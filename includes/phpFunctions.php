@@ -14,9 +14,9 @@ function editFormItem($id=NULL,$type=NULL,$fieldID=NULL) {
 	global $engine;
 
 	$return  = '<span class="itemOptions">';
-	$return .= '<img class="trashIcon" src="'.recurseInsert("images/trash.png","url").'" />';
+	$return .= '<img class="trashIcon" src="'.$engine->localVars("siteRoot").'images/trash.png" />';
 	$return .= ' <span class="editLink">Edit</span> ';
-	$return .= '<img class="dragHandle" src="'.recurseInsert("images/hand.png","url").'" />';
+	$return .= '<img class="dragHandle" src="'.$engine->localVars("siteRoot").'images/hand.png" />';
 	$return .= '</span>';
 
 	$return .= '<span class="item">';
