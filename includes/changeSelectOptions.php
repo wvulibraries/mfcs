@@ -1,15 +1,8 @@
 <?php
-$engineDir = "/home/library/phpincludes/engineAPI/engine";
-include($engineDir ."/engine.php");
-$engine = new EngineCMS();
+include("../newEngine.php");
 
 recurseInsert("acl.php","php");
-
-recurseInsert("dbTableList.php","php");
-$engine->dbConnect("database","mfcs",TRUE);
-
 recurseInsert("vars.php","php");
-
 recurseInsert("showField.php","php");
 recurseInsert("phpFunctions.php","php");
 

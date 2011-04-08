@@ -2,6 +2,13 @@
 global $engine;
 ?>
 
+<script type="text/javascript" src="{engine var="jquery"}"></script>
+<script type="text/javascript" src="{engine var="selectBoxJS"}"></script>
+<script type="text/javascript" src="{engine var="convert2TextJS"}"></script>
+<script type="text/javascript" src="{engine var="engineListObjJS"}"></script>
+<script type="text/javascript" src="{engine var="engineWYSIWYGJS"}"></script>
+<script type="text/javascript" src="{engine var="tiny_mce_JS"}"></script>
+
 <script type="text/javascript" src="{local var="siteRoot"}includes/jquery-expose.js"></script>
 <script type="text/javascript" src="{local var="siteRoot"}includes/jquery-validate.js"></script>
 <script type="text/javascript" src="{local var="siteRoot"}includes/jquery-ui.js"></script>

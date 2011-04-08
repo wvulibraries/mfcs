@@ -48,4 +48,6 @@ global $engine;
 
 	}
 	?>
+	<li class="noBorder">&nbsp;</li>
+	<li><a href="{engine var="logoutPage"}?csrf={engine name="csrfGet"}">Logout</a></li>
 </ul>

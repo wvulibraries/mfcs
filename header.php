@@ -1,13 +1,11 @@
 <?php
-$engineDir = "/home/library/phpincludes/engineAPI/engine";
-include($engineDir ."/engine.php");
-$engine = new EngineCMS();
+include("newEngine.php");
 
 $engine->localVars('pageTitle',"Metadata Form Creation System");
 
 recurseInsert("vars.php","php");
 
-$engine->eTemplate("load","systems");
+// $engine->eTemplate("load","systems");
 $engine->eTemplate("include","header");
 
 // commented for testing

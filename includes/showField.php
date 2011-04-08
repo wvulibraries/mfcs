@@ -316,7 +316,7 @@ function fieldProperties($id,$type,$name,$default,$fieldID=NULL,$hidden=FALSE) {
 			$sql = sprintf("SELECT ID FROM %s WHERE formName='%s' AND projectID='%s' LIMIT 1",
 				$engine->openDB->escape($engine->dbTables("forms")),
 				$engine->openDB->escape($engine->localVars("formName")),
-				$engine->openDB->escape($engine->localVars("projID"))
+				$engine->openDB->escape($engine->localVars("projectID"))
 				);
 			$engine->openDB->sanitize = FALSE;
 			$sqlResult                = $engine->openDB->query($sql);
