@@ -4,6 +4,8 @@ global $engine;
 $submitFields          = array();
 $storedFields          = array();
 $organizedSubmitFields = array();
+$settingsTblElements   = array("releasePublic","searchable","sortable");
+
 
 $i = 0;
 foreach ($engine->cleanPost['HTML'] as $key => $value) {
@@ -192,6 +194,41 @@ foreach ($storedFields as $storedFieldName => $storedFieldProperties) {
 
 			}
 
+			// Update settings
+			foreach ($submit['properties'] as $key => $value) {
+				switch ($key) {
+
+					// List of settings to place into settings table
+					case 'releasePublic':
+					case 'searchable':
+					case 'sortable':
+
+						// Switch to project database
+						$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
+
+						$sql = sprintf("UPDATE %s SET formName='%s', fieldName='%s', setting='%s', value='%s' WHERE formName='%s' AND fieldName='%s' AND setting='%s' LIMIT 1",
+							$engine->openDB->escape($engine->dbTables($engine->localVars("dbPrefix")."settings")),
+							$engine->openDB->escape($engine->localVars("formName")),
+							$engine->openDB->escape($submit['fieldName']),
+							$engine->openDB->escape($key),
+							$engine->openDB->escape($value),
+							$engine->openDB->escape($engine->localVars("formName")),
+							$engine->openDB->escape($submit['original']),
+							$engine->openDB->escape($key)
+							);
+						$engine->openDB->sanitize = FALSE;
+						$sqlResult                = $engine->openDB->query($sql);
+
+						// Switch to system database
+						$engine->openDB->select_db($engine->localVars("dbName"));
+
+						break;
+
+					default:
+						break;
+				}
+			}
+
 			// Update each of the properties for this field
 			foreach ($storedFieldProperties as $storedOption => $storedValue) {
 				
@@ -253,6 +290,24 @@ foreach ($storedFields as $storedFieldName => $storedFieldProperties) {
 					);
 				$engine->openDB->sanitize = FALSE;
 				$sqlResult                = $engine->openDB->query($sql);
+
+				// Switch to project database
+				$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
+
+				// Add to settings table
+				$sql = sprintf("INSERT INTO %s (formName,fieldName,setting,value) VALUES ('%s','%s','%s','%s')",
+					$engine->openDB->escape($engine->dbTables($engine->localVars("dbPrefix")."settings")),
+					$engine->openDB->escape($engine->localVars("formName")),
+					$engine->openDB->escape($submit['fieldName']),
+					$engine->openDB->escape($submitOption),
+					$engine->openDB->escape($submitValue)
+					);
+				$engine->openDB->sanitize = FALSE;
+				$sqlResult                = $engine->openDB->query($sql);
+
+				// Switch to system database
+				$engine->openDB->select_db($engine->localVars("dbName"));
+
 			}
 
 			continue(2);
@@ -266,6 +321,21 @@ foreach ($storedFields as $storedFieldName => $storedFieldProperties) {
 		);
 	$engine->openDB->sanitize = FALSE;
 	$sqlResult                = $engine->openDB->query($sql);
+
+	// Switch to project database
+	$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
+
+	// Delete stored field properties
+	$sql = sprintf("DELETE FROM %s WHERE formName='%s' AND fieldName='%s'",
+		$engine->openDB->escape($engine->dbTables($engine->localVars("dbPrefix")."settings")),
+		$engine->openDB->escape($engine->localVars("formName")),
+		$engine->openDB->escape($storedFieldName)
+		);
+	$engine->openDB->sanitize = FALSE;
+	$sqlResult                = $engine->openDB->query($sql);
+
+	// Switch to system database
+	$engine->openDB->select_db($engine->localVars("dbName"));
 
 	foreach ($storedFieldProperties as $option => $value) {
 
@@ -346,6 +416,27 @@ foreach ($organizedSubmitFields as $I => $submit) {
 			);
 		$engine->openDB->sanitize = FALSE;
 		$sqlResult                = $engine->openDB->query($sql);			
+
+		// Switch to project database
+		$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
+
+		// Add to settings table
+		foreach ($settingsTblElements as $element) {
+			if ($element == $k) {
+				$sql = sprintf("INSERT INTO %s (formName,fieldName,setting,value) VALUES ('%s','%s','%s','%s')",
+					$engine->openDB->escape($engine->dbTables($engine->localVars("dbPrefix")."settings")),
+					$engine->openDB->escape($engine->localVars("formName")),
+					$engine->openDB->escape($submit['fieldName']),
+					$engine->openDB->escape($k),
+					$engine->openDB->escape($v)
+					);
+				$engine->openDB->sanitize = FALSE;
+				$sqlResult                = $engine->openDB->query($sql);
+			}
+		}
+
+		// Switch to system database
+		$engine->openDB->select_db($engine->localVars("dbName"));
 
 		if ($submit['type'] == 'multiselect' && $k == 'optionValues') {
 

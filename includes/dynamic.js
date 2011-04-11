@@ -171,6 +171,14 @@ function dynamicEffects(item) {
 			managedByOptions(item,$(this).val());
 		}
 	)
+
+	// show/hide sortable based on searchable
+	toggleSortable(item,$(":input[name*='searchable']", item).val());
+	$(":input[name*='searchable']", item).change(
+		function() {
+			toggleSortable(item,$(this).val());
+		}
+	)
 }
 
 function hoverOptions(item) {

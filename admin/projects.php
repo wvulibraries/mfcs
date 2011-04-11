@@ -30,13 +30,8 @@ if(isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_submit'])
 	
 	$errorMsg .= $listObj->insert();
 
-/*
-	// add to permissions table with ident of 'projects'
-	$permissions = new mfcsPermissions("permissions",$engine,$ident,"tempPermissions");
-
-	$insert = $permissions->insert($engine->cleanPost['MYSQL']['name_insert']);
-*/
 	if (!is_empty($engine->cleanPost['MYSQL']['name_insert'])) {
+
 		$sql = sprintf("CREATE DATABASE %s%s",
 			$engine->openDB->escape($engine->localVars("dbPrefix")),
 			$engine->cleanPost['MYSQL']['name_insert']
@@ -47,6 +42,30 @@ if(isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_submit'])
 		if ($sqlResult['affectedRows'] < 0) {
 			$errorMsg .= webHelper_errorMsg("Error creating new Project".(($sqlResult['errorNumber']=='1007')?" (already exists)":""));
 		}
+
+		//Switch to project database
+		$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->cleanPost['MYSQL']['name_insert']);
+		
+		// Create settings table
+		$sql = sprintf("CREATE TABLE %s (mfcs_ID int(10) UNSIGNED NOT NULL AUTO_INCREMENT, formName varchar(255) NOT NULL DEFAULT '', fieldName varchar(255) NULL, setting varchar(255) NOT NULL DEFAULT '', value varchar(255) NOT NULL DEFAULT '', PRIMARY KEY (mfcs_ID))",
+			$engine->openDB->escape($engine->localVars("dbPrefix")."settings")
+			);
+		$engine->openDB->sanitize = FALSE;
+		$sqlResult                = $engine->openDB->query($sql);
+
+		// Switch to system database
+		$engine->openDB->select_db($engine->localVars("dbName"));
+
+		// Insert table name into dbTables table if it's not already there
+		$sql = sprintf("INSERT INTO %s (name) SELECT '%s' FROM dual WHERE NOT EXISTS(SELECT * FROM %s WHERE name='%s' LIMIT 1)",
+			$engine->openDB->escape($engine->dbTables("dbTables")),
+			$engine->openDB->escape($engine->localVars("dbPrefix")."settings"),
+			$engine->openDB->escape($engine->dbTables("dbTables")),
+			$engine->openDB->escape($engine->localVars("dbPrefix")."settings")
+			);
+		$engine->openDB->sanitize = FALSE;
+		$sqlResult                = $engine->openDB->query($sql);
+
 	}
 
 }
@@ -66,19 +85,7 @@ else if (isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_upd
 			if ($sqlResult['affectedRows'] < 0) {
 				$errorMsg .= webHelper_errorMsg("Error modifying projects.");
 			}
-/*
-			$sql = sprintf("DELETE FROM %s WHERE ident='%s' AND name='%s'",
-				$engine->openDB->escape($engine->dbTables("permissions")),
-				$engine->openDB->escape($ident),
-				$engine->cleanPost['MYSQL']['name_'.$val]
-				);
-			$engine->openDB->sanitize = FALSE;
-			$sqlResult                = $engine->openDB->query($sql);
-			
-			if (!$sqlResult['result']) {
-				$errorMsg .= webHelper_errorMsg("Error modifying permissions.");
-			}
-*/
+
 		}
 	}
 
@@ -151,21 +158,7 @@ else if (isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_upd
 				$errorMsg .= webHelper_errorMsg("Error modifying forms.");
 				break;
 			}
-/*
-			// Edit name in permissions table
-			$sql = sprintf("UPDATE %s SET name='%s' WHERE ident='%s' AND name='%s' LIMIT 1",
-				$engine->openDB->escape($engine->dbTables("permissions")),
-				$engine->openDB->escape($val['new']),
-				$engine->openDB->escape($ident),
-				$engine->openDB->escape($val['orig'])
-				);
-			$engine->openDB->sanitize = FALSE;
-			$sqlResult                = $engine->openDB->query($sql);
-			
-			if (!$sqlResult['result']) {
-				$errorMsg .= webHelper_errorMsg("Error modifying permissions.");
-			}
-*/
+
 		}
 	}
 

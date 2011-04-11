@@ -228,6 +228,15 @@ function managedByOptions(item,value) {
 	}
 }
 
+function toggleSortable(item,value) {
+	if (value == '1') {
+		$(':input[name*=sortable]', item).removeAttr('disabled').closest('tr').show();
+	}
+	else if (value == '0') {
+		$(':input[name*=sortable]', item).attr('disabled', true).closest('tr').hide();
+	}
+}
+
 function changeSelectOptions(item) {
 	var inputElm = $('.item :input:not(input[type=hidden])', item);
 	var value = $(':input[name*=optionValues]', item).val();

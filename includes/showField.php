@@ -1,24 +1,27 @@
 <?php
 function defaultValues() {
-	$v['fieldName']    = "";
-	$v['fieldLabel']   = "[Label]";
-	$v['placeHolder']  = "";
-	$v['size']         = "40";
-	$v['mssize']       = "4";
-	$v['width']        = "30";
-	$v['height']       = "3";
-	$v['dupes']        = "0";
-	$v['nulls']        = "0";
-	$v['disable' ]     = "0";
-	$v['readonly']     = "0";
-	$v['plugins']      = "";
-	$v['validation']   = "";
-	$v['maxlength']    = "255";
-	$v['format']       = "abc####";
-	$v['reuseids']     = "0";
-	$v['autoinc']      = "1";
-	$v['managedBy']    = "system";
-	$v['optionValues'] = "";
+	$v['fieldName']     = "";
+	$v['fieldLabel']    = "[Label]";
+	$v['placeHolder']   = "";
+	$v['size']          = "40";
+	$v['mssize']        = "4";
+	$v['width']         = "30";
+	$v['height']        = "3";
+	$v['dupes']         = "0";
+	$v['nulls']         = "0";
+	$v['disable' ]      = "0";
+	$v['readonly']      = "0";
+	$v['plugins']       = "";
+	$v['validation']    = "";
+	$v['maxlength']     = "255";
+	$v['format']        = "abc####";
+	$v['reuseids']      = "0";
+	$v['autoinc']       = "1";
+	$v['managedBy']     = "system";
+	$v['optionValues']  = "";
+	$v['releasePublic'] = "1";
+	$v['searchable']    = "0";
+	$v['sortable']      = "0";
 
 	return $v;
 }
@@ -118,6 +121,9 @@ function fieldList($type) {
 			$fields['display']['fieldLabel']    = "";
 			$fields['display']['size']          = $defaults['size'];
 			$fields['display']['managedBy']     = $defaults['managedBy'];
+			$fields['display']['releasePublic'] = $defaults['releasePublic'];
+			$fields['display']['searchable']    = $defaults['searchable'];
+			$fields['display']['sortable']      = $defaults['sortable'];
 			$fields['display']['validation']    = $defaults['validation'];
 			$fields['display']['reuseids']      = $defaults['reuseids'];
 			$fields['display']['format']        = $defaults['format'];
@@ -128,72 +134,90 @@ function fieldList($type) {
 			break;
 
 		case "text":
-			$fields['display']['fieldName']   = "";
-			$fields['display']['fieldLabel']  = "";
-			$fields['display']['placeHolder'] = $defaults['placeHolder'];
-			$fields['display']['size']        = $defaults['size'];
-			$fields['display']['dupes']       = $defaults['dupes'];
-			$fields['display']['nulls']       = $defaults['nulls'];
-			$fields['display']['readonly']    = $defaults['readonly'];
-			$fields['display']['disable']     = $defaults['disable'];
-			$fields['display']['maxlength']   = $defaults['maxlength'];
-			$fields['display']['validation']  = $defaults['validation'];
+			$fields['display']['fieldName']     = "";
+			$fields['display']['fieldLabel']    = "";
+			$fields['display']['placeHolder']   = $defaults['placeHolder'];
+			$fields['display']['size']          = $defaults['size'];
+			$fields['display']['dupes']         = $defaults['dupes'];
+			$fields['display']['nulls']         = $defaults['nulls'];
+			$fields['display']['readonly']      = $defaults['readonly'];
+			$fields['display']['disable']       = $defaults['disable'];
+			$fields['display']['maxlength']     = $defaults['maxlength'];
+			$fields['display']['releasePublic'] = $defaults['releasePublic'];
+			$fields['display']['searchable']    = $defaults['searchable'];
+			$fields['display']['sortable']      = $defaults['sortable'];
+			$fields['display']['validation']    = $defaults['validation'];
 			break;
 
 		case "date":
-			$fields['display']['fieldName']   = "";
-			$fields['display']['fieldLabel']  = "";
-			$fields['display']['placeHolder'] = $defaults['placeHolder'];
-			$fields['display']['size']        = $defaults['size'];
-			$fields['display']['dupes']       = $defaults['dupes'];
-			$fields['display']['nulls']       = $defaults['nulls'];
-			$fields['display']['readonly']    = $defaults['readonly'];
-			$fields['display']['disable']     = $defaults['disable'];
-			$fields['display']['validation']  = $defaults['validation'];
+			$fields['display']['fieldName']     = "";
+			$fields['display']['fieldLabel']    = "";
+			$fields['display']['placeHolder']   = $defaults['placeHolder'];
+			$fields['display']['size']          = $defaults['size'];
+			$fields['display']['dupes']         = $defaults['dupes'];
+			$fields['display']['nulls']         = $defaults['nulls'];
+			$fields['display']['readonly']      = $defaults['readonly'];
+			$fields['display']['disable']       = $defaults['disable'];
+			$fields['display']['releasePublic'] = $defaults['releasePublic'];
+			$fields['display']['searchable']    = $defaults['searchable'];
+			$fields['display']['sortable']      = $defaults['sortable'];
+			$fields['display']['validation']    = $defaults['validation'];
 			break;
 
 		case "select":
-			$fields['display']['fieldName']    = "";
-			$fields['display']['fieldLabel']   = "";
-			$fields['display']['optionValues'] = $defaults['optionValues'];
-			$fields['display']['dupes']        = $defaults['dupes'];
-			$fields['display']['nulls']        = $defaults['nulls'];
-			$fields['display']['disable']      = $defaults['disable'];
-			$fields['display']['validation']   = $defaults['validation'];
+			$fields['display']['fieldName']     = "";
+			$fields['display']['fieldLabel']    = "";
+			$fields['display']['optionValues']  = $defaults['optionValues'];
+			$fields['display']['dupes']         = $defaults['dupes'];
+			$fields['display']['nulls']         = $defaults['nulls'];
+			$fields['display']['disable']       = $defaults['disable'];
+			$fields['display']['releasePublic'] = $defaults['releasePublic'];
+			$fields['display']['searchable']    = $defaults['searchable'];
+			$fields['display']['sortable']      = $defaults['sortable'];
+			$fields['display']['validation']    = $defaults['validation'];
 			break;
 
 		case "multiselect":
-			$fields['hidden']['fieldName']     = "";
-			$fields['display']['fieldLabel']   = "";
-			$fields['display']['optionValues'] = $defaults['optionValues'];
-			$fields['display']['mssize']       = $defaults['mssize'];
-			$fields['display']['dupes']        = $defaults['dupes'];
-			$fields['display']['nulls']        = $defaults['nulls'];
-			$fields['display']['disable']      = $defaults['disable'];
+			$fields['hidden']['fieldName']      = "";
+			$fields['display']['fieldLabel']    = "";
+			$fields['display']['optionValues']  = $defaults['optionValues'];
+			$fields['display']['mssize']        = $defaults['mssize'];
+			$fields['display']['dupes']         = $defaults['dupes'];
+			$fields['display']['nulls']         = $defaults['nulls'];
+			$fields['display']['disable']       = $defaults['disable'];
+			$fields['display']['releasePublic'] = $defaults['releasePublic'];
+			$fields['display']['searchable']    = $defaults['searchable'];
+			$fields['display']['sortable']      = $defaults['sortable'];
 			break;
 
 		case "textarea":
-			$fields['display']['fieldName']   = "";
-			$fields['display']['fieldLabel']  = "";
-			$fields['display']['placeHolder'] = $defaults['placeHolder'];
-			$fields['display']['width']       = $defaults['width'];
-			$fields['display']['height']      = $defaults['height'];
-			$fields['display']['dupes']       = $defaults['dupes'];
-			$fields['display']['nulls']       = $defaults['nulls'];
-			$fields['display']['readonly']    = $defaults['readonly'];
-			$fields['display']['disable']     = $defaults['disable'];
-			$fields['display']['validation']  = $defaults['validation'];
+			$fields['display']['fieldName']     = "";
+			$fields['display']['fieldLabel']    = "";
+			$fields['display']['placeHolder']   = $defaults['placeHolder'];
+			$fields['display']['width']         = $defaults['width'];
+			$fields['display']['height']        = $defaults['height'];
+			$fields['display']['dupes']         = $defaults['dupes'];
+			$fields['display']['nulls']         = $defaults['nulls'];
+			$fields['display']['readonly']      = $defaults['readonly'];
+			$fields['display']['disable']       = $defaults['disable'];
+			$fields['display']['releasePublic'] = $defaults['releasePublic'];
+			$fields['display']['searchable']    = $defaults['searchable'];
+			$fields['display']['sortable']      = $defaults['sortable'];
+			$fields['display']['validation']    = $defaults['validation'];
 			break;
 
 		case "wysiwyg":
-			$fields['display']['fieldName']   = "";
-			$fields['display']['fieldLabel']  = "";
-			$fields['display']['plugins']     = $defaults['plugins'];
-			$fields['display']['dupes']       = $defaults['dupes'];
-			$fields['display']['nulls']       = $defaults['nulls'];
-			$fields['display']['readonly']    = $defaults['readonly'];
-			$fields['display']['disable']     = $defaults['disable'];
-			$fields['display']['validation']  = $defaults['validation'];
+			$fields['display']['fieldName']     = "";
+			$fields['display']['fieldLabel']    = "";
+			$fields['display']['plugins']       = $defaults['plugins'];
+			$fields['display']['dupes']         = $defaults['dupes'];
+			$fields['display']['nulls']         = $defaults['nulls'];
+			$fields['display']['readonly']      = $defaults['readonly'];
+			$fields['display']['disable']       = $defaults['disable'];
+			$fields['display']['releasePublic'] = $defaults['releasePublic'];
+			$fields['display']['searchable']    = $defaults['searchable'];
+			$fields['display']['sortable']      = $defaults['sortable'];
+			$fields['display']['validation']    = $defaults['validation'];
 			break;
 	}
 
@@ -388,6 +412,15 @@ function fieldProperties($id,$type,$name,$default,$fieldID=NULL,$hidden=FALSE) {
 
 			return array('Option Values','<select name="'.$prefix.$name.'"><option value="null">None</option>'.$options.'</select>');
 
+		case 'releasePublic':
+			return array('Release to Public','<select name="'.$prefix.$name.'"><option value="0">No</option><option value="1"'.(($values[$name]=='1')?' selected':'').'>Yes</option></select>');
+
+		case 'searchable':
+			return array('Searchable','<select name="'.$prefix.$name.'"><option value="0">No</option><option value="1"'.(($values[$name]=='1')?' selected':'').'>Yes</option></select>');
+
+		case 'sortable':
+			return array('Sortable','<select name="'.$prefix.$name.'"><option value="0">No</option><option value="1"'.(($values[$name]=='1')?' selected':'').'>Yes</option></select>');
+		
 	}
 
 	return FALSE;

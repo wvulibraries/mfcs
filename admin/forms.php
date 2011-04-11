@@ -3,6 +3,7 @@ include("header.php");
 
 $engine->localVars("listTable",$engine->dbTables("forms"));
 $ident = "proj".$engine->localVars("projectID")."forms";
+$settingsTblElements = array("releasePublic","formType","deletions");
 $errorMsg = NULL;
 
 function listFields() {
@@ -33,6 +34,7 @@ function listFields() {
 	$options = array();
 	$options['field']    = "label";
 	$options['label']    = "Label";
+	$options['dupes']     = TRUE;
 	$options['size']     = "20";
 	$options['validate'] = "alphaNumeric";
 	$listObj->addField($options);
@@ -52,6 +54,17 @@ function listFields() {
 	$options = array();
 	$options['field']     = "deletions";
 	$options['label']     = "Allow Deletions";
+	$options['dupes']     = TRUE;
+	$options['type']      = "select";
+	$options['options'][] = array("value"=>"1","label"=>"Yes");
+	$options['options'][] = array("value"=>"0","label"=>"No");
+	$options['original']  = TRUE;
+	$listObj->addField($options);
+	unset($options);
+
+	$options = array();
+	$options['field']     = "releasePublic";
+	$options['label']     = "Release to Public";
 	$options['dupes']     = TRUE;
 	$options['type']      = "select";
 	$options['options'][] = array("value"=>"1","label"=>"Yes");
@@ -82,6 +95,7 @@ if(isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_submit'])
 	else {
 
 		if (isnull($errorMsg)) {
+
 			//Switch to project database
 			$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
 
@@ -102,6 +116,18 @@ if(isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_submit'])
 				);
 			$engine->openDB->sanitize = FALSE;
 			$sqlResult                = $engine->openDB->query($sql);
+
+			// Add setting for this form in the settings table
+			foreach ($settingsTblElements as $element) {
+				$sql = sprintf("INSERT INTO %s (formName,setting,value) VALUES ('%s','%s','%s')",
+					$engine->openDB->escape($engine->localVars("dbPrefix").'settings'),
+					$engine->cleanPost['MYSQL']['formName_insert'],
+					$engine->openDB->escape($element),
+					$engine->cleanPost['MYSQL'][$element.'_insert']
+					);
+				$engine->openDB->sanitize = FALSE;
+				$sqlResult                = $engine->openDB->query($sql);
+			}
 
 			// Switch to system database
 			$engine->openDB->select_db($engine->localVars("dbName"));
@@ -125,8 +151,6 @@ if(isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_submit'])
 				$sqlResult2               = $engine->openDB->query($sql);
 			}
 			
-
-
 		}
 	}
 
@@ -204,6 +228,14 @@ else if (isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_upd
 			$engine->openDB->sanitize = FALSE;
 			$sqlResult                = $engine->openDB->query($sql);
 
+			// Remove this form from the settings table
+			$sql = sprintf("DELETE FROM %s WHERE formName='%s'",
+				$engine->openDB->escape($engine->localVars("dbPrefix").'settings'),
+				$engine->cleanPost['MYSQL']['formName_'.$val]
+				);
+			$engine->openDB->sanitize = FALSE;
+			$sqlResult                = $engine->openDB->query($sql);
+
 			// Switch to system database
 			$engine->openDB->select_db($engine->localVars("dbName"));
 
@@ -227,13 +259,13 @@ else if (isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_upd
 	}
 
 
-	foreach ($formNames as $formName) {
+	// Switch to project database
+	$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
+
+	foreach ($formNames as $id => $formName) {
 		// If the submitted value is different from the original
 		if ($formName['orig'] != $formName['new']) {
 			
-			// Switch to project database
-			$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
-
 			// Rename data table
 			$sql = sprintf("RENAME TABLE %s TO %s",
 				$engine->openDB->escape($formName['orig']),
@@ -260,14 +292,29 @@ else if (isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_upd
 				$error = TRUE;
 			}
 
-			// Switch to system database
-			$engine->openDB->select_db($engine->localVars("dbName"));
-
 		}
+
+		// Update settings table with new form settings
+		foreach ($settingsTblElements as $element) {
+			$sql = sprintf("UPDATE %s SET formName='%s',setting='%s',value='%s' WHERE formName='%s' AND setting='%s'",
+				$engine->openDB->escape($engine->localVars("dbPrefix").'settings'),
+				$engine->openDB->escape($formName['new']),
+				$engine->openDB->escape($element),
+				$engine->cleanPost['MYSQL'][$element.'_'.$id],
+				$engine->openDB->escape($formName['orig']),
+				$engine->openDB->escape($element)
+				);
+			$engine->openDB->sanitize = FALSE;
+			$sqlResult                = $engine->openDB->query($sql);
+		}
+
 	}
 
+	// Switch to system database
+	$engine->openDB->select_db($engine->localVars("dbName"));
+
 	if ($error === FALSE) {
-		$errorMsg .= $listObj->update();
+		$errorMsg .= $listObj->update();		
 	}
 	
 }
