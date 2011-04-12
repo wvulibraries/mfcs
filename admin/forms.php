@@ -25,6 +25,7 @@ function listFields() {
 	$options = array();
 	$options['field']    = "formName";
 	$options['label']    = "Name";
+	$options['dupes']    = TRUE;
 	$options['size']     = "20";
 	$options['validate'] = "alphaNumericNoSpaces";
 	$options['original'] = TRUE;
@@ -34,7 +35,7 @@ function listFields() {
 	$options = array();
 	$options['field']    = "label";
 	$options['label']    = "Label";
-	$options['dupes']     = TRUE;
+	$options['dupes']    = TRUE;
 	$options['size']     = "20";
 	$options['validate'] = "alphaNumeric";
 	$listObj->addField($options);
@@ -117,7 +118,7 @@ if(isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_submit'])
 			$engine->openDB->sanitize = FALSE;
 			$sqlResult                = $engine->openDB->query($sql);
 
-			// Add setting for this form in the settings table
+			// Add settings for this form in the settings table
 			foreach ($settingsTblElements as $element) {
 				$sql = sprintf("INSERT INTO %s (formName,setting,value) VALUES ('%s','%s','%s')",
 					$engine->openDB->escape($engine->localVars("dbPrefix").'settings'),
@@ -132,30 +133,58 @@ if(isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_submit'])
 			// Switch to system database
 			$engine->openDB->select_db($engine->localVars("dbName"));
 
-			// Insert new table into dbTables if necessary
-			$sql = sprintf("SELECT ID FROM %s WHERE name='%s' LIMIT 1",
+			// Insert table name into dbTables table if it's not already there
+			$sql = sprintf("INSERT INTO %s (name) SELECT '%s' FROM dual WHERE NOT EXISTS(SELECT * FROM %s WHERE name='%s' LIMIT 1)",
+				$engine->openDB->escape($engine->dbTables("dbTables")),
+				$engine->cleanPost['MYSQL']['formName_insert'],
 				$engine->openDB->escape($engine->dbTables("dbTables")),
 				$engine->cleanPost['MYSQL']['formName_insert']
 				);
 			$engine->openDB->sanitize = FALSE;
 			$sqlResult                = $engine->openDB->query($sql);
-			
-			if ($sqlResult['affectedRows'] < 1) {
-				$row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
 
-				$sql = sprintf("INSERT INTO %s (name) VALUES ('%s')",
-					$engine->openDB->escape($engine->dbTables("dbTables")),
-					$engine->cleanPost['MYSQL']['formName_insert']
-					);
-				$engine->openDB->sanitize = FALSE;
-				$sqlResult2               = $engine->openDB->query($sql);
-			}
-			
 		}
 	}
 
 	if (isnull($errorMsg)) {
 		$errorMsg .= $listObj->insert();
+
+		// check to see if the insert failed, if so, undo db changes
+		if (is_empty($engine->localVars("listObjInsertID"))) {
+
+			//Switch to project database
+			$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
+
+			// Remove data table
+			$sql = sprintf("DROP TABLE IF EXISTS %s",
+				$engine->cleanPost['MYSQL']['formName_insert']
+				);
+			$engine->openDB->sanitize = FALSE;
+			$sqlResult                = $engine->openDB->query($sql);
+
+			// Remove changelog table
+			$sql = sprintf("DROP TABLE IF EXISTS %s_changelog",
+				$engine->cleanPost['MYSQL']['formName_insert']
+				);
+			$engine->openDB->sanitize = FALSE;
+			$sqlResult                = $engine->openDB->query($sql);
+
+			// Remove settings for this form in the settings table
+			foreach ($settingsTblElements as $element) {
+				$sql = sprintf("DELETE FROM %s WHERE formName='%s' AND setting='%s' AND value='%s'",
+					$engine->openDB->escape($engine->localVars("dbPrefix").'settings'),
+					$engine->cleanPost['MYSQL']['formName_insert'],
+					$engine->openDB->escape($element),
+					$engine->cleanPost['MYSQL'][$element.'_insert']
+					);
+				$engine->openDB->sanitize = FALSE;
+				$sqlResult                = $engine->openDB->query($sql);
+			}
+
+			// Switch to system database
+			$engine->openDB->select_db($engine->localVars("dbName"));
+			
+		}
 	}
 
 }

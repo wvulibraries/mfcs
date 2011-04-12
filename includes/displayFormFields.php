@@ -72,8 +72,29 @@ function listFields($fields,$display) {
 				case 'multiselect':
 				case 'wysiwyg':
 					$complexForm = TRUE;
-					break;
+					break(2);
 			}
+		}
+
+	}
+
+	if ($complexForm == TRUE) {
+		// $listObj->deleteBox = FALSE;
+		// $listObj->noSubmit  = TRUE;
+
+		$options = array();
+		$options['field']    = '<a href="'.$engine->localVars("siteRoot").'displayForm.php?proj='.$engine->localVars("projectID").'&form='.$engine->localVars("formName").'&display=updateinsert&id={'.$idFieldName.'}">Edit</a>';
+		$options['label']    = "Edit";
+		$options['type']     = "plainText";
+		$listObj->addField($options);
+		unset($options);
+
+	}
+
+	foreach ($fields as $field) {
+
+		if ($complexForm == TRUE && ($field['type'] == 'multiselect' || $field['type'] == 'wysiwyg')) {
+			continue;
 		}
 
 		if ($field['type'] == 'identifier') {
@@ -207,25 +228,6 @@ function listFields($fields,$display) {
 	$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
 
 	if ($complexForm == TRUE) {
-		// $listObj->deleteBox = FALSE;
-		// $listObj->noSubmit  = TRUE;
-
-		$options = array();
-		$options['field']    = '<a href="'.$engine->localVars("siteRoot").'displayForm.php?proj='.$engine->localVars("projectID").'&form='.$engine->localVars("formName").'&display=updateinsert&id={'.$idFieldName.'}">Edit</a>';
-		$options['label']    = "Edit";
-		$options['type']     = "plainText";
-		$listObj->addField($options);
-		unset($options);
-
-		foreach ($fields as $field) {
-			switch($field['type']) {
-				case 'multiselect':
-				case 'wysiwyg':
-					$listObj->removeField($field['fieldName']);
-					break;
-			}
-		}
-
 		$listObj->disableAllFields();
 	}
 

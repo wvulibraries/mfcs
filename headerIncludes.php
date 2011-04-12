@@ -3,6 +3,7 @@ global $engine;
 ?>
 
 <script type="text/javascript" src="{engine var="jquery"}"></script>
+<script type="text/javascript" src="{engine var="jqueryDate"}"></script>
 <script type="text/javascript" src="{engine var="selectBoxJS"}"></script>
 <script type="text/javascript" src="{engine var="convert2TextJS"}"></script>
 <script type="text/javascript" src="{engine var="engineListObjJS"}"></script>

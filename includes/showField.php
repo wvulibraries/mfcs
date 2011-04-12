@@ -121,13 +121,13 @@ function fieldList($type) {
 			$fields['display']['fieldLabel']    = "";
 			$fields['display']['size']          = $defaults['size'];
 			$fields['display']['managedBy']     = $defaults['managedBy'];
-			$fields['display']['releasePublic'] = $defaults['releasePublic'];
-			$fields['display']['searchable']    = $defaults['searchable'];
-			$fields['display']['sortable']      = $defaults['sortable'];
 			$fields['display']['validation']    = $defaults['validation'];
 			$fields['display']['reuseids']      = $defaults['reuseids'];
 			$fields['display']['format']        = $defaults['format'];
 			$fields['display']['autoinc']       = $defaults['autoinc'];
+			$fields['display']['releasePublic'] = $defaults['releasePublic'];
+			$fields['display']['searchable']    = $defaults['searchable'];
+			$fields['display']['sortable']      = $defaults['sortable'];
 			$fields['hidden']['maxlength']      = "10";
 			$fields['hidden']['readonly']       = "1";
 			$fields['hidden']['autoincCurrent'] = $defaults['autoinc'];
@@ -136,32 +136,32 @@ function fieldList($type) {
 		case "text":
 			$fields['display']['fieldName']     = "";
 			$fields['display']['fieldLabel']    = "";
-			$fields['display']['placeHolder']   = $defaults['placeHolder'];
+			// $fields['display']['placeHolder']   = $defaults['placeHolder'];
 			$fields['display']['size']          = $defaults['size'];
 			$fields['display']['dupes']         = $defaults['dupes'];
 			$fields['display']['nulls']         = $defaults['nulls'];
 			$fields['display']['readonly']      = $defaults['readonly'];
 			$fields['display']['disable']       = $defaults['disable'];
 			$fields['display']['maxlength']     = $defaults['maxlength'];
+			$fields['display']['validation']    = $defaults['validation'];
 			$fields['display']['releasePublic'] = $defaults['releasePublic'];
 			$fields['display']['searchable']    = $defaults['searchable'];
 			$fields['display']['sortable']      = $defaults['sortable'];
-			$fields['display']['validation']    = $defaults['validation'];
 			break;
 
 		case "date":
 			$fields['display']['fieldName']     = "";
 			$fields['display']['fieldLabel']    = "";
-			$fields['display']['placeHolder']   = $defaults['placeHolder'];
+			// $fields['display']['placeHolder']   = $defaults['placeHolder'];
 			$fields['display']['size']          = $defaults['size'];
 			$fields['display']['dupes']         = $defaults['dupes'];
 			$fields['display']['nulls']         = $defaults['nulls'];
 			$fields['display']['readonly']      = $defaults['readonly'];
 			$fields['display']['disable']       = $defaults['disable'];
+			$fields['display']['validation']    = $defaults['validation'];
 			$fields['display']['releasePublic'] = $defaults['releasePublic'];
 			$fields['display']['searchable']    = $defaults['searchable'];
 			$fields['display']['sortable']      = $defaults['sortable'];
-			$fields['display']['validation']    = $defaults['validation'];
 			break;
 
 		case "select":
@@ -171,10 +171,10 @@ function fieldList($type) {
 			$fields['display']['dupes']         = $defaults['dupes'];
 			$fields['display']['nulls']         = $defaults['nulls'];
 			$fields['display']['disable']       = $defaults['disable'];
+			$fields['display']['validation']    = $defaults['validation'];
 			$fields['display']['releasePublic'] = $defaults['releasePublic'];
 			$fields['display']['searchable']    = $defaults['searchable'];
 			$fields['display']['sortable']      = $defaults['sortable'];
-			$fields['display']['validation']    = $defaults['validation'];
 			break;
 
 		case "multiselect":
@@ -193,17 +193,17 @@ function fieldList($type) {
 		case "textarea":
 			$fields['display']['fieldName']     = "";
 			$fields['display']['fieldLabel']    = "";
-			$fields['display']['placeHolder']   = $defaults['placeHolder'];
+			// $fields['display']['placeHolder']   = $defaults['placeHolder'];
 			$fields['display']['width']         = $defaults['width'];
 			$fields['display']['height']        = $defaults['height'];
 			$fields['display']['dupes']         = $defaults['dupes'];
 			$fields['display']['nulls']         = $defaults['nulls'];
 			$fields['display']['readonly']      = $defaults['readonly'];
 			$fields['display']['disable']       = $defaults['disable'];
+			$fields['display']['validation']    = $defaults['validation'];
 			$fields['display']['releasePublic'] = $defaults['releasePublic'];
 			$fields['display']['searchable']    = $defaults['searchable'];
 			$fields['display']['sortable']      = $defaults['sortable'];
-			$fields['display']['validation']    = $defaults['validation'];
 			break;
 
 		case "wysiwyg":
@@ -214,10 +214,10 @@ function fieldList($type) {
 			$fields['display']['nulls']         = $defaults['nulls'];
 			$fields['display']['readonly']      = $defaults['readonly'];
 			$fields['display']['disable']       = $defaults['disable'];
+			$fields['display']['validation']    = $defaults['validation'];
 			$fields['display']['releasePublic'] = $defaults['releasePublic'];
 			$fields['display']['searchable']    = $defaults['searchable'];
 			$fields['display']['sortable']      = $defaults['sortable'];
-			$fields['display']['validation']    = $defaults['validation'];
 			break;
 	}
 
@@ -275,8 +275,8 @@ function fieldProperties($id,$type,$name,$default,$fieldID=NULL,$hidden=FALSE) {
 		case 'fieldLabel':
 			return array('Field Label','<input type="text" name="'.$prefix.$name.'" placeholder="Label to be displayed." value="'.$values[$name].'" />');
 		
-		case 'placeHolder':
-			return array('Placeholder Text','<input type="text" name="'.$prefix.$name.'" value="'.$values[$name].'" />');
+		// case 'placeHolder': // Not implemented in listManagement
+		// 	return array('Placeholder Text','<input type="text" name="'.$prefix.$name.'" value="'.$values[$name].'" />');
 		
 		case 'size':
 			return array('Size','<input type="number" name="'.$prefix.$name.'" value="'.$values[$name].'" min="0" />');

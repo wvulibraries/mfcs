@@ -65,7 +65,7 @@ if(isset($engine->cleanPost['MYSQL'][$engine->localVars("formName").'_submit']))
 	
 	foreach ($fields as $field) {
 		
-		if ($field['type'] == 'autoid' && $field['managedBy'] == 'system') {
+		if ($field['type'] == 'identifier' && $field['managedBy'] == 'system') {
 			
 			$newID       = NULL;
 			$formatParts = array();
@@ -79,7 +79,7 @@ if(isset($engine->cleanPost['MYSQL'][$engine->localVars("formName").'_submit']))
 
 			if ($field['reuseids'] == 0) {
 
-				$sql = sprintf("SELECT SUBSTRING(%s,%s,%s) AS autoID FROM %s HAVING autoID>='%s' ORDER BY autoID DESC",
+				$sql = sprintf("SELECT SUBSTRING(%s,%s,%s) AS identifier FROM %s HAVING identifier>='%s' ORDER BY identifier DESC",
 					$engine->openDB->escape($field['fieldName']),
 					$engine->openDB->escape(strlen($formatParts[0])+1),
 					$engine->openDB->escape($padLength),
@@ -117,7 +117,7 @@ if(isset($engine->cleanPost['MYSQL'][$engine->localVars("formName").'_submit']))
 					$formatStr = "WHERE ".$formatStr;
 				}
 				
-				$sql = sprintf("SELECT SUBSTRING(%s,%s,%s) AS autoID FROM %s %s HAVING autoID>='%s' ORDER BY autoID ASC",
+				$sql = sprintf("SELECT SUBSTRING(%s,%s,%s) AS identifier FROM %s %s HAVING identifier>='%s' ORDER BY identifier ASC",
 					$engine->openDB->escape($field['fieldName']),
 					$engine->openDB->escape(strlen($formatParts[0])+1),
 					$engine->openDB->escape($padLength),
@@ -165,11 +165,28 @@ if(isset($engine->cleanPost['MYSQL'][$engine->localVars("formName").'_submit']))
 				$errorMsg .= webHelper_succesSMsg("New ".$field['fieldLabel'].": ".$engine->cleanPost['MYSQL'][$field['fieldName'].'_insert']);
 			}
 
-			
+		}
+	}
+
+	if (!$error) {
+		$errorMsg .= $listObj->insert();
+
+		// Update changelog on successful insert
+		if (!is_empty($engine->localVars("listObjInsertID"))) {
+
+			// Record an insert action into the changelog
+			$sql = sprintf("INSERT INTO %s_changelog (dataID,action,time) VALUES ('%s','insert','%s')",
+				$engine->openDB->escape($engine->localVars("formName")),
+				$engine->openDB->escape($engine->localVars("listObjInsertID")),
+				$engine->openDB->escape(time())
+				);
+			$engine->openDB->sanitize = FALSE;
+			$sqlResult                = $engine->openDB->query($sql);
+
 			// Switch to system database
 			$engine->openDB->select_db($engine->localVars("dbName"));
 
-			// increment autoidCurrent
+			// increment identifierCurrent
 			$sql = sprintf("UPDATE %s SET value='%s' WHERE fieldID='%s' AND `option`='autoincCurrent' LIMIT 1",
 				$engine->openDB->escape($engine->dbTables("formFieldProperties")),
 				$engine->openDB->escape(++$newID),
@@ -181,21 +198,6 @@ if(isset($engine->cleanPost['MYSQL'][$engine->localVars("formName").'_submit']))
 			// Switch to project database
 			$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
 
-		}
-	}
-
-	if (!$error) {
-		$errorMsg .= $listObj->insert();
-
-		// Update changelog on successful insert
-		if (!is_empty($engine->localVars("listObjInsertID"))) {
-			$sql = sprintf("INSERT INTO %s_changelog (dataID,action,time) VALUES ('%s','insert','%s')",
-				$engine->openDB->escape($engine->localVars("formName")),
-				$engine->openDB->escape($engine->localVars("listObjInsertID")),
-				$engine->openDB->escape(time())
-				);
-			$engine->openDB->sanitize = FALSE;
-			$sqlResult                = $engine->openDB->query($sql);
 		}
 	}
 
