@@ -1,4 +1,4 @@
-<?
+<?php
 global $engine;
 
 $engine->accessControl("ADgroup","libraryGroup_students",TRUE,FALSE);

@@ -5,11 +5,10 @@ $engine->localVars('pageTitle',"Metadata Form Creation System");
 
 recurseInsert("vars.php","php");
 
-$engine->eTemplate("load","systems");
+// $engine->eTemplate("load","systems");
 $engine->eTemplate("include","header");
 
-// commented for testing
-// recurseInsert("acl.php","php");
+recurseInsert("acl.php","php");
 
 
 // Redirect if no project ID set

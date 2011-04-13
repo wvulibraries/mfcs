@@ -1,26 +1,23 @@
 <?php
 global $engine;
-
-/*if (strpos($_SERVER['PHP_SELF'],'editForm.php')) {
-	?>
-	<ul id="draggableFormElements">
-		<li>AutoID</li>
-		<li>Text</li>
-		<li>Select</li>
-		<li>Multiselect</li>
-		<li>Textarea</li>
-		<li>Date</li>
-		<li>WYSIWYG</li>
-	</ul>
-	<?php
-}
-*/?>
+?>
 
 <ul>
 	<li><a href="{local var="siteRoot"}admin/selectProject.php">Select Project</a></li>
 	<li class="noBorder">&nbsp;</li>
-	<li><a href="{local var="siteRoot"}admin/projects.php">Projects</a></li>
+	
 	<?php
+	if (checkGroup("libraryDept_dlc_systems")) {
+		print '<li>Systems Office';
+			print '<ul>';
+			print '<li><a href="{local var="siteRoot"}admin/users.php">Users</a></li>';
+			print '<li><a href="{local var="siteRoot"}admin/projects.php">Projects</a></li>';
+			print '<li><a href="{local var="siteRoot"}admin/export.php">Export Data</a></li>';
+			print '<li class="noBorder">&nbsp;</li>';
+			print '</ul>';
+		print '</li>';
+	}
+
 	if (!is_empty($engine->localVars("projectID"))) {
 	
 		print '<li><a href="{local var="siteRoot"}admin/forms.php">Forms</a>';
