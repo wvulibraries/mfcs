@@ -3,33 +3,8 @@ include("header.php");
 
 // Form submission is handled in header.php
 
-$action   = isset($engine->cleanGet['MYSQL']['refer'])?$engine->cleanGet['MYSQL']['refer']:$_SERVER['PHP_SELF'];
-$grps     = array();
-$projects = array();
-
-foreach (sessionGet("groups") as $key => $value) {
-	$grps[] = "name='".$value."'";
-}
-
-if (!is_empty($grps)) {
-	$groupStr = " OR (type='group' AND (".implode(" OR ",$grps)."))";
-}
-
-$sql = sprintf("SELECT * FROM %s WHERE (type='user' AND name='%s') %s",
-	$engine->openDB->escape($engine->dbTables("users")),
-	$engine->openDB->escape(sessionGet("username")),
-	$groupStr
-	);
-$engine->openDB->sanitize = FALSE;
-$sqlResult                = $engine->openDB->query($sql);
-
-if ($sqlResult['result']) {
-	while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
-		
-		$projects[] = $row['ID'];
-
-	}
-}
+$action  = isset($engine->cleanGet['MYSQL']['refer'])?$engine->cleanGet['MYSQL']['refer']:$_SERVER['PHP_SELF'];
+$projIDs = allowedProjects();
 ?>
 
 <!-- Page Content Goes Above This Line -->
@@ -49,7 +24,7 @@ if ($sqlResult['result']) {
 			while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
 				
 				// Do not display if the user does not have permissions
-				if (!in_array($row['ID'],$projects)) {
+				if (!in_array($row['ID'],$projIDs)) {
 					continue;
 				}
 

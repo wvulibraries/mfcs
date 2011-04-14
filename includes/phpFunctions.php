@@ -54,4 +54,41 @@ function editFormItem($id=NULL,$type=NULL,$fieldID=NULL) {
 function leftPad($str,$length,$padChars='0',$padDir=STR_PAD_LEFT) {
 	return str_pad($str,$length,$padChars,$padDir);
 }
+
+// returns an array of projectIDs that the user can access
+function allowedProjects() {
+
+	global $engine;
+
+	$grps       = array();
+	$projectIDs = array();
+
+	foreach (sessionGet("groups") as $key => $value) {
+		$grps[] = "name='".$value."'";
+	}
+
+	if (!is_empty($grps)) {
+		$groupStr = " OR (type='group' AND (".implode(" OR ",$grps)."))";
+	}
+
+	$sql = sprintf("SELECT * FROM %s WHERE (type='user' AND name='%s') %s",
+		$engine->openDB->escape($engine->dbTables("users")),
+		$engine->openDB->escape(sessionGet("username")),
+		$groupStr
+		);
+	$engine->openDB->sanitize = FALSE;
+	$sqlResult                = $engine->openDB->query($sql);
+
+	if ($sqlResult['result']) {
+		while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+			
+			$projectIDs[] = $row['ID'];
+
+		}
+	}
+
+	return $projectIDs;
+
+}
+
 ?>
