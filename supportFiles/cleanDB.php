@@ -29,6 +29,4 @@ $sqlResult = $engine->openDB->query("TRUNCATE TABLE formFields");
 $sqlResult = $engine->openDB->query("TRUNCATE TABLE forms");
 $sqlResult = $engine->openDB->query("TRUNCATE TABLE permissions");
 $sqlResult = $engine->openDB->query("TRUNCATE TABLE projects");
-$sqlResult = $engine->openDB->query("TRUNCATE TABLE userPermissions");
-
 ?>

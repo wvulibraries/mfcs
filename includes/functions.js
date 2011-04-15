@@ -110,7 +110,7 @@ function toggleSubmitButton() {
 	var buttonState = "show";
 
 	// hide when there are no elements
-	if($.trim($("#mainList").text()) == "") {
+	if ($.trim($("#mainList").text()) == "") {
 		buttonState = "hide";
 	}
 
@@ -131,7 +131,7 @@ function toggleSubmitButton() {
 
 			// create error message if it doesn't exist
 			if ($('#identifierError').length == 0) {
-				$('<span id="identifierError">Record forms require an Identifier field.</span>').insertAfter(':input[type=submit]').css('color','#F00');
+				$('<span id="identifierError">Record forms require an Identifier field.</span>').insertAfter(':input[name=createFormSubmit][type=submit]').css('color','#F00');
 			}
 
 			$('#identifierError').show();
@@ -142,10 +142,10 @@ function toggleSubmitButton() {
 	}
 
 	if (buttonState == "show") {
-		$('input[type=submit]').removeAttr('disabled');
+		$(':input[type=submit]').removeAttr('disabled');
 	}
 	else {
-		$('input[type=submit]').attr('disabled',true);
+		$(':input[type=submit]').attr('disabled',true);
 	}
 }
 
@@ -158,6 +158,7 @@ function genLabelAndField(item,type) {
 			url: "../includes/createFormContent.php",
 			data: {
 				type: type,
+				form: $(':input[name=form]').val(),
 				id: (++ID)
 			},
 			success: function(result) {

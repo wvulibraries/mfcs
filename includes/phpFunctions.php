@@ -52,7 +52,9 @@ function editFormItem($id=NULL,$type=NULL,$fieldID=NULL) {
 }
 
 function leftPad($str,$length,$padChars='0',$padDir=STR_PAD_LEFT) {
+	
 	return str_pad($str,$length,$padChars,$padDir);
+	
 }
 
 // returns an array of projectIDs that the user can access
@@ -68,11 +70,11 @@ function allowedProjects() {
 	}
 
 	if (!is_empty($grps)) {
-		$groupStr = " OR (type='group' AND (".implode(" OR ",$grps)."))";
+		$groupStr = "OR (type='group' AND (".implode(" OR ",$grps)."))";
 	}
 
 	$sql = sprintf("SELECT * FROM %s WHERE (type='user' AND name='%s') %s",
-		$engine->openDB->escape($engine->dbTables("users")),
+		$engine->openDB->escape($engine->dbTables("permissions")),
 		$engine->openDB->escape(sessionGet("username")),
 		$groupStr
 		);
@@ -82,7 +84,7 @@ function allowedProjects() {
 	if ($sqlResult['result']) {
 		while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
 			
-			$projectIDs[] = $row['ID'];
+			$projectIDs[] = $row['projectID'];
 
 		}
 	}

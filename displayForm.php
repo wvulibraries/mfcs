@@ -9,53 +9,37 @@ $engine->localVars("display",isset($engine->cleanGet['MYSQL']['display'])?$engin
 // Include file with listObj field declaration function: listFields()
 recurseInsert("includes/displayFormFields.php","php");
 
-// Get formID from formName
-$sql = sprintf("SELECT ID FROM %s WHERE formName='%s' LIMIT 1",
-	$engine->openDB->escape($engine->dbTables("forms")),
-	$engine->openDB->escape($engine->localVars("formName"))
-	);
-$engine->openDB->sanitize = FALSE;
-$sqlResult                = $engine->openDB->query($sql);
-$row                      = mysql_fetch_array($sqlResult['result'], MYSQL_NUM);
-$formID = $row[0];
 
-// Populate fields array to pass into listFields() function
-$sql = sprintf("SELECT ID, fieldName, type FROM %s WHERE formID='%s' ORDER BY position",
-	$engine->openDB->escape($engine->dbTables("formFields")),
-	$engine->openDB->escape($formID)
-	);
-$engine->openDB->sanitize = FALSE;
-$sqlResult                = $engine->openDB->query($sql);
+	// Populate fields array to pass into listFields() function
+	$sql = sprintf("SELECT ID, fieldName, type FROM %s WHERE formID='%s' ORDER BY position",
+		$engine->openDB->escape($engine->dbTables("formFields")),
+		$engine->openDB->escape($engine->localVars("formID"))
+		);
+	$engine->openDB->sanitize = FALSE;
+	$sqlResult                = $engine->openDB->query($sql);
 
-if ($sqlResult['result']) {
-	while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
-		
-		$tmp = array();
-		foreach ($row as $key => $value) {
-			$tmp[$key] = $value;
+	if ($sqlResult['result']) {
+		while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+			
+			$sql = sprintf("SELECT * FROM %s WHERE fieldID='%s'",
+				$engine->openDB->escape($engine->dbTables("formFieldProperties")),
+				$engine->openDB->escape($row['ID'])
+				);
+			$engine->openDB->sanitize = FALSE;
+			$sqlResult2               = $engine->openDB->query($sql);
+			
+			if ($sqlResult2['result']) {
+				while ($row2 = mysql_fetch_array($sqlResult2['result'], MYSQL_ASSOC)) {
+
+					$row[$row2['option']] = $row2['value'];
+
+				}
+			}		
+			
+			$fields[] = $row;
+
 		}
-
-		$sql = sprintf("SELECT * FROM %s WHERE fieldID='%s'",
-			$engine->openDB->escape($engine->dbTables("formFieldProperties")),
-			$engine->openDB->escape($row['ID'])
-			);
-		$engine->openDB->sanitize = FALSE;
-		$sqlResult2               = $engine->openDB->query($sql);
-		
-		if ($sqlResult2['result']) {
-			$tmp2 = array();
-			while ($row2 = mysql_fetch_array($sqlResult2['result'], MYSQL_ASSOC)) {
-
-				$tmp[$row2['option']] = $row2['value'];
-
-			}
-		}		
-		
-		$fields[] = $tmp;
-		unset($tmp);
-
 	}
-}
 
 
 $listObj = listFields($fields,$engine->localVars("display"));
@@ -162,7 +146,7 @@ if(isset($engine->cleanPost['MYSQL'][$engine->localVars("formName").'_submit']))
 				$formatParts[1] = $newID;
 				$engine->cleanPost['MYSQL'][$field['fieldName'].'_insert'] = implode($formatParts);
 				
-				$errorMsg .= webHelper_succesSMsg("New ".$field['fieldLabel'].": ".$engine->cleanPost['MYSQL'][$field['fieldName'].'_insert']);
+				$newIDmsg = webHelper_succesSMsg("New ".$field['fieldLabel'].": ".$engine->cleanPost['MYSQL'][$field['fieldName'].'_insert']);
 			}
 
 		}
@@ -183,20 +167,28 @@ if(isset($engine->cleanPost['MYSQL'][$engine->localVars("formName").'_submit']))
 			$engine->openDB->sanitize = FALSE;
 			$sqlResult                = $engine->openDB->query($sql);
 
-			// Switch to system database
-			$engine->openDB->select_db($engine->localVars("dbName"));
-
 			// increment identifierCurrent
-			$sql = sprintf("UPDATE %s SET value='%s' WHERE fieldID='%s' AND `option`='autoincCurrent' LIMIT 1",
-				$engine->openDB->escape($engine->dbTables("formFieldProperties")),
-				$engine->openDB->escape(++$newID),
-				$engine->openDB->escape($field['ID'])
-				);
-			$engine->openDB->sanitize = FALSE;
-			$sqlResult                = $engine->openDB->query($sql);
+			if ($field['type'] == 'identifier' && $field['managedBy'] == 'system') {
 
-			// Switch to project database
-			$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
+				// Switch to system database
+				$engine->openDB->select_db($engine->localVars("dbName"));
+
+				$sql = sprintf("UPDATE %s SET value='%s' WHERE fieldID='%s' AND `option`='autoincCurrent' LIMIT 1",
+					$engine->openDB->escape($engine->dbTables("formFieldProperties")),
+					$engine->openDB->escape(++$newID),
+					$engine->openDB->escape($field['ID'])
+					);
+				$engine->openDB->sanitize = FALSE;
+				$sqlResult                = $engine->openDB->query($sql);
+
+				// Switch to project database
+				$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
+
+			}
+
+			if (isset($newIDmsg)) {
+				$errorMsg .= $newIDmsg;
+			}
 
 		}
 	}
@@ -285,6 +277,8 @@ else if (isset($engine->cleanPost['MYSQL'][$engine->localVars("formName").'_dele
 }
 // Form Submission
 
+
+$engine->eTemplate("include","header");
 
 print '<h2>'.$engine->localVars("formLabel").'</h2>';
 

@@ -26,6 +26,7 @@ if (isset($engine->cleanPost['MYSQL']['createFormSubmit'])) {
 }
 // Form Submission
 
+$engine->eTemplate("include","header");
 ?>
 
 <div id="draggableFormElementsContainer">
@@ -75,6 +76,7 @@ if (!is_empty($errorMsg)) {
 
 	{engine name="insertCSRF"}
 	<input type="hidden" name="requireIdentifier" value="{local var="requireIdentifier"}" />
+	<input type="hidden" name="form" value="{local var="formName"}" />
 	<input type="submit" name="createFormSubmit" value="Submit" disabled />
 </form>
 

@@ -13,7 +13,7 @@ function dynamicEffects(item) {
 	setEqWidth($('.labelContainer'));
 	$(":input[name*='fieldLabel']", item).keyup(
 		function() {
-			$('.label', item).html($(this).val());
+			$('.label', item).text($(this).val()).html();
 			setEqWidth($('.labelContainer')); // dynamically set label width for all elements
 		}
 	)
@@ -33,39 +33,39 @@ function dynamicEffects(item) {
 	)
 
 	// change size of multiselect field
-	$(".item :input[name$='_ms']", item).attr('size', $(":input[name*='mssize']", item).val())
+	$(".item :input[name$='_ms']", item).attr('size', $(":input[name*='mssize']", item).val());
 	$(":input[name*='mssize']", item).change(
 		function() {
-			$(".item :input[name$='_ms']", item).attr('size', $(this).val())
+			$(".item :input[name$='_ms']", item).attr('size', $(this).val());
 		}
-	)
+	);
 
 	// change width
 	$(":input[name*='width']", item).change(
 		function() {
-			inputElm.attr('cols', $(this).val())
+			inputElm.attr('cols', $(this).val());
 		}
-	)
+	);
 
 	// change height
 	$(":input[name*='height']", item).change(
 		function() {
-			inputElm.attr('rows', $(this).val())
+			inputElm.attr('rows', $(this).val());
 		}
-	)
+	);
 
-	// change nulls
+	// change required
 	setWeight('.label',item);
-	$(":input[name*='nulls']", item).change(
+	$(":input[name*='required']", item).change(
 		function() {
 			setWeight('.label',item);
 			setEqWidth($('.labelContainer'));
 		}
-	)
+	);
 
 	// change readonly
 	if ($(":input[name*='readonly']", item).val() == 1) {
-		inputElm.attr('readonly', true)
+		inputElm.attr('readonly', true);
 	}
 	else {
 		inputElm.removeAttr('readonly')
@@ -73,37 +73,37 @@ function dynamicEffects(item) {
 	$(":input[name*='readonly']", item).change(
 		function() {
 			if ($(this).val() == 1) {
-				inputElm.attr('readonly', true)
+				inputElm.attr('readonly', true);
 			}
 			else {
-				inputElm.removeAttr('readonly')
+				inputElm.removeAttr('readonly');
 			}
 		}
 	)
 
 	// change disabled
 	if ($(":input[name*='disable']", item).val() == 1) {
-		inputElm.attr('disabled', true)
+		inputElm.attr('disabled', true);
 	}
 	else {
-		inputElm.removeAttr('disabled')
+		inputElm.removeAttr('disabled');
 	}
 	$(":input[name*='disable']", item).change(
 		function() {
 			if ($(this).val() == 1) {
-				inputElm.attr('disabled', true)
+				inputElm.attr('disabled', true);
 			}
 			else {
-				inputElm.removeAttr('disabled')
+				inputElm.removeAttr('disabled');
 			}
 		}
-	)
+	);
 
 	// change options in select based on optionValues
 	changeSelectOptions(item);
 	$(":input[name*='optionValues']", item).change(
 		function() {
-			changeSelectOptions(item)
+			changeSelectOptions(item);
 		}
 	)
 
@@ -170,7 +170,7 @@ function dynamicEffects(item) {
 		function() {
 			managedByOptions(item,$(this).val());
 		}
-	)
+	);
 
 	// show/hide sortable based on searchable
 	toggleSortable(item,$(":input[name*='searchable']", item).val());
@@ -178,7 +178,7 @@ function dynamicEffects(item) {
 		function() {
 			toggleSortable(item,$(this).val());
 		}
-	)
+	);
 }
 
 function hoverOptions(item) {
@@ -200,22 +200,24 @@ function hoverOptions(item) {
 	// delete field
 	$('.trashIcon', item).unbind('click').click(
 		function() {
-			item.remove();
-			toggleSubmitButton();
+			if (confirm("You have selected to delete this field. Continue?")) {
+				item.remove();
+				toggleSubmitButton();
+			}
 		}
 	)
 
 	// Toggle field configuration
 	$('.editLink', item).unbind('click').click(
 		function() {
-			toggleAddlInfoForm(item)
+			toggleAddlInfoForm(item);
 		}
 	)
 
 }
 
 function setWeight(selector,item) {
-	if ($(":input[name*='nulls']", item).val() == 1) {
+	if ($(":input[name*='required']", item).val() == 0) {
 		$(selector, item).css('font-weight', 'normal');
 	}
 	else {

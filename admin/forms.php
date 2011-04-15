@@ -352,6 +352,8 @@ else if (isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_upd
 $listObj = listFields();
 
 
+$engine->eTemplate("include","header");
+
 print "<h2>Edit Form List</h2>";
 
 if (!is_empty($errorMsg)) {
@@ -365,7 +367,6 @@ print "<hr />";
 
 print "<h3>Edit Forms</h3>";
 print $listObj->displayEditTable();
-
 
 $engine->eTemplate("include","footer");
 ?>

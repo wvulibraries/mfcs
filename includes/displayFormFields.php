@@ -110,7 +110,7 @@ function listFields($fields,$display) {
 		$options['width']    = isset($field['width'])?$field['width']:NULL;
 		$options['height']   = isset($field['height'])?$field['height']:NULL;
 		$options['dupes']    = isset($field['dupes'])?(bool)$field['dupes']:FALSE;
-		$options['blank']    = isset($field['nulls'])?(bool)$field['nulls']:FALSE;
+		$options['blank']    = isset($field['required'])?!(bool)$field['required']:FALSE;
 		$options['readonly'] = isset($field['readonly'])?(bool)$field['readonly']:FALSE;
 		$options['disabled'] = isset($field['disable'])?(bool)$field['disable']:FALSE;
 		$options['validate'] = (isset($field['validation']) && $field['validation']!='')?$field['validation']:NULL;

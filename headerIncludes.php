@@ -1,7 +1,3 @@
-<?php
-global $engine;
-?>
-
 <script type="text/javascript" src="{engine var="jquery"}"></script>
 <script type="text/javascript" src="{engine var="jqueryDate"}"></script>
 <script type="text/javascript" src="{engine var="selectBoxJS"}"></script>
@@ -19,8 +15,3 @@ global $engine;
 
 <link rel="stylesheet" type="text/css" media="screen" href="{local var="siteRoot"}includes/date_input.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="{local var="siteRoot"}includes/stylesheet.css" />
-
-<?php
-recurseInsert("includes/showField.php","php");
-recurseInsert("includes/phpFunctions.php","php");
-?>

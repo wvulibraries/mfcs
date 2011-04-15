@@ -77,7 +77,7 @@ foreach ($submitFields as $I => $field) {
 		// Adjust maxlength to accomodate longest stored string
 		$sql = sprintf("SELECT MAX(LENGTH(%s)) AS maxLength FROM %s",
 			$engine->openDB->escape($field['fieldName']),
-			$engine->openDB->escape($engine->dbTables("formName"))
+			$engine->openDB->escape($engine->localVars("formName"))
 			);
 		$engine->openDB->sanitize = FALSE;
 		$sqlResult                = $engine->openDB->query($sql);

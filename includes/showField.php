@@ -8,7 +8,7 @@ function defaultValues() {
 	$v['width']         = "30";
 	$v['height']        = "3";
 	$v['dupes']         = "0";
-	$v['nulls']         = "0";
+	$v['required']      = "1";
 	$v['disable' ]      = "0";
 	$v['readonly']      = "0";
 	$v['plugins']       = "";
@@ -139,7 +139,7 @@ function fieldList($type) {
 			// $fields['display']['placeHolder']   = $defaults['placeHolder'];
 			$fields['display']['size']          = $defaults['size'];
 			$fields['display']['dupes']         = $defaults['dupes'];
-			$fields['display']['nulls']         = $defaults['nulls'];
+			$fields['display']['required']      = $defaults['required'];
 			$fields['display']['readonly']      = $defaults['readonly'];
 			$fields['display']['disable']       = $defaults['disable'];
 			$fields['display']['maxlength']     = $defaults['maxlength'];
@@ -155,7 +155,7 @@ function fieldList($type) {
 			// $fields['display']['placeHolder']   = $defaults['placeHolder'];
 			$fields['display']['size']          = $defaults['size'];
 			$fields['display']['dupes']         = $defaults['dupes'];
-			$fields['display']['nulls']         = $defaults['nulls'];
+			$fields['display']['required']      = $defaults['required'];
 			$fields['display']['readonly']      = $defaults['readonly'];
 			$fields['display']['disable']       = $defaults['disable'];
 			$fields['display']['validation']    = $defaults['validation'];
@@ -169,7 +169,7 @@ function fieldList($type) {
 			$fields['display']['fieldLabel']    = "";
 			$fields['display']['optionValues']  = $defaults['optionValues'];
 			$fields['display']['dupes']         = $defaults['dupes'];
-			$fields['display']['nulls']         = $defaults['nulls'];
+			$fields['display']['required']      = $defaults['required'];
 			$fields['display']['disable']       = $defaults['disable'];
 			$fields['display']['validation']    = $defaults['validation'];
 			$fields['display']['releasePublic'] = $defaults['releasePublic'];
@@ -183,7 +183,7 @@ function fieldList($type) {
 			$fields['display']['optionValues']  = $defaults['optionValues'];
 			$fields['display']['mssize']        = $defaults['mssize'];
 			$fields['display']['dupes']         = $defaults['dupes'];
-			$fields['display']['nulls']         = $defaults['nulls'];
+			$fields['display']['required']      = $defaults['required'];
 			$fields['display']['disable']       = $defaults['disable'];
 			$fields['display']['releasePublic'] = $defaults['releasePublic'];
 			$fields['display']['searchable']    = $defaults['searchable'];
@@ -197,7 +197,7 @@ function fieldList($type) {
 			$fields['display']['width']         = $defaults['width'];
 			$fields['display']['height']        = $defaults['height'];
 			$fields['display']['dupes']         = $defaults['dupes'];
-			$fields['display']['nulls']         = $defaults['nulls'];
+			$fields['display']['required']      = $defaults['required'];
 			$fields['display']['readonly']      = $defaults['readonly'];
 			$fields['display']['disable']       = $defaults['disable'];
 			$fields['display']['validation']    = $defaults['validation'];
@@ -211,10 +211,9 @@ function fieldList($type) {
 			$fields['display']['fieldLabel']    = "";
 			$fields['display']['plugins']       = $defaults['plugins'];
 			$fields['display']['dupes']         = $defaults['dupes'];
-			$fields['display']['nulls']         = $defaults['nulls'];
+			$fields['display']['required']      = $defaults['required'];
 			$fields['display']['readonly']      = $defaults['readonly'];
 			$fields['display']['disable']       = $defaults['disable'];
-			$fields['display']['validation']    = $defaults['validation'];
 			$fields['display']['releasePublic'] = $defaults['releasePublic'];
 			$fields['display']['searchable']    = $defaults['searchable'];
 			$fields['display']['sortable']      = $defaults['sortable'];
@@ -296,8 +295,8 @@ function fieldProperties($id,$type,$name,$default,$fieldID=NULL,$hidden=FALSE) {
 		case 'dupes':
 			return array('Allow Duplicates','<select name="'.$prefix.$name.'"><option value="0">No</option><option value="1"'.(($values[$name]=='1')?' selected':'').'>Yes</option></select>');
 		
-		case 'nulls':
-			return array('Allow Empty Values','<select name="'.$prefix.$name.'"><option value="0">No</option><option value="1"'.(($values[$name]=='1')?' selected':'').'>Yes</option></select>');
+		case 'required':
+			return array('Required','<select name="'.$prefix.$name.'"><option value="0">No</option><option value="1"'.(($values[$name]=='1')?' selected':'').'>Yes</option></select>');
 		
 		case 'readonly':
 			return array('Read Only','<select name="'.$prefix.$name.'"><option value="0">No</option><option value="1"'.(($values[$name]=='1')?' selected':'').'>Yes</option></select>');
@@ -324,6 +323,8 @@ function fieldProperties($id,$type,$name,$default,$fieldID=NULL,$hidden=FALSE) {
 			return array('Managed By','<select name="'.$prefix.$name.'"><option value="user">User</option><option value="system"'.(($values[$name]=='system')?' selected':'').'>System</option></select>');
 		
 		case 'optionValues':
+
+			// Get current stored value for optionValues property
 			$sql = sprintf("SELECT value FROM %s AS properties LEFT JOIN %s AS fields ON fields.ID=properties.fieldID WHERE fields.formID='%s' AND fields.position='%s' AND properties.`option`='optionValues' LIMIT 1",
 				$engine->openDB->escape($engine->dbTables("formFieldProperties")),
 				$engine->openDB->escape($engine->dbTables("formFields")),
@@ -337,18 +338,8 @@ function fieldProperties($id,$type,$name,$default,$fieldID=NULL,$hidden=FALSE) {
 			$selected = explode("_",$row['value']);
 
 
-			$sql = sprintf("SELECT ID FROM %s WHERE formName='%s' AND projectID='%s' LIMIT 1",
-				$engine->openDB->escape($engine->dbTables("forms")),
-				$engine->openDB->escape($engine->localVars("formName")),
-				$engine->openDB->escape($engine->localVars("projectID"))
-				);
-			$engine->openDB->sanitize = FALSE;
-			$sqlResult                = $engine->openDB->query($sql);
-			$row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
-			$formID = $row['ID'];
-
-
-			$sql = sprintf("SELECT props.value FROM %s AS props LEFT JOIN %s AS fields ON props.fieldID=fields.ID WHERE props.option='optionValues' AND fields.formID='%s' AND fields.type='multiselect'",
+			// Get list of optionValues stored so they are not selectable
+			$sql = sprintf("SELECT props.value FROM %s AS props LEFT JOIN %s AS fields ON props.fieldID=fields.ID WHERE props.option='optionValues' AND fields.formID='%s' AND (fields.type='multiselect' OR fields.type='select')",
 				$engine->openDB->escape($engine->dbTables("formFieldProperties")),
 				$engine->openDB->escape($engine->dbTables("formFields")),
 				$engine->openDB->escape($engine->localVars("formID"))
@@ -356,14 +347,15 @@ function fieldProperties($id,$type,$name,$default,$fieldID=NULL,$hidden=FALSE) {
 			$engine->openDB->sanitize = FALSE;
 			$sqlResult                = $engine->openDB->query($sql);
 
-			$ignored = array();
+			$optValsInUse = array();
 			if ($sqlResult['result']) {
 				while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
-					$ignored[] = substr($row['value'],strpos($row['value'],"_")+1);
+					$optValsInUse[] = substr($row['value'],strpos($row['value'],"_")+1);
 				}
 			}
 
 
+			// Get list of forms in current project
 			$sql = sprintf("SELECT ID, formName FROM %s WHERE projectID='%s'",
 				$engine->openDB->escape($engine->dbTables("forms")),
 				$engine->openDB->escape($engine->localVars("projectID"))
@@ -375,10 +367,12 @@ function fieldProperties($id,$type,$name,$default,$fieldID=NULL,$hidden=FALSE) {
 			if ($sqlResult['result']) {
 				while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
 
+					// Skip current form
 					if ($engine->localVars("formID") == $row['ID']) {
 						continue;
 					}
 
+					// Get field info to put into <option> tags
 					$sql = sprintf("SELECT fields.ID, fields.fieldName, value AS fieldLabel FROM %s AS fields LEFT JOIN %s AS properties ON fields.ID=properties.fieldID WHERE formID='%s' AND `option`='fieldLabel'",
 						$engine->openDB->escape($engine->dbTables("formFields")),
 						$engine->openDB->escape($engine->dbTables("formFieldProperties")),
@@ -394,7 +388,10 @@ function fieldProperties($id,$type,$name,$default,$fieldID=NULL,$hidden=FALSE) {
 							if (isset($selected[1]) && $row2['ID'] == $selected[1]) {
 								$opt .= '<option value="'.$row['formName'].'_'.$row2['ID'].'" selected="selected">'.$row2['fieldLabel'].'</option>';
 							}
-							else if (!in_array($row2['ID'],$ignored)) {
+							else if (in_array($row2['ID'],$optValsInUse)) {
+								$opt .= '<option value="'.$row['formName'].'_'.$row2['ID'].'" disabled>'.$row2['fieldLabel'].'</option>';
+							}
+							else {
 								$opt .= '<option value="'.$row['formName'].'_'.$row2['ID'].'">'.$row2['fieldLabel'].'</option>';
 							}
 
@@ -410,7 +407,7 @@ function fieldProperties($id,$type,$name,$default,$fieldID=NULL,$hidden=FALSE) {
 				}
 			}
 
-			return array('Option Values','<select name="'.$prefix.$name.'"><option value="null">None</option>'.$options.'</select>');
+			return array('Option Values','<select name="'.$prefix.$name.'"><option value="">None</option>'.$options.'</select>');
 
 		case 'releasePublic':
 			return array('Release to Public','<select name="'.$prefix.$name.'"><option value="0">No</option><option value="1"'.(($values[$name]=='1')?' selected':'').'>Yes</option></select>');

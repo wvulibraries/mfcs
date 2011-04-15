@@ -6,7 +6,7 @@ $errorMsg = NULL;
 function listFields() {
 	global $engine;
 
-	$listObj = new listManagement($engine,$engine->dbTables("users"));
+	$listObj = new listManagement($engine,$engine->dbTables("permissions"));
 
 	$options = array();
 	$options['field']    = "ID";
@@ -62,12 +62,12 @@ function listFields() {
 $listObj = listFields();
 
 // Form Submission
-if(isset($engine->cleanPost['MYSQL'][$engine->dbTables("users").'_submit'])) {
+if(isset($engine->cleanPost['MYSQL'][$engine->dbTables("permissions").'_submit'])) {
 	
 	$errorMsg .= $listObj->insert();
 
 }
-else if (isset($engine->cleanPost['MYSQL'][$engine->dbTables("users").'_update'])) {
+else if (isset($engine->cleanPost['MYSQL'][$engine->dbTables("permissions").'_update'])) {
 	
 	$errorMsg .= $listObj->update();
 	
@@ -77,7 +77,9 @@ else if (isset($engine->cleanPost['MYSQL'][$engine->dbTables("users").'_update']
 $listObj = listFields();
 
 
-print "<h2>Edit Users</h2>";
+$engine->eTemplate("include","header");
+
+print "<h2>Edit Permissions</h2>";
 
 if (!is_empty($errorMsg)) {
 	print $errorMsg."<hr />";
@@ -88,9 +90,8 @@ print $listObj->displayInsertForm();
 
 print "<hr />";
 
-print "<h3>Edit Users</h3>";
+print "<h3>Edit Permissions</h3>";
 print $listObj->displayEditTable();
-
 
 $engine->eTemplate("include","footer");
 ?>

@@ -3,10 +3,11 @@ include("newEngine.php");
 
 $engine->localVars('pageTitle',"Metadata Form Creation System");
 
-recurseInsert("vars.php","php");
-
 // $engine->eTemplate("load","systems");
-$engine->eTemplate("include","header");
+
+recurseInsert("vars.php","php");
+recurseInsert("includes/phpFunctions.php","php");
+recurseInsert("includes/showField.php","php");
 
 recurseInsert("acl.php","php");
 
@@ -15,17 +16,16 @@ recurseInsert("acl.php","php");
 $projIDs = allowedProjects();
 if (!in_array($engine->localVars("projectID"),$projIDs)) {
 	if (strpos($_SERVER['PHP_SELF'],"selectProject") === FALSE
-	 && strpos($_SERVER['PHP_SELF'],"projects") === FALSE
-	 && strpos($_SERVER['PHP_SELF'],"users") === FALSE
-	 && strpos($_SERVER['PHP_SELF'],"export") === FALSE) {
-		header("Location: ".$engine->localVars("siteRoot")."selectProject.php?refer=".$_SERVER['PHP_SELF']);
+	 && strpos($_SERVER['PHP_SELF'],"permissions") === FALSE
+	 && strpos($_SERVER['PHP_SELF'],"projects") === FALSE) {
+		header("Location: selectProject.php?refer=".$_SERVER['PHP_SELF']);
 	}
 }
 
 // Redirect from these pages if no project ID set
 foreach (array("forms","editForm","displayForm") as $page) {
 	if (strpos($_SERVER['PHP_SELF'],$page) !== FALSE && is_empty($engine->localVars("projectID"))) {
-		header("Location: ".$engine->localVars("siteRoot")."selectProject.php?refer=".$_SERVER['PHP_SELF']);
+		header("Location: selectProject.php?refer=".$_SERVER['PHP_SELF']);
 	}
 }
 ?>
