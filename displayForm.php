@@ -10,36 +10,36 @@ $engine->localVars("display",isset($engine->cleanGet['MYSQL']['display'])?$engin
 recurseInsert("includes/displayFormFields.php","php");
 
 
-	// Populate fields array to pass into listFields() function
-	$sql = sprintf("SELECT ID, fieldName, type FROM %s WHERE formID='%s' ORDER BY position",
-		$engine->openDB->escape($engine->dbTables("formFields")),
-		$engine->openDB->escape($engine->localVars("formID"))
-		);
-	$engine->openDB->sanitize = FALSE;
-	$sqlResult                = $engine->openDB->query($sql);
+// Populate fields array to pass into listFields() function
+$sql = sprintf("SELECT ID, fieldName, type FROM %s WHERE formID='%s' ORDER BY position",
+	$engine->openDB->escape($engine->dbTables("formFields")),
+	$engine->openDB->escape($engine->localVars("formID"))
+	);
+$engine->openDB->sanitize = FALSE;
+$sqlResult                = $engine->openDB->query($sql);
 
-	if ($sqlResult['result']) {
-		while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
-			
-			$sql = sprintf("SELECT * FROM %s WHERE fieldID='%s'",
-				$engine->openDB->escape($engine->dbTables("formFieldProperties")),
-				$engine->openDB->escape($row['ID'])
-				);
-			$engine->openDB->sanitize = FALSE;
-			$sqlResult2               = $engine->openDB->query($sql);
-			
-			if ($sqlResult2['result']) {
-				while ($row2 = mysql_fetch_array($sqlResult2['result'], MYSQL_ASSOC)) {
+if ($sqlResult['result']) {
+	while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+		
+		$sql = sprintf("SELECT * FROM %s WHERE fieldID='%s'",
+			$engine->openDB->escape($engine->dbTables("formFieldProperties")),
+			$engine->openDB->escape($row['ID'])
+			);
+		$engine->openDB->sanitize = FALSE;
+		$sqlResult2               = $engine->openDB->query($sql);
+		
+		if ($sqlResult2['result']) {
+			while ($row2 = mysql_fetch_array($sqlResult2['result'], MYSQL_ASSOC)) {
 
-					$row[$row2['option']] = $row2['value'];
+				$row[$row2['option']] = $row2['value'];
 
-				}
-			}		
-			
-			$fields[] = $row;
+			}
+		}		
+		
+		$fields[] = $row;
 
-		}
 	}
+}
 
 
 $listObj = listFields($fields,$engine->localVars("display"));
@@ -49,7 +49,7 @@ if(isset($engine->cleanPost['MYSQL'][$engine->localVars("formName").'_submit']))
 	
 	foreach ($fields as $field) {
 		
-		if ($field['type'] == 'identifier' && $field['managedBy'] == 'system') {
+		if ($engine->localVars("display") != 'updateinsert' && $field['type'] == 'identifier' && $field['managedBy'] == 'system') {
 			
 			$newID       = NULL;
 			$formatParts = array();
@@ -156,7 +156,7 @@ if(isset($engine->cleanPost['MYSQL'][$engine->localVars("formName").'_submit']))
 		$errorMsg .= $listObj->insert();
 
 		// Update changelog on successful insert
-		if (!is_empty($engine->localVars("listObjInsertID"))) {
+		if (!is_empty($engine->localVars("listObjInsertID")) && $engine->localVars("display") != 'updateinsert') {
 
 			// Record an insert action into the changelog
 			$sql = sprintf("INSERT INTO %s_changelog (dataID,action,time) VALUES ('%s','insert','%s')",
