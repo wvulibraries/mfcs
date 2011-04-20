@@ -10,11 +10,30 @@ function dynamicEffects(item) {
 	}
 
 	// change label text
+	var label = $(":input[name*='fieldLabel']", item).val();
+	if (label == undefined || label.length == 0) {
+		label = "[Label]";
+	}
+	$('.label', item).text(label).html();
 	setEqWidth($('.labelContainer'));
 	$(":input[name*='fieldLabel']", item).keyup(
 		function() {
-			$('.label', item).text($(this).val()).html();
+			var label = $(this).val();
+			if (label.length == 0) {
+				label = "[Label]";
+			}
+			$('.label', item).text(label).html();
 			setEqWidth($('.labelContainer')); // dynamically set label width for all elements
+		}
+	)
+
+	// change link text
+	if ($(":input[name*='linkLabel'], :input[name*='linkURL']", item).length > 1) {
+		$('.labelContainer', item).html('<a href="'+$(":input[name*='linkURL']", item).val()+'">'+$(":input[name*='linkLabel']", item).val()+'</a>');
+	}
+	$(":input[name*='linkLabel'], :input[name*='linkURL']", item).keyup(
+		function() {
+			$('.labelContainer', item).html('<a href="'+$(":input[name*='linkURL']", item).val()+'">'+$(":input[name*='linkLabel']", item).val()+'</a>');
 		}
 	)
 		
@@ -56,6 +75,7 @@ function dynamicEffects(item) {
 
 	// change required
 	setWeight('.label',item);
+	setEqWidth($('.labelContainer'));
 	$(":input[name*='required']", item).change(
 		function() {
 			setWeight('.label',item);

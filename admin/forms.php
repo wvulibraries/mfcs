@@ -15,9 +15,8 @@ function listFields() {
 
 	$options = array();
 	$options['field']    = "projectID";
-	$options['label']    = "Project";
+	$options['label']    = "Project ID";
 	$options['type']     = "hidden";
-	$options['dupes']    = TRUE;
 	$options['value']    = $engine->localVars("projectID");
 	$listObj->addField($options);
 	unset($options);
@@ -37,6 +36,15 @@ function listFields() {
 	$options['label']    = "Label";
 	$options['dupes']    = TRUE;
 	$options['size']     = "20";
+	$listObj->addField($options);
+	unset($options);
+
+	$options = array();
+	$options['field']    = "groupName";
+	$options['label']    = "Group";
+	$options['dupes']    = TRUE;
+	$options['blank']    = TRUE;
+	$options['size']     = "20";
 	$options['validate'] = "alphaNumeric";
 	$listObj->addField($options);
 	unset($options);
@@ -48,6 +56,31 @@ function listFields() {
 	$options['type']      = "select";
 	$options['options'][] = array("value"=>"metadata","label"=>"Metadata");
 	$options['options'][] = array("value"=>"record","label"=>"Record");
+	$options['original']  = TRUE;
+	$listObj->addField($options);
+	unset($options);
+
+	$options = array();
+	$options['field']     = "parentForm";
+	$options['label']     = "Parent Form";
+	$options['dupes']     = TRUE;
+	$options['blank']     = TRUE;
+	$options['type']      = "select";
+	$options['options'][] = array("value"=>"","label"=>"None");
+
+	$sql = sprintf("SELECT * FROM %s WHERE projectID='%s' AND formType='record'",
+		$engine->openDB->escape($engine->dbTables("forms")),
+		$engine->openDB->escape($engine->localVars("projectID"))
+		);
+	$engine->openDB->sanitize = FALSE;
+	$sqlResult                = $engine->openDB->query($sql);
+	
+	if ($sqlResult['result']) {
+		while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+			$options['options'][] = array("value"=>$row['ID'],"label"=>$row['label']);
+		}
+	}
+	
 	$options['original']  = TRUE;
 	$listObj->addField($options);
 	unset($options);
@@ -75,7 +108,7 @@ function listFields() {
 	unset($options);
 
 	$options = array();
-	$options['field']    = '<a href="'.$engine->localVars("siteRoot").'admin/editForm.php?proj={projectID}&form={formName}">Edit</a>';
+	$options['field']    = '<a href="'.$engine->localVars("siteRoot").'admin/editForm.php?form={formName}">Edit</a>';
 	$options['label']    = "Edit";
 	$options['type']     = "plainText";
 	$listObj->addField($options);
@@ -101,7 +134,7 @@ if(isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_submit'])
 			$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
 
 			// Create data table
-			$sql = sprintf("CREATE TABLE %s (mfcs_ID int(10) UNSIGNED NOT NULL AUTO_INCREMENT, PRIMARY KEY (mfcs_ID))",
+			$sql = sprintf("CREATE TABLE %s (mfcs_ID int(10) UNSIGNED NOT NULL AUTO_INCREMENT, parentFormID int(10) UNSIGNED NULL, PRIMARY KEY (mfcs_ID))",
 				$engine->cleanPost['MYSQL']['formName_insert']
 				);
 			$engine->openDB->sanitize = FALSE;

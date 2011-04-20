@@ -7,7 +7,7 @@ function listFields($fields,$display) {
 
 	$listObj = new listManagement($engine,$engine->localVars("formName"));
 	$listObj->primaryKey = $idFieldName;
-	// $listObj->debug = TRUE;
+	$listObj->debug = TRUE;
 
 	if ($display == 'updateinsert') {
 		$listObj->updateInsert   = TRUE;
@@ -17,7 +17,7 @@ function listFields($fields,$display) {
 	// Switch to system database
 	$engine->openDB->select_db($engine->localVars("dbName"));
 	
-	$sql = sprintf("SELECT deletions FROM %s WHERE projectID='%s' AND formName='%s' LIMIT 1",
+	$sql = sprintf("SELECT deletions, parentForm FROM %s WHERE projectID='%s' AND formName='%s' LIMIT 1",
 		$engine->openDB->escape($engine->dbTables("forms")),
 		$engine->openDB->escape($engine->localVars("projectID")),
 		$engine->openDB->escape($engine->localVars("formName"))
@@ -26,10 +26,26 @@ function listFields($fields,$display) {
 	$sqlResult                = $engine->openDB->query($sql);
 	
 	if ($sqlResult['result']) {
-		$row = mysql_fetch_array($sqlResult['result'], MYSQL_NUM);
-		$listObj->deleteBox = (bool)$row[0];
+		$row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
+		
+		$listObj->deleteBox = (bool)$row['deletions'];
+		
+		if ($row['parentForm'] != 0 && !isnull($row['parentForm']) && isset($engine->cleanGet['MYSQL']['mainid'])) {
+			
+			// Set where clause
+			$listObj->whereClause = "WHERE parentFormID='".$engine->cleanGet['MYSQL']['mainid']."'";
+
+			// Add hidden field
+			$options = array();
+			$options['field'] = "parentFormID";
+			$options['label'] = "Parent Form ID";
+			$options['type']  = "hidden";
+			$options['value'] = $engine->cleanGet['MYSQL']['mainid'];
+			$listObj->addField($options);
+			unset($options);
+		}
 	}
-	
+
 
 	$options = array();
 	$options['field'] = $idFieldName;
@@ -91,6 +107,29 @@ function listFields($fields,$display) {
 
 	}
 
+	// If this has a subform, display a link here
+	$sql = sprintf("SELECT * FROM %s WHERE projectID='%s' AND parentForm='%s'",
+		$engine->openDB->escape($engine->dbTables("forms")),
+		$engine->openDB->escape($engine->localVars("projectID")),
+		$engine->openDB->escape($engine->localVars("formID"))
+		);
+	$engine->openDB->sanitize = FALSE;
+	$sqlResult                = $engine->openDB->query($sql);
+	
+	if ($sqlResult['result']) {
+		while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+
+			$options = array();
+			$options['field']    = '<a href="'.$engine->localVars("siteRoot").'displayForm.php?proj='.$engine->localVars("projectID").'&form='.$row['formName'].'&display=both&mainid={'.$idFieldName.'}">'.$row['label'].'</a>';
+			$options['label']    = "Sub-Form";
+			$options['type']     = "plainText";
+			$listObj->addField($options);
+			unset($options);
+
+		}
+	}	
+	
+
 	foreach ($fields as $field) {
 
 		if ($complexForm == TRUE && ($field['type'] == 'multiselect' || $field['type'] == 'wysiwyg')) {
@@ -100,6 +139,14 @@ function listFields($fields,$display) {
 		if ($field['type'] == 'identifier') {
 			$field['type'] = 'text';
 			$listObj->orderBy = "ORDER BY ".$field['fieldName'];
+		}
+		if ($field['type'] == 'link') {
+			$field['fieldName']  = '<a href="'.$field['linkURL'].'">'.$field['linkLabel'].'</a>';
+			$field['fieldLabel'] = $field['linkLabel'];
+			$field['type']       = 'plainText';
+		}
+		if ($field['type'] == 'release-to-public') {
+			$field['type']       = 'select';
 		}
 
 		$options = array();
@@ -139,7 +186,16 @@ function listFields($fields,$display) {
 		}
 
 		if ($options['type'] == 'select' || $options['type'] == 'multiselect') {
-			$value = explode("_",$field['optionValues']);
+			
+			$value = array();
+			if (isset($field['optionValues'])) {
+				$value = explode("_",$field['optionValues']);
+			}
+
+			if (isset($value[0]) && $value[0] == 'yesno') {
+				$options['options'][] = array("value" => "1", "label" => "Yes");
+				$options['options'][] = array("value" => "0", "label" => "No");
+			}
 
 			if (isset($value[1])) {
 
@@ -153,10 +209,10 @@ function listFields($fields,$display) {
 
 				$fieldName = $row['fieldName'];
 
-				// Switch to project database
-				$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
-				
 				if ($options['type'] == 'select') {
+					
+					// Switch to project database
+					$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
 					
 					$sql = sprintf("SELECT %s, %s FROM %s ORDER BY %s",
 						$engine->openDB->escape($idFieldName),
@@ -172,11 +228,11 @@ function listFields($fields,$display) {
 							$options['options'][] = array("value" => $row[$idFieldName], "label" => $row[$fieldName]);
 						}
 					}
+					
+					// Switch to system database
+					$engine->openDB->select_db($engine->localVars("dbName"));
 
 				}
-				
-				// Switch to system database
-				$engine->openDB->select_db($engine->localVars("dbName"));
 
 				if ($options['type'] == 'multiselect') {
 

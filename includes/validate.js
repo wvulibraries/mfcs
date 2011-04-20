@@ -12,8 +12,8 @@ function validateRules(item) {
 
 	var numeric              = "^[0-9]+$";
 	var alphaNoSpaces        = "^[A-Za-z]+$";
-	var alphaNumeric         = "^[A-Za-z0-9\-\_\ ]+$";
-	var alphaNumericNoSpaces = "^[A-Za-z0-9\-\_]+$";
+	var alphaNumeric         = "^[A-Za-z0-9\_\ ]+$";
+	var alphaNumericNoSpaces = "^[A-Za-z0-9\_]+$";
 	var autoIDformat         = "^[^#]*?(#+){1}[^#]*?$";
 
 	if ($(":input[name*='fieldName']", item).length) {
@@ -21,7 +21,7 @@ function validateRules(item) {
 		$(":input[name*='fieldName']", item).closest("tr").find("td:first-child").css('font-weight','bold');
 	}
 	if ($(":input[name*='fieldLabel']", item).length) {
-		$(":input[name*='fieldLabel']", item).rules("add", { required: true, regex: alphaNumeric });
+		$(":input[name*='fieldLabel']", item).rules("add", { required: true });
 		$(":input[name*='fieldLabel']", item).closest("tr").find("td:first-child").css('font-weight','bold');
 	}
 
@@ -46,6 +46,15 @@ function validateRules(item) {
 	if ($(":input[name*='optionValues']", item).length) {
 		$(":input[name*='optionValues']", item).rules("add", { required: true });
 		$(":input[name*='optionValues']", item).closest("tr").find("td:first-child").css('font-weight','bold');
+	}
+
+	if ($(":input[name*='linkURL']", item).length) {
+		$(":input[name*='linkURL']", item).rules("add", { required: true });
+		$(":input[name*='linkURL']", item).closest("tr").find("td:first-child").css('font-weight','bold');
+	}
+	if ($(":input[name*='linkLabel']", item).length) {
+		$(":input[name*='linkLabel']", item).rules("add", { required: true });
+		$(":input[name*='linkLabel']", item).closest("tr").find("td:first-child").css('font-weight','bold');
 	}
 
 }

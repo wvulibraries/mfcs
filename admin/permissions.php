@@ -29,7 +29,7 @@ function listFields() {
 	$options['field']    = "name";
 	$options['label']    = "Username/Group Name";
 	$options['size']     = "20";
-	$options['validate'] = "alphaNumeric";
+	$options['validate'] = "alphaNumericNoSpaces";
 	$options['dupes']    = TRUE;
 	$listObj->addField($options);
 	unset($options);

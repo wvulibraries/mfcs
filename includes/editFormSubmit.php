@@ -62,11 +62,11 @@ foreach ($submitFields as $I => $field) {
 					}
 				}
 			}
-						
+
 			if (count($formats) == 0 || $formats[count($formats)-1] != $field['format']) {
 				$formats[] = $field['format'];
 			}
-			
+
 			// Create string of previous formats from array
 			$submitFields[$I]['prevFormats'] = $field['prevFormats'] = implode("|",$formats);
 		}
@@ -81,10 +81,10 @@ foreach ($submitFields as $I => $field) {
 			);
 		$engine->openDB->sanitize = FALSE;
 		$sqlResult                = $engine->openDB->query($sql);
-		
+
 		if ($sqlResult['result']) {
 			$row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
-			
+
 			if ($field['maxlength'] < $row['maxLength']) {
 				$field['maxlength'] = $row['maxLength'];
 			}
@@ -93,6 +93,9 @@ foreach ($submitFields as $I => $field) {
 		// Switch to system database
 		$engine->openDB->select_db($engine->localVars("dbName"));
 
+	}
+	else if ($field['type'] == 'link') {
+		$submitFields[$I]['fieldName'] = $field['fieldName'] = "<a href='".$field['linkURL']."'>".$field['linkLabel']."</a>";
 	}
 
 	$organizedSubmitFields[$I]['fieldName'] = $field['fieldName'];
@@ -545,8 +548,8 @@ foreach ($submitFields as $field) {
 
 foreach ($keys as $key) {
 
-	// Skip ID field
-	if ($key == 'mfcs_ID') {
+	// Skip ID field and parentID field
+	if ($key == 'mfcs_ID' || $key == 'parentFormID') {
 		continue;
 	}
 

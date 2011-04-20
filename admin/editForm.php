@@ -29,10 +29,14 @@ if (isset($engine->cleanPost['MYSQL']['createFormSubmit'])) {
 $engine->eTemplate("include","header");
 ?>
 
+<h1>{local var="formLabel"} Form</h1>
+
 <div id="draggableFormElementsContainer">
 	<strong>Drag to create a new element:</strong>
 	<ul id="draggableFormElements">
 		<li>Identifier</li>
+		<li>Release to Public</li>
+		<li>Link</li>
 		<li>Text</li>
 		<li>Select</li>
 		<li>Multiselect</li>
@@ -55,9 +59,10 @@ if (!is_empty($errorMsg)) {
 	if (!isnull($engine->localVars("formName"))) {
 		$i = 0;
 
-		$sql = sprintf("SELECT formFields.ID, formFields.type FROM %s AS formFields LEFT JOIN %s AS forms ON forms.ID=formFields.formID WHERE forms.formName='%s' ORDER BY formFields.position",
+		$sql = sprintf("SELECT formFields.ID, formFields.type FROM %s AS formFields LEFT JOIN %s AS forms ON forms.ID=formFields.formID WHERE forms.projectID='%s' AND forms.formName='%s' ORDER BY formFields.position",
 			$engine->openDB->escape($engine->dbTables("formFields")),
 			$engine->openDB->escape($engine->dbTables("forms")),
+			$engine->openDB->escape($engine->localVars("projectID")),
 			$engine->openDB->escape($engine->localVars("formName"))
 			);
 		$engine->openDB->sanitize = FALSE;

@@ -247,17 +247,24 @@ function changeSelectOptions(item) {
 
 	var vals = value.split("_");
 
-	$.ajax({
-		type: "GET", // cannot insert csrf, must be get
-		url: "../includes/changeSelectOptions.php",
-		data: {
-			formName: vals[0],
-			value: vals[1]
-		},
-		success: function(result) {
-			// alert(result);
-			inputElm.html(result);
-			$(":input[name*='multiselect_fieldName']", item).val("ms_"+vals[0]);
-		}
-	})
+	if (vals[0] == 'yesno') {
+		inputElm.html('<option value="1">Yes</option><option value="0">No</option>');
+	}
+	else {
+
+		$.ajax({
+			type: "GET", // cannot insert csrf, must be get
+			url: "../includes/changeSelectOptions.php",
+			data: {
+				formName: vals[0],
+				value: vals[1]
+			},
+			success: function(result) {
+				// alert(result);
+				inputElm.html(result);
+				$(":input[name*='multiselect_fieldName']", item).val("ms_"+vals[0]);
+			}
+		})
+
+	}
 }

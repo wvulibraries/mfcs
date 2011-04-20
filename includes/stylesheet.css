@@ -75,12 +75,13 @@ label.error {
 
 #draggableFormElements {
 	list-style: none;
-	height: 35px;
+	height: 30px;
+	/*height: 50px;*/
 	padding-left: 0px;
 }
 
 #draggableFormElements li {
 	float: left;
-	padding: 6px;
+	padding: 4px;
 	border: 1px #FFF dashed;
 }

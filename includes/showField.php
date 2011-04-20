@@ -20,8 +20,8 @@ function defaultValues() {
 	$v['managedBy']     = "system";
 	$v['optionValues']  = "";
 	$v['releasePublic'] = "1";
-	$v['searchable']    = "0";
-	$v['sortable']      = "0";
+	$v['searchable']    = "1";
+	$v['sortable']      = "1";
 
 	return $v;
 }
@@ -29,7 +29,7 @@ function defaultValues() {
 function showField($id,$type,$fieldID=NULL) {
 	global $engine;
 
-	$type = strtolower($type);
+	$type = strtolower(str_replace(" ","-",$type));
 	$prefix = $id.'_'.$type;
 
 	// Set Default values
@@ -79,6 +79,7 @@ function showField($id,$type,$fieldID=NULL) {
 			$out .= '<input type="text" name="'.$prefix.'" id="'.$prefix.'" size="'.$values['size'].'" placeholder="'.$values['placeHolder'].'"'.(($values['readonly'])?' readonly':'').(($values['disable'])?' disabled':'').' />';
 			return $out;
 
+		case "release-to-public":
 		case "select":
 			$out .= '<select name="'.$prefix.'" id="'.$prefix.'"></select>';
 			return $out;
@@ -101,6 +102,10 @@ function showField($id,$type,$fieldID=NULL) {
 		case "wysiwyg":
 			$out .= '<textarea name="'.$prefix.'" id="'.$prefix.'" rows="'.$values['height'].'" cols="'.$values['width'].'" class="engineWYSIWYG"></textarea>';
 			return $out;
+		
+		case "link":
+			$out .= $values['fieldName'];
+			return $out;
 
 		default: 
 
@@ -110,7 +115,7 @@ function showField($id,$type,$fieldID=NULL) {
 function fieldList($type) {
 	global $engine;
 
-	$type = strtolower($type);
+	$type = strtolower(str_replace(" ","-",$type));
 	$fields = array("hidden"=>array(), "required"=>array(), "other"=>array());
 
 	$defaults = defaultValues();
@@ -131,6 +136,24 @@ function fieldList($type) {
 			$fields['hidden']['maxlength']      = "10";
 			$fields['hidden']['readonly']       = "1";
 			$fields['hidden']['autoincCurrent'] = $defaults['autoinc'];
+			break;
+
+		case "release-to-public":
+			$fields['hidden']['fieldName']      = "releasePublic";
+			$fields['display']['fieldLabel']    = "Release to Public";
+			$fields['hidden']['optionValues']   = "yesno";
+			$fields['hidden']['dupes']          = $defaults['dupes'];
+			$fields['hidden']['required']       = $defaults['required'];
+			$fields['hidden']['disable']        = $defaults['disable'];
+			$fields['hidden']['releasePublic']  = $defaults['releasePublic'];
+			$fields['hidden']['searchable']     = $defaults['searchable'];
+			$fields['hidden']['sortable']       = $defaults['sortable'];
+			break;
+
+		case "link":
+			// $fields['hidden']['fieldName']      = "";
+			$fields['display']['linkURL']       = "";
+			$fields['display']['linkLabel']     = "";
 			break;
 
 		case "text":
@@ -226,7 +249,7 @@ function fieldList($type) {
 function fieldProperties($id,$type,$name,$default,$fieldID=NULL,$hidden=FALSE) {
 	global $engine;
 
-	$type = strtolower($type);
+	$type = strtolower(str_replace(" ","-",$type));
 	$prefix = $id.'_'.$type.'_';
 	
 	// Set Default values
@@ -278,7 +301,7 @@ function fieldProperties($id,$type,$name,$default,$fieldID=NULL,$hidden=FALSE) {
 		// 	return array('Placeholder Text','<input type="text" name="'.$prefix.$name.'" value="'.$values[$name].'" />');
 		
 		case 'size':
-			return array('Size','<input type="number" name="'.$prefix.$name.'" value="'.$values[$name].'" min="0" />');
+			return array('Size','<input type="number" name="'.$prefix.$name.'" value="'.$values[$name].'" min="1" />');
 		
 		case 'mssize':
 			return array('Multiselect Size','<input type="number" name="'.$prefix.$name.'" value="'.$values[$name].'" min="4" />');
@@ -407,7 +430,7 @@ function fieldProperties($id,$type,$name,$default,$fieldID=NULL,$hidden=FALSE) {
 				}
 			}
 
-			return array('Option Values','<select name="'.$prefix.$name.'"><option value="">None</option>'.$options.'</select>');
+			return array('Option Values','<select name="'.$prefix.$name.'"><option value="">None</option>'.(($type=='select')?'<option value="yesno"'.(($values[$name]=='yesno')?' selected':'').'>Yes/No</option>':'').$options.'</select>');
 
 		case 'releasePublic':
 			return array('Release to Public','<select name="'.$prefix.$name.'"><option value="0">No</option><option value="1"'.(($values[$name]=='1')?' selected':'').'>Yes</option></select>');
@@ -418,6 +441,12 @@ function fieldProperties($id,$type,$name,$default,$fieldID=NULL,$hidden=FALSE) {
 		case 'sortable':
 			return array('Sortable','<select name="'.$prefix.$name.'"><option value="0">No</option><option value="1"'.(($values[$name]=='1')?' selected':'').'>Yes</option></select>');
 		
+		case 'linkURL':
+			return array('Link URL','<input type="text" name="'.$prefix.$name.'" value="'.$values[$name].'" />');
+		
+		case 'linkLabel':
+			return array('Link Text','<input type="text" name="'.$prefix.$name.'" value="'.$values[$name].'" />');
+			
 	}
 
 	return FALSE;

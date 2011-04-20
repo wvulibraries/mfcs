@@ -41,7 +41,7 @@ if (!is_empty($engine->localVars("projectID"))) {
 	print '<li class="noBorder">&nbsp;</li>';
 	print '<li>Metadata';
 
-	$sql = sprintf("SELECT * FROM %s WHERE projectID='%s' AND formType='metadata' ORDER BY label",
+	$sql = sprintf("SELECT * FROM %s WHERE projectID='%s' AND formType='metadata' AND parentForm='0' ORDER BY label",
 		$engine->openDB->escape($engine->dbTables("forms")),
 		$engine->openDB->escape($engine->localVars("projectID"))
 		);
