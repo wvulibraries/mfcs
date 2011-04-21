@@ -8,7 +8,7 @@ $settingsTblElements   = array("releasePublic","searchable","sortable");
 
 
 $i = 0;
-foreach ($engine->cleanPost['HTML'] as $key => $value) {
+foreach ($engine->cleanPost['MYSQL'] as $key => $value) {
 	// ID_type_name
 	$post = explode("_",$key);
 	
@@ -188,6 +188,17 @@ foreach ($storedFields as $storedFieldName => $storedFieldProperties) {
 					$engine->openDB->escape($engine->localVars("formName")),
 					$engine->openDB->escape($submitOptionFormName),
 					$engine->openDB->escape($submitOptionFieldName)
+					);
+				$engine->openDB->sanitize = FALSE;
+				$sqlResult                = $engine->openDB->query($sql);
+				
+				// Change field in new link table to match
+				$sql = sprintf("ALTER TABLE %s_link_%s_%s CHANGE %sID %sID int(10) UNSIGNED NOT NULL",
+					$engine->openDB->escape($engine->localVars("formName")),
+					$engine->openDB->escape($submitOptionFormName),
+					$engine->openDB->escape($submitOptionFieldName),
+					$engine->openDB->escape($storedOptionFormName),
+					$engine->openDB->escape($submitOptionFormName)
 					);
 				$engine->openDB->sanitize = FALSE;
 				$sqlResult                = $engine->openDB->query($sql);

@@ -7,7 +7,7 @@ $fields   = array();
 $engine->localVars("display",isset($engine->cleanGet['MYSQL']['display'])?$engine->cleanGet['MYSQL']['display']:NULL);
 
 // Include file with listObj field declaration function: listFields()
-recurseInsert("includes/displayFormFields.php","php");
+recurseInsert("includes/displayForm_fields.php","php");
 
 
 // Populate fields array to pass into listFields() function
@@ -280,7 +280,7 @@ else if (isset($engine->cleanPost['MYSQL'][$engine->localVars("formName").'_dele
 
 $engine->eTemplate("include","header");
 
-print '<h2>'.$engine->localVars("formLabel").'</h2>';
+print '<h2>'.htmlSanitize($engine->localVars("formLabel")).'</h2>';
 
 if (!is_empty($errorMsg)) {
 	print $errorMsg."<hr />";
@@ -294,14 +294,14 @@ else {
 		
 		$listObj = listFields($fields,'insert');
 		
-		print '<h3>New '.$engine->localVars("formLabel").'</h3>';
+		print '<h3>New '.htmlSanitize($engine->localVars("formLabel")).'</h3>';
 		print $listObj->displayInsertForm();
 		
 		print '<br />';
 		
 		$listObj = listFields($fields,'update');
 		
-		print '<h3>Edit '.$engine->localVars("formLabel").'</h3>';
+		print '<h3>Edit '.htmlSanitize($engine->localVars("formLabel")).'</h3>';
 		print $listObj->displayEditTable();
 
 	}
@@ -311,26 +311,48 @@ else {
 		
 		if ($engine->localVars("display") == 'insert') {
 			
-			print '<h3>New '.$engine->localVars("formLabel").'</h3>';
+			print '<h3>New '.htmlSanitize($engine->localVars("formLabel")).'</h3>';
 			print $listObj->displayInsertForm();
 
 		}
 		else if ($engine->localVars("display") == 'updateinsert') {
 			
-			print '<h3>Edit '.$engine->localVars("formLabel").'</h3>';
+			print '<h3>Edit '.htmlSanitize($engine->localVars("formLabel")).'</h3>';
+			
+			// Switch to system database
+			$engine->openDB->select_db($engine->localVars("dbName"));
+
+			// If this has a subform, display a link here
+			$sql = sprintf("SELECT * FROM %s WHERE projectID='%s' AND parentForm='%s'",
+				$engine->openDB->escape($engine->dbTables("forms")),
+				$engine->openDB->escape($engine->localVars("projectID")),
+				$engine->openDB->escape($engine->localVars("formID"))
+				);
+			$engine->openDB->sanitize = FALSE;
+			$sqlResult                = $engine->openDB->query($sql);
+			
+			if ($sqlResult['result']) {
+				while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+					print '<p><a href="'.$engine->localVars("siteRoot").'displayForm.php?proj='.$engine->localVars("projectID").'&form='.htmlSanitize($row['formName']).'&display=both&mainid='.htmlSanitize($engine->localVars("formID")).'">'.htmlSanitize($row['label']).'</a></p>';
+				}
+			}
+
+			// Switch to project database
+			$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
+
 			print $listObj->displayInsertForm();
 
 			// Delete button
-			print '<form action="'.$_SERVER['PHP_SELF'].'?form='.$engine->localVars("formName").'&display=update" method="post">';
-			print '<input type="hidden" name="id" value="'.$engine->cleanGet['MYSQL']['id'].'" />';
+			print '<form action="'.$_SERVER['PHP_SELF'].'?form='.htmlSanitize($engine->localVars("formName")).'&display=update" method="post">';
+			print '<input type="hidden" name="id" value="'.$engine->cleanGet['HTML']['id'].'" />';
 			print sessionInsertCSRF();
-			print '<input type="submit" name="'.$engine->localVars("formName").'_delete" value="Delete" />';
+			print '<input type="submit" name="'.htmlSanitize($engine->localVars("formName")).'_delete" value="Delete" />';
 			print '</form>';
 
 		}
 		else if ($engine->localVars("display") == 'update') {
 			
-			print '<h3>Edit '.$engine->localVars("formLabel").'</h3>';
+			print '<h3>Edit '.htmlSanitize($engine->localVars("formLabel")).'</h3>';
 			print $listObj->displayEditTable();
 
 		}

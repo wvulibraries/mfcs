@@ -40,16 +40,6 @@ function listFields() {
 	unset($options);
 
 	$options = array();
-	$options['field']    = "groupName";
-	$options['label']    = "Group";
-	$options['dupes']    = TRUE;
-	$options['blank']    = TRUE;
-	$options['size']     = "20";
-	$options['validate'] = "alphaNumeric";
-	$listObj->addField($options);
-	unset($options);
-
-	$options = array();
 	$options['field']     = "formType";
 	$options['label']     = "Type";
 	$options['dupes']     = TRUE;
@@ -61,14 +51,24 @@ function listFields() {
 	unset($options);
 
 	$options = array();
+	$options['field']    = "groupName";
+	$options['label']    = "Group";
+	$options['dupes']    = TRUE;
+	$options['blank']    = TRUE;
+	$options['size']     = "20";
+	$options['validate'] = "alphaNumeric";
+	$listObj->addField($options);
+	unset($options);
+
+	$options = array();
 	$options['field']     = "parentForm";
 	$options['label']     = "Parent Form";
 	$options['dupes']     = TRUE;
 	$options['blank']     = TRUE;
 	$options['type']      = "select";
-	$options['options'][] = array("value"=>"","label"=>"None");
+	$options['options'][] = array("value"=>"0","label"=>"None");
 
-	$sql = sprintf("SELECT * FROM %s WHERE projectID='%s' AND formType='record'",
+	$sql = sprintf("SELECT * FROM %s WHERE projectID='%s' AND formType='record' AND parentForm='0'",
 		$engine->openDB->escape($engine->dbTables("forms")),
 		$engine->openDB->escape($engine->localVars("projectID"))
 		);
@@ -225,43 +225,103 @@ else if (isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_upd
 	
 	$error = FALSE;
 
-	// Verify record form types have an identifier
-	$formTypes = array();
+	$submitFields = array();
 	foreach ($engine->cleanPost['MYSQL'] as $key => $value) {
-		if (strpos($key,"formType") !== FALSE) {
-			$id = substr($key,strrpos($key,"_")+1);
-			
-			if (strpos($key,"original") !== FALSE) {
-				$formTypes[$id]['orig'] = $value;
-				continue;
-			}
-			
-			$formTypes[$id]['new'] = $value;
+		$vals = explode("_",$key);
+
+		if (count($vals) == 3 && $vals[0] == "original" && isint($vals[2])) {
+			$submitFields[$vals[2]][$vals[1]]['orig'] = $value;
+		}
+		else if (count($vals) == 2 && isint($vals[1])) {
+			$submitFields[$vals[1]][$vals[0]]['new'] = $value;
 		}
 	}
 
-	foreach ($formTypes as $formID => $formType) {
-		// If the submitted value is different from the original and the new type is record
-		if ($formType['orig'] != $formType['new'] && $formType['new'] == 'record') {
-
-			// Check fields to see if an identifier exists
-			$sql = sprintf("SELECT * FROM %s WHERE formID='%s' AND type='identifier'",
-				$engine->openDB->escape($engine->dbTables("formFields")),
-				$engine->openDB->escape($formID)
-				);
-			$engine->openDB->sanitize = FALSE;
-			$sqlResult                = $engine->openDB->query($sql);
+	foreach ($submitFields as $formID => $submit) {
+		// If the submitted type or parent value is different from the original
+		if ($submit['formType']['orig'] != $submit['formType']['new'] || $submit['parentForm']['orig'] != $submit['parentForm']['new']) {
 			
-			if ($sqlResult['affectedRows'] == 0) {
-				// Set type back to original
-				$engine->cleanPost['RAW']['formType_'.$formID]   = $engine->cleanPost['RAW']['original_formType_'.$formID];
-				$engine->cleanPost['HTML']['formType_'.$formID]  = $engine->cleanPost['HTML']['original_formType_'.$formID];
-				$engine->cleanPost['MYSQL']['formType_'.$formID] = $engine->cleanPost['MYSQL']['original_formType_'.$formID];
+			// If the new type is record, and it is not a subform
+			if ($submit['formType']['new'] == 'record' && $submit['parentForm']['new'] == '0') {
+				
+				// Check to verify this is the only top level record
+				foreach ($submitFields as $ID => $value) {
+					if ($formID != $ID && $value['formType']['new'] == 'record' && $value['parentForm']['new'] == 0) {
+						// Set type back to original
+						$engine->cleanPost['RAW']['formType_'.$formID]   = $engine->cleanPost['RAW']['original_formType_'.$formID];
+						$engine->cleanPost['HTML']['formType_'.$formID]  = $engine->cleanPost['HTML']['original_formType_'.$formID];
+						$engine->cleanPost['MYSQL']['formType_'.$formID] = $engine->cleanPost['MYSQL']['original_formType_'.$formID];
 
-				$errorMsg .= webHelper_errorMsg($engine->cleanPost['HTML']['formName_'.$formID]." must have an Identifier before changing to a Record type. Other records may be updated still.");
+						$errorMsg .= webHelper_errorMsg("Another top-level Record already exists. ".$engine->cleanPost['HTML']['formName_'.$formID]." could not be set as a Record. Other records may be updated still.");
+					}
+				}
+
+				// Check fields to see if an identifier exists
+				$sql = sprintf("SELECT * FROM %s WHERE formID='%s' AND type='identifier'",
+					$engine->openDB->escape($engine->dbTables("formFields")),
+					$engine->openDB->escape($formID)
+					);
+				$engine->openDB->sanitize = FALSE;
+				$sqlResult                = $engine->openDB->query($sql);
+				
+				if ($sqlResult['affectedRows'] == 0) {
+					// Set type back to original
+					$engine->cleanPost['RAW']['formType_'.$formID]   = $engine->cleanPost['RAW']['original_formType_'.$formID];
+					$engine->cleanPost['HTML']['formType_'.$formID]  = $engine->cleanPost['HTML']['original_formType_'.$formID];
+					$engine->cleanPost['MYSQL']['formType_'.$formID] = $engine->cleanPost['MYSQL']['original_formType_'.$formID];
+
+					$errorMsg .= webHelper_errorMsg($engine->cleanPost['HTML']['formName_'.$formID]." must have an Identifier before changing to a Record type. Other records may be updated still.");
+				}
+
 			}
 
 		}
+
+		// If the submitted value is different from the original
+		if ($submit['formName']['orig'] != $submit['formName']['new']) {
+			
+			// Rename data table
+			$sql = sprintf("RENAME TABLE %s TO %s",
+				$engine->openDB->escape($submit['formName']['orig']),
+				$engine->openDB->escape($submit['formName']['new'])
+				);
+			$engine->openDB->sanitize = FALSE;
+			$sqlResult                = $engine->openDB->query($sql);
+
+			if ($sqlResult['affectedRows'] < 0) {
+				$errorMsg .= webHelper_errorMsg("Error modifying forms.");
+				$error = TRUE;
+			}
+
+			// Rename changelog table
+			$sql = sprintf("RENAME TABLE %s_changelog TO %s_changelog",
+				$engine->openDB->escape($submit['formName']['orig']),
+				$engine->openDB->escape($submit['formName']['new'])
+				);
+			$engine->openDB->sanitize = FALSE;
+			$sqlResult                = $engine->openDB->query($sql);
+
+			if ($sqlResult['affectedRows'] < 0) {
+				$errorMsg .= webHelper_errorMsg("Error modifying forms.");
+				$error = TRUE;
+			}
+
+		}
+
+		// Update settings table with new form settings
+		foreach ($settingsTblElements as $element) {
+			$sql = sprintf("UPDATE %s SET formName='%s',setting='%s',value='%s' WHERE formName='%s' AND setting='%s'",
+				$engine->openDB->escape($engine->localVars("dbPrefix").'settings'),
+				$engine->openDB->escape($submit['formName']['new']),
+				$engine->openDB->escape($element),
+				$engine->cleanPost['MYSQL'][$element.'_'.$formID],
+				$engine->openDB->escape($submit['formName']['orig']),
+				$engine->openDB->escape($element)
+				);
+			$engine->openDB->sanitize = FALSE;
+			$sqlResult                = $engine->openDB->query($sql);
+		}
+		
 	}
 
 
@@ -305,76 +365,6 @@ else if (isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_upd
 	}
 
 
-	// Loop through Post variables looking for the form names and the original form names
-	$formNames = array();
-	foreach ($engine->cleanPost['MYSQL'] as $key => $value) {
-		if (strpos($key,"formName") !== FALSE) {
-			$id = substr($key,strrpos($key,"_")+1);
-			
-			if (strpos($key,"original") !== FALSE) {
-				$formNames[$id]['orig'] = $value;
-				continue;
-			}
-			
-			$formNames[$id]['new'] = $value;
-		}
-	}
-
-
-	// Switch to project database
-	$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
-
-	foreach ($formNames as $id => $formName) {
-		// If the submitted value is different from the original
-		if ($formName['orig'] != $formName['new']) {
-			
-			// Rename data table
-			$sql = sprintf("RENAME TABLE %s TO %s",
-				$engine->openDB->escape($formName['orig']),
-				$engine->openDB->escape($formName['new'])
-				);
-			$engine->openDB->sanitize = FALSE;
-			$sqlResult                = $engine->openDB->query($sql);
-
-			if ($sqlResult['affectedRows'] < 0) {
-				$errorMsg .= webHelper_errorMsg("Error modifying forms.");
-				$error = TRUE;
-			}
-
-			// Rename changelog table
-			$sql = sprintf("RENAME TABLE %s_changelog TO %s_changelog",
-				$engine->openDB->escape($formName['orig']),
-				$engine->openDB->escape($formName['new'])
-				);
-			$engine->openDB->sanitize = FALSE;
-			$sqlResult                = $engine->openDB->query($sql);
-
-			if ($sqlResult['affectedRows'] < 0) {
-				$errorMsg .= webHelper_errorMsg("Error modifying forms.");
-				$error = TRUE;
-			}
-
-		}
-
-		// Update settings table with new form settings
-		foreach ($settingsTblElements as $element) {
-			$sql = sprintf("UPDATE %s SET formName='%s',setting='%s',value='%s' WHERE formName='%s' AND setting='%s'",
-				$engine->openDB->escape($engine->localVars("dbPrefix").'settings'),
-				$engine->openDB->escape($formName['new']),
-				$engine->openDB->escape($element),
-				$engine->cleanPost['MYSQL'][$element.'_'.$id],
-				$engine->openDB->escape($formName['orig']),
-				$engine->openDB->escape($element)
-				);
-			$engine->openDB->sanitize = FALSE;
-			$sqlResult                = $engine->openDB->query($sql);
-		}
-
-	}
-
-	// Switch to system database
-	$engine->openDB->select_db($engine->localVars("dbName"));
-
 	if ($error === FALSE) {
 		$errorMsg .= $listObj->update();		
 	}
@@ -386,20 +376,30 @@ $listObj = listFields();
 
 
 $engine->eTemplate("include","header");
+?>
 
-print "<h2>Edit Form List</h2>";
+<script type="text/javascript" src="{local var="siteRoot"}includes/forms_functions.js"></script>
 
+<h2>Edit Form List</h2>
+
+<?php
 if (!is_empty($errorMsg)) {
 	print $errorMsg."<hr />";
 }
+?>
 
-print "<h3>New Form</h3>";
-print $listObj->displayInsertForm();
+<h3>New Form</h3>
+<?php print $listObj->displayInsertForm(); ?>
 
-print "<hr />";
+<hr />
 
-print "<h3>Edit Forms</h3>";
-print $listObj->displayEditTable();
+<h3>Edit Forms</h3>
+<?php print $listObj->displayEditTable(); ?>
 
+<script type="text/javascript">
+	$(document).ready(init);
+</script>
+
+<?php
 $engine->eTemplate("include","footer");
 ?>

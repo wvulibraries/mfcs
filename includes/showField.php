@@ -3,8 +3,9 @@ function defaultValues() {
 	$v['fieldName']     = "";
 	$v['fieldLabel']    = "[Label]";
 	$v['placeHolder']   = "";
+	$v['default']       = "";
 	$v['size']          = "40";
-	$v['mssize']        = "4";
+	$v['mssize']        = "5";
 	$v['width']         = "30";
 	$v['height']        = "3";
 	$v['dupes']         = "0";
@@ -142,7 +143,7 @@ function fieldList($type) {
 			$fields['hidden']['fieldName']      = "releasePublic";
 			$fields['display']['fieldLabel']    = "Release to Public";
 			$fields['hidden']['optionValues']   = "yesno";
-			$fields['hidden']['dupes']          = $defaults['dupes'];
+			$fields['hidden']['dupes']          = "1";
 			$fields['hidden']['required']       = $defaults['required'];
 			$fields['hidden']['disable']        = $defaults['disable'];
 			$fields['hidden']['releasePublic']  = $defaults['releasePublic'];
@@ -160,6 +161,7 @@ function fieldList($type) {
 			$fields['display']['fieldName']     = "";
 			$fields['display']['fieldLabel']    = "";
 			// $fields['display']['placeHolder']   = $defaults['placeHolder'];
+			$fields['display']['default']       = $defaults['default'];
 			$fields['display']['size']          = $defaults['size'];
 			$fields['display']['dupes']         = $defaults['dupes'];
 			$fields['display']['required']      = $defaults['required'];
@@ -191,10 +193,9 @@ function fieldList($type) {
 			$fields['display']['fieldName']     = "";
 			$fields['display']['fieldLabel']    = "";
 			$fields['display']['optionValues']  = $defaults['optionValues'];
-			$fields['display']['dupes']         = $defaults['dupes'];
+			$fields['display']['dupes']         = "1";
 			$fields['display']['required']      = $defaults['required'];
 			$fields['display']['disable']       = $defaults['disable'];
-			$fields['display']['validation']    = $defaults['validation'];
 			$fields['display']['releasePublic'] = $defaults['releasePublic'];
 			$fields['display']['searchable']    = $defaults['searchable'];
 			$fields['display']['sortable']      = $defaults['sortable'];
@@ -205,7 +206,7 @@ function fieldList($type) {
 			$fields['display']['fieldLabel']    = "";
 			$fields['display']['optionValues']  = $defaults['optionValues'];
 			$fields['display']['mssize']        = $defaults['mssize'];
-			$fields['display']['dupes']         = $defaults['dupes'];
+			$fields['display']['dupes']         = "1";
 			$fields['display']['required']      = $defaults['required'];
 			$fields['display']['disable']       = $defaults['disable'];
 			$fields['display']['releasePublic'] = $defaults['releasePublic'];
@@ -217,6 +218,7 @@ function fieldList($type) {
 			$fields['display']['fieldName']     = "";
 			$fields['display']['fieldLabel']    = "";
 			// $fields['display']['placeHolder']   = $defaults['placeHolder'];
+			$fields['display']['default']       = $defaults['default'];
 			$fields['display']['width']         = $defaults['width'];
 			$fields['display']['height']        = $defaults['height'];
 			$fields['display']['dupes']         = $defaults['dupes'];
@@ -300,11 +302,14 @@ function fieldProperties($id,$type,$name,$default,$fieldID=NULL,$hidden=FALSE) {
 		// case 'placeHolder': // Not implemented in listManagement
 		// 	return array('Placeholder Text','<input type="text" name="'.$prefix.$name.'" value="'.$values[$name].'" />');
 		
+		case 'default':
+			return array('Default Value','<input type="text" name="'.$prefix.$name.'" value="'.$values[$name].'" />');
+		
 		case 'size':
 			return array('Size','<input type="number" name="'.$prefix.$name.'" value="'.$values[$name].'" min="1" />');
 		
 		case 'mssize':
-			return array('Multiselect Size','<input type="number" name="'.$prefix.$name.'" value="'.$values[$name].'" min="4" />');
+			return array('Multiselect Size','<input type="number" name="'.$prefix.$name.'" value="'.$values[$name].'" min="4" max="50" />');
 		
 		case 'width':
 			return array('Width','<input type="number" name="'.$prefix.$name.'" value="'.$values[$name].'" />');
@@ -379,7 +384,7 @@ function fieldProperties($id,$type,$name,$default,$fieldID=NULL,$hidden=FALSE) {
 
 
 			// Get list of forms in current project
-			$sql = sprintf("SELECT ID, formName FROM %s WHERE projectID='%s'",
+			$sql = sprintf("SELECT * FROM %s WHERE projectID='%s'",
 				$engine->openDB->escape($engine->dbTables("forms")),
 				$engine->openDB->escape($engine->localVars("projectID"))
 				);
@@ -409,20 +414,20 @@ function fieldProperties($id,$type,$name,$default,$fieldID=NULL,$hidden=FALSE) {
 						while ($row2 = mysql_fetch_array($sqlResult2['result'], MYSQL_ASSOC)) {
 
 							if (isset($selected[1]) && $row2['ID'] == $selected[1]) {
-								$opt .= '<option value="'.$row['formName'].'_'.$row2['ID'].'" selected="selected">'.$row2['fieldLabel'].'</option>';
+								$opt .= '<option value="'.$row['formName'].'_'.$row2['ID'].'" selected="selected">'.htmlSanitize($row2['fieldLabel']).'</option>';
 							}
 							else if (in_array($row2['ID'],$optValsInUse)) {
-								$opt .= '<option value="'.$row['formName'].'_'.$row2['ID'].'" disabled>'.$row2['fieldLabel'].'</option>';
+								$opt .= '<option value="'.$row['formName'].'_'.$row2['ID'].'" disabled>'.htmlSanitize($row2['fieldLabel']).'</option>';
 							}
 							else {
-								$opt .= '<option value="'.$row['formName'].'_'.$row2['ID'].'">'.$row2['fieldLabel'].'</option>';
+								$opt .= '<option value="'.$row['formName'].'_'.$row2['ID'].'">'.htmlSanitize($row2['fieldLabel']).'</option>';
 							}
 
 						}
 					}
 					
 					if (!isnull($opt)) {
-						$options .= '<optgroup label="'.$row['formName'].'">';
+						$options .= '<optgroup label="'.htmlSanitize($row['label']).'">';
 						$options .= $opt;
 						$options .= '</optgroup>';
 					}

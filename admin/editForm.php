@@ -4,7 +4,7 @@ include("header.php");
 $errorMsg = NULL;
 $engine->localVars("requireIdentifier",FALSE);
 
-$sql = sprintf("SELECT formType FROM %s WHERE projectID='%s' AND formName='%s' LIMIT 1",
+$sql = sprintf("SELECT formType, parentForm FROM %s WHERE projectID='%s' AND formName='%s' LIMIT 1",
 	$engine->openDB->escape($engine->dbTables("forms")),
 	$engine->openDB->escape($engine->localVars("projectID")),
 	$engine->openDB->escape($engine->localVars("formName"))
@@ -13,7 +13,7 @@ $engine->openDB->sanitize = FALSE;
 $sqlResult                = $engine->openDB->query($sql);
 $row                      = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
 
-if ($row['formType'] == 'record') {
+if ($row['formType'] == 'record' && $row['parentForm'] == '0') {
 	$engine->localVars("requireIdentifier",TRUE);
 }
 
@@ -21,7 +21,7 @@ if ($row['formType'] == 'record') {
 // Form Submission
 if (isset($engine->cleanPost['MYSQL']['createFormSubmit'])) {
 
-	recurseInsert("includes/editFormSubmit.php","php");
+	recurseInsert("includes/editForm_submit.php","php");
 
 }
 // Form Submission
@@ -29,13 +29,21 @@ if (isset($engine->cleanPost['MYSQL']['createFormSubmit'])) {
 $engine->eTemplate("include","header");
 ?>
 
-<h1>{local var="formLabel"} Form</h1>
+<script type="text/javascript" src="{local var="siteRoot"}includes/editForm_functions.js"></script>
+<script type="text/javascript" src="{local var="siteRoot"}includes/editForm_dynamic.js"></script>
+<script type="text/javascript" src="{local var="siteRoot"}includes/editForm_validate.js"></script>
+
+<h1><?= htmlSanitize($engine->localVars("formLabel")) ?> Form</h1>
 
 <div id="draggableFormElementsContainer">
 	<strong>Drag to create a new element:</strong>
 	<ul id="draggableFormElements">
 		<li>Identifier</li>
-		<li>Release to Public</li>
+		<?php
+		if ($row['formType'] == 'metadata') {
+			print '<li>Release to Public</li>';
+		}
+		?>
 		<li>Link</li>
 		<li>Text</li>
 		<li>Select</li>
@@ -80,8 +88,8 @@ if (!is_empty($errorMsg)) {
 	</ul>
 
 	{engine name="insertCSRF"}
-	<input type="hidden" name="requireIdentifier" value="{local var="requireIdentifier"}" />
-	<input type="hidden" name="form" value="{local var="formName"}" />
+	<input type="hidden" name="requireIdentifier" value="<?= htmlSanitize($engine->localVars("requireIdentifier")) ?>" />
+	<input type="hidden" name="form" value="<?= htmlSanitize($engine->localVars("formName")) ?>" />
 	<input type="submit" name="createFormSubmit" value="Submit" disabled />
 </form>
 

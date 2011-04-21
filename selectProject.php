@@ -1,7 +1,9 @@
 <?php
 include("header.php");
 
+//
 // Form submission is handled in header.php
+//
 
 $action  = isset($engine->cleanGet['MYSQL']['refer'])?$engine->cleanGet['MYSQL']['refer']:$_SERVER['PHP_SELF'];
 $projIDs = allowedProjects();
@@ -38,10 +40,10 @@ else {
 					}
 
 					if ($engine->localVars("projectID") == $row['ID']) {
-						print '<option value="'.$row['ID'].'" selected>'.$row['name'].'</option>';
+						print '<option value="'.$row['ID'].'" selected>'.htmlSanitize($row['label']).'</option>';
 					}
 					else {
-						print '<option value="'.$row['ID'].'">'.$row['name'].'</option>';
+						print '<option value="'.$row['ID'].'">'.htmlSanitize($row['label']).'</option>';
 					}
 				}
 			}

@@ -41,9 +41,9 @@ $projID = isset($engine->cleanPost['MYSQL']['projectID'])?$engine->cleanPost['MY
 $formName = isset($engine->cleanPost['MYSQL']['form'])?$engine->cleanPost['MYSQL']['form']:(isset($engine->cleanGet['MYSQL']['form'])?$engine->cleanGet['MYSQL']['form']:NULL);
 
 // Set session variable
-if (!is_empty($projID)) {
+// if (!is_empty($projID)) {
 	sessionSet("mfcsProjectID",$projID);  // Project ID in session
-}
+// }
 
 $engine->localVars("queryString",is_empty($_SERVER['QUERY_STRING'])?'':'?'.$_SERVER['QUERY_STRING']);
 $engine->localVars("projectID",sessionGet("mfcsProjectID"));
@@ -62,7 +62,7 @@ recurseInsert("dbTableListDynamic.php","php");
 // Get more info about project and form, assign to local variables
 if (!is_empty($engine->localVars("projectID"))) {
 	
-	$sql = sprintf("SELECT name FROM %s WHERE ID='%s' LIMIT 1",
+	$sql = sprintf("SELECT name, label FROM %s WHERE ID='%s' LIMIT 1",
 		$engine->openDB->escape($engine->dbTables("projects")),
 		$engine->openDB->escape($engine->localVars("projectID"))
 		);
@@ -71,6 +71,7 @@ if (!is_empty($engine->localVars("projectID"))) {
 	$row                      = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
 	
 	$engine->localVars("projectName",$row['name']);
+	$engine->localVars("projectLabel",$row['label']);
 
 
 	if (!is_empty($engine->localVars("formName"))) {

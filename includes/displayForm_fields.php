@@ -7,7 +7,7 @@ function listFields($fields,$display) {
 
 	$listObj = new listManagement($engine,$engine->localVars("formName"));
 	$listObj->primaryKey = $idFieldName;
-	$listObj->debug = TRUE;
+	// $listObj->debug = TRUE;
 
 	if ($display == 'updateinsert') {
 		$listObj->updateInsert   = TRUE;
@@ -99,7 +99,7 @@ function listFields($fields,$display) {
 		// $listObj->noSubmit  = TRUE;
 
 		$options = array();
-		$options['field']    = '<a href="'.$engine->localVars("siteRoot").'displayForm.php?proj='.$engine->localVars("projectID").'&form='.$engine->localVars("formName").'&display=updateinsert&id={'.$idFieldName.'}">Edit</a>';
+		$options['field']    = '<a href="'.$engine->localVars("siteRoot").'displayForm.php?proj='.htmlSanitize($engine->localVars("projectID")).'&form='.htmlSanitize($engine->localVars("formName")).'&display=updateinsert&id={'.$idFieldName.'}">Edit</a>';
 		$options['label']    = "Edit";
 		$options['type']     = "plainText";
 		$listObj->addField($options);
@@ -120,14 +120,14 @@ function listFields($fields,$display) {
 		while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
 
 			$options = array();
-			$options['field']    = '<a href="'.$engine->localVars("siteRoot").'displayForm.php?proj='.$engine->localVars("projectID").'&form='.$row['formName'].'&display=both&mainid={'.$idFieldName.'}">'.$row['label'].'</a>';
+			$options['field']    = '<a href="'.$engine->localVars("siteRoot").'displayForm.php?proj='.htmlSanitize($engine->localVars("projectID")).'&form='.htmlSanitize($row['formName']).'&display=both&mainid={'.$idFieldName.'}">'.htmlSanitize($row['label']).'</a>';
 			$options['label']    = "Sub-Form";
 			$options['type']     = "plainText";
 			$listObj->addField($options);
 			unset($options);
 
 		}
-	}	
+	}
 	
 
 	foreach ($fields as $field) {
@@ -151,8 +151,9 @@ function listFields($fields,$display) {
 
 		$options = array();
 		$options['type']     = $field['type'];
-		$options['field']    = $field['fieldName'];
-		$options['label']    = $field['fieldLabel'];
+		$options['field']    = htmlSanitize($field['fieldName']);
+		$options['label']    = htmlSanitize($field['fieldLabel']);
+		$options['value']    = isset($field['default'])?$field['default']:NULL;
 		$options['size']     = isset($field['size'])?$field['size']:NULL;
 		$options['width']    = isset($field['width'])?$field['width']:NULL;
 		$options['height']   = isset($field['height'])?$field['height']:NULL;
@@ -224,6 +225,7 @@ function listFields($fields,$display) {
 					$sqlResult                = $engine->openDB->query($sql);
 					
 					if ($sqlResult['result']) {
+						$options['options'][] = array("value" => "", "label" => "-- Select --");
 						while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
 							$options['options'][] = array("value" => $row[$idFieldName], "label" => $row[$fieldName]);
 						}

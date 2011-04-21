@@ -14,8 +14,8 @@ if (checkGroup("libraryDept_dlc_systems")) {
 	print '</li>';
 }
 
-if (!is_empty($engine->localVars("projectName"))) {
-	print '<li>Current Project: '.$engine->localVars("projectName").'</li>';
+if (!is_empty($engine->localVars("projectLabel"))) {
+	print '<li>Current Project: '.htmlSanitize($engine->localVars("projectLabel")).'</li>';
 }
 
 print '<li><a href="{local var="siteRoot"}admin/selectProject.php">Select Project</a></li>';
@@ -37,7 +37,7 @@ if (!is_empty($engine->localVars("projectID"))) {
 		while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
 			
 			if (!is_empty($row['groupName'])) {
-				print '<li>'.$row['groupName'];
+				print '<li>'.htmlSanitize($row['groupName']);
 				print '<ul>';
 			}
 			
@@ -54,7 +54,7 @@ if (!is_empty($engine->localVars("projectID"))) {
 				while ($row2 = mysql_fetch_array($sqlResult2['result'], MYSQL_ASSOC)) {
 					print '<li>';
 					print '<a href="editForm.php?form='.$row2['formName'].'">';
-					print $row2['label'];
+					print htmlSanitize($row2['label']);
 					print '</a>';
 
 					// List sub forms
@@ -70,7 +70,7 @@ if (!is_empty($engine->localVars("projectID"))) {
 						while ($row3 = mysql_fetch_array($sqlResult3['result'], MYSQL_ASSOC)) {
 							print '<li>';
 							print '<a href="editForm.php?form='.$row3['formName'].'">';
-							print $row3['label'];
+							print htmlSanitize($row3['label']);
 							print '</a>';
 							print '</li>';
 						}

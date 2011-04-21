@@ -1,20 +1,26 @@
 <?php
 include("header.php");
 
-$engine->localVars("listTable",$engine->dbTables("projects"));
-$ident = "projects";
 $errorMsg = NULL;
 
 function listFields() {
 	global $engine;
 
-	$listObj = new listManagement($engine,$engine->localVars("listTable"));
+	$listObj = new listManagement($engine,$engine->dbTables("projects"));
 
 	$options = array();
 	$options['field']    = "name";
 	$options['label']    = "Project Name";
 	$options['size']     = "20";
 	$options['validate'] = "alphaNumericNoSpaces";
+	$options['original'] = TRUE;
+	$listObj->addField($options);
+	unset($options);
+
+	$options = array();
+	$options['field']    = "label";
+	$options['label']    = "Project Label";
+	$options['size']     = "20";
 	$options['original'] = TRUE;
 	$listObj->addField($options);
 	unset($options);
@@ -26,7 +32,7 @@ function listFields() {
 $listObj = listFields();
 
 // Form Submission
-if(isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_submit'])) {
+if(isset($engine->cleanPost['MYSQL'][$engine->dbTables("projects").'_submit'])) {
 	
 	$errorMsg .= $listObj->insert();
 
@@ -69,7 +75,7 @@ if(isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_submit'])
 	}
 
 }
-else if (isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_update'])) {
+else if (isset($engine->cleanPost['MYSQL'][$engine->dbTables("projects").'_update'])) {
 	
 	$deletions = $listObj->haveDeletes();
 	if ($deletions !== FALSE) {

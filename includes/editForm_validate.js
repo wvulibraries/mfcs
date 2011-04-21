@@ -49,7 +49,7 @@ function validateRules(item) {
 	}
 
 	if ($(":input[name*='linkURL']", item).length) {
-		$(":input[name*='linkURL']", item).rules("add", { required: true });
+		$(":input[name*='linkURL']", item).rules("add", { required: true, url: true });
 		$(":input[name*='linkURL']", item).closest("tr").find("td:first-child").css('font-weight','bold');
 	}
 	if ($(":input[name*='linkLabel']", item).length) {

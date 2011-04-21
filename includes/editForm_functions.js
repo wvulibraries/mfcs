@@ -155,7 +155,7 @@ function genLabelAndField(item,type) {
 		
 		$.ajax({
 			type: "GET", // cannot insert csrf, must be get
-			url: "../includes/createFormContent.php",
+			url: "../includes/ajax_createFormContent.php",
 			data: {
 				type: type,
 				form: $(':input[name=form]').val(),
@@ -254,7 +254,7 @@ function changeSelectOptions(item) {
 
 		$.ajax({
 			type: "GET", // cannot insert csrf, must be get
-			url: "../includes/changeSelectOptions.php",
+			url: "../includes/ajax_changeSelectOptions.php",
 			data: {
 				formName: vals[0],
 				value: vals[1]
@@ -266,5 +266,14 @@ function changeSelectOptions(item) {
 			}
 		})
 
+	}
+}
+
+function setWeight(selector,item) {
+	if ($(":input[name*='required']", item).val() == 0) {
+		$(selector, item).css('font-weight', 'normal');
+	}
+	else {
+		$(selector, item).css('font-weight', 'bold');
 	}
 }

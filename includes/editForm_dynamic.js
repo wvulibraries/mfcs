@@ -35,27 +35,40 @@ function dynamicEffects(item) {
 		function() {
 			$('.labelContainer', item).html('<a href="'+$(":input[name*='linkURL']", item).val()+'">'+$(":input[name*='linkLabel']", item).val()+'</a>');
 		}
-	)
+	);
 		
 	// change placeholder text
+	inputElm.attr('placeholder', $(":input[name*='placeHolder']", item).val());
 	$(":input[name*='placeHolder']", item).keyup(
 		function() {
 			inputElm.attr('placeholder', $(this).val());
 		}
-	)
+	);
+	
+	// change default text
+	inputElm.val($(":input[name*='default']", item).val());
+	$(":input[name*='default']", item).keyup(
+		function() {
+			inputElm.val($(this).val());
+		}
+	);
 	
 	// change size of field
 	$(":input[name*='size']:not(input[name*='mssize'])", item).change(
 		function() {
-			inputElm.attr('size', $(this).val())
+			if ($(':input', $('.addlInfoForm', item)).valid()) {
+				inputElm.attr('size', $(this).val());
+			}
 		}
-	)
+	);
 
 	// change size of multiselect field
 	$(".item :input[name$='_ms']", item).attr('size', $(":input[name*='mssize']", item).val());
 	$(":input[name*='mssize']", item).change(
 		function() {
-			$(".item :input[name$='_ms']", item).attr('size', $(this).val());
+			if ($(':input', $('.addlInfoForm', item)).valid()) {
+				$(".item :input[name$='_ms']", item).attr('size', $(this).val());
+			}
 		}
 	);
 
@@ -234,13 +247,4 @@ function hoverOptions(item) {
 		}
 	)
 
-}
-
-function setWeight(selector,item) {
-	if ($(":input[name*='required']", item).val() == 0) {
-		$(selector, item).css('font-weight', 'normal');
-	}
-	else {
-		$(selector, item).css('font-weight', 'bold');
-	}
 }
