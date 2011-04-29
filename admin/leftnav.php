@@ -7,20 +7,60 @@ if (checkGroup("libraryDept_dlc_systems")) {
 	print '<li>Systems Office';
 		print '<ul>';
 		print '<li><a href="{local var="siteRoot"}admin/projects.php">Projects</a></li>';
-		print '<li><a href="{local var="siteRoot"}admin/permissions.php">Permissions</a></li>';
-		print '<li><a href="{local var="siteRoot"}admin/export.php">Export Data</a></li>';
 		print '<li class="noBorder">&nbsp;</li>';
 		print '</ul>';
 	print '</li>';
 }
+?>
 
-if (!is_empty($engine->localVars("projectLabel"))) {
-	print '<li>Current Project: '.htmlSanitize($engine->localVars("projectLabel")).'</li>';
-}
+<li class="bold">Current Project
+	<ul>
+		<li>
+			<form method="post" action="<?= $_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'] ?>">
 
-print '<li><a href="{local var="siteRoot"}admin/selectProject.php">Select Project</a></li>';
-print '<li class="noBorder">&nbsp;</li>';
+				<select name="projectID">
+					<option value="">-- Select a Project --</option>
+					<?php
+					// Switch to system database
+					$engine->openDB->select_db($engine->localVars("dbName"));
+					
+					$projIDs = allowedProjects();
 
+					$sql = sprintf("SELECT * FROM %s",
+						$engine->openDB->escape($engine->dbTables("projects"))
+						);
+					$engine->openDB->sanitize = FALSE;
+					$sqlResult                = $engine->openDB->query($sql);
+
+					if ($sqlResult['result']) {
+						while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+							
+							// Do not display if the user does not have permissions
+							if (!in_array($row['ID'],$projIDs)) {
+								continue;
+							}
+
+							if ($engine->localVars("projectID") == $row['ID']) {
+								print '<option value="'.$row['ID'].'" selected>'.htmlSanitize(substr($row['label'],0,31)).'</option>';
+							}
+							else {
+								print '<option value="'.$row['ID'].'">'.htmlSanitize(substr($row['label'],0,31)).'</option>';
+							}
+						}
+					}
+					?>
+				</select>
+
+				{engine name="insertCSRF"}
+				<input type="submit" name="selectProjectSubmit" value="Select Project" />
+
+			</form>
+		</li>
+	</ul>
+</li>
+<li class="noBorder">&nbsp;</li>
+
+<?php
 if (!is_empty($engine->localVars("projectID"))) {
 
 	print '<li><a href="{local var="siteRoot"}admin/forms.php">Forms</a>';

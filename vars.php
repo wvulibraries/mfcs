@@ -76,7 +76,7 @@ if (!is_empty($engine->localVars("projectID"))) {
 
 	if (!is_empty($engine->localVars("formName"))) {
 		
-		$sql = sprintf("SELECT ID,label FROM %s WHERE formName='%s' AND projectID='%s' LIMIT 1",
+		$sql = sprintf("SELECT ID,label,parentForm FROM %s WHERE formName='%s' AND projectID='%s' LIMIT 1",
 			$engine->openDB->escape($engine->dbTables("forms")),
 			$engine->openDB->escape($engine->localVars("formName")),
 			$engine->openDB->escape($engine->localVars("projectID"))
@@ -89,6 +89,7 @@ if (!is_empty($engine->localVars("projectID"))) {
 
 			$engine->localVars("formID",$row['ID']);
 			$engine->localVars("formLabel",$row['label']);
+			$engine->localVars("formParent",$row['parentForm']);
 
 		}
 		else {

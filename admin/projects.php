@@ -7,11 +7,20 @@ function listFields() {
 	global $engine;
 
 	$listObj = new listManagement($engine,$engine->dbTables("projects"));
+	$listObj->numberRows = TRUE;
+
+	$options = array();
+	$options['field']    = "ID";
+	$options['label']    = "Project ID";
+	$options['type']     = "hidden";
+	$options['original'] = TRUE;
+	$listObj->addField($options);
+	unset($options);
 
 	$options = array();
 	$options['field']    = "name";
 	$options['label']    = "Project Name";
-	$options['size']     = "20";
+	$options['size']     = "30";
 	$options['validate'] = "alphaNumericNoSpaces";
 	$options['original'] = TRUE;
 	$listObj->addField($options);
@@ -20,8 +29,22 @@ function listFields() {
 	$options = array();
 	$options['field']    = "label";
 	$options['label']    = "Project Label";
-	$options['size']     = "20";
+	$options['size']     = "30";
 	$options['original'] = TRUE;
+	$listObj->addField($options);
+	unset($options);
+
+	$options = array();
+	$options['field']    = '<a href="'.$engine->localVars("siteRoot").'admin/permissions.php?proj={ID}">Permissions</a>';
+	$options['label']    = "Permissions";
+	$options['type']     = "plainText";
+	$listObj->addField($options);
+	unset($options);
+
+	$options = array();
+	$options['field']    = '<a href="'.$engine->localVars("siteRoot").'admin/export.php?proj={ID}">Export</a>';
+	$options['label']    = "Export";
+	$options['type']     = "plainText";
 	$listObj->addField($options);
 	unset($options);
 

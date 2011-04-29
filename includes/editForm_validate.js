@@ -44,7 +44,7 @@ function validateRules(item) {
 	}
 
 	if ($(":input[name*='optionValues']", item).length) {
-		$(":input[name*='optionValues']", item).rules("add", { required: true });
+		$(":input[name*='optionValues']", item).rules("add", { required: true, unique: $(':input[name*="optionValues"]') });
 		$(":input[name*='optionValues']", item).closest("tr").find("td:first-child").css('font-weight','bold');
 	}
 

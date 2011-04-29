@@ -8,6 +8,7 @@ $output  = '<?xml version="1.0" encoding="UTF-8" ?>'."\n";
 
 $output .= '<project>';
 $output .= '<name>'.$engine->localVars("projectName").'</name>';
+$output .= '<label>'.$engine->localVars("projectLabel").'</label>';
 $output .= '<forms>';
 
 	$sql = sprintf("SELECT * FROM %s WHERE projectID='%s'",

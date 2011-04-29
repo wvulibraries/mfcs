@@ -168,6 +168,7 @@ function listFields($fields,$display) {
 			// Switch to project database
 			$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
 			
+			// Get field value
 			$sql = sprintf("SELECT %s FROM %s WHERE %s='%s' LIMIT 1",
 				$engine->openDB->escape($field['fieldName']),
 				$engine->openDB->escape($engine->localVars("formName")),
@@ -215,6 +216,7 @@ function listFields($fields,$display) {
 					// Switch to project database
 					$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
 					
+					// Get list of options for select field
 					$sql = sprintf("SELECT %s, %s FROM %s ORDER BY %s",
 						$engine->openDB->escape($idFieldName),
 						$engine->openDB->escape($fieldName),
@@ -227,7 +229,7 @@ function listFields($fields,$display) {
 					if ($sqlResult['result']) {
 						$options['options'][] = array("value" => "", "label" => "-- Select --");
 						while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
-							$options['options'][] = array("value" => $row[$idFieldName], "label" => $row[$fieldName]);
+							$options['options'][] = array("value" => $row[$idFieldName], "label" => $row[$fieldName], "selected" => (!is_empty($options['value'])?TRUE:FALSE));
 						}
 					}
 					
@@ -248,9 +250,11 @@ function listFields($fields,$display) {
 					$options['options']['linkObjectField']   = $engine->localVars("formName")."ID";
 
 					if ($display == 'updateinsert') {
+
 						// Switch to project database
 						$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
 
+						// Get list of items previously selected
 						$sql = sprintf("SELECT %s FROM %s WHERE %s='%s'",
 							$engine->openDB->escape($options['options']['linkValueField']),
 							$engine->openDB->escape($options['options']['linkTable']),
@@ -271,6 +275,7 @@ function listFields($fields,$display) {
 						
 						// Switch to system database
 						$engine->openDB->select_db($engine->localVars("dbName"));
+						
 					}
 
 				}
@@ -280,6 +285,7 @@ function listFields($fields,$display) {
 
 		$listObj->addField($options);
 		unset($options);
+
 	}
 
 	// Switch to project database

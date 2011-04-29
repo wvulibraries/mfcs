@@ -1,5 +1,6 @@
 <?php
 global $engine;
+global $errorMsg;
 
 $submitFields          = array();
 $storedFields          = array();
@@ -527,11 +528,11 @@ foreach ($submitFields as $field) {
 		if ($key == $field['original']) {
 			
 			// Update columns
-			$sql = sprintf("ALTER TABLE %s CHANGE %s %s varchar(%s) %s %s",
+			$sql = sprintf("ALTER TABLE %s CHANGE `%s` `%s` varchar(%s) %s %s",
 				$engine->openDB->escape($engine->localVars("formName")),
 				$engine->openDB->escape($field['original']),
 				$engine->openDB->escape($field['fieldName']),
-				$engine->openDB->escape(isset($field['maxlength'])?$field['maxlength']:''),
+				$engine->openDB->escape(isset($field['maxlength'])?$field['maxlength']:'255'),
 				$engine->openDB->escape(isset($field['nulls'])?'NULL':'NOT NULL'),
 				isset($field['placeHolder'])?"DEFAULT '".$field['placeHolder']."'":""
 				);
@@ -544,7 +545,7 @@ foreach ($submitFields as $field) {
 	}
 
 	// Add columns that are in the field definition, but not in the schema
-	$sql = sprintf("ALTER TABLE %s ADD COLUMN %s varchar(%s) %s %s",
+	$sql = sprintf("ALTER TABLE %s ADD COLUMN `%s` varchar(%s) %s %s",
 		$engine->openDB->escape($engine->localVars("formName")),
 		$engine->openDB->escape($field['fieldName']),
 		$engine->openDB->escape(isset($field['maxlength'])?$field['maxlength']:'255'),
@@ -584,4 +585,6 @@ foreach ($keys as $key) {
 
 // Switch to system database
 $engine->openDB->select_db($engine->localVars("dbName"));
+
+$errorMsg .= webHelper_successMsg("Form submitted successfully.");
 ?>

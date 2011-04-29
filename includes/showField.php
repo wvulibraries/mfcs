@@ -8,7 +8,7 @@ function defaultValues() {
 	$v['mssize']        = "5";
 	$v['width']         = "30";
 	$v['height']        = "3";
-	$v['dupes']         = "0";
+	$v['dupes']         = "1";
 	$v['required']      = "1";
 	$v['disable' ]      = "0";
 	$v['readonly']      = "0";
@@ -143,7 +143,7 @@ function fieldList($type) {
 			$fields['hidden']['fieldName']      = "releasePublic";
 			$fields['display']['fieldLabel']    = "Release to Public";
 			$fields['hidden']['optionValues']   = "yesno";
-			$fields['hidden']['dupes']          = "1";
+			$fields['hidden']['dupes']          = $defaults['dupes'];
 			$fields['hidden']['required']       = $defaults['required'];
 			$fields['hidden']['disable']        = $defaults['disable'];
 			$fields['hidden']['releasePublic']  = $defaults['releasePublic'];
@@ -152,7 +152,6 @@ function fieldList($type) {
 			break;
 
 		case "link":
-			// $fields['hidden']['fieldName']      = "";
 			$fields['display']['linkURL']       = "";
 			$fields['display']['linkLabel']     = "";
 			break;
@@ -160,10 +159,10 @@ function fieldList($type) {
 		case "text":
 			$fields['display']['fieldName']     = "";
 			$fields['display']['fieldLabel']    = "";
-			// $fields['display']['placeHolder']   = $defaults['placeHolder'];
+			$fields['display']['placeHolder']   = $defaults['placeHolder'];
 			$fields['display']['default']       = $defaults['default'];
 			$fields['display']['size']          = $defaults['size'];
-			$fields['display']['dupes']         = $defaults['dupes'];
+			$fields['display']['dupes']         = "0";
 			$fields['display']['required']      = $defaults['required'];
 			$fields['display']['readonly']      = $defaults['readonly'];
 			$fields['display']['disable']       = $defaults['disable'];
@@ -177,7 +176,7 @@ function fieldList($type) {
 		case "date":
 			$fields['display']['fieldName']     = "";
 			$fields['display']['fieldLabel']    = "";
-			// $fields['display']['placeHolder']   = $defaults['placeHolder'];
+			$fields['display']['placeHolder']   = $defaults['placeHolder'];
 			$fields['display']['size']          = $defaults['size'];
 			$fields['display']['dupes']         = $defaults['dupes'];
 			$fields['display']['required']      = $defaults['required'];
@@ -193,7 +192,7 @@ function fieldList($type) {
 			$fields['display']['fieldName']     = "";
 			$fields['display']['fieldLabel']    = "";
 			$fields['display']['optionValues']  = $defaults['optionValues'];
-			$fields['display']['dupes']         = "1";
+			$fields['display']['dupes']         = $defaults['dupes'];
 			$fields['display']['required']      = $defaults['required'];
 			$fields['display']['disable']       = $defaults['disable'];
 			$fields['display']['releasePublic'] = $defaults['releasePublic'];
@@ -206,7 +205,7 @@ function fieldList($type) {
 			$fields['display']['fieldLabel']    = "";
 			$fields['display']['optionValues']  = $defaults['optionValues'];
 			$fields['display']['mssize']        = $defaults['mssize'];
-			$fields['display']['dupes']         = "1";
+			$fields['display']['dupes']         = $defaults['dupes'];
 			$fields['display']['required']      = $defaults['required'];
 			$fields['display']['disable']       = $defaults['disable'];
 			$fields['display']['releasePublic'] = $defaults['releasePublic'];
@@ -217,7 +216,7 @@ function fieldList($type) {
 		case "textarea":
 			$fields['display']['fieldName']     = "";
 			$fields['display']['fieldLabel']    = "";
-			// $fields['display']['placeHolder']   = $defaults['placeHolder'];
+			$fields['display']['placeHolder']   = $defaults['placeHolder'];
 			$fields['display']['default']       = $defaults['default'];
 			$fields['display']['width']         = $defaults['width'];
 			$fields['display']['height']        = $defaults['height'];
@@ -299,8 +298,8 @@ function fieldProperties($id,$type,$name,$default,$fieldID=NULL,$hidden=FALSE) {
 		case 'fieldLabel':
 			return array('Field Label','<input type="text" name="'.$prefix.$name.'" placeholder="Label to be displayed." value="'.$values[$name].'" />');
 		
-		// case 'placeHolder': // Not implemented in listManagement
-		// 	return array('Placeholder Text','<input type="text" name="'.$prefix.$name.'" value="'.$values[$name].'" />');
+		case 'placeHolder': // Not implemented in listManagement
+			return array('Placeholder Text','<input type="text" name="'.$prefix.$name.'" value="'.$values[$name].'" />');
 		
 		case 'default':
 			return array('Default Value','<input type="text" name="'.$prefix.$name.'" value="'.$values[$name].'" />');

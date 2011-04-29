@@ -5,6 +5,7 @@ jQuery.extend(jQuery.expr[':'], {
 });
 
 var ID = 0;
+var detectedChanges = 0;
 
 function init() {
 	
@@ -19,7 +20,7 @@ function init() {
 				}
 			}
 		}
-	)
+	);
 
 	// Make items sortable
 	$('#mainList').sortable({
@@ -73,7 +74,7 @@ function init() {
 
 	$('.engineWYSIWYG').each(function() {
 		wysiwygInit($(this).attr('id'));
-	})
+	});
 
 	$('#draggableFormElements li').bind({
 		mouseenter:
@@ -84,7 +85,20 @@ function init() {
 			function() {
 				$(this).css('background-color','#FFF').css('border','1px #FFF dashed');
 			}
+	});
+
+	$(':input[name=createFormSubmit][type=submit]').click(function() {
+		detectedChanges = 0;
 	})
+
+}
+
+
+function unload() {
+	
+	if (detectedChanges == 1) {
+		return "Leaving the page will lose all unsaved data!";
+	}
 
 }
 
@@ -142,10 +156,10 @@ function toggleSubmitButton() {
 	}
 
 	if (buttonState == "show") {
-		$(':input[type=submit]').removeAttr('disabled');
+		$(':input[name=createFormSubmit][type=submit]').removeAttr('disabled');
 	}
 	else {
-		$(':input[type=submit]').attr('disabled',true);
+		$(':input[name=createFormSubmit][type=submit]').attr('disabled',true);
 	}
 }
 

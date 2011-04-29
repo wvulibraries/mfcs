@@ -292,18 +292,65 @@ if (is_empty($fields)) {
 else {
 	if ($engine->localVars("display") == 'both') {
 		
-		$listObj = listFields($fields,'insert');
+		// Switch to system database
+		$engine->openDB->select_db($engine->localVars("dbName"));
+
+		$sql = sprintf("SELECT * FROM %s WHERE ID='%s' LIMIT 1",
+			$engine->openDB->escape($engine->dbTables("forms")),
+			$engine->openDB->escape($engine->localVars("formParent"))
+			);
+		$engine->openDB->sanitize = FALSE;
+		$sqlResult                = $engine->openDB->query($sql);
 		
-		print '<h3>New '.htmlSanitize($engine->localVars("formLabel")).'</h3>';
-		print $listObj->displayInsertForm();
+		if ($sqlResult['result']) {
+			$row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
+
+			// If this is a subform, display a link back to the parent form here
+			print '<p><a href="'.$engine->localVars("siteRoot").'displayForm.php?proj='.$engine->localVars("projectID").'&form='.htmlSanitize($row['formName']).'&display=updateinsert&id='.htmlSanitize($row['ID']).'">'.htmlSanitize($row['label']).'</a></p>';
+		}
+
+
+		$sql = sprintf("SELECT * FROM %s WHERE ID='%s' LIMIT 1",
+			$engine->openDB->escape($engine->dbTables("forms")),
+			$engine->openDB->escape($engine->localVars("formID"))
+			);
+		$engine->openDB->sanitize = FALSE;
+		$sqlResult                = $engine->openDB->query($sql);
 		
-		print '<br />';
+		if ($sqlResult['result']) {
+			$row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
+		}
+
+		// Switch to project database
+		$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
+
+		if ($row['insertLocation'] == 'above' || $row['insertLocation'] == 'both') {
+
+			$listObj = listFields($fields,'insert');
+			
+			print '<h3>New '.htmlSanitize($engine->localVars("formLabel")).'</h3>';
+			print $listObj->displayInsertForm();
+		
+			print '<br />';
+
+		}
 		
 		$listObj = listFields($fields,'update');
 		
 		print '<h3>Edit '.htmlSanitize($engine->localVars("formLabel")).'</h3>';
 		print $listObj->displayEditTable();
 
+		if ($row['insertLocation'] == 'below' || $row['insertLocation'] == 'both') {
+
+			$listObj = listFields($fields,'insert');
+			
+			print '<h3>New '.htmlSanitize($engine->localVars("formLabel")).'</h3>';
+			print $listObj->displayInsertForm();
+		
+			print '<br />';
+
+		}
+		
 	}
 	else {
 
@@ -316,8 +363,6 @@ else {
 
 		}
 		else if ($engine->localVars("display") == 'updateinsert') {
-			
-			print '<h3>Edit '.htmlSanitize($engine->localVars("formLabel")).'</h3>';
 			
 			// Switch to system database
 			$engine->openDB->select_db($engine->localVars("dbName"));
@@ -340,6 +385,8 @@ else {
 			// Switch to project database
 			$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
 
+			
+			print '<h3>Edit '.htmlSanitize($engine->localVars("formLabel")).'</h3>';
 			print $listObj->displayInsertForm();
 
 			// Delete button

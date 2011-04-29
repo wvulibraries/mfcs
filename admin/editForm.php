@@ -2,7 +2,7 @@
 include("header.php");
 
 $errorMsg = NULL;
-$engine->localVars("requireIdentifier",FALSE);
+$engine->localVars("requireIdentifier","0");
 
 $sql = sprintf("SELECT formType, parentForm FROM %s WHERE projectID='%s' AND formName='%s' LIMIT 1",
 	$engine->openDB->escape($engine->dbTables("forms")),
@@ -14,7 +14,7 @@ $sqlResult                = $engine->openDB->query($sql);
 $row                      = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
 
 if ($row['formType'] == 'record' && $row['parentForm'] == '0') {
-	$engine->localVars("requireIdentifier",TRUE);
+	$engine->localVars("requireIdentifier","1");
 }
 
 
@@ -95,6 +95,8 @@ if (!is_empty($errorMsg)) {
 
 <script type="text/javascript">
 	$(document).ready(init);
+	// $(window).unload(unload);
+	window.onbeforeunload = unload;
 </script>
 
 <?php

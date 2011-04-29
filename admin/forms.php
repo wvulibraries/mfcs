@@ -86,6 +86,18 @@ function listFields() {
 	unset($options);
 
 	$options = array();
+	$options['field']     = "insertLocation";
+	$options['label']     = "Insert Location";
+	$options['dupes']     = TRUE;
+	$options['blank']     = TRUE;
+	$options['type']      = "select";
+	$options['options'][] = array("value"=>"above","label"=>"Above Edit");
+	$options['options'][] = array("value"=>"below","label"=>"Below Edit");
+	$options['original']  = TRUE;
+	$listObj->addField($options);
+	unset($options);
+
+	$options = array();
 	$options['field']     = "deletions";
 	$options['label']     = "Allow Deletions";
 	$options['dupes']     = TRUE;
@@ -280,6 +292,9 @@ else if (isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_upd
 		// If the submitted value is different from the original
 		if ($submit['formName']['orig'] != $submit['formName']['new']) {
 			
+			//Switch to project database
+			$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
+
 			// Rename data table
 			$sql = sprintf("RENAME TABLE %s TO %s",
 				$engine->openDB->escape($submit['formName']['orig']),
@@ -305,6 +320,19 @@ else if (isset($engine->cleanPost['MYSQL'][$engine->localVars("listTable").'_upd
 				$errorMsg .= webHelper_errorMsg("Error modifying forms.");
 				$error = TRUE;
 			}
+
+			// Switch to system database
+			$engine->openDB->select_db($engine->localVars("dbName"));
+
+			// Insert table name into dbTables table if it's not already there
+			$sql = sprintf("INSERT INTO %s (name) SELECT '%s' FROM dual WHERE NOT EXISTS(SELECT * FROM %s WHERE name='%s' LIMIT 1)",
+				$engine->openDB->escape($engine->dbTables("dbTables")),
+				$engine->openDB->escape($submit['formName']['new']),
+				$engine->openDB->escape($engine->dbTables("dbTables")),
+				$engine->openDB->escape($submit['formName']['new'])
+				);
+			$engine->openDB->sanitize = FALSE;
+			$sqlResult                = $engine->openDB->query($sql);
 
 		}
 

@@ -4,6 +4,13 @@ function dynamicEffects(item) {
 	
 	var inputElm = $('.item :input:not(input[type=hidden])', item);
 
+	// warn on changes
+	if (detectedChanges == 0) {
+		$(":input").change(function() {
+			detectedChanges = 1;
+		});
+	}
+
 	// launch date picker
 	if (inputElm.hasClass('date_input')) {
 		inputElm.date_input()
@@ -25,7 +32,7 @@ function dynamicEffects(item) {
 			$('.label', item).text(label).html();
 			setEqWidth($('.labelContainer')); // dynamically set label width for all elements
 		}
-	)
+	);
 
 	// change link text
 	if ($(":input[name*='linkLabel'], :input[name*='linkURL']", item).length > 1) {
@@ -138,7 +145,7 @@ function dynamicEffects(item) {
 		function() {
 			changeSelectOptions(item);
 		}
-	)
+	);
 
 	// toggle other field
 	$(':input[name$=validation]', item).change(
@@ -212,6 +219,7 @@ function dynamicEffects(item) {
 			toggleSortable(item,$(this).val());
 		}
 	);
+
 }
 
 function hoverOptions(item) {
@@ -228,7 +236,7 @@ function hoverOptions(item) {
 			function() {
 				$('.itemOptions', item).hide();
 			}
-	})
+	});
 
 	// delete field
 	$('.trashIcon', item).unbind('click').click(
@@ -238,13 +246,13 @@ function hoverOptions(item) {
 				toggleSubmitButton();
 			}
 		}
-	)
+	);
 
 	// Toggle field configuration
 	$('.editLink', item).unbind('click').click(
 		function() {
 			toggleAddlInfoForm(item);
 		}
-	)
+	);
 
 }

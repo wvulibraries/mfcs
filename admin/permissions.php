@@ -8,6 +8,8 @@ function listFields() {
 
 	$listObj = new listManagement($engine,$engine->dbTables("permissions"));
 
+	$listObj->whereClause = "WHERE projectID = '".$engine->localVars("projectID")."'";
+
 	$options = array();
 	$options['field']    = "ID";
 	$options['label']    = "ID";
@@ -36,22 +38,10 @@ function listFields() {
 
 	$options = array();
 	$options['field']     = "projectID";
-	$options['label']     = "Project Name";
+	$options['label']     = "Project ID";
 	$options['dupes']     = TRUE;
-	$options['type']      = "select";
-
-	$sql = sprintf("SELECT * FROM %s",
-		$engine->openDB->escape($engine->dbTables("projects"))
-		);
-	$engine->openDB->sanitize = FALSE;
-	$sqlResult                = $engine->openDB->query($sql);
-	
-	if ($sqlResult['result']) {
-		while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
-			$options['options'][] = array("value" => $row['ID'], "label" => $row['name']);
-		}
-	}
-
+	$options['type']      = "hidden";
+	$options['value']     = $engine->localVars("projectID");
 	$listObj->addField($options);
 	unset($options);
 
@@ -78,20 +68,52 @@ $listObj = listFields();
 
 
 $engine->eTemplate("include","header");
+?>
 
-print "<h2>Edit Permissions</h2>";
+<script type="text/javascript" src="{local var="siteRoot"}includes/permissions_functions.js"></script>
 
+<h2>Edit Permissions</h2>
+
+<?php
 if (!is_empty($errorMsg)) {
 	print $errorMsg."<hr />";
 }
+?>
 
-print "<h3>New User</h3>";
-print $listObj->displayInsertForm();
+<p><a href="#" id="commonSecurityGroupsToggle">Common Security Groups</a></p>
 
-print "<hr />";
+<ul id="commonSecurityGroupsList">
+<li><a href="#">libraryDept_dlc_systems</a></li>
+<li><a href="#">libraryDept_dlc_systemsStudents</a></li>
+<li><a href="#">libraryGroup_Proxy</a></li>
+<li><a href="#">libraryGroup_ProxyAlumni</a></li>
+<li><a href="#">libraryGroup_staff</a></li>
+<li><a href="#">libraryGroup_staff_dlc</a></li>
+<li><a href="#">libraryGroup_staff_evl</a></li>
+<li><a href="#">libraryGroup_staff_hsl</a></li>
+<li><a href="#">libraryGroup_students</a></li>
+<li><a href="#">libraryGroup_StudentsWithHomeDirs</a></li>
+<li><a href="#">libraryWeb_engineCMSAdmin</a></li>
+<li><a href="#">libraryWebWVC_IAI</a></li>
+<li><a href="#">libraryWebWVC_PEC</a></li>
+<li><a href="#">libraryWebWVC_PTP</a></li>
+<li><a href="#">libraryWebWVC_Workshop</a></li>
+<li><a href="#">libraryWebWVC_wvcguide</a></li>
+<li><a href="#">libraryWebWVC_WVCP</a></li>
+</ul>
 
-print "<h3>Edit Permissions</h3>";
-print $listObj->displayEditTable();
+<h3>New User</h3>
+<?= $listObj->displayInsertForm(); ?>
 
+<hr />
+
+<h3>Edit Permissions</h3>
+<?= $listObj->displayEditTable(); ?>
+
+<script type="text/javascript">
+	$(document).ready(init);
+</script>
+
+<?php
 $engine->eTemplate("include","footer");
 ?>

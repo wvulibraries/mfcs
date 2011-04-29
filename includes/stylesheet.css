@@ -18,10 +18,6 @@
 
 .labelContainer {
 	display: inline-block;
-}
-
-.label,
-.item {
 	vertical-align: top;
 }
 
@@ -84,4 +80,8 @@ label.error {
 	float: left;
 	padding: 4px;
 	border: 1px #FFF dashed;
+}
+
+#commonSecurityGroupsList {
+	display: none;
 }
