@@ -69,8 +69,9 @@ function allowedProjects() {
 		$grps[] = "name='".$value."'";
 	}
 
+	$groupStr = NULL;
 	if (!is_empty($grps)) {
-		$groupStr = "OR (type='group' AND (".implode(" OR ",$grps)."))";
+		$groupStr .= "OR (type='group' AND (".implode(" OR ",$grps)."))";
 	}
 
 	$sql = sprintf("SELECT * FROM %s WHERE (type='user' AND name='%s') %s",

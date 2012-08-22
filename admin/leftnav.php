@@ -1,17 +1,8 @@
 <?php
 global $engine;
-
-print "<ul>";
-
-if (checkGroup("libraryDept_dlc_systems")) {
-	print '<li>Systems Office';
-		print '<ul>';
-		print '<li><a href="{local var="siteRoot"}admin/projects.php">Projects</a></li>';
-		print '<li class="noBorder">&nbsp;</li>';
-		print '</ul>';
-	print '</li>';
-}
 ?>
+
+<ul>
 
 <li class="bold">Current Project
 	<ul>
@@ -23,7 +14,7 @@ if (checkGroup("libraryDept_dlc_systems")) {
 					<?php
 					// Switch to system database
 					$engine->openDB->select_db($engine->localVars("dbName"));
-					
+
 					$projIDs = allowedProjects();
 
 					$sql = sprintf("SELECT * FROM %s",
@@ -34,7 +25,7 @@ if (checkGroup("libraryDept_dlc_systems")) {
 
 					if ($sqlResult['result']) {
 						while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
-							
+
 							// Do not display if the user does not have permissions
 							if (!in_array($row['ID'],$projIDs)) {
 								continue;
@@ -61,6 +52,16 @@ if (checkGroup("libraryDept_dlc_systems")) {
 <li class="noBorder">&nbsp;</li>
 
 <?php
+if (checkGroup("libraryWeb_mfcs_admin")) {
+	print '<li>MFCS Admin';
+		print '<ul>';
+		print '<li><a href="{local var="siteRoot"}admin/projects.php">Projects</a></li>';
+		print '<li><a href="{local var="siteRoot"}admin/copyProject.php">Copy a Project</a></li>';
+		print '<li class="noBorder">&nbsp;</li>';
+		print '</ul>';
+	print '</li>';
+}
+
 if (!is_empty($engine->localVars("projectID"))) {
 
 	print '<li><a href="{local var="siteRoot"}admin/forms.php">Forms</a>';
@@ -71,16 +72,16 @@ if (!is_empty($engine->localVars("projectID"))) {
 		);
 	$engine->openDB->sanitize = FALSE;
 	$sqlResult                = $engine->openDB->query($sql);
-	
+
 	if ($sqlResult['affectedRows'] > 0) {
 		print '<ul>';
 		while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
-			
+
 			if (!is_empty($row['groupName'])) {
 				print '<li>'.htmlSanitize($row['groupName']);
 				print '<ul>';
 			}
-			
+
 			// top level forms
 			$sql = sprintf("SELECT * FROM %s WHERE projectID='%s' AND groupName='%s' AND parentForm='0' ORDER BY label",
 				$engine->openDB->escape($engine->dbTables("forms")),
@@ -89,7 +90,7 @@ if (!is_empty($engine->localVars("projectID"))) {
 				);
 			$engine->openDB->sanitize = FALSE;
 			$sqlResult2               = $engine->openDB->query($sql);
-			
+
 			if ($sqlResult2['result']) {
 				while ($row2 = mysql_fetch_array($sqlResult2['result'], MYSQL_ASSOC)) {
 					print '<li>';
@@ -104,7 +105,7 @@ if (!is_empty($engine->localVars("projectID"))) {
 						);
 					$engine->openDB->sanitize = FALSE;
 					$sqlResult3               = $engine->openDB->query($sql);
-					
+
 					if ($sqlResult3['affectedRows'] > 0) {
 						print '<ul>';
 						while ($row3 = mysql_fetch_array($sqlResult3['result'], MYSQL_ASSOC)) {
@@ -116,7 +117,7 @@ if (!is_empty($engine->localVars("projectID"))) {
 						}
 						print '</ul>';
 					}
-					
+
 
 					print '</li>';
 				}

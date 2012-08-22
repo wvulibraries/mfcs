@@ -574,7 +574,7 @@ foreach ($keys as $key) {
 	}
 
 	// Drop columns in the schema, but not in the field definition anymore
-	$sql = sprintf("ALTER TABLE %s DROP COLUMN %s",
+	$sql = sprintf("ALTER TABLE %s DROP COLUMN `%s`",
 		$engine->openDB->escape($engine->localVars("formName")),
 		$engine->openDB->escape($key)
 		);

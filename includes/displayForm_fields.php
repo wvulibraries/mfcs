@@ -58,7 +58,7 @@ function listFields($fields,$display) {
 			// Switch to project database
 			$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
 			
-			$sql = sprintf("SELECT %s FROM %s WHERE %s='%s' LIMIT 1",
+			$sql = sprintf("SELECT `%s` FROM %s WHERE `%s`='%s' LIMIT 1",
 				$engine->openDB->escape($options['field']),
 				$engine->openDB->escape($engine->localVars("formName")),
 				$engine->openDB->escape($listObj->updateInsertID),
@@ -169,7 +169,7 @@ function listFields($fields,$display) {
 			$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
 			
 			// Get field value
-			$sql = sprintf("SELECT %s FROM %s WHERE %s='%s' LIMIT 1",
+			$sql = sprintf("SELECT `%s` FROM %s WHERE `%s`='%s' LIMIT 1",
 				$engine->openDB->escape($field['fieldName']),
 				$engine->openDB->escape($engine->localVars("formName")),
 				$engine->openDB->escape($listObj->updateInsertID),
@@ -217,7 +217,7 @@ function listFields($fields,$display) {
 					$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
 					
 					// Get list of options for select field
-					$sql = sprintf("SELECT %s, %s FROM %s ORDER BY %s",
+					$sql = sprintf("SELECT `%s`, `%s` FROM %s ORDER BY `%s`",
 						$engine->openDB->escape($idFieldName),
 						$engine->openDB->escape($fieldName),
 						$engine->openDB->escape($value[0]),
@@ -255,7 +255,7 @@ function listFields($fields,$display) {
 						$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
 
 						// Get list of items previously selected
-						$sql = sprintf("SELECT %s FROM %s WHERE %s='%s'",
+						$sql = sprintf("SELECT `%s` FROM %s WHERE `%s`='%s'",
 							$engine->openDB->escape($options['options']['linkValueField']),
 							$engine->openDB->escape($options['options']['linkTable']),
 							$engine->openDB->escape($options['options']['linkObjectField']),
@@ -275,7 +275,7 @@ function listFields($fields,$display) {
 						
 						// Switch to system database
 						$engine->openDB->select_db($engine->localVars("dbName"));
-						
+
 					}
 
 				}

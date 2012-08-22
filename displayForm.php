@@ -324,7 +324,7 @@ else {
 		// Switch to project database
 		$engine->openDB->select_db($engine->localVars("dbPrefix").$engine->localVars("projectName"));
 
-		if ($row['insertLocation'] == 'above' || $row['insertLocation'] == 'both') {
+		if ($row['insertLocation'] == '' || $row['insertLocation'] == 'above' || $row['insertLocation'] == 'both') {
 
 			$listObj = listFields($fields,'insert');
 			

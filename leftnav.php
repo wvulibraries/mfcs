@@ -50,8 +50,6 @@ global $engine;
 	</ul>
 </li>
 
-<!-- <li><a href="{local var="siteRoot"}selectProject.php">Select Project</a></li> -->
-<li><a href="{local var="siteRoot"}search.php">Search</a></li>
 
 <?php
 if (!is_empty($engine->localVars("projectID"))) {
@@ -59,6 +57,8 @@ if (!is_empty($engine->localVars("projectID"))) {
 	// Switch to system database
 	$engine->openDB->select_db($engine->localVars("dbName"));
 
+	print '<li class="noBorder">&nbsp;</li>';
+	print '<li><a href="{local var="siteRoot"}search.php">Search</a></li>';
 	print '<li class="noBorder">&nbsp;</li>';
 
 	$sql = sprintf("SELECT * FROM %s WHERE projectID='%s' AND formType='record' AND parentForm='0' ORDER BY label",
