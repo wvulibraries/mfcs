@@ -1,0 +1,87 @@
+#mainList {
+	position: relative;
+	padding: 2px;
+	padding-top: 10px;
+	min-height: 250px;
+}
+
+#mainList li {
+	padding-left: 75px;
+	list-style: none;
+}
+
+.itemOptions {
+	display: none;
+	position: absolute;
+	left: 0px;
+}
+
+.labelContainer {
+	display: inline-block;
+	vertical-align: top;
+}
+
+.editLink {
+	cursor: pointer;
+	cursor: hand;
+}
+
+.addlInfoForm {
+	/*display:none;*/
+	padding: 10px;
+	margin-top: 2px;
+	margin-bottom: 10px;
+	border: 1px solid #000;
+}
+
+.ui-state-highlight {
+	height: 1.5em;
+	line-height: 1.2em;
+	background-color: yellow;
+	border: 1px dashed #000;
+}
+
+.ui-icon {
+	display: block;
+	text-indent: -99999px;
+	overflow: hidden;
+	background-repeat: no-repeat;
+	margin-left: -15px;
+	margin-top: -15px;
+
+	width: 16px;
+	height: 16px;
+	background-image: url(../images/ui-icons_666666_256x240.png);
+}
+
+.ui-icon-close { background-position: -80px -128px; }
+.ui-icon-circle-close { background-position: -32px -192px; }
+
+label.error {
+	color: #FF0000;
+}
+
+.requiredField {
+	font-weight: bold;
+}
+
+#draggableFormElementsContainer {
+	border-bottom: 1px #000 solid;
+}
+
+#draggableFormElements {
+	list-style: none;
+	height: 30px;
+	/*height: 50px;*/
+	padding-left: 0px;
+}
+
+#draggableFormElements li {
+	float: left;
+	padding: 4px;
+	border: 1px #FFF dashed;
+}
+
+#commonSecurityGroupsList {
+	display: none;
+}
