@@ -1,0 +1,37 @@
+#fieldAdd li {
+	margin-bottom: 10px;
+}
+
+#formPreview li {
+	border-width: 2px;
+	border-style: solid;
+	border-color: transparent;
+	padding: 5px;
+}
+
+#formPreview li:hover {
+	border-style: dashed;
+	border-color: #000;
+}
+
+#formPreview li.highlight {
+	border-style: dashed;
+	border-color: #000;
+	min-height: 80px;
+}
+
+#formPreview li.well {
+	border-color: #000;
+	margin-bottom: 0px;
+}
+
+#formPreview li.well i {
+	display: block;
+}
+
+#formPreview li i {
+	position: absolute;
+	margin-left: -19px;
+	display: none;
+}
+
