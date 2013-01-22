@@ -2,6 +2,10 @@
 	margin-bottom: 10px;
 }
 
+#formPreview {
+	min-height: 80px;
+}
+
 #formPreview li {
 	border-width: 2px;
 	border-style: solid;
@@ -17,7 +21,7 @@
 #formPreview li.highlight {
 	border-style: dashed;
 	border-color: #000;
-	min-height: 80px;
+	min-height: 50px;
 }
 
 #formPreview li.well {
@@ -34,4 +38,3 @@
 	margin-left: -19px;
 	display: none;
 }
-
