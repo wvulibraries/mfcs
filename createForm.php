@@ -68,6 +68,15 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 										<input type="text" class="input-block-level" id="fieldSettings_name" name="fieldSettings_name" />
 										<span class="help-block hidden"></span>
 									</div>
+
+									<div class="control-group well well-small" id="fieldSettings_container_ID">
+										<label for="fieldSettings_ID">
+											Unique ID
+											<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="The field ID is a unique value that can be used to identify a field."></i>
+										</label>
+										<input type="text" class="input-block-level" id="fieldSettings_ID" name="fieldSettings_ID" />
+										<span class="help-block hidden"></span>
+									</div>
 								</span>
 
 								<span class="span6">
@@ -77,6 +86,15 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 											<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="The field label tells your users what to enter in this field."></i>
 										</label>
 										<input type="text" class="input-block-level" id="fieldSettings_label" name="fieldSettings_label" />
+										<span class="help-block hidden"></span>
+									</div>
+
+									<div class="control-group well well-small" id="fieldSettings_container_class">
+										<label for="fieldSettings_class">
+											CSS Classes
+											<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="CSS classes can be entered to give the field a different look and feel."></i>
+										</label>
+										<input type="text" class="input-block-level" id="fieldSettings_class" name="fieldSettings_class" />
 										<span class="help-block hidden"></span>
 									</div>
 								</span>

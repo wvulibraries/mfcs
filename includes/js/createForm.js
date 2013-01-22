@@ -86,33 +86,40 @@ function showFieldSettings(fullID) {
 		}
 
 		// Update field settings to use values from form display
-		$("#fieldSettings_name").val($(":input", "#"+fullID).attr('name'));
-		$("#fieldSettings_label").val($("label", "#"+fullID).text());
+		$("#fieldSettings_name").val($("#name_"+id).val());
+		$("#fieldSettings_label").val($("#label_"+id).val());
+		$("#fieldSettings_ID").val($("#ID_"+id).val());
+		$("#fieldSettings_class").val($("#class_"+id).val());
 	}
 }
 
 function fieldSettingsBindings() {
 	$("#fieldSettings_name").keyup(function() {
-		$("#formPreview .well .controls :input").attr('name',$(this).val());
+		$("#formPreview .well .controls :input").prop('name',$(this).val());
+		$("#formPreview .well :input[name^=name_]").val($(this).val());
 
 		// If no id, set id to be the same as name
-		if (!$("#fieldSettings_id").val()) {
-			$("#formPreview .well .control-group label").attr('for',$(this).val());
-			$("#formPreview .well .controls :input").attr('id',$(this).val());
+		if (!$("#fieldSettings_ID").val()) {
+			$("#formPreview .well .control-group label").prop('for',$(this).val());
+			$("#formPreview .well .controls :input").prop('id',$(this).val());
+			$("#formPreview .well :input[name^=ID_]").val($(this).val());
 		}
 	});
 
 	$("#fieldSettings_label").keyup(function() {
 		$("#formPreview .well .control-group label").text($(this).val());
+		$("#formPreview .well :input[name^=label_]").val($(this).val());
 	});
 
-	$("#fieldSettings_id").keyup(function() {
-		$("#formPreview .well .control-group label").attr('for',$(this).val());
-		$("#formPreview .well .controls :input").attr('id',$(this).val());
+	$("#fieldSettings_ID").keyup(function() {
+		$("#formPreview .well .control-group label").prop('for',$(this).val());
+		$("#formPreview .well .controls :input").prop('id',$(this).val());
+		$("#formPreview .well :input[name^=ID_]").val($(this).val());
 	});
 
 	$("#fieldSettings_class").keyup(function() {
-		$("#formPreview .well .controls :input").attr('class',$(this).val());
+		$("#formPreview .well .controls :input").prop('class',$(this).val());
+		$("#formPreview .well :input[name^=class_]").val($(this).val());
 	});
 
 
@@ -202,30 +209,25 @@ function newFieldValues(id,type) {
 
 	output  = '<input type="hidden" id="type_'+id+'" name="type_'+id+'" value="'+type+'" />';
 	output += '<input type="hidden" id="position_'+id+'" name="position_'+id+'" value="" />';
-	output += '<input type="hidden" id="ID_'+id+'" name="ID_'+id+'" value="untitled_'+id+'" />';
 	output += '<input type="hidden" id="name_'+id+'" name="name_'+id+'" value="untitled_'+id+'" />';
 	output += '<input type="hidden" id="label_'+id+'" name="label_'+id+'" value="Untitled" />';
-
-	switch(type) {
-		case 'Single Line Text':
-		case 'Paragraph Text':
-		case 'Number':
-			output += '<input type="hidden" id="min_'+id+'" name="min_'+id+'" value="" />';
-			output += '<input type="hidden" id="max_'+id+'" name="max_'+id+'" value="" />';
-			output += '<input type="hidden" id="format_'+id+'" name="max_'+id+'" value="" />';
-			break;
-
-		case 'Multiple Choice':
-		case 'Checkboxes':
-		case 'Dropdown':
-		case 'Email':
-		case 'Phone':
-		case 'Date':
-		case 'Time':
-		case 'Website':
-		default:
-			break;
-	}
+	output += '<input type="hidden" id="ID_'+id+'" name="ID_'+id+'" value="" />';
+	output += '<input type="hidden" id="class_'+id+'" name="class_'+id+'" value="" />';
+	output += '<input type="hidden" id="placeholder_'+id+'" name="placeholder_'+id+'" value="" />';
+	output += '<input type="hidden" id="min_'+id+'" name="min_'+id+'" value="" />';    // Range
+	output += '<input type="hidden" id="max_'+id+'" name="max_'+id+'" value="" />';    // Range
+	output += '<input type="hidden" id="format_'+id+'" name="max_'+id+'" value="" />'; // Range
+	output += '<input type="hidden" id="validation_'+id+'" name="validation_'+id+'" value="" />';
+	output += '<input type="hidden" id="access_'+id+'" name="access_'+id+'" value="" />';
+	output += '<input type="hidden" id="required_'+id+'" name="required_'+id+'" value="" />';
+	output += '<input type="hidden" id="duplicates_'+id+'" name="duplicates_'+id+'" value="" />';
+	output += '<input type="hidden" id="defaultValue_'+id+'" name="defaultValue_'+id+'" value="" />';
+	output += '<input type="hidden" id="readonly_'+id+'" name="readonly_'+id+'" value="" />';
+	output += '<input type="hidden" id="disable_'+id+'" name="disable_'+id+'" value="" />';
+	output += '<input type="hidden" id="sortable_'+id+'" name="sortable_'+id+'" value="" />';
+	output += '<input type="hidden" id="searchable_'+id+'" name="searchable_'+id+'" value="" />';
+	output += '<input type="hidden" id="localCSS_'+id+'" name="localCSS_'+id+'" value="" />';
+	output += '<input type="hidden" id="releaseToPublic_'+id+'" name="releaseToPublic_'+id+'" value="" />';
 
 	return output;
 }
