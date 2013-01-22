@@ -107,10 +107,16 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 											Options
 										</label>
 										<label class="checkbox">
-											<input type="checkbox" id="fieldSettings_options_required" name="fieldSettings_options_required" value="1"> Required
+											<input type="checkbox" id="fieldSettings_options_required" name="fieldSettings_options_required"> Required
 										</label>
 										<label class="checkbox">
-											<input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates" value="1"> No Duplicates
+											<input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates"> No Duplicates
+										</label>
+										<label class="checkbox">
+											<input type="checkbox" id="fieldSettings_options_readonly" name="fieldSettings_options_readonly"> Read Only
+										</label>
+										<label class="checkbox">
+											<input type="checkbox" id="fieldSettings_options_disable" name="fieldSettings_options_disable"> Disabled
 										</label>
 									</div>
 								</span>

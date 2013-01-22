@@ -90,6 +90,10 @@ function showFieldSettings(fullID) {
 		$("#fieldSettings_label").val($("#label_"+id).val());
 		$("#fieldSettings_ID").val($("#ID_"+id).val());
 		$("#fieldSettings_class").val($("#class_"+id).val());
+		$("#fieldSettings_options_required").prop("checked",($("#required_"+id).val()==='true'));
+		$("#fieldSettings_options_duplicates").prop("checked",($("#duplicates_"+id).val()==='true'));
+		$("#fieldSettings_options_readonly").prop("checked",($("#readonly_"+id).val()==='true'));
+		$("#fieldSettings_options_disable").prop("checked",($("#disable_"+id).val()==='true'));
 	}
 }
 
@@ -122,6 +126,24 @@ function fieldSettingsBindings() {
 		$("#formPreview .well :input[name^=class_]").val($(this).val());
 	});
 
+	$("#fieldSettings_options_required").change(function() {
+		$("#formPreview .well .controls :input").prop('required',$(this).is(":checked"));
+		$("#formPreview .well :input[name^=required_]").val($(this).is(":checked"));
+	});
+
+	$("#fieldSettings_options_duplicates").change(function() {
+		$("#formPreview .well :input[name^=duplicates_]").val($(this).is(":checked"));
+	});
+
+	$("#fieldSettings_options_readonly").change(function() {
+		$("#formPreview .well .controls :input").prop('readonly',$(this).is(":checked"));
+		$("#formPreview .well :input[name^=readonly_]").val($(this).is(":checked"));
+	});
+
+	$("#fieldSettings_options_disable").change(function() {
+		$("#formPreview .well .controls :input").prop('disabled',$(this).is(":checked"));
+		$("#formPreview .well :input[name^=disable_]").val($(this).is(":checked"));
+	});
 
 }
 
@@ -219,11 +241,11 @@ function newFieldValues(id,type) {
 	output += '<input type="hidden" id="format_'+id+'" name="max_'+id+'" value="" />'; // Range
 	output += '<input type="hidden" id="validation_'+id+'" name="validation_'+id+'" value="" />';
 	output += '<input type="hidden" id="access_'+id+'" name="access_'+id+'" value="" />';
-	output += '<input type="hidden" id="required_'+id+'" name="required_'+id+'" value="" />';
-	output += '<input type="hidden" id="duplicates_'+id+'" name="duplicates_'+id+'" value="" />';
+	output += '<input type="hidden" id="required_'+id+'" name="required_'+id+'" value="false" />';
+	output += '<input type="hidden" id="duplicates_'+id+'" name="duplicates_'+id+'" value="false" />';
 	output += '<input type="hidden" id="defaultValue_'+id+'" name="defaultValue_'+id+'" value="" />';
-	output += '<input type="hidden" id="readonly_'+id+'" name="readonly_'+id+'" value="" />';
-	output += '<input type="hidden" id="disable_'+id+'" name="disable_'+id+'" value="" />';
+	output += '<input type="hidden" id="readonly_'+id+'" name="readonly_'+id+'" value="false" />';
+	output += '<input type="hidden" id="disable_'+id+'" name="disable_'+id+'" value="false" />';
 	output += '<input type="hidden" id="sortable_'+id+'" name="sortable_'+id+'" value="" />';
 	output += '<input type="hidden" id="searchable_'+id+'" name="searchable_'+id+'" value="" />';
 	output += '<input type="hidden" id="localCSS_'+id+'" name="localCSS_'+id+'" value="" />';
