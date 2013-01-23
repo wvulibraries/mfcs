@@ -58,9 +58,10 @@ function showFieldSettings(fullID) {
 			case 'Paragraph Text':
 				$("#fieldSettings_container_range").show();
 
-				$("#fieldSettings_format option").hide();
-				$("#fieldSettings_format option[value='characters']").show();
-				$("#fieldSettings_format option[value='words']").show();
+				$("#fieldSettings_format option").remove();
+				$("#fieldSettings_format")
+					.append($("<option>").prop("value","characters").text("Characters"))
+					.append($("<option>").prop("value","words").text("Words"));
 				break;
 
 			case 'Multiple Choice':
@@ -71,9 +72,10 @@ function showFieldSettings(fullID) {
 			case 'Number':
 				$("#fieldSettings_container_range").show();
 
-				$("#fieldSettings_format option").hide();
-				$("#fieldSettings_format option[value='values']").show();
-				$("#fieldSettings_format option[value='digits']").show();
+				$("#fieldSettings_format option").remove();
+				$("#fieldSettings_format")
+					.append($("<option>").prop("value","value").text("Value"))
+					.append($("<option>").prop("value","digits").text("Digits"));
 				break;
 
 			case 'Email':
@@ -94,6 +96,9 @@ function showFieldSettings(fullID) {
 		$("#fieldSettings_options_duplicates").prop("checked",($("#duplicates_"+id).val()==='true'));
 		$("#fieldSettings_options_readonly").prop("checked",($("#readonly_"+id).val()==='true'));
 		$("#fieldSettings_options_disable").prop("checked",($("#disable_"+id).val()==='true'));
+		$("#fieldSettings_min").val($("#min_"+id).val());
+		$("#fieldSettings_max").val($("#max_"+id).val());
+		$("#fieldSettings_format").val($("#format_"+id).val()).change();
 	}
 }
 
@@ -144,6 +149,26 @@ function fieldSettingsBindings() {
 		$("#formPreview .well .controls :input").prop('disabled',$(this).is(":checked"));
 		$("#formPreview .well :input[name^=disable_]").val($(this).is(":checked"));
 	});
+
+	$("#fieldSettings_min").change(function() {
+		$("#formPreview .well :input[name^=min_]").val($(this).val());
+		if ($("#fieldSettings_min").val() > $("#fieldSettings_max").val()) {
+			$("#fieldSettings_max").val($("#fieldSettings_min").val()).change();
+		}
+	});
+
+	$("#fieldSettings_max").change(function() {
+		$("#formPreview .well :input[name^=max_]").val($(this).val());
+		if ($("#fieldSettings_min").val() > $("#fieldSettings_max").val()) {
+			$("#fieldSettings_min").val($("#fieldSettings_max").val()).change();
+		}
+	});
+
+	$("#fieldSettings_format").change(function() {
+		$("#formPreview .well :input[name^=format_]").val($(this).val());
+	});
+
+
 
 }
 
@@ -236,9 +261,9 @@ function newFieldValues(id,type) {
 	output += '<input type="hidden" id="ID_'+id+'" name="ID_'+id+'" value="" />';
 	output += '<input type="hidden" id="class_'+id+'" name="class_'+id+'" value="" />';
 	output += '<input type="hidden" id="placeholder_'+id+'" name="placeholder_'+id+'" value="" />';
-	output += '<input type="hidden" id="min_'+id+'" name="min_'+id+'" value="" />';    // Range
-	output += '<input type="hidden" id="max_'+id+'" name="max_'+id+'" value="" />';    // Range
-	output += '<input type="hidden" id="format_'+id+'" name="max_'+id+'" value="" />'; // Range
+	output += '<input type="hidden" id="min_'+id+'" name="min_'+id+'" value="" />';       // Range
+	output += '<input type="hidden" id="max_'+id+'" name="max_'+id+'" value="" />';       // Range
+	output += '<input type="hidden" id="format_'+id+'" name="format_'+id+'" value="" />'; // Range
 	output += '<input type="hidden" id="validation_'+id+'" name="validation_'+id+'" value="" />';
 	output += '<input type="hidden" id="access_'+id+'" name="access_'+id+'" value="" />';
 	output += '<input type="hidden" id="required_'+id+'" name="required_'+id+'" value="false" />';

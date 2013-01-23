@@ -71,8 +71,8 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 
 									<div class="control-group well well-small" id="fieldSettings_container_ID">
 										<label for="fieldSettings_ID">
-											Unique ID
-											<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="The field ID is a unique value that can be used to identify a field."></i>
+											HTML ID
+											<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="The ID is a unique value that can be used to identify a field."></i>
 										</label>
 										<input type="text" class="input-block-level" id="fieldSettings_ID" name="fieldSettings_ID" />
 										<span class="help-block hidden"></span>
@@ -91,8 +91,8 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 
 									<div class="control-group well well-small" id="fieldSettings_container_class">
 										<label for="fieldSettings_class">
-											CSS Classes
-											<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="CSS classes can be entered to give the field a different look and feel."></i>
+											HTML Classes
+											<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Classes can be entered to give the field a different look and feel."></i>
 										</label>
 										<input type="text" class="input-block-level" id="fieldSettings_class" name="fieldSettings_class" />
 										<span class="help-block hidden"></span>
@@ -142,24 +142,19 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 										<label for="fieldSettings_min">
 											Min
 										</label>
-										<input type="text" class="input-block-level" id="fieldSettings_min" name="fieldSettings_min" />
+										<input type="number" class="input-block-level" id="fieldSettings_min" name="fieldSettings_min" min="0" />
 									</span>
 									<span class="span4">
 										<label for="fieldSettings_max">
 											Max
 										</label>
-										<input type="text" class="input-block-level" id="fieldSettings_max" name="fieldSettings_max" />
+										<input type="number" class="input-block-level" id="fieldSettings_max" name="fieldSettings_max" min="0" />
 									</span>
 									<span class="span4">
 										<label for="fieldSettings_format">
 											Format
 										</label>
-										<select class="input-block-level" id="fieldSettings_format" name="fieldSettings_format">
-											<option value="characters">Characters</option>
-											<option value="words">Words</option>
-											<option value="value">Value</option>
-											<option value="digits">Digits</option>
-										</select>
+										<select class="input-block-level" id="fieldSettings_format" name="fieldSettings_format"></select>
 									</span>
 								</div>
 							</div>
