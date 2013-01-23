@@ -133,6 +133,8 @@ function showFieldSettings(fullID) {
 		$("#fieldSettings_options_duplicates").prop("checked",($("#duplicates_"+id).val()==='true'));
 		$("#fieldSettings_options_readonly").prop("checked",($("#readonly_"+id).val()==='true'));
 		$("#fieldSettings_options_disable").prop("checked",($("#disable_"+id).val()==='true'));
+		$("#fieldSettings_options_sortable").prop("checked",($("#sortable_"+id).val()==='true'));
+		$("#fieldSettings_options_searchable").prop("checked",($("#searchable_"+id).val()==='true'));
 		$("#fieldSettings_min").val($("#min_"+id).val());
 		$("#fieldSettings_max").val($("#max_"+id).val());
 		$("#fieldSettings_format").val($("#format_"+id).val()).change();
@@ -143,13 +145,6 @@ function fieldSettingsBindings() {
 	$("#fieldSettings_name").keyup(function() {
 		$("#formPreview .well .controls :input").prop('name',$(this).val());
 		$("#formPreview .well :input[name^=name_]").val($(this).val());
-
-		// If no id, set id to be the same as name
-		// if (!$("#fieldSettings_ID").val()) {
-		// 	$("#formPreview .well .control-group label").prop('for',$(this).val());
-		// 	$("#formPreview .well .controls :input").prop('id',$(this).val());
-		// 	$("#formPreview .well :input[name^=ID_]").val($(this).val());
-		// }
 	});
 
 	$("#fieldSettings_label").keyup(function() {
@@ -200,6 +195,14 @@ function fieldSettingsBindings() {
 	$("#fieldSettings_options_disable").change(function() {
 		$("#formPreview .well .controls :input").prop('disabled',$(this).is(":checked"));
 		$("#formPreview .well :input[name^=disable_]").val($(this).is(":checked"));
+	});
+
+	$("#fieldSettings_options_sortable").change(function() {
+		$("#formPreview .well :input[name^=sortable_]").val($(this).is(":checked"));
+	});
+
+	$("#fieldSettings_options_searchable").change(function() {
+		$("#formPreview .well :input[name^=searchable_]").val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_min").change(function() {
@@ -286,6 +289,7 @@ function newFieldPreview(id,type) {
 			break;
 
 		case 'Phone':
+			output += '<input type="tel">';
 			break;
 
 		case 'Date':
@@ -293,7 +297,13 @@ function newFieldPreview(id,type) {
 			break;
 
 		case 'Time':
+			output += '<input type="datetime">';
+			break;
+
 		case 'Website':
+			output += '<input type="url">';
+			break;
+
 		default:
 			break;
 	}
@@ -306,27 +316,27 @@ function newFieldPreview(id,type) {
 function newFieldValues(id,type) {
 	var output;
 
-	output  = '<input type="hidden" id="position_'+id+'" name="position_'+id+'" value="" />';
-	output += '<input type="hidden" id="type_'+id+'" name="type_'+id+'" value="'+type+'" />';
-	output += '<input type="hidden" id="name_'+id+'" name="name_'+id+'" value="untitled'+(id+1)+'" />';
-	output += '<input type="hidden" id="label_'+id+'" name="label_'+id+'" value="Untitled" />';
-	output += '<input type="hidden" id="defaultValue_'+id+'" name="defaultValue_'+id+'" value="" />';
-	output += '<input type="hidden" id="placeholder_'+id+'" name="placeholder_'+id+'" value="" />';
-	output += '<input type="hidden" id="ID_'+id+'" name="ID_'+id+'" value="untitled'+(id+1)+'" />';
-	output += '<input type="hidden" id="class_'+id+'" name="class_'+id+'" value="" />';
-	output += '<input type="hidden" id="styles_'+id+'" name="styles_'+id+'" value="" />';
-	output += '<input type="hidden" id="required_'+id+'" name="required_'+id+'" value="false" />';
-	output += '<input type="hidden" id="duplicates_'+id+'" name="duplicates_'+id+'" value="false" />';
-	output += '<input type="hidden" id="readonly_'+id+'" name="readonly_'+id+'" value="false" />';
-	output += '<input type="hidden" id="disable_'+id+'" name="disable_'+id+'" value="false" />';
-	output += '<input type="hidden" id="min_'+id+'" name="min_'+id+'" value="" />';       // Range
-	output += '<input type="hidden" id="max_'+id+'" name="max_'+id+'" value="" />';       // Range
-	output += '<input type="hidden" id="format_'+id+'" name="format_'+id+'" value="" />'; // Range
-	output += '<input type="hidden" id="validation_'+id+'" name="validation_'+id+'" value="" />';
-	output += '<input type="hidden" id="access_'+id+'" name="access_'+id+'" value="" />';
-	output += '<input type="hidden" id="sortable_'+id+'" name="sortable_'+id+'" value="" />';
-	output += '<input type="hidden" id="searchable_'+id+'" name="searchable_'+id+'" value="" />';
-	output += '<input type="hidden" id="releaseToPublic_'+id+'" name="releaseToPublic_'+id+'" value="" />';
+	output  = '<input type="hidden" name="position_'+id+'" value="" />';
+	output += '<input type="hidden" name="type_'+id+'" value="'+type+'" />';
+	output += '<input type="hidden" name="name_'+id+'" value="untitled'+(id+1)+'" />';
+	output += '<input type="hidden" name="label_'+id+'" value="Untitled" />';
+	output += '<input type="hidden" name="defaultValue_'+id+'" value="" />';
+	output += '<input type="hidden" name="placeholder_'+id+'" value="" />';
+	output += '<input type="hidden" name="ID_'+id+'" value="untitled'+(id+1)+'" />';
+	output += '<input type="hidden" name="class_'+id+'" value="" />';
+	output += '<input type="hidden" name="styles_'+id+'" value="" />';
+	output += '<input type="hidden" name="required_'+id+'" value="false" />';
+	output += '<input type="hidden" name="duplicates_'+id+'" value="false" />';
+	output += '<input type="hidden" name="readonly_'+id+'" value="false" />';
+	output += '<input type="hidden" name="disable_'+id+'" value="false" />';
+	output += '<input type="hidden" name="sortable_'+id+'" value="" />';
+	output += '<input type="hidden" name="searchable_'+id+'" value="" />';
+	output += '<input type="hidden" name="min_'+id+'" value="" />';    // Range
+	output += '<input type="hidden" name="max_'+id+'" value="" />';    // Range
+	output += '<input type="hidden" name="format_'+id+'" value="" />'; // Range
+	output += '<input type="hidden" name="validation_'+id+'" value="" />';
+	output += '<input type="hidden" name="access_'+id+'" value="" />';
+	output += '<input type="hidden" name="releaseToPublic_'+id+'" value="" />';
 
 	return output;
 }

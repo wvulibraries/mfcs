@@ -149,6 +149,12 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 										<label class="checkbox">
 											<input type="checkbox" id="fieldSettings_options_disable" name="fieldSettings_options_disable"> Disabled
 										</label>
+										<label class="checkbox">
+											<input type="checkbox" id="fieldSettings_options_sortable" name="fieldSettings_options_sortable"> Sortable
+										</label>
+										<label class="checkbox">
+											<input type="checkbox" id="fieldSettings_options_searchable" name="fieldSettings_options_searchable"> Searchable
+										</label>
 									</div>
 								</span>
 								<span class="span6">
