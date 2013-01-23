@@ -6,8 +6,10 @@ recurseInsert("acl.php","php");
 $engine->eTemplate("include","header");
 
 if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
-	print "<pre>";
-	print_r($engine->cleanPost['MYSQL']);
+	print "<pre>POST\n";
+	print_r($engine->cleanPost['HTML']);
+	print "------------\nFields\n";
+	print_r(json_decode($engine->cleanPost['RAW']['fields']));
 	print "</pre>";
 }
 
@@ -69,6 +71,15 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 										<span class="help-block hidden"></span>
 									</div>
 
+									<div class="control-group well well-small" id="fieldSettings_container_defaultValue">
+										<label for="fieldSettings_defaultValue">
+											Default Value
+											<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="When the form is first displayed, this value will already be prepopulated."></i>
+										</label>
+										<input type="text" class="input-block-level" id="fieldSettings_defaultValue" name="fieldSettings_defaultValue" />
+										<span class="help-block hidden"></span>
+									</div>
+
 									<div class="control-group well well-small" id="fieldSettings_container_ID">
 										<label for="fieldSettings_ID">
 											HTML ID
@@ -89,6 +100,15 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 										<span class="help-block hidden"></span>
 									</div>
 
+									<div class="control-group well well-small" id="fieldSettings_container_placeholder">
+										<label for="fieldSettings_placeholder">
+											Placeholder Text
+											<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If there is no value in the field, this can tell your users what to input."></i>
+										</label>
+										<input type="text" class="input-block-level" id="fieldSettings_placeholder" name="fieldSettings_placeholder" />
+										<span class="help-block hidden"></span>
+									</div>
+
 									<div class="control-group well well-small" id="fieldSettings_container_class">
 										<label for="fieldSettings_class">
 											HTML Classes
@@ -98,6 +118,17 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 										<span class="help-block hidden"></span>
 									</div>
 								</span>
+							</div>
+
+							<div class="row-fluid noHide">
+								<div class="control-group well well-small" id="fieldSettings_container_styles">
+									<label for="fieldSettings_styles">
+										Local Styles
+										<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="You can set any HTML styles and they will only apply to this field."></i>
+									</label>
+									<input type="text" class="input-block-level" id="fieldSettings_styles" name="fieldSettings_styles" />
+									<span class="help-block hidden"></span>
+								</div>
 							</div>
 
 							<div class="row-fluid noHide">
@@ -169,7 +200,8 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 				<form class="form-horizontal" name="formPreview" method="post">
 					<ul class="unstyled" id="formPreview"></ul>
 
-					<input type="submit" name="submitForm" value="Add/Update Form" >
+					<input type="hidden" name="fields">
+					<input type="submit" name="submitForm" value="Add/Update Form">
 					{engine name="csrf"}
 				</form>
 			</div>
@@ -177,20 +209,6 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 		</div>
 	</div>
 </section>
-
-<script type="text/javascript">
-	$("form[name=formPreview]").submit(function() {
-		$(".fieldPreview :input").prop('disabled', true);
-
-		var pos = 0;
-		$(":input[name^=position_]", this).each(function() {
-			$(this).val(pos++);
-		});
-
-		// console.log($("form[name=formPreview]").serialize());
-		// return false;
-	});
-</script>
 
 <?php
 $engine->eTemplate("include","footer");

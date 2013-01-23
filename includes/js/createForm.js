@@ -1,17 +1,21 @@
 $(function() {
+	// Instantiate the bootstrap tooltip plugin
 	$("[rel='tooltip']").tooltip();
 
+	// Blank both panes when changing tabs
 	$("#fieldTab").on("click", "a", function() {
 		$("#formPreview li").removeClass("well");
 		showFieldSettings(); // blank the Field Settings pane
 	});
 
+	// Select a field to change settings
 	$("#formPreview").on("click", "li", function() {
 		$(this).addClass("well").addClass("well-small").siblings().removeClass("well");
 		$("#fieldTab a[href='#fieldSettings']").tab("show");
 		showFieldSettings($(this).attr("id"));
 	});
 
+	// Make the preview pane sortable -- sort order determines position
 	$("#formPreview").sortable({
 		revert: true,
 		placeholder: "highlight",
@@ -22,13 +26,43 @@ $(function() {
 			}
 		}
 	});
+
+	// Make field types draggable, linked to preview pane
 	$("#fieldAdd li").draggable({
 		connectToSortable: "#formPreview",
 		helper: "clone",
 		revert: "invalid",
 	});
 
+	// Set all the black magic bindings
 	fieldSettingsBindings();
+
+	// Form submit handler
+	$("form[name=formPreview]").submit(function(e) {
+		// Disable all fields so PHP doesn't get them
+		$("#formPreview :input").prop('disabled', true);
+
+		// Calculate position of all fields
+		var pos = 0;
+		$(":input[name^=position_]", this).each(function() {
+			$(this).val(pos++);
+		});
+
+		// Create a multidimentional object to store field info
+		var obj = {};
+		$(".fieldValues :input").each(function() {
+			var field = $(this).prop("name").split("_");
+
+			if (!obj[ field[1] ]) {
+				obj[ field[1] ] = {};
+			}
+			obj[ field[1] ][ field[0] ] = $(this).val();
+
+		});
+
+		// Convert object to JSON and add it to a hidden form field
+		$(":input[name=fields]").val(JSON.stringify(obj));
+	});
 
 });
 
@@ -90,8 +124,11 @@ function showFieldSettings(fullID) {
 		// Update field settings to use values from form display
 		$("#fieldSettings_name").val($("#name_"+id).val());
 		$("#fieldSettings_label").val($("#label_"+id).val());
+		$("#fieldSettings_defaultValue").val($("#defaultValue_"+id).val());
+		$("#fieldSettings_placeholder").val($("#placeholder_"+id).val());
 		$("#fieldSettings_ID").val($("#ID_"+id).val());
 		$("#fieldSettings_class").val($("#class_"+id).val());
+		$("#fieldSettings_styles").val($("#styles_"+id).val());
 		$("#fieldSettings_options_required").prop("checked",($("#required_"+id).val()==='true'));
 		$("#fieldSettings_options_duplicates").prop("checked",($("#duplicates_"+id).val()==='true'));
 		$("#fieldSettings_options_readonly").prop("checked",($("#readonly_"+id).val()==='true'));
@@ -108,16 +145,26 @@ function fieldSettingsBindings() {
 		$("#formPreview .well :input[name^=name_]").val($(this).val());
 
 		// If no id, set id to be the same as name
-		if (!$("#fieldSettings_ID").val()) {
-			$("#formPreview .well .control-group label").prop('for',$(this).val());
-			$("#formPreview .well .controls :input").prop('id',$(this).val());
-			$("#formPreview .well :input[name^=ID_]").val($(this).val());
-		}
+		// if (!$("#fieldSettings_ID").val()) {
+		// 	$("#formPreview .well .control-group label").prop('for',$(this).val());
+		// 	$("#formPreview .well .controls :input").prop('id',$(this).val());
+		// 	$("#formPreview .well :input[name^=ID_]").val($(this).val());
+		// }
 	});
 
 	$("#fieldSettings_label").keyup(function() {
 		$("#formPreview .well .control-group label").text($(this).val());
 		$("#formPreview .well :input[name^=label_]").val($(this).val());
+	});
+
+	$("#fieldSettings_defaultValue").keyup(function() {
+		$("#formPreview .well .controls :input").val($(this).val());
+		$("#formPreview .well :input[name^=defaultValue_]").val($(this).val());
+	});
+
+	$("#fieldSettings_placeholder").keyup(function() {
+		$("#formPreview .well .controls :input").prop('placeholder',$(this).val());
+		$("#formPreview .well :input[name^=placeholder_]").val($(this).val());
 	});
 
 	$("#fieldSettings_ID").keyup(function() {
@@ -131,8 +178,13 @@ function fieldSettingsBindings() {
 		$("#formPreview .well :input[name^=class_]").val($(this).val());
 	});
 
+	$("#fieldSettings_styles").keyup(function() {
+		$("#formPreview .well .controls :input").attr('style',$(this).val());
+		$("#formPreview .well :input[name^=styles_]").val($(this).val());
+	});
+
 	$("#fieldSettings_options_required").change(function() {
-		$("#formPreview .well .controls :input").prop('required',$(this).is(":checked"));
+		// $("#formPreview .well .controls :input").prop('required',$(this).is(":checked")); // Requires that you fill the preview with a value
 		$("#formPreview .well :input[name^=required_]").val($(this).is(":checked"));
 	});
 
@@ -213,11 +265,11 @@ function newFieldPreview(id,type) {
 
 	switch(type) {
 		case 'Single Line Text':
-			output += '<input type="text" name="untitled_'+id+'" id="untitled_'+id+'" class="" value="" placeholder="">';
+			output += '<input type="text">';
 			break;
 
 		case 'Paragraph Text':
-			output += '<textarea name="" id="" class=""></textarea>';
+			output += '<textarea></textarea>';
 			break;
 
 		case 'Multiple Choice':
@@ -226,18 +278,18 @@ function newFieldPreview(id,type) {
 			break;
 
 		case 'Number':
-			output += '<input type="number" name="" id="" class="" value="" placeholder="">';
+			output += '<input type="number">';
 			break;
 
 		case 'Email':
-			output += '<input type="email" name="" id="" class="" value="" placeholder="">';
+			output += '<input type="email">';
 			break;
 
 		case 'Phone':
 			break;
 
 		case 'Date':
-			output += '<input type="date" name="" id="" class="" value="" placeholder="">';
+			output += '<input type="date">';
 			break;
 
 		case 'Time':
@@ -254,26 +306,26 @@ function newFieldPreview(id,type) {
 function newFieldValues(id,type) {
 	var output;
 
-	output  = '<input type="hidden" id="type_'+id+'" name="type_'+id+'" value="'+type+'" />';
-	output += '<input type="hidden" id="position_'+id+'" name="position_'+id+'" value="" />';
-	output += '<input type="hidden" id="name_'+id+'" name="name_'+id+'" value="untitled_'+id+'" />';
+	output  = '<input type="hidden" id="position_'+id+'" name="position_'+id+'" value="" />';
+	output += '<input type="hidden" id="type_'+id+'" name="type_'+id+'" value="'+type+'" />';
+	output += '<input type="hidden" id="name_'+id+'" name="name_'+id+'" value="untitled'+(id+1)+'" />';
 	output += '<input type="hidden" id="label_'+id+'" name="label_'+id+'" value="Untitled" />';
-	output += '<input type="hidden" id="ID_'+id+'" name="ID_'+id+'" value="" />';
-	output += '<input type="hidden" id="class_'+id+'" name="class_'+id+'" value="" />';
+	output += '<input type="hidden" id="defaultValue_'+id+'" name="defaultValue_'+id+'" value="" />';
 	output += '<input type="hidden" id="placeholder_'+id+'" name="placeholder_'+id+'" value="" />';
+	output += '<input type="hidden" id="ID_'+id+'" name="ID_'+id+'" value="untitled'+(id+1)+'" />';
+	output += '<input type="hidden" id="class_'+id+'" name="class_'+id+'" value="" />';
+	output += '<input type="hidden" id="styles_'+id+'" name="styles_'+id+'" value="" />';
+	output += '<input type="hidden" id="required_'+id+'" name="required_'+id+'" value="false" />';
+	output += '<input type="hidden" id="duplicates_'+id+'" name="duplicates_'+id+'" value="false" />';
+	output += '<input type="hidden" id="readonly_'+id+'" name="readonly_'+id+'" value="false" />';
+	output += '<input type="hidden" id="disable_'+id+'" name="disable_'+id+'" value="false" />';
 	output += '<input type="hidden" id="min_'+id+'" name="min_'+id+'" value="" />';       // Range
 	output += '<input type="hidden" id="max_'+id+'" name="max_'+id+'" value="" />';       // Range
 	output += '<input type="hidden" id="format_'+id+'" name="format_'+id+'" value="" />'; // Range
 	output += '<input type="hidden" id="validation_'+id+'" name="validation_'+id+'" value="" />';
 	output += '<input type="hidden" id="access_'+id+'" name="access_'+id+'" value="" />';
-	output += '<input type="hidden" id="required_'+id+'" name="required_'+id+'" value="false" />';
-	output += '<input type="hidden" id="duplicates_'+id+'" name="duplicates_'+id+'" value="false" />';
-	output += '<input type="hidden" id="defaultValue_'+id+'" name="defaultValue_'+id+'" value="" />';
-	output += '<input type="hidden" id="readonly_'+id+'" name="readonly_'+id+'" value="false" />';
-	output += '<input type="hidden" id="disable_'+id+'" name="disable_'+id+'" value="false" />';
 	output += '<input type="hidden" id="sortable_'+id+'" name="sortable_'+id+'" value="" />';
 	output += '<input type="hidden" id="searchable_'+id+'" name="searchable_'+id+'" value="" />';
-	output += '<input type="hidden" id="localCSS_'+id+'" name="localCSS_'+id+'" value="" />';
 	output += '<input type="hidden" id="releaseToPublic_'+id+'" name="releaseToPublic_'+id+'" value="" />';
 
 	return output;
