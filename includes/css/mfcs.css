@@ -28,13 +28,3 @@
 	border-color: #000;
 	margin-bottom: 0px;
 }
-
-#formPreview li.well i {
-	display: block;
-}
-
-#formPreview li i {
-	position: absolute;
-	margin-left: -19px;
-	display: none;
-}
