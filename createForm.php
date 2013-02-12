@@ -13,11 +13,12 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 
 	if (!isnull($formID)) {
 		// Update forms table
-		$sql = sprintf("UPDATE `%s` SET `title`='%s', `description`=%s, `fields`='%s' WHERE ID='%s' LIMIT 1",
+		$sql = sprintf("UPDATE `%s` SET `title`='%s', `description`=%s, `fields`='%s', `container`='%s' WHERE ID='%s' LIMIT 1",
 			$engine->openDB->escape($engine->dbTables("forms")),
 			$engine->openDB->escape($form['formTitle']),
 			!is_empty($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
 			encodeFields($fields),
+			$engine->openDB->escape($form['formContainer']),
 			$engine->openDB->escape($formID)
 			);
 		$sqlResult = $engine->openDB->query($sql);
@@ -26,7 +27,6 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			errorHandle::newError(__METHOD__."() - updating form: ".$sqlResult['error'], errorHandle::DEBUG);
 			errorHandle::errorMsg("Failed to update form.");
 		}
-
 	}
 	else {
 		// Insert into forms table
@@ -82,8 +82,6 @@ if ($sqlResult['result']) {
 }
 
 
-
-
 if (!is_empty($engine->errorStack)) {
 	localVars::add("results",errorHandle::prettyPrint());
 }
@@ -130,7 +128,6 @@ if (!isnull($formID)) {
 				);
 		}
 		localVars::add("formPreview",$formPreview);
-	
 	}
 }
 
@@ -419,6 +416,13 @@ $engine->eTemplate("include","header");
 									<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="The form description explains the purpose of this form to users."></i>
 								</label>
 								<input type="text" class="input-block-level" id="formSettings_formDescription" name="formSettings_formDescription" value="{local var="formDescription"}" />
+								<span class="help-block hidden"></span>
+							</div>
+
+							<div class="control-group well well-small" id="formSettings_formContainer_container">
+								<label class="checkbox">
+									<input type="checkbox" id="formSettings_formContainer" name="formSettings_formContainer"> Act as Container
+								</label>
 								<span class="help-block hidden"></span>
 							</div>
 						</div>
