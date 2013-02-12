@@ -7,87 +7,43 @@ $formID = isset($engine->cleanGet['MYSQL']['id']) ? $engine->cleanGet['MYSQL']['
 
 if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	$engine->openDB->transBegin();
+
 	$form   = json_decode($engine->cleanPost['RAW']['form'], TRUE);
 	$fields = json_decode($engine->cleanPost['RAW']['fields'], TRUE);
 
 	if (!isnull($formID)) {
 		// Update forms table
-		$sql = sprintf("UPDATE `%s` SET `title`='%s', `description`=%s WHERE ID='%s' LIMIT 1",
+		$sql = sprintf("UPDATE `%s` SET `title`='%s', `description`=%s, `fields`='%s' WHERE ID='%s' LIMIT 1",
 			$engine->openDB->escape($engine->dbTables("forms")),
 			$engine->openDB->escape($form['formTitle']),
 			!is_empty($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
+			encodeFields($fields),
 			$engine->openDB->escape($formID)
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - updating form: ".$sqlResult['error'], errorHandle::DEBUG);
 			errorHandle::errorMsg("Failed to update form.");
 		}
 
-		// Delete from fields table
-		$sql = sprintf("DELETE FROM `%s` WHERE formID='%s'",
-			$engine->openDB->escape($engine->dbTables("fields")),
-			$engine->openDB->escape($formID)
-			);
-		$sqlResult = $engine->openDB->query($sql);
-
-		if (!$sqlResult['result']) {
-			errorHandle::errorMsg("Failed to update fields.");
-		}
 	}
 	else {
 		// Insert into forms table
-		$sql = sprintf("INSERT INTO `%s` VALUES (NULL,'%s',%s)",
+		$sql = sprintf("INSERT INTO `%s` (title, description, fields) VALUES ('%s',%s,'%s')",
 			$engine->openDB->escape($engine->dbTables("forms")),
 			$engine->openDB->escape($form['formTitle']),
-			isset($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL"
+			isset($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
+			encodeFields($fields)
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - Inserting new form: ".$sqlResult['error']." == ".$sql, errorHandle::DEBUG);
 			errorHandle::errorMsg("Failed to create form.");
 		}
 		else {
 			$formID = $sqlResult['id'];
-		}
-	}
-
-	// Insert into fields table
-	foreach ($fields as $fieldOptions) {
-		$sql = sprintf("INSERT INTO `%s` VALUES (NULL,'%s','%s','%s','%s','%s',%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-			$engine->openDB->escape($engine->dbTables("fields")),
-			$engine->openDB->escape($formID),
-			$engine->openDB->escape($fieldOptions['position']),
-			$engine->openDB->escape($fieldOptions['type']),
-			$engine->openDB->escape($fieldOptions['name']),
-			$engine->openDB->escape($fieldOptions['label']),
-			!is_empty($fieldOptions['rangeMin'])        ? "'".$engine->openDB->escape($fieldOptions['rangeMin'])."'"        : "NULL",
-			!is_empty($fieldOptions['rangeMax'])        ? "'".$engine->openDB->escape($fieldOptions['rangeMax'])."'"        : "NULL",
-			!is_empty($fieldOptions['rangeFormat'])     ? "'".$engine->openDB->escape($fieldOptions['rangeFormat'])."'"     : "NULL",
-			!is_empty($fieldOptions['placeholder'])     ? "'".$engine->openDB->escape($fieldOptions['placeholder'])."'"     : "NULL",
-			!is_empty($fieldOptions['cssClass'])        ? "'".$engine->openDB->escape($fieldOptions['cssClass'])."'"        : "NULL",
-			!is_empty($fieldOptions['cssID'])           ? "'".$engine->openDB->escape($fieldOptions['cssID'])."'"           : "NULL",
-			!is_empty($fieldOptions['validation'])      ? "'".$engine->openDB->escape($fieldOptions['validation'])."'"      : "NULL",
-			!is_empty($fieldOptions['validationRegex']) ? "'".$engine->openDB->escape($fieldOptions['validationRegex'])."'" : "NULL",
-			!is_empty($fieldOptions['access'])          ? "'".$engine->openDB->escape($fieldOptions['access'])."'"          : "NULL",
-			!is_empty($fieldOptions['publicRelease'])   ? "'".$engine->openDB->escape($fieldOptions['publicRelease'])."'"   : "NULL",
-			!is_empty($fieldOptions['required'])        ? "'".$engine->openDB->escape($fieldOptions['required'])."'"        : "NULL",
-			!is_empty($fieldOptions['duplicates'])      ? "'".$engine->openDB->escape($fieldOptions['duplicates'])."'"      : "NULL",
-			!is_empty($fieldOptions['defaultValue'])    ? "'".$engine->openDB->escape($fieldOptions['defaultValue'])."'"    : "NULL",
-			!is_empty($fieldOptions['readonly'])        ? "'".$engine->openDB->escape($fieldOptions['readonly'])."'"        : "NULL",
-			!is_empty($fieldOptions['disable'])         ? "'".$engine->openDB->escape($fieldOptions['disable'])."'"         : "NULL",
-			!is_empty($fieldOptions['sortable'])        ? "'".$engine->openDB->escape($fieldOptions['sortable'])."'"        : "NULL",
-			!is_empty($fieldOptions['searchable'])      ? "'".$engine->openDB->escape($fieldOptions['searchable'])."'"      : "NULL",
-			!is_empty($fieldOptions['localCSS'])        ? "'".$engine->openDB->escape($fieldOptions['localCSS'])."'"        : "NULL",
-			!is_empty($fieldOptions['fieldset'])        ? "'".$engine->openDB->escape($fieldOptions['fieldset'])."'"        : "NULL",
-			!is_empty($fieldOptions['choicesType'])     ? "'".$engine->openDB->escape($fieldOptions['choicesType'])."'"     : "NULL",
-			!is_empty($fieldOptions['choicesDefault'])  ? "'".$engine->openDB->escape($fieldOptions['choicesDefault'])."'"  : "NULL",
-			!is_empty($fieldOptions['choicesOptions'])  ? "'".$engine->openDB->escape($fieldOptions['choicesOptions'])."'"  : "NULL"
-			);
-		$sqlResult = $engine->openDB->query($sql);
-
-		if (!$sqlResult['result']) {
-			errorHandle::errorMsg("Failed to create form field '".$fieldOptions['name']."'.");
 		}
 	}
 
@@ -126,6 +82,8 @@ if ($sqlResult['result']) {
 }
 
 
+
+
 if (!is_empty($engine->errorStack)) {
 	localVars::add("results",errorHandle::prettyPrint());
 }
@@ -143,43 +101,36 @@ if (!isnull($formID)) {
 		localVars::add("formTitle",$row['title']);
 		localVars::add("formDescription",$row['description']);
 
-		// Get field info for display
-		$sql = sprintf("SELECT * FROM `%s` WHERE formID='%s'",
-			$engine->openDB->escape($engine->dbTables("fields")),
-			$engine->openDB->escape($formID)
-			);
-		$sqlResult = $engine->openDB->query($sql);
+		$fields = decodeFields($row['fields']);
 
-		if ($sqlResult['result']) {
-			$formPreview = NULL;
-			while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
-				$values = json_encode($row);
-				$formPreview .= sprintf('
-					<li id="formPreview_%s">
-						<div class="fieldPreview">
-							<script type="text/javascript">
-								$("#formPreview_%s .fieldPreview").html(newFieldPreview("%s","%s"));
-							</script>
-						</div>
-						<div class="fieldValues">
-							<script type="text/javascript">
-								$("#formPreview_%s .fieldValues").html(newFieldValues("%s","%s",%s));
-							</script>
-						</div>
-					</li>',
-					htmlSanitize($row['position']),
-					htmlSanitize($row['position']),
-					htmlSanitize($row['position']),
-					htmlSanitize($row['type']),
-					htmlSanitize($row['position']),
-					htmlSanitize($row['position']),
-					htmlSanitize($row['type']),
-					$values
-					);
-			}
-			localVars::add("formPreview",$formPreview);
+		$formPreview = NULL;
+		foreach($fields as $row) {
+			$values = json_encode($row);
+			$formPreview .= sprintf('
+				<li id="formPreview_%s">
+				<div class="fieldPreview">
+				<script type="text/javascript">
+				$("#formPreview_%s .fieldPreview").html(newFieldPreview("%s","%s"));
+				</script>
+				</div>
+				<div class="fieldValues">
+				<script type="text/javascript">
+				$("#formPreview_%s .fieldValues").html(newFieldValues("%s","%s",%s));
+				</script>
+				</div>
+				</li>',
+				htmlSanitize($row['position']),
+				htmlSanitize($row['position']),
+				htmlSanitize($row['position']),
+				htmlSanitize($row['type']),
+				htmlSanitize($row['position']),
+				htmlSanitize($row['position']),
+				htmlSanitize($row['type']),
+				$values
+				);
 		}
-
+		localVars::add("formPreview",$formPreview);
+	
 	}
 }
 
