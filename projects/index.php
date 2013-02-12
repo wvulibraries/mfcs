@@ -1,14 +1,71 @@
 <?php
 
+include("../header.php");
 
+$tableName = $engine->dbTables("projects");
+
+function defineList($tableName) {
+	// $engine = EngineAPI::singleton();
+	$l      = new listManagement($tableName);
+
+	$l->addField(array(
+		"field"    => "projectName",
+		"label"    => "Project Name",
+		));
+
+	$l->addField (
+
+		array(
+			"field" => "edit.php?{ID}",
+			"label" => "edit",
+			"type"  => "plainText"
+			)
+
+		);
+
+	return $l;
+}
+
+if (isset($engine->cleanPost['MYSQL'][$tableName."_submit"])) {
+	$list = defineList($tableName);
+	$list->insert();
+}
+if (isset($engine->cleanPost['MYSQL'][$tableName."_update"])) {
+	$list = defineList($tableName);
+	$list->update();
+}
+
+$list = defineList($tableName);
+
+localVars::add("results",displayMessages());
+
+$engine->eTemplate("include","header");
 ?>
 
-<h1>Project Management</h1>
+<section>
+	<header class="page-header">
+		<h1>Manage Projects</h1>
+	</header>
 
-<div>
-	<h2>New Project</h2>
-</div>
+	{local var="results"}
 
-<div>
-	<h2>Project List</h2>
-</div>
+	<section>
+		<header>
+			<h2>Add Project</h2>
+		</header>
+		{listObject display="insertForm"}
+	</section>
+
+	<hr />
+
+	<section>
+		<header>
+			<h2>Edit Projects</h2>
+		</header>
+		{listObject display="editTable"}
+	</section>
+</section>
+
+<?php
+$engine->eTemplate("include","footer");
+?>
