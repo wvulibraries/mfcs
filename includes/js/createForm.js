@@ -346,6 +346,7 @@ function fieldSettingsBindings() {
 	$("#fieldSettings_choices_form").on("change","#fieldSettings_choices_formSelect",function() {
 		$.ajax("includes/getFormFields.php?id="+$(this).val())
 			.done(function(data) {
+				// console.log(data);
 				// add <option>s here
 				// $("#fieldSettings_choices_fieldSelect").append();
 			});
