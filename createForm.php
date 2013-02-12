@@ -106,16 +106,16 @@ if (!isnull($formID)) {
 			$values = json_encode($row);
 			$formPreview .= sprintf('
 				<li id="formPreview_%s">
-				<div class="fieldPreview">
-				<script type="text/javascript">
-				$("#formPreview_%s .fieldPreview").html(newFieldPreview("%s","%s"));
-				</script>
-				</div>
-				<div class="fieldValues">
-				<script type="text/javascript">
-				$("#formPreview_%s .fieldValues").html(newFieldValues("%s","%s",%s));
-				</script>
-				</div>
+					<div class="fieldPreview">
+						<script type="text/javascript">
+							$("#formPreview_%s .fieldPreview").html(newFieldPreview("%s","%s"));
+						</script>
+					</div>
+					<div class="fieldValues">
+						<script type="text/javascript">
+							$("#formPreview_%s .fieldValues").html(newFieldValues("%s","%s",%s));
+						</script>
+					</div>
 				</li>',
 				htmlSanitize($row['position']),
 				htmlSanitize($row['position']),

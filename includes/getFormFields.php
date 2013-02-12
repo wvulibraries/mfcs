@@ -15,7 +15,7 @@ $sqlResult = $engine->openDB->query($sql);
 if ($sqlResult['result']) {
 	$row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
 
-	$tmp = decodeFields($row['fields']));
+	$tmp = decodeFields($row['fields']);
 	foreach ($tmp as $field) {
 		$fields[$field['name']] = $field['label'];
 	}
