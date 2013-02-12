@@ -13,11 +13,12 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 
 	if (!isnull($formID)) {
 		// Update forms table
-		$sql = sprintf("UPDATE `%s` SET `title`='%s', `description`=%s, `fields`='%s' WHERE ID='%s' LIMIT 1",
+		$sql = sprintf("UPDATE `%s` SET `title`='%s', `description`=%s, `fields`='%s', `container`='%s' WHERE ID='%s' LIMIT 1",
 			$engine->openDB->escape($engine->dbTables("forms")),
 			$engine->openDB->escape($form['formTitle']),
 			!is_empty($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
 			encodeFields($fields),
+			$engine->openDB->escape($form['formContainer']),
 			$engine->openDB->escape($formID)
 			);
 		$sqlResult = $engine->openDB->query($sql);
@@ -26,15 +27,15 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			errorHandle::newError(__METHOD__."() - updating form: ".$sqlResult['error'], errorHandle::DEBUG);
 			errorHandle::errorMsg("Failed to update form.");
 		}
-
 	}
 	else {
 		// Insert into forms table
-		$sql = sprintf("INSERT INTO `%s` (title, description, fields) VALUES ('%s',%s,'%s')",
+		$sql = sprintf("INSERT INTO `%s` (title, description, fields, container) VALUES ('%s',%s,'%s','%s')",
 			$engine->openDB->escape($engine->dbTables("forms")),
 			$engine->openDB->escape($form['formTitle']),
 			isset($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
-			encodeFields($fields)
+			encodeFields($fields),
+			$engine->openDB->escape($form['formContainer'])
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
@@ -82,8 +83,6 @@ if ($sqlResult['result']) {
 }
 
 
-
-
 if (!is_empty($engine->errorStack)) {
 	localVars::add("results",errorHandle::prettyPrint());
 }
@@ -108,16 +107,16 @@ if (!isnull($formID)) {
 			$values = json_encode($row);
 			$formPreview .= sprintf('
 				<li id="formPreview_%s">
-				<div class="fieldPreview">
-				<script type="text/javascript">
-				$("#formPreview_%s .fieldPreview").html(newFieldPreview("%s","%s"));
-				</script>
-				</div>
-				<div class="fieldValues">
-				<script type="text/javascript">
-				$("#formPreview_%s .fieldValues").html(newFieldValues("%s","%s",%s));
-				</script>
-				</div>
+					<div class="fieldPreview">
+						<script type="text/javascript">
+							$("#formPreview_%s .fieldPreview").html(newFieldPreview("%s","%s"));
+						</script>
+					</div>
+					<div class="fieldValues">
+						<script type="text/javascript">
+							$("#formPreview_%s .fieldValues").html(newFieldValues("%s","%s",%s));
+						</script>
+					</div>
 				</li>',
 				htmlSanitize($row['position']),
 				htmlSanitize($row['position']),
@@ -130,7 +129,6 @@ if (!isnull($formID)) {
 				);
 		}
 		localVars::add("formPreview",$formPreview);
-	
 	}
 }
 
@@ -152,7 +150,7 @@ $engine->eTemplate("include","header");
 		<div class="row-fluid">
 			<div class="span5">
 				<ul class="nav nav-tabs" id="fieldTab">
-					<li class="active"><a href="#fieldAdd" data-toggle="tab">Add a Field</a></li>
+					<li><a href="#fieldAdd" data-toggle="tab">Add a Field</a></li>
 					<li><a href="#fieldSettings" data-toggle="tab">Field Settings</a></li>
 					<li><a href="#formSettings" data-toggle="tab">Form Settings</a></li>
 				</ul>
@@ -419,6 +417,13 @@ $engine->eTemplate("include","header");
 									<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="The form description explains the purpose of this form to users."></i>
 								</label>
 								<input type="text" class="input-block-level" id="formSettings_formDescription" name="formSettings_formDescription" value="{local var="formDescription"}" />
+								<span class="help-block hidden"></span>
+							</div>
+
+							<div class="control-group well well-small" id="formSettings_formContainer_container">
+								<label class="checkbox">
+									<input type="checkbox" id="formSettings_formContainer" name="formSettings_formContainer"> Act as Container
+								</label>
 								<span class="help-block hidden"></span>
 							</div>
 						</div>
