@@ -152,7 +152,7 @@ $engine->eTemplate("include","header");
 		<div class="row-fluid">
 			<div class="span5">
 				<ul class="nav nav-tabs" id="fieldTab">
-					<li class="active"><a href="#fieldAdd" data-toggle="tab">Add a Field</a></li>
+					<li><a href="#fieldAdd" data-toggle="tab">Add a Field</a></li>
 					<li><a href="#fieldSettings" data-toggle="tab">Field Settings</a></li>
 					<li><a href="#formSettings" data-toggle="tab">Form Settings</a></li>
 				</ul>

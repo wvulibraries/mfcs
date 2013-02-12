@@ -69,6 +69,10 @@ $(function() {
 		$(":input[name=fields]", this).val(JSON.stringify(obj));
 	});
 
+	// Click through each field and then back to add field tab on page load to update form preview
+	$("#formPreview li").click();
+	$("#fieldTab li:last a").click();
+
 });
 
 function showFieldSettings(fullID) {
@@ -129,13 +133,13 @@ function showFieldSettings(fullID) {
 
 		// Update field settings to use values from form display
 		$("#fieldSettings_name").val($("#name_"+id).val()).keyup();
-		$("#fieldSettings_label").val($("#label_"+id).val());
-		$("#fieldSettings_defaultValue").val($("#defaultValue_"+id).val());
-		$("#fieldSettings_placeholder").val($("#placeholder_"+id).val());
-		$("#fieldSettings_ID").val($("#ID_"+id).val());
-		$("#fieldSettings_fieldset").val($("#fieldset_"+id).val());
-		$("#fieldSettings_class").val($("#class_"+id).val());
-		$("#fieldSettings_styles").val($("#styles_"+id).val());
+		$("#fieldSettings_label").val($("#label_"+id).val()).keyup();
+		$("#fieldSettings_defaultValue").val($("#defaultValue_"+id).val()).keyup();
+		$("#fieldSettings_placeholder").val($("#placeholder_"+id).val()).keyup();
+		$("#fieldSettings_ID").val($("#ID_"+id).val()).keyup();
+		$("#fieldSettings_fieldset").val($("#fieldset_"+id).val()).keyup();
+		$("#fieldSettings_class").val($("#class_"+id).val()).keyup();
+		$("#fieldSettings_styles").val($("#styles_"+id).val()).keyup();
 		$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change();
 
 		var opts = $("#choicesOptions_"+id).val().split(",");
@@ -147,14 +151,14 @@ function showFieldSettings(fullID) {
 
 		$("#fieldSettings_options_required").prop("checked",($("#required_"+id).val()==='true'));
 		$("#fieldSettings_options_duplicates").prop("checked",($("#duplicates_"+id).val()==='true'));
-		$("#fieldSettings_options_readonly").prop("checked",($("#readonly_"+id).val()==='true'));
-		$("#fieldSettings_options_disable").prop("checked",($("#disable_"+id).val()==='true'));
+		$("#fieldSettings_options_readonly").prop("checked",($("#readonly_"+id).val()==='true')).change();
+		$("#fieldSettings_options_disable").prop("checked",($("#disable_"+id).val()==='true')).change();
 		$("#fieldSettings_options_sortable").prop("checked",($("#sortable_"+id).val()==='true'));
 		$("#fieldSettings_options_searchable").prop("checked",($("#searchable_"+id).val()==='true'));
 		$("#fieldSettings_validation").val($("#validation_"+id).val()).change();
 		$("#fieldSettings_validationRegex").val($("#validationRegex_"+id).val());
-		$("#fieldSettings_range_min").val($("#rangeMin_"+id).val());
-		$("#fieldSettings_range_max").val($("#rangeMax_"+id).val());
+		$("#fieldSettings_range_min").val($("#rangeMin_"+id).val()).change();
+		$("#fieldSettings_range_max").val($("#rangeMax_"+id).val()).change();
 		$("#fieldSettings_range_format").val($("#rangeFormat_"+id).val()).change();
 	}
 }
