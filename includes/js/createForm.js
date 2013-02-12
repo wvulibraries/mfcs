@@ -138,12 +138,12 @@ function showFieldSettings(fullID) {
 		$("#fieldSettings_styles").val($("#styles_"+id).val());
 		$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change();
 
-		$("#fieldSettings_choices_manual :input[name=fieldSettings_choices_text]").keyup();
-		$("#fieldSettings_choices_manual").html('');
 		var opts = $("#choicesOptions_"+id).val().split(",");
+		$("#fieldSettings_choices_manual").html('');
 		for (var i = 0; i < opts.length; i++) {
 			$("#fieldSettings_choices_manual").append(addChoice(opts[i],$("#choicesDefault_"+id).val()));
 		}
+		$("#fieldSettings_choices_manual :input[name=fieldSettings_choices_text]").keyup();
 
 		$("#fieldSettings_options_required").prop("checked",($("#required_"+id).val()==='true'));
 		$("#fieldSettings_options_duplicates").prop("checked",($("#duplicates_"+id).val()==='true'));
@@ -203,7 +203,6 @@ function fieldSettingsBindings() {
 
 		$("#formPreview .well :input[name^=fieldset_]").val($(this).val());
 		$("#formPreview .well legend").text($(this).val());
-
 	});
 
 	$("#fieldSettings_class").keyup(function() {
