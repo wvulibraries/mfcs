@@ -49,7 +49,12 @@ $(function() {
 		$("#formSettings :input").each(function() {
 			var form = $(this).prop("name").split("_");
 
-			obj[ form[1] ] = $(this).val();
+			if ($(this).prop("type") == "checkbox") {
+				obj[ form[1] ] = $(this).prop("checked");
+			}
+			else {
+				obj[ form[1] ] = $(this).val();
+			}
 		});
 		// Convert object to JSON and add it to a hidden form field
 		$(":input[name=form]", this).val(JSON.stringify(obj));
@@ -63,7 +68,13 @@ $(function() {
 			if (!obj[ field[1] ]) {
 				obj[ field[1] ] = {};
 			}
-			obj[ field[1] ][ field[0] ] = $(this).val();
+
+			if ($(this).prop("type") == "checkbox") {
+				obj[ field[1] ][ field[0] ] = $(this).prop("checked");
+			}
+			else {
+				obj[ field[1] ][ field[0] ] = $(this).val();
+			}
 		});
 		// Convert object to JSON and add it to a hidden form field
 		$(":input[name=fields]", this).val(JSON.stringify(obj));
