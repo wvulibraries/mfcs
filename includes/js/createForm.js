@@ -328,6 +328,14 @@ function fieldSettingsBindings() {
 		}
 	});
 
+	$("#fieldSettings_choices_form").on("change","#fieldSettings_choices_formSelect",function() {
+		$.ajax("includes/getFormFields.php?id="+$(this).val())
+			.done(function(data) {
+				// add <option>s here
+				// $("#fieldSettings_choices_fieldSelect").append();
+			});
+	});
+
 	$("#fieldSettings_options_required").change(function() {
 		$("#formPreview .well .controls :input").prop('required',$(this).is(":checked"));
 		$("#formPreview .well :input[name^=required_]").val($(this).is(":checked"));
