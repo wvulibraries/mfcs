@@ -17,7 +17,10 @@ if ($sqlResult['result']) {
 
 	$tmp = decodeFields($row['fields']);
 	foreach ($tmp as $field) {
-		$fields[$field['name']] = $field['label'];
+		$fields[] = array(
+			"name"   => $field['name'],
+			"label"  => $field['label'],
+			);
 	}
 }
 

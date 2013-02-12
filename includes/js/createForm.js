@@ -344,11 +344,15 @@ function fieldSettingsBindings() {
 	});
 
 	$("#fieldSettings_choices_form").on("change","#fieldSettings_choices_formSelect",function() {
-		$.ajax("includes/getFormFields.php?id="+$(this).val())
+		$.ajax("../includes/getFormFields.php?id="+$(this).val())
 			.done(function(data) {
-				// console.log(data);
-				// add <option>s here
-				// $("#fieldSettings_choices_fieldSelect").append();
+				$("#fieldSettings_choices_fieldSelect").html('')
+
+				var obj = JSON.parse(data);
+				for(var i in obj) {
+					var field = obj[i];
+					$("#fieldSettings_choices_fieldSelect").append('<option value="'+field.name+'">'+field.label+'</option>');
+				}
 			});
 	});
 
