@@ -12,7 +12,7 @@
 					<li><a href="{local var="siteRoot"}admin/containers.php">Manage Containers</a></li>
 				</ul>
 			</li>
-			<li><a href="{local var="siteRoot"}createForm.php">Form Creator</a></li>
+			<li><a href="{local var="siteRoot"}/formCreator/createForm.php">Form Creator</a></li>
 			<li class="divider"></li>
 			<li><a href="{engine var="logoutPage"}?csrf={engine name="csrfGet"}">Logout</a></li>
 		</ul>
