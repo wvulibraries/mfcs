@@ -7,7 +7,6 @@ $formID = isset($engine->cleanGet['MYSQL']['id']) ? $engine->cleanGet['MYSQL']['
 
 if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	$engine->openDB->transBegin();
-
 	$form   = json_decode($engine->cleanPost['RAW']['form'], TRUE);
 	$fields = json_decode($engine->cleanPost['RAW']['fields'], TRUE);
 
@@ -108,6 +107,23 @@ foreach (validator::getValidationTypes() as $val => $text) {
 	$tmp .= '<option value="'.$val.'">'.$text.'</option>';
 }
 localVars::add("validationTypes",$tmp);
+
+// Get list of forms for choices dropdown
+$sql = sprintf("SELECT ID, `title` FROM `%s` ORDER BY `title`",
+	$engine->openDB->escape($engine->dbTables("forms"))
+	);
+$sqlResult = $engine->openDB->query($sql);
+
+if ($sqlResult['result']) {
+	$tmp = array();
+	while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+		$tmp[] = sprintf('<option value="%s">%s</option>',
+			$row['ID'],
+			$row['title']
+			);
+	}
+	localVars::add("formsOptions",implode(",",$tmp));
+}
 
 
 if (!is_empty($engine->errorStack)) {
@@ -339,7 +355,17 @@ $engine->eTemplate("include","header");
 										</div>
 									</div>
 									<div id="fieldSettings_choices_form">
-
+										<label for="fieldSettings_choices_formSelect">
+											Select a Form
+										</label>
+										<select class="input-block-level" id="fieldSettings_choices_formSelect" name="fieldSettings_choices_formSelect">
+											{local var="formsOptions"}
+										</select>
+										<label for="fieldSettings_choices_fieldSelect">
+											Select a Field
+										</label>
+										<select class="input-block-level" id="fieldSettings_choices_fieldSelect" name="fieldSettings_choices_fieldSelect">
+										</select>
 									</div>
 								</p>
 								<span class="help-block hidden"></span>
