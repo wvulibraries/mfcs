@@ -540,6 +540,24 @@ function newFieldValues(id,type,vals) {
 
 	if (vals == undefined) {
 		vals = {};
+
+		switch (type) {
+			case 'Number':
+				vals['validation'] = "integer";
+				break;
+			case 'Email':
+				vals['validation'] = "emailAddr";
+				break;
+			case 'Phone':
+				vals['validation'] = "phoneNumber";
+				break;
+			case 'Date':
+				vals['validation'] = "date";
+				break;
+			case 'Website':
+				vals['validation'] = "url";
+				break;
+		}
 	}
 
 	output  = '<input type="hidden" id="position_'+id+'" name="position_'+id+'" value="'+((vals['position']!=undefined)?vals['position']:'')+'">';
