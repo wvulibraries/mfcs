@@ -13,12 +13,13 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 
 	if (!isnull($formID)) {
 		// Update forms table
-		$sql = sprintf("UPDATE `%s` SET `title`='%s', `description`=%s, `fields`='%s', `container`='%s' WHERE ID='%s' LIMIT 1",
+		$sql = sprintf("UPDATE `%s` SET `title`='%s', `description`=%s, `fields`='%s', `container`='%s', `production`='%s' WHERE ID='%s' LIMIT 1",
 			$engine->openDB->escape($engine->dbTables("forms")),
 			$engine->openDB->escape($form['formTitle']),
 			!is_empty($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
 			encodeFields($fields),
 			$engine->openDB->escape($form['formContainer']),
+			$engine->openDB->escape($form['formProduction']),
 			$engine->openDB->escape($formID)
 			);
 		$sqlResult = $engine->openDB->query($sql);
@@ -30,12 +31,13 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	}
 	else {
 		// Insert into forms table
-		$sql = sprintf("INSERT INTO `%s` (title, description, fields, container) VALUES ('%s',%s,'%s','%s')",
+		$sql = sprintf("INSERT INTO `%s` (title, description, fields, container, production) VALUES ('%s',%s,'%s','%s','%s')",
 			$engine->openDB->escape($engine->dbTables("forms")),
 			$engine->openDB->escape($form['formTitle']),
 			isset($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
 			encodeFields($fields),
-			$engine->openDB->escape($form['formContainer'])
+			$engine->openDB->escape($form['formContainer']),
+			$engine->openDB->escape($form['formProduction'])
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
@@ -423,6 +425,9 @@ $engine->eTemplate("include","header");
 							<div class="control-group well well-small" id="formSettings_formContainer_container">
 								<label class="checkbox">
 									<input type="checkbox" id="formSettings_formContainer" name="formSettings_formContainer"> Act as Container
+								</label>
+								<label class="checkbox">
+									<input type="checkbox" id="formSettings_formProduction" name="formSettings_formProduction"> Production Ready
 								</label>
 								<span class="help-block hidden"></span>
 							</div>
