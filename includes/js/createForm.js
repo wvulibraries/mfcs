@@ -159,6 +159,8 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_choices_manual").append(addChoice(opts[i],$("#choicesDefault_"+id).val()));
 		}
 		$("#fieldSettings_choices_manual :input[name=fieldSettings_choices_text]").keyup();
+		$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
+		$("#fieldSettings_choices_fieldSelect").val($("#choicesField_"+id).val()).change();
 
 		$("#fieldSettings_options_required").prop("checked",($("#required_"+id).val()==='true'));
 		$("#fieldSettings_options_duplicates").prop("checked",($("#duplicates_"+id).val()==='true'));
@@ -242,119 +244,122 @@ function fieldSettingsBindings() {
 		}
 	});
 
-	$("#fieldSettings_choices_manual").on("click","button[name=default]",function() {
-		switch ($("#formPreview .well :input[name^=type_]").val()) {
-			case 'Dropdown':
-				if ($(this).hasClass("active")) {
-					$("#formPreview .well .controls :input").val('');
-					$("#formPreview .well :input[name^=choicesDefault_]").val('');
-				}
-				else {
-					$("#formPreview .well .controls :input").val($(this).siblings(":input").val());
-					$("#formPreview .well :input[name^=choicesDefault_]").val($(this).siblings(":input").val());
-				}
-				$("#fieldSettings_choices_manual button[name=default]").not(this).removeClass("active");
-				break;
+	$("#fieldSettings_choices_manual")
+		.on("click","button[name=default]",function() {
+			switch ($("#formPreview .well :input[name^=type_]").val()) {
+				case 'Dropdown':
+					if ($(this).hasClass("active")) {
+						$("#formPreview .well .controls :input").val('');
+						$("#formPreview .well :input[name^=choicesDefault_]").val('');
+					}
+					else {
+						$("#formPreview .well .controls :input").val($(this).siblings(":input").val());
+						$("#formPreview .well :input[name^=choicesDefault_]").val($(this).siblings(":input").val());
+					}
+					$("#fieldSettings_choices_manual button[name=default]").not(this).removeClass("active");
+					break;
 
-			case 'Multiple Choice':
-				if ($(this).hasClass("active")) {
-					$("#formPreview .well .controls :input").removeAttr('checked');
-					$("#formPreview .well :input[name^=choicesDefault_]").val('');
-				}
-				else {
+				case 'Multiple Choice':
+					if ($(this).hasClass("active")) {
+						$("#formPreview .well .controls :input").removeAttr('checked');
+						$("#formPreview .well :input[name^=choicesDefault_]").val('');
+					}
+					else {
+						var val = $(this).siblings(":input").val();
+						$("#formPreview .well .controls label").each(function() {
+							if ($(this).text() == val) {
+								$(":input",this).prop('checked',true);
+							}
+						});
+						$("#formPreview .well :input[name^=choicesDefault_]").val($(this).siblings(":input").val());
+					}
+					$("#fieldSettings_choices_manual button[name=default]").not(this).removeClass("active");
+					break;
+
+				case 'Checkboxes':
 					var val = $(this).siblings(":input").val();
-					$("#formPreview .well .controls label").each(function() {
-						if ($(this).text() == val) {
-							$(":input",this).prop('checked',true);
-						}
+					if ($(this).hasClass("active")) {
+						$("#formPreview .well .controls label").each(function() {
+							if ($(this).text() == val) {
+								$(":input",this).removeAttr('checked');
+							}
+						});
+					}
+					else {
+						$("#formPreview .well .controls label").each(function() {
+							if ($(this).text() == val) {
+								$(":input",this).prop('checked',true);
+							}
+						});
+					}
+
+					var vals = [];
+					$("#formPreview .well .controls :input:checked").each(function() {
+						vals.push($(this).parent().text());
 					});
-					$("#formPreview .well :input[name^=choicesDefault_]").val($(this).siblings(":input").val());
-				}
-				$("#fieldSettings_choices_manual button[name=default]").not(this).removeClass("active");
-				break;
 
-			case 'Checkboxes':
-				var val = $(this).siblings(":input").val();
-				if ($(this).hasClass("active")) {
-					$("#formPreview .well .controls label").each(function() {
-						if ($(this).text() == val) {
-							$(":input",this).removeAttr('checked');
-						}
-					});
-				}
-				else {
-					$("#formPreview .well .controls label").each(function() {
-						if ($(this).text() == val) {
-							$(":input",this).prop('checked',true);
-						}
-					});
-				}
+					$("#formPreview .well :input[name^=choicesDefault_]").val('').val(vals.join());
+					break;
 
-				var vals = [];
-				$("#formPreview .well .controls :input:checked").each(function() {
-					vals.push($(this).parent().text());
-				});
-
-				$("#formPreview .well :input[name^=choicesDefault_]").val('').val(vals.join());
-				break;
-
-		}
-	});
-
-	$("#fieldSettings_choices_manual").on("click","button[name=add]",function() {
-		$(this).parent().after(addChoice());
-	});
-
-	$("#fieldSettings_choices_manual").on("click","button[name=remove]",function() {
-		if ($(this).parent().siblings().length == 0) {
-			$(this).siblings("button[name=add]").click();
-		}
-		$(this).parent().remove();
-	});
-
-	$("#fieldSettings_choices_manual").on("keyup",":input[name=fieldSettings_choices_text]",function() {
-		var vals = [];
-		$("#fieldSettings_choices_manual input[name=fieldSettings_choices_text]").each(function() {
-			vals.push($(this).val());
-		});
-		$("#formPreview .well :input[name^=choicesOptions_]").val(vals.join());
-
-		switch ($("#formPreview .well :input[name^=type_]").val()) {
-			case 'Dropdown':
-				$("#formPreview .well .controls :input").html('');
-				for (var i = 0; i < vals.length; i++) {
-					$("#formPreview .well .controls :input").append($("<option>").prop("value",vals[i]).text(vals[i]));
-				}
-				break;
-
-			case 'Multiple Choice':
-				$("#formPreview .well .controls").html('');
-				for (var i = 0; i < vals.length; i++) {
-					$("#formPreview .well .controls").append($("<label>").addClass("radio").append($("<input>").prop("type","radio").prop("name",$("#formPreview .well :input[name^=name_]").val())).append(vals[i]));
-				}
-				break;
-
-			case 'Checkboxes':
-				$("#formPreview .well .controls").html('');
-				for (var i = 0; i < vals.length; i++) {
-					$("#formPreview .well .controls").append($("<label>").addClass("checkbox").append($("<input>").prop("type","checkbox").prop("name",$("#formPreview .well :input[name^=name_]").val())).append(vals[i]));
-				}
-				break;
-		}
-	});
-
-	$("#fieldSettings_choices_form").on("change","#fieldSettings_choices_formSelect",function() {
-		$.ajax("../includes/getFormFields.php?id="+$(this).val())
-			.done(function(data) {
-				$("#fieldSettings_choices_fieldSelect").html('')
-
-				var obj = JSON.parse(data);
-				for(var i in obj) {
-					var field = obj[i];
-					$("#fieldSettings_choices_fieldSelect").append('<option value="'+field.name+'">'+field.label+'</option>');
-				}
+			}
+		})
+		.on("click","button[name=add]",function() {
+			$(this).parent().after(addChoice());
+		})
+		.on("click","button[name=remove]",function() {
+			if ($(this).parent().siblings().length == 0) {
+				$(this).siblings("button[name=add]").click();
+			}
+			$(this).parent().remove();
+		})
+		.on("keyup",":input[name=fieldSettings_choices_text]",function() {
+			var vals = [];
+			$("#fieldSettings_choices_manual input[name=fieldSettings_choices_text]").each(function() {
+				vals.push($(this).val());
 			});
-	});
+			$("#formPreview .well :input[name^=choicesOptions_]").val(vals.join());
+
+			switch ($("#formPreview .well :input[name^=type_]").val()) {
+				case 'Dropdown':
+					$("#formPreview .well .controls :input").html('');
+					for (var i = 0; i < vals.length; i++) {
+						$("#formPreview .well .controls :input").append($("<option>").prop("value",vals[i]).text(vals[i]));
+					}
+					break;
+
+				case 'Multiple Choice':
+					$("#formPreview .well .controls").html('');
+					for (var i = 0; i < vals.length; i++) {
+						$("#formPreview .well .controls").append($("<label>").addClass("radio").append($("<input>").prop("type","radio").prop("name",$("#formPreview .well :input[name^=name_]").val())).append(vals[i]));
+					}
+					break;
+
+				case 'Checkboxes':
+					$("#formPreview .well .controls").html('');
+					for (var i = 0; i < vals.length; i++) {
+						$("#formPreview .well .controls").append($("<label>").addClass("checkbox").append($("<input>").prop("type","checkbox").prop("name",$("#formPreview .well :input[name^=name_]").val())).append(vals[i]));
+					}
+					break;
+			}
+		});
+
+	$("#fieldSettings_choices_form")
+		.on("change","#fieldSettings_choices_formSelect",function() {
+			$("#formPreview .well :input[name^=choicesForm_]").val($(this).val());
+			$.ajax("../includes/getFormFields.php?id="+$(this).val())
+				.done(function(data) {
+					$("#fieldSettings_choices_fieldSelect").html('');
+
+					var obj = JSON.parse(data);
+					for(var i in obj) {
+						var field = obj[i];
+						$("#fieldSettings_choices_fieldSelect").append('<option value="'+field.name+'">'+field.label+'</option>');
+					}
+				});
+		})
+		.on("change","#fieldSettings_choices_fieldSelect",function() {
+			$("#formPreview .well :input[name^=choicesField_]").val($(this).val());
+		});
 
 	$("#fieldSettings_options_required").change(function() {
 		$("#formPreview .well .controls :input").prop('required',$(this).is(":checked"));
@@ -535,6 +540,24 @@ function newFieldValues(id,type,vals) {
 
 	if (vals == undefined) {
 		vals = {};
+
+		switch (type) {
+			case 'Number':
+				vals['validation'] = "integer";
+				break;
+			case 'Email':
+				vals['validation'] = "emailAddr";
+				break;
+			case 'Phone':
+				vals['validation'] = "phoneNumber";
+				break;
+			case 'Date':
+				vals['validation'] = "date";
+				break;
+			case 'Website':
+				vals['validation'] = "url";
+				break;
+		}
 	}
 
 	output  = '<input type="hidden" id="position_'+id+'" name="position_'+id+'" value="'+((vals['position']!=undefined)?vals['position']:'')+'">';
@@ -550,6 +573,8 @@ function newFieldValues(id,type,vals) {
 	output += '<input type="hidden" id="choicesType_'+id+'" name="choicesType_'+id+'" value="'+((vals['choicesType']!=undefined)?vals['choicesType']:'')+'">';
 	output += '<input type="hidden" id="choicesDefault_'+id+'" name="choicesDefault_'+id+'" value="'+((vals['choicesDefault']!=undefined)?vals['choicesDefault']:'')+'">';
 	output += '<input type="hidden" id="choicesOptions_'+id+'" name="choicesOptions_'+id+'" value="'+((vals['choicesOptions']!=undefined)?vals['choicesOptions']:'First Choice,Second Choice')+'">';
+	output += '<input type="hidden" id="choicesForm_'+id+'" name="choicesForm_'+id+'" value="'+((vals['choicesForm']!=undefined)?vals['choicesForm']:'')+'">';
+	output += '<input type="hidden" id="choicesField_'+id+'" name="choicesField_'+id+'" value="'+((vals['choicesField']!=undefined)?vals['choicesField']:'')+'">';
 	output += '<input type="hidden" id="required_'+id+'" name="required_'+id+'" value="'+((vals['required']!=undefined)?vals['required']:'false')+'">';
 	output += '<input type="hidden" id="duplicates_'+id+'" name="duplicates_'+id+'" value="'+((vals['duplicates']!=undefined)?vals['duplicates']:'false')+'">';
 	output += '<input type="hidden" id="readonly_'+id+'" name="readonly_'+id+'" value="'+((vals['readonly']!=undefined)?vals['readonly']:'false')+'">';
