@@ -104,37 +104,40 @@ if (!isnull($formID)) {
 
 	if ($sqlResult['result']) {
 		$row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
-
-		$fields = decodeFields($row['fields']);
 		localVars::add("formID",htmlSanitize($row['ID']));
 		localVars::add("formTitle",htmlSanitize($row['title']));
 		localVars::add("formDescription",htmlSanitize($row['description']));
 
 		$formPreview = NULL;
-		foreach($fields as $row) {
-			$values = json_encode($row);
-			$formPreview .= sprintf('
-				<li id="formPreview_%s">
-					<div class="fieldPreview">
-						<script type="text/javascript">
-							$("#formPreview_%s .fieldPreview").html(newFieldPreview("%s","%s"));
-						</script>
-					</div>
-					<div class="fieldValues">
-						<script type="text/javascript">
-							$("#formPreview_%s .fieldValues").html(newFieldValues("%s","%s",%s));
-						</script>
-					</div>
-				</li>',
-				htmlSanitize($row['position']),
-				htmlSanitize($row['position']),
-				htmlSanitize($row['position']),
-				htmlSanitize($row['type']),
-				htmlSanitize($row['position']),
-				htmlSanitize($row['position']),
-				htmlSanitize($row['type']),
-				$values
-				);
+		if (!is_empty($row['fields'])) {
+			$fields = decodeFields($row['fields']);
+
+			foreach((array)$fields as $I => $field) {
+				$values = json_encode($field);
+
+				$formPreview .= sprintf('
+					<li id="formPreview_%s">
+						<div class="fieldPreview">
+							<script type="text/javascript">
+								$("#formPreview_%s .fieldPreview").html(newFieldPreview("%s","%s"));
+							</script>
+						</div>
+						<div class="fieldValues">
+							<script type="text/javascript">
+								$("#formPreview_%s .fieldValues").html(newFieldValues("%s","%s",%s));
+							</script>
+						</div>
+					</li>',
+					htmlSanitize($field['position']),
+					htmlSanitize($field['position']),
+					htmlSanitize($field['position']),
+					htmlSanitize($field['type']),
+					htmlSanitize($field['position']),
+					htmlSanitize($field['position']),
+					htmlSanitize($field['type']),
+					$values
+					);
+			}
 		}
 		localVars::add("formPreview",$formPreview);
 	}
@@ -164,26 +167,32 @@ $engine->eTemplate("include","header");
 				</ul>
 
 				<div class="tab-content">
-					<div class="tab-pane active" id="fieldAdd">
-						<div class="span6">
-							<ul class="unstyled">
-								<li><a href="#" class="btn btn-block">Single Line Text</a></li>
-								<li><a href="#" class="btn btn-block">Paragraph Text</a></li>
-								<li><a href="#" class="btn btn-block">Multiple Choice</a></li>
-								<li><a href="#" class="btn btn-block">Checkboxes</a></li>
-								<li><a href="#" class="btn btn-block">Dropdown</a></li>
-								<li><a href="#" class="btn btn-block">Number</a></li>
-							</ul>
+					<div class="tab-pane" id="fieldAdd">
+						<div class="row-fluid">
+							<div class="span6">
+								<ul class="unstyled draggable">
+									<li><a href="#" class="btn btn-block">Single Line Text</a></li>
+									<li><a href="#" class="btn btn-block">Paragraph Text</a></li>
+									<li><a href="#" class="btn btn-block">Multiple Choice</a></li>
+									<li><a href="#" class="btn btn-block">Checkboxes</a></li>
+									<li><a href="#" class="btn btn-block">Dropdown</a></li>
+									<li><a href="#" class="btn btn-block">Number</a></li>
+								</ul>
+							</div>
+							<div class="span6">
+								<ul class="unstyled draggable">
+									<li><a href="#" class="btn btn-block">Email</a></li>
+									<li><a href="#" class="btn btn-block">Phone</a></li>
+									<li><a href="#" class="btn btn-block">Date</a></li>
+									<li><a href="#" class="btn btn-block">Time</a></li>
+									<li><a href="#" class="btn btn-block">Website</a></li>
+								</ul>
+							</div>
 						</div>
-						<div class="span6">
-							<ul class="unstyled">
-								<li><a href="#" class="btn btn-block">Email</a></li>
-								<li><a href="#" class="btn btn-block">Phone</a></li>
-								<li><a href="#" class="btn btn-block">Date</a></li>
-								<li><a href="#" class="btn btn-block">Time</a></li>
-								<li><a href="#" class="btn btn-block">Website</a></li>
-							</ul>
-						</div>
+						<hr>
+						<ul class="unstyled draggable">
+							<li><a href="#" class="btn btn-block">Field Set</a></li>
+						</ul>
 					</div>
 
 					<div class="tab-pane" id="fieldSettings">
@@ -191,6 +200,17 @@ $engine->eTemplate("include","header");
 							<h4>No Field Selected</h4>
 							To change a field, click on it in the form preview to the right.
 						</div>
+
+						<form class="form form-horizontal" id="fieldSettings_fieldset_form">
+							<div class="control-group well well-small" id="fieldSettings_container_fieldset">
+								<label for="fieldSettings_fieldset">
+									Fieldset Label
+									<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If a label is entered here, the field will be surrounded by a FieldSet, and the label used."></i>
+								</label>
+								<input type="text" class="input-block-level" id="fieldSettings_fieldset" name="fieldSettings_fieldset" />
+								<span class="help-block hidden"></span>
+							</div>
+						</form>
 
 						<form class="form form-horizontal" id="fieldSettings_form">
 							<div class="row-fluid noHide">
@@ -254,26 +274,15 @@ $engine->eTemplate("include","header");
 								</span>
 
 								<span class="span6">
-									<div class="control-group well well-small" id="fieldSettings_container_fieldset">
-										<label for="fieldSettings_fieldset">
-											Fieldset Label
-											<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If a label is entered here, the field will be surrounded by a FieldSet, and the label used."></i>
+									<div class="control-group well well-small" id="fieldSettings_container_class">
+										<label for="fieldSettings_class">
+											HTML Classes
+											<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Classes can be entered to give the field a different look and feel."></i>
 										</label>
-										<input type="text" class="input-block-level" id="fieldSettings_fieldset" name="fieldSettings_fieldset" />
+										<input type="text" class="input-block-level" id="fieldSettings_class" name="fieldSettings_class" />
 										<span class="help-block hidden"></span>
 									</div>
 								</span>
-							</div>
-
-							<div class="row-fluid noHide">
-								<div class="control-group well well-small" id="fieldSettings_container_class">
-									<label for="fieldSettings_class">
-										HTML Classes
-										<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Classes can be entered to give the field a different look and feel."></i>
-									</label>
-									<input type="text" class="input-block-level" id="fieldSettings_class" name="fieldSettings_class" />
-									<span class="help-block hidden"></span>
-								</div>
 							</div>
 
 							<div class="row-fluid noHide">
@@ -453,7 +462,7 @@ $engine->eTemplate("include","header");
 				<form class="form-horizontal" id="formPreview_container">
 					<h2 id="formTitle"></h2>
 					<p id="formDescription"></p>
-					<ul class="unstyled" id="formPreview">
+					<ul class="unstyled sortable" id="formPreview">
 						{local var="formPreview"}
 					</ul>
 				</form>
