@@ -425,15 +425,9 @@ $engine->eTemplate("include","header");
 							</div>
 
 							<div class="control-group well well-small" id="formSettings_formContainer_container">
-								<label class="checkbox">
-									<input type="checkbox" id="formSettings_formContainer" name="formSettings_formContainer"> Act as Container
-								</label>
-								<label class="checkbox">
-									<input type="checkbox" id="formSettings_formProduction" name="formSettings_formProduction"> Production Ready
-								</label>
-								<label class="checkbox">
-								<input type="checkbox" id="formSettings_formMetadata" name="formSettings_formMetadata"> <label for="formSettings_formMetadata" style="display: inline;">Metadata Form</label>
-								</label>
+								<input type="checkbox" id="formSettings_formContainer" name="formSettings_formContainer"> <label class="checkbox" for="formSettings_formContainer" style="display: inline;">Act as Container</label> <br />
+								<input type="checkbox" id="formSettings_formProduction" name="formSettings_formProduction"> <label class="checkbox" for="formSettings_formProduction" style="display: inline;">Production Ready</label> <br />
+								<input type="checkbox" id="formSettings_formMetadata" name="formSettings_formMetadata"> <label class="checkbox" for="formSettings_formMetadata" style="display: inline;">Metadata Form</label> <br />
 								<span class="help-block hidden"></span>
 							</div>
 						</div>
