@@ -3,7 +3,10 @@ include("../header.php");
 
 recurseInsert("acl.php","php");
 
-$formID = isset($engine->cleanGet['MYSQL']['id']) ? $engine->cleanGet['MYSQL']['id'] : NULL;
+$formID = isset($engine->cleanPost['HTML']['id']) ? $engine->cleanPost['HTML']['id'] : (isset($engine->cleanGet['HTML']['id']) ? $engine->cleanGet['HTML']['id'] : NULL);
+if (is_empty($formID)) {
+	$formID = NULL;
+}
 
 if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	$engine->openDB->transBegin();
@@ -101,10 +104,11 @@ if (!isnull($formID)) {
 
 	if ($sqlResult['result']) {
 		$row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
-		localVars::add("formTitle",$row['title']);
-		localVars::add("formDescription",$row['description']);
 
 		$fields = decodeFields($row['fields']);
+		localVars::add("formID",htmlSanitize($row['ID']));
+		localVars::add("formTitle",htmlSanitize($row['title']));
+		localVars::add("formDescription",htmlSanitize($row['description']));
 
 		$formPreview = NULL;
 		foreach($fields as $row) {
@@ -434,6 +438,7 @@ $engine->eTemplate("include","header");
 
 						<div class="row-fluid noHide">
 							<form class="form form-horizontal" id="submitForm" name="submitForm" method="post">
+								<input type="hidden" name="id" value="{local var="formID"}">
 								<input type="hidden" name="form">
 								<input type="hidden" name="fields">
 								<input type="submit" class="btn btn-large btn-block btn-primary" name="submitForm" value="Add/Update Form">
