@@ -13,13 +13,14 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 
 	if (!isnull($formID)) {
 		// Update forms table
-		$sql = sprintf("UPDATE `%s` SET `title`='%s', `description`=%s, `fields`='%s', `container`='%s', `production`='%s' WHERE ID='%s' LIMIT 1",
+		$sql = sprintf("UPDATE `%s` SET `title`='%s', `description`=%s, `fields`='%s', `container`='%s', `production`='%s', `metadata`='%s' WHERE ID='%s' LIMIT 1",
 			$engine->openDB->escape($engine->dbTables("forms")),
 			$engine->openDB->escape($form['formTitle']),
 			!is_empty($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
 			encodeFields($fields),
 			$engine->openDB->escape($form['formContainer']),
 			$engine->openDB->escape($form['formProduction']),
+			$engine->openDB->escape($form['formMetadata']),
 			$engine->openDB->escape($formID)
 			);
 		$sqlResult = $engine->openDB->query($sql);
@@ -31,13 +32,14 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	}
 	else {
 		// Insert into forms table
-		$sql = sprintf("INSERT INTO `%s` (title, description, fields, container, production) VALUES ('%s',%s,'%s','%s','%s')",
+		$sql = sprintf("INSERT INTO `%s` (title, description, fields, container, production, metadata) VALUES ('%s',%s,'%s','%s','%s','%s')",
 			$engine->openDB->escape($engine->dbTables("forms")),
 			$engine->openDB->escape($form['formTitle']),
 			isset($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
 			encodeFields($fields),
 			$engine->openDB->escape($form['formContainer']),
-			$engine->openDB->escape($form['formProduction'])
+			$engine->openDB->escape($form['formProduction']),
+			$engine->openDB->escape($form['formMetadata'])
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
@@ -428,6 +430,9 @@ $engine->eTemplate("include","header");
 								</label>
 								<label class="checkbox">
 									<input type="checkbox" id="formSettings_formProduction" name="formSettings_formProduction"> Production Ready
+								</label>
+								<label class="checkbox">
+								<input type="checkbox" id="formSettings_formMetadata" name="formSettings_formMetadata"> <label for="formSettings_formMetadata" style="display: inline;">Metadata Form</label>
 								</label>
 								<span class="help-block hidden"></span>
 							</div>
