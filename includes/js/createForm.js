@@ -9,7 +9,8 @@ $(function() {
 	});
 
 	// Make the preview pane sortable -- sort order determines position
-	$("#formPreview").sortable({
+	$("ul.sortable").sortable({
+		connectWith: "ul.sortable",
 		revert: true,
 		placeholder: "highlight",
 		update: function(event, ui) {
@@ -17,19 +18,42 @@ $(function() {
 			if ($(ui.item).hasClass("ui-draggable")) {
 				addNewField(ui.item);
 			}
+			$("ul.sortable").sortable({
+				revert: true,
+				placeholder: "highlight",
+				update: function(event, ui) {
+					// Only perform this if it's a brand new field
+					if ($(ui.item).hasClass("ui-draggable")) {
+						addNewField(ui.item);
+					}
+				}
+			});
 		}
 	});
 
 	// Make field types draggable, linked to preview pane
-	$("#fieldAdd li").draggable({
-		connectToSortable: "#formPreview",
+	$(".draggable li").draggable({
+		connectToSortable: "ul.sortable",
 		helper: "clone",
 		revert: "invalid",
 	});
 
+	// Add new field on click as well as drag
 	$("#fieldAdd li").click(function() {
 		$(this).clone().appendTo($("#formPreview"));
 		addNewField($("#formPreview li:last"));
+	});
+
+	// Re-order nesting on load
+	// This loops through <li> and finds all the fieldsets, then loops through matching all <li> that have
+	// the same fieldset name and moves them inside it
+	$(".fieldValues :input[name^='type_'][value='Field Set']").each(function() {
+		var fieldset = $(this).parents("li").prop("id");
+		$(".fieldValues :input[name^='fieldset_'][value='"+$(this).siblings(":input[name^='fieldset_']").val()+"']").each(function() {
+			if (fieldset != $(this).parents("li").prop("id")) {
+				$(this).parents("li").detach().appendTo($("#"+fieldset+" ul"));
+			}
+		});
 	});
 
 	// Set all the black magic bindings
@@ -90,6 +114,7 @@ function showFieldSettings(fullID) {
 	if (fullID === undefined) {
 		// Hide the form and show a warning about having nothing selected
 		$("#noFieldSelected").show();
+		$("#fieldSettings_fieldset_form").hide();
 		$("#fieldSettings_form").hide();
 	}
 	else {
@@ -101,45 +126,52 @@ function showFieldSettings(fullID) {
 
 		// Hide the nothing selected error and show the form
 		$("#noFieldSelected").hide();
-		$("#fieldSettings_form").show();
+		if (type == "Field Set") {
+			$("#fieldSettings_fieldset_form").show();
+			$("#fieldSettings_form").hide();
+		}
+		else {
+			$("#fieldSettings_fieldset_form").hide();
+			$("#fieldSettings_form").show();
 
-		// Hide all but the common fields
-		$("#fieldSettings_form").children().not(".noHide").hide();
+			// Hide all but the common fields
+			$("#fieldSettings_form").children().not(".noHide").hide();
 
-		// Show optional fields
-		switch(type) {
-			case 'Single Line Text':
-			case 'Paragraph Text':
-				$("#fieldSettings_container_range").show();
+			// Show optional fields
+			switch(type) {
+				case 'Single Line Text':
+				case 'Paragraph Text':
+					$("#fieldSettings_container_range").show();
 
-				$("#fieldSettings_range_format option").remove();
-				$("#fieldSettings_range_format")
-					.append($("<option>").prop("value","characters").text("Characters"))
-					.append($("<option>").prop("value","words").text("Words"));
-				break;
+					$("#fieldSettings_range_format option").remove();
+					$("#fieldSettings_range_format")
+						.append($("<option>").prop("value","characters").text("Characters"))
+						.append($("<option>").prop("value","words").text("Words"));
+					break;
 
-			case 'Multiple Choice':
-			case 'Checkboxes':
-			case 'Dropdown':
-				$("#fieldSettings_container_choices").show();
-				break;
+				case 'Multiple Choice':
+				case 'Checkboxes':
+				case 'Dropdown':
+					$("#fieldSettings_container_choices").show();
+					break;
 
-			case 'Number':
-				$("#fieldSettings_container_range").show();
+				case 'Number':
+					$("#fieldSettings_container_range").show();
 
-				$("#fieldSettings_range_format option").remove();
-				$("#fieldSettings_range_format")
-					.append($("<option>").prop("value","value").text("Value"))
-					.append($("<option>").prop("value","digits").text("Digits"));
-				break;
+					$("#fieldSettings_range_format option").remove();
+					$("#fieldSettings_range_format")
+						.append($("<option>").prop("value","value").text("Value"))
+						.append($("<option>").prop("value","digits").text("Digits"));
+					break;
 
-			case 'Email':
-			case 'Phone':
-			case 'Date':
-			case 'Time':
-			case 'Website':
-			default:
-				break;
+				case 'Email':
+				case 'Phone':
+				case 'Date':
+				case 'Time':
+				case 'Website':
+				default:
+					break;
+			}
 		}
 
 		// Update field settings to use values from form display
@@ -178,8 +210,10 @@ function showFieldSettings(fullID) {
 
 function fieldSettingsBindings() {
 	// Select a field to change settings
-	$("#formPreview").on("click", "li", function() {
-		$(this).addClass("well").addClass("well-small").siblings().removeClass("well");
+	$("#formPreview").on("click", "li", function(event) {
+		event.stopPropagation();
+		$("#formPreview .well").removeClass("well");
+		$(this).addClass("well well-small");
 		$("#fieldTab a[href='#fieldSettings']").tab("show");
 		showFieldSettings($(this).attr("id"));
 	});
@@ -211,15 +245,9 @@ function fieldSettingsBindings() {
 	});
 
 	$("#fieldSettings_fieldset").keyup(function() {
-		if ($(this).val() && !$("#formPreview .well :input[name^=fieldset_]").val()) {
-			$("#formPreview .well .fieldPreview").html("<fieldset><legend></legend>"+$("#formPreview .well .fieldPreview").html()+"</fieldset>");
-		}
-		else if (!$(this).val() && $("#formPreview .well :input[name^=fieldset_]").val()) {
-			$("#formPreview .well .fieldPreview").html($("#formPreview .well fieldset").html());
-		}
+		$("#formPreview .well .fieldPreview legend").text($(this).val());
 
 		$("#formPreview .well :input[name^=fieldset_]").val($(this).val());
-		$("#formPreview .well legend").text($(this).val());
 	});
 
 	$("#fieldSettings_class").keyup(function() {
@@ -479,58 +507,63 @@ function addNewField(item) {
 function newFieldPreview(id,type) {
 	var output;
 
-	output  = '<div class="control-group"><label class="control-label">Untitled</label><div class="controls">';
-
-	switch(type) {
-		case 'Single Line Text':
-			output += '<input type="text">';
-			break;
-
-		case 'Paragraph Text':
-			output += '<textarea></textarea>';
-			break;
-
-		case 'Multiple Choice':
-			output += '<label class="radio"><input type="radio">First Choice</label><label class="radio"><input type="radio">Second Choice</label>';
-			break;
-
-		case 'Checkboxes':
-			output += '<label class="checkbox"><input type="checkbox">First Choice</label><label class="checkbox"><input type="checkbox">Second Choice</label>';
-			break;
-
-		case 'Dropdown':
-			output += '<select></select>';
-			break;
-
-		case 'Number':
-			output += '<input type="number">';
-			break;
-
-		case 'Email':
-			output += '<input type="email">';
-			break;
-
-		case 'Phone':
-			output += '<input type="tel">';
-			break;
-
-		case 'Date':
-			output += '<input type="date">';
-			break;
-
-		case 'Time':
-			output += '<input type="datetime">';
-			break;
-
-		case 'Website':
-			output += '<input type="url">';
-			break;
-
-		default:
-			break;
+	if (type == 'Field Set') {
+		output = '<fieldset><legend></legend><ul class="unstyled sortable"></ul></fieldset>';
 	}
+	else {
+		output = '<div class="control-group"><label class="control-label">Untitled</label><div class="controls">';
 
-	output += '</div></div>';
+		switch(type) {
+			case 'Single Line Text':
+				output += '<input type="text">';
+				break;
+
+			case 'Paragraph Text':
+				output += '<textarea></textarea>';
+				break;
+
+			case 'Multiple Choice':
+				output += '<label class="radio"><input type="radio">First Choice</label><label class="radio"><input type="radio">Second Choice</label>';
+				break;
+
+			case 'Checkboxes':
+				output += '<label class="checkbox"><input type="checkbox">First Choice</label><label class="checkbox"><input type="checkbox">Second Choice</label>';
+				break;
+
+			case 'Dropdown':
+				output += '<select></select>';
+				break;
+
+			case 'Number':
+				output += '<input type="number">';
+				break;
+
+			case 'Email':
+				output += '<input type="email">';
+				break;
+
+			case 'Phone':
+				output += '<input type="tel">';
+				break;
+
+			case 'Date':
+				output += '<input type="date">';
+				break;
+
+			case 'Time':
+				output += '<input type="datetime">';
+				break;
+
+			case 'Website':
+				output += '<input type="url">';
+				break;
+
+			default:
+				break;
+		}
+
+		output += '</div></div>';
+	}
 
 	return output;
 }
