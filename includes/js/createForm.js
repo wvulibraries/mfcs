@@ -266,7 +266,7 @@ function fieldSettingsBindings() {
 	$("#fieldSettings_choices_manual")
 		.on("click","button[name=default]",function() {
 			switch ($("#formPreview .well :input[name^=type_]").val()) {
-				case 'Dropdown':
+				case 'select':
 					if ($(this).hasClass("active")) {
 						$("#formPreview .well .controls :input").val('');
 						$("#formPreview .well :input[name^=choicesDefault_]").val('');
@@ -278,7 +278,7 @@ function fieldSettingsBindings() {
 					$("#fieldSettings_choices_manual button[name=default]").not(this).removeClass("active");
 					break;
 
-				case 'Radio':
+				case 'radio':
 					if ($(this).hasClass("active")) {
 						$("#formPreview .well .controls :input").removeAttr('checked');
 						$("#formPreview .well :input[name^=choicesDefault_]").val('');
@@ -295,7 +295,7 @@ function fieldSettingsBindings() {
 					$("#fieldSettings_choices_manual button[name=default]").not(this).removeClass("active");
 					break;
 
-				case 'Checkboxes':
+				case 'checkbox':
 					var val = $(this).siblings(":input").val();
 					if ($(this).hasClass("active")) {
 						$("#formPreview .well .controls label").each(function() {
@@ -338,21 +338,21 @@ function fieldSettingsBindings() {
 			$("#formPreview .well :input[name^=choicesOptions_]").val(vals.join());
 
 			switch ($("#formPreview .well :input[name^=type_]").val()) {
-				case 'Dropdown':
+				case 'select':
 					$("#formPreview .well .controls :input").html('');
 					for (var i = 0; i < vals.length; i++) {
 						$("#formPreview .well .controls :input").append($("<option>").prop("value",vals[i]).text(vals[i]));
 					}
 					break;
 
-				case 'Radio':
+				case 'radio':
 					$("#formPreview .well .controls").html('');
 					for (var i = 0; i < vals.length; i++) {
 						$("#formPreview .well .controls").append($("<label>").addClass("radio").append($("<input>").prop("type","radio").prop("name",$("#formPreview .well :input[name^=name_]").val())).append(vals[i]));
 					}
 					break;
 
-				case 'Checkboxes':
+				case 'checkbox':
 					$("#formPreview .well .controls").html('');
 					for (var i = 0; i < vals.length; i++) {
 						$("#formPreview .well .controls").append($("<label>").addClass("checkbox").append($("<input>").prop("type","checkbox").prop("name",$("#formPreview .well :input[name^=name_]").val())).append(vals[i]));
@@ -368,21 +368,21 @@ function fieldSettingsBindings() {
 			$("#formPreview .well :input[name^=choicesOptions_]").val(vals.join());
 
 			switch ($("#formPreview .well :input[name^=type_]").val()) {
-				case 'Dropdown':
+				case 'select':
 					$("#formPreview .well .controls :input").html('');
 					for (var i = 0; i < vals.length; i++) {
 						$("#formPreview .well .controls :input").append($("<option>").prop("value",vals[i]).text(vals[i]));
 					}
 					break;
 
-				case 'Radio':
+				case 'radio':
 					$("#formPreview .well .controls").html('');
 					for (var i = 0; i < vals.length; i++) {
 						$("#formPreview .well .controls").append($("<label>").addClass("radio").append($("<input>").prop("type","radio").prop("name",$("#formPreview .well :input[name^=name_]").val())).append(vals[i]));
 					}
 					break;
 
-				case 'Checkboxes':
+				case 'checkbox':
 					$("#formPreview .well .controls").html('');
 					for (var i = 0; i < vals.length; i++) {
 						$("#formPreview .well .controls").append($("<label>").addClass("checkbox").append($("<input>").prop("type","checkbox").prop("name",$("#formPreview .well :input[name^=name_]").val())).append(vals[i]));
@@ -540,46 +540,57 @@ function newFieldPreview(id,type) {
 
 		switch(type) {
 			case 'Single Line Text':
+			case 'text':
 				output += '<input type="text">';
 				break;
 
 			case 'Paragraph Text':
+			case 'textarea':
 				output += '<textarea></textarea>';
 				break;
 
 			case 'Radio':
+			case 'radio':
 				output += '<label class="radio"><input type="radio">First Choice</label><label class="radio"><input type="radio">Second Choice</label>';
 				break;
 
 			case 'Checkboxes':
+			case 'checkbox':
 				output += '<label class="checkbox"><input type="checkbox">First Choice</label><label class="checkbox"><input type="checkbox">Second Choice</label>';
 				break;
 
 			case 'Dropdown':
+			case 'select':
 				output += '<select></select>';
 				break;
 
 			case 'Number':
+			case 'number':
 				output += '<input type="number">';
 				break;
 
 			case 'Email':
+			case 'email':
 				output += '<input type="email">';
 				break;
 
 			case 'Phone':
+			case 'tel':
 				output += '<input type="tel">';
 				break;
 
 			case 'Date':
+			case 'date':
 				output += '<input type="date">';
 				break;
 
 			case 'Time':
+			case 'datetime':
 				output += '<input type="datetime">';
 				break;
 
 			case 'Website':
+			case 'url':
 				output += '<input type="url">';
 				break;
 
