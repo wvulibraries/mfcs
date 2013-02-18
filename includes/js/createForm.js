@@ -340,6 +340,35 @@ function fieldSettingsBindings() {
 				$(this).siblings("button[name=add]").click();
 			}
 			$(this).parent().remove();
+
+			var vals = [];
+			$("#fieldSettings_choices_manual input[name=fieldSettings_choices_text]").each(function() {
+				vals.push($(this).val());
+			});
+			$("#formPreview .well :input[name^=choicesOptions_]").val(vals.join());
+
+			switch ($("#formPreview .well :input[name^=type_]").val()) {
+				case 'Dropdown':
+					$("#formPreview .well .controls :input").html('');
+					for (var i = 0; i < vals.length; i++) {
+						$("#formPreview .well .controls :input").append($("<option>").prop("value",vals[i]).text(vals[i]));
+					}
+					break;
+
+				case 'Radio':
+					$("#formPreview .well .controls").html('');
+					for (var i = 0; i < vals.length; i++) {
+						$("#formPreview .well .controls").append($("<label>").addClass("radio").append($("<input>").prop("type","radio").prop("name",$("#formPreview .well :input[name^=name_]").val())).append(vals[i]));
+					}
+					break;
+
+				case 'Checkboxes':
+					$("#formPreview .well .controls").html('');
+					for (var i = 0; i < vals.length; i++) {
+						$("#formPreview .well .controls").append($("<label>").addClass("checkbox").append($("<input>").prop("type","checkbox").prop("name",$("#formPreview .well :input[name^=name_]").val())).append(vals[i]));
+					}
+					break;
+			}
 		})
 		.on("keyup",":input[name=fieldSettings_choices_text]",function() {
 			var vals = [];
