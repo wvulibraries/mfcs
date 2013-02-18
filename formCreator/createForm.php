@@ -263,23 +263,23 @@ $engine->eTemplate("include","header");
 
 							<div class="row-fluid noHide">
 								<span class="span6">
-									<div class="control-group well well-small" id="fieldSettings_container_ID">
-										<label for="fieldSettings_ID">
-											HTML ID
+									<div class="control-group well well-small" id="fieldSettings_container_cssID">
+										<label for="fieldSettings_cssID">
+											CSS ID
 											<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="The ID is a unique value that can be used to identify a field."></i>
 										</label>
-										<input type="text" class="input-block-level" id="fieldSettings_ID" name="fieldSettings_ID" />
+										<input type="text" class="input-block-level" id="fieldSettings_cssID" name="fieldSettings_cssID" />
 										<span class="help-block hidden"></span>
 									</div>
 								</span>
 
 								<span class="span6">
-									<div class="control-group well well-small" id="fieldSettings_container_class">
-										<label for="fieldSettings_class">
-											HTML Classes
+									<div class="control-group well well-small" id="fieldSettings_container_cssClass">
+										<label for="fieldSettings_cssClass">
+											CSS Classes
 											<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Classes can be entered to give the field a different look and feel."></i>
 										</label>
-										<input type="text" class="input-block-level" id="fieldSettings_class" name="fieldSettings_class" />
+										<input type="text" class="input-block-level" id="fieldSettings_cssClass" name="fieldSettings_cssClass" />
 										<span class="help-block hidden"></span>
 									</div>
 								</span>

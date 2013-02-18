@@ -174,9 +174,8 @@ function showFieldSettings(fullID) {
 		$("#fieldSettings_label").val($("#label_"+id).val()).keyup();
 		$("#fieldSettings_value").val($("#value_"+id).val()).keyup();
 		$("#fieldSettings_placeholder").val($("#placeholder_"+id).val()).keyup();
-		$("#fieldSettings_ID").val($("#ID_"+id).val()).keyup();
-		$("#fieldSettings_fieldset").val($("#fieldset_"+id).val()).keyup();
-		$("#fieldSettings_class").val($("#class_"+id).val()).keyup();
+		$("#fieldSettings_cssID").val($("#cssID_"+id).val()).keyup();
+		$("#fieldSettings_cssClass").val($("#cssClass_"+id).val()).keyup();
 		$("#fieldSettings_styles").val($("#styles_"+id).val()).keyup();
 		$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change();
 
@@ -201,6 +200,8 @@ function showFieldSettings(fullID) {
 		$("#fieldSettings_range_min").val($("#rangeMin_"+id).val()).change();
 		$("#fieldSettings_range_max").val($("#rangeMax_"+id).val()).change();
 		$("#fieldSettings_range_format").val($("#rangeFormat_"+id).val()).change();
+
+		$("#fieldSettings_fieldset").val($("#fieldset_"+id).val()).keyup();
 	}
 }
 
@@ -234,21 +235,15 @@ function fieldSettingsBindings() {
 		$("#formPreview .well :input[name^=placeholder_]").val($(this).val());
 	});
 
-	$("#fieldSettings_ID").keyup(function() {
+	$("#fieldSettings_cssID").keyup(function() {
 		$("#formPreview .well .control-group > label").prop('for',$(this).val());
 		$("#formPreview .well .controls :input").prop('id',$(this).val());
-		$("#formPreview .well :input[name^=ID_]").val($(this).val());
+		$("#formPreview .well :input[name^=cssID_]").val($(this).val());
 	});
 
-	$("#fieldSettings_fieldset").keyup(function() {
-		$("#formPreview .well .fieldPreview legend").text($(this).val());
-
-		$("#formPreview .well :input[name^=fieldset_]").val($(this).val());
-	});
-
-	$("#fieldSettings_class").keyup(function() {
+	$("#fieldSettings_cssClass").keyup(function() {
 		$("#formPreview .well .controls :input").prop('class',$(this).val());
-		$("#formPreview .well :input[name^=class_]").val($(this).val());
+		$("#formPreview .well :input[name^=cssClass_]").val($(this).val());
 	});
 
 	$("#fieldSettings_styles").keyup(function() {
@@ -475,6 +470,11 @@ function fieldSettingsBindings() {
 
 	$("#fieldSettings_range_format").change(function() {
 		$("#formPreview .well :input[name^=rangeFormat_]").val($(this).val());
+	});
+
+	$("#fieldSettings_fieldset").keyup(function() {
+		$("#formPreview .well .fieldPreview legend").text($(this).val());
+		$("#formPreview .well :input[name^=fieldset_]").val($(this).val());
 	});
 }
 
