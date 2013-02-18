@@ -23,11 +23,13 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 
 	if (!isnull($formID)) {
 		// Update forms table
-		$sql = sprintf("UPDATE `%s` SET `title`='%s', `description`=%s, `fields`='%s', `container`='%s', `production`='%s', `metadata`='%s' WHERE ID='%s' LIMIT 1",
+		$sql = sprintf("UPDATE `%s` SET `title`='%s', `description`=%s, `fields`='%s', `submitButton`='%s', `updateButton`='%s', `container`='%s', `production`='%s', `metadata`='%s' WHERE ID='%s' LIMIT 1",
 			$engine->openDB->escape($engine->dbTables("forms")),
 			$engine->openDB->escape($form['formTitle']),
 			!is_empty($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
 			encodeFields($fields),
+			$engine->openDB->escape($form['submitButton']),
+			$engine->openDB->escape($form['updateButton']),
 			$engine->openDB->escape($form['formContainer']),
 			$engine->openDB->escape($form['formProduction']),
 			$engine->openDB->escape($form['formMetadata']),
@@ -114,6 +116,8 @@ if (!isnull($formID)) {
 		localVars::add("formID",htmlSanitize($row['ID']));
 		localVars::add("formTitle",htmlSanitize($row['title']));
 		localVars::add("formDescription",htmlSanitize($row['description']));
+		localVars::add("submitButton",htmlSanitize($row['submitButton']));
+		localVars::add("updateButton",htmlSanitize($row['updateButton']));
 
 		$formPreview = NULL;
 		if (!is_empty($row['fields'])) {
@@ -151,6 +155,13 @@ if (!isnull($formID)) {
 		}
 		localVars::add("formPreview",$formPreview);
 	}
+}
+
+if (is_empty(localVars::get("submitButton"))) {
+	localVars::add("submitButton","Submit");
+}
+if (is_empty(localVars::get("updateButton"))) {
+	localVars::add("updateButton","Update");
 }
 
 $engine->eTemplate("include","header");
@@ -441,7 +452,33 @@ $engine->eTemplate("include","header");
 								<input type="text" class="input-block-level" id="formSettings_formDescription" name="formSettings_formDescription" value="{local var="formDescription"}" />
 								<span class="help-block hidden"></span>
 							</div>
+						</div>
 
+						<div class="row-fluid noHide">
+							<div class="span6">
+								<div class="control-group well well-small" id="formSettings_submitButton_container">
+									<label for="formSettings_submitButton">
+										Submit Button
+										<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="The text that is displayed on the form's submit button."></i>
+									</label>
+									<input type="text" class="input-block-level" id="formSettings_submitButton" name="formSettings_submitButton" value="{local var="submitButton"}" />
+									<span class="help-block hidden"></span>
+								</div>
+							</div>
+
+							<div class="span6">
+								<div class="control-group well well-small" id="formSettings_updateButton_container">
+									<label for="formSettings_updateButton">
+										Update Button
+										<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="The text that is displayed on the form's update button."></i>
+									</label>
+									<input type="text" class="input-block-level" id="formSettings_updateButton" name="formSettings_updateButton" value="{local var="updateButton"}" />
+									<span class="help-block hidden"></span>
+								</div>
+							</div>
+						</div>
+
+						<div class="row-fluid noHide">
 							<div class="control-group well well-small" id="formSettings_formContainer_container">
 								<input type="checkbox" id="formSettings_formContainer" name="formSettings_formContainer"> <label class="checkbox" for="formSettings_formContainer" style="display: inline;">Act as Container</label> <br />
 								<input type="checkbox" id="formSettings_formProduction" name="formSettings_formProduction"> <label class="checkbox" for="formSettings_formProduction" style="display: inline;">Production Ready</label> <br />
