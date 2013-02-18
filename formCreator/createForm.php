@@ -388,29 +388,24 @@ $engine->eTemplate("include","header");
 							</div>
 
 							<div class="control-group well well-small" id="fieldSettings_container_range">
-								<label for="fieldSettings_min">
-									Range
-									<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title=""></i>
-								</label>
-
 								<div class="row-fluid">
 									<span class="span4">
-										<label for="fieldSettings_min">
+										<label for="fieldSettings_range_min">
 											Min
 										</label>
-										<input type="number" class="input-block-level" id="fieldSettings_min" name="fieldSettings_min" min="0" />
+										<input type="number" class="input-block-level" id="fieldSettings_range_min" name="fieldSettings_range_min" min="0" />
 									</span>
 									<span class="span4">
-										<label for="fieldSettings_max">
+										<label for="fieldSettings_range_max">
 											Max
 										</label>
-										<input type="number" class="input-block-level" id="fieldSettings_max" name="fieldSettings_max" min="0" />
+										<input type="number" class="input-block-level" id="fieldSettings_range_max" name="fieldSettings_range_max" min="0" />
 									</span>
 									<span class="span4">
-										<label for="fieldSettings_format">
+										<label for="fieldSettings_range_format">
 											Format
 										</label>
-										<select class="input-block-level" id="fieldSettings_format" name="fieldSettings_format"></select>
+										<select class="input-block-level" id="fieldSettings_range_format" name="fieldSettings_range_format"></select>
 									</span>
 								</div>
 							</div>

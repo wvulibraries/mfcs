@@ -145,8 +145,8 @@ function showFieldSettings(fullID) {
 
 					$("#fieldSettings_range_format option").remove();
 					$("#fieldSettings_range_format")
-						.append($("<option>").prop("value","characters").text("Characters"))
-						.append($("<option>").prop("value","words").text("Words"));
+						.append('<option value="characters">Characters</option')
+						.append('<option value="words">Words</option')
 					break;
 
 				case 'Radio':
@@ -160,8 +160,8 @@ function showFieldSettings(fullID) {
 
 					$("#fieldSettings_range_format option").remove();
 					$("#fieldSettings_range_format")
-						.append($("<option>").prop("value","value").text("Value"))
-						.append($("<option>").prop("value","digits").text("Digits"));
+						.append('<option value="value">Value</option')
+						.append('<option value="digits">Digits</option')
 					break;
 
 				case 'Email':
