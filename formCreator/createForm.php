@@ -16,8 +16,8 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 
 	// Ensure all fields have an ID for the label. Assign it the value of name if needed.
 	foreach ($fields as $I => $field) {
-		if (is_empty($field['cssID'])) {
-			$fields[$I]['cssID'] = $field['name'];
+		if (is_empty($field['id'])) {
+			$fields[$I]['id'] = $field['name'];
 		}
 	}
 
@@ -270,12 +270,12 @@ $engine->eTemplate("include","header");
 
 							<div class="row-fluid noHide">
 								<span class="span6">
-									<div class="control-group well well-small" id="fieldSettings_container_cssID">
-										<label for="fieldSettings_cssID">
+									<div class="control-group well well-small" id="fieldSettings_container_id">
+										<label for="fieldSettings_id">
 											CSS ID
 											<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="The ID is a unique value that can be used to identify a field."></i>
 										</label>
-										<input type="text" class="input-block-level" id="fieldSettings_cssID" name="fieldSettings_cssID" />
+										<input type="text" class="input-block-level" id="fieldSettings_id" name="fieldSettings_id" />
 										<span class="help-block hidden"></span>
 									</div>
 								</span>
