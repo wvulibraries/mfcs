@@ -175,7 +175,7 @@ function showFieldSettings(fullID) {
 		$("#fieldSettings_value").val($("#value_"+id).val()).keyup();
 		$("#fieldSettings_placeholder").val($("#placeholder_"+id).val()).keyup();
 		$("#fieldSettings_cssID").val($("#cssID_"+id).val()).keyup();
-		$("#fieldSettings_cssClass").val($("#cssClass_"+id).val()).keyup();
+		$("#fieldSettings_class").val($("#class_"+id).val()).keyup();
 		$("#fieldSettings_style").val($("#style_"+id).val()).keyup();
 		$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change();
 
@@ -241,9 +241,9 @@ function fieldSettingsBindings() {
 		$("#formPreview .well :input[name^=cssID_]").val($(this).val());
 	});
 
-	$("#fieldSettings_cssClass").keyup(function() {
+	$("#fieldSettings_class").keyup(function() {
 		$("#formPreview .well .controls :input").prop('class',$(this).val());
-		$("#formPreview .well :input[name^=cssClass_]").val($(this).val());
+		$("#formPreview .well :input[name^=class_]").val($(this).val());
 	});
 
 	$("#fieldSettings_style").keyup(function() {
@@ -689,8 +689,7 @@ function newFieldValues(id,type,vals) {
 	output += '<input type="hidden" id="value_'+id+'" name="value_'+id+'" value="'+((vals['value']!=undefined)?vals['value']:'')+'">';
 	output += '<input type="hidden" id="placeholder_'+id+'" name="placeholder_'+id+'" value="'+((vals['placeholder']!=undefined)?vals['placeholder']:'')+'">';
 	output += '<input type="hidden" id="cssID_'+id+'" name="cssID_'+id+'" value="'+((vals['cssID']!=undefined)?vals['cssID']:'')+'">';
-	output += '<input type="hidden" id="fieldset_'+id+'" name="fieldset_'+id+'" value="'+((vals['fieldset']!=undefined)?vals['fieldset']:'')+'">';
-	output += '<input type="hidden" id="cssClass_'+id+'" name="cssClass_'+id+'" value="'+((vals['cssClass']!=undefined)?vals['cssClass']:'')+'">';
+	output += '<input type="hidden" id="class_'+id+'" name="class_'+id+'" value="'+((vals['class']!=undefined)?vals['class']:'')+'">';
 	output += '<input type="hidden" id="style_'+id+'" name="style_'+id+'" value="'+((vals['style']!=undefined)?vals['style']:'')+'">';
 	output += '<input type="hidden" id="choicesType_'+id+'" name="choicesType_'+id+'" value="'+((vals['choicesType']!=undefined)?vals['choicesType']:'')+'">';
 	output += '<input type="hidden" id="choicesDefault_'+id+'" name="choicesDefault_'+id+'" value="'+((vals['choicesDefault']!=undefined)?vals['choicesDefault']:'')+'">';
@@ -710,6 +709,7 @@ function newFieldValues(id,type,vals) {
 	output += '<input type="hidden" id="rangeMin_'+id+'" name="rangeMin_'+id+'" value="'+((vals['rangeMin']!=undefined)?vals['rangeMin']:'')+'">';
 	output += '<input type="hidden" id="rangeMax_'+id+'" name="rangeMax_'+id+'" value="'+((vals['rangeMax']!=undefined)?vals['rangeMax']:'')+'">';
 	output += '<input type="hidden" id="rangeFormat_'+id+'" name="rangeFormat_'+id+'" value="'+((vals['rangeFormat']!=undefined)?vals['rangeFormat']:'')+'">';
+	output += '<input type="hidden" id="fieldset_'+id+'" name="fieldset_'+id+'" value="'+((vals['fieldset']!=undefined)?vals['fieldset']:'')+'">';
 
 	return output;
 }

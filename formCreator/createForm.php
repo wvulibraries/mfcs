@@ -281,12 +281,12 @@ $engine->eTemplate("include","header");
 								</span>
 
 								<span class="span6">
-									<div class="control-group well well-small" id="fieldSettings_container_cssClass">
-										<label for="fieldSettings_cssClass">
+									<div class="control-group well well-small" id="fieldSettings_container_class">
+										<label for="fieldSettings_class">
 											CSS Classes
 											<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Classes can be entered to give the field a different look and feel."></i>
 										</label>
-										<input type="text" class="input-block-level" id="fieldSettings_cssClass" name="fieldSettings_cssClass" />
+										<input type="text" class="input-block-level" id="fieldSettings_class" name="fieldSettings_class" />
 										<span class="help-block hidden"></span>
 									</div>
 								</span>
