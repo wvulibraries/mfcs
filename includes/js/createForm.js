@@ -536,7 +536,7 @@ function addNewField(item) {
 function newFieldPreview(id,type) {
 	var output;
 
-	if (type == 'Field Set') {
+	if (type == 'Field Set' || type == 'fieldset') {
 		output = '<fieldset><legend></legend><ul class="unstyled sortable"></ul></fieldset>';
 	}
 	else {
