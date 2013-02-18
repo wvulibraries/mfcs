@@ -16,11 +16,13 @@ if ($sqlResult['result']) {
 	$row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
 
 	$tmp = decodeFields($row['fields']);
-	foreach ($tmp as $field) {
-		$fields[] = array(
-			"name"   => $field['name'],
-			"label"  => $field['label'],
-			);
+	if (isset($tmp) && is_array($tmp)) {
+		foreach ($tmp as $field) {
+			$fields[] = array(
+				"name"   => $field['name'],
+				"label"  => $field['label'],
+				);
+		}
 	}
 }
 
