@@ -121,7 +121,7 @@ function showFieldSettings(fullID) {
 
 		// Hide the nothing selected error and show the form
 		$("#noFieldSelected").hide();
-		if (type == "Field Set") {
+		if (type == "fieldset") {
 			$("#fieldSettings_fieldset_form").show();
 			$("#fieldSettings_form").hide();
 		}
@@ -134,8 +134,8 @@ function showFieldSettings(fullID) {
 
 			// Show optional fields
 			switch(type) {
-				case 'Single Line Text':
-				case 'Paragraph Text':
+				case 'text':
+				case 'textarea':
 					$("#fieldSettings_container_range").show();
 
 					$("#fieldSettings_range_format option").remove();
@@ -144,13 +144,13 @@ function showFieldSettings(fullID) {
 						.append('<option value="words">Words</option')
 					break;
 
-				case 'Radio':
-				case 'Checkboxes':
-				case 'Dropdown':
+				case 'radio':
+				case 'checkbox':
+				case 'select':
 					$("#fieldSettings_container_choices").show();
 					break;
 
-				case 'Number':
+				case 'number':
 					$("#fieldSettings_container_range").show();
 
 					$("#fieldSettings_range_format option").remove();
@@ -159,11 +159,11 @@ function showFieldSettings(fullID) {
 						.append('<option value="digits">Digits</option')
 					break;
 
-				case 'Email':
-				case 'Phone':
-				case 'Date':
-				case 'Time':
-				case 'Website':
+				case 'email':
+				case 'phone':
+				case 'date':
+				case 'datetime':
+				case 'website':
 				default:
 					break;
 			}
@@ -532,7 +532,7 @@ function addNewField(item) {
 function newFieldPreview(id,type) {
 	var output;
 
-	if (type == 'Field Set') {
+	if (type == 'fieldet') {
 		output = '<fieldset><legend></legend><ul class="unstyled sortable"></ul></fieldset>';
 	}
 	else {
@@ -661,6 +661,10 @@ function newFieldValues(id,type,vals) {
 
 		case 'Website':
 			type = vals['type'] = 'url';
+			break;
+
+		case 'Field Set':
+			type = vals['type'] = 'fieldset';
 			break;
 
 		default:
