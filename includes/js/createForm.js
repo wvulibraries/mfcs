@@ -180,7 +180,7 @@ function showFieldSettings(fullID) {
 		$("#fieldSettings_style").val($("#style_"+id).val()).keyup();
 		$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change();
 
-		var opts = $("#choicesOptions_"+id).val().split(",");
+		var opts = $("#choicesOptions_"+id).val().split("%,%");
 		$("#fieldSettings_choices_manual").html('');
 		for (var i = 0; i < opts.length; i++) {
 			$("#fieldSettings_choices_manual").append(addChoice(opts[i],$("#choicesDefault_"+id).val()));
@@ -719,7 +719,7 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="choicesType_'+id+'" name="choicesType_'+id+'" value="'+((vals['choicesType']!=undefined)?vals['choicesType']:'')+'">';
 			if (vals['choicesType'] == 'manual') {
 				output += '<input type="hidden" id="choicesDefault_'+id+'" name="choicesDefault_'+id+'" value="'+((vals['choicesDefault']!=undefined)?vals['choicesDefault']:'')+'">';
-				output += '<input type="hidden" id="choicesOptions_'+id+'" name="choicesOptions_'+id+'" value="'+((vals['choicesOptions']!=undefined)?vals['choicesOptions']:'First Choice,Second Choice')+'">';
+				output += '<input type="hidden" id="choicesOptions_'+id+'" name="choicesOptions_'+id+'" value="'+((vals['choicesOptions']!=undefined)?vals['choicesOptions']:'First Choice%,%Second Choice')+'">';
 			}
 			else if (vals['choicesType'] == 'form') {
 				output += '<input type="hidden" id="choicesForm_'+id+'" name="choicesForm_'+id+'" value="'+((vals['choicesForm']!=undefined)?vals['choicesForm']:'')+'">';

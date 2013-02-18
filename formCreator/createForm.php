@@ -120,6 +120,9 @@ if (!isnull($formID)) {
 			$fields = decodeFields($row['fields']);
 
 			foreach((array)$fields as $I => $field) {
+				if (isset($field['choicesOptions']) && is_array($field['choicesOptions'])) {
+					$field['choicesOptions'] = implode("%,%",$field['choicesOptions']);
+				}
 				$values = json_encode($field);
 
 				$formPreview .= sprintf('
