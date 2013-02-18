@@ -1,30 +1,39 @@
+#groupingsAdd li,
 #fieldAdd li {
 	margin-bottom: 10px;
 }
 
 ul.sortable {
-	min-height: 80px;
+	min-height: 10px;
 }
 
-#formPreview li {
+ul.sortable li {
 	border-width: 2px;
 	border-style: solid;
 	border-color: transparent;
-	padding: 5px;
 }
 
-#formPreview li:hover {
+ul.sortable li:hover {
 	border-style: dashed;
 	border-color: #000;
 }
 
-#formPreview li.highlight {
+ul.sortable .highlight {
 	border-style: dashed;
 	border-color: #000;
+	min-height: 20px;
+}
+
+ul.sortable li.well {
+	border-color: #000;
+	margin-bottom: 0px;
+}
+
+#fieldPreview,
+#fieldPreview ul {
 	min-height: 50px;
 }
 
-#formPreview li.well {
-	border-color: #000;
-	margin-bottom: 0px;
+#fieldPreview li {
+	padding: 5px;
 }

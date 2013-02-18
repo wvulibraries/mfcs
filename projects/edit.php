@@ -38,7 +38,7 @@ try {
 				$engine->openDB->escape($V)
 				);
 			$sqlResult = $engine->openDB->query($sql);
-			
+
 			if (!$sqlResult['result']) {
 				errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
 				errorHandle::errorMsg("Error Updating Project");
@@ -46,7 +46,7 @@ try {
 				$engine->openDB->transEnd();
 				throw new Exception('Error');
 			}
-			
+
 		}
 
 		foreach($engine->cleanPost['MYSQL']['selectedUsersAdmins'] as $I=>$V) {
@@ -55,7 +55,7 @@ try {
 				$engine->openDB->escape($V)
 				);
 			$sqlResult = $engine->openDB->query($sql);
-			
+
 			if (!$sqlResult['result']) {
 				errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
 				errorHandle::errorMsg("Error Updating Project");
@@ -63,7 +63,7 @@ try {
 				$engine->openDB->transEnd();
 				throw new Exception('Error');
 			}
-			
+
 		}
 
 		// generate forms serialized arrays
@@ -85,7 +85,7 @@ try {
 			$engine->cleanGet['MYSQL']['id']
 			);
 		$sqlResult = $engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - Inserting Forms", errorHandle::DEBUG);
 			errorHandle::errorMsg("Error Updating Project");
@@ -137,20 +137,20 @@ try {
 			$engine->openDB->escape($V)
 			);
 		$sqlResult = $engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - getting form titles (metadata)", errorHandle::DEBUG);
 			errorHandle::errorMsg("Error Building Page");
 			throw new Exception('Error');
 		}
-		
+
 		$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 		$selectedMetadataForms .= sprintf('<option value="%s">%s</option>',
 			$engine->openDB->escape($row['ID']),
 			$engine->openDB->escape($row['title'])
 			);
 
-	} 
+	}
 
 	// Object Forms
 	foreach ($currentForms['objects'] as $I => $V) {
@@ -158,13 +158,13 @@ try {
 			$engine->openDB->escape($V)
 			);
 		$sqlResult = $engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - getting form titles (object)", errorHandle::DEBUG);
 			errorHandle::errorMsg("Error Building Page");
 			throw new Exception('Error');
 		}
-		
+
 		$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 		$selectedObjectForms .= sprintf('<option value="%s">%s</option>',
 			$engine->openDB->escape($row['ID']),
@@ -226,13 +226,13 @@ try {
 	// Get all users
 	$sql       = sprintf("SELECT * FROM `users`");
 	$sqlResult = $engine->openDB->query($sql);
-	
+
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - retrieving users.", errorHandle::DEBUG);
 		errorHandle::errorMsg("Error retrieving users.");
 		throw new Exception('Error');
 	}
-	
+
 	$availableUsersList = '<option value="null">Select a User</option>';
 	while($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 		$availableUsersList .= sprintf('<option value="%s">%s, %s (%s)</option>',
@@ -251,13 +251,13 @@ try {
 		$engine->cleanGet['MYSQL']['id']
 		);
 	$sqlResult = $engine->openDB->query($sql);
-	
+
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - getting permissions", errorHandle::DEBUG);
 		errorHandle::errorMsg("Error retrieving users.");
 		throw new Exception('Error');
 	}
-	
+
 	while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 		if ($row['type'] == "0") {
 			$selectedUsers .= sprintf('<option value="%s">%s, %s (%s)</option>',
@@ -291,163 +291,156 @@ localVars::add("results",displayMessages());
 $engine->eTemplate("include","header");
 ?>
 
+<script type="text/javascript" src="{local var="siteRoot"}includes/js/projectEdit.js"></script>
+
 <section>
 	<header class="page-header">
 		<h1>Project Management : Edit Project</h1>
 	</header>
 
-	{local var="results"}
+	<div class="container-fluid">
+		<div class="row-fluid" id="results">
+			{local var="results"}
+		</div>
 
-<?php 
-if (is_empty($engine->errorStack)) {
-	?>
+		<?php
+		if (is_empty($engine->errorStack)) {
+			?>
+			<div class="row-fluid" id="pageNav">
+				<ul>
+					<li><a href="#addForms">Add Forms</a></li>
+					<li><a href="#groupings">Groupings</a></li>
+					<li><a href="#permissions">Permissions</a></li>
+				</ul>
+			</div>
 
-	<ul>
-		<li><a href="#addForms">Add Forms</a></li>
-		<li><a href="#groupings">Groupings</a></li>
-		<li><a href="#permissions">Permissions</a></li>
-	</ul>
+			<form action="{phpself query="true"}" method="post">
+				{engine name="csrf"}
 
-<form action="{phpself query="true"}" method="post">
+				<div class="row-fluid" id="addForms">
+					<header>
+						<h1>Add Forms</h1>
+					</header>
 
-	{engine name="csrf"}
+					<a name="addForms"></a>
 
-	<div id="addForms">
-		<header>
-			<h1>Add Forms</h1>
-		</header>
+					<table>
+						<tr>
+							<th>Metadata Forms</th>
+							<th>Object Forms</th>
+						</tr>
+						<tr>
+							<td>
+								<select name="selectedMetadataForms[]" id="selectedMetadataForms" size="5" multiple="multiple">
+									{local var="selectedMetadataForms"}
+								</select>
+								<br />
+								<select name="availableMetadataForms" id="availableMetadataForms" onchange="addItemToID('selectedMetadataForms', this.options[this.selectedIndex])">
+									<option value="null">Select a Form</option>
+									{local var="availableMetadataForms"}
+								</select>
+								<br />
+								<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedMetadataForms', this.form.selectedMetadataForms)" />
+							</td>
+							<td>
+								<select name="selectedObjectForms[]" id="selectedObjectForms" size="5" multiple="multiple">
+									{local var="selectedObjectForms"}
+								</select>
+								<br />
+								<select name="availableObjectForms" id="availableObjectForms" onchange="addItemToID('selectedObjectForms', this.options[this.selectedIndex])">
+									<option value="null">Select a Form</option>
+									{local var="availableObjectForms"}
+								</select>
+								<br />
+								<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedObjectForms', this.form.selectedObjectForms)" />
+							</td>
+						</tr>
+					</table>
+				</div>
 
-		<a name="addForms"></a>
+				<div class="row-fluid" id="groupings">
+					<header>
+						<h1>Manage Groupings</h1>
+					</header>
+					<a name="groupings"></a>
 
-		<table>
+					<div class="row-fluid">
+						<div class="span6">
+							<ul class="nav nav-tabs" id="groupingTab">
+								<li><a href="#groupingsAdd" data-toggle="tab">Add</a></li>
+								<li><a href="#groupingsSettings" data-toggle="tab">Settings</a></li>
+							</ul>
 
-			<tr>
-				<th>Metadata Forms</th>
-				<th>Object Forms</th>
-			<tr>
+							<div class="tab-content">
+								<div class="tab-pane" id="groupingsAdd">
+									<ul class="unstyled draggable">
+										<li><a href="#" class="btn btn-block">New Grouping</a></li>
+										<li><a href="#" class="btn btn-block">Log Out</a></li>
+										<li><a href="#" class="btn btn-block">Export Link (needs definable properties)</a></li>
+										<li><a href="#" class="btn btn-block">Random Link</a></li>
+									</ul>
 
-				<td>
+									Forms
+									<ul class="unstyled draggable" id="groupingsFormsAdd"></ul>
+								</div>
+								<div class="tab-pane" id="groupingsSettings">
 
-					<select name="selectedMetadataForms[]" id="selectedMetadataForms" size="5" multiple="multiple">
-						{local var="selectedMetadataForms"}
-					</select>
+								</div>
+							</div>
+						</div>
+						<div class="span6">
+							<ul class="sortable"></ul>
+						</div>
+					</div>
+				</div>
 
-					<br />
+				<div class="row-fluid" id="permissions">
+					<header>
+						<h1>Manage Permissions</h1>
+					</header>
 
-					<select name="availableMetadataForms" id="availableMetadataForms" onchange="addItemToID('selectedMetadataForms', this.options[this.selectedIndex])">
-						<option value="null">Select a Form</option>
-						{local var="availableMetadataForms"}
-					</select>
-					<br />
-					<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedMetadataForms', this.form.selectedMetadataForms)" />
+					<a name="permissions"></a>
 
-				</td>
+					<table>
+						<tr>
+							<th>Data Entry Users</th>
+							<th>Administrators</th>
+						</tr>
+						<tr>
+							<td>
+								<select name="selectedUsers[]" id="selectedUsers" size="5" multiple="multiple">
+									{local var="selectedUsers"}
+								</select>
+								<br />
+								<select name="availableUsers" id="availableUsers" onchange="addItemToID('selectedUsers', this.options[this.selectedIndex])">
+									{local var="availableUsersList"}
+								</select>
+								<br />
+								<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedUsers', this.form.selectedUsers)" />
+							</td>
+							<td>
+								<select name="selectedUsersAdmins[]" id="selectedUsersAdmins" size="5" multiple="multiple">
+									{local var="selectedUsersAdmins"}
+								</select>
+								<br />
+								<select name="availableUsersAdmins" id="availableUsersAdmins" onchange="addItemToID('selectedUsersAdmins', this.options[this.selectedIndex])">
+									{local var="availableUsersList"}
+								</select>
+								<br />
+								<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedUsersAdmins', this.form.selectedUsers)" />
+							</td>
+						<tr>
+					</table>
+				</div>
 
-				<td>
-
-					<select name="selectedObjectForms[]" id="selectedObjectForms" size="5" multiple="multiple">
-						{local var="selectedObjectForms"}
-					</select>
-					
-					<br />
-
-					<select name="availableObjectForms" id="availableObjectForms" onchange="addItemToID('selectedObjectForms', this.options[this.selectedIndex])">
-						<option value="null">Select a Form</option>
-						{local var="availableObjectForms"}
-					</select>
-
-					<br />
-					<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedObjectForms', this.form.selectedObjectForms)" />
-
-
-				</td>
-
-			</tr>
-
-		</table>
-
+				<br />
+				<input type="submit" class="btn btn-large btn-block btn-primary" name="submitProjectEdits" value="Update Project" onclick="entrySubmit()" />
+			</form>
+			<?php
+		}
+		?>
 	</div>
-
-	<div id="groupings">
-		<header>
-			<h1>Manage Groupings</h1>
-		</header>
-
-		<a name="groupings"></a>
-
-		<ul>
-			<li>New Grouping</li>
-			<li>Log Out</li>
-			<li>Export Link (needs definable properties)</li> 
-			<li>random link</li>
-		</ul>
-
-		Forms
-		<ul>
-		</ul>
-
-
-	</div>
-
-	<div id="permissions">
-		<header>
-			<h1>Manage Permissions</h1>
-		</header>
-
-
-		<a name="permissions"></a>
-
-		<table>
-			<tr>
-				<th>
-					Data Entry Users
-				</th>
-				<th>
-					Administrators
-				</th>
-			</tr>
-			<tr>
-				<td>
-		<select name="selectedUsers[]" id="selectedUsers" size="5" multiple="multiple">
-			{local var="selectedUsers"}
-		</select>
-
-		<br />
-
-		<select name="availableUsers" id="availableUsers" onchange="addItemToID('selectedUsers', this.options[this.selectedIndex])">
-			{local var="availableUsersList"}
-		</select>
-
-		<br />
-		<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedUsers', this.form.selectedUsers)" />
-</td>
-<td>
-		<select name="selectedUsersAdmins[]" id="selectedUsersAdmins" size="5" multiple="multiple">
-			{local var="selectedUsersAdmins"}
-		</select>
-
-		<br />
-
-		<select name="availableUsersAdmins" id="availableUsersAdmins" onchange="addItemToID('selectedUsersAdmins', this.options[this.selectedIndex])">
-			{local var="availableUsersList"}
-		</select>
-
-		<br />
-		<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedUsersAdmins', this.form.selectedUsers)" />
-</td>
-<tr>
-</table>
-
-	</div>
-
-	<input type="submit" name="submitProjectEdits" value="Update Project" onclick="entrySubmit()" />
-
-</form>
-
 </section>
-<?php 
-}
-?>
 
 <script type="text/javascript">
 
@@ -457,13 +450,13 @@ function addItemToID(id, item) {
 	if (item.value == "null") {
 		return;
 	}
-	
+
 	for (i = theSelect.length - 1; i >= 0; i--) {
 		if (theSelect.options[i].value == item.value) {
 			return;
 		}
 	}
-	
+
 	theSelect.options[theSelect.length] = new Option(item.text, item.value);
 }
 
@@ -483,7 +476,7 @@ function removeItemFromID(id, item) {
 
 function selectAllOnSubmit(id) {
 	var item = document.getElementById(id);
-	
+
 	for (i = item.length - 1; i >= 0; i--) {
 		item.options[i].selected = true;
 	}
@@ -494,7 +487,7 @@ function entrySubmit() {
 	selectAllOnSubmit("selectedObjectForms");
 	selectAllOnSubmit("selectedUsers");
 	selectAllOnSubmit("selectedUsersAdmins");
-	
+
 	return(true);
 }
 
