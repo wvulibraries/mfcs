@@ -239,12 +239,12 @@ $engine->eTemplate("include","header");
 
 							<div class="row-fluid noHide">
 								<span class="span6">
-									<div class="control-group well well-small" id="fieldSettings_container_defaultValue">
-										<label for="fieldSettings_defaultValue">
-											Default Value
+									<div class="control-group well well-small" id="fieldSettings_container_value">
+										<label for="fieldSettings_value">
+											Value
 											<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="When the form is first displayed, this value will already be prepopulated."></i>
 										</label>
-										<input type="text" class="input-block-level" id="fieldSettings_defaultValue" name="fieldSettings_defaultValue" />
+										<input type="text" class="input-block-level" id="fieldSettings_value" name="fieldSettings_value" />
 										<span class="help-block hidden"></span>
 									</div>
 								</span>
