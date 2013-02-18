@@ -9,7 +9,7 @@ recurseInsert("includes/validator.php","php");
 
 $engine->eTemplate("load","distribution");
 
-$engine->localVars("siteRoot",$engineVars['WEBROOT']."/mfcs/");
-$engine->localVars('pageTitle',"Metadata Form Creation System");
-$engine->localVars('pageHeader',"Metadata Form Creation System");
+localVars::add("siteRoot",$engineVars['WEBROOT']."/mfcs/");
+localVars::add('pageTitle',"Metadata Form Creation System");
+localVars::add('pageHeader',"Metadata Form Creation System");
 ?>
