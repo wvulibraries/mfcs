@@ -178,16 +178,19 @@ function showFieldSettings(fullID) {
 		$("#fieldSettings_id").val($("#id_"+id).val()).keyup();
 		$("#fieldSettings_class").val($("#class_"+id).val()).keyup();
 		$("#fieldSettings_style").val($("#style_"+id).val()).keyup();
-		$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change();
 
-		var opts = $("#choicesOptions_"+id).val().split("%,%");
-		$("#fieldSettings_choices_manual").html('');
-		for (var i = 0; i < opts.length; i++) {
-			$("#fieldSettings_choices_manual").append(addChoice(opts[i],$("#choicesDefault_"+id).val()));
+		if ($("#choicesOptions_"+id).val() != undefined) {
+			$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change();
+
+			var opts = $("#choicesOptions_"+id).val().split("%,%");
+			$("#fieldSettings_choices_manual").html('');
+			for (var i = 0; i < opts.length; i++) {
+				$("#fieldSettings_choices_manual").append(addChoice(opts[i],$("#choicesDefault_"+id).val()));
+			}
+			$("#fieldSettings_choices_manual :input[name=fieldSettings_choices_text]").keyup();
+			$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
+			$("#fieldSettings_choices_fieldSelect").val($("#choicesField_"+id).val()).change();
 		}
-		$("#fieldSettings_choices_manual :input[name=fieldSettings_choices_text]").keyup();
-		$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
-		$("#fieldSettings_choices_fieldSelect").val($("#choicesField_"+id).val()).change();
 
 		$("#fieldSettings_options_required").prop("checked",($("#required_"+id).val()==='true'));
 		$("#fieldSettings_options_duplicates").prop("checked",($("#duplicates_"+id).val()==='true'));
@@ -533,7 +536,7 @@ function addNewField(item) {
 function newFieldPreview(id,type) {
 	var output;
 
-	if (type == 'fieldet') {
+	if (type == 'Field Set') {
 		output = '<fieldset><legend></legend><ul class="unstyled sortable"></ul></fieldset>';
 	}
 	else {
