@@ -14,6 +14,13 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	$form   = json_decode($engine->cleanPost['RAW']['form'], TRUE);
 	$fields = json_decode($engine->cleanPost['RAW']['fields'], TRUE);
 
+	// Ensure all fields have an ID for the label. Assign it the value of name if needed.
+	foreach ($fields as $I => $field) {
+		if (is_empty($field['cssID'])) {
+			$fields[$I] = $field['name'];
+		}
+	}
+
 	if (!isnull($formID)) {
 		// Update forms table
 		$sql = sprintf("UPDATE `%s` SET `title`='%s', `description`=%s, `fields`='%s', `container`='%s', `production`='%s', `metadata`='%s' WHERE ID='%s' LIMIT 1",

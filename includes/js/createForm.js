@@ -677,7 +677,7 @@ function newFieldValues(id,type,vals) {
 	output += '<input type="hidden" id="label_'+id+'" name="label_'+id+'" value="'+((vals['label']!=undefined)?vals['label']:'Untitled')+'">';
 	output += '<input type="hidden" id="value_'+id+'" name="value_'+id+'" value="'+((vals['value']!=undefined)?vals['value']:'')+'">';
 	output += '<input type="hidden" id="placeholder_'+id+'" name="placeholder_'+id+'" value="'+((vals['placeholder']!=undefined)?vals['placeholder']:'')+'">';
-	output += '<input type="hidden" id="cssID_'+id+'" name="cssID_'+id+'" value="'+((vals['cssID']!=undefined)?vals['cssID']:'untitled'+(id+1))+'">';
+	output += '<input type="hidden" id="cssID_'+id+'" name="cssID_'+id+'" value="'+((vals['cssID']!=undefined)?vals['cssID']:'')+'">';
 	output += '<input type="hidden" id="fieldset_'+id+'" name="fieldset_'+id+'" value="'+((vals['fieldset']!=undefined)?vals['fieldset']:'')+'">';
 	output += '<input type="hidden" id="cssClass_'+id+'" name="cssClass_'+id+'" value="'+((vals['cssClass']!=undefined)?vals['cssClass']:'')+'">';
 	output += '<input type="hidden" id="localCSS_'+id+'" name="localCSS_'+id+'" value="'+((vals['localCSS']!=undefined)?vals['localCSS']:'')+'">';
