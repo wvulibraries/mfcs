@@ -191,7 +191,7 @@ function showFieldSettings(fullID) {
 		$("#fieldSettings_options_required").prop("checked",($("#required_"+id).val()==='true'));
 		$("#fieldSettings_options_duplicates").prop("checked",($("#duplicates_"+id).val()==='true'));
 		$("#fieldSettings_options_readonly").prop("checked",($("#readonly_"+id).val()==='true')).change();
-		$("#fieldSettings_options_disable").prop("checked",($("#disable_"+id).val()==='true')).change();
+		$("#fieldSettings_options_disabled").prop("checked",($("#disabled_"+id).val()==='true')).change();
 		$("#fieldSettings_options_publicRelease").prop("checked",($("#publicRelease_"+id).val()==='true')).change();
 		$("#fieldSettings_options_sortable").prop("checked",($("#sortable_"+id).val()==='true'));
 		$("#fieldSettings_options_searchable").prop("checked",($("#searchable_"+id).val()==='true'));
@@ -423,9 +423,9 @@ function fieldSettingsBindings() {
 		$("#formPreview .well :input[name^=readonly_]").val($(this).is(":checked"));
 	});
 
-	$("#fieldSettings_options_disable").change(function() {
+	$("#fieldSettings_options_disabled").change(function() {
 		$("#formPreview .well .controls :input").prop('disabled',$(this).is(":checked"));
-		$("#formPreview .well :input[name^=disable_]").val($(this).is(":checked"));
+		$("#formPreview .well :input[name^=disabled_]").val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_options_publicRelease").change(function() {
@@ -700,7 +700,7 @@ function newFieldValues(id,type,vals) {
 	output += '<input type="hidden" id="required_'+id+'" name="required_'+id+'" value="'+((vals['required']!=undefined)?vals['required']:'false')+'">';
 	output += '<input type="hidden" id="duplicates_'+id+'" name="duplicates_'+id+'" value="'+((vals['duplicates']!=undefined)?vals['duplicates']:'false')+'">';
 	output += '<input type="hidden" id="readonly_'+id+'" name="readonly_'+id+'" value="'+((vals['readonly']!=undefined)?vals['readonly']:'false')+'">';
-	output += '<input type="hidden" id="disable_'+id+'" name="disable_'+id+'" value="'+((vals['disable']!=undefined)?vals['disable']:'false')+'">';
+	output += '<input type="hidden" id="disabled_'+id+'" name="disabled_'+id+'" value="'+((vals['disabled']!=undefined)?vals['disabled']:'false')+'">';
 	output += '<input type="hidden" id="publicRelease_'+id+'" name="publicRelease_'+id+'" value="'+((vals['publicRelease']!=undefined)?vals['publicRelease']:'true')+'">';
 	output += '<input type="hidden" id="sortable_'+id+'" name="sortable_'+id+'" value="'+((vals['sortable']!=undefined)?vals['sortable']:'')+'">';
 	output += '<input type="hidden" id="searchable_'+id+'" name="searchable_'+id+'" value="'+((vals['searchable']!=undefined)?vals['searchable']:'')+'">';

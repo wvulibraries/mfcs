@@ -360,7 +360,7 @@ $engine->eTemplate("include","header");
 											<input type="checkbox" id="fieldSettings_options_readonly" name="fieldSettings_options_readonly"> Read Only
 										</label>
 										<label class="checkbox">
-											<input type="checkbox" id="fieldSettings_options_disable" name="fieldSettings_options_disable"> Disabled
+											<input type="checkbox" id="fieldSettings_options_disabled" name="fieldSettings_options_disabled"> Disabled
 										</label>
 										<label class="checkbox">
 											<input type="checkbox" id="fieldSettings_options_publicRelease" name="fieldSettings_options_publicRelease"> Public Release
