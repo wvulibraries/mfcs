@@ -73,8 +73,9 @@ $(function() {
 				obj[ field[1] ] = {};
 			}
 
-			if ($(this).prop("type") == "checkbox") {
-				obj[ field[1] ][ field[0] ] = $(this).prop("checked");
+			if ($(this).is('[id^="choicesOptions_"]')) {
+				obj[ field[1] ][ field[0] ] = {};
+				obj[ field[1] ][ field[0] ] = $(this).val().split("%,%");
 			}
 			else {
 				obj[ field[1] ][ field[0] ] = $(this).val();
@@ -317,7 +318,7 @@ function fieldSettingsBindings() {
 						vals.push($(this).parent().text());
 					});
 
-					$("#formPreview .well :input[name^=choicesDefault_]").val('').val(vals.join());
+					$("#formPreview .well :input[name^=choicesDefault_]").val('').val(vals.join("%,%"));
 					break;
 
 			}
@@ -335,7 +336,7 @@ function fieldSettingsBindings() {
 			$("#fieldSettings_choices_manual input[name=fieldSettings_choices_text]").each(function() {
 				vals.push($(this).val());
 			});
-			$("#formPreview .well :input[name^=choicesOptions_]").val(vals.join());
+			$("#formPreview .well :input[name^=choicesOptions_]").val(vals.join("%,%"));
 
 			switch ($("#formPreview .well :input[name^=type_]").val()) {
 				case 'select':
@@ -365,7 +366,7 @@ function fieldSettingsBindings() {
 			$("#fieldSettings_choices_manual input[name=fieldSettings_choices_text]").each(function() {
 				vals.push($(this).val());
 			});
-			$("#formPreview .well :input[name^=choicesOptions_]").val(vals.join());
+			$("#formPreview .well :input[name^=choicesOptions_]").val(vals.join("%,%"));
 
 			switch ($("#formPreview .well :input[name^=type_]").val()) {
 				case 'select':
