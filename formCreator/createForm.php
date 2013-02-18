@@ -17,7 +17,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	// Ensure all fields have an ID for the label. Assign it the value of name if needed.
 	foreach ($fields as $I => $field) {
 		if (is_empty($field['cssID'])) {
-			$fields[$I] = $field['name'];
+			$fields[$I]['cssID'] = $field['name'];
 		}
 	}
 
