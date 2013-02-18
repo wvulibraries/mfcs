@@ -692,11 +692,6 @@ function newFieldValues(id,type,vals) {
 	output += '<input type="hidden" id="id_'+id+'" name="id_'+id+'" value="'+((vals['id']!=undefined)?vals['id']:'')+'">';
 	output += '<input type="hidden" id="class_'+id+'" name="class_'+id+'" value="'+((vals['class']!=undefined)?vals['class']:'')+'">';
 	output += '<input type="hidden" id="style_'+id+'" name="style_'+id+'" value="'+((vals['style']!=undefined)?vals['style']:'')+'">';
-	output += '<input type="hidden" id="choicesType_'+id+'" name="choicesType_'+id+'" value="'+((vals['choicesType']!=undefined)?vals['choicesType']:'')+'">';
-	output += '<input type="hidden" id="choicesDefault_'+id+'" name="choicesDefault_'+id+'" value="'+((vals['choicesDefault']!=undefined)?vals['choicesDefault']:'')+'">';
-	output += '<input type="hidden" id="choicesOptions_'+id+'" name="choicesOptions_'+id+'" value="'+((vals['choicesOptions']!=undefined)?vals['choicesOptions']:'First Choice,Second Choice')+'">';
-	output += '<input type="hidden" id="choicesForm_'+id+'" name="choicesForm_'+id+'" value="'+((vals['choicesForm']!=undefined)?vals['choicesForm']:'')+'">';
-	output += '<input type="hidden" id="choicesField_'+id+'" name="choicesField_'+id+'" value="'+((vals['choicesField']!=undefined)?vals['choicesField']:'')+'">';
 	output += '<input type="hidden" id="required_'+id+'" name="required_'+id+'" value="'+((vals['required']!=undefined)?vals['required']:'false')+'">';
 	output += '<input type="hidden" id="duplicates_'+id+'" name="duplicates_'+id+'" value="'+((vals['duplicates']!=undefined)?vals['duplicates']:'false')+'">';
 	output += '<input type="hidden" id="readonly_'+id+'" name="readonly_'+id+'" value="'+((vals['readonly']!=undefined)?vals['readonly']:'false')+'">';
@@ -707,10 +702,34 @@ function newFieldValues(id,type,vals) {
 	output += '<input type="hidden" id="validation_'+id+'" name="validation_'+id+'" value="'+((vals['validation']!=undefined)?vals['validation']:'')+'">';
 	output += '<input type="hidden" id="validationRegex_'+id+'" name="validationRegex_'+id+'" value="'+((vals['validationRegex']!=undefined)?vals['validationRegex']:'')+'">';
 	output += '<input type="hidden" id="access_'+id+'" name="access_'+id+'" value="'+((vals['access']!=undefined)?vals['access']:'')+'">';
-	output += '<input type="hidden" id="rangeMin_'+id+'" name="rangeMin_'+id+'" value="'+((vals['rangeMin']!=undefined)?vals['rangeMin']:'')+'">';
-	output += '<input type="hidden" id="rangeMax_'+id+'" name="rangeMax_'+id+'" value="'+((vals['rangeMax']!=undefined)?vals['rangeMax']:'')+'">';
-	output += '<input type="hidden" id="rangeFormat_'+id+'" name="rangeFormat_'+id+'" value="'+((vals['rangeFormat']!=undefined)?vals['rangeFormat']:'')+'">';
 	output += '<input type="hidden" id="fieldset_'+id+'" name="fieldset_'+id+'" value="'+((vals['fieldset']!=undefined)?vals['fieldset']:'')+'">';
+
+	switch(type) {
+		case 'text':
+		case 'textarea':
+		case 'number':
+			output += '<input type="hidden" id="rangeMin_'+id+'" name="rangeMin_'+id+'" value="'+((vals['rangeMin']!=undefined)?vals['rangeMin']:'')+'">';
+			output += '<input type="hidden" id="rangeMax_'+id+'" name="rangeMax_'+id+'" value="'+((vals['rangeMax']!=undefined)?vals['rangeMax']:'')+'">';
+			output += '<input type="hidden" id="rangeFormat_'+id+'" name="rangeFormat_'+id+'" value="'+((vals['rangeFormat']!=undefined)?vals['rangeFormat']:'')+'">';
+			break;
+
+		case 'radio':
+		case 'checkbox':
+		case 'select':
+			output += '<input type="hidden" id="choicesType_'+id+'" name="choicesType_'+id+'" value="'+((vals['choicesType']!=undefined)?vals['choicesType']:'')+'">';
+			if (vals['choicesType'] == 'manual') {
+				output += '<input type="hidden" id="choicesDefault_'+id+'" name="choicesDefault_'+id+'" value="'+((vals['choicesDefault']!=undefined)?vals['choicesDefault']:'')+'">';
+				output += '<input type="hidden" id="choicesOptions_'+id+'" name="choicesOptions_'+id+'" value="'+((vals['choicesOptions']!=undefined)?vals['choicesOptions']:'First Choice,Second Choice')+'">';
+			}
+			else if (vals['choicesType'] == 'form') {
+				output += '<input type="hidden" id="choicesForm_'+id+'" name="choicesForm_'+id+'" value="'+((vals['choicesForm']!=undefined)?vals['choicesForm']:'')+'">';
+				output += '<input type="hidden" id="choicesField_'+id+'" name="choicesField_'+id+'" value="'+((vals['choicesField']!=undefined)?vals['choicesField']:'')+'">';
+			}
+			break;
+
+		default:
+			break;
+	}
 
 	return output;
 }
