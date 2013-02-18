@@ -173,7 +173,7 @@ $engine->eTemplate("include","header");
 								<ul class="unstyled draggable">
 									<li><a href="#" class="btn btn-block">Single Line Text</a></li>
 									<li><a href="#" class="btn btn-block">Paragraph Text</a></li>
-									<li><a href="#" class="btn btn-block">Multiple Choice</a></li>
+									<li><a href="#" class="btn btn-block">Radio</a></li>
 									<li><a href="#" class="btn btn-block">Checkboxes</a></li>
 									<li><a href="#" class="btn btn-block">Dropdown</a></li>
 									<li><a href="#" class="btn btn-block">Number</a></li>

@@ -149,7 +149,7 @@ function showFieldSettings(fullID) {
 						.append($("<option>").prop("value","words").text("Words"));
 					break;
 
-				case 'Multiple Choice':
+				case 'Radio':
 				case 'Checkboxes':
 				case 'Dropdown':
 					$("#fieldSettings_container_choices").show();
@@ -288,7 +288,7 @@ function fieldSettingsBindings() {
 					$("#fieldSettings_choices_manual button[name=default]").not(this).removeClass("active");
 					break;
 
-				case 'Multiple Choice':
+				case 'Radio':
 					if ($(this).hasClass("active")) {
 						$("#formPreview .well .controls :input").removeAttr('checked');
 						$("#formPreview .well :input[name^=choicesDefault_]").val('');
@@ -356,7 +356,7 @@ function fieldSettingsBindings() {
 					}
 					break;
 
-				case 'Multiple Choice':
+				case 'Radio':
 					$("#formPreview .well .controls").html('');
 					for (var i = 0; i < vals.length; i++) {
 						$("#formPreview .well .controls").append($("<label>").addClass("radio").append($("<input>").prop("type","radio").prop("name",$("#formPreview .well :input[name^=name_]").val())).append(vals[i]));
@@ -523,7 +523,7 @@ function newFieldPreview(id,type) {
 				output += '<textarea></textarea>';
 				break;
 
-			case 'Multiple Choice':
+			case 'Radio':
 				output += '<label class="radio"><input type="radio">First Choice</label><label class="radio"><input type="radio">Second Choice</label>';
 				break;
 
