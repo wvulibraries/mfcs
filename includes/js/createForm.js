@@ -623,6 +623,55 @@ function newFieldValues(id,type,vals) {
 		}
 	}
 
+	switch(type) {
+		case 'Single Line Text':
+			type = vals['type'] = 'text';
+			break;
+
+		case 'Paragraph Text':
+			type = vals['type'] = 'textarea';
+			break;
+
+		case 'Radio':
+			type = vals['type'] = 'radio';
+			break;
+
+		case 'Checkboxes':
+			type = vals['type'] = 'checkbox';
+			break;
+
+		case 'Dropdown':
+			type = vals['type'] = 'select';
+			break;
+
+		case 'Number':
+			type = vals['type'] = 'number';
+			break;
+
+		case 'Email':
+			type = vals['type'] = 'email';
+			break;
+
+		case 'Phone':
+			type = vals['type'] = 'tel';
+			break;
+
+		case 'Date':
+			type = vals['type'] = 'date';
+			break;
+
+		case 'Time':
+			type = vals['type'] = 'datetime';
+			break;
+
+		case 'Website':
+			type = vals['type'] = 'url';
+			break;
+
+		default:
+			break;
+	}
+
 	output  = '<input type="hidden" id="position_'+id+'" name="position_'+id+'" value="'+((vals['position']!=undefined)?vals['position']:'')+'">';
 	output += '<input type="hidden" id="type_'+id+'" name="type_'+id+'" value="'+((vals['type']!=undefined)?vals['type']:type)+'">';
 	output += '<input type="hidden" id="name_'+id+'" name="name_'+id+'" value="'+((vals['name']!=undefined)?vals['name']:'untitled'+(id+1))+'">';
