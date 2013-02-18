@@ -293,12 +293,12 @@ $engine->eTemplate("include","header");
 							</div>
 
 							<div class="row-fluid noHide">
-								<div class="control-group well well-small" id="fieldSettings_container_styles">
-									<label for="fieldSettings_styles">
+								<div class="control-group well well-small" id="fieldSettings_container_style">
+									<label for="fieldSettings_style">
 										Local Styles
 										<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="You can set any HTML styles and they will only apply to this field."></i>
 									</label>
-									<input type="text" class="input-block-level" id="fieldSettings_styles" name="fieldSettings_styles" />
+									<input type="text" class="input-block-level" id="fieldSettings_style" name="fieldSettings_style" />
 									<span class="help-block hidden"></span>
 								</div>
 							</div>

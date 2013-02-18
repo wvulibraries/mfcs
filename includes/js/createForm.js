@@ -176,7 +176,7 @@ function showFieldSettings(fullID) {
 		$("#fieldSettings_placeholder").val($("#placeholder_"+id).val()).keyup();
 		$("#fieldSettings_cssID").val($("#cssID_"+id).val()).keyup();
 		$("#fieldSettings_cssClass").val($("#cssClass_"+id).val()).keyup();
-		$("#fieldSettings_styles").val($("#styles_"+id).val()).keyup();
+		$("#fieldSettings_style").val($("#style_"+id).val()).keyup();
 		$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change();
 
 		var opts = $("#choicesOptions_"+id).val().split(",");
@@ -246,9 +246,9 @@ function fieldSettingsBindings() {
 		$("#formPreview .well :input[name^=cssClass_]").val($(this).val());
 	});
 
-	$("#fieldSettings_styles").keyup(function() {
+	$("#fieldSettings_style").keyup(function() {
 		$("#formPreview .well .controls :input").attr('style',$(this).val());
-		$("#formPreview .well :input[name^=styles_]").val($(this).val());
+		$("#formPreview .well :input[name^=style_]").val($(this).val());
 	});
 
 	$("#fieldSettings_choices_type").change(function() {
@@ -691,7 +691,7 @@ function newFieldValues(id,type,vals) {
 	output += '<input type="hidden" id="cssID_'+id+'" name="cssID_'+id+'" value="'+((vals['cssID']!=undefined)?vals['cssID']:'')+'">';
 	output += '<input type="hidden" id="fieldset_'+id+'" name="fieldset_'+id+'" value="'+((vals['fieldset']!=undefined)?vals['fieldset']:'')+'">';
 	output += '<input type="hidden" id="cssClass_'+id+'" name="cssClass_'+id+'" value="'+((vals['cssClass']!=undefined)?vals['cssClass']:'')+'">';
-	output += '<input type="hidden" id="localCSS_'+id+'" name="localCSS_'+id+'" value="'+((vals['localCSS']!=undefined)?vals['localCSS']:'')+'">';
+	output += '<input type="hidden" id="style_'+id+'" name="style_'+id+'" value="'+((vals['style']!=undefined)?vals['style']:'')+'">';
 	output += '<input type="hidden" id="choicesType_'+id+'" name="choicesType_'+id+'" value="'+((vals['choicesType']!=undefined)?vals['choicesType']:'')+'">';
 	output += '<input type="hidden" id="choicesDefault_'+id+'" name="choicesDefault_'+id+'" value="'+((vals['choicesDefault']!=undefined)?vals['choicesDefault']:'')+'">';
 	output += '<input type="hidden" id="choicesOptions_'+id+'" name="choicesOptions_'+id+'" value="'+((vals['choicesOptions']!=undefined)?vals['choicesOptions']:'First Choice,Second Choice')+'">';
