@@ -9,27 +9,7 @@ $(function() {
 	});
 
 	// Make the preview pane sortable -- sort order determines position
-	$("ul.sortable").sortable({
-		connectWith: "ul.sortable",
-		revert: true,
-		placeholder: "highlight",
-		update: function(event, ui) {
-			// Only perform this if it's a brand new field
-			if ($(ui.item).hasClass("ui-draggable")) {
-				addNewField(ui.item);
-			}
-			$("ul.sortable").sortable({
-				revert: true,
-				placeholder: "highlight",
-				update: function(event, ui) {
-					// Only perform this if it's a brand new field
-					if ($(ui.item).hasClass("ui-draggable")) {
-						addNewField(ui.item);
-					}
-				}
-			});
-		}
-	});
+	sortable();
 
 	// Make field types draggable, linked to preview pane
 	$(".draggable li").draggable({
@@ -109,6 +89,21 @@ $(function() {
 	$("#fieldTab li:last a").click();
 
 });
+
+function sortable() {
+	$("ul.sortable").sortable({
+		connectWith: "ul.sortable",
+		revert: true,
+		placeholder: "highlight",
+		update: function(event, ui) {
+			// Only perform this if it's a brand new field
+			if ($(ui.item).hasClass("ui-draggable")) {
+				addNewField(ui.item);
+			}
+			sortable();
+		}
+	});
+}
 
 function showFieldSettings(fullID) {
 	if (fullID === undefined) {
