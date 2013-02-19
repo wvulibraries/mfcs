@@ -105,6 +105,10 @@ function buildForm($formID) {
 
 	foreach ($fields as $field) {
 
+		if ($field['type'] == "fieldset") {
+			continue;
+		}
+
 		// deal with field sets
 		if ($field['fieldset'] != $currentFieldset) {
 			if ($currentFieldset != "") {
