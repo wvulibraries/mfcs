@@ -37,7 +37,7 @@ try {
 	
 	$project       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
-	localvars::add("projectName",$row['projectName']);
+	localvars::add("projectName",$project['projectName']);
 
 	$builtForm = buildForm($engine->cleanGet['MYSQL']['formID']);
 	if ($builtForm === FALSE) {

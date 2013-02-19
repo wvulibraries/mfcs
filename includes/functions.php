@@ -140,7 +140,7 @@ function buildForm($formID) {
 
 		}
 		else {
-			$output .= sprintf('<input type="%s" name="%s" value="%s" placeholder="%s" %s id="%s" class="%s" %s %s %s %s/>',
+			$output .= sprintf('<input type="%s" name="%s" value="%s" placeholder="%s" %s id="%s" class="%s" %s %s %s %s />',
 				htmlSanitize($field['type']),
 				htmlSanitize($field['name']),
 				htmlSanitize($field['value']),
