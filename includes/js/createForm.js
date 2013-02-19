@@ -101,6 +101,8 @@ function sortable() {
 			if ($(ui.item).hasClass("ui-draggable")) {
 				addNewField(ui.item);
 			}
+			$(ui.item).parents("li").click();
+			$(ui.item).click();
 			sortable();
 		}
 	});
