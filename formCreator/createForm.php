@@ -16,10 +16,13 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 
 	// Ensure all fields have an ID for the label. Assign it the value of name if needed.
 	foreach ($fields as $I => $field) {
+		$positions[$I] = $field['position'];
 		if (is_empty($field['id'])) {
 			$fields[$I]['id'] = $field['name'];
 		}
 	}
+
+	array_multisort($positions, SORT_ASC, $fields);
 
 	if (!isnull($formID)) {
 		// Update forms table
@@ -123,11 +126,50 @@ if (!isnull($formID)) {
 		if (!is_empty($row['fields'])) {
 			$fields = decodeFields($row['fields']);
 
+			// Get all fieldsets needed
+			foreach ($fields as $I => $field) {
+				if (!is_empty($field['fieldset'])) {
+					$fieldsets[$field['fieldset']] = array(
+						"type"     => "fieldset",
+						"fieldset" => $field['fieldset'],
+						);
+				}
+			}
+
+			$positionOffset = 0;
 			foreach((array)$fields as $I => $field) {
 				if (isset($field['choicesOptions']) && is_array($field['choicesOptions'])) {
 					$field['choicesOptions'] = implode("%,%",$field['choicesOptions']);
 				}
 				$values = json_encode($field);
+
+				if (!is_empty($field['fieldset']) && isset($fieldsets[$field['fieldset']])) {
+					$formPreview .= sprintf('
+						<li id="formPreview_%s">
+							<div class="fieldPreview">
+								<script type="text/javascript">
+									$("#formPreview_%s .fieldPreview").html(newFieldPreview("%s","%s"));
+								</script>
+							</div>
+							<div class="fieldValues">
+								<script type="text/javascript">
+									$("#formPreview_%s .fieldValues").html(newFieldValues("%s","%s",%s));
+								</script>
+							</div>
+						</li>',
+						htmlSanitize($field['position'] + $positionOffset),
+						htmlSanitize($field['position'] + $positionOffset),
+						htmlSanitize($field['position'] + $positionOffset),
+						htmlSanitize($fieldsets[$field['fieldset']]['type']),
+						htmlSanitize($field['position'] + $positionOffset),
+						htmlSanitize($field['position'] + $positionOffset),
+						htmlSanitize($fieldsets[$field['fieldset']]['type']),
+						json_encode($fieldsets[$field['fieldset']])
+						);
+
+					$positionOffset++;
+					unset($fieldsets[$field['fieldset']]);
+				}
 
 				$formPreview .= sprintf('
 					<li id="formPreview_%s">
@@ -142,12 +184,12 @@ if (!isnull($formID)) {
 							</script>
 						</div>
 					</li>',
-					htmlSanitize($field['position']),
-					htmlSanitize($field['position']),
-					htmlSanitize($field['position']),
+					htmlSanitize($field['position'] + $positionOffset),
+					htmlSanitize($field['position'] + $positionOffset),
+					htmlSanitize($field['position'] + $positionOffset),
 					htmlSanitize($field['type']),
-					htmlSanitize($field['position']),
-					htmlSanitize($field['position']),
+					htmlSanitize($field['position'] + $positionOffset),
+					htmlSanitize($field['position'] + $positionOffset),
 					htmlSanitize($field['type']),
 					$values
 					);

@@ -8,9 +8,6 @@ $(function() {
 		showFieldSettings(); // blank the Field Settings pane
 	});
 
-	// Make the preview pane sortable -- sort order determines position
-	sortable();
-
 	// Make field types draggable, linked to preview pane
 	$(".draggable li").draggable({
 		connectToSortable: "ul.sortable",
@@ -27,7 +24,7 @@ $(function() {
 	// Re-order nesting on load
 	// This loops through <li> and finds all the fieldsets, then loops through matching all <li> that have
 	// the same fieldset name and moves them inside it
-	$(".fieldValues :input[name^='type_'][value='Field Set']").each(function() {
+	$(".fieldValues :input[name^='type_'][value='fieldset']").each(function() {
 		var fieldset = $(this).parents("li").prop("id");
 		$(".fieldValues :input[name^='fieldset_'][value='"+$(this).siblings(":input[name^='fieldset_']").val()+"']").each(function() {
 			if (fieldset != $(this).parents("li").prop("id")) {
@@ -36,16 +33,20 @@ $(function() {
 		});
 	});
 
+	// Make the preview pane sortable -- sort order determines position
+	sortable();
+
 	// Set all the black magic bindings
 	fieldSettingsBindings();
 	formSettingsBindings();
 
 	// Form submit handler
 	$("form[name=submitForm]").submit(function(e) {
+		// e.preventDefault();
+
 		// Calculate position of all fields
-		var pos = 0;
-		$(".fieldValues :input[name^=position_]").each(function() {
-			$(this).val(pos++);
+		$(".fieldValues :input[name^=position_]").each(function(index) {
+			$(this).val(index);
 		});
 
 		// Create a multidimentional object to store field info
@@ -81,6 +82,13 @@ $(function() {
 			}
 		});
 
+		// Remove fieldsets from submission
+		for (var i in obj) {
+			if (obj[i]['type'] == 'fieldset' || obj[i]['type'] == 'Field Set') {
+				delete obj[i];
+			}
+		};
+
 		// Convert object to JSON and add it to a hidden form field
 		$(":input[name=fields]", this).val(JSON.stringify(obj));
 	});
@@ -88,7 +96,6 @@ $(function() {
 	// Click through each field and then back to add field tab on page load to update form preview
 	$("#formPreview li").click();
 	$("#fieldTab li:last a").click();
-
 });
 
 function sortable() {
