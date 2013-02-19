@@ -63,7 +63,6 @@ $(function() {
 		// Convert object to JSON and add it to a hidden form field
 		$(":input[name=form]", this).val(JSON.stringify(obj));
 
-
 		// Create a multidimentional object to store field info
 		var obj = {};
 		$(".fieldValues :input").each(function() {
@@ -81,6 +80,7 @@ $(function() {
 				obj[ field[1] ][ field[0] ] = $(this).val();
 			}
 		});
+
 		// Convert object to JSON and add it to a hidden form field
 		$(":input[name=fields]", this).val(JSON.stringify(obj));
 	});
@@ -101,8 +101,10 @@ function sortable() {
 			if ($(ui.item).hasClass("ui-draggable")) {
 				addNewField(ui.item);
 			}
+
 			$(ui.item).parents("li").click();
 			$(ui.item).click();
+
 			sortable();
 		}
 	});
@@ -127,6 +129,8 @@ function showFieldSettings(fullID) {
 		if (type == "fieldset") {
 			$("#fieldSettings_fieldset_form").show();
 			$("#fieldSettings_form").hide();
+
+			$("#fieldSettings_fieldset").val($("#fieldset_"+id).val()).keyup();
 		}
 		else {
 			$("#fieldSettings_fieldset_form").hide();
@@ -170,44 +174,45 @@ function showFieldSettings(fullID) {
 				default:
 					break;
 			}
-		}
 
-		// Update field settings to use values from form display
-		$("#fieldSettings_name").val($("#name_"+id).val()).keyup();
-		$("#fieldSettings_label").val($("#label_"+id).val()).keyup();
-		$("#fieldSettings_value").val($("#value_"+id).val()).keyup();
-		$("#fieldSettings_placeholder").val($("#placeholder_"+id).val()).keyup();
-		$("#fieldSettings_id").val($("#id_"+id).val()).keyup();
-		$("#fieldSettings_class").val($("#class_"+id).val()).keyup();
-		$("#fieldSettings_style").val($("#style_"+id).val()).keyup();
+			// Update field settings to use values from form display
+			$("#fieldSettings_name").val($("#name_"+id).val()).keyup();
+			$("#fieldSettings_label").val($("#label_"+id).val()).keyup();
+			$("#fieldSettings_value").val($("#value_"+id).val()).keyup();
+			$("#fieldSettings_placeholder").val($("#placeholder_"+id).val()).keyup();
+			$("#fieldSettings_id").val($("#id_"+id).val()).keyup();
+			$("#fieldSettings_class").val($("#class_"+id).val()).keyup();
+			$("#fieldSettings_style").val($("#style_"+id).val()).keyup();
 
-		if ($("#choicesOptions_"+id).val() != undefined) {
-			$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change();
+			if ($("#choicesOptions_"+id).val() != undefined) {
+				$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change();
 
-			var opts = $("#choicesOptions_"+id).val().split("%,%");
-			$("#fieldSettings_choices_manual").html('');
-			for (var i = 0; i < opts.length; i++) {
-				$("#fieldSettings_choices_manual").append(addChoice(opts[i],$("#choicesDefault_"+id).val()));
+				var opts = $("#choicesOptions_"+id).val().split("%,%");
+				$("#fieldSettings_choices_manual").html('');
+				for (var i = 0; i < opts.length; i++) {
+					$("#fieldSettings_choices_manual").append(addChoice(opts[i],$("#choicesDefault_"+id).val()));
+				}
+				$("#fieldSettings_choices_manual :input[name=fieldSettings_choices_text]").keyup();
+				$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
+				$("#fieldSettings_choices_fieldSelect").val($("#choicesField_"+id).val()).change();
 			}
-			$("#fieldSettings_choices_manual :input[name=fieldSettings_choices_text]").keyup();
-			$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
-			$("#fieldSettings_choices_fieldSelect").val($("#choicesField_"+id).val()).change();
+
+			$("#fieldSettings_options_required").prop("checked",($("#required_"+id).val()==='true'));
+			$("#fieldSettings_options_duplicates").prop("checked",($("#duplicates_"+id).val()==='true'));
+			$("#fieldSettings_options_readonly").prop("checked",($("#readonly_"+id).val()==='true')).change();
+			$("#fieldSettings_options_disabled").prop("checked",($("#disabled_"+id).val()==='true')).change();
+			$("#fieldSettings_options_publicRelease").prop("checked",($("#publicRelease_"+id).val()==='true')).change();
+			$("#fieldSettings_options_sortable").prop("checked",($("#sortable_"+id).val()==='true'));
+			$("#fieldSettings_options_searchable").prop("checked",($("#searchable_"+id).val()==='true'));
+			$("#fieldSettings_validation").val($("#validation_"+id).val()).change();
+			$("#fieldSettings_validationRegex").val($("#validationRegex_"+id).val());
+			$("#fieldSettings_range_min").val($("#rangeMin_"+id).val()).change();
+			$("#fieldSettings_range_max").val($("#rangeMax_"+id).val()).change();
+			$("#fieldSettings_range_format").val($("#rangeFormat_"+id).val()).change();
+
+			$("#fieldSettings_fieldset").val($("#fieldset_"+id).val()).keyup();
 		}
 
-		$("#fieldSettings_options_required").prop("checked",($("#required_"+id).val()==='true'));
-		$("#fieldSettings_options_duplicates").prop("checked",($("#duplicates_"+id).val()==='true'));
-		$("#fieldSettings_options_readonly").prop("checked",($("#readonly_"+id).val()==='true')).change();
-		$("#fieldSettings_options_disabled").prop("checked",($("#disabled_"+id).val()==='true')).change();
-		$("#fieldSettings_options_publicRelease").prop("checked",($("#publicRelease_"+id).val()==='true')).change();
-		$("#fieldSettings_options_sortable").prop("checked",($("#sortable_"+id).val()==='true'));
-		$("#fieldSettings_options_searchable").prop("checked",($("#searchable_"+id).val()==='true'));
-		$("#fieldSettings_validation").val($("#validation_"+id).val()).change();
-		$("#fieldSettings_validationRegex").val($("#validationRegex_"+id).val());
-		$("#fieldSettings_range_min").val($("#rangeMin_"+id).val()).change();
-		$("#fieldSettings_range_max").val($("#rangeMax_"+id).val()).change();
-		$("#fieldSettings_range_format").val($("#rangeFormat_"+id).val()).change();
-
-		$("#fieldSettings_fieldset").val($("#fieldset_"+id).val()).keyup();
 	}
 }
 
@@ -497,6 +502,7 @@ function formSettingsBindings() {
 	$("#formSettings_formTitle").keyup(function() {
 		$("#formTitle").html($(this).val());
 	}).keyup();
+
 	$("#formSettings_formDescription").keyup(function() {
 		$("#formDescription").html($(this).val());
 	}).keyup();
@@ -618,18 +624,23 @@ function newFieldValues(id,type,vals) {
 
 		switch (type) {
 			case 'Number':
+			case 'number':
 				vals['validation'] = "integer";
 				break;
 			case 'Email':
+			case 'email':
 				vals['validation'] = "emailAddr";
 				break;
 			case 'Phone':
+			case 'tel':
 				vals['validation'] = "phoneNumber";
 				break;
 			case 'Date':
+			case 'date':
 				vals['validation'] = "date";
 				break;
 			case 'Website':
+			case 'url':
 				vals['validation'] = "url";
 				break;
 		}
@@ -637,50 +648,62 @@ function newFieldValues(id,type,vals) {
 
 	switch(type) {
 		case 'Single Line Text':
+		case 'text':
 			type = vals['type'] = 'text';
 			break;
 
 		case 'Paragraph Text':
+		case 'textarea':
 			type = vals['type'] = 'textarea';
 			break;
 
 		case 'Radio':
+		case 'radio':
 			type = vals['type'] = 'radio';
 			break;
 
 		case 'Checkboxes':
+		case 'checkbox':
 			type = vals['type'] = 'checkbox';
 			break;
 
 		case 'Dropdown':
+		case 'select':
 			type = vals['type'] = 'select';
 			break;
 
 		case 'Number':
+		case 'number':
 			type = vals['type'] = 'number';
 			break;
 
 		case 'Email':
+		case 'email':
 			type = vals['type'] = 'email';
 			break;
 
 		case 'Phone':
+		case 'tel':
 			type = vals['type'] = 'tel';
 			break;
 
 		case 'Date':
+		case 'date':
 			type = vals['type'] = 'date';
 			break;
 
 		case 'Time':
+		case 'datetime':
 			type = vals['type'] = 'datetime';
 			break;
 
 		case 'Website':
+		case 'url':
 			type = vals['type'] = 'url';
 			break;
 
 		case 'Field Set':
+		case 'fieldset':
 			type = vals['type'] = 'fieldset';
 			break;
 
