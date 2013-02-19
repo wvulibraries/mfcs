@@ -217,7 +217,12 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_range_max").val($("#rangeMax_"+id).val()).change();
 			$("#fieldSettings_range_format").val($("#rangeFormat_"+id).val()).change();
 
-			$("#fieldSettings_fieldset").val($("#fieldset_"+id).val()).keyup();
+			if ($("#type_"+id).val() != 'fieldset') {
+				$("#fieldset_"+id).val($("#fieldset_"+id).parents("li").parents("li").find(":input[name^=fieldset_]").val());
+			}
+			else {
+				$("#fieldSettings_fieldset").val($("#fieldset_"+id).val());
+			}
 		}
 
 	}
