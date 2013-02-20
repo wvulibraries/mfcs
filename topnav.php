@@ -5,6 +5,7 @@
 			<b class="caret"></b>
 		</a>
 		<ul class="dropdown-menu">
+			<li><a href="{local var="siteRoot"}">Home</a></li>
 			<li class="dropdown-submenu">
 				<a tabindex="-1" href="#">Administrative Panel</a>
 				<ul class="dropdown-menu">
