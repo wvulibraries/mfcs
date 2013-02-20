@@ -80,8 +80,9 @@ try {
 
 		$forms = encodeFields($forms);
 
-		$sql       = sprintf("UPDATE `projects` SET `forms`='%s' WHERE `ID`='%s'",
+		$sql       = sprintf("UPDATE `projects` SET `forms`='%s', `numbering`='%s' WHERE `ID`='%s'",
 			$engine->openDB->escape($forms),
+			$engine->cleanGet['MYSQL']['numbering'],
 			$engine->cleanGet['MYSQL']['id']
 			);
 		$sqlResult = $engine->openDB->query($sql);
@@ -107,6 +108,8 @@ try {
 		errorHandle::errorMsg("Error retrieving project.");
 		throw new Exception('Error');
 	}
+
+	localvars::add("numbering",$project['numbering']);
 
 	// Get the forms that belong to this project
 	if (!is_empty($project['forms'])) {
@@ -299,6 +302,7 @@ $engine->eTemplate("include","header");
 					<li><a href="#addForms">Add Forms</a></li>
 					<li><a href="#groupings">Groupings</a></li>
 					<li><a href="#permissions">Permissions</a></li>
+					<li><a href="#numbering">Project Numbering</a></li>
 				</ul>
 			</div>
 
@@ -421,6 +425,20 @@ $engine->eTemplate("include","header");
 					</table>
 				</div>
 
+
+				<div class="row-fluid" id="permissions">
+					<header>
+						<h1>Numbering</h1>
+					</header>
+					<a name="numbering"></a>
+
+					<label for="numbering">Project Numbering</label>
+				<input type="text" name="numbering" id="numbering" placeholder="projectName-###" value="{local var="numbering"}"/>					
+				<br />
+				<p>a single # will be replaced with the number of the item, ### will 0 pad the number</p>
+
+				</div>
+
 				<br />
 				<input type="submit" class="btn btn-large btn-block btn-primary" name="submitProjectEdits" value="Update Project" onclick="entrySubmit()" />
 			</form>
@@ -428,6 +446,8 @@ $engine->eTemplate("include","header");
 		}
 		?>
 	</div>
+
+
 </section>
 
 <script type="text/javascript">
