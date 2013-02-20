@@ -127,17 +127,6 @@ function buildForm($formID) {
 	$engine = EngineAPI::singleton();
 
 	// Get the current Form
-	$sql       = sprintf("SELECT * FROM `forms` WHERE `ID`='%s'",
-		$engine->openDB->escape($formID)
-		);
-	$sqlResult = $engine->openDB->query($sql);
-	
-	if (!$sqlResult['result']) {
-		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
-		errorHandle::errorMsg("Error retrieving form.");
-		return(FALSE);
-	}
-	
 	$form   = getForm($formID);
 
 	if ($form === FALSE) {
@@ -146,11 +135,10 @@ function buildForm($formID) {
 
 	$fields = decodeFields($form['fields']);
 
-
 	if (usort($fields, 'sortFieldsByPosition') !== TRUE) {
 		errorHandle::newError(__METHOD__."() - usort", errorHandle::DEBUG);
 		errorHandle::errorMsg("Error retrieving form.");
-		throw new Exception('Error');
+		return(FALSE);
 	}
 
 	print "<pre>";
@@ -166,6 +154,10 @@ function buildForm($formID) {
 		$_SERVER['PHP_SELF'],
 		"post"
 		);
+
+			$output .= sprintf('<header><h1>%s</h1><h2>%s</h2></header>',
+			htmlSanitize($form['title']),
+			htmlSanitize($form['description']));
 
 	$currentFieldset = "";
 
@@ -192,12 +184,25 @@ function buildForm($formID) {
 		
 		$output .= '<div class="">';
 
+
 		$output .= sprintf('<label for="%s">%s</label>',
 			htmlSanitize($field['id']),
 			htmlSanitize($field['label'])
 			);
 
 		if ($field['type']      == "textarea") {
+			$output .= sprintf('<textarea name="%s" placeholder="%s" id="%s" class="%s" %s %s %s %s>%s</textarea>',
+				htmlSanitize($field['name']),
+				htmlSanitize($field['placeholder']),
+				htmlSanitize($field['id']),
+				htmlSanitize($field['class']),
+				(!isempty($field['style']))?'style="'.htmlSanitize($field['style']).'"':"",
+				//true/false type attributes
+				(uc($field['required']) == "TRUE")?"required":"",
+				(uc($field['readonly']) == "TRUE")?"readonly":"", 
+				(uc($field['disabled']) == "TRUE")?"disabled":"",
+				htmlSanitize($field['value'])
+				);
 
 		}
 		else if ($field['type'] == "checkbox") {
@@ -235,7 +240,7 @@ function buildForm($formID) {
 	}
 	
 	$output .= sprintf('<input type="submit" value="%s" name="%s" />',
-		"Submit",
+		htmlSanitize($form["submitButton"]),
 		"submitForm"
 		);
 
