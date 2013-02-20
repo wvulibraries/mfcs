@@ -23,24 +23,24 @@ try {
 		throw new Exception('Error');
 	}
 
+	// check that this form is part of the project
+	if (!checkFormInProject($engine->cleanGet['MYSQL']['id'],$engine->cleanGet['MYSQL']['formID'])) {
+		errorHandle::errorMsg("Form is not part of project.");
+		throw new Exception('Error');
+	}
+
 	// Get the project
-	$sql       = sprintf("SELECT * FROM `projects` WHERE `ID`='%s'",
-		$engine->cleanGet['MYSQL']['id']
-		);
-	$sqlResult = $engine->openDB->query($sql);
-	
-	if (!$sqlResult['result']) {
-		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
+	$project = getProject($engine->cleanGet['MYSQL']['id']);
+	if ($project === FALSE) {
 		errorHandle::errorMsg("Error retrieving project.");
 		throw new Exception('Error');
 	}
-	
-	$project       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
 	localvars::add("projectName",$project['projectName']);
 
 	$builtForm = buildForm($engine->cleanGet['MYSQL']['formID']);
 	if ($builtForm === FALSE) {
+		errorHandle::errorMsg("Error building form.");
 		throw new Exception('Error');
 	}
 

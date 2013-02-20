@@ -102,26 +102,14 @@ try {
 
 
 	// Get the current project from the database
-	$sql       = sprintf("SELECT * FROM `projects` WHERE `ID`='%s' LIMIT 1",
-		$engine->cleanGet['MYSQL']['id']
-		);
-	$sqlResult = $engine->openDB->query($sql);
-
-	if (!$sqlResult['result']) {
-		errorHandle::newError(__METHOD__."() - Error getting project data", errorHandle::DEBUG);
-		errorHandle::errorMsg("Error Building Page");
+	$project = getProject($engine->cleanGet['MYSQL']['id']);
+	if ($project === FALSE) {
+		errorHandle::errorMsg("Error retrieving project.");
 		throw new Exception('Error');
 	}
-
-	if ($sqlResult['numrows'] == 0) {
-		throw new Exception('Error');
-		errorHandle::errorMsg("Project not Found");
-	}
-
-	$project = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
 	// Get the forms that belong to this project
-	if (!is_empty($project)) {
+	if (!is_empty($project['forms'])) {
 		$currentForms = decodeFields($project['forms']);
 	}
 	else {

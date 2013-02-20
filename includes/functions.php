@@ -46,6 +46,67 @@ function checkProjectPermissions($id) {
 
 }
 
+// returns the database object for the project ID
+// we need to add caching to this, once caching is moved from EngineCMS to EngineAPI
+function getProject($projectID) {
+
+	$engine = EngineAPI::singleton();
+
+	$sql       = sprintf("SELECT * FROM `projects` WHERE `ID`='%s'",
+		$engine->openDB->escape($projectID)
+		);
+	$sqlResult = $engine->openDB->query($sql);
+	
+	if (!$sqlResult['result']) {
+		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
+		return(FALSE);
+	}
+	
+	return(mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC));
+
+}
+
+function getForm($formID) {
+
+	$engine = EngineAPI::singleton();
+
+	$sql       = sprintf("SELECT * FROM `forms` WHERE `ID`='%s'",
+		$engine->openDB->escape($formID)
+		);
+	$sqlResult = $engine->openDB->query($sql);
+	
+	if (!$sqlResult['result']) {
+		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
+		return(FALSE);
+	}
+	
+	return(mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC));
+}
+
+function checkFormInProject($projectID,$formID) {
+
+	$project = getProject($projectID);
+
+	if (!is_empty($project['forms'])) {
+
+		$currentForms = decodeFields($project['forms']);
+
+		foreach ($currentForms['metadata'] as $I=>$V) {
+			if ($V == $formID) {
+				return(TRUE);
+			}
+		}
+		foreach ($currentForms['objects'] as $I=>$V) {
+			if ($V == $formID) {
+				return(TRUE);
+			}
+		}
+	}
+
+	return(FALSE);
+
+}
+
 function sortFieldsByPosition($a,$b) {
     return strnatcmp($a['position'], $b['position']);
 }
@@ -77,8 +138,13 @@ function buildForm($formID) {
 		return(FALSE);
 	}
 	
-	$form       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
-	$fields     = decodeFields($form['fields']);
+	$form   = getForm($formID);
+
+	if ($form === FALSE) {
+		return(FALSE);
+	}
+
+	$fields = decodeFields($form['fields']);
 
 
 	if (usort($fields, 'sortFieldsByPosition') !== TRUE) {
