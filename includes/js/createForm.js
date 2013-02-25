@@ -199,9 +199,9 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_class").val($("#class_"+id).val()).keyup();
 			$("#fieldSettings_style").val($("#style_"+id).val()).keyup();
 
-			if ($("#choicesOptions_"+id).val() != undefined) {
-				$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change();
+			$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change();
 
+			if ($("#choicesOptions_"+id).val() != undefined) {
 				var opts = $("#choicesOptions_"+id).val().split("%,%");
 				$("#fieldSettings_choices_manual").html('');
 				for (var i = 0; i < opts.length; i++) {
@@ -292,7 +292,7 @@ function fieldSettingsBindings() {
 			$("#fieldSettings_choices_manual").hide();
 			$("#fieldSettings_choices_form").show();
 		}
-	});
+	}).change();
 
 	$("#fieldSettings_choices_manual")
 		.on("click","button[name=default]",function() {
