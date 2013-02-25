@@ -150,6 +150,8 @@ function showFieldSettings(fullID) {
 			switch(type) {
 				case 'text':
 				case 'textarea':
+					$("#fieldSettings_container_value").show();
+					$("#fieldSettings_container_placeholder").show();
 					$("#fieldSettings_container_range").show();
 
 					$("#fieldSettings_range_format option").remove();
@@ -161,10 +163,14 @@ function showFieldSettings(fullID) {
 				case 'radio':
 				case 'checkbox':
 				case 'select':
+					$("#fieldSettings_container_value").hide();
+					$("#fieldSettings_container_placeholder").hide();
 					$("#fieldSettings_container_choices").show();
 					break;
 
 				case 'number':
+					$("#fieldSettings_container_value").show();
+					$("#fieldSettings_container_placeholder").show();
 					$("#fieldSettings_container_range").show();
 
 					$("#fieldSettings_range_format option").remove();
@@ -179,6 +185,8 @@ function showFieldSettings(fullID) {
 				case 'datetime':
 				case 'website':
 				default:
+					$("#fieldSettings_container_value").show();
+					$("#fieldSettings_container_placeholder").show();
 					break;
 			}
 

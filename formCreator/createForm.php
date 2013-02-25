@@ -307,8 +307,8 @@ $engine->eTemplate("include","header");
 							</div>
 
 							<div class="row-fluid noHide">
-								<span class="span6">
-									<div class="control-group well well-small" id="fieldSettings_container_value">
+								<span class="span6" id="fieldSettings_container_value">
+									<div class="control-group well well-small">
 										<label for="fieldSettings_value">
 											Value
 											<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="When the form is first displayed, this value will already be prepopulated."></i>
@@ -318,8 +318,8 @@ $engine->eTemplate("include","header");
 									</div>
 								</span>
 
-								<span class="span6">
-									<div class="control-group well well-small" id="fieldSettings_container_placeholder">
+								<span class="span6" id="fieldSettings_container_placeholder">
+									<div class="control-group well well-small">
 										<label for="fieldSettings_placeholder">
 											Placeholder Text
 											<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If there is no value in the field, this can tell your users what to input."></i>
@@ -396,6 +396,7 @@ $engine->eTemplate("include","header");
 										<select class="input-block-level" id="fieldSettings_choices_formSelect" name="fieldSettings_choices_formSelect">
 											{local var="formsOptions"}
 										</select>
+
 										<label for="fieldSettings_choices_fieldSelect">
 											Select a Field
 										</label>
