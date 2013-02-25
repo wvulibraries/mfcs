@@ -81,7 +81,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 }
 
 $tmp = '<option value="">None</option>';
-foreach (validator::getValidationTypes() as $val => $text) {
+foreach (validate::validationMethods() as $val => $text) {
 	$tmp .= '<option value="'.$val.'">'.$text.'</option>';
 }
 localVars::add("validationTypes",$tmp);
