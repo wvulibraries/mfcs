@@ -479,6 +479,16 @@ $engine->eTemplate("include","header");
 								</div>
 							</div>
 						</form>
+
+						<div class="row-fluid noHide">
+							<form class="form form-horizontal" id="submitForm" name="submitForm" method="post">
+								<input type="hidden" name="id" value="{local var="formID"}">
+								<input type="hidden" name="form">
+								<input type="hidden" name="fields">
+								<input type="submit" class="btn btn-large btn-block btn-primary" name="submitForm" value="{local var="thisSubmitButton"}">
+								{engine name="csrf"}
+							</form>
+						</div>
 					</div>
 
 					<div class="tab-pane" id="formSettings">
