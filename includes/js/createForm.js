@@ -21,6 +21,12 @@ $(function() {
 		addNewField($("#formPreview li:last"));
 	});
 
+	$("#formPreview").on("click", ".fieldPreview i.icon-remove", function() {
+		if (confirm("Are you sure you want to remove this field?")) {
+			$(this).parents("li").remove();
+		}
+	});
+
 	// Re-order nesting on load
 	// This loops through <li> and finds all the fieldsets, then loops through matching all <li> that have
 	// the same fieldset name and moves them inside it
@@ -576,11 +582,13 @@ function addNewField(item) {
 function newFieldPreview(id,type) {
 	var output;
 
+	output = '<i class="icon-remove"></i>';
+
 	if (type == 'Field Set' || type == 'fieldset') {
-		output = '<fieldset><legend></legend><ul class="unstyled sortable"></ul></fieldset>';
+		output += '<fieldset><legend></legend><ul class="unstyled sortable"></ul></fieldset>';
 	}
 	else {
-		output = '<div class="control-group"><label class="control-label">Untitled</label><div class="controls">';
+		output += '<div class="control-group"><label class="control-label">Untitled</label><div class="controls">';
 
 		switch(type) {
 			case 'Single Line Text':

@@ -29,11 +29,21 @@ ul.sortable li.well {
 	margin-bottom: 0px;
 }
 
-#fieldPreview,
-#fieldPreview ul {
+#formPreview ul,
+#formPreview li {
 	min-height: 50px;
 }
 
-#fieldPreview li {
+#formPreview li {
 	padding: 5px;
+}
+
+.fieldPreview i.icon-remove {
+	position: absolute;
+	display:none;
+}
+
+li:hover .fieldPreview i.icon-remove {
+	display:block;
+	cursor: pointer;
 }
