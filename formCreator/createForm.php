@@ -80,7 +80,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	}
 }
 
-$tmp = '<option value="none">None</option>';
+$tmp = '<option value="">None</option>';
 foreach (validator::getValidationTypes() as $val => $text) {
 	$tmp .= '<option value="'.$val.'">'.$text.'</option>';
 }
