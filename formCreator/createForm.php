@@ -463,17 +463,23 @@ $engine->eTemplate("include","header");
 
 							<div class="control-group well well-small" id="fieldSettings_container_range">
 								<div class="row-fluid">
-									<span class="span4">
+									<span class="span3">
 										<label for="fieldSettings_range_min">
 											Min
 										</label>
 										<input type="number" class="input-block-level" id="fieldSettings_range_min" name="fieldSettings_range_min" min="0" />
 									</span>
-									<span class="span4">
+									<span class="span3">
 										<label for="fieldSettings_range_max">
 											Max
 										</label>
 										<input type="number" class="input-block-level" id="fieldSettings_range_max" name="fieldSettings_range_max" min="0" />
+									</span>
+									<span class="span2">
+										<label for="fieldSettings_range_step">
+											Step
+										</label>
+										<input type="number" class="input-block-level" id="fieldSettings_range_step" name="fieldSettings_range_step" min="0" />
 									</span>
 									<span class="span4">
 										<label for="fieldSettings_range_format">

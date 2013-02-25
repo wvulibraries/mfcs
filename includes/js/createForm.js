@@ -152,7 +152,11 @@ function showFieldSettings(fullID) {
 				case 'textarea':
 					$("#fieldSettings_container_value").show();
 					$("#fieldSettings_container_placeholder").show();
+
 					$("#fieldSettings_container_range").show();
+					$("#fieldSettings_range_step").parent().hide();
+					$("#fieldSettings_range_min").parent().addClass("span4").removeClass("span3");
+					$("#fieldSettings_range_max").parent().addClass("span4").removeClass("span3");
 
 					$("#fieldSettings_range_format option").remove();
 					$("#fieldSettings_range_format")
@@ -171,7 +175,11 @@ function showFieldSettings(fullID) {
 				case 'number':
 					$("#fieldSettings_container_value").show();
 					$("#fieldSettings_container_placeholder").show();
+
 					$("#fieldSettings_container_range").show();
+					$("#fieldSettings_range_step").parent().show();
+					$("#fieldSettings_range_min").parent().addClass("span3").removeClass("span4");
+					$("#fieldSettings_range_max").parent().addClass("span3").removeClass("span4");
 
 					$("#fieldSettings_range_format option").remove();
 					$("#fieldSettings_range_format")
@@ -223,6 +231,7 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_validationRegex").val($("#validationRegex_"+id).val());
 			$("#fieldSettings_range_min").val($("#min_"+id).val()).change();
 			$("#fieldSettings_range_max").val($("#max_"+id).val()).change();
+			$("#fieldSettings_range_step").val($("#step_"+id).val()).change();
 			$("#fieldSettings_range_format").val($("#format_"+id).val()).change();
 
 			if ($("#type_"+id).val() != 'fieldset') {
@@ -499,6 +508,10 @@ function fieldSettingsBindings() {
 		}
 	});
 
+	$("#fieldSettings_range_step").change(function() {
+		$("#formPreview .well :input[name^=step_]").val($(this).val());
+	});
+
 	$("#fieldSettings_range_format").change(function() {
 		$("#formPreview .well :input[name^=format_]").val($(this).val());
 	});
@@ -757,6 +770,7 @@ function newFieldValues(id,type,vals) {
 		case 'number':
 			output += '<input type="hidden" id="min_'+id+'" name="min_'+id+'" value="'+((vals['min']!=undefined)?vals['min']:'')+'">';
 			output += '<input type="hidden" id="max_'+id+'" name="max_'+id+'" value="'+((vals['max']!=undefined)?vals['max']:'')+'">';
+			output += '<input type="hidden" id="step_'+id+'" name="step_'+id+'" value="'+((vals['step']!=undefined)?vals['step']:'')+'">';
 			output += '<input type="hidden" id="format_'+id+'" name="format_'+id+'" value="'+((vals['format']!=undefined)?vals['format']:'')+'">';
 			break;
 
