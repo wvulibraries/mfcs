@@ -514,15 +514,14 @@ function formSettingsBindings() {
 		$("#fieldTab a[href='#formSettings']").click();
 		$("#formSettings_formTitle").focus();
 	});
-	$("#formDescription").on("click", function() {
-		$("#fieldTab a[href='#formSettings']").click();
-		$("#formSettings_formDescription").focus();
-	});
-
 	$("#formSettings_formTitle").keyup(function() {
 		$("#formTitle").html($(this).val());
 	}).keyup();
 
+	$("#formDescription").on("click", function() {
+		$("#fieldTab a[href='#formSettings']").click();
+		$("#formSettings_formDescription").focus();
+	});
 	$("#formSettings_formDescription").keyup(function() {
 		$("#formDescription").html($(this).val());
 	}).keyup();

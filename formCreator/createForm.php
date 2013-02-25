@@ -122,11 +122,15 @@ if (!isnull($formID)) {
 
 	if ($sqlResult['result']) {
 		$row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
+
 		localVars::add("formID",htmlSanitize($row['ID']));
 		localVars::add("formTitle",htmlSanitize($row['title']));
 		localVars::add("formDescription",htmlSanitize($row['description']));
 		localVars::add("submitButton",htmlSanitize($row['submitButton']));
 		localVars::add("updateButton",htmlSanitize($row['updateButton']));
+		localVars::add("formContainer",  ($row['container'] == '1')  ? "checked" : "");
+		localVars::add("formProduction", ($row['production'] == '1') ? "checked" : "");
+		localVars::add("formMetadata",   ($row['metadata'] == '1')   ? "checked" : "");
 
 		$formPreview = NULL;
 		if (!is_empty($row['fields'])) {
@@ -539,9 +543,9 @@ $engine->eTemplate("include","header");
 
 						<div class="row-fluid noHide">
 							<div class="control-group well well-small" id="formSettings_formContainer_container">
-								<input type="checkbox" id="formSettings_formContainer" name="formSettings_formContainer"> <label class="checkbox" for="formSettings_formContainer" style="display: inline;">Act as Container</label> <br />
-								<input type="checkbox" id="formSettings_formProduction" name="formSettings_formProduction"> <label class="checkbox" for="formSettings_formProduction" style="display: inline;">Production Ready</label> <br />
-								<input type="checkbox" id="formSettings_formMetadata" name="formSettings_formMetadata"> <label class="checkbox" for="formSettings_formMetadata" style="display: inline;">Metadata Form</label> <br />
+								<input type="checkbox" id="formSettings_formContainer" name="formSettings_formContainer" {local var="formContainer"}> <label class="checkbox" for="formSettings_formContainer" style="display: inline;">Act as Container</label> <br />
+								<input type="checkbox" id="formSettings_formProduction" name="formSettings_formProduction" {local var="formProduction"}> <label class="checkbox" for="formSettings_formProduction" style="display: inline;">Production Ready</label> <br />
+								<input type="checkbox" id="formSettings_formMetadata" name="formSettings_formMetadata" {local var="formMetadata"}> <label class="checkbox" for="formSettings_formMetadata" style="display: inline;">Metadata Form</label> <br />
 								<span class="help-block hidden"></span>
 							</div>
 						</div>
