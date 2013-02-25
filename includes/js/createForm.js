@@ -221,9 +221,9 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_options_searchable").prop("checked",($("#searchable_"+id).val()==='true'));
 			$("#fieldSettings_validation").val($("#validation_"+id).val()).change();
 			$("#fieldSettings_validationRegex").val($("#validationRegex_"+id).val());
-			$("#fieldSettings_range_min").val($("#rangeMin_"+id).val()).change();
-			$("#fieldSettings_range_max").val($("#rangeMax_"+id).val()).change();
-			$("#fieldSettings_range_format").val($("#rangeFormat_"+id).val()).change();
+			$("#fieldSettings_range_min").val($("#min_"+id).val()).change();
+			$("#fieldSettings_range_max").val($("#max_"+id).val()).change();
+			$("#fieldSettings_range_format").val($("#format_"+id).val()).change();
 
 			if ($("#type_"+id).val() != 'fieldset') {
 				$("#fieldset_"+id).val($("#fieldset_"+id).parents("li").parents("li").find(":input[name^=fieldset_]").val());
@@ -486,21 +486,21 @@ function fieldSettingsBindings() {
 	});
 
 	$("#fieldSettings_range_min").change(function() {
-		$("#formPreview .well :input[name^=range_rangeMin_]").val($(this).val());
+		$("#formPreview .well :input[name^=min_]").val($(this).val());
 		if ($("#fieldSettings_range_min").val() > $("#fieldSettings_range_max").val()) {
 			$("#fieldSettings_range_max").val($("#fieldSettings_range_min").val()).change();
 		}
 	});
 
 	$("#fieldSettings_range_max").change(function() {
-		$("#formPreview .well :input[name^=rangeMax_]").val($(this).val());
+		$("#formPreview .well :input[name^=max_]").val($(this).val());
 		if ($("#fieldSettings_range_min").val() > $("#fieldSettings_range_max").val()) {
 			$("#fieldSettings_range_min").val($("#fieldSettings_range_max").val()).change();
 		}
 	});
 
 	$("#fieldSettings_range_format").change(function() {
-		$("#formPreview .well :input[name^=rangeFormat_]").val($(this).val());
+		$("#formPreview .well :input[name^=format_]").val($(this).val());
 	});
 
 	$("#fieldSettings_fieldset").keyup(function() {
@@ -756,9 +756,9 @@ function newFieldValues(id,type,vals) {
 		case 'text':
 		case 'textarea':
 		case 'number':
-			output += '<input type="hidden" id="rangeMin_'+id+'" name="rangeMin_'+id+'" value="'+((vals['rangeMin']!=undefined)?vals['rangeMin']:'')+'">';
-			output += '<input type="hidden" id="rangeMax_'+id+'" name="rangeMax_'+id+'" value="'+((vals['rangeMax']!=undefined)?vals['rangeMax']:'')+'">';
-			output += '<input type="hidden" id="rangeFormat_'+id+'" name="rangeFormat_'+id+'" value="'+((vals['rangeFormat']!=undefined)?vals['rangeFormat']:'')+'">';
+			output += '<input type="hidden" id="min_'+id+'" name="min_'+id+'" value="'+((vals['min']!=undefined)?vals['min']:'')+'">';
+			output += '<input type="hidden" id="max_'+id+'" name="max_'+id+'" value="'+((vals['max']!=undefined)?vals['max']:'')+'">';
+			output += '<input type="hidden" id="format_'+id+'" name="format_'+id+'" value="'+((vals['format']!=undefined)?vals['format']:'')+'">';
 			break;
 
 		case 'radio':
