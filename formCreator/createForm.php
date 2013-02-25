@@ -108,7 +108,11 @@ if (!is_empty($engine->errorStack)) {
 	localVars::add("results",errorHandle::prettyPrint());
 }
 
+localVars::add("thisSubmitButton","Add Form");
+
 if (!isnull($formID)) {
+	localVars::add("thisSubmitButton","Update Form");
+
 	// Get form info for display
 	$sql = sprintf("SELECT * FROM `%s` WHERE ID='%s' LIMIT 1",
 		$engine->openDB->escape($engine->dbTables("forms")),
@@ -536,7 +540,7 @@ $engine->eTemplate("include","header");
 								<input type="hidden" name="id" value="{local var="formID"}">
 								<input type="hidden" name="form">
 								<input type="hidden" name="fields">
-								<input type="submit" class="btn btn-large btn-block btn-primary" name="submitForm" value="Add/Update Form">
+								<input type="submit" class="btn btn-large btn-block btn-primary" name="submitForm" value="{local var="thisSubmitButton"}">
 								{engine name="csrf"}
 							</form>
 						</div>
