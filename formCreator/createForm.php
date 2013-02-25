@@ -47,11 +47,13 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	}
 	else {
 		// Insert into forms table
-		$sql = sprintf("INSERT INTO `%s` (title, description, fields, container, production, metadata) VALUES ('%s',%s,'%s','%s','%s','%s')",
+		$sql = sprintf("INSERT INTO `%s` (title, description, fields, container, submitButton, updateButton production, metadata) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s')",
 			$engine->openDB->escape($engine->dbTables("forms")),
 			$engine->openDB->escape($form['formTitle']),
 			isset($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
 			encodeFields($fields),
+			$engine->openDB->escape($form['submitButton']),
+			$engine->openDB->escape($form['updateButton']),
 			$engine->openDB->escape($form['formContainer']),
 			$engine->openDB->escape($form['formProduction']),
 			$engine->openDB->escape($form['formMetadata'])
