@@ -22,11 +22,11 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			$fields[$I]['id'] = $field['name'];
 		}
 
-		if ($field['choicesType'] == 'manual') {
+		if (isset($field['choicesType']) && $field['choicesType'] == 'manual') {
 			unset($fields[$I]['choicesForm']);
 			unset($fields[$I]['choicesField']);
 		}
-		else if ($field['choicesType'] == 'form') {
+		else if (isset($field['choicesType']) && $field['choicesType'] == 'form') {
 			unset($fields[$I]['choicesDefault']);
 			unset($fields[$I]['choicesOptions']);
 		}
