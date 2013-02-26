@@ -1,4 +1,5 @@
 <?php
+
 function displayMessages() {
 	$engine = EngineAPI::singleton();
 	if (is_empty($engine->errorStack)) {
@@ -83,6 +84,34 @@ function getForm($formID) {
 	return(mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC));
 }
 
+function getObject($objectID) {
+	$engine = EngineAPI::singleton();
+
+	$sql       = sprintf("SELECT * FROM `objects` WHERE `ID`='%s'",
+		$engine->openDB->escape($objectID)
+		);
+	$sqlResult = $engine->openDB->query($sql);
+	
+	if (!$sqlResult['result']) {
+		errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
+		return(FALSE);
+	}
+	
+	return(mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC));
+}
+
+function checkObjectInForm($formID,$objectID) {
+
+	$object = getObject($objectID);
+
+	if ($object['formID'] == $formID) {
+		return(TRUE);
+	}
+
+	return(FALSE);
+
+}
+
 function checkFormInProject($projectID,$formID) {
 
 	$project = getProject($projectID);
@@ -122,7 +151,7 @@ function buildNumberAttributes($field) {
 
 }
 
-function buildForm($formID) {
+function buildForm($formID,$projectID,$objectID = NULL) {
 
 	$engine = EngineAPI::singleton();
 
@@ -141,6 +170,19 @@ function buildForm($formID) {
 		return(FALSE);
 	}
 
+	if (!isnull($objectID)) {
+		$object = getObject($objectID);
+		if ($object === FALSE) {
+			errorHandle::errorMsg("Error retrieving object.");
+			return(FALSE);
+		}
+		$object['data'] = decodeFields($object['data']);
+		if ($object['data'] === FALSE) {
+			errorHandle::errorMsg("Error retrieving object.");
+			return(FALSE);
+		}
+	}
+
 	print "<pre>";
 	var_dump($form);
 	print "</pre>";
@@ -149,15 +191,23 @@ function buildForm($formID) {
 	var_dump($fields);
 	print "</pre>";
 
+	// print "<pre>";
+	// var_dump($object);
+	// print "</pre>";
+    
 
-	$output = sprintf('<form action="%s" method="%s">',
+	$output = sprintf('<form action="%s?id=%s&amp;formID=%s" method="%s">',
 		$_SERVER['PHP_SELF'],
+		htmlSanitize($projectID),
+		htmlSanitize($formID),
 		"post"
 		);
 
-			$output .= sprintf('<header><h1>%s</h1><h2>%s</h2></header>',
-			htmlSanitize($form['title']),
-			htmlSanitize($form['description']));
+	$output .= sessionInsertCSRF();
+
+	$output .= sprintf('<header><h1>%s</h1><h2>%s</h2></header>',
+		htmlSanitize($form['title']),
+		htmlSanitize($form['description']));
 
 	$currentFieldset = "";
 
@@ -201,7 +251,7 @@ function buildForm($formID) {
 				(uc($field['required']) == "TRUE")?"required":"",
 				(uc($field['readonly']) == "TRUE")?"readonly":"", 
 				(uc($field['disabled']) == "TRUE")?"disabled":"",
-				htmlSanitize($field['value'])
+				(isset($object['data'][$field['name']]))?htmlSanitize($object['data'][$field['name']]):htmlSanitize($field['value'])
 				);
 
 		}
@@ -218,7 +268,7 @@ function buildForm($formID) {
 			$output .= sprintf('<input type="%s" name="%s" value="%s" placeholder="%s" %s id="%s" class="%s" %s %s %s %s />',
 				htmlSanitize($field['type']),
 				htmlSanitize($field['name']),
-				htmlSanitize($field['value']),
+				(isset($object['data'][$field['name']]))?htmlSanitize($object['data'][$field['name']]):htmlSanitize($field['value']),
 				htmlSanitize($field['placeholder']),
 				//for numbers
 				($field['type'] == "number")?(buildNumberAttributes($field)):"",
@@ -248,6 +298,98 @@ function buildForm($formID) {
 
 	return($output);
 
+}
+
+
+// NOTE: data is being saved as RAW from the array. 
+function submitForm($project,$formID,$objectID=NULL) {
+
+	$engine = EngineAPI::singleton();
+
+	// Get the current Form
+	$form   = getForm($formID);
+
+	if ($form === FALSE) {
+		return(FALSE);
+	}
+
+	$fields = decodeFields($form['fields']);
+	print "<pre>";
+	var_dump($fields);
+	print "</pre>";
+
+	if (usort($fields, 'sortFieldsByPosition') !== TRUE) {
+		errorHandle::newError(__METHOD__."() - usort", errorHandle::DEBUG);
+		errorHandle::errorMsg("Error retrieving form.");
+		return(FALSE);
+	}
+
+	$values = array();
+
+	// go through all the fields, get their values
+	foreach ($fields as $field) {
+
+		if ($field['type'] == "fieldset") {
+			continue;
+		}
+
+		// perform validations here
+		if (isempty($field['validation']) || $field['validation'] == "none") {
+			$valid = TRUE;
+		}
+		else {
+			$return = validate::isValidMethod($field['validation']);
+			$valid  = FALSE;
+			if ($return === TRUE) {
+				if ($field['validation'] == "regexp") {
+					$valid = validate::$field['validation']($field['validationRegex'],$field['value']);
+				}
+				else {
+					$valid = validate::$field['validation']($engine->cleanPost['RAW'][$field['name']]);
+				}
+			}
+		}
+
+		if ($valid === FALSE) {
+			errorHandle::errorMsg("Invalid data provided in field '".$field['label']."'.");
+			continue;
+		}
+
+		$values[$field['name']] = $engine->cleanPost['RAW'][$field['name']];
+
+	}
+
+	if (!is_empty($engine->errorStack)) {
+		return(FALSE);
+	}
+
+	if (isnull($objectID)) {
+		$sql       = sprintf("INSERT INTO `objects` (parentID,formID,defaultProject,data,metadata) VALUES('%s','%s','%s','%s','%s')",
+			isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",
+			$engine->openDB->escape($formID),
+			$engine->openDB->escape($project['ID']),
+			encodeFields($values),
+			$engine->openDB->escape($form['metadata'])
+			);
+	}
+	else {
+		// start transactions
+		
+		// place old version into revision control
+		
+		// insert new version
+		
+		// end transactions
+	}
+	$sqlResult = $engine->openDB->query($sql);
+	
+	if (!$sqlResult['result']) {
+		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
+		return(FALSE);
+	}
+	
+
+	return(TRUE);
 }
 
 ?>
