@@ -222,6 +222,8 @@ function showFieldSettings(fullID) {
 					$("#fieldSettings_choices_manual").append(addChoice(opts[i],$("#choicesDefault_"+id).val()));
 				}
 				$("#fieldSettings_choices_manual :input[name=fieldSettings_choices_text]").keyup();
+			}
+			else {
 				$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
 				$("#fieldSettings_choices_fieldSelect").val($("#choicesField_"+id).val()).change();
 			}
