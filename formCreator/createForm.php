@@ -97,7 +97,7 @@ foreach (validate::validationMethods() as $val => $text) {
 localVars::add("validationTypes",$tmp);
 
 // Get list of forms for choices dropdown
-$sql = sprintf("SELECT ID, `title` FROM `%s` ORDER BY `title`",
+$sql = sprintf("SELECT ID, `title` FROM `%s` WHERE metadata='1' ORDER BY `title`",
 	$engine->openDB->escape($engine->dbTables("forms"))
 	);
 $sqlResult = $engine->openDB->query($sql);
