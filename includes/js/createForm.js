@@ -306,6 +306,8 @@ function fieldSettingsBindings() {
 		else if ($(this).val() == 'form') {
 			$("#fieldSettings_choices_manual").hide();
 			$("#fieldSettings_choices_form").show();
+			$("#fieldSettings_choices_formSelect").change();
+			$("#fieldSettings_choices_fieldSelect").change();
 		}
 	}).change();
 
