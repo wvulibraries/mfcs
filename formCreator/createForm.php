@@ -17,8 +17,18 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	// Ensure all fields have an ID for the label. Assign it the value of name if needed.
 	foreach ($fields as $I => $field) {
 		$positions[$I] = $field['position'];
+
 		if (is_empty($field['id'])) {
 			$fields[$I]['id'] = $field['name'];
+		}
+
+		if ($field['choicesType'] == 'manual') {
+			unset($fields[$I]['choicesForm']);
+			unset($fields[$I]['choicesField']);
+		}
+		else if ($field['choicesType'] == 'form') {
+			unset($fields[$I]['choicesDefault']);
+			unset($fields[$I]['choicesOptions']);
 		}
 	}
 
