@@ -269,6 +269,7 @@ $engine->eTemplate("include","header");
 									<li><a href="#" class="btn btn-block">Date</a></li>
 									<li><a href="#" class="btn btn-block">Time</a></li>
 									<li><a href="#" class="btn btn-block">Website</a></li>
+									<li><a href="#" class="btn btn-block">WYSIWYG</a></li>
 								</ul>
 							</div>
 						</div>

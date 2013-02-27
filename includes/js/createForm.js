@@ -650,6 +650,11 @@ function newFieldPreview(id,type) {
 				output += '<input type="url">';
 				break;
 
+			case 'WYSIWYG':
+			case 'wysiwyg':
+				output += '<img src="../includes/img/wysiwyg.png" />';
+				break;
+
 			default:
 				break;
 		}
@@ -744,6 +749,11 @@ function newFieldValues(id,type,vals) {
 		case 'Website':
 		case 'url':
 			type = vals['type'] = 'url';
+			break;
+
+		case 'WYSIWYG':
+		case 'wysiwyg':
+			type = vals['type'] = 'wysiwyg';
 			break;
 
 		case 'Field Set':
