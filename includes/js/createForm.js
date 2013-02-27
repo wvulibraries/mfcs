@@ -198,6 +198,7 @@ function showFieldSettings(fullID) {
 				case 'date':
 				case 'datetime':
 				case 'website':
+				case 'wysiwyg':
 				default:
 					$("#fieldSettings_container_value").show();
 					$("#fieldSettings_container_placeholder").show();
