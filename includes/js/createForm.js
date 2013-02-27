@@ -258,10 +258,12 @@ function fieldSettingsBindings() {
 	// Select a field to change settings
 	$("#formPreview").on("click", "li", function(event) {
 		event.stopPropagation();
-		$("#formPreview .well").removeClass("well");
-		$(this).addClass("well well-small");
-		$("#fieldTab a[href='#fieldSettings']").tab("show");
-		showFieldSettings($(this).attr("id"));
+		if (!$(this).hasClass("well")) {
+			$("#formPreview .well").removeClass("well");
+			$(this).addClass("well well-small");
+			$("#fieldTab a[href='#fieldSettings']").tab("show");
+			showFieldSettings($(this).attr("id"));
+		}
 	});
 
 	$("#fieldSettings_name").keyup(function() {
