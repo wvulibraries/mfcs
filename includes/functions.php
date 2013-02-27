@@ -183,13 +183,13 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 		}
 	}
 
-	print "<pre>";
-	var_dump($form);
-	print "</pre>";
+	// print "<pre>";
+	// var_dump($form);
+	// print "</pre>";
 
-	print "<pre>";
-	var_dump($fields);
-	print "</pre>";
+	// print "<pre>";
+	// var_dump($fields);
+	// print "</pre>";
 
 	// print "<pre>";
 	// var_dump($object);
@@ -227,6 +227,7 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 					$field['fieldset']
 					);
 			}
+			$currentFieldset = $field['fieldset'];
 		}	
 
 
@@ -255,13 +256,109 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 				);
 
 		}
-		else if ($field['type'] == "checkbox") {
+		else if ($field['type'] == "checkbox" || $field['type'] == "radio") {
 
-		}
-		else if ($field['type'] == "radio") {
+		// }
+		// else if ($field['type'] == "radio") {
+			// Manually selected
+			if (isset($field['choicesType']) && !isempty($field['choicesType']) && $field['choicesType'] == "manual") {
+				if (isempty($field['choicesOptions'])) {
+					errorHandle::errorMsg("No options provided for radio buttons, '".$field['label']."'");
+					return(FALSE);
+				}
 
+				foreach ($field['choicesOptions'] as $I=>$option) {
+					$output .= sprintf('<input type="%s" name="%s" id="%s_%s" value="%s" %s/><label for="%s_%s">%s</label>',
+						htmlSanitize($field['type']),
+						htmlSanitize($field['name']),
+						htmlSanitize($field['name']),
+						htmlSanitize($I),
+						htmlSanitize($option),
+						(!isempty($field['choicesDefault']) && $field['choicesDefault'] == $option)?'checked="checked"':"",
+						htmlSanitize($field['name']),
+						htmlSanitize($I),
+						htmlSanitize($option)
+						);
+				}
+
+			}
+			else {
+				$sql       = sprintf("SELECT * FROM `objects` WHERE formID='%s' and metadata='1'",
+					$engine->openDB->escape($field['choicesForm'])
+					);
+				$sqlResult = $engine->openDB->query($sql);
+
+				if (!$sqlResult['result']) {
+					errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
+					return(FALSE);
+				}
+
+				$count = 0;
+				while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+					$row['data'] = decodeFields($row['data']);
+
+					$output .= sprintf('<input type="checkbox" name="%s" id="%s_%s" value="%s"/><label for="%s_%s">%s</label>',
+						htmlSanitize($field['type']),
+						htmlSanitize($field['name']),
+						htmlSanitize($field['name']),
+						htmlSanitize(++$count),
+						htmlSanitize($row['ID']),
+						htmlSanitize($field['name']),
+						htmlSanitize($count),
+						htmlSanitize($row['data'][$field['choicesField']])
+						);
+				}
+
+			}
 		}
 		else if ($field['type'] == "select") {
+			$output .= sprintf('<select name="%s" id="%s">',
+				htmlSanitize($field['name']),
+				htmlSanitize($field['name'])
+				);
+
+			// Manually selected
+			if (isset($field['choicesType']) && !isempty($field['choicesType']) && $field['choicesType'] == "manual") {
+				if (isempty($field['choicesOptions'])) {
+					errorHandle::errorMsg("No options provided for radio buttons, '".$field['label']."'");
+					return(FALSE);
+				}
+
+				foreach ($field['choicesOptions'] as $I=>$option) {
+					$output .= sprintf('<option value="%s" %s/>%s</option>',
+						htmlSanitize($option),
+						(!isempty($field['choicesDefault']) && $field['choicesDefault'] == $option)?'checked="checked"':"",
+						htmlSanitize($option)
+						);
+				}
+
+			}
+			// Pull from another Form
+			else {
+
+				$sql       = sprintf("SELECT * FROM `objects` WHERE formID='%s' and metadata='1'",
+					$engine->openDB->escape($field['choicesForm'])
+					);
+				$sqlResult = $engine->openDB->query($sql);
+
+				if (!$sqlResult['result']) {
+					errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
+					return(FALSE);
+				}
+
+				while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+
+					$row['data'] = decodeFields($row['data']);
+
+					$output .= sprintf('<option value="%s" />%s</option>',
+						htmlSanitize($row['ID']),
+						htmlSanitize($row['data'][$field['choicesField']])
+						);
+				}
+
+			}
+
+			$output .= "</select>";
 
 		}
 		else {
