@@ -255,6 +255,8 @@ function showFieldSettings(fullID) {
 }
 
 function fieldSettingsBindings() {
+	var choicesFields = {};
+
 	// Select a field to change settings
 	$("#formPreview").on("click", "li", function(event) {
 		event.stopPropagation();
@@ -446,19 +448,25 @@ function fieldSettingsBindings() {
 
 	$("#fieldSettings_choices_form")
 		.on("change","#fieldSettings_choices_formSelect",function() {
-			$("#formPreview .well :input[name^=choicesForm_]").val($(this).val());
-			$.ajax({
-				url: "../includes/getFormFields.php?id="+$(this).val(),
-				async: false,
-			}).done(function(data) {
-				$("#fieldSettings_choices_fieldSelect").html('');
+			var val = $(this).val();
 
-				var obj = JSON.parse(data);
-				for(var i in obj) {
-					var field = obj[i];
-					$("#fieldSettings_choices_fieldSelect").append('<option value="'+field.name+'">'+field.label+'</option>');
-				}
-			});
+			if (choicesFields[val] == undefined) {
+				$.ajax({
+					url: "../includes/getFormFields.php?id="+val,
+					async: false,
+				}).done(function(data) {
+					var obj = JSON.parse(data);
+					var options;
+					for(var i in obj) {
+						var field = obj[i];
+						options += '<option value="'+field.name+'">'+field.label+'</option>';
+					}
+					choicesFields[val] = options;
+				});
+			}
+
+			$("#formPreview .well :input[name^=choicesForm_]").val(val);
+			$("#fieldSettings_choices_fieldSelect").html(choicesFields[val]);
 		})
 		.on("change","#fieldSettings_choices_fieldSelect",function() {
 			$("#formPreview .well :input[name^=choicesField_]").val($(this).val());
