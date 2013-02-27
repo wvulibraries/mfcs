@@ -445,16 +445,18 @@ function fieldSettingsBindings() {
 	$("#fieldSettings_choices_form")
 		.on("change","#fieldSettings_choices_formSelect",function() {
 			$("#formPreview .well :input[name^=choicesForm_]").val($(this).val());
-			$.ajax("../includes/getFormFields.php?id="+$(this).val())
-				.done(function(data) {
-					$("#fieldSettings_choices_fieldSelect").html('');
+			$.ajax({
+				url: "../includes/getFormFields.php?id="+$(this).val(),
+				async: false,
+			}).done(function(data) {
+				$("#fieldSettings_choices_fieldSelect").html('');
 
-					var obj = JSON.parse(data);
-					for(var i in obj) {
-						var field = obj[i];
-						$("#fieldSettings_choices_fieldSelect").append('<option value="'+field.name+'">'+field.label+'</option>');
-					}
-				});
+				var obj = JSON.parse(data);
+				for(var i in obj) {
+					var field = obj[i];
+					$("#fieldSettings_choices_fieldSelect").append('<option value="'+field.name+'">'+field.label+'</option>');
+				}
+			});
 		})
 		.on("change","#fieldSettings_choices_fieldSelect",function() {
 			$("#formPreview .well :input[name^=choicesField_]").val($(this).val());
