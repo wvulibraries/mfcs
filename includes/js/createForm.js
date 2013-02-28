@@ -24,7 +24,14 @@ $(function() {
 	// Delete icon binding
 	$("#formPreview").on("click", ".fieldPreview i.icon-remove", function() {
 		if (confirm("Are you sure you want to remove this field?")) {
-			$(this).parents("li").remove();
+			var thisLI = $(this).parent().parent();
+
+			// If I'm a fieldset, move any fields that are within me
+			if ($(this).parent().next().children(":input[name^=type_]").val() == 'fieldset') {
+				thisLI.after($(this).next().find("li"));
+			}
+			// Delete this li
+			thisLI.remove();
 		}
 	});
 
