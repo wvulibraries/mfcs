@@ -21,6 +21,7 @@ $(function() {
 		addNewField($("#formPreview li:last"));
 	});
 
+	// Delete icon binding
 	$("#formPreview").on("click", ".fieldPreview i.icon-remove", function() {
 		if (confirm("Are you sure you want to remove this field?")) {
 			$(this).parents("li").remove();
@@ -102,6 +103,25 @@ $(function() {
 	// Click through each field and then back to add field tab on page load to update form preview
 	$("#formPreview li").click();
 	$("#fieldTab li:last a").click();
+
+	// Make the left panel fixed if the viewport is big enough to hold the content
+	$(window).scroll(function() {
+		var left = $('#leftPanel');
+		var height = $('#leftPanel .tab-content').outerHeight() + $('#fieldTab').outerHeight() + 170;
+
+		// Is the window big enough?
+		if ($(window).height() > height) {
+			// Yes - should we fix it?
+			if (!left.hasClass("fix") && $(window).scrollTop() - left.offset().top + 170 > 0) {
+				left.addClass('fix');
+				left.css("width",left.parent().width());
+			}
+		}
+		else {
+			// No - make sure it's not currently fixed
+			left.removeClass('fix');
+		}
+	}).scroll();
 });
 
 function sortable() {

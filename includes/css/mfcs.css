@@ -47,3 +47,8 @@ li:hover .fieldPreview i.icon-remove {
 	display:block;
 	cursor: pointer;
 }
+
+#leftPanel.fix {
+	position: fixed;
+	top: 170px;
+}
