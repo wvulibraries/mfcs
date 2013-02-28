@@ -451,6 +451,9 @@ $engine->eTemplate("include","header");
 											<label class="checkbox">
 												<input type="checkbox" id="fieldSettings_options_searchable" name="fieldSettings_options_searchable"> Searchable
 											</label>
+											<label class="checkbox">
+												<input type="checkbox" id="fieldSettings_options_displayTable" name="fieldSettings_options_displayTable"> Display in List Table
+											</label>
 										</div>
 									</span>
 									<span class="span6">

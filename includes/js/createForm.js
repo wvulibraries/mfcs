@@ -284,6 +284,7 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_options_publicRelease").prop("checked",($("#publicRelease_"+id).val()==='true')).change();
 			$("#fieldSettings_options_sortable").prop("checked",($("#sortable_"+id).val()==='true'));
 			$("#fieldSettings_options_searchable").prop("checked",($("#searchable_"+id).val()==='true'));
+			$("#fieldSettings_options_displayTable").prop("checked",($("#displayTable_"+id).val()==='true'));
 			$("#fieldSettings_validation").val($("#validation_"+id).val()).change();
 			$("#fieldSettings_validationRegex").val($("#validationRegex_"+id).val());
 			$("#fieldSettings_range_min").val($("#min_"+id).val()).change();
@@ -575,6 +576,10 @@ function fieldSettingsBindings() {
 
 	$("#fieldSettings_options_searchable").change(function() {
 		$("#formPreview .well :input[name^=searchable_]").val($(this).is(":checked"));
+	});
+
+	$("#fieldSettings_options_displayTable").change(function() {
+		$("#formPreview .well :input[name^=displayTable_]").val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_validation").change(function() {
@@ -878,6 +883,7 @@ function newFieldValues(id,type,vals) {
 	output += '<input type="hidden" id="publicRelease_'+id+'" name="publicRelease_'+id+'" value="'+((vals['publicRelease']!=undefined)?vals['publicRelease']:'true')+'">';
 	output += '<input type="hidden" id="sortable_'+id+'" name="sortable_'+id+'" value="'+((vals['sortable']!=undefined)?vals['sortable']:'')+'">';
 	output += '<input type="hidden" id="searchable_'+id+'" name="searchable_'+id+'" value="'+((vals['searchable']!=undefined)?vals['searchable']:'')+'">';
+	output += '<input type="hidden" id="displayTable_'+id+'" name="displayTable_'+id+'" value="'+((vals['displayTable']!=undefined)?vals['displayTable']:'true')+'">';
 	output += '<input type="hidden" id="validation_'+id+'" name="validation_'+id+'" value="'+((vals['validation']!=undefined)?vals['validation']:'')+'">';
 	output += '<input type="hidden" id="validationRegex_'+id+'" name="validationRegex_'+id+'" value="'+((vals['validationRegex']!=undefined)?vals['validationRegex']:'')+'">';
 	output += '<input type="hidden" id="access_'+id+'" name="access_'+id+'" value="'+((vals['access']!=undefined)?vals['access']:'')+'">';
