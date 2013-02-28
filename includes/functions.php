@@ -241,7 +241,7 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 			htmlSanitize($field['label'])
 			);
 
-		if ($field['type']      == "textarea") {
+		if ($field['type']      == "textarea" || $field['type']      == "wysiwyg") {
 			$output .= sprintf('<textarea name="%s" placeholder="%s" id="%s" class="%s" %s %s %s %s>%s</textarea>',
 				htmlSanitize($field['name']),
 				htmlSanitize($field['placeholder']),
@@ -254,6 +254,32 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 				(uc($field['disabled']) == "TRUE")?"disabled":"",
 				(isset($object['data'][$field['name']]))?htmlSanitize($object['data'][$field['name']]):htmlSanitize($field['value'])
 				);
+
+			if ($field['type'] == "wysiwyg") {
+				$output .= sprintf('<script type="text/javascript">window.CKEDITOR_BASEPATH="%s/includes/js/CKEditor/"</script>',
+					localvars::get("siteRoot")
+					);
+				$output .= sprintf('<script type="text/javascript" src="%s/includes/js/CKEditor/ckeditor.js"></script>',
+					localvars::get("siteRoot")
+					);
+				$output .= '<script type="text/javascript">';
+				$output .= sprintf('if (CKEDITOR.instances["%s"]) { CKEDITOR.remove(CKEDITOR.instances["%s"]); }',
+					htmlSanitize($field['id']),
+					htmlSanitize($field['id'])
+					);
+				$output .= sprintf('CKEDITOR.replace("%s");',
+					htmlSanitize($field['id'])
+					);
+
+				$output .= 'htmlParser = "";';
+				$output .= 'if (CKEDITOR.instances["'.$I['field'].'_insert"].dataProcessor) {';
+				$output .= sprintf('    htmlParser = CKEDITOR.instances["%s"].dataProcessor.htmlFilter;',
+					htmlSanitize($field['id'])
+					);
+				$output .= '}';
+
+				$output .= '</script>';
+			}
 
 		}
 		else if ($field['type'] == "checkbox" || $field['type'] == "radio") {
