@@ -139,8 +139,15 @@ function sortable() {
 		revert: true,
 		placeholder: "highlight",
 		update: function(event, ui) {
+
 			// Only perform this if it's a brand new field
 			if ($(ui.item).hasClass("ui-draggable")) {
+				// Block fieldsets within fieldsets
+				if ($(ui.item).text() == 'Field Set' && $(ui.item).parent().attr("id") != "formPreview") {
+					$(ui.item).remove();
+				}
+
+				// Convert text to preview
 				addNewField(ui.item);
 			}
 
