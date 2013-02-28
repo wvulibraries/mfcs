@@ -34,16 +34,16 @@ function checkProjectPermissions($id) {
 	
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
-		return(FALSE);
+		return FALSE;
 	}
 	
 	$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
 	if ((int)$row['COUNT(permissions.ID)'] > 0) {
-		return(TRUE);
+		return TRUE;
 	}
 
-	return(FALSE);
+	return FALSE;
 
 }
 
@@ -60,10 +60,10 @@ function getProject($projectID) {
 	
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
-		return(FALSE);
+		return FALSE;
 	}
 	
-	return(mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC));
+	return mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
 }
 
@@ -78,10 +78,10 @@ function getForm($formID) {
 	
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
-		return(FALSE);
+		return FALSE;
 	}
 	
-	return(mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC));
+	return mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 }
 
 function getObject($objectID) {
@@ -94,10 +94,10 @@ function getObject($objectID) {
 	
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
-		return(FALSE);
+		return FALSE;
 	}
 	
-	return(mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC));
+	return mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 }
 
 function getAllObjectsForForm($formID) {
@@ -107,7 +107,7 @@ function getAllObjectsForForm($formID) {
 	
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
-		return(FALSE);
+		return FALSE;
 	}
 	
 	$objects = array();
@@ -127,10 +127,10 @@ function checkObjectInForm($formID,$objectID) {
 	$object = getObject($objectID);
 
 	if ($object['formID'] == $formID) {
-		return(TRUE);
+		return TRUE;
 	}
 
-	return(FALSE);
+	return FALSE;
 
 }
 
@@ -144,17 +144,17 @@ function checkFormInProject($projectID,$formID) {
 
 		foreach ($currentForms['metadata'] as $I=>$V) {
 			if ($V == $formID) {
-				return(TRUE);
+				return TRUE;
 			}
 		}
 		foreach ($currentForms['objects'] as $I=>$V) {
 			if ($V == $formID) {
-				return(TRUE);
+				return TRUE;
 			}
 		}
 	}
 
-	return(FALSE);
+	return FALSE;
 
 }
 
@@ -169,7 +169,7 @@ function buildNumberAttributes($field) {
 	$output .= (!isempty($field["max"])) ?' max="'.$field['max'].'"'  :"";
 	$output .= (!isempty($field["step"]))?' step="'.$field['step'].'"':"";
 
-	return($output);
+	return $output;
 
 }
 
@@ -181,7 +181,7 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 	$form   = getForm($formID);
 
 	if ($form === FALSE) {
-		return(FALSE);
+		return FALSE;
 	}
 
 	$fields = decodeFields($form['fields']);
@@ -189,19 +189,19 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 	if (usort($fields, 'sortFieldsByPosition') !== TRUE) {
 		errorHandle::newError(__METHOD__."() - usort", errorHandle::DEBUG);
 		errorHandle::errorMsg("Error retrieving form.");
-		return(FALSE);
+		return FALSE;
 	}
 
 	if (!isnull($objectID)) {
 		$object = getObject($objectID);
 		if ($object === FALSE) {
 			errorHandle::errorMsg("Error retrieving object.");
-			return(FALSE);
+			return FALSE;
 		}
 		$object['data'] = decodeFields($object['data']);
 		if ($object['data'] === FALSE) {
 			errorHandle::errorMsg("Error retrieving object.");
-			return(FALSE);
+			return FALSE;
 		}
 	}
 
@@ -312,7 +312,7 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 			if (isset($field['choicesType']) && !isempty($field['choicesType']) && $field['choicesType'] == "manual") {
 				if (isempty($field['choicesOptions'])) {
 					errorHandle::errorMsg("No options provided for radio buttons, '".$field['label']."'");
-					return(FALSE);
+					return FALSE;
 				}
 
 				foreach ($field['choicesOptions'] as $I=>$option) {
@@ -338,7 +338,7 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 
 				if (!$sqlResult['result']) {
 					errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
-					return(FALSE);
+					return FALSE;
 				}
 
 				$count = 0;
@@ -369,7 +369,7 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 			if (isset($field['choicesType']) && !isempty($field['choicesType']) && $field['choicesType'] == "manual") {
 				if (isempty($field['choicesOptions'])) {
 					errorHandle::errorMsg("No options provided for radio buttons, '".$field['label']."'");
-					return(FALSE);
+					return FALSE;
 				}
 
 				foreach ($field['choicesOptions'] as $I=>$option) {
@@ -391,7 +391,7 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 
 				if (!$sqlResult['result']) {
 					errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
-					return(FALSE);
+					return FALSE;
 				}
 
 				while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
@@ -441,7 +441,7 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 
 	$output .= "</form>";
 
-	return($output);
+	return $output;
 
 }
 
@@ -455,7 +455,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 	$form   = getForm($formID);
 
 	if ($form === FALSE) {
-		return(FALSE);
+		return FALSE;
 	}
 
 	$fields = decodeFields($form['fields']);
@@ -466,7 +466,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 	if (usort($fields, 'sortFieldsByPosition') !== TRUE) {
 		errorHandle::newError(__METHOD__."() - usort", errorHandle::DEBUG);
 		errorHandle::errorMsg("Error retrieving form.");
-		return(FALSE);
+		return FALSE;
 	}
 
 	$values = array();
@@ -505,7 +505,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 	}
 
 	if (!is_empty($engine->errorStack)) {
-		return(FALSE);
+		return FALSE;
 	}
 
 	if (isnull($objectID)) {
@@ -530,11 +530,11 @@ function submitForm($project,$formID,$objectID=NULL) {
 	
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
-		return(FALSE);
+		return FALSE;
 	}
 	
 
-	return(TRUE);
+	return TRUE;
 }
 
 ?>
