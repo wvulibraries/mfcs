@@ -22,6 +22,34 @@ try {
 		errorHandle::errorMsg("No Form ID Provided.");
 		throw new Exception('Error');
 	}
+
+	// check for edit permissions on the project
+	if (checkProjectPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) {
+		errorHandle::errorMsg("Permissions denied for working on this project");
+		throw new Exception('Error');
+	}
+
+	// check that this form is part of the project
+	if (!checkFormInProject($engine->cleanGet['MYSQL']['id'],$engine->cleanGet['MYSQL']['formID'])) {
+		errorHandle::errorMsg("Form is not part of project.");
+		throw new Exception('Error');
+	}
+
+	$objects = getAllObjectsForForm($engine->cleanGet['MYSQL']['formID']);
+
+	if ($objects === FALSE) {
+		errorHandle::errorMsg("Error retrieving objects.");
+		throw new Exception('Error');
+	}
+
+	$form = getForm($engine->cleanGet['MYSQL']['formID']);
+	if ($form === FALSE) {
+		errorHandle::errorMsg("Error retrieving Form.");
+		throw new Exception('error');
+	}
+
+	localvars::add("listTable",buildListTable($objects,$form,$engine->cleanGet['MYSQL']['id']));
+
 }
 catch(Exception $e) {
 }
@@ -46,7 +74,7 @@ $engine->eTemplate("include","header");
 </div>
 <div id="right">
 
-	{local var="form"}
+	{local var="listTable"}
 
 </div>
 

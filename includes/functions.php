@@ -102,11 +102,15 @@ function getObject($objectID) {
 
 function getAllObjectsForForm($formID) {
 
-	$sql       = sprintf("SELECT * FROM `objects` WHERE `formID`");
+	$engine = EngineAPI::singleton();
+
+	$sql       = sprintf("SELECT * FROM `objects` WHERE `formID`='%s'",
+		$engine->openDB->escape($formID)
+		);
 	$sqlResult = $engine->openDB->query($sql);
 	
 	if (!$sqlResult['result']) {
-		errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
+		errorHandle::newError(__METHOD__."() - getting all objects: ".$sqlResult['error'], errorHandle::DEBUG);
 		return FALSE;
 	}
 	
@@ -445,6 +449,64 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 
 }
 
+function buildListTable($objects,$form,$projectID) {
+
+	$form['fields'] = decodeFields($form['fields']);
+
+	$header  = '<tr><th>Delete</th><th>Edit</th><th>ID No</th>';
+	$headers = array();
+	foreach ($form['fields'] as $field) {
+		if ($field['displayTable'] == "1") {
+			$header .= sprintf('<th>%s</th>',
+				$field['label']
+				);
+			$headers[$field['name']] = $field['label'];
+		}
+	}
+	$header .= '</tr>';
+
+	$output = sprintf('<form action="%s?id=%s&amp;formID=%s" method="%s">',
+		$_SERVER['PHP_SELF'],
+		htmlSanitize($projectID),
+		htmlSanitize($form['ID']),
+		"post"
+		);
+	$output .= sessionInsertCSRF();
+
+	$output .= '<table>';
+	$output .= $header;
+
+	foreach($objects as $object) {
+ 
+		$output .= "<tr>";
+		$output .= sprintf('<td><input type="checkbox" name="delete_%s" /></td>',
+			$object['ID']
+			);
+		$output .= sprintf('<td><a href="form.php?id=%s&amp;formID=%s&amp;objectID=%s">Edit</a></td>',
+			htmlSanitize($projectID),
+			htmlSanitize($form['ID']),
+			htmlSanitize($object['ID'])
+			);
+		$output .= sprintf('<td>%s</td>',
+			htmlSanitize($object['ID'])
+			);
+		foreach ($headers as $headerName => $headerLabel) {
+			$output .= sprintf('<td>%s</td>',
+				htmlSanitize($objects['data'][$headerName])
+				);
+		}
+		$output .= "</tr>";
+
+	}
+
+
+	$output .= '</table>';
+
+	$output .= "</form>";
+
+	return $output;
+
+}
 
 // NOTE: data is being saved as RAW from the array. 
 function submitForm($project,$formID,$objectID=NULL) {
