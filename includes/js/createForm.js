@@ -202,6 +202,7 @@ function showFieldSettings(fullID) {
 				case 'radio':
 				case 'checkbox':
 				case 'select':
+				case 'multiselect':
 					$("#fieldSettings_container_value").hide();
 					$("#fieldSettings_container_placeholder").hide();
 					$("#fieldSettings_container_choices").show();
@@ -404,6 +405,18 @@ function fieldSettingsBindings() {
 					$("#formPreview .well :input[name^=choicesDefault_]").val('').val(vals.join("%,%"));
 					break;
 
+				case 'multiselect':
+					if ($(this).hasClass("active")) {
+						$("#formPreview .well .controls :input:last").val('');
+						$("#formPreview .well :input[name^=choicesDefault_]").val('');
+					}
+					else {
+						$("#formPreview .well .controls :input:last").val($(this).siblings(":input").val());
+						$("#formPreview .well :input[name^=choicesDefault_]").val($(this).siblings(":input").val());
+					}
+					$("#fieldSettings_choices_manual button[name=default]").not(this).removeClass("active");
+					break;
+
 			}
 		})
 		.on("click","button[name=add]",function() {
@@ -442,6 +455,13 @@ function fieldSettingsBindings() {
 						$("#formPreview .well .controls").append($("<label>").addClass("checkbox").append($("<input>").prop("type","checkbox").prop("name",$("#formPreview .well :input[name^=name_]").val())).append(vals[i]));
 					}
 					break;
+
+				case 'multiselect':
+					$("#formPreview .well .controls :input:last").html('');
+					for (var i = 0; i < vals.length; i++) {
+						$("#formPreview .well .controls :input:last").append($("<option>").prop("value",vals[i]).text(vals[i]));
+					}
+					break;
 			}
 		})
 		.on("keyup",":input[name=fieldSettings_choices_text]",function() {
@@ -470,6 +490,13 @@ function fieldSettingsBindings() {
 					$("#formPreview .well .controls").html('');
 					for (var i = 0; i < vals.length; i++) {
 						$("#formPreview .well .controls").append($("<label>").addClass("checkbox").append($("<input>").prop("type","checkbox").prop("name",$("#formPreview .well :input[name^=name_]").val())).append(vals[i]));
+					}
+					break;
+
+				case 'multiselect':
+					$("#formPreview .well .controls :input:last").html('');
+					for (var i = 0; i < vals.length; i++) {
+						$("#formPreview .well .controls :input:last").append($("<option>").prop("value",vals[i]).text(vals[i]));
 					}
 					break;
 			}
@@ -692,6 +719,11 @@ function newFieldPreview(id,type) {
 				output += '<input type="url">';
 				break;
 
+			case 'Multi-Select':
+			case 'multiselect':
+				output += '<select multiple></select><br><select></select>';
+				break;
+
 			case 'WYSIWYG':
 			case 'wysiwyg':
 				output += '<img src="../includes/img/wysiwyg.png" />';
@@ -793,6 +825,11 @@ function newFieldValues(id,type,vals) {
 			type = vals['type'] = 'url';
 			break;
 
+		case 'Multi-Select':
+		case 'multiselect':
+			type = vals['type'] = 'multiselect';
+			break;
+
 		case 'WYSIWYG':
 		case 'wysiwyg':
 			type = vals['type'] = 'wysiwyg';
@@ -841,6 +878,7 @@ function newFieldValues(id,type,vals) {
 		case 'radio':
 		case 'checkbox':
 		case 'select':
+		case 'multiselect':
 			output += '<input type="hidden" id="choicesType_'+id+'" name="choicesType_'+id+'" value="'+((vals['choicesType']!=undefined)?vals['choicesType']:'')+'">';
 			output += '<input type="hidden" id="choicesDefault_'+id+'" name="choicesDefault_'+id+'" value="'+((vals['choicesDefault']!=undefined)?vals['choicesDefault']:'')+'">';
 			output += '<input type="hidden" id="choicesOptions_'+id+'" name="choicesOptions_'+id+'" value="'+((vals['choicesOptions']!=undefined)?vals['choicesOptions']:'First Choice%,%Second Choice')+'">';

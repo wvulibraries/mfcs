@@ -260,6 +260,7 @@ $engine->eTemplate("include","header");
 										<li><a href="#" class="btn btn-block">Radio</a></li>
 										<li><a href="#" class="btn btn-block">Checkboxes</a></li>
 										<li><a href="#" class="btn btn-block">Dropdown</a></li>
+										<li><a href="#" class="btn btn-block">Multi-Select</a></li>
 										<li><a href="#" class="btn btn-block">Number</a></li>
 									</ul>
 								</div>
