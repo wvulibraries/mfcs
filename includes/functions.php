@@ -100,6 +100,28 @@ function getObject($objectID) {
 	return(mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC));
 }
 
+function getAllObjectsForForm($formID) {
+
+	$sql       = sprintf("SELECT * FROM `objects` WHERE `formID`");
+	$sqlResult = $engine->openDB->query($sql);
+	
+	if (!$sqlResult['result']) {
+		errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
+		return(FALSE);
+	}
+	
+	$objects = array();
+	while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+
+		$row['data'] = decodeFields($row['data']);
+		$objects[] = $row;
+
+	}
+	
+	return $objects;
+
+}
+
 function checkObjectInForm($formID,$objectID) {
 
 	$object = getObject($objectID);
