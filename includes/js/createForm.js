@@ -237,12 +237,16 @@ function showFieldSettings(fullID) {
 						.append('<option value="digits">Digits</option')
 					break;
 
+				case 'wysiwyg':
+					$("#fieldSettings_container_value").show();
+					$("#fieldSettings_container_placeholder").hide();
+					break;
+
 				case 'email':
 				case 'phone':
 				case 'date':
 				case 'datetime':
 				case 'website':
-				case 'wysiwyg':
 				default:
 					$("#fieldSettings_container_value").show();
 					$("#fieldSettings_container_placeholder").show();
