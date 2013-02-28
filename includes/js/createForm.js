@@ -122,6 +122,15 @@ $(function() {
 			left.removeClass('fix');
 		}
 	}).scroll();
+
+	$(window).resize(function() {
+		if ($("#leftPanel").hasClass("fix")) {
+			$("#leftPanel").css("width",$("#leftPanel").parent().width());
+		}
+		else {
+			$("#leftPanel").css("width",auto);
+		}
+	});
 });
 
 function sortable() {
