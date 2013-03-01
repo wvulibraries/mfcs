@@ -633,7 +633,7 @@ function fieldSettingsBindings() {
 			$("#fieldSettings_container_idnum_format").show();
 			$("#fieldSettings_container_idnum_startIncrement").show();
 		}
-		else if ($(this).val() == "manual") {
+		else if ($(this).val() == "user") {
 			$("#formPreview .well .controls :input").removeAttr('readonly');
 			$("#fieldSettings_container_idnum_reuseIDs").hide();
 			$("#fieldSettings_container_idnum_format").hide();
@@ -936,7 +936,7 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="managedBy_'+id+'" name="managedBy_'+id+'" value="'+((vals['managedBy']!=undefined)?vals['managedBy']:'')+'">';
 			output += '<input type="hidden" id="reuseIDs_'+id+'" name="reuseIDs_'+id+'" value="'+((vals['reuseIDs']!=undefined)?vals['reuseIDs']:'')+'">';
 			output += '<input type="hidden" id="idnumFormat_'+id+'" name="idnumFormat_'+id+'" value="'+((vals['idnumFormat']!=undefined)?vals['idnumFormat']:'')+'">';
-			output += '<input type="hidden" id="startIncrement_'+id+'" name="startIncrement_'+id+'" value="'+((vals['startIncrement']!=undefined)?vals['startIncrement']:'')+'">';
+			output += '<input type="hidden" id="startIncrement_'+id+'" name="startIncrement_'+id+'" value="'+((vals['startIncrement']!=undefined)?vals['startIncrement']:'1')+'">';
 			break;
 
 		case 'text':

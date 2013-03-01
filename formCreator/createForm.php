@@ -459,25 +459,27 @@ $engine->eTemplate("include","header");
 										ID Number Options
 									</label>
 									<select class="input-block-level" id="fieldSettings_idnum_managedBy" name="fieldSettings_idnum_managedBy">
-										<option value="system">System</option>
-										<option value="manual">Manual</option>
+										<option value="system">Managed by System</option>
+										<option value="user">Managed by User</option>
 									</select>
 
-									<div class="row-fluid">
-										<div class="span6" id="fieldSettings_container_idnum_format">
-											<label for="fieldSettings_idnum_format">
-												Format
-											</label>
-											<input type="text" class="input-block-level" id="fieldSettings_idnum_format" name="fieldSettings_idnum_format" placeholder="st_###" />
-										</div>
+									<p>
+										<div class="row-fluid">
+											<div class="span6" id="fieldSettings_container_idnum_format">
+												<label for="fieldSettings_idnum_format">
+													Format
+												</label>
+												<input type="text" class="input-block-level" id="fieldSettings_idnum_format" name="fieldSettings_idnum_format" placeholder="st_###" />
+											</div>
 
-										<div class="span6" id="fieldSettings_container_idnum_startIncrement">
-											<label for="fieldSettings_idnum_startIncrement">
-												Auto Increment Start
-											</label>
-											<input type="number" class="input-block-level" id="fieldSettings_idnum_startIncrement" name="fieldSettings_idnum_startIncrement" min="0" />
+											<div class="span6" id="fieldSettings_container_idnum_startIncrement">
+												<label for="fieldSettings_idnum_startIncrement">
+													Auto Increment Start
+												</label>
+												<input type="number" class="input-block-level" id="fieldSettings_idnum_startIncrement" name="fieldSettings_idnum_startIncrement" min="1" />
+											</div>
 										</div>
-									</div>
+									</p>
 
 									<div id="fieldSettings_container_idnum_reuseIDs">
 										<label class="checkbox">
