@@ -255,17 +255,18 @@ $engine->eTemplate("include","header");
 							<div class="row-fluid">
 								<div class="span6">
 									<ul class="unstyled draggable">
+										<li><a href="#" class="btn btn-block">ID Number</a></li>
 										<li><a href="#" class="btn btn-block">Single Line Text</a></li>
 										<li><a href="#" class="btn btn-block">Paragraph Text</a></li>
 										<li><a href="#" class="btn btn-block">Radio</a></li>
 										<li><a href="#" class="btn btn-block">Checkboxes</a></li>
 										<li><a href="#" class="btn btn-block">Dropdown</a></li>
 										<li><a href="#" class="btn btn-block">Multi-Select</a></li>
-										<li><a href="#" class="btn btn-block">Number</a></li>
 									</ul>
 								</div>
 								<div class="span6">
 									<ul class="unstyled draggable">
+										<li><a href="#" class="btn btn-block">Number</a></li>
 										<li><a href="#" class="btn btn-block">Email</a></li>
 										<li><a href="#" class="btn btn-block">Phone</a></li>
 										<li><a href="#" class="btn btn-block">Date</a></li>
@@ -424,6 +425,69 @@ $engine->eTemplate("include","header");
 									<span class="help-block hidden"></span>
 								</div>
 
+								<div class="control-group well well-small" id="fieldSettings_container_range">
+									<div class="row-fluid">
+										<span class="span3">
+											<label for="fieldSettings_range_min">
+												Min
+											</label>
+											<input type="number" class="input-block-level" id="fieldSettings_range_min" name="fieldSettings_range_min" min="0" />
+										</span>
+										<span class="span3">
+											<label for="fieldSettings_range_max">
+												Max
+											</label>
+											<input type="number" class="input-block-level" id="fieldSettings_range_max" name="fieldSettings_range_max" min="0" />
+										</span>
+										<span class="span2">
+											<label for="fieldSettings_range_step">
+												Step
+											</label>
+											<input type="number" class="input-block-level" id="fieldSettings_range_step" name="fieldSettings_range_step" min="0" />
+										</span>
+										<span class="span4">
+											<label for="fieldSettings_range_format">
+												Format
+											</label>
+											<select class="input-block-level" id="fieldSettings_range_format" name="fieldSettings_range_format"></select>
+										</span>
+									</div>
+								</div>
+
+								<div class="control-group well well-small" id="fieldSettings_container_idnum">
+									<label for="fieldSettings_idnum_managedBy">
+										ID Number Options
+									</label>
+									<select class="input-block-level" id="fieldSettings_idnum_managedBy" name="fieldSettings_idnum_managedBy">
+										<option value="system">Managed by System</option>
+										<option value="user">Managed by User</option>
+									</select>
+
+									<p>
+										<div class="row-fluid">
+											<div class="span6" id="fieldSettings_container_idnum_format">
+												<label for="fieldSettings_idnum_format">
+													Format
+												</label>
+												<input type="text" class="input-block-level" id="fieldSettings_idnum_format" name="fieldSettings_idnum_format" placeholder="st_###" />
+											</div>
+
+											<div class="span6" id="fieldSettings_container_idnum_startIncrement">
+												<label for="fieldSettings_idnum_startIncrement">
+													Auto Increment Start
+												</label>
+												<input type="number" class="input-block-level" id="fieldSettings_idnum_startIncrement" name="fieldSettings_idnum_startIncrement" min="1" />
+											</div>
+										</div>
+									</p>
+
+									<div id="fieldSettings_container_idnum_reuseIDs">
+										<label class="checkbox">
+											<input type="checkbox" id="fieldSettings_idnum_reuseIDs" name="fieldSettings_idnum_reuseIDs"> Reuse Deleted IDs
+										</label>
+									</div>
+								</div>
+
 								<div class="row-fluid noHide">
 									<span class="span6">
 										<div class="control-group well well-small" id="fieldSettings_container_options">
@@ -475,35 +539,6 @@ $engine->eTemplate("include","header");
 											</select>
 										</div>
 									</span>
-								</div>
-
-								<div class="control-group well well-small" id="fieldSettings_container_range">
-									<div class="row-fluid">
-										<span class="span3">
-											<label for="fieldSettings_range_min">
-												Min
-											</label>
-											<input type="number" class="input-block-level" id="fieldSettings_range_min" name="fieldSettings_range_min" min="0" />
-										</span>
-										<span class="span3">
-											<label for="fieldSettings_range_max">
-												Max
-											</label>
-											<input type="number" class="input-block-level" id="fieldSettings_range_max" name="fieldSettings_range_max" min="0" />
-										</span>
-										<span class="span2">
-											<label for="fieldSettings_range_step">
-												Step
-											</label>
-											<input type="number" class="input-block-level" id="fieldSettings_range_step" name="fieldSettings_range_step" min="0" />
-										</span>
-										<span class="span4">
-											<label for="fieldSettings_range_format">
-												Format
-											</label>
-											<select class="input-block-level" id="fieldSettings_range_format" name="fieldSettings_range_format"></select>
-										</span>
-									</div>
 								</div>
 							</form>
 
