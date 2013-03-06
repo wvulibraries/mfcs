@@ -454,36 +454,36 @@ $engine->eTemplate("include","header");
 									</div>
 								</div>
 
-								<div class="control-group well well-small" id="fieldSettings_container_idnum">
-									<label for="fieldSettings_idnum_managedBy">
+								<div class="control-group well well-small" id="fieldSettings_container_idno">
+									<label for="fieldSettings_idno_managedBy">
 										ID Number Options
 									</label>
-									<select class="input-block-level" id="fieldSettings_idnum_managedBy" name="fieldSettings_idnum_managedBy">
+									<select class="input-block-level" id="fieldSettings_idno_managedBy" name="fieldSettings_idno_managedBy">
 										<option value="system">Managed by System</option>
 										<option value="user">Managed by User</option>
 									</select>
 
 									<p>
 										<div class="row-fluid">
-											<div class="span6" id="fieldSettings_container_idnum_format">
-												<label for="fieldSettings_idnum_format">
+											<div class="span6" id="fieldSettings_container_idno_format">
+												<label for="fieldSettings_idno_format">
 													Format
 												</label>
-												<input type="text" class="input-block-level" id="fieldSettings_idnum_format" name="fieldSettings_idnum_format" placeholder="st_###" />
+												<input type="text" class="input-block-level" id="fieldSettings_idno_format" name="fieldSettings_idno_format" placeholder="st_###" />
 											</div>
 
-											<div class="span6" id="fieldSettings_container_idnum_startIncrement">
-												<label for="fieldSettings_idnum_startIncrement">
+											<div class="span6" id="fieldSettings_container_idno_startIncrement">
+												<label for="fieldSettings_idno_startIncrement">
 													Auto Increment Start
 												</label>
-												<input type="number" class="input-block-level" id="fieldSettings_idnum_startIncrement" name="fieldSettings_idnum_startIncrement" min="1" />
+												<input type="number" class="input-block-level" id="fieldSettings_idno_startIncrement" name="fieldSettings_idno_startIncrement" min="1" />
 											</div>
 										</div>
 									</p>
 
-									<div id="fieldSettings_container_idnum_reuseIDs">
+									<div id="fieldSettings_container_idno_reuseIDs">
 										<label class="checkbox">
-											<input type="checkbox" id="fieldSettings_idnum_reuseIDs" name="fieldSettings_idnum_reuseIDs"> Reuse Deleted IDs
+											<input type="checkbox" id="fieldSettings_idno_reuseIDs" name="fieldSettings_idno_reuseIDs"> Reuse Deleted IDs
 										</label>
 									</div>
 								</div>
