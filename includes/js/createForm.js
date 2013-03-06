@@ -681,7 +681,13 @@ function formSettingsBindings() {
 
 	$("#formSettings_formMetadata").change(function() {
 		if ($(this).is(":checked")) {
-			$("#fieldAdd li:contains('ID Number')").hide();
+			if (confirm("Enabling this will remove any existing ID Number fields. Do you want to continue?")) {
+				$("#fieldAdd li:contains('ID Number')").hide();
+				$("#formPreview :input[name^=type_][value=idno]").parent().parent().remove();
+			}
+			else {
+				$(this).removeAttr('checked');
+			}
 		}
 		else {
 			$("#fieldAdd li:contains('ID Number')").show();
