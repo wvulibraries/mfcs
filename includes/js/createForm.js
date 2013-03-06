@@ -296,7 +296,7 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_range_step").val($("#step_"+id).val()).change();
 			$("#fieldSettings_range_format").val($("#format_"+id).val()).change();
 			$("#fieldSettings_idno_managedBy").val($("#managedBy_"+id).val()).change();
-			$("#fieldSettings_idno_reuseIDs").val($("#reuseIDs_"+id).val());
+			$("#fieldSettings_idno_reuseIDs").prop("checked",($("#reuseIDs_"+id).val()==='true'));
 			$("#fieldSettings_idno_format").val($("#idnoFormat_"+id).val());
 			$("#fieldSettings_idno_startIncrement").val($("#startIncrement_"+id).val());
 
@@ -681,7 +681,13 @@ function formSettingsBindings() {
 
 	$("#formSettings_formMetadata").change(function() {
 		if ($(this).is(":checked")) {
-			$("#fieldAdd li:contains('ID Number')").hide();
+			if (confirm("Enabling this will remove any existing ID Number fields. Do you want to continue?")) {
+				$("#fieldAdd li:contains('ID Number')").hide();
+				$("#formPreview :input[name^=type_][value=idno]").parent().parent().remove();
+			}
+			else {
+				$(this).removeAttr('checked');
+			}
 		}
 		else {
 			$("#fieldAdd li:contains('ID Number')").show();
