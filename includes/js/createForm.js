@@ -296,7 +296,7 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_range_step").val($("#step_"+id).val()).change();
 			$("#fieldSettings_range_format").val($("#format_"+id).val()).change();
 			$("#fieldSettings_idno_managedBy").val($("#managedBy_"+id).val()).change();
-			$("#fieldSettings_idno_reuseIDs").val($("#reuseIDs_"+id).val());
+			$("#fieldSettings_idno_reuseIDs").prop("checked",($("#reuseIDs_"+id).val()==='true'));
 			$("#fieldSettings_idno_format").val($("#idnoFormat_"+id).val());
 			$("#fieldSettings_idno_startIncrement").val($("#startIncrement_"+id).val());
 
