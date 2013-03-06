@@ -627,6 +627,7 @@ function fieldSettingsBindings() {
 	});
 
 	$("#fieldSettings_idno_managedBy").change(function() {
+		$("#formPreview .well :input[name^=managedBy_]").val($(this).val());
 		if ($(this).val() == "system") {
 			$("#formPreview .well .controls :input").prop('readonly','true');
 			$("#fieldSettings_container_idno_reuseIDs").show();
@@ -642,7 +643,7 @@ function fieldSettingsBindings() {
 	});
 
 	$("#fieldSettings_idno_reuseIDs").change(function() {
-		$("#formPreview .well :input[name^=reuseIDs_]").val($(this).val());
+		$("#formPreview .well :input[name^=reuseIDs_]").val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_idno_format").keyup(function() {
