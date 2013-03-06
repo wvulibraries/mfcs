@@ -628,17 +628,19 @@ function fieldSettingsBindings() {
 
 	$("#fieldSettings_idno_managedBy").change(function() {
 		$("#formPreview .well :input[name^=managedBy_]").val($(this).val());
-		if ($(this).val() == "system") {
-			$("#formPreview .well .controls :input").prop('readonly','true');
-			$("#fieldSettings_container_idno_reuseIDs").show();
-			$("#fieldSettings_container_idno_format").show();
-			$("#fieldSettings_container_idno_startIncrement").show();
-		}
-		else if ($(this).val() == "user") {
-			$("#formPreview .well .controls :input").removeAttr('readonly');
-			$("#fieldSettings_container_idno_reuseIDs").hide();
-			$("#fieldSettings_container_idno_format").hide();
-			$("#fieldSettings_container_idno_startIncrement").hide();
+		if ($("#formPreview .well :input[name^=type_]").val() == 'idno') {
+			if ($(this).val() == "system") {
+				$("#formPreview .well .controls :input").prop('readonly','true');
+				$("#fieldSettings_container_idno_reuseIDs").show();
+				$("#fieldSettings_container_idno_format").show();
+				$("#fieldSettings_container_idno_startIncrement").show();
+			}
+			else if ($(this).val() == "user") {
+				$("#formPreview .well .controls :input").removeAttr('readonly');
+				$("#fieldSettings_container_idno_reuseIDs").hide();
+				$("#fieldSettings_container_idno_format").hide();
+				$("#fieldSettings_container_idno_startIncrement").hide();
+			}
 		}
 	});
 
