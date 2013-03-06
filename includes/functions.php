@@ -262,10 +262,12 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 		$output .= '<div class="">';
 
 
-		$output .= sprintf('<label for="%s">%s</label>',
-			htmlSanitize($field['id']),
-			htmlSanitize($field['label'])
-			);
+		if ($field['type'] != "idno" && strtolower($field['managedBy']) != "system") {
+			$output .= sprintf('<label for="%s">%s</label>',
+				htmlSanitize($field['id']),
+				htmlSanitize($field['label'])
+				);
+		}
 
 		if ($field['type']      == "textarea" || $field['type']      == "wysiwyg") {
 			$output .= sprintf('<textarea name="%s" placeholder="%s" id="%s" class="%s" %s %s %s %s>%s</textarea>',
@@ -641,13 +643,21 @@ function submitForm($project,$formID,$objectID=NULL) {
 	return TRUE;
 }
 
+function getFormIDInfo($formID) {
+	$form = getForm($formID);
+
+	return decodeFields($form['idno']);
+}
+
 function getIDNO($formID,$projectID) {
 
 	$form           = getForm($formID);
 	$form['fields'] = decodeFields($form['fields']);
 
+	$idno           = getFormIDInfo($formID);
+
 	print "<pre>";
-	var_dump($form);
+	var_dump($idno);
 	print "</pre>";
 
 	return TRUE;
