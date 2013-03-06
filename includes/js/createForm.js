@@ -195,9 +195,32 @@ function showFieldSettings(fullID) {
 			// Hide all but the common fields
 			$("#fieldSettings_form").children().not(".noHide").hide();
 
+			if (type == 'idno') {
+				$("#fieldSettings_name").prop("readonly",true).val("idno").keyup();
+				$("#fieldSettings_options_required").prop({
+					checked:  true,
+					disabled: true,
+				}).change();
+				$("#fieldSettings_options_duplicates").prop({
+					checked:  true,
+					disabled: true,
+				}).change();
+				$("#fieldSettings_options_readonly").prop("disabled",true);
+				$("#fieldSettings_options_disabled").removeAttr("checked").change().prop("disabled",true);
+			}
+			else {
+				$("#fieldSettings_name").removeAttr("readonly");
+				$("#fieldSettings_options_required").removeAttr("disabled");
+				$("#fieldSettings_options_duplicates").removeAttr("disabled");
+				$("#fieldSettings_options_readonly").removeAttr("disabled");
+				$("#fieldSettings_options_disabled").removeAttr("disabled");
+			}
+
 			// Show optional fields
 			switch(type) {
 				case 'idno':
+					$("#fieldSettings_container_value").show();
+					$("#fieldSettings_container_placeholder").show();
 					$("#fieldSettings_container_idno").show();
 					break;
 
@@ -629,12 +652,12 @@ function fieldSettingsBindings() {
 		$("#formPreview .well :input[name^=managedBy_]").val($(this).val());
 		if ($("#formPreview .well :input[name^=type_]").val() == 'idno') {
 			if ($(this).val() == "system") {
-				$("#formPreview .well .controls :input").prop('readonly','true');
+				$("#fieldSettings_options_readonly").prop("checked",true).change();
 				$("#fieldSettings_container_idno_format").show();
 				$("#fieldSettings_container_idno_startIncrement").show();
 			}
 			else if ($(this).val() == "user") {
-				$("#formPreview .well .controls :input").removeAttr('readonly');
+				$("#fieldSettings_options_readonly").removeAttr("checked").change();
 				$("#fieldSettings_container_idno_format").hide();
 				$("#fieldSettings_container_idno_startIncrement").hide();
 			}
