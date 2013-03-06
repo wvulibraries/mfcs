@@ -488,12 +488,6 @@ $engine->eTemplate("include","header");
 											</div>
 										</div>
 									</p>
-
-									<div id="fieldSettings_container_idno_reuseIDs">
-										<label class="checkbox">
-											<input type="checkbox" id="fieldSettings_idno_reuseIDs" name="fieldSettings_idno_reuseIDs"> Reuse Deleted IDs
-										</label>
-									</div>
 								</div>
 
 								<div class="row-fluid noHide">

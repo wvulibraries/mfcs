@@ -296,7 +296,6 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_range_step").val($("#step_"+id).val()).change();
 			$("#fieldSettings_range_format").val($("#format_"+id).val()).change();
 			$("#fieldSettings_idno_managedBy").val($("#managedBy_"+id).val()).change();
-			$("#fieldSettings_idno_reuseIDs").prop("checked",($("#reuseIDs_"+id).val()==='true'));
 			$("#fieldSettings_idno_format").val($("#idnoFormat_"+id).val());
 			$("#fieldSettings_idno_startIncrement").val($("#startIncrement_"+id).val());
 
@@ -631,21 +630,15 @@ function fieldSettingsBindings() {
 		if ($("#formPreview .well :input[name^=type_]").val() == 'idno') {
 			if ($(this).val() == "system") {
 				$("#formPreview .well .controls :input").prop('readonly','true');
-				$("#fieldSettings_container_idno_reuseIDs").show();
 				$("#fieldSettings_container_idno_format").show();
 				$("#fieldSettings_container_idno_startIncrement").show();
 			}
 			else if ($(this).val() == "user") {
 				$("#formPreview .well .controls :input").removeAttr('readonly');
-				$("#fieldSettings_container_idno_reuseIDs").hide();
 				$("#fieldSettings_container_idno_format").hide();
 				$("#fieldSettings_container_idno_startIncrement").hide();
 			}
 		}
-	});
-
-	$("#fieldSettings_idno_reuseIDs").change(function() {
-		$("#formPreview .well :input[name^=reuseIDs_]").val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_idno_format").keyup(function() {
@@ -952,7 +945,6 @@ function newFieldValues(id,type,vals) {
 	switch(type) {
 		case 'idno':
 			output += '<input type="hidden" id="managedBy_'+id+'" name="managedBy_'+id+'" value="'+((vals['managedBy']!=undefined)?vals['managedBy']:'')+'">';
-			output += '<input type="hidden" id="reuseIDs_'+id+'" name="reuseIDs_'+id+'" value="'+((vals['reuseIDs']!=undefined)?vals['reuseIDs']:'')+'">';
 			output += '<input type="hidden" id="idnoFormat_'+id+'" name="idnoFormat_'+id+'" value="'+((vals['idnoFormat']!=undefined)?vals['idnoFormat']:'')+'">';
 			output += '<input type="hidden" id="startIncrement_'+id+'" name="startIncrement_'+id+'" value="'+((vals['startIncrement']!=undefined)?vals['startIncrement']:'1')+'">';
 			break;
