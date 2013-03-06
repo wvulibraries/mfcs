@@ -678,6 +678,15 @@ function formSettingsBindings() {
 	$("#formSettings_formDescription").keyup(function() {
 		$("#formDescription").html($(this).val());
 	}).keyup();
+
+	$("#formSettings_formMetadata").change(function() {
+		if ($(this).is(":checked")) {
+			$("#fieldAdd li:contains('ID Number')").hide();
+		}
+		else {
+			$("#fieldAdd li:contains('ID Number')").show();
+		}
+	}).change();
 }
 
 function addNewField(item) {
