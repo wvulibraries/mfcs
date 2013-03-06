@@ -197,8 +197,8 @@ function showFieldSettings(fullID) {
 
 			// Show optional fields
 			switch(type) {
-				case 'idnum':
-					$("#fieldSettings_container_idnum").show();
+				case 'idno':
+					$("#fieldSettings_container_idno").show();
 					break;
 
 				case 'text':
@@ -295,10 +295,10 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_range_max").val($("#max_"+id).val()).change();
 			$("#fieldSettings_range_step").val($("#step_"+id).val()).change();
 			$("#fieldSettings_range_format").val($("#format_"+id).val()).change();
-			$("#fieldSettings_idnum_managedBy").val($("#managedBy_"+id).val()).change();
-			$("#fieldSettings_idnum_reuseIDs").val($("#reuseIDs_"+id).val());
-			$("#fieldSettings_idnum_format").val($("#idnumFormat_"+id).val());
-			$("#fieldSettings_idnum_startIncrement").val($("#startIncrement_"+id).val());
+			$("#fieldSettings_idno_managedBy").val($("#managedBy_"+id).val()).change();
+			$("#fieldSettings_idno_reuseIDs").val($("#reuseIDs_"+id).val());
+			$("#fieldSettings_idno_format").val($("#idnoFormat_"+id).val());
+			$("#fieldSettings_idno_startIncrement").val($("#startIncrement_"+id).val());
 
 			if ($("#type_"+id).val() != 'fieldset') {
 				$("#fieldset_"+id).val($("#fieldset_"+id).parents("li").parents("li").find(":input[name^=fieldset_]").val());
@@ -626,30 +626,30 @@ function fieldSettingsBindings() {
 		$("#formPreview .well :input[name^=format_]").val($(this).val());
 	});
 
-	$("#fieldSettings_idnum_managedBy").change(function() {
+	$("#fieldSettings_idno_managedBy").change(function() {
 		if ($(this).val() == "system") {
 			$("#formPreview .well .controls :input").prop('readonly','true');
-			$("#fieldSettings_container_idnum_reuseIDs").show();
-			$("#fieldSettings_container_idnum_format").show();
-			$("#fieldSettings_container_idnum_startIncrement").show();
+			$("#fieldSettings_container_idno_reuseIDs").show();
+			$("#fieldSettings_container_idno_format").show();
+			$("#fieldSettings_container_idno_startIncrement").show();
 		}
 		else if ($(this).val() == "user") {
 			$("#formPreview .well .controls :input").removeAttr('readonly');
-			$("#fieldSettings_container_idnum_reuseIDs").hide();
-			$("#fieldSettings_container_idnum_format").hide();
-			$("#fieldSettings_container_idnum_startIncrement").hide();
+			$("#fieldSettings_container_idno_reuseIDs").hide();
+			$("#fieldSettings_container_idno_format").hide();
+			$("#fieldSettings_container_idno_startIncrement").hide();
 		}
 	});
 
-	$("#fieldSettings_idnum_reuseIDs").change(function() {
+	$("#fieldSettings_idno_reuseIDs").change(function() {
 		$("#formPreview .well :input[name^=reuseIDs_]").val($(this).val());
 	});
 
-	$("#fieldSettings_idnum_format").keyup(function() {
-		$("#formPreview .well :input[name^=idnumFormat_]").val($(this).val());
+	$("#fieldSettings_idno_format").keyup(function() {
+		$("#formPreview .well :input[name^=idnoFormat_]").val($(this).val());
 	});
 
-	$("#fieldSettings_idnum_startIncrement").change(function() {
+	$("#fieldSettings_idno_startIncrement").change(function() {
 		$("#formPreview .well :input[name^=startIncrement_]").val($(this).val());
 	});
 
@@ -723,7 +723,7 @@ function newFieldPreview(id,type) {
 
 		switch(type) {
 			case 'ID Number':
-			case 'idnum':
+			case 'idno':
 			case 'Single Line Text':
 			case 'text':
 				output += '<input type="text">';
@@ -831,8 +831,8 @@ function newFieldValues(id,type,vals) {
 
 	switch(type) {
 		case 'ID Number':
-		case 'idnum':
-			type = vals['type'] = 'idnum';
+		case 'idno':
+			type = vals['type'] = 'idno';
 			break;
 
 		case 'Single Line Text':
@@ -932,10 +932,10 @@ function newFieldValues(id,type,vals) {
 	output += '<input type="hidden" id="fieldset_'+id+'" name="fieldset_'+id+'" value="'+((vals['fieldset']!=undefined)?vals['fieldset']:'')+'">';
 
 	switch(type) {
-		case 'idnum':
+		case 'idno':
 			output += '<input type="hidden" id="managedBy_'+id+'" name="managedBy_'+id+'" value="'+((vals['managedBy']!=undefined)?vals['managedBy']:'')+'">';
 			output += '<input type="hidden" id="reuseIDs_'+id+'" name="reuseIDs_'+id+'" value="'+((vals['reuseIDs']!=undefined)?vals['reuseIDs']:'')+'">';
-			output += '<input type="hidden" id="idnumFormat_'+id+'" name="idnumFormat_'+id+'" value="'+((vals['idnumFormat']!=undefined)?vals['idnumFormat']:'')+'">';
+			output += '<input type="hidden" id="idnoFormat_'+id+'" name="idnoFormat_'+id+'" value="'+((vals['idnoFormat']!=undefined)?vals['idnoFormat']:'')+'">';
 			output += '<input type="hidden" id="startIncrement_'+id+'" name="startIncrement_'+id+'" value="'+((vals['startIncrement']!=undefined)?vals['startIncrement']:'1')+'">';
 			break;
 
