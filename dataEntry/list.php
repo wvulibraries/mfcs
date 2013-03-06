@@ -2,6 +2,8 @@
 
 include("../header.php");
 
+getIDNO("6","1"); 
+
 recurseInsert("acl.php","php");
 
 try {

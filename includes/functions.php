@@ -414,6 +414,11 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 
 		}
 		else {
+			if ($field['type'] == "idno") {
+				if (strtolower($field['managedBy']) == "system") continue;
+				$field['type'] = "text";
+			}
+
 			$output .= sprintf('<input type="%s" name="%s" value="%s" placeholder="%s" %s id="%s" class="%s" %s %s %s %s />',
 				htmlSanitize($field['type']),
 				htmlSanitize($field['name']),
@@ -456,7 +461,7 @@ function buildListTable($objects,$form,$projectID) {
 	$header  = '<tr><th>Delete</th><th>Edit</th><th>ID No</th>';
 	$headers = array();
 	foreach ($form['fields'] as $field) {
-		if ($field['displayTable'] == "1") {
+		if ($field['displayTable'] == "true") {
 			$header .= sprintf('<th>%s</th>',
 				$field['label']
 				);
@@ -477,7 +482,7 @@ function buildListTable($objects,$form,$projectID) {
 	$output .= $header;
 
 	foreach($objects as $object) {
- 
+
 		$output .= "<tr>";
 		$output .= sprintf('<td><input type="checkbox" name="delete_%s" /></td>',
 			$object['ID']
@@ -488,11 +493,11 @@ function buildListTable($objects,$form,$projectID) {
 			htmlSanitize($object['ID'])
 			);
 		$output .= sprintf('<td>%s</td>',
-			htmlSanitize($object['ID'])
+			htmlSanitize(($form['metadata'] == "1")?$object['ID']:$object['data']['idno'])
 			);
 		foreach ($headers as $headerName => $headerLabel) {
 			$output .= sprintf('<td>%s</td>',
-				htmlSanitize($objects['data'][$headerName])
+				htmlSanitize($object['data'][$headerName])
 				);
 		}
 		$output .= "</tr>";
@@ -570,31 +575,80 @@ function submitForm($project,$formID,$objectID=NULL) {
 		return FALSE;
 	}
 
+		// start transactions
+	$result = $this->openDB->transBegin("objects");
+	if ($result !== TRUE) {
+		errorHandle::errorMsg("Database transactions could not begin.");
+		errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
+		return FALSE;
+		}
+
 	if (isnull($objectID)) {
-		$sql       = sprintf("INSERT INTO `objects` (parentID,formID,defaultProject,data,metadata) VALUES('%s','%s','%s','%s','%s')",
+		$sql       = sprintf("INSERT INTO `objects` (parentID,formID,defaultProject,data,metadata,idno,modifiedTime) VALUES('%s','%s','%s','%s','%s','%s','%s')",
 			isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",
 			$engine->openDB->escape($formID),
 			$engine->openDB->escape($project['ID']),
 			encodeFields($values),
-			$engine->openDB->escape($form['metadata'])
+			$engine->openDB->escape($form['metadata']),
+			isset($engine->cleanPost['MYSQL']['idno'])?$engine->openDB->escape($engine->cleanPost['MYSQL']['idno']):"",
+			time()
 			);
 	}
 	else {
-		// start transactions
-		
+
 		// place old version into revision control
-		
+		$return = $rcs->insertRevision($objectID);
+
+		if ($return !== TRUE) {
+
+			$this->openDB->transRollback();
+			$this->openDB->transEnd();
+
+			errorHandle::errorMsg("Error inserting revision.");
+			errorHandle::newError(__METHOD__."() - unable to insert revisions", errorHandle::DEBUG);
+			return FALSE;
+		}
+
 		// insert new version
+		$sql = sprintf("UPDATE `objects` SET `parentID`='%s', `formID`='%s', `defaultProject`='%s', `data`='%s', `metadata`='%s',idno='%s',`modifiedTime`='%s') WHERE `ID`='%s'",
+			isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",
+			$engine->openDB->escape($formID),
+			$engine->openDB->escape($project['ID']),
+			encodeFields($values),
+			$engine->openDB->escape($form['metadata']),
+			isset($engine->cleanPost['MYSQL']['idno'])?$engine->openDB->escape($engine->cleanPost['MYSQL']['idno']):"",
+			time(),
+			$engine->openDB->escape($objectID)
+			);
 		
-		// end transactions
+
 	}
+
 	$sqlResult = $engine->openDB->query($sql);
 	
 	if (!$sqlResult['result']) {
+		$this->openDB->transRollback();
+		$this->openDB->transEnd();
+		
 		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
 		return FALSE;
 	}
 	
+	// end transactions
+	$this->openDB->transCommit();
+	$this->openDB->transEnd();
+
+	return TRUE;
+}
+
+function getIDNO($formID,$projectID) {
+
+	$form           = getForm($formID);
+	$form['fields'] = decodeFields($form['fields']);
+
+	print "<pre>";
+	var_dump($form);
+	print "</pre>";
 
 	return TRUE;
 }
