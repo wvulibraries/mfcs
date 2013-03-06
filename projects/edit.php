@@ -34,8 +34,8 @@ try {
 
 		foreach($engine->cleanPost['MYSQL']['selectedUsers'] as $I=>$V) {
 			$sql       = sprintf("INSERT INTO `permissions` (userID,projectID,type) VALUES('%s','%s','0')",
-				$engine->cleanGet['MYSQL']['id'],
-				$engine->openDB->escape($V)
+				$engine->openDB->escape($V),
+				$engine->cleanGet['MYSQL']['id']
 				);
 			$sqlResult = $engine->openDB->query($sql);
 
@@ -51,8 +51,8 @@ try {
 
 		foreach($engine->cleanPost['MYSQL']['selectedUsersAdmins'] as $I=>$V) {
 			$sql       = sprintf("INSERT INTO `permissions` (userID,projectID,type) VALUES('%s','%s','1')",
-				$engine->cleanGet['MYSQL']['id'],
-				$engine->openDB->escape($V)
+				$engine->openDB->escape($V),
+				$engine->cleanGet['MYSQL']['id']
 				);
 			$sqlResult = $engine->openDB->query($sql);
 
@@ -70,19 +70,22 @@ try {
 		$forms             = array();
 		$forms['metadata'] = array();
 		$forms['objects']  = array();
-		foreach($engine->cleanPost['MYSQL']['selectedMetadataForms'] as $I=>$V) {
-			$forms['metadata'][] = $V;
+		if (isset($engine->cleanPost['MYSQL']['selectedMetadataForms'])) {
+			foreach($engine->cleanPost['MYSQL']['selectedMetadataForms'] as $I=>$V) {
+				$forms['metadata'][] = $V;
+			}
 		}
 
-		foreach($engine->cleanPost['MYSQL']['selectedObjectForms'] as $I=>$V) {
-			$forms['objects'][] = $V;
+		if (isset($engine->cleanPost['MYSQL']['selectedObjectForms'])) {
+			foreach($engine->cleanPost['MYSQL']['selectedObjectForms'] as $I=>$V) {
+				$forms['objects'][] = $V;
+			}
 		}
 
 		$forms = encodeFields($forms);
 
-		$sql       = sprintf("UPDATE `projects` SET `forms`='%s', `numbering`='%s' WHERE `ID`='%s'",
+		$sql       = sprintf("UPDATE `projects` SET `forms`='%s' WHERE `ID`='%s'",
 			$engine->openDB->escape($forms),
-			$engine->cleanGet['MYSQL']['numbering'],
 			$engine->cleanGet['MYSQL']['id']
 			);
 		$sqlResult = $engine->openDB->query($sql);
@@ -423,20 +426,6 @@ $engine->eTemplate("include","header");
 							</td>
 						<tr>
 					</table>
-				</div>
-
-
-				<div class="row-fluid" id="permissions">
-					<header>
-						<h1>Numbering</h1>
-					</header>
-					<a name="numbering"></a>
-
-					<label for="numbering">Project Numbering</label>
-				<input type="text" name="numbering" id="numbering" placeholder="projectName-###" value="{local var="numbering"}"/>					
-				<br />
-				<p>a single # will be replaced with the number of the item, ### will 0 pad the number</p>
-
 				</div>
 
 				<br />
