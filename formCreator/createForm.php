@@ -13,6 +13,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 
 	$form   = json_decode($engine->cleanPost['RAW']['form'], TRUE);
 	$fields = json_decode($engine->cleanPost['RAW']['fields'], TRUE);
+	$idno   = NULL;
 
 	// Ensure all fields have an ID for the label. Assign it the value of name if needed.
 	foreach ($fields as $I => $field) {
@@ -22,7 +23,10 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			$fields[$I]['id'] = $field['name'];
 		}
 
-		if (isset($field['choicesType']) && $field['choicesType'] == 'manual') {
+		if ($field['type'] == 'idno') {
+			$idno = $field;
+		}
+		else if (isset($field['choicesType']) && $field['choicesType'] == 'manual') {
 			unset($fields[$I]['choicesForm']);
 			unset($fields[$I]['choicesField']);
 		}
@@ -36,11 +40,12 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 
 	if (!isnull($formID)) {
 		// Update forms table
-		$sql = sprintf("UPDATE `%s` SET `title`='%s', `description`=%s, `fields`='%s', `submitButton`='%s', `updateButton`='%s', `container`='%s', `production`='%s', `metadata`='%s' WHERE ID='%s' LIMIT 1",
+		$sql = sprintf("UPDATE `%s` SET `title`='%s', `description`=%s, `fields`='%s', `idno`='%s', `submitButton`='%s', `updateButton`='%s', `container`='%s', `production`='%s', `metadata`='%s' WHERE ID='%s' LIMIT 1",
 			$engine->openDB->escape($engine->dbTables("forms")),
 			$engine->openDB->escape($form['formTitle']),
 			!is_empty($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
 			encodeFields($fields),
+			encodeFields($idno),
 			$engine->openDB->escape($form['submitButton']),
 			$engine->openDB->escape($form['updateButton']),
 			$engine->openDB->escape($form['formContainer']),
@@ -57,11 +62,12 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	}
 	else {
 		// Insert into forms table
-		$sql = sprintf("INSERT INTO `%s` (title, description, fields, submitButton, updateButton, container, production, metadata) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s')",
+		$sql = sprintf("INSERT INTO `%s` (title, description, fields, idno, submitButton, updateButton, container, production, metadata) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s')",
 			$engine->openDB->escape($engine->dbTables("forms")),
 			$engine->openDB->escape($form['formTitle']),
 			isset($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
 			encodeFields($fields),
+			encodeFields($idno),
 			$engine->openDB->escape($form['submitButton']),
 			$engine->openDB->escape($form['updateButton']),
 			$engine->openDB->escape($form['formContainer']),
