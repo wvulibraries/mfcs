@@ -16,27 +16,29 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	$idno   = NULL;
 
 	// Ensure all fields have an ID for the label. Assign it the value of name if needed.
-	foreach ($fields as $I => $field) {
-		$positions[$I] = $field['position'];
+	if (!is_empty($fields)) {
+		foreach ($fields as $I => $field) {
+			$positions[$I] = $field['position'];
 
-		if (is_empty($field['id'])) {
-			$fields[$I]['id'] = $field['name'];
+			if (is_empty($field['id'])) {
+				$fields[$I]['id'] = $field['name'];
+			}
+
+			if ($field['type'] == 'idno') {
+				$idno = $field;
+			}
+			else if (isset($field['choicesType']) && $field['choicesType'] == 'manual') {
+				unset($fields[$I]['choicesForm']);
+				unset($fields[$I]['choicesField']);
+			}
+			else if (isset($field['choicesType']) && $field['choicesType'] == 'form') {
+				unset($fields[$I]['choicesDefault']);
+				unset($fields[$I]['choicesOptions']);
+			}
 		}
 
-		if ($field['type'] == 'idno') {
-			$idno = $field;
-		}
-		else if (isset($field['choicesType']) && $field['choicesType'] == 'manual') {
-			unset($fields[$I]['choicesForm']);
-			unset($fields[$I]['choicesField']);
-		}
-		else if (isset($field['choicesType']) && $field['choicesType'] == 'form') {
-			unset($fields[$I]['choicesDefault']);
-			unset($fields[$I]['choicesOptions']);
-		}
+		array_multisort($positions, SORT_ASC, $fields);
 	}
-
-	array_multisort($positions, SORT_ASC, $fields);
 
 	if (!isnull($formID)) {
 		// Update forms table
