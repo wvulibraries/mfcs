@@ -32,6 +32,20 @@ $(function() {
 			}
 			// Delete this li
 			thisLI.remove();
+
+			if ($("#formSettings_formMetadata").not(":checked")) {
+				// Enable/disable Production Form setting based on whether an idno field exists
+				if ($("#formPreview :input[name^=type_][value=idno]").length == 0) {
+					$("#formSettings_formProduction").prop({
+						checked:  false,
+						disabled: true,
+						title:    "This form needs an ID Number field.",
+					});
+				}
+				else {
+					$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
+				}
+			}
 		}
 	});
 
@@ -697,16 +711,34 @@ function formSettingsBindings() {
 
 	$("#formSettings_formMetadata").change(function() {
 		if ($(this).is(":checked")) {
-			if (confirm("Enabling this will remove any existing ID Number fields. Do you want to continue?")) {
+			if ($("#formPreview :input[name^=type_][value=idno]").length == 0) {
 				$("#fieldAdd li:contains('ID Number')").hide();
-				$("#formPreview :input[name^=type_][value=idno]").parent().parent().remove();
+				$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
 			}
 			else {
-				$(this).removeAttr('checked');
+				if (confirm("Enabling this will remove any existing ID Number fields. Do you want to continue?")) {
+					$("#fieldAdd li:contains('ID Number')").hide();
+					$("#formPreview :input[name^=type_][value=idno]").parent().parent().remove();
+					$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
+				}
+				else {
+					$(this).removeAttr('checked');
+				}
 			}
 		}
 		else {
 			$("#fieldAdd li:contains('ID Number')").show();
+
+			if ($("#formPreview :input[name^=type_][value=idno]").length == 0) {
+				$("#formSettings_formProduction").prop({
+					checked:  false,
+					disabled: true,
+					title:    "This form needs an ID Number field.",
+				});
+			}
+			else {
+				$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
+			}
 		}
 	}).change();
 }
@@ -742,6 +774,20 @@ function addNewField(item) {
 
 	// Display settings for new field
 	$("#formPreview_"+newID).click();
+
+	if ($("#formSettings_formMetadata").not(":checked")) {
+		// Enable/disable Production Form setting based on whether an idno field exists
+		if ($("#formPreview :input[name^=type_][value=idno]").length == 0) {
+			$("#formSettings_formProduction").prop({
+				checked:  false,
+				disabled: true,
+				title:    "This form needs an ID Number field.",
+			});
+		}
+		else {
+			$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
+		}
+	}
 }
 
 function newFieldPreview(id,type) {
