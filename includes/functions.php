@@ -262,7 +262,7 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 		$output .= '<div class="">';
 
 
-		if ($field['type'] != "idno" && strtolower($field['managedBy']) != "system") {
+		if ($field['type'] != "idno" && (isset($field['managedBy']) && strtolower($field['managedBy']) != "system")) {
 			$output .= sprintf('<label for="%s">%s</label>',
 				htmlSanitize($field['id']),
 				htmlSanitize($field['label'])
@@ -520,6 +520,13 @@ function submitForm($project,$formID,$objectID=NULL) {
 
 	$engine = EngineAPI::singleton();
 
+	if (isnull($objectID)) {
+		$newObject = TRUE;
+	}
+	else {
+		$newObject = FALSE;
+	}
+
 	// Get the current Form
 	$form   = getForm($formID);
 
@@ -527,10 +534,16 @@ function submitForm($project,$formID,$objectID=NULL) {
 		return FALSE;
 	}
 
+	// the form is an object form, make sure that it has an ID field defined. 
+	if ($form['metadata'] == "0") {
+		$idnoInfo = getFormIDInfo($formID);
+		if ($idnoInfo === FALSE) {
+			errorHandle::newError(__METHOD__."() - no IDNO field for object form.", errorHandle::DEBUG);
+			return(FALSE);
+		}
+	}
+
 	$fields = decodeFields($form['fields']);
-	print "<pre>";
-	var_dump($fields);
-	print "</pre>";
 
 	if (usort($fields, 'sortFieldsByPosition') !== TRUE) {
 		errorHandle::newError(__METHOD__."() - usort", errorHandle::DEBUG);
@@ -577,22 +590,21 @@ function submitForm($project,$formID,$objectID=NULL) {
 		return FALSE;
 	}
 
-		// start transactions
-	$result = $this->openDB->transBegin("objects");
+	// start transactions
+	$result = $engine->openDB->transBegin("objects");
 	if ($result !== TRUE) {
 		errorHandle::errorMsg("Database transactions could not begin.");
 		errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
 		return FALSE;
 		}
 
-	if (isnull($objectID)) {
-		$sql       = sprintf("INSERT INTO `objects` (parentID,formID,defaultProject,data,metadata,idno,modifiedTime) VALUES('%s','%s','%s','%s','%s','%s','%s')",
+	if ($newObject === TRUE) {
+		$sql       = sprintf("INSERT INTO `objects` (parentID,formID,defaultProject,data,metadata,modifiedTime) VALUES('%s','%s','%s','%s','%s','%s','%s')",
 			isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",
 			$engine->openDB->escape($formID),
 			$engine->openDB->escape($project['ID']),
 			encodeFields($values),
 			$engine->openDB->escape($form['metadata']),
-			isset($engine->cleanPost['MYSQL']['idno'])?$engine->openDB->escape($engine->cleanPost['MYSQL']['idno']):"",
 			time()
 			);
 	}
@@ -603,8 +615,8 @@ function submitForm($project,$formID,$objectID=NULL) {
 
 		if ($return !== TRUE) {
 
-			$this->openDB->transRollback();
-			$this->openDB->transEnd();
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
 
 			errorHandle::errorMsg("Error inserting revision.");
 			errorHandle::newError(__METHOD__."() - unable to insert revisions", errorHandle::DEBUG);
@@ -612,13 +624,12 @@ function submitForm($project,$formID,$objectID=NULL) {
 		}
 
 		// insert new version
-		$sql = sprintf("UPDATE `objects` SET `parentID`='%s', `formID`='%s', `defaultProject`='%s', `data`='%s', `metadata`='%s',idno='%s',`modifiedTime`='%s') WHERE `ID`='%s'",
+		$sql = sprintf("UPDATE `objects` SET `parentID`='%s', `formID`='%s', `defaultProject`='%s', `data`='%s', `metadata`='%s', `modifiedTime`='%s') WHERE `ID`='%s'",
 			isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",
 			$engine->openDB->escape($formID),
 			$engine->openDB->escape($project['ID']),
 			encodeFields($values),
 			$engine->openDB->escape($form['metadata']),
-			isset($engine->cleanPost['MYSQL']['idno'])?$engine->openDB->escape($engine->cleanPost['MYSQL']['idno']):"",
 			time(),
 			$engine->openDB->escape($objectID)
 			);
@@ -629,16 +640,141 @@ function submitForm($project,$formID,$objectID=NULL) {
 	$sqlResult = $engine->openDB->query($sql);
 	
 	if (!$sqlResult['result']) {
-		$this->openDB->transRollback();
-		$this->openDB->transEnd();
+		$engine->openDB->transRollback();
+		$engine->openDB->transEnd();
 		
 		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
 		return FALSE;
 	}
+
+	if ($newObject === TRUE) {
+		$objectID = $sqlResult['id'];
+	}
 	
+	// Check to see if this object already exists in the objectProjects table. If not, add it. 
+	$sql       = sprintf("SELECT COUNT(*) FROM `objectProjects` WHERE `objectID`='%s' AND `projectID`='%s'",
+		$engine->openDB->escape($objectID),
+		$engine->openDB->escape($project['ID'])
+		);
+	$sqlResult = $engine->openDB->query($sql);
+	
+	if (!$sqlResult['result']) {
+		$engine->openDB->transRollback();
+		$engine->openDB->transEnd();
+
+		errorHandle::newError(__METHOD__."() - error getting count: ".$sqlResult['error'], errorHandle::DEBUG);
+		return FALSE;
+	}
+	
+	$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+	if ($row['COUNT(*)'] == 0) {
+		$sql       = sprintf("INSERT INTO `objectProjects` (objectID,projectID) VALUES('%s','%s')",
+			$engine->openDB->escape($objectID),
+			$engine->openDB->escape($project['ID'])
+			);
+		$sqlResult = $engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
+
+			errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+	}
+
+	
+
+	// if it is an object form (not a metadata form)
+	// do the IDNO stuff
+	if ($form['metadata'] == "0") {
+			// increment the project counter
+		$sql       = sprintf("UPDATE `objectProjects` SET `projectNumber`=`projectNumber`+'1' WHERE `ID`='%s'",
+			$engine->openDB->escape($objectID)
+			);
+		$sqlResult = $engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
+
+			errorHandle::newError(__METHOD__."() - Error incrementing project counter: ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+			// if the idno is managed by the system get a new idno
+		if ($idnoInfo['managedBy'] == "system") { 
+			$idno = $engine->openDB->escape(getIDNO($formID,$project['ID']));
+		}
+			// the idno is managed manually
+		else {
+			$idno = $engine->cleanPost['MYSQL']['idno'];
+		}
+		
+			// update the object with the new idno
+		$sql       = sprintf("UPDATE `objects` SET `idno`='%s' WHERE `ID`='%s'",
+				$idno, // Cleaned above when assigned
+				$engine->openDB->escape($objectID)
+				);
+		$sqlResult = $engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - updating the IDNO: ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+	}
+
+	if ($newObject === FALSE) {
+			// update the object with a new idno if it is managed manually
+			// update all the fields in the dupeMatching Table
+		
+			// delete all matching fields
+		$sql       = sprintf("DELETE FROM `dupeMatching` WHERE `formID`='%s' AND `objectID`='%s' AND `projectID`='%s'",
+			$engine->openDB->escape($formID),
+			$engine->openDB->escape($objectID),
+			$engine->openDB->escape($project['ID'])
+			);
+		$sqlResult = $engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
+			errorHandle::newError(__METHOD__."() - removing from duplicate table: ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+	}
+
+		// insert all the fields into the dupeMatching table
+	foreach ($values as $name=>$raw) {
+		$sql       = sprintf("INSERT INTO `dupeMatching` (`formID`,`projectID`,`objectID`,`field`,`value`) VALUES('%s','%s','%s','%s','%s','%s')",
+			$engine->openDB->escape($formID),
+			$engine->openDB->escape($project['ID']),
+			$engine->openDB->escape($objectID),
+			$engine->openDB->escape($name),
+			$engine->cleanPost['MYSQL'][$name]
+			);
+		$sqlResult = $engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
+
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+	}
+	
+
+
+
 	// end transactions
-	$this->openDB->transCommit();
-	$this->openDB->transEnd();
+	$engine->openDB->transCommit();
+	$engine->openDB->transEnd();
 
 	return TRUE;
 }
@@ -649,18 +785,53 @@ function getFormIDInfo($formID) {
 	return decodeFields($form['idno']);
 }
 
-function getIDNO($formID,$projectID) {
+// if $increment is true it returns the NEXT number. if it is false it returns the current
+function getIDNO($formID,$projectID,$increment=TRUE) {
+
+	$engine         = EngineAPI::singleton();
 
 	$form           = getForm($formID);
 	$form['fields'] = decodeFields($form['fields']);
-
 	$idno           = getFormIDInfo($formID);
 
 	print "<pre>";
-	var_dump($idno);
+	var_dump($form);
 	print "</pre>";
+
+	$sql       = sprintf("SELECT COUNT(idno) as `count`, `idno` FROM `objects` LEFT JOIN `objectProjects` ON `objectProjects`.`objectID`=`objects`.`ID` WHERE `objects`.`formID`='%s' AND `objectProjects`.`projectID`='%s'",
+		$engine->openDB->escape($formID),
+		$engine->openDB->escape($projectID)
+		);
+	$sqlResult = $engine->openDB->query($sql);
+	
+	if (!$sqlResult['result']) {
+		errorHandle::newError(__METHOD__."() - getting count info: ".$sqlResult['error'], errorHandle::DEBUG);
+		return FALSE;
+	}
+	
+	while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+		print "<pre>";
+		var_dump($row);
+		print "</pre>";
+	}
 
 	return TRUE;
 }
 
+
+// if $increment is true it returns the NEXT number. if it is false it returns the current
+function dumpStuff($formID,$projectID,$increment=TRUE) {
+
+	$engine         = EngineAPI::singleton();
+
+	$form           = getForm($formID);
+	$form['fields'] = decodeFields($form['fields']);
+	$idno           = getFormIDInfo($formID);
+
+	print "<pre>";
+	var_dump($form);
+	print "</pre>";
+
+	return TRUE;
+}
 ?>
