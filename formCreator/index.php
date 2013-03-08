@@ -494,6 +494,9 @@ $engine->eTemplate("include","header");
 										<input type="checkbox" id="fieldSettings_file_options_multipleFiles" name="fieldSettings_file_options_multipleFiles"> Allow Multiple Files in Single Upload
 									</label>
 									<label class="checkbox">
+										<input type="checkbox" id="fieldSettings_file_options_watermark" name="fieldSettings_file_options_watermark"> Add Watermark
+									</label>
+									<label class="checkbox">
 										<input type="checkbox" id="fieldSettings_file_options_ocr" name="fieldSettings_file_options_ocr"> Optical Character Recognition (OCR)
 									</label>
 									<label class="checkbox">

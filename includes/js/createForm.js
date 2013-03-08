@@ -353,6 +353,7 @@ function showFieldSettings(fullID) {
 			}
 
 			$("#fieldSettings_file_options_multipleFiles").prop("checked",($("#multipleFiles_"+id).val()==='true'));
+			$("#fieldSettings_file_options_watermark").prop("checked",($("#watermark_"+id).val()==='true'));
 			$("#fieldSettings_file_options_ocr").prop("checked",($("#ocr_"+id).val()==='true'));
 			$("#fieldSettings_file_options_thumbnail").prop("checked",($("#thumbnail_"+id).val()==='true')).change();
 			$("#fieldSettings_file_thumbnail_height").val($("#thumbnailHeight_"+id).val());
@@ -737,6 +738,10 @@ function fieldSettingsBindings() {
 		$("#formPreview .well :input[name^=multipleFiles_]").val($(this).is(":checked"));
 	});
 
+	$("#fieldSettings_file_options_watermark").change(function() {
+		$("#formPreview .well :input[name^=watermark_]").val($(this).is(":checked"));
+	});
+
 	$("#fieldSettings_file_options_ocr").change(function() {
 		$("#formPreview .well :input[name^=ocr_]").val($(this).is(":checked"));
 	});
@@ -1119,6 +1124,7 @@ function newFieldValues(id,type,vals) {
 		case 'fileupload':
 			output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'" value="'+((vals['allowedExtensions']!=undefined)?vals['allowedExtensions']:'jpg%,%png%,%gif')+'">';
 			output += '<input type="hidden" id="multipleFiles_'+id+'" name="multipleFiles_'+id+'" value="'+((vals['multipleFiles']!=undefined)?vals['multipleFiles']:'')+'">';
+			output += '<input type="hidden" id="watermark_'+id+'" name="watermark_'+id+'" value="'+((vals['watermark']!=undefined)?vals['watermark']:'')+'">';
 			output += '<input type="hidden" id="ocr_'+id+'" name="ocr_'+id+'" value="'+((vals['ocr']!=undefined)?vals['ocr']:'')+'">';
 			output += '<input type="hidden" id="thumbnail_'+id+'" name="thumbnail_'+id+'" value="'+((vals['thumbnail']!=undefined)?vals['thumbnail']:'')+'">';
 			output += '<input type="hidden" id="thumbnailHeight_'+id+'" name="thumbnailHeight_'+id+'" value="'+((vals['thumbnailHeight']!=undefined)?vals['thumbnailHeight']:'')+'">';
