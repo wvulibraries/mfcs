@@ -270,6 +270,7 @@ $engine->eTemplate("include","header");
 										<li><a href="#" class="btn btn-block">Checkboxes</a></li>
 										<li><a href="#" class="btn btn-block">Dropdown</a></li>
 										<li><a href="#" class="btn btn-block">Multi-Select</a></li>
+										<li><a href="#" class="btn btn-block">File Upload</a></li>
 									</ul>
 								</div>
 								<div class="span6">
@@ -488,6 +489,26 @@ $engine->eTemplate("include","header");
 											</div>
 										</div>
 									</p>
+								</div>
+
+								<div class="control-group well well-small" id="fieldSettings_container_file_allowedExtensions">
+									<label for="fieldSettings_file_allowedExtensions">
+										Allowed Extensions
+									</label>
+									<ul class="unstyled" id="fieldSettings_file_allowedExtensions"></ul>
+									<span class="help-block hidden"></span>
+								</div>
+
+								<div class="control-group well well-small" id="fieldSettings_container_file_options">
+									<label for="fieldSettings_file_options">
+										File Upload Options
+									</label>
+									<label class="checkbox">
+										<input type="checkbox" id="fieldSettings_file_options_multipleFiles" name="fieldSettings_file_options_multipleFiles"> Allow Multiple Files in Single Upload
+									</label>
+									<label class="checkbox">
+										<input type="checkbox" id="fieldSettings_file_options_ocr" name="fieldSettings_file_options_ocr"> Optical Character Recognition (OCR)
+									</label>
 								</div>
 
 								<div class="row-fluid noHide">

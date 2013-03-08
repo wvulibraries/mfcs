@@ -283,6 +283,13 @@ function showFieldSettings(fullID) {
 					$("#fieldSettings_container_placeholder").hide();
 					break;
 
+				case 'fileupload':
+					$("#fieldSettings_container_file_allowedExtensions").show();
+					$("#fieldSettings_container_file_options").show();
+					$("#fieldSettings_container_value").hide();
+					$("#fieldSettings_container_placeholder").hide();
+					break;
+
 				case 'email':
 				case 'phone':
 				case 'date':
@@ -335,6 +342,18 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_idno_managedBy").val($("#managedBy_"+id).val()).change();
 			$("#fieldSettings_idno_format").val($("#idnoFormat_"+id).val());
 			$("#fieldSettings_idno_startIncrement").val($("#startIncrement_"+id).val());
+
+			if ($("#allowedExtensions_"+id).val() != undefined) {
+				var opts = $("#allowedExtensions_"+id).val().split("%,%");
+				$("#fieldSettings_file_allowedExtensions").html('');
+				for (var i = 0; i < opts.length; i++) {
+					$("#fieldSettings_file_allowedExtensions").append(addAllowedExtension(opts[i]));
+				}
+				$("#fieldSettings_file_allowedExtensions :input[name=fieldSettings_allowedExtension_text]").keyup();
+			}
+
+			$("#fieldSettings_file_options_multipleFiles").prop("checked",($("#multipleFiles_"+id).val()==='true'));
+			$("#fieldSettings_file_options_ocr").prop("checked",($("#ocr_"+id).val()==='true'));
 
 			if ($("#type_"+id).val() != 'fieldset') {
 				$("#fieldset_"+id).val($("#fieldset_"+id).parents("li").parents("li").find(":input[name^=fieldset_]").val());
@@ -686,6 +705,38 @@ function fieldSettingsBindings() {
 		$("#formPreview .well :input[name^=startIncrement_]").val($(this).val());
 	});
 
+	$("#fieldSettings_file_allowedExtensions")
+		.on("click","button[name=add]",function() {
+			$(this).parent().parent().after(addAllowedExtension());
+		})
+		.on("click","button[name=remove]",function() {
+			if ($(this).parent().parent().siblings().length == 0) {
+				$(this).siblings("button[name=add]").click();
+			}
+			$(this).parent().parent().remove();
+
+			var vals = [];
+			$("#fieldSettings_file_allowedExtensions :input[name=fieldSettings_allowedExtension_text]").each(function() {
+				vals.push($(this).val());
+			});
+			$("#formPreview .well :input[name^=allowedExtensions_]").val(vals.join("%,%"));
+		})
+		.on("keyup",":input[name=fieldSettings_allowedExtension_text]",function() {
+			var vals = [];
+			$("#fieldSettings_file_allowedExtensions :input[name=fieldSettings_allowedExtension_text]").each(function() {
+				vals.push($(this).val());
+			});
+			$("#formPreview .well :input[name^=allowedExtensions_]").val(vals.join("%,%"));
+		});
+
+	$("#fieldSettings_file_options_multipleFiles").change(function() {
+		$("#formPreview .well :input[name^=multipleFiles_]").val($(this).is(":checked"));
+	});
+
+	$("#fieldSettings_file_options_ocr").change(function() {
+		$("#formPreview .well :input[name^=ocr_]").val($(this).is(":checked"));
+	});
+
 	$("#fieldSettings_fieldset").keyup(function() {
 		$("#formPreview .well .fieldPreview legend").text($(this).val());
 		$("#formPreview .well :input[name^=fieldset_]").val($(this).val());
@@ -866,7 +917,12 @@ function newFieldPreview(id,type) {
 
 			case 'WYSIWYG':
 			case 'wysiwyg':
-				output += '<img src="../includes/img/wysiwyg.png" />';
+				output += '<img src="../includes/img/wysiwyg.png">';
+				break;
+
+			case 'File Upload':
+			case 'fileupload':
+				output += '<input type="file">';
 				break;
 
 			default:
@@ -980,6 +1036,11 @@ function newFieldValues(id,type,vals) {
 			type = vals['type'] = 'wysiwyg';
 			break;
 
+		case 'File Upload':
+		case 'fileupload':
+			type = vals['type'] = 'fileupload';
+			break;
+
 		case 'Field Set':
 		case 'fieldset':
 			type = vals['type'] = 'fieldset';
@@ -1038,6 +1099,12 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="choicesField_'+id+'" name="choicesField_'+id+'" value="'+((vals['choicesField']!=undefined)?vals['choicesField']:'')+'">';
 			break;
 
+		case 'fileupload':
+			output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'" value="'+((vals['allowedExtensions']!=undefined)?vals['allowedExtensions']:'jpg%,%png%,%gif')+'">';
+			output += '<input type="hidden" id="multipleFiles_'+id+'" name="multipleFiles_'+id+'" value="'+((vals['multipleFiles']!=undefined)?vals['multipleFiles']:'')+'">';
+			output += '<input type="hidden" id="ocr_'+id+'" name="ocr_'+id+'" value="'+((vals['ocr']!=undefined)?vals['ocr']:'')+'">';
+			break;
+
 		default:
 			break;
 	}
@@ -1069,4 +1136,16 @@ function addChoice(val,def) {
 				'<button name="add" class="btn" type="button" title="Add a choice."><i class="icon-plus"></i></button>'+
 				'<button name="remove" class="btn" type="button" title="Remove this choice."><i class="icon-remove"></i></button>'+
 			'</div>';
+}
+
+function addAllowedExtension(val) {
+	if (val == undefined) {
+		val = '';
+	}
+
+	return '<li><div class="input-append">'+
+				'<input name="fieldSettings_allowedExtension_text" class="input-block-level" type="text" value="'+val+'">'+
+				'<button name="add" class="btn" type="button" title="Add an extension."><i class="icon-plus"></i></button>'+
+				'<button name="remove" class="btn" type="button" title="Remove this extension."><i class="icon-remove"></i></button>'+
+			'</div></li>';
 }
