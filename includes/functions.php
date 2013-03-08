@@ -691,8 +691,8 @@ function submitForm($project,$formID,$objectID=NULL) {
 	// do the IDNO stuff
 	if ($form['metadata'] == "0") {
 			// increment the project counter
-		$sql       = sprintf("UPDATE `objectProjects` SET `projectNumber`=`projectNumber`+'1' WHERE `ID`='%s'",
-			$engine->openDB->escape($objectID)
+		$sql       = sprintf("UPDATE `projects` SET `count`=`count`+'1' WHERE `ID`='%s'",
+			$engine->openDB->escape($project['ID'])
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
@@ -712,7 +712,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 		else {
 			$idno = $engine->cleanPost['MYSQL']['idno'];
 		}
-		
+
 			// update the object with the new idno
 		$sql       = sprintf("UPDATE `objects` SET `idno`='%s' WHERE `ID`='%s'",
 				$idno, // Cleaned above when assigned
@@ -731,7 +731,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 	if ($newObject === FALSE) {
 			// update the object with a new idno if it is managed manually
 			// update all the fields in the dupeMatching Table
-		
+
 			// delete all matching fields
 		$sql       = sprintf("DELETE FROM `dupeMatching` WHERE `formID`='%s' AND `objectID`='%s' AND `projectID`='%s'",
 			$engine->openDB->escape($formID),
@@ -739,14 +739,14 @@ function submitForm($project,$formID,$objectID=NULL) {
 			$engine->openDB->escape($project['ID'])
 			);
 		$sqlResult = $engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			$engine->openDB->transRollback();
 			$engine->openDB->transEnd();
 			errorHandle::newError(__METHOD__."() - removing from duplicate table: ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-		
+
 	}
 
 		// insert all the fields into the dupeMatching table
@@ -759,7 +759,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 			$engine->cleanPost['MYSQL'][$name]
 			);
 		$sqlResult = $engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			$engine->openDB->transRollback();
 			$engine->openDB->transEnd();
@@ -789,33 +789,24 @@ function getFormIDInfo($formID) {
 function getIDNO($formID,$projectID,$increment=TRUE) {
 
 	$engine         = EngineAPI::singleton();
-
-	$form           = getForm($formID);
-	$form['fields'] = decodeFields($form['fields']);
 	$idno           = getFormIDInfo($formID);
 
-	print "<pre>";
-	var_dump($form);
-	print "</pre>";
-
-	$sql       = sprintf("SELECT COUNT(idno) as `count`, `idno` FROM `objects` LEFT JOIN `objectProjects` ON `objectProjects`.`objectID`=`objects`.`ID` WHERE `objects`.`formID`='%s' AND `objectProjects`.`projectID`='%s'",
-		$engine->openDB->escape($formID),
-		$engine->openDB->escape($projectID)
+	$sqlResult = $engine->openDB->sqlResult(
+		sprintf("SELECT `count` FROM `projects` WHERE `ID`='%s'",
+			$engine->openDB->escape($projectID)
+			)
 		);
-	$sqlResult = $engine->openDB->query($sql);
 	
 	if (!$sqlResult['result']) {
-		errorHandle::newError(__METHOD__."() - getting count info: ".$sqlResult['error'], errorHandle::DEBUG);
 		return FALSE;
 	}
-	
-	while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-		print "<pre>";
-		var_dump($row);
-		print "</pre>";
-	}
 
-	return TRUE;
+	$idno                         = $idno['idnoFormat'];
+	$len                          = strrpos($idno,"#") - strpos($idno,"#") + 1;
+	$sqlResult['result']['count'] = str_pad($sqlResult['result']['count'],$len,"0",STR_PAD_LEFT);
+	$idno                         = preg_replace("/#+/", $sqlResult['result']['count'], $idno);
+
+	return $idno;
 }
 
 
@@ -828,8 +819,52 @@ function dumpStuff($formID,$projectID,$increment=TRUE) {
 	$form['fields'] = decodeFields($form['fields']);
 	$idno           = getFormIDInfo($formID);
 
+	// print "<pre>";
+	// var_dump($form);
+	// print "</pre>";
+
 	print "<pre>";
-	var_dump($form);
+	var_dump($idno);
+	print "</pre>";
+
+	$sqlResult = $engine->openDB->sqlResult(
+		sprintf("SELECT `count` FROM `projects` WHERE `ID`='%s'",
+			$engine->openDB->escape($projectID)
+			)
+		);
+
+	print "<pre>";
+	var_dump($sqlResult);
+	print "</pre>";
+
+	$sqlResult = $engine->openDB->sqlResult(
+		sprintf("SELECT * FROM `projects`",
+			$engine->openDB->escape($projectID)
+			)
+		);
+
+	print "<pre>";
+	var_dump($sqlResult);
+	print "</pre>";
+
+	$sqlResult = $engine->openDB->sqlResult(
+		sprintf("INSERT INTO containers (containerName) VALUES('foo')",
+			$engine->openDB->escape($projectID)
+			)
+		);
+
+	print "<pre>";
+	var_dump($sqlResult);
+	print "</pre>";
+
+	$sqlResult = $engine->openDB->sqlResult(
+		sprintf("UPDATE containers SET containerName='bar' WHERE ID='1'",
+			$engine->openDB->escape($projectID)
+			)
+		);
+
+	print "<pre>";
+	var_dump($sqlResult);
 	print "</pre>";
 
 	return TRUE;
