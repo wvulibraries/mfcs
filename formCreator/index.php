@@ -402,20 +402,7 @@ $engine->eTemplate("include","header");
 										<option value="form">Another Form</option>
 									</select>
 									<p>
-										<div id="fieldSettings_choices_manual">
-											<div class="input-prepend input-append">
-												<button name="default" class="btn" type="button" data-toggle="buttons-radio" title="Set this choice as the default."><i class="icon-ok"></i></button>
-												<input name="fieldSettings_choices_text" class="input-block-level" type="text" value="First Choice">
-												<button name="add" class="btn" type="button" title="Add a choice."><i class="icon-plus"></i></button>
-												<button name="remove" class="btn" type="button" title="Remove this choice."><i class="icon-remove"></i></button>
-											</div>
-											<div class="input-prepend input-append">
-												<button name="default" class="btn" type="button" data-toggle="buttons-radio" title="Set this choice as the default."><i class="icon-ok"></i></button>
-												<input name="fieldSettings_choices_text" class="input-block-level" type="text" value="Second Choice">
-												<button name="add" class="btn" type="button" title="Add a choice."><i class="icon-plus"></i></button>
-												<button name="remove" class="btn" type="button" title="Remove this choice."><i class="icon-remove"></i></button>
-											</div>
-										</div>
+										<div id="fieldSettings_choices_manual"></div>
 										<div id="fieldSettings_choices_form">
 											<label for="fieldSettings_choices_formSelect">
 												Select a Form
