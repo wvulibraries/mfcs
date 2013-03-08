@@ -512,14 +512,16 @@ $engine->eTemplate("include","header");
 										<span class="span4">
 											<label for="fieldSettings_file_thumbnail_height">
 												Height
+												<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
 											</label>
-											<input type="number" class="input-block-level" id="fieldSettings_file_thumbnail_height" name="fieldSettings_file_thumbnail_height" min="1" />
+											<input type="number" class="input-block-level" id="fieldSettings_file_thumbnail_height" name="fieldSettings_file_thumbnail_height" min="0" />
 										</span>
 										<span class="span4">
 											<label for="fieldSettings_file_thumbnail_width">
 												Width
+												<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
 											</label>
-											<input type="number" class="input-block-level" id="fieldSettings_file_thumbnail_width" name="fieldSettings_file_thumbnail_width" min="1" />
+											<input type="number" class="input-block-level" id="fieldSettings_file_thumbnail_width" name="fieldSettings_file_thumbnail_width" min="0" />
 										</span>
 										<span class="span4">
 											<label for="fieldSettings_file_thumbnail_type">
