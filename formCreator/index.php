@@ -496,7 +496,37 @@ $engine->eTemplate("include","header");
 									<label class="checkbox">
 										<input type="checkbox" id="fieldSettings_file_options_ocr" name="fieldSettings_file_options_ocr"> Optical Character Recognition (OCR)
 									</label>
+									<label class="checkbox">
+										<input type="checkbox" id="fieldSettings_file_options_thumbnail" name="fieldSettings_file_options_thumbnail"> Create Thumbnail
+									</label>
 								</div>
+
+								<div class="control-group well well-small" id="fieldSettings_container_file_thumbnail">
+									<label for="fieldSettings_file_thumbnail">
+										Thumbnail Options
+									</label>
+									<div class="row-fluid" id="fieldSettings_file_thumbnail">
+										<span class="span4">
+											<label for="fieldSettings_file_thumbnail_height">
+												Height
+											</label>
+											<input type="number" class="input-block-level" id="fieldSettings_file_thumbnail_height" name="fieldSettings_file_thumbnail_height" min="1" />
+										</span>
+										<span class="span4">
+											<label for="fieldSettings_file_thumbnail_width">
+												Width
+											</label>
+											<input type="number" class="input-block-level" id="fieldSettings_file_thumbnail_width" name="fieldSettings_file_thumbnail_width" min="1" />
+										</span>
+										<span class="span4">
+											<label for="fieldSettings_file_thumbnail_type">
+												Type
+											</label>
+											<input type="text" class="input-block-level" id="fieldSettings_file_thumbnail_type" name="fieldSettings_file_thumbnail_type" min="1" />
+										</span>
+									</div>
+								</div>
+
 
 								<div class="row-fluid noHide">
 									<span class="span6">

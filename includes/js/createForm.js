@@ -354,6 +354,10 @@ function showFieldSettings(fullID) {
 
 			$("#fieldSettings_file_options_multipleFiles").prop("checked",($("#multipleFiles_"+id).val()==='true'));
 			$("#fieldSettings_file_options_ocr").prop("checked",($("#ocr_"+id).val()==='true'));
+			$("#fieldSettings_file_options_thumbnail").prop("checked",($("#thumbnail_"+id).val()==='true')).change();
+			$("#fieldSettings_file_thumbnail_height").val($("#thumbnailHeight_"+id).val());
+			$("#fieldSettings_file_thumbnail_width").val($("#thumbnailWidth_"+id).val());
+			$("#fieldSettings_file_thumbnail_type").val($("#thumbnailType_"+id).val());
 
 			if ($("#type_"+id).val() != 'fieldset') {
 				$("#fieldset_"+id).val($("#fieldset_"+id).parents("li").parents("li").find(":input[name^=fieldset_]").val());
@@ -737,6 +741,19 @@ function fieldSettingsBindings() {
 		$("#formPreview .well :input[name^=ocr_]").val($(this).is(":checked"));
 	});
 
+	$("#fieldSettings_file_options_thumbnail").change(function() {
+		$("#formPreview .well :input[name^=thumbnail_]").val($(this).is(":checked"));
+
+		// if ($("#formPreview .well :input[name^=type_]").val() == 'fileupload') {
+			if ($(this).is(":checked")) {
+				$("#fieldSettings_container_file_thumbnail").show();
+			}
+			else {
+				$("#fieldSettings_container_file_thumbnail").hide();
+			}
+		// }
+	});
+
 	$("#fieldSettings_fieldset").keyup(function() {
 		$("#formPreview .well .fieldPreview legend").text($(this).val());
 		$("#formPreview .well :input[name^=fieldset_]").val($(this).val());
@@ -1103,6 +1120,10 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'" value="'+((vals['allowedExtensions']!=undefined)?vals['allowedExtensions']:'jpg%,%png%,%gif')+'">';
 			output += '<input type="hidden" id="multipleFiles_'+id+'" name="multipleFiles_'+id+'" value="'+((vals['multipleFiles']!=undefined)?vals['multipleFiles']:'')+'">';
 			output += '<input type="hidden" id="ocr_'+id+'" name="ocr_'+id+'" value="'+((vals['ocr']!=undefined)?vals['ocr']:'')+'">';
+			output += '<input type="hidden" id="thumbnail_'+id+'" name="thumbnail_'+id+'" value="'+((vals['thumbnail']!=undefined)?vals['thumbnail']:'')+'">';
+			output += '<input type="hidden" id="thumbnailHeight_'+id+'" name="thumbnailHeight_'+id+'" value="'+((vals['thumbnailHeight']!=undefined)?vals['thumbnailHeight']:'')+'">';
+			output += '<input type="hidden" id="thumbnailWidth_'+id+'" name="thumbnailWidth_'+id+'" value="'+((vals['thumbnailWidth']!=undefined)?vals['thumbnailWidth']:'')+'">';
+			output += '<input type="hidden" id="thumbnailType_'+id+'" name="thumbnailType_'+id+'" value="'+((vals['thumbnailType']!=undefined)?vals['thumbnailType']:'')+'">';
 			break;
 
 		default:
