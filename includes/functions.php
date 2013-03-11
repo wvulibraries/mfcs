@@ -463,6 +463,9 @@ function buildListTable($objects,$form,$projectID) {
 	$header  = '<tr><th>Delete</th><th>Edit</th><th>ID No</th>';
 	$headers = array();
 	foreach ($form['fields'] as $field) {
+
+		if (strtolower($field['type']) == "idno") continue;
+
 		if ($field['displayTable'] == "true") {
 			$header .= sprintf('<th>%s</th>',
 				$field['label']
@@ -484,7 +487,6 @@ function buildListTable($objects,$form,$projectID) {
 	$output .= $header;
 
 	foreach($objects as $object) {
-
 		$output .= "<tr>";
 		$output .= sprintf('<td><input type="checkbox" name="delete_%s" /></td>',
 			$object['ID']
@@ -495,7 +497,7 @@ function buildListTable($objects,$form,$projectID) {
 			htmlSanitize($object['ID'])
 			);
 		$output .= sprintf('<td>%s</td>',
-			htmlSanitize(($form['metadata'] == "1")?$object['ID']:$object['data']['idno'])
+			htmlSanitize(($form['metadata'] == "1")?$object['ID']:$object['idno'])
 			);
 		foreach ($headers as $headerName => $headerLabel) {
 			$output .= sprintf('<td>%s</td>',
