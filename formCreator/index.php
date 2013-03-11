@@ -543,7 +543,7 @@ $engine->eTemplate("include","header");
 												<input type="checkbox" id="fieldSettings_options_required" name="fieldSettings_options_required"> Required
 											</label>
 											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates"> No Duplicates - All Forms
+												<input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates"> No Duplicates - Project
 											</label>
 											<label class="checkbox">
 												<input type="checkbox" id="fieldSettings_options_duplicatesForm" name="fieldSettings_options_duplicatesForm"> No Duplicates - This Form
