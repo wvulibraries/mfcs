@@ -223,6 +223,10 @@ function showFieldSettings(fullID) {
 					checked:  false,
 					disabled: true,
 				}).change();
+				$("#fieldSettings_options_displayTable").prop({
+					checked:  true,
+					disabled: true,
+				}).change();
 				$("#fieldSettings_options_readonly").prop("disabled",true);
 				$("#fieldSettings_options_disabled").removeAttr("checked").change().prop("disabled",true);
 			}
@@ -233,6 +237,7 @@ function showFieldSettings(fullID) {
 				$("#fieldSettings_options_duplicatesForm").removeAttr("disabled");
 				$("#fieldSettings_options_readonly").removeAttr("disabled");
 				$("#fieldSettings_options_disabled").removeAttr("disabled");
+				$("#fieldSettings_options_displayTable").removeAttr("disabled");
 			}
 
 			// Show optional fields
@@ -765,14 +770,12 @@ function fieldSettingsBindings() {
 	$("#fieldSettings_file_options_thumbnail").change(function() {
 		$("#formPreview .well :input[name^=thumbnail_]").val($(this).is(":checked"));
 
-		// if ($("#formPreview .well :input[name^=type_]").val() == 'fileupload') {
-			if ($(this).is(":checked")) {
-				$("#fieldSettings_container_file_thumbnail").show();
-			}
-			else {
-				$("#fieldSettings_container_file_thumbnail").hide();
-			}
-		// }
+		if ($(this).is(":checked")) {
+			$("#fieldSettings_container_file_thumbnail").show();
+		}
+		else {
+			$("#fieldSettings_container_file_thumbnail").hide();
+		}
 	});
 
 	$("#fieldSettings_fieldset").keyup(function() {
