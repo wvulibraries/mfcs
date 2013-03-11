@@ -494,10 +494,10 @@ $engine->eTemplate("include","header");
 										<input type="checkbox" id="fieldSettings_file_options_multipleFiles" name="fieldSettings_file_options_multipleFiles"> Allow Multiple Files in Single Upload
 									</label>
 									<label class="checkbox">
-										<input type="checkbox" id="fieldSettings_file_options_watermark" name="fieldSettings_file_options_watermark"> Add Watermark
+										<input type="checkbox" id="fieldSettings_file_options_ocr" name="fieldSettings_file_options_ocr"> Optical Character Recognition (OCR)
 									</label>
 									<label class="checkbox">
-										<input type="checkbox" id="fieldSettings_file_options_ocr" name="fieldSettings_file_options_ocr"> Optical Character Recognition (OCR)
+										<input type="checkbox" id="fieldSettings_file_options_convert" name="fieldSettings_file_options_convert"> Convert Uploaded File
 									</label>
 									<label class="checkbox">
 										<input type="checkbox" id="fieldSettings_file_options_thumbnail" name="fieldSettings_file_options_thumbnail"> Create Thumbnail
