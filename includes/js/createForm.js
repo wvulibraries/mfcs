@@ -628,12 +628,16 @@ function fieldSettingsBindings() {
 
 	$("#fieldSettings_options_duplicates").change(function() {
 		$("#formPreview .well :input[name^=duplicates_]").val($(this).is(":checked"));
-		$("#fieldSettings_options_duplicatesForm").removeAttr("checked");
+		if ($(this).is(":checked")) {
+			$("#fieldSettings_options_duplicatesForm").removeAttr("checked").change();
+		}
 	});
 
 	$("#fieldSettings_options_duplicatesForm").change(function() {
 		$("#formPreview .well :input[name^=duplicatesForm_]").val($(this).is(":checked"));
-		$("#fieldSettings_options_duplicates").removeAttr("checked");
+		if ($(this).is(":checked")) {
+			$("#fieldSettings_options_duplicates").removeAttr("checked").change();
+		}
 	});
 
 	$("#fieldSettings_options_readonly").change(function() {
