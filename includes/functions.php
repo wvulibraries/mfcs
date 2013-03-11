@@ -558,6 +558,16 @@ function submitForm($project,$formID,$objectID=NULL) {
 
 		if ($field['type'] == "fieldset" || $field['type'] == "idno") continue; 
 
+		if (strtolower($field['required']) == "true"           && 
+			(!isset($engine->cleanPost['RAW'][$field['name']]) || 
+			 isempty($engine->cleanPost['RAW'][$field['name']]))
+			) {
+
+			errorHandle::errorMsg("Missing data for required field '".$field['label']."'.");
+			continue;
+
+		}
+
 		// perform validations here
 		if (isempty($field['validation']) || $field['validation'] == "none") {
 			$valid = TRUE;
@@ -794,6 +804,8 @@ function submitForm($project,$formID,$objectID=NULL) {
 // $value must be RAW
 function isDupe($formID,$projectID=NULL,$field,$value) {
 
+	$engine = EngineAPI::singleton();
+
 	if (isnull($projectID)) {
 		$sql = sprintf("SELECT COUNT(*) FROM dupeMatching WHERE `formID`='%s' AND `field`='%s' AND `value`='%s'",
 			$engine->openDB->escape($formID),
@@ -816,7 +828,7 @@ function isDupe($formID,$projectID=NULL,$field,$value) {
 	if ($sqlResult['result'] === FALSE) {
 		return TRUE;
 	}
-	else if ($sqlResult['result'] > 0) {
+	else if ((INT)$sqlResult['result']['COUNT(*)'] > 0) {
 		return TRUE;
 	}	
 	else {
