@@ -556,9 +556,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 	// go through all the fields, get their values
 	foreach ($fields as $field) {
 
-		if ($field['type'] == "fieldset") {
-			continue;
-		}
+		if ($field['type'] == "fieldset" || $field['type'] == "idno") continue; 
 
 		// perform validations here
 		if (isempty($field['validation']) || $field['validation'] == "none") {
@@ -582,6 +580,21 @@ function submitForm($project,$formID,$objectID=NULL) {
 			continue;
 		}
 
+		// Duplicate Checking (Project)
+		if (strtolower($field['duplicates']) == "true") {
+			if (isDupe($formID,$project['ID'],$field['name'],$engine->cleanPost['RAW'][$field['name']])) {
+				errorHandle::errorMsg("Duplicate data (in Project) provided in field '".$field['label']."'.");
+				continue;
+			}
+		}
+		// Duplicate Checking (Form)
+		if (strtolower($field['duplicatesForm']) == "true") {
+			if (isDupe($formID,NULL,$field['name'],$engine->cleanPost['RAW'][$field['name']])) {
+				errorHandle::errorMsg("Duplicate data (in form) provided in field '".$field['label']."'.");
+				continue;
+			}
+		}
+
 		$values[$field['name']] = $engine->cleanPost['RAW'][$field['name']];
 
 	}
@@ -599,7 +612,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 		}
 
 	if ($newObject === TRUE) {
-		$sql       = sprintf("INSERT INTO `objects` (parentID,formID,defaultProject,data,metadata,modifiedTime) VALUES('%s','%s','%s','%s','%s','%s','%s')",
+		$sql       = sprintf("INSERT INTO `objects` (parentID,formID,defaultProject,data,metadata,modifiedTime) VALUES('%s','%s','%s','%s','%s','%s')",
 			isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",
 			$engine->openDB->escape($formID),
 			$engine->openDB->escape($project['ID']),
@@ -725,7 +738,6 @@ function submitForm($project,$formID,$objectID=NULL) {
 			return FALSE;
 		}
 
-		$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 	}
 
 	if ($newObject === FALSE) {
@@ -751,7 +763,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 
 		// insert all the fields into the dupeMatching table
 	foreach ($values as $name=>$raw) {
-		$sql       = sprintf("INSERT INTO `dupeMatching` (`formID`,`projectID`,`objectID`,`field`,`value`) VALUES('%s','%s','%s','%s','%s','%s')",
+		$sql       = sprintf("INSERT INTO `dupeMatching` (`formID`,`projectID`,`objectID`,`field`,`value`) VALUES('%s','%s','%s','%s','%s')",
 			$engine->openDB->escape($formID),
 			$engine->openDB->escape($project['ID']),
 			$engine->openDB->escape($objectID),
@@ -777,6 +789,40 @@ function submitForm($project,$formID,$objectID=NULL) {
 	$engine->openDB->transEnd();
 
 	return TRUE;
+}
+
+// $value must be RAW
+function isDupe($formID,$projectID=NULL,$field,$value) {
+
+	if (isnull($projectID)) {
+		$sql = sprintf("SELECT COUNT(*) FROM dupeMatching WHERE `formID`='%s' AND `field`='%s' AND `value`='%s'",
+			$engine->openDB->escape($formID),
+			$engine->openDB->escape($field),
+			$engine->openDB->escape($value)
+			);
+	}
+	else {
+		$sql = sprintf("SELECT COUNT(*) FROM dupeMatching WHERE `formID`='%s' AND `projectID`='%s' AND `field`='%s' AND `value`='%s'",
+			$engine->openDB->escape($formID),
+			$engine->openDB->escape($projectID),
+			$engine->openDB->escape($field),
+			$engine->openDB->escape($value)
+			);
+	}
+
+	$sqlResult = $engine->openDB->sqlResult($sql);
+
+	// we return TRUE on Error, because if a dupe is encountered we want it to fail out.
+	if ($sqlResult['result'] === FALSE) {
+		return TRUE;
+	}
+	else if ($sqlResult['result'] > 0) {
+		return TRUE;
+	}	
+	else {
+		return FALSE;
+	}
+
 }
 
 function getFormIDInfo($formID) {
@@ -819,9 +865,9 @@ function dumpStuff($formID,$projectID,$increment=TRUE) {
 	$form['fields'] = decodeFields($form['fields']);
 	$idno           = getFormIDInfo($formID);
 
-	// print "<pre>";
-	// var_dump($form);
-	// print "</pre>";
+	print "<pre>";
+	var_dump($form['fields']);
+	print "</pre>";
 
 	print "<pre>";
 	var_dump($idno);
