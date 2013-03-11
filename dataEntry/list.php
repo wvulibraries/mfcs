@@ -2,6 +2,11 @@
 
 include("../header.php");
 
+// $idno = dumpStuff("7","1",TRUE);
+// print "<pre>";
+// var_dump($idno);
+// print "</pre>";
+
 recurseInsert("acl.php","php");
 
 try {
