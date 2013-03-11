@@ -556,7 +556,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 	// go through all the fields, get their values
 	foreach ($fields as $field) {
 
-		if ($field['type'] == "fieldset" || $field['type'] == "idno") continue; 
+		if ($field['type'] == "fieldset" || $field['type'] == "idno" || $field['disabled'] == "true") continue; 
 
 		if (strtolower($field['required']) == "true"           && 
 			(!isset($engine->cleanPost['RAW'][$field['name']]) || 
@@ -602,6 +602,20 @@ function submitForm($project,$formID,$objectID=NULL) {
 			if (isDupe($formID,NULL,$field['name'],$engine->cleanPost['RAW'][$field['name']])) {
 				errorHandle::errorMsg("Duplicate data (in form) provided in field '".$field['label']."'.");
 				continue;
+			}
+		}
+
+		if (strtolower($field['readonly']) == "true") {
+			// need to pull the data that loaded with the form
+			if ($newObject === TRUE) {
+				// grab it from the database
+				$oldObject              = getObject($objectID);
+				$object['data']         = decodeFields($object['data']);
+				$values[$field['name']] = $object['data'][$field['name']];
+			}
+			else {
+				// grab the default value from the form. 
+				$values[$field['name']] = $field['value'];
 			}
 		}
 
