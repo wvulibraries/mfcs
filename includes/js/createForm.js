@@ -17,8 +17,11 @@ $(function() {
 
 	// Add new field on click as well as drag
 	$("#fieldAdd li").click(function() {
+		event.preventDefault();
+
 		$(this).clone().appendTo($("#formPreview"));
 		addNewField($("#formPreview li:last"));
+		sortable();
 	});
 
 	// Delete icon binding
