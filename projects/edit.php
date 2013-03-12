@@ -379,12 +379,40 @@ $engine->eTemplate("include","header");
 									<ul class="unstyled draggable" id="groupingsFormsAdd"></ul>
 								</div>
 								<div class="tab-pane" id="groupingsSettings">
+									<div class="alert alert-block" id="noGroupingSelected">
+										<h4>No Grouping Selected</h4>
+										To change a grouping, click on it in the preview to the right.
+									</div>
+
+									<div class="control-group well well-small" id="groupingsSettings_container_grouping">
+										<label for="groupingsSettings_grouping">
+											Grouping Label
+										</label>
+										<input type="text" class="input-block-level" id="groupingsSettings_grouping" name="groupingsSettings_grouping" />
+										<span class="help-block hidden"></span>
+									</div>
+
+									<div class="control-group well well-small" id="groupingsSettings_container_label">
+										<label for="groupingsSettings_label">
+											Label
+										</label>
+										<input type="text" class="input-block-level" id="groupingsSettings_label" name="groupingsSettings_label" />
+										<span class="help-block hidden"></span>
+									</div>
+
+									<div class="control-group well well-small" id="groupingsSettings_container_url">
+										<label for="groupingsSettings_url">
+											Address
+										</label>
+										<input type="text" class="input-block-level" id="groupingsSettings_url" name="groupingsSettings_url" />
+										<span class="help-block hidden"></span>
+									</div>
 
 								</div>
 							</div>
 						</div>
 						<div class="span6">
-							<ul class="sortable"></ul>
+							<ul class="sortable unstyled" id="GroupingsPreview"></ul>
 						</div>
 					</div>
 				</div>

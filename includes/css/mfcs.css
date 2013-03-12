@@ -38,12 +38,12 @@ ul.sortable li.well {
 	padding: 5px;
 }
 
-.fieldPreview i.icon-remove {
+.sortable i.icon-remove {
 	position: absolute;
 	display:none;
 }
 
-li:hover .fieldPreview i.icon-remove {
+li:hover i.icon-remove {
 	display:block;
 	cursor: pointer;
 }
@@ -51,4 +51,13 @@ li:hover .fieldPreview i.icon-remove {
 #leftPanel.fix {
 	position: fixed;
 	top: 170px;
+}
+
+#GroupingsPreview li {
+	position: relative;
+	padding-left: 40px;
+}
+
+#GroupingsPreview li i.icon-remove {
+	left: 9px;
 }
