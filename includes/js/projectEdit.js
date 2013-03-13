@@ -13,15 +13,18 @@ $(function() {
 		connectToSortable: "ul.sortable",
 		helper: "clone",
 		revert: "invalid",
+		cancel: ".noDrag",
 	}).disableSelection();
 
 	// Add new on click as well as drag
-	$("#groupingsAdd li").click(function(event) {
+	$("#groupingsAdd").on("click", "li", function(event) {
 		event.preventDefault();
 
-		$(this).clone().appendTo($("#GroupingsPreview"));
-		addNew($("#GroupingsPreview li:last"));
-		sortable();
+		if (!$(this).hasClass("noDrag")) {
+			$(this).clone().appendTo($("#GroupingsPreview"));
+			addNew($("#GroupingsPreview li:last"));
+			sortable();
+		}
 	});
 
 
@@ -126,39 +129,6 @@ function sortable() {
 	});
 }
 
-function addNew(item) {
-	// Remove class to designate this is not new for next time
-	$(item).removeClass("ui-draggable");
-
-	// Preserve type
-	var type = $("a", item).text();
-
-	// Assign an id to new li
-	var newID = 0;
-	$("#GroupingsPreview li").each(function() {
-		if ($(this)[0] !== $(item)[0]) {
-			var thisID = $(this).attr("id").split("_");
-			if (newID <= thisID[1]) {
-				newID = parseInt(thisID[1])+1;
-			}
-		}
-	});
-	$(item).attr("id","GroupingsPreview_"+newID);
-
-	// Add base html
-	$(item).html('<div class="groupingPreview"></div>');
-
-	// Add field specific html to .fieldPreview
-	$(".groupingPreview", item).html(newGroupingPreview(type));
-
-	// Container for hidden fields
-	$(item).append('<div class="groupingValues"></div>');
-	$(".groupingValues", item).html(newGroupingValues(newID,type));
-
-	// Display settings for new field
-	$("#GroupingsPreview_"+newID).click();
-}
-
 function settingsBindings() {
 	// Select an option to change settings
 	$("#GroupingsPreview").on("click", "li", function(event) {
@@ -183,6 +153,7 @@ function settingsBindings() {
 		after.before($(this).val());
 
 		$("#GroupingsPreview .well :input[name^=grouping_]").val($(this).val());
+		$("#GroupingsPreview .well > .groupingValues :input[name^=label_]").val($(this).val());
 	});
 
 	$("#groupingsSettings_label").keyup(function() {
@@ -219,14 +190,23 @@ function showSettings(fullID) {
 		else {
 			switch(type) {
 				case 'logout':
-				case 'random':
+				case 'link':
 					$("#groupingsSettings_container_label").show();
 					$("#groupingsSettings_container_url").show();
 					break;
 
 				case 'export':
+				case 'objectForm':
+				case 'metadataForm':
 					$("#groupingsSettings_container_label").show();
 					break;
+			}
+
+			if (type == 'objectForm' || type == 'metadataForm') {
+				$("#groupingsSettings_label").prop('disabled', true);
+			}
+			else {
+				$("#groupingsSettings_label").removeAttr("disabled");
 			}
 
 			if ($("#type_"+id).val() != 'grouping') {
@@ -241,6 +221,46 @@ function showSettings(fullID) {
 		}
 
 	}
+}
+
+function addNew(item) {
+	// Remove class to designate this is not new for next time
+	$(item).removeClass("ui-draggable");
+
+	// Preserve type
+	var type = $("a", item).text();
+	var vals = {};
+
+	// If data-type attribute exists, use that for type
+	if ($(item).data("type")) {
+		vals['type']  = type = $(item).data("type");
+		vals['label'] = $("a", item).text();
+	}
+
+	// Assign an id to new li
+	var newID = 0;
+	$("#GroupingsPreview li").each(function() {
+		if ($(this)[0] !== $(item)[0]) {
+			var thisID = $(this).attr("id").split("_");
+			if (newID <= thisID[1]) {
+				newID = parseInt(thisID[1])+1;
+			}
+		}
+	});
+	$(item).attr("id","GroupingsPreview_"+newID);
+
+	// Add base html
+	$(item).html('<div class="groupingPreview"></div>');
+
+	// Add field specific html to .fieldPreview
+	$(".groupingPreview", item).html(newGroupingPreview(type));
+
+	// Container for hidden fields
+	$(item).append('<div class="groupingValues"></div>');
+	$(".groupingValues", item).html(newGroupingValues(newID,type,vals));
+
+	// Display settings for new field
+	$("#GroupingsPreview_"+newID).click();
 }
 
 function newGroupingPreview(type) {
@@ -281,9 +301,9 @@ function newGroupingValues(id,type,vals) {
 			type = vals['type'] = 'export';
 			break;
 
-		case 'Random Link':
-		case 'random':
-			type = vals['type'] = 'random';
+		case 'Link':
+		case 'link':
+			type = vals['type'] = 'link';
 			break;
 
 		default:

@@ -31,38 +31,40 @@ try {
 		}
 
 
-		foreach($engine->cleanPost['MYSQL']['selectedUsers'] as $I=>$V) {
-			$sql       = sprintf("INSERT INTO `permissions` (userID,projectID,type) VALUES('%s','%s','0')",
-				$engine->openDB->escape($V),
-				$engine->cleanGet['MYSQL']['id']
-				);
-			$sqlResult = $engine->openDB->query($sql);
+		if (isset($engine->cleanPost['MYSQL']['selectedUsers'])) {
+			foreach($engine->cleanPost['MYSQL']['selectedUsers'] as $I=>$V) {
+				$sql       = sprintf("INSERT INTO `permissions` (userID,projectID,type) VALUES('%s','%s','0')",
+					$engine->openDB->escape($V),
+					$engine->cleanGet['MYSQL']['id']
+					);
+				$sqlResult = $engine->openDB->query($sql);
 
-			if (!$sqlResult['result']) {
-				errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
-				errorHandle::errorMsg("Error Updating Project");
-				$engine->openDB->transRollback();
-				$engine->openDB->transEnd();
-				throw new Exception('Error');
+				if (!$sqlResult['result']) {
+					errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
+					errorHandle::errorMsg("Error Updating Project");
+					$engine->openDB->transRollback();
+					$engine->openDB->transEnd();
+					throw new Exception('Error');
+				}
 			}
-
 		}
 
-		foreach($engine->cleanPost['MYSQL']['selectedUsersAdmins'] as $I=>$V) {
-			$sql       = sprintf("INSERT INTO `permissions` (userID,projectID,type) VALUES('%s','%s','1')",
-				$engine->openDB->escape($V),
-				$engine->cleanGet['MYSQL']['id']
-				);
-			$sqlResult = $engine->openDB->query($sql);
+		if (isset($engine->cleanPost['MYSQL']['selectedUsersAdmins'])) {
+			foreach($engine->cleanPost['MYSQL']['selectedUsersAdmins'] as $I=>$V) {
+				$sql       = sprintf("INSERT INTO `permissions` (userID,projectID,type) VALUES('%s','%s','1')",
+					$engine->openDB->escape($V),
+					$engine->cleanGet['MYSQL']['id']
+					);
+				$sqlResult = $engine->openDB->query($sql);
 
-			if (!$sqlResult['result']) {
-				errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
-				errorHandle::errorMsg("Error Updating Project");
-				$engine->openDB->transRollback();
-				$engine->openDB->transEnd();
-				throw new Exception('Error');
+				if (!$sqlResult['result']) {
+					errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
+					errorHandle::errorMsg("Error Updating Project");
+					$engine->openDB->transRollback();
+					$engine->openDB->transEnd();
+					throw new Exception('Error');
+				}
 			}
-
 		}
 
 		// generate forms serialized arrays
@@ -83,7 +85,6 @@ try {
 
 		$forms     = encodeFields($forms);
 		$groupings = encodeFields(json_decode($engine->cleanPost['RAW']['groupings'], TRUE));
-
 
 		$sql       = sprintf("UPDATE `projects` SET `forms`='%s', `groupings`='%s' WHERE `ID`='%s'",
 			$engine->openDB->escape($forms),
@@ -124,6 +125,12 @@ try {
 		$currentForms = array();
 	}
 
+	$metadataForms         = array();
+	$objectForms           = array();
+	$objectFormsEven       = NULL;
+	$objectFormsOdd        = NULL;
+	$metadataFormsEven     = NULL;
+	$metadataFormsOdd      = NULL;
 	$selectedMetadataForms = "";
 	$selectedObjectForms   = "";
 
@@ -141,12 +148,27 @@ try {
 		}
 
 		$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+		$metadataForms[] = $row['title'];
 		$selectedMetadataForms .= sprintf('<option value="%s">%s</option>',
 			$engine->openDB->escape($row['ID']),
 			$engine->openDB->escape($row['title'])
 			);
-
 	}
+
+	foreach ($metadataForms as $I => $form) {
+		if ($I % 2 == 0) { // even
+			$metadataFormsEven .= '<li data-type="metadataForm"><a href="#" class="btn btn-block">'.$form.'</a></li>';
+		}
+		else { // odd
+			$metadataFormsOdd .= '<li data-type="metadataForm"><a href="#" class="btn btn-block">'.$form.'</a></li>';
+		}
+	}
+
+	localVars::add("metadataFormsEven",$metadataFormsEven);
+	localVars::add("metadataFormsOdd",$metadataFormsOdd);
+	localvars::add("selectedMetadataForms",$selectedMetadataForms);
+
 
 	// Object Forms
 	foreach ($currentForms['objects'] as $I => $V) {
@@ -162,14 +184,25 @@ try {
 		}
 
 		$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+		$objectForms[] = $row['title'];
 		$selectedObjectForms .= sprintf('<option value="%s">%s</option>',
 			$engine->openDB->escape($row['ID']),
 			$engine->openDB->escape($row['title'])
 			);
-
 	}
 
-	localvars::add("selectedMetadataForms",$selectedMetadataForms);
+	foreach ($objectForms as $I => $form) {
+		if ($I % 2 == 0) { // even
+			$objectFormsEven .= '<li data-type="objectForm"><a href="#" class="btn btn-block">'.$form.'</a></li>';
+		}
+		else { // odd
+			$objectFormsOdd .= '<li data-type="objectForm"><a href="#" class="btn btn-block">'.$form.'</a></li>';
+		}
+	}
+
+	localVars::add("objectFormsEven",$objectFormsEven);
+	localVars::add("objectFormsOdd",$objectFormsOdd);
 	localvars::add("selectedObjectForms",$selectedObjectForms);
 
 
@@ -199,7 +232,6 @@ try {
 				);
 		}
 	}
-
 	localvars::add("availableMetadataForms",$availableMetadataForms);
 	localvars::add("availableObjectForms",$availableObjectForms);
 
@@ -219,7 +251,9 @@ try {
 	$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
 	if (!is_empty($row['groupings'])) {
-		$tmp = decodeFields($row['groupings']);
+		$tmp       = decodeFields($row['groupings']);
+		$groupings = array();
+		$preview   = NULL;
 
 		// Get all groupings needed
 		foreach ($tmp as $I => $V) {
@@ -438,16 +472,28 @@ $engine->eTemplate("include","header");
 
 							<div class="tab-content">
 								<div class="tab-pane" id="groupingsAdd">
-									<ul class="unstyled draggable">
+									<ul class="unstyled draggable span6">
 										<li><a href="#" class="btn btn-block">New Grouping</a></li>
 										<li><a href="#" class="btn btn-block">Log Out</a></li>
+									</ul>
+									<ul class="unstyled draggable span6">
 										<li><a href="#" class="btn btn-block">Export Link (needs definable properties)</a></li>
-										<li><a href="#" class="btn btn-block">Random Link</a></li>
+										<li><a href="#" class="btn btn-block">Link</a></li>
 									</ul>
 
-									Forms
-									<ul class="unstyled draggable" id="groupingsFormsAdd"></ul>
+									<h3>Object Forms</h3>
+									<div class="row-fluid">
+										<ul class="unstyled draggable span6">{local var="objectFormsEven"}</ul>
+										<ul class="unstyled draggable span6">{local var="objectFormsOdd"}</ul>
+									</div>
+
+									<h3>Metadata Forms</h3>
+									<div class="row-fluid">
+										<ul class="unstyled draggable span6">{local var="metadataFormsEven"}</ul>
+										<ul class="unstyled draggable span6">{local var="metadataFormsOdd"}</ul>
+									</div>
 								</div>
+
 								<div class="tab-pane" id="groupingsSettings">
 									<div class="alert alert-block" id="noGroupingSelected">
 										<h4>No Grouping Selected</h4>
@@ -481,6 +527,7 @@ $engine->eTemplate("include","header");
 							</div>
 							<input type="hidden" name="groupings">
 						</div>
+
 						<div class="span6">
 							<ul class="sortable unstyled" id="GroupingsPreview">
 								{local var="existingGroupings"}
