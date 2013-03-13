@@ -62,6 +62,42 @@ $(function() {
 	$("#GroupingsPreview").on("click", "a", function(event) {
 		event.preventDefault();
 	});
+
+	$("form[name=projectEdits]").submit(function(event) {
+		// event.preventDefault();
+
+		entrySubmit();
+
+		// Calculate position of all fields
+		$(".groupingValues :input[name^=position_]").each(function(index) {
+			$(this).val(index);
+		});
+
+		// Create a multidimentional object to store field info
+		var obj = {};
+		$(".groupingValues :input").each(function() {
+			var grouping = $(this).prop("name").split("_");
+
+			if (!obj[ grouping[1] ]) {
+				obj[ grouping[1] ] = {};
+			}
+
+			obj[ grouping[1] ][ grouping[0] ] = $(this).val();
+		});
+
+		// Remove groupings from submission
+		for (var i in obj) {
+			if (obj[i]['type'] == 'grouping') {
+				delete obj[i];
+			}
+		};
+
+		// Convert object to JSON and add it to a hidden form field
+		$(":input[name=groupings]", this).val(JSON.stringify(obj));
+
+		$("#groupingsSettings :input").prop("disabled", true);
+		$("#GroupingsPreview :input").prop("disabled", true);
+	});
 });
 
 function sortable() {
@@ -113,7 +149,7 @@ function addNew(item) {
 	$(item).html('<div class="groupingPreview"></div>');
 
 	// Add field specific html to .fieldPreview
-	$(".groupingPreview", item).html(newGroupingPreview(newID,type));
+	$(".groupingPreview", item).html(newGroupingPreview(type));
 
 	// Container for hidden fields
 	$(item).append('<div class="groupingValues"></div>');
@@ -158,7 +194,6 @@ function settingsBindings() {
 		$("#GroupingsPreview .well a").prop("href",$(this).val());
 		$("#GroupingsPreview .well :input[name^=url_]").val($(this).val());
 	});
-
 }
 
 function showSettings(fullID) {
@@ -193,16 +228,22 @@ function showSettings(fullID) {
 					$("#groupingsSettings_container_label").show();
 					break;
 			}
-		}
 
-		$("#groupingsSettings_grouping").val($("#grouping_"+id).val()).keyup();
-		$("#groupingsSettings_label").val($("#label_"+id).val()).keyup();
-		$("#groupingsSettings_url").val($("#url_"+id).val()).keyup();
+			if ($("#type_"+id).val() != 'grouping') {
+				$("#grouping_"+id).val($("#grouping_"+id).parents("li").parents("li").find(":input[name^=grouping_]").val());
+			}
+			else {
+				$("#groupingsSettings_grouping").val($("#grouping_"+id).val());
+			}
+
+			$("#groupingsSettings_label").val($("#label_"+id).val()).keyup();
+			$("#groupingsSettings_url").val($("#url_"+id).val()).keyup();
+		}
 
 	}
 }
 
-function newGroupingPreview(id,type) {
+function newGroupingPreview(type) {
 	var output;
 
 	output = '<i class="icon-remove"></i>';

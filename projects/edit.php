@@ -13,7 +13,6 @@ try {
 
 	// Submission
 	if (isset($engine->cleanPost['MYSQL']['submitProjectEdits'])) {
-
 		// trans: begin transaction
 		$engine->openDB->transBegin();
 
@@ -82,10 +81,13 @@ try {
 			}
 		}
 
-		$forms = encodeFields($forms);
+		$forms     = encodeFields($forms);
+		$groupings = encodeFields(json_decode($engine->cleanPost['RAW']['groupings'], TRUE));
 
-		$sql       = sprintf("UPDATE `projects` SET `forms`='%s' WHERE `ID`='%s'",
+
+		$sql       = sprintf("UPDATE `projects` SET `forms`='%s', `groupings`='%s' WHERE `ID`='%s'",
 			$engine->openDB->escape($forms),
+			$engine->openDB->escape($groupings),
 			$engine->cleanGet['MYSQL']['id']
 			);
 		$sqlResult = $engine->openDB->query($sql);
@@ -171,51 +173,119 @@ try {
 	localvars::add("selectedObjectForms",$selectedObjectForms);
 
 
-	// Get all the metadata forms
-	$sql       = sprintf("SELECT * FROM `forms` WHERE `production`='1' AND `metadata`='1' ORDER BY `title`");
+	// Get all the Object forms
+	$sql       = sprintf("SELECT * FROM `forms` WHERE `production`='1' ORDER BY `title`");
 	$sqlResult = $engine->openDB->query($sql);
 
 	if (!$sqlResult['result']) {
-		errorHandle::newError(__METHOD__."() - Error getting Metadata forms", errorHandle::DEBUG);
+		errorHandle::newError(__METHOD__."() - Error getting forms", errorHandle::DEBUG);
 		errorHandle::errorMsg("Error Building Page");
 		throw new Exception('Error');
 	}
 
-	$metadataForms          = array();
 	$availableMetadataForms = "";
+	$availableObjectForms   = "";
 	while($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-		$metadataForms[] = $row;
-
-		$availableMetadataForms .= sprintf('<option value="%s">%s</option>',
-			htmlSanitize($row['ID']),
-			htmlSanitize($row['title'])
-			);
+		if ($row['metadata'] == "1") {
+			$availableMetadataForms .= sprintf('<option value="%s">%s</option>',
+				htmlSanitize($row['ID']),
+				htmlSanitize($row['title'])
+				);
+		}
+		else if ($row['metadata'] == "0") {
+			$availableObjectForms .= sprintf('<option value="%s">%s</option>',
+				htmlSanitize($row['ID']),
+				htmlSanitize($row['title'])
+				);
+		}
 	}
 
 	localvars::add("availableMetadataForms",$availableMetadataForms);
+	localvars::add("availableObjectForms",$availableObjectForms);
 
-	// Get all the Object forms
-	$sql       = sprintf("SELECT * FROM `forms` WHERE `production`='1' AND `metadata`='0' ORDER BY `title`");
+
+	// Get existing groupings
+	$sql = sprintf("SELECT * FROM `projects` WHERE `ID`='%s' LIMIT 1",
+		$engine->cleanGet['MYSQL']['id']
+		);
 	$sqlResult = $engine->openDB->query($sql);
 
 	if (!$sqlResult['result']) {
-		errorHandle::newError(__METHOD__."() - Error getting Metadata forms", errorHandle::DEBUG);
+		errorHandle::newError(__METHOD__."() - Error getting project", errorHandle::DEBUG);
 		errorHandle::errorMsg("Error Building Page");
 		throw new Exception('Error');
 	}
 
+	$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
-	$availableObjectForms = "";
-	while($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+	if (!is_empty($row['groupings'])) {
+		$tmp = decodeFields($row['groupings']);
 
-		$availableObjectForms .= sprintf('<option value="%s">%s</option>',
-			htmlSanitize($row['ID']),
-			htmlSanitize($row['title'])
-			);
+		// Get all groupings needed
+		foreach ($tmp as $I => $V) {
+			if (!is_empty($V['grouping'])) {
+				$groupings[$V['grouping']] = array(
+					"type"     => "grouping",
+					"grouping" => $V['grouping'],
+					);
+			}
+		}
+
+		$positionOffset = 0;
+		foreach ($tmp as $I => $V) {
+			$values = json_encode($V);
+
+			if (!is_empty($V['grouping']) && isset($groupings[$V['grouping']])) {
+				$preview .= sprintf('
+					<li id="GroupingsPreview_%s">
+						<div class="groupingPreview">
+							<script type="text/javascript">
+								$("#GroupingsPreview_%s .groupingPreview").html(newGroupingPreview("%s"));
+							</script>
+						</div>
+						<div class="groupingValues">
+							<script type="text/javascript">
+								$("#GroupingsPreview_%s .groupingValues").html(newGroupingValues("%s","%s",%s));
+							</script>
+						</div>
+					</li>',
+					htmlSanitize($V['position'] + $positionOffset),
+					htmlSanitize($V['position'] + $positionOffset),
+					htmlSanitize($groupings[$V['grouping']]['type']),
+					htmlSanitize($V['position'] + $positionOffset),
+					htmlSanitize($V['position'] + $positionOffset),
+					htmlSanitize($groupings[$V['grouping']]['type']),
+					json_encode($groupings[$V['grouping']])
+					);
+
+				$positionOffset++;
+				unset($groupings[$V['grouping']]);
+			}
+
+			$preview .= sprintf('
+				<li id="GroupingsPreview_%s">
+					<div class="groupingPreview">
+						<script type="text/javascript">
+							$("#GroupingsPreview_%s .groupingPreview").html(newGroupingPreview("%s"));
+						</script>
+					</div>
+					<div class="groupingValues">
+						<script type="text/javascript">
+							$("#GroupingsPreview_%s .groupingValues").html(newGroupingValues("%s","%s",%s));
+						</script>
+					</div>
+				</li>',
+				htmlSanitize($V['position'] + $positionOffset),
+				htmlSanitize($V['position'] + $positionOffset),
+				htmlSanitize($V['type']),
+				htmlSanitize($V['position'] + $positionOffset),
+				htmlSanitize($V['position'] + $positionOffset),
+				htmlSanitize($V['type']),
+				$values
+				);
+		}
+		localvars::add("existingGroupings",$preview);
 	}
-
-	localvars::add("availableObjectForms",$availableObjectForms);
-
 
 	// Get all users
 	$sql       = sprintf("SELECT * FROM `users`");
@@ -309,7 +379,7 @@ $engine->eTemplate("include","header");
 				</ul>
 			</div>
 
-			<form action="{phpself query="true"}" method="post">
+			<form name="projectEdits" action="{phpself query="true"}" method="post">
 				{engine name="csrf"}
 
 				<div class="row-fluid" id="addForms">
@@ -407,12 +477,14 @@ $engine->eTemplate("include","header");
 										<input type="text" class="input-block-level" id="groupingsSettings_url" name="groupingsSettings_url" />
 										<span class="help-block hidden"></span>
 									</div>
-
 								</div>
 							</div>
+							<input type="hidden" name="groupings">
 						</div>
 						<div class="span6">
-							<ul class="sortable unstyled" id="GroupingsPreview"></ul>
+							<ul class="sortable unstyled" id="GroupingsPreview">
+								{local var="existingGroupings"}
+							</ul>
 						</div>
 					</div>
 				</div>
@@ -457,7 +529,7 @@ $engine->eTemplate("include","header");
 				</div>
 
 				<br />
-				<input type="submit" class="btn btn-large btn-block btn-primary" name="submitProjectEdits" value="Update Project" onclick="entrySubmit()" />
+				<input type="submit" class="btn btn-large btn-block btn-primary" name="submitProjectEdits" value="Update Project" />
 			</form>
 			<?php
 		}
