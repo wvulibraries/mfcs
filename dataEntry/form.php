@@ -90,6 +90,8 @@ try {
 
 	localvars::add("form",$builtForm);
 
+	localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['id']));
+
 }
 catch(Exception $e) {
 }
@@ -109,7 +111,7 @@ $engine->eTemplate("include","header");
 
 <div id="left">
 
-	<p>Built up left nav will go here</p>
+	{local var="leftnav"}
 
 </div>
 <div id="right">

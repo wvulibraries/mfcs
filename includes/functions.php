@@ -175,9 +175,9 @@ function buildProjectNavigation($projectID) {
 
 	$nav = decodeFields($project['groupings']);
 
-	print "<pre>";
-	var_dump($nav);
-	print "</pre>";
+	// print "<pre>";
+	// var_dump($nav);
+	// print "</pre>";
 
 	$output = "";
 
@@ -208,6 +208,13 @@ function buildProjectNavigation($projectID) {
 		else if ($item['type'] == "link") {
 			$output .= sprintf('<a href="%s">%s</a>',
 				htmlSanitize($item['url']),
+				htmlSanitize($item['label'])
+				);
+		}
+		else if ($item['type'] == "objectForm" || $item['type'] == "metadataForm") {
+			$output .= sprintf('<a href="form.php?id=%s&amp;formID=%s">%s</a>',
+				htmlSanitize($projectID),
+				htmlSanitize($item['formID']),
 				htmlSanitize($item['label'])
 				);
 		}
