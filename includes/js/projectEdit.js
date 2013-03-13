@@ -233,10 +233,14 @@ function addNew(item) {
 
 	// If data-type attribute exists, use that for type
 	if ($(item).data("type")) {
-		vals['type']  = type = $(item).data("type");
-		vals['label'] = $("a", item).text();
+		vals['type']   = type = $(item).data("type");
+		vals['label']  = $("a", item).text();
 	}
 
+	if ($(item).data("formid")) {
+		vals['formID'] = $(item).data("formid");
+	}
+console.log(vals);
 	// Assign an id to new li
 	var newID = 0;
 	$("#GroupingsPreview li").each(function() {
@@ -317,8 +321,10 @@ function newGroupingValues(id,type,vals) {
 	output += '<input type="hidden" id="grouping_'+id+'" name="grouping_'+id+'" value="'+((vals['grouping']!=undefined)?vals['grouping']:'')+'">';
 
 	switch(type) {
-		case 'form':
-			output += '<input type="hidden" id="showData_'+id+'" name="showData_'+id+'" value="'+((vals['showData']!=undefined)?vals['showData']:'')+'">';
+		case 'objectForm':
+		case 'metadataForm':
+			output += '<input type="hidden" id="formID_'+id+'" name="formID_'+id+'" value="'+((vals['formID']!=undefined)?vals['formID']:'')+'">';
+			// output += '<input type="hidden" id="showData_'+id+'" name="showData_'+id+'" value="'+((vals['showData']!=undefined)?vals['showData']:'')+'">';
 			break;
 
 		default:

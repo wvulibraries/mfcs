@@ -83,8 +83,21 @@ try {
 			}
 		}
 
+		$groupings = json_decode($engine->cleanPost['RAW']['groupings'], TRUE);
+
+		if (!is_empty($groupings)) {
+			foreach ($groupings as $I => $grouping) {
+				$positions[$I] = $grouping['position'];
+			}
+
+			array_multisort($positions, SORT_ASC, $groupings);
+		}
+print "<pre>";
+print_r($groupings);
+print "</pre>";
+
 		$forms     = encodeFields($forms);
-		$groupings = encodeFields(json_decode($engine->cleanPost['RAW']['groupings'], TRUE));
+		$groupings = encodeFields($groupings);
 
 		$sql       = sprintf("UPDATE `projects` SET `forms`='%s', `groupings`='%s' WHERE `ID`='%s'",
 			$engine->openDB->escape($forms),
@@ -149,7 +162,10 @@ try {
 
 		$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
-		$metadataForms[] = $row['title'];
+		$metadataForms[] = array(
+			"ID"    => $row['ID'],
+			"title" => $row['title'],
+			);
 		$selectedMetadataForms .= sprintf('<option value="%s">%s</option>',
 			$engine->openDB->escape($row['ID']),
 			$engine->openDB->escape($row['title'])
@@ -157,11 +173,16 @@ try {
 	}
 
 	foreach ($metadataForms as $I => $form) {
+		$tmp = sprintf('<li data-type="metadataForm" data-formid="%s"><a href="#" class="btn btn-block">%s</a></li>',
+			htmlSanitize($form['ID']),
+			htmlSanitize($form['title'])
+			);
+
 		if ($I % 2 == 0) { // even
-			$metadataFormsEven .= '<li data-type="metadataForm"><a href="#" class="btn btn-block">'.$form.'</a></li>';
+			$metadataFormsEven .= $tmp;
 		}
 		else { // odd
-			$metadataFormsOdd .= '<li data-type="metadataForm"><a href="#" class="btn btn-block">'.$form.'</a></li>';
+			$metadataFormsOdd .= $tmp;
 		}
 	}
 
@@ -185,7 +206,10 @@ try {
 
 		$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
-		$objectForms[] = $row['title'];
+		$objectForms[] = array(
+			"ID"    => $row['ID'],
+			"title" => $row['title'],
+			);
 		$selectedObjectForms .= sprintf('<option value="%s">%s</option>',
 			$engine->openDB->escape($row['ID']),
 			$engine->openDB->escape($row['title'])
@@ -193,11 +217,16 @@ try {
 	}
 
 	foreach ($objectForms as $I => $form) {
+		$tmp = sprintf('<li data-type="objectForm" data-formID="%s"><a href="#" class="btn btn-block">%s</a></li>',
+			htmlSanitize($form['ID']),
+			htmlSanitize($form['title'])
+			);
+
 		if ($I % 2 == 0) { // even
-			$objectFormsEven .= '<li data-type="objectForm"><a href="#" class="btn btn-block">'.$form.'</a></li>';
+			$objectFormsEven .= $tmp;
 		}
 		else { // odd
-			$objectFormsOdd .= '<li data-type="objectForm"><a href="#" class="btn btn-block">'.$form.'</a></li>';
+			$objectFormsOdd .= $tmp;
 		}
 	}
 
