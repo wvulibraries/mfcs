@@ -92,9 +92,6 @@ try {
 
 			array_multisort($positions, SORT_ASC, $groupings);
 		}
-print "<pre>";
-print_r($groupings);
-print "</pre>";
 
 		$forms     = encodeFields($forms);
 		$groupings = encodeFields($groupings);
