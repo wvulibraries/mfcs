@@ -166,6 +166,65 @@ function sortFieldsByPosition($a,$b) {
     return strnatcmp($a['position'], $b['position']);
 }
 
+function buildProjectNavigation($projectID) {
+	$project = getProject($projectID);
+
+	if ($project === FALSE) {
+		return(FALSE);
+	}
+
+	$nav = decodeFields($project['groupings']);
+
+	print "<pre>";
+	var_dump($nav);
+	print "</pre>";
+
+	$output = "";
+
+	$currentGroup = "";
+
+	foreach ($nav as $item) {
+
+		// deal with field sets
+		if ($item['grouping'] != $currentGroup) {
+			if ($currentGroup != "") {
+				$output .= "</ul></li>";
+			}
+			if (!isempty($item['grouping'])) {
+				$output .= sprintf('<li><strong>%s</strong><ul>',
+					$item['grouping']
+					);
+			}
+			$currentGroup = $item['grouping'];
+		}	
+
+		$output .= "<li>";
+		if ($item['type'] == "logout") {
+			$output .= sprintf('<a href="%s">%s</a>',
+				htmlSanitize($item['url']),
+				htmlSanitize($item['label'])
+				);
+		}
+		else if ($item['type'] == "link") {
+			$output .= sprintf('<a href="%s">%s</a>',
+				htmlSanitize($item['url']),
+				htmlSanitize($item['label'])
+				);
+		}
+		else {
+			$output .= sprintf('%s',
+				htmlSanitize($item['label'])
+				);
+		}
+		$output .= "</li>";
+
+	}
+
+
+	return $output;
+
+}
+
 function buildNumberAttributes($field) {
 
 	$output = "";
