@@ -296,7 +296,7 @@ function showFieldSettings(fullID) {
 					$("#fieldSettings_container_placeholder").hide();
 					break;
 
-				case 'fileupload':
+				case 'file':
 					$("#fieldSettings_container_file_allowedExtensions").show();
 					$("#fieldSettings_container_file_options").show();
 					$("#fieldSettings_container_value").hide();
@@ -960,7 +960,7 @@ function newFieldPreview(id,type) {
 				break;
 
 			case 'File Upload':
-			case 'fileupload':
+			case 'file':
 				output += '<input type="file">';
 				break;
 
@@ -1076,8 +1076,8 @@ function newFieldValues(id,type,vals) {
 			break;
 
 		case 'File Upload':
-		case 'fileupload':
-			type = vals['type'] = 'fileupload';
+		case 'file':
+			type = vals['type'] = 'file';
 			break;
 
 		case 'Field Set':
@@ -1139,7 +1139,7 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="choicesField_'+id+'" name="choicesField_'+id+'" value="'+((vals['choicesField']!=undefined)?vals['choicesField']:'')+'">';
 			break;
 
-		case 'fileupload':
+		case 'file':
 			output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'" value="'+((vals['allowedExtensions']!=undefined)?vals['allowedExtensions']:'jpg%,%png%,%gif')+'">';
 			output += '<input type="hidden" id="multipleFiles_'+id+'" name="multipleFiles_'+id+'" value="'+((vals['multipleFiles']!=undefined)?vals['multipleFiles']:'')+'">';
 			output += '<input type="hidden" id="ocr_'+id+'" name="ocr_'+id+'" value="'+((vals['ocr']!=undefined)?vals['ocr']:'')+'">';
