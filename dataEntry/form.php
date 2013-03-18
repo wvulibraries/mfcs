@@ -5,8 +5,8 @@ recurseInsert("acl.php","php");
 
 try {
 
-	if (!isset($engine->cleanGet['MYSQL']['id'])   
-		|| is_empty($engine->cleanGet['MYSQL']['id']) 
+	if (!isset($engine->cleanGet['MYSQL']['id'])
+		|| is_empty($engine->cleanGet['MYSQL']['id'])
 		|| !validate::integer($engine->cleanGet['MYSQL']['id'])) {
 
 		errorHandle::newError(__METHOD__."() - No Project ID Provided.", errorHandle::DEBUG);
@@ -14,8 +14,8 @@ try {
 		throw new Exception('Error');
 	}
 
-	if (!isset($engine->cleanGet['MYSQL']['formID']) 
-		|| is_empty($engine->cleanGet['MYSQL']['formID']) 
+	if (!isset($engine->cleanGet['MYSQL']['formID'])
+		|| is_empty($engine->cleanGet['MYSQL']['formID'])
 		|| !validate::integer($engine->cleanGet['MYSQL']['formID'])) {
 
 		errorHandle::newError(__METHOD__."() - No Project ID Provided.", errorHandle::DEBUG);
@@ -23,8 +23,8 @@ try {
 		throw new Exception('Error');
 	}
 
-	if (isset($engine->cleanGet['MYSQL']['objectID']) 
-		&& (is_empty($engine->cleanGet['MYSQL']['objectID']) 
+	if (isset($engine->cleanGet['MYSQL']['objectID'])
+		&& (is_empty($engine->cleanGet['MYSQL']['objectID'])
 			|| !validate::integer($engine->cleanGet['MYSQL']['objectID']))
 		) {
 
@@ -50,7 +50,7 @@ try {
 	}
 
 	// if an object ID is provided make sure the object is from this form
-	if (isset($engine->cleanGet['MYSQL']['objectID']) 
+	if (isset($engine->cleanGet['MYSQL']['objectID'])
 		&& !checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
 		errorHandle::errorMsg("Object not from this form");
 		throw new Exception('Error');
@@ -101,6 +101,27 @@ localVars::add("results",displayMessages());
 $engine->eTemplate("include","header");
 ?>
 
+<link rel="stylesheet" type="text/css" href="{local var="siteRoot"}includes/css/fineuploader.css" />
+<script type="text/javascript" src="{local var="siteRoot"}includes/js/jquery.fineuploader.min.js"></script>
+<style>
+  /* Fine Uploader
+  -------------------------------------------------- */
+  .qq-upload-list {
+    text-align: left;
+  }
+
+  li.alert-success {
+    background-color: #DFF0D8;
+  }
+
+  li.alert-error {
+    background-color: #F2DEDE;
+  }
+
+  .alert-error .qq-upload-failed-text {
+    display: inline;
+  }
+</style>
 <section>
 	<header class="page-header">
 		<h1>{local var="projectName"}</h1>

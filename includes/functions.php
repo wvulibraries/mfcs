@@ -31,12 +31,12 @@ function checkProjectPermissions($id) {
 		$engine->openDB->escape($username)
 		);
 	$sqlResult = $engine->openDB->query($sql);
-	
+
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
 		return FALSE;
 	}
-	
+
 	$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
 	if ((int)$row['COUNT(permissions.ID)'] > 0) {
@@ -57,12 +57,12 @@ function getProject($projectID) {
 		$engine->openDB->escape($projectID)
 		);
 	$sqlResult = $engine->openDB->query($sql);
-	
+
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
 		return FALSE;
 	}
-	
+
 	return mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
 }
@@ -75,12 +75,12 @@ function getForm($formID) {
 		$engine->openDB->escape($formID)
 		);
 	$sqlResult = $engine->openDB->query($sql);
-	
+
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
 		return FALSE;
 	}
-	
+
 	return mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 }
 
@@ -91,12 +91,12 @@ function getObject($objectID) {
 		$engine->openDB->escape($objectID)
 		);
 	$sqlResult = $engine->openDB->query($sql);
-	
+
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
 		return FALSE;
 	}
-	
+
 	return mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 }
 
@@ -108,12 +108,12 @@ function getAllObjectsForForm($formID) {
 		$engine->openDB->escape($formID)
 		);
 	$sqlResult = $engine->openDB->query($sql);
-	
+
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - getting all objects: ".$sqlResult['error'], errorHandle::DEBUG);
 		return FALSE;
 	}
-	
+
 	$objects = array();
 	while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
@@ -121,7 +121,7 @@ function getAllObjectsForForm($formID) {
 		$objects[] = $row;
 
 	}
-	
+
 	return $objects;
 
 }
@@ -196,7 +196,7 @@ function buildProjectNavigation($projectID) {
 					);
 			}
 			$currentGroup = $item['grouping'];
-		}	
+		}
 
 		$output .= "<li>";
 		if ($item['type'] == "logout") {
@@ -286,7 +286,7 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 	// print "<pre>";
 	// var_dump($object);
 	// print "</pre>";
-    
+
 
 	$output = sprintf('<form action="%s?id=%s&amp;formID=%s" method="%s">',
 		$_SERVER['PHP_SELF'],
@@ -320,11 +320,11 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 					);
 			}
 			$currentFieldset = $field['fieldset'];
-		}	
+		}
 
 
 		// build the actual input box
-		
+
 		$output .= '<div class="">';
 
 
@@ -343,9 +343,9 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 				htmlSanitize($field['class']),
 				(!isempty($field['style']))?'style="'.htmlSanitize($field['style']).'"':"",
 				//true/false type attributes
-				(uc($field['required']) == "TRUE")?"required":"",
-				(uc($field['readonly']) == "TRUE")?"readonly":"", 
-				(uc($field['disabled']) == "TRUE")?"disabled":"",
+				(strtoupper($field['required']) == "TRUE")?"required":"",
+				(strtoupper($field['readonly']) == "TRUE")?"readonly":"",
+				(strtoupper($field['disabled']) == "TRUE")?"disabled":"",
 				(isset($object['data'][$field['name']]))?htmlSanitize($object['data'][$field['name']]):htmlSanitize($field['value'])
 				);
 
@@ -481,6 +481,47 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 			$output .= "</select>";
 
 		}
+		else if ($field['type'] == 'file') {
+
+			$output .= sprintf('<div id="fineUploader_%s"></div>',
+				htmlSanitize($field['name'])
+				);
+			$output .= sprintf('
+				<script type="text/javascript">
+					$("#fineUploader_%s")
+						.fineUploader({
+							request: {
+								endpoint: "{local var="siteRoot"}includes/uploader.php",
+								params: {
+									engineCSRFCheck: "{engine name="csrf" insert="false"}",
+								}
+							},
+							multiple: %s,
+							validation: {
+								allowedExtensions: ["%s"],
+							},
+							text: {
+							  uploadButton: \'<i class="icon-plus icon-white"></i> Select Files\'
+							},
+							showMessage: function(message) {
+								$("#fineUploader_%s .qq-upload-list").append(\'<li class="alert alert-error">\' + message + \'</li >\');
+							},
+							classes: {
+								success: "alert alert-success",
+								fail: "alert alert-error"
+							},
+						})
+						.on("complete", function(event,id,fileName,responseJSON) {
+							console.log(responseJSON);
+						});
+				</script>',
+				htmlSanitize($field['name']),
+				(strtoupper($field['multipleFiles']) == "TRUE") ? "true" : "false",
+				implode('", "',$field['allowedExtensions']),
+				htmlSanitize($field['name'])
+				);
+
+		}
 		else {
 			if ($field['type'] == "idno") {
 				if (strtolower($field['managedBy']) == "system") continue;
@@ -498,9 +539,9 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 				htmlSanitize($field['class']),
 				(!isempty($field['style']))?'style="'.htmlSanitize($field['style']).'"':"",
 				//true/false type attributes
-				(uc($field['required']) == "TRUE")?"required":"",
-				(uc($field['readonly']) == "TRUE")?"readonly":"", 
-				(uc($field['disabled']) == "TRUE")?"disabled":""
+				(strtoupper($field['required']) == "TRUE")?"required":"",
+				(strtoupper($field['readonly']) == "TRUE")?"readonly":"",
+				(strtoupper($field['disabled']) == "TRUE")?"disabled":""
 				);
 		}
 
@@ -510,7 +551,7 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 	if (!isempty($currentFieldset)) {
 		$output .= "</fieldset>";
 	}
-	
+
 	$output .= sprintf('<input type="submit" value="%s" name="%s" />',
 		htmlSanitize($form["submitButton"]),
 		"submitForm"
@@ -583,7 +624,7 @@ function buildListTable($objects,$form,$projectID) {
 
 }
 
-// NOTE: data is being saved as RAW from the array. 
+// NOTE: data is being saved as RAW from the array.
 function submitForm($project,$formID,$objectID=NULL) {
 
 	$engine = EngineAPI::singleton();
@@ -602,7 +643,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 		return FALSE;
 	}
 
-	// the form is an object form, make sure that it has an ID field defined. 
+	// the form is an object form, make sure that it has an ID field defined.
 	if ($form['metadata'] == "0") {
 		$idnoInfo = getFormIDInfo($formID);
 		if ($idnoInfo === FALSE) {
@@ -624,10 +665,10 @@ function submitForm($project,$formID,$objectID=NULL) {
 	// go through all the fields, get their values
 	foreach ($fields as $field) {
 
-		if ($field['type'] == "fieldset" || $field['type'] == "idno" || $field['disabled'] == "true") continue; 
+		if ($field['type'] == "fieldset" || $field['type'] == "idno" || $field['disabled'] == "true") continue;
 
-		if (strtolower($field['required']) == "true"           && 
-			(!isset($engine->cleanPost['RAW'][$field['name']]) || 
+		if (strtolower($field['required']) == "true"           &&
+			(!isset($engine->cleanPost['RAW'][$field['name']]) ||
 			 isempty($engine->cleanPost['RAW'][$field['name']]))
 			) {
 
@@ -682,7 +723,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 				$values[$field['name']] = $object['data'][$field['name']];
 			}
 			else {
-				// grab the default value from the form. 
+				// grab the default value from the form.
 				$values[$field['name']] = $field['value'];
 			}
 		}
@@ -738,16 +779,16 @@ function submitForm($project,$formID,$objectID=NULL) {
 			time(),
 			$engine->openDB->escape($objectID)
 			);
-		
+
 
 	}
 
 	$sqlResult = $engine->openDB->query($sql);
-	
+
 	if (!$sqlResult['result']) {
 		$engine->openDB->transRollback();
 		$engine->openDB->transEnd();
-		
+
 		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
 		return FALSE;
 	}
@@ -755,14 +796,14 @@ function submitForm($project,$formID,$objectID=NULL) {
 	if ($newObject === TRUE) {
 		$objectID = $sqlResult['id'];
 	}
-	
-	// Check to see if this object already exists in the objectProjects table. If not, add it. 
+
+	// Check to see if this object already exists in the objectProjects table. If not, add it.
 	$sql       = sprintf("SELECT COUNT(*) FROM `objectProjects` WHERE `objectID`='%s' AND `projectID`='%s'",
 		$engine->openDB->escape($objectID),
 		$engine->openDB->escape($project['ID'])
 		);
 	$sqlResult = $engine->openDB->query($sql);
-	
+
 	if (!$sqlResult['result']) {
 		$engine->openDB->transRollback();
 		$engine->openDB->transEnd();
@@ -770,7 +811,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 		errorHandle::newError(__METHOD__."() - error getting count: ".$sqlResult['error'], errorHandle::DEBUG);
 		return FALSE;
 	}
-	
+
 	$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
 	if ($row['COUNT(*)'] == 0) {
@@ -779,7 +820,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 			$engine->openDB->escape($project['ID'])
 			);
 		$sqlResult = $engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			$engine->openDB->transRollback();
 			$engine->openDB->transEnd();
@@ -787,10 +828,10 @@ function submitForm($project,$formID,$objectID=NULL) {
 			errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
 			return FALSE;
 		}
-		
+
 	}
 
-	
+
 
 	// if it is an object form (not a metadata form)
 	// do the IDNO stuff
@@ -810,7 +851,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 		}
 
 			// if the idno is managed by the system get a new idno
-		if ($idnoInfo['managedBy'] == "system") { 
+		if ($idnoInfo['managedBy'] == "system") {
 			$idno = $engine->openDB->escape(getIDNO($formID,$project['ID']));
 		}
 			// the idno is managed manually
@@ -872,7 +913,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 			return FALSE;
 		}
 	}
-	
+
 
 
 
@@ -912,7 +953,7 @@ function isDupe($formID,$projectID=NULL,$field,$value) {
 	}
 	else if ((INT)$sqlResult['result']['COUNT(*)'] > 0) {
 		return TRUE;
-	}	
+	}
 	else {
 		return FALSE;
 	}
@@ -936,7 +977,7 @@ function getIDNO($formID,$projectID,$increment=TRUE) {
 			$engine->openDB->escape($projectID)
 			)
 		);
-	
+
 	if (!$sqlResult['result']) {
 		return FALSE;
 	}
