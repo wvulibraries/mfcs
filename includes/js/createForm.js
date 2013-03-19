@@ -104,7 +104,7 @@ $(function() {
 				obj[ field[1] ] = {};
 			}
 
-			if ($(this).is('[id^="choicesOptions_"]')) {
+			if ($(this).is('[id^="choicesOptions_"]') || $(this).is('[id^="allowedExtensions_"]')) {
 				obj[ field[1] ][ field[0] ] = {};
 				obj[ field[1] ][ field[0] ] = $(this).val().split("%,%");
 			}
@@ -735,13 +735,13 @@ function fieldSettingsBindings() {
 
 	$("#fieldSettings_file_allowedExtensions")
 		.on("click","button[name=add]",function() {
-			$(this).parent().parent().after(addAllowedExtension());
+			$(this).parent().after(addAllowedExtension());
 		})
 		.on("click","button[name=remove]",function() {
-			if ($(this).parent().parent().siblings().length == 0) {
+			if ($(this).parent().siblings().length == 0) {
 				$(this).siblings("button[name=add]").click();
 			}
-			$(this).parent().parent().remove();
+			$(this).parent().remove();
 
 			var vals = [];
 			$("#fieldSettings_file_allowedExtensions :input[name=fieldSettings_allowedExtension_text]").each(function() {
@@ -1158,25 +1158,25 @@ function newFieldValues(id,type,vals) {
 
 function addChoice(val,def) {
 	if (val == undefined) {
-		return '<div class="input-prepend input-append">'+
+		return '<div class="row-fluid input-prepend input-append">'+
 					'<button name="default" class="btn" type="button" data-toggle="buttons-radio" title="Set this choice as the default."><i class="icon-ok"></i></button>'+
-					'<input name="fieldSettings_choices_text" class="input-block-level" type="text">'+
+					'<input name="fieldSettings_choices_text" type="text">'+
 					'<button name="add" class="btn" type="button" title="Add a choice."><i class="icon-plus"></i></button>'+
 					'<button name="remove" class="btn" type="button" title="Remove this choice."><i class="icon-remove"></i></button>'+
 				'</div>';
 	}
 	else if (def == undefined) {
-		return '<div class="input-prepend input-append">'+
+		return '<div class="row-fluid input-prepend input-append">'+
 					'<button name="default" class="btn" type="button" data-toggle="buttons-radio" title="Set this choice as the default."><i class="icon-ok"></i></button>'+
-					'<input name="fieldSettings_choices_text" class="input-block-level" type="text" value="'+val+'">'+
+					'<input name="fieldSettings_choices_text" type="text" value="'+val+'">'+
 					'<button name="add" class="btn" type="button" title="Add a choice."><i class="icon-plus"></i></button>'+
 					'<button name="remove" class="btn" type="button" title="Remove this choice."><i class="icon-remove"></i></button>'+
 				'</div>';
 	}
 
-	return '<div class="input-prepend input-append">'+
+	return '<div class="row-fluid input-prepend input-append">'+
 				'<button name="default" class="btn'+(val==def?" active":"")+'" type="button" data-toggle="buttons-radio" title="Set this choice as the default."><i class="icon-ok"></i></button>'+
-				'<input name="fieldSettings_choices_text" class="input-block-level" type="text" value="'+val+'">'+
+				'<input name="fieldSettings_choices_text" type="text" value="'+val+'">'+
 				'<button name="add" class="btn" type="button" title="Add a choice."><i class="icon-plus"></i></button>'+
 				'<button name="remove" class="btn" type="button" title="Remove this choice."><i class="icon-remove"></i></button>'+
 			'</div>';
@@ -1187,9 +1187,9 @@ function addAllowedExtension(val) {
 		val = '';
 	}
 
-	return '<li><div class="input-append">'+
-				'<input name="fieldSettings_allowedExtension_text" class="input-block-level" type="text" value="'+val+'">'+
+	return '<div class="row-fluid input-append">'+
+				'<input name="fieldSettings_allowedExtension_text" type="text" value="'+val+'">'+
 				'<button name="add" class="btn" type="button" title="Add an extension."><i class="icon-plus"></i></button>'+
 				'<button name="remove" class="btn" type="button" title="Remove this extension."><i class="icon-remove"></i></button>'+
-			'</div></li>';
+			'</div>';
 }

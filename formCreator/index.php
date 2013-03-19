@@ -169,6 +169,10 @@ if (!isnull($formID)) {
 				if (isset($field['choicesOptions']) && is_array($field['choicesOptions'])) {
 					$field['choicesOptions'] = implode("%,%",$field['choicesOptions']);
 				}
+				else if (isset($field['allowedExtensions']) && is_array($field['allowedExtensions'])) {
+					$field['allowedExtensions'] = implode("%,%",$field['allowedExtensions']);
+				}
+
 				$values = json_encode($field);
 
 				if (!is_empty($field['fieldset']) && isset($fieldsets[$field['fieldset']])) {
@@ -482,7 +486,7 @@ $engine->eTemplate("include","header");
 									<label for="fieldSettings_file_allowedExtensions">
 										Allowed Extensions
 									</label>
-									<ul class="unstyled" id="fieldSettings_file_allowedExtensions"></ul>
+									<div id="fieldSettings_file_allowedExtensions"></div>
 									<span class="help-block hidden"></span>
 								</div>
 
