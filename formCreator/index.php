@@ -508,6 +508,97 @@ $engine->eTemplate("include","header");
 									</label>
 								</div>
 
+								<div class="control-group well well-small" id="fieldSettings_container_file_convert">
+									<label for="fieldSettings_file_convert">
+										Conversions
+									</label>
+
+									<div class="row-fluid">
+										<div class="span4" id="fieldSettings_container_file_convert_height">
+											<label for="fieldSettings_file_convert_height">
+												Height
+											</label>
+											<input type="number" class="input-block-level" id="fieldSettings_file_convert_height" name="fieldSettings_file_convert_height" min="0" />
+										</div>
+
+										<div class="span4" id="fieldSettings_container_file_convert_width">
+											<label for="fieldSettings_file_convert_width">
+												Width
+											</label>
+											<input type="number" class="input-block-level" id="fieldSettings_file_convert_width" name="fieldSettings_file_convert_width" min="0" />
+										</div>
+
+										<div class="span4" id="fieldSettings_container_file_convert_extension">
+											<label for="fieldSettings_file_convert_extension">
+												Extension
+											</label>
+											<input type="text" class="input-block-level" id="fieldSettings_file_convert_extension" name="fieldSettings_file_convert_extension" />
+										</div>
+									</div>
+
+									<label class="checkbox">
+										<input type="checkbox" id="fieldSettings_file_convert_watermark" name="fieldSettings_file_convert_watermark"> Watermark
+									</label>
+									<div class="row-fluid">
+										<div class="span5">
+											<label for="fieldSettings_file_watermark_text">
+												Text
+											</label>
+											<input type="text" class="input-block-level" id="fieldSettings_file_watermark_text" name="fieldSettings_file_watermark_text" />
+
+											<label for="fieldSettings_file_watermark_text_location">
+												Location
+											</label>
+											<select class="input-block-level" id="fieldSettings_file_watermark_text_location" name="fieldSettings_file_watermark_text_location">
+												{local var="imageLocations"}
+											</select>
+										</div>
+
+										<div class="span5 offset2">
+											<label for="fieldSettings_file_watermark_image">
+												Image
+											</label>
+											<input type="text" class="input-block-level" id="fieldSettings_file_watermark_image" name="fieldSettings_file_watermark_image" />
+
+											<label for="fieldSettings_file_watermark_image_location">
+												Location
+											</label>
+											<select class="input-block-level" id="fieldSettings_file_watermark_image_location" name="fieldSettings_file_watermark_image_location">
+												{local var="imageLocations"}
+											</select>
+										</div>
+									</div>
+
+									<label class="checkbox">
+										<input type="checkbox" id="fieldSettings_file_convert_border" name="fieldSettings_file_convert_border"> Border
+									</label>
+									<div class="row-fluid">
+										<div class="span4">
+											<label for="fieldSettings_file_border_height">
+												Height
+												<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Border width of the top and bottom."></i>
+											</label>
+											<input type="number" class="input-block-level" id="fieldSettings_file_border_height" name="fieldSettings_file_border_height" min="0" />
+										</div>
+
+										<div class="span4">
+											<label for="fieldSettings_file_border_width">
+												Width
+												<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Border width of the left and right."></i>
+											</label>
+											<input type="number" class="input-block-level" id="fieldSettings_file_border_width" name="fieldSettings_file_border_width" min="0" />
+										</div>
+
+										<div class="span4">
+											<label for="fieldSettings_file_border_color">
+												Color
+											</label>
+											<input type="color" class="input-block-level" id="fieldSettings_file_border_color" name="fieldSettings_file_border_color" />
+										</div>
+									</div>
+
+								</div>
+
 								<div class="control-group well well-small" id="fieldSettings_container_file_thumbnail">
 									<label for="fieldSettings_file_thumbnail">
 										Thumbnail Options

@@ -368,6 +368,7 @@ function showFieldSettings(fullID) {
 
 			$("#fieldSettings_file_options_multipleFiles").prop("checked",($("#multipleFiles_"+id).val()==='true'));
 			$("#fieldSettings_file_options_ocr").prop("checked",($("#ocr_"+id).val()==='true'));
+			$("#fieldSettings_file_options_convert").prop("checked",($("#convert_"+id).val()==='true')).change();
 			$("#fieldSettings_file_options_thumbnail").prop("checked",($("#thumbnail_"+id).val()==='true')).change();
 			$("#fieldSettings_file_thumbnail_height").val($("#thumbnailHeight_"+id).val());
 			$("#fieldSettings_file_thumbnail_width").val($("#thumbnailWidth_"+id).val());
@@ -765,6 +766,67 @@ function fieldSettingsBindings() {
 		$("#formPreview .well :input[name^=ocr_]").val($(this).is(":checked"));
 	});
 
+	$("#fieldSettings_file_options_convert").change(function() {
+		$("#formPreview .well :input[name^=convert_]").val($(this).is(":checked"));
+
+		if ($(this).is(":checked")) {
+			$("#fieldSettings_container_file_convert").show();
+		}
+		else {
+			$("#fieldSettings_container_file_convert").hide();
+		}
+	});
+
+	$("#fieldSettings_file_convert_watermark").change(function() {
+		$("#formPreview .well :input[name^=watermark_]").val($(this).is(":checked"));
+
+		if ($(this).is(":checked")) {
+			$(this).parent().next().show();
+		}
+		else {
+			$(this).parent().next().hide();
+		}
+	}).change();
+
+	$("#fieldSettings_file_watermark_text").keyup(function() {
+		$("#formPreview .well :input[name^=watermarkText_]").val($(this).val());
+	});
+
+	$("#fieldSettings_file_watermark_text_location").change(function() {
+		$("#formPreview .well :input[name^=watermarkTextLocation_]").val($(this).val());
+	});
+
+	$("#fieldSettings_file_watermark_image").keyup(function() {
+		$("#formPreview .well :input[name^=watermarkImage_]").val($(this).val());
+	});
+
+	$("#fieldSettings_file_watermark_image_location").change(function() {
+		$("#formPreview .well :input[name^=watermarkImageLocation_]").val($(this).val());
+	});
+
+	$("#fieldSettings_file_convert_border").change(function() {
+		$("#formPreview .well :input[name^=border_]").val($(this).is(":checked"));
+
+		if ($(this).is(":checked")) {
+			$(this).parent().next().show();
+		}
+		else {
+			$(this).parent().next().hide();
+		}
+	}).change();
+
+	$("#fieldSettings_file_border_height").change(function() {
+		$("#formPreview .well :input[name^=borderHeight_]").val($(this).val());
+	});
+
+	$("#fieldSettings_file_border_width").change(function() {
+		$("#formPreview .well :input[name^=borderWidth_]").val($(this).val());
+	});
+
+	$("#fieldSettings_file_border_color").change(function() {
+		$("#formPreview .well :input[name^=borderColor_]").val($(this).val());
+	});
+
 	$("#fieldSettings_file_options_thumbnail").change(function() {
 		$("#formPreview .well :input[name^=thumbnail_]").val($(this).is(":checked"));
 
@@ -1143,6 +1205,16 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'" value="'+((vals['allowedExtensions']!=undefined)?vals['allowedExtensions']:'jpg%,%png%,%gif')+'">';
 			output += '<input type="hidden" id="multipleFiles_'+id+'" name="multipleFiles_'+id+'" value="'+((vals['multipleFiles']!=undefined)?vals['multipleFiles']:'')+'">';
 			output += '<input type="hidden" id="ocr_'+id+'" name="ocr_'+id+'" value="'+((vals['ocr']!=undefined)?vals['ocr']:'')+'">';
+			output += '<input type="hidden" id="convert_'+id+'" name="convert_'+id+'" value="'+((vals['convert']!=undefined)?vals['convert']:'')+'">';
+			output += '<input type="hidden" id="watermark_'+id+'" name="watermark_'+id+'" value="'+((vals['watermark']!=undefined)?vals['watermark']:'')+'">';
+			output += '<input type="hidden" id="watermarkText_'+id+'" name="watermarkText_'+id+'" value="'+((vals['watermarkText']!=undefined)?vals['watermarkText']:'')+'">';
+			output += '<input type="hidden" id="watermarkTextLocation_'+id+'" name="watermarkTextLocation_'+id+'" value="'+((vals['watermarkTextLocation']!=undefined)?vals['watermarkTextLocation']:'')+'">';
+			output += '<input type="hidden" id="watermarkImage_'+id+'" name="watermarkImage_'+id+'" value="'+((vals['watermarkImage']!=undefined)?vals['watermarkImage']:'')+'">';
+			output += '<input type="hidden" id="watermarkImageLocation_'+id+'" name="watermarkImageLocation_'+id+'" value="'+((vals['watermarkImageLocation']!=undefined)?vals['watermarkImageLocation']:'')+'">';
+			output += '<input type="hidden" id="border_'+id+'" name="border_'+id+'" value="'+((vals['border']!=undefined)?vals['border']:'')+'">';
+			output += '<input type="hidden" id="borderHeight_'+id+'" name="borderHeight_'+id+'" value="'+((vals['borderHeight']!=undefined)?vals['borderHeight']:'')+'">';
+			output += '<input type="hidden" id="borderWidth_'+id+'" name="borderWidth_'+id+'" value="'+((vals['borderWidth']!=undefined)?vals['borderWidth']:'')+'">';
+			output += '<input type="hidden" id="borderColor_'+id+'" name="borderColor_'+id+'" value="'+((vals['borderColor']!=undefined)?vals['borderColor']:'')+'">';
 			output += '<input type="hidden" id="thumbnail_'+id+'" name="thumbnail_'+id+'" value="'+((vals['thumbnail']!=undefined)?vals['thumbnail']:'')+'">';
 			output += '<input type="hidden" id="thumbnailHeight_'+id+'" name="thumbnailHeight_'+id+'" value="'+((vals['thumbnailHeight']!=undefined)?vals['thumbnailHeight']:'')+'">';
 			output += '<input type="hidden" id="thumbnailWidth_'+id+'" name="thumbnailWidth_'+id+'" value="'+((vals['thumbnailWidth']!=undefined)?vals['thumbnailWidth']:'')+'">';
