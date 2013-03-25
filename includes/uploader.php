@@ -1,6 +1,8 @@
 <?php
 require("../engineInclude.php");
 
+localVars::add("basePath","/tmp/mfcs")
+
 // Include the uploader class
 recurseInsert("includes/class.fineUploader.php","php");
 
@@ -16,13 +18,13 @@ $uploader->sizeLimit = 10 * 1024 * 1024;
 $uploader->inputName = 'qqfile';
 
 // If you want to use resume feature for uploader, specify the folder to save parts.
-$uploader->chunksFolder = '/tmp/chunks';
+$uploader->chunksFolder = localVars::get("basePath").'/chunks';
 
 // Call handleUpload() with the name of the folder, relative to PHP's getcwd()
 // $result = $uploader->handleUpload('/tmp/fineUploads');
 
 // To save the upload with a specified name, set the second parameter.
-$result = $uploader->handleUpload('/tmp/', md5(mt_rand()).'_'.$uploader->getName());
+$result = $uploader->handleUpload(localVars::get("basePath").'/originals/', md5(mt_rand()).'_'.$uploader->getName());
 
 // To return a name used for uploaded file you can use the following line.
 $result['uploadName'] = $uploader->getUploadName();
