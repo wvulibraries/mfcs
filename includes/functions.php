@@ -512,12 +512,14 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 							},
 						})
 						.on("complete", function(event,id,fileName,responseJSON) {
-							console.log(responseJSON);
+							$("#fineUploader_%s").after(\'<input type="hidden" name="%s[]" value="\'+responseJSON.uploadName+\'">\');
 						});
 				</script>',
 				htmlSanitize($field['name']),
 				(strtoupper($field['multipleFiles']) == "TRUE") ? "true" : "false",
 				implode('", "',$field['allowedExtensions']),
+				htmlSanitize($field['name']),
+				htmlSanitize($field['name']),
 				htmlSanitize($field['name'])
 				);
 
