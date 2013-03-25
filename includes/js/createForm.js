@@ -375,7 +375,7 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_file_options_thumbnail").prop("checked",($("#thumbnail_"+id).val()==='true')).change();
 			$("#fieldSettings_file_thumbnail_height").val($("#thumbnailHeight_"+id).val());
 			$("#fieldSettings_file_thumbnail_width").val($("#thumbnailWidth_"+id).val());
-			$("#fieldSettings_file_thumbnail_type").val($("#thumbnailType_"+id).val());
+			$("#fieldSettings_file_thumbnail_format").val($("#thumbnailFormat_"+id).val());
 
 			if ($("#type_"+id).val() != 'fieldset') {
 				$("#fieldset_"+id).val($("#fieldset_"+id).parents("li").parents("li").find(":input[name^=fieldset_]").val());
@@ -1236,7 +1236,7 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="thumbnail_'+id+'" name="thumbnail_'+id+'" value="'+((vals['thumbnail']!=undefined)?vals['thumbnail']:'')+'">';
 			output += '<input type="hidden" id="thumbnailHeight_'+id+'" name="thumbnailHeight_'+id+'" value="'+((vals['thumbnailHeight']!=undefined)?vals['thumbnailHeight']:'')+'">';
 			output += '<input type="hidden" id="thumbnailWidth_'+id+'" name="thumbnailWidth_'+id+'" value="'+((vals['thumbnailWidth']!=undefined)?vals['thumbnailWidth']:'')+'">';
-			output += '<input type="hidden" id="thumbnailType_'+id+'" name="thumbnailType_'+id+'" value="'+((vals['thumbnailType']!=undefined)?vals['thumbnailType']:'')+'">';
+			output += '<input type="hidden" id="thumbnailFormat_'+id+'" name="thumbnailFormat_'+id+'" value="'+((vals['thumbnailFormat']!=undefined)?vals['thumbnailFormat']:'')+'">';
 			break;
 
 		default:

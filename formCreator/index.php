@@ -638,10 +638,12 @@ $engine->eTemplate("include","header");
 											<input type="number" class="input-block-level" id="fieldSettings_file_thumbnail_width" name="fieldSettings_file_thumbnail_width" min="0" />
 										</span>
 										<span class="span4">
-											<label for="fieldSettings_file_thumbnail_type">
+											<label for="fieldSettings_file_thumbnail_format">
 												Type
 											</label>
-											<input type="text" class="input-block-level" id="fieldSettings_file_thumbnail_type" name="fieldSettings_file_thumbnail_type" min="1" />
+											<select class="input-block-level" id="fieldSettings_file_thumbnail_format" name="fieldSettings_file_thumbnail_format">
+												{local var="conversionFormats"}
+											</select>
 										</span>
 									</div>
 								</div>
