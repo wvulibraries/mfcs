@@ -98,11 +98,21 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	}
 }
 
+$tmp = NULL;
+foreach (array("top","middle","bottom") as $h) {
+	foreach (array("left","center","right") as $w) {
+		$tmp .= '<option value="'.$h.'|'.$w.'">'.ucfirst($h).' '.ucfirst($w).'</option>';
+	}
+}
+localVars::add("imageLocations",$tmp);
+unset($tmp);
+
 $tmp = '<option value="">None</option>';
 foreach (validate::validationMethods() as $val => $text) {
 	$tmp .= '<option value="'.$val.'">'.$text.'</option>';
 }
 localVars::add("validationTypes",$tmp);
+unset($tmp);
 
 // Get list of forms for choices dropdown
 $sql = sprintf("SELECT ID, `title` FROM `%s` WHERE metadata='1' ORDER BY `title`",
