@@ -533,16 +533,16 @@ $engine->eTemplate("include","header");
 									<div class="row-fluid">
 										<div class="span4" id="fieldSettings_container_file_convert_height">
 											<label for="fieldSettings_file_convert_height">
-												Height
+												Max Height
 											</label>
-											<input type="number" class="input-block-level" id="fieldSettings_file_convert_height" name="fieldSettings_file_convert_height" min="0" />
+											<input type="number" class="input-block-level" id="fieldSettings_file_convert_height" name="fieldSettings_file_convert_height" min="1" />
 										</div>
 
 										<div class="span4" id="fieldSettings_container_file_convert_width">
 											<label for="fieldSettings_file_convert_width">
-												Width
+												Max Width
 											</label>
-											<input type="number" class="input-block-level" id="fieldSettings_file_convert_width" name="fieldSettings_file_convert_width" min="0" />
+											<input type="number" class="input-block-level" id="fieldSettings_file_convert_width" name="fieldSettings_file_convert_width" min="1" />
 										</div>
 
 										<div class="span4" id="fieldSettings_container_file_convert_extension">
