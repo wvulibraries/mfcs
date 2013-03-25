@@ -1052,4 +1052,37 @@ function dumpStuff($formID,$projectID,$increment=TRUE) {
 
 	return TRUE;
 }
+
+
+/**
+ * Checks if the path exists and attempts to correct problems.
+ *
+ * @param string $path
+ * @return bool
+ * @author Scott Blake
+ **/
+function prepareUploadDir($path) {
+	$permissions = 0755;
+
+	if (!is_dir($path)) {
+		mkdir($path.'/originals', $permissions, TRUE);
+		mkdir($path.'/chunks',    $permissions, TRUE);
+		mkdir($path.'/thumbs',    $permissions, TRUE);
+		mkdir($path.'/converted', $permissions, TRUE);
+	}
+	else if (!is_writable($path)) {
+		if (chmod($path, $permissions)) {
+			chmod($path.'/originals', $permissions);
+			chmod($path.'/chunks',    $permissions);
+			chmod($path.'/thumbs',    $permissions);
+			chmod($path.'/converted', $permissions);
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	return TRUE;
+}
+
 ?>
