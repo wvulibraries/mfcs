@@ -369,6 +369,9 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_file_options_multipleFiles").prop("checked",($("#multipleFiles_"+id).val()==='true'));
 			$("#fieldSettings_file_options_ocr").prop("checked",($("#ocr_"+id).val()==='true'));
 			$("#fieldSettings_file_options_convert").prop("checked",($("#convert_"+id).val()==='true')).change();
+			$("#fieldSettings_file_convert_height").val($("#convertHeight_"+id).val());
+			$("#fieldSettings_file_convert_width").val($("#convertWidth_"+id).val());
+			$("#fieldSettings_file_convert_exension").val($("#convertExtension_"+id).val());
 			$("#fieldSettings_file_options_thumbnail").prop("checked",($("#thumbnail_"+id).val()==='true')).change();
 			$("#fieldSettings_file_thumbnail_height").val($("#thumbnailHeight_"+id).val());
 			$("#fieldSettings_file_thumbnail_width").val($("#thumbnailWidth_"+id).val());
@@ -775,6 +778,18 @@ function fieldSettingsBindings() {
 		else {
 			$("#fieldSettings_container_file_convert").hide();
 		}
+	});
+
+	$("#fieldSettings_file_convert_height").change(function() {
+		$("#formPreview .well :input[name^=convertHeight_]").val($(this).val());
+	});
+
+	$("#fieldSettings_file_convert_width").change(function() {
+		$("#formPreview .well :input[name^=convertWidth_]").val($(this).val());
+	});
+
+	$("#fieldSettings_file_convert_extension").keyup(function() {
+		$("#formPreview .well :input[name^=convertExtension_]").val($(this).val());
 	});
 
 	$("#fieldSettings_file_convert_watermark").change(function() {
@@ -1206,6 +1221,9 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="multipleFiles_'+id+'" name="multipleFiles_'+id+'" value="'+((vals['multipleFiles']!=undefined)?vals['multipleFiles']:'')+'">';
 			output += '<input type="hidden" id="ocr_'+id+'" name="ocr_'+id+'" value="'+((vals['ocr']!=undefined)?vals['ocr']:'')+'">';
 			output += '<input type="hidden" id="convert_'+id+'" name="convert_'+id+'" value="'+((vals['convert']!=undefined)?vals['convert']:'')+'">';
+			output += '<input type="hidden" id="convertHeight_'+id+'" name="convertHeight_'+id+'" value="'+((vals['convertHeight']!=undefined)?vals['convertHeight']:'')+'">';
+			output += '<input type="hidden" id="convertWidth_'+id+'" name="convertWidth_'+id+'" value="'+((vals['convertWidth']!=undefined)?vals['convertWidth']:'')+'">';
+			output += '<input type="hidden" id="convertExtension_'+id+'" name="convertExtension_'+id+'" value="'+((vals['convertExtension']!=undefined)?vals['convertExtension']:'')+'">';
 			output += '<input type="hidden" id="watermark_'+id+'" name="watermark_'+id+'" value="'+((vals['watermark']!=undefined)?vals['watermark']:'')+'">';
 			output += '<input type="hidden" id="watermarkText_'+id+'" name="watermarkText_'+id+'" value="'+((vals['watermarkText']!=undefined)?vals['watermarkText']:'')+'">';
 			output += '<input type="hidden" id="watermarkTextLocation_'+id+'" name="watermarkTextLocation_'+id+'" value="'+((vals['watermarkTextLocation']!=undefined)?vals['watermarkTextLocation']:'')+'">';
