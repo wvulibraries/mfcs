@@ -99,6 +99,13 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 }
 
 $tmp = NULL;
+foreach (Imagick::queryFormats() as $format) {
+	$tmp .= '<option value="'.$format.'">'.$format.'</option>';
+}
+localVars::add("conversionFormats",$tmp);
+unset($tmp);
+
+$tmp = NULL;
 foreach (array("top","middle","bottom") as $h) {
 	foreach (array("left","center","right") as $w) {
 		$tmp .= '<option value="'.$h.'|'.$w.'">'.ucfirst($h).' '.ucfirst($w).'</option>';
@@ -539,10 +546,12 @@ $engine->eTemplate("include","header");
 										</div>
 
 										<div class="span4" id="fieldSettings_container_file_convert_extension">
-											<label for="fieldSettings_file_convert_extension">
-												Extension
+											<label for="fieldSettings_file_convert_format">
+												Format
 											</label>
-											<input type="text" class="input-block-level" id="fieldSettings_file_convert_extension" name="fieldSettings_file_convert_extension" />
+											<select class="input-block-level" id="fieldSettings_file_convert_format" name="fieldSettings_file_convert_format">
+												{local var="conversionFormats"}
+											</select>
 										</div>
 									</div>
 
