@@ -14,9 +14,6 @@ $uploader = new qqFileUploader();
 // Specify the list of valid extensions, ex. array("jpeg", "xml", "bmp")
 $uploader->allowedExtensions = array();
 
-// Specify max file size in bytes.
-$uploader->sizeLimit = 10 * 1024 * 1024;
-
 // Specify the input name set in the javascript.
 $uploader->inputName = 'qqfile';
 
