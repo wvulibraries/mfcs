@@ -577,7 +577,7 @@ $engine->eTemplate("include","header");
 											<label for="fieldSettings_file_watermark_image">
 												Image
 											</label>
-											<input type="text" class="input-block-level" id="fieldSettings_file_watermark_image" name="fieldSettings_file_watermark_image" />
+											<input type="text" class="input-block-level" id="fieldSettings_file_watermark_image" name="fieldSettings_file_watermark_image" placeholder="Image URL" />
 
 											<label for="fieldSettings_file_watermark_image_location">
 												Location

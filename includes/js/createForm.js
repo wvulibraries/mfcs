@@ -372,6 +372,15 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_file_convert_height").val($("#convertHeight_"+id).val());
 			$("#fieldSettings_file_convert_width").val($("#convertWidth_"+id).val());
 			$("#fieldSettings_file_convert_format").val($("#convertFormat_"+id).val());
+			$("#fieldSettings_file_convert_watermark").prop("checked",($("#watermark_"+id).val()==='true')).change();
+			$("#fieldSettings_file_watermark_text").val($("#watermarkText_"+id).val());
+			$("#fieldSettings_file_watermark_text_location").val($("#watermarkTextLocation_"+id).val());
+			$("#fieldSettings_file_watermark_image").val($("#watermarkImage_"+id).val());
+			$("#fieldSettings_file_watermark_image_location").val($("#watermarkImageLocation_"+id).val());
+			$("#fieldSettings_file_convert_border").prop("checked",($("#border_"+id).val()==='true')).change();
+			$("#fieldSettings_file_border_height").val($("#borderHeight_"+id).val());
+			$("#fieldSettings_file_border_width").val($("#borderWidth_"+id).val());
+			$("#fieldSettings_file_border_color").val($("#borderColor_"+id).val());
 			$("#fieldSettings_file_options_thumbnail").prop("checked",($("#thumbnail_"+id).val()==='true')).change();
 			$("#fieldSettings_file_thumbnail_height").val($("#thumbnailHeight_"+id).val());
 			$("#fieldSettings_file_thumbnail_width").val($("#thumbnailWidth_"+id).val());
