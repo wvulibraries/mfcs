@@ -496,6 +496,12 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 									engineCSRFCheck: "{engine name="csrf" insert="false"}",
 								}
 							},
+							failedUploadTextDisplay: {
+							  mode: "custom",
+							  maxChars: 40,
+							  responseProperty: "error",
+							  enableTooltip: true
+							},
 							multiple: %s,
 							validation: {
 								allowedExtensions: ["%s"],
