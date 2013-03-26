@@ -275,19 +275,6 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 		}
 	}
 
-	// print "<pre>";
-	// var_dump($form);
-	// print "</pre>";
-
-	// print "<pre>";
-	// var_dump($fields);
-	// print "</pre>";
-
-	// print "<pre>";
-	// var_dump($object);
-	// print "</pre>";
-
-
 	$output = sprintf('<form action="%s?id=%s&amp;formID=%s" method="%s">',
 		$_SERVER['PHP_SELF'],
 		htmlSanitize($projectID),
@@ -736,6 +723,10 @@ function submitForm($project,$formID,$objectID=NULL) {
 			}
 		}
 
+		if (strtolower($field['type']) == "file") {
+			processUploads($field,$engine->cleanPost['RAW'][$field['name']]);
+		}
+
 		$values[$field['name']] = $engine->cleanPost['RAW'][$field['name']];
 
 	}
@@ -763,7 +754,6 @@ function submitForm($project,$formID,$objectID=NULL) {
 			);
 	}
 	else {
-
 		// place old version into revision control
 		$return = $rcs->insertRevision($objectID);
 
@@ -787,8 +777,6 @@ function submitForm($project,$formID,$objectID=NULL) {
 			time(),
 			$engine->openDB->escape($objectID)
 			);
-
-
 	}
 
 	$sqlResult = $engine->openDB->query($sql);
@@ -836,7 +824,6 @@ function submitForm($project,$formID,$objectID=NULL) {
 			errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
 			return FALSE;
 		}
-
 	}
 
 
@@ -844,7 +831,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 	// if it is an object form (not a metadata form)
 	// do the IDNO stuff
 	if ($form['metadata'] == "0") {
-			// increment the project counter
+		// increment the project counter
 		$sql       = sprintf("UPDATE `projects` SET `count`=`count`+'1' WHERE `ID`='%s'",
 			$engine->openDB->escape($project['ID'])
 			);
@@ -878,7 +865,6 @@ function submitForm($project,$formID,$objectID=NULL) {
 			errorHandle::newError(__METHOD__."() - updating the IDNO: ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-
 	}
 
 	if ($newObject === FALSE) {
@@ -899,7 +885,6 @@ function submitForm($project,$formID,$objectID=NULL) {
 			errorHandle::newError(__METHOD__."() - removing from duplicate table: ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-
 	}
 
 		// insert all the fields into the dupeMatching table
@@ -921,8 +906,6 @@ function submitForm($project,$formID,$objectID=NULL) {
 			return FALSE;
 		}
 	}
-
-
 
 
 	// end transactions
@@ -965,7 +948,6 @@ function isDupe($formID,$projectID=NULL,$field,$value) {
 	else {
 		return FALSE;
 	}
-
 }
 
 function getFormIDInfo($formID) {
@@ -1091,4 +1073,116 @@ function prepareUploadDir($path) {
 	return TRUE;
 }
 
+/**
+ * Performs necessary conversions, thumbnails, etc.
+ *
+ * @param array $field
+ * @param array $filenames
+ * @return bool
+ * @author Scott Blake
+ **/
+function processUploads($field,$filenames) {
+	$engine   = EngineAPI::singleton();
+	$basePath = "/tmp/mfcs";
+
+	foreach ($filenames as $filename) {
+		$image = new Imagick();
+		$image->readImage($basePath.DIRECTORY_SEPARATOR."originals".DIRECTORY_SEPARATOR.$filename);
+
+		if (isset($field['convert']) && str2bool($field['convert'])) {
+			// Convert format
+			$image->setImageFormat($field['convertFormat']);
+
+			// Resize image
+			$image->scaleImage($field['convertWidth'], $field['convertHeight'], TRUE);
+
+			// Get new dimentions
+			$iWidth  = $image->getImageWidth();
+			$iHeight = $image->getImageHeight();
+
+			// Create a thumbnail
+			if (isset($field['thumbnail']) && str2bool($field['thumbnail'])) {
+				// Make a copy of the original
+				$thumb = $image->clone();
+
+				// Change the format
+				$thumb->setImageFormat($field['thumbnailFormat']);
+
+				// Scale to thumbnail size, constraining proportions
+				$thumb->thumbnailImage(
+					$field['thumbnailWidth'],
+					$field['thumbnailHeight'],
+					TRUE
+					);
+
+				// Store thumbnail
+				$thumb->writeImage($basePath.DIRECTORY_SEPARATOR."thumbs".DIRECTORY_SEPARATOR.basename($filename).".".$thumb->getImageFormat());
+			}
+
+			// Add a watermark
+			if (isset($field['watermark']) && str2bool($field['watermark'])) {
+				$fh = fopen($field['watermarkImage'], "rb");
+
+				$watermark = new Imagick();
+				$watermark->readImageFile($fh); // Full URL
+				// $watermark->readImage("wvc.png"); // Uses path relative to current file
+
+				// Resize the watermark
+				$watermark->scaleImage($iWidth/1.5, $iHeight/1.5, TRUE);
+
+				// Get watermark size
+				$wHeight = $watermark->getImageHeight();
+				$wWidth  = $watermark->getImageWidth();
+
+				list($positionHeight,$positionWidth) = explode("|",$field['watermarkImageLocation']);
+
+				// calculate the position
+				switch ($positionHeight) {
+					case 'top':
+						$y = 0;
+						break;
+
+					case 'bottom':
+						$y = $iHeight - $wHeight;
+						break;
+
+					case 'middle':
+					default:
+						$y = ($iHeight - $wHeight) / 2;
+						break;
+				}
+
+				switch ($positionWidth) {
+					case 'left':
+						$x = 0;
+						break;
+
+					case 'right':
+						$x = $iWidth - $wWidth;
+						break;
+
+					case 'center':
+					default:
+						$x = ($iWidth - $wWidth) / 2;
+						break;
+				}
+
+				// Add watermark to image
+				$image->compositeImage($watermark, Imagick::COMPOSITE_OVER, $x, $y);
+			}
+
+			// Add a border
+			if (isset($field['border']) && str2bool($field['border'])) {
+				$image->borderImage(
+					$field['borderColor'],
+					$field['borderWidth'],
+					$field['borderHeight']
+					);
+			}
+
+			// Store image
+			$image->writeImage($basePath.DIRECTORY_SEPARATOR."converted".DIRECTORY_SEPARATOR.basename($filename).".".$image->getImageFormat());
+		}
+	}
+}
 ?>
