@@ -559,26 +559,13 @@ $engine->eTemplate("include","header");
 										<input type="checkbox" id="fieldSettings_file_convert_watermark" name="fieldSettings_file_convert_watermark"> Watermark
 									</label>
 									<div class="row-fluid">
-										<div class="span5">
-											<label for="fieldSettings_file_watermark_text">
-												Text
-											</label>
-											<input type="text" class="input-block-level" id="fieldSettings_file_watermark_text" name="fieldSettings_file_watermark_text" />
-
-											<label for="fieldSettings_file_watermark_text_location">
-												Location
-											</label>
-											<select class="input-block-level" id="fieldSettings_file_watermark_text_location" name="fieldSettings_file_watermark_text_location">
-												{local var="imageLocations"}
-											</select>
-										</div>
-
-										<div class="span5 offset2">
+										<div class="span6">
 											<label for="fieldSettings_file_watermark_image">
 												Image
 											</label>
 											<input type="text" class="input-block-level" id="fieldSettings_file_watermark_image" name="fieldSettings_file_watermark_image" placeholder="Image URL" />
-
+										</div>
+										<div class="span6">
 											<label for="fieldSettings_file_watermark_image_location">
 												Location
 											</label>

@@ -373,8 +373,6 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_file_convert_width").val($("#convertWidth_"+id).val());
 			$("#fieldSettings_file_convert_format").val($("#convertFormat_"+id).val());
 			$("#fieldSettings_file_convert_watermark").prop("checked",($("#watermark_"+id).val()==='true')).change();
-			$("#fieldSettings_file_watermark_text").val($("#watermarkText_"+id).val());
-			$("#fieldSettings_file_watermark_text_location").val($("#watermarkTextLocation_"+id).val());
 			$("#fieldSettings_file_watermark_image").val($("#watermarkImage_"+id).val());
 			$("#fieldSettings_file_watermark_image_location").val($("#watermarkImageLocation_"+id).val());
 			$("#fieldSettings_file_convert_border").prop("checked",($("#border_"+id).val()==='true')).change();
@@ -812,14 +810,6 @@ function fieldSettingsBindings() {
 		}
 	}).change();
 
-	$("#fieldSettings_file_watermark_text").keyup(function() {
-		$("#formPreview .well :input[name^=watermarkText_]").val($(this).val());
-	});
-
-	$("#fieldSettings_file_watermark_text_location").change(function() {
-		$("#formPreview .well :input[name^=watermarkTextLocation_]").val($(this).val());
-	});
-
 	$("#fieldSettings_file_watermark_image").keyup(function() {
 		$("#formPreview .well :input[name^=watermarkImage_]").val($(this).val());
 	});
@@ -1234,8 +1224,6 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="convertWidth_'+id+'" name="convertWidth_'+id+'" value="'+((vals['convertWidth']!=undefined)?vals['convertWidth']:'')+'">';
 			output += '<input type="hidden" id="convertFormat_'+id+'" name="convertFormat_'+id+'" value="'+((vals['convertFormat']!=undefined)?vals['convertFormat']:'')+'">';
 			output += '<input type="hidden" id="watermark_'+id+'" name="watermark_'+id+'" value="'+((vals['watermark']!=undefined)?vals['watermark']:'')+'">';
-			output += '<input type="hidden" id="watermarkText_'+id+'" name="watermarkText_'+id+'" value="'+((vals['watermarkText']!=undefined)?vals['watermarkText']:'')+'">';
-			output += '<input type="hidden" id="watermarkTextLocation_'+id+'" name="watermarkTextLocation_'+id+'" value="'+((vals['watermarkTextLocation']!=undefined)?vals['watermarkTextLocation']:'')+'">';
 			output += '<input type="hidden" id="watermarkImage_'+id+'" name="watermarkImage_'+id+'" value="'+((vals['watermarkImage']!=undefined)?vals['watermarkImage']:'')+'">';
 			output += '<input type="hidden" id="watermarkImageLocation_'+id+'" name="watermarkImageLocation_'+id+'" value="'+((vals['watermarkImageLocation']!=undefined)?vals['watermarkImageLocation']:'')+'">';
 			output += '<input type="hidden" id="border_'+id+'" name="border_'+id+'" value="'+((vals['border']!=undefined)?vals['border']:'')+'">';
