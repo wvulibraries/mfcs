@@ -566,10 +566,10 @@ $engine->eTemplate("include","header");
 											<input type="text" class="input-block-level" id="fieldSettings_file_watermark_image" name="fieldSettings_file_watermark_image" placeholder="Image URL" />
 										</div>
 										<div class="span6">
-											<label for="fieldSettings_file_watermark_image_location">
+											<label for="fieldSettings_file_watermark_location">
 												Location
 											</label>
-											<select class="input-block-level" id="fieldSettings_file_watermark_image_location" name="fieldSettings_file_watermark_image_location">
+											<select class="input-block-level" id="fieldSettings_file_watermark_location" name="fieldSettings_file_watermark_location">
 												{local var="imageLocations"}
 											</select>
 										</div>

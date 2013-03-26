@@ -374,7 +374,7 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_file_convert_format").val($("#convertFormat_"+id).val());
 			$("#fieldSettings_file_convert_watermark").prop("checked",($("#watermark_"+id).val()==='true')).change();
 			$("#fieldSettings_file_watermark_image").val($("#watermarkImage_"+id).val());
-			$("#fieldSettings_file_watermark_image_location").val($("#watermarkImageLocation_"+id).val());
+			$("#fieldSettings_file_watermark_location").val($("#watermarkLocation_"+id).val());
 			$("#fieldSettings_file_convert_border").prop("checked",($("#border_"+id).val()==='true')).change();
 			$("#fieldSettings_file_border_height").val($("#borderHeight_"+id).val());
 			$("#fieldSettings_file_border_width").val($("#borderWidth_"+id).val());
@@ -814,8 +814,8 @@ function fieldSettingsBindings() {
 		$("#formPreview .well :input[name^=watermarkImage_]").val($(this).val());
 	});
 
-	$("#fieldSettings_file_watermark_image_location").change(function() {
-		$("#formPreview .well :input[name^=watermarkImageLocation_]").val($(this).val());
+	$("#fieldSettings_file_watermark_location").change(function() {
+		$("#formPreview .well :input[name^=watermarkLocation_]").val($(this).val());
 	});
 
 	$("#fieldSettings_file_convert_border").change(function() {
@@ -1225,7 +1225,7 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="convertFormat_'+id+'" name="convertFormat_'+id+'" value="'+((vals['convertFormat']!=undefined)?vals['convertFormat']:'')+'">';
 			output += '<input type="hidden" id="watermark_'+id+'" name="watermark_'+id+'" value="'+((vals['watermark']!=undefined)?vals['watermark']:'')+'">';
 			output += '<input type="hidden" id="watermarkImage_'+id+'" name="watermarkImage_'+id+'" value="'+((vals['watermarkImage']!=undefined)?vals['watermarkImage']:'')+'">';
-			output += '<input type="hidden" id="watermarkImageLocation_'+id+'" name="watermarkImageLocation_'+id+'" value="'+((vals['watermarkImageLocation']!=undefined)?vals['watermarkImageLocation']:'')+'">';
+			output += '<input type="hidden" id="watermarkLocation_'+id+'" name="watermarkLocation_'+id+'" value="'+((vals['watermarkLocation']!=undefined)?vals['watermarkLocation']:'')+'">';
 			output += '<input type="hidden" id="border_'+id+'" name="border_'+id+'" value="'+((vals['border']!=undefined)?vals['border']:'')+'">';
 			output += '<input type="hidden" id="borderHeight_'+id+'" name="borderHeight_'+id+'" value="'+((vals['borderHeight']!=undefined)?vals['borderHeight']:'')+'">';
 			output += '<input type="hidden" id="borderWidth_'+id+'" name="borderWidth_'+id+'" value="'+((vals['borderWidth']!=undefined)?vals['borderWidth']:'')+'">';
