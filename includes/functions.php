@@ -1057,6 +1057,7 @@ function prepareUploadDir($path) {
 		mkdir($path.'/chunks',    $permissions, TRUE);
 		mkdir($path.'/thumbs',    $permissions, TRUE);
 		mkdir($path.'/converted', $permissions, TRUE);
+		mkdir($path.'/ocr',       $permissions, TRUE);
 	}
 	else if (!is_writable($path)) {
 		if (chmod($path, $permissions)) {
@@ -1064,6 +1065,7 @@ function prepareUploadDir($path) {
 			chmod($path.'/chunks',    $permissions);
 			chmod($path.'/thumbs',    $permissions);
 			chmod($path.'/converted', $permissions);
+			chmod($path.'/ocr',       $permissions);
 		}
 		else {
 			return FALSE;
@@ -1182,6 +1184,17 @@ function processUploads($field,$filenames) {
 
 			// Store image
 			$image->writeImage($basePath.DIRECTORY_SEPARATOR."converted".DIRECTORY_SEPARATOR.basename($filename).".".$image->getImageFormat());
+		}
+
+		if (isset($field['ocr']) && str2bool($field['ocr'])) {
+			// Include TesseractOCR class
+			require_once 'class.tesseract_ocr.php';
+
+			$text = TesseractOCR::recognize($basePath.DIRECTORY_SEPARATOR."originals".DIRECTORY_SEPARATOR.$filename);
+
+			if (file_put_contents($basePath.DIRECTORY_SEPARATOR."ocr".DIRECTORY_SEPARATOR.basename($filename).".ocr", $text) === FALSE) {
+				errorHandle::newError("Failed to create OCR file for ".$filename,errorHandle::DEBUG);
+			}
 		}
 	}
 }
