@@ -1050,7 +1050,7 @@ function dumpStuff($formID,$projectID,$increment=TRUE) {
  * @author Scott Blake
  **/
 function prepareUploadDir($path) {
-	$permissions = 0755;
+	$permissions = 0700;
 
 	if (!is_dir($path)) {
 		mkdir($path.'/originals', $permissions, TRUE);
@@ -1086,10 +1086,10 @@ function processUploads($field,$filenames) {
 	$basePath = "/tmp/mfcs";
 
 	foreach ($filenames as $filename) {
-		$image = new Imagick();
-		$image->readImage($basePath.DIRECTORY_SEPARATOR."originals".DIRECTORY_SEPARATOR.$filename);
-
 		if (isset($field['convert']) && str2bool($field['convert'])) {
+			$image = new Imagick();
+			$image->readImage($basePath.DIRECTORY_SEPARATOR."originals".DIRECTORY_SEPARATOR.$filename);
+
 			// Convert format
 			$image->setImageFormat($field['convertFormat']);
 
@@ -1099,6 +1099,15 @@ function processUploads($field,$filenames) {
 			// Get new dimentions
 			$iWidth  = $image->getImageWidth();
 			$iHeight = $image->getImageHeight();
+
+			// Add a border
+			if (isset($field['border']) && str2bool($field['border'])) {
+				$image->borderImage(
+					$field['borderColor'],
+					$field['borderWidth'],
+					$field['borderHeight']
+					);
+			}
 
 			// Create a thumbnail
 			if (isset($field['thumbnail']) && str2bool($field['thumbnail'])) {
@@ -1134,7 +1143,7 @@ function processUploads($field,$filenames) {
 				$wHeight = $watermark->getImageHeight();
 				$wWidth  = $watermark->getImageWidth();
 
-				list($positionHeight,$positionWidth) = explode("|",$field['watermarkImageLocation']);
+				list($positionHeight,$positionWidth) = explode("|",$field['watermarkLocation']);
 
 				// calculate the position
 				switch ($positionHeight) {
@@ -1169,15 +1178,6 @@ function processUploads($field,$filenames) {
 
 				// Add watermark to image
 				$image->compositeImage($watermark, Imagick::COMPOSITE_OVER, $x, $y);
-			}
-
-			// Add a border
-			if (isset($field['border']) && str2bool($field['border'])) {
-				$image->borderImage(
-					$field['borderColor'],
-					$field['borderWidth'],
-					$field['borderHeight']
-					);
 			}
 
 			// Store image
