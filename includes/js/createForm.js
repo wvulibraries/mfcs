@@ -852,6 +852,18 @@ function fieldSettingsBindings() {
 		}
 	});
 
+	$("#fieldSettings_file_thumbnail_height").change(function() {
+		$("#formPreview .well :input[name^=thumbnailHeight_]").val($(this).val());
+	});
+
+	$("#fieldSettings_file_thumbnail_width").change(function() {
+		$("#formPreview .well :input[name^=thumbnailWidth_]").val($(this).val());
+	});
+
+	$("#fieldSettings_file_thumbnail_format").change(function() {
+		$("#formPreview .well :input[name^=thumbnailFormat_]").val($(this).val());
+	});
+
 	$("#fieldSettings_fieldset").keyup(function() {
 		$("#formPreview .well .fieldPreview legend").text($(this).val());
 		$("#formPreview .well :input[name^=fieldset_]").val($(this).val());

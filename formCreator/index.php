@@ -626,7 +626,7 @@ $engine->eTemplate("include","header");
 										</span>
 										<span class="span4">
 											<label for="fieldSettings_file_thumbnail_format">
-												Type
+												Format
 											</label>
 											<select class="input-block-level" id="fieldSettings_file_thumbnail_format" name="fieldSettings_file_thumbnail_format">
 												{local var="conversionFormats"}
