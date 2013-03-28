@@ -2,6 +2,9 @@
 include("../header.php");
 recurseInsert("acl.php","php");
 
+// Turn off EngineAPI template engine
+$engine->obCallback = FALSE;
+
 try{
     // Check for simple (stupid developer errors)
     if(!isset($engine->cleanGet['MYSQL']['objectID'])) throw new Exception('No Object ID Provided!');
