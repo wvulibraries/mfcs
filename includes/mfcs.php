@@ -34,8 +34,6 @@ class mfcs {
         if(is_readable($configFile)){
             self::$config = parse_ini_file($configFile);
         }
-
-        echo '<pre><tt>'.print_r(self::$config,true).'</tt></pre>';
     }
 
     /**
