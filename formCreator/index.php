@@ -98,11 +98,28 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	}
 }
 
+$tmp = NULL;
+foreach (Imagick::queryFormats() as $format) {
+	$tmp .= '<option value="'.$format.'">'.$format.'</option>';
+}
+localVars::add("conversionFormats",$tmp);
+unset($tmp);
+
+$tmp = NULL;
+foreach (array("top","middle","bottom") as $h) {
+	foreach (array("left","center","right") as $w) {
+		$tmp .= '<option value="'.$h.'|'.$w.'">'.ucfirst($h).' '.ucfirst($w).'</option>';
+	}
+}
+localVars::add("imageLocations",$tmp);
+unset($tmp);
+
 $tmp = '<option value="">None</option>';
 foreach (validate::validationMethods() as $val => $text) {
 	$tmp .= '<option value="'.$val.'">'.$text.'</option>';
 }
 localVars::add("validationTypes",$tmp);
+unset($tmp);
 
 // Get list of forms for choices dropdown
 $sql = sprintf("SELECT ID, `title` FROM `%s` WHERE metadata='1' ORDER BY `title`",
@@ -169,6 +186,10 @@ if (!isnull($formID)) {
 				if (isset($field['choicesOptions']) && is_array($field['choicesOptions'])) {
 					$field['choicesOptions'] = implode("%,%",$field['choicesOptions']);
 				}
+				else if (isset($field['allowedExtensions']) && is_array($field['allowedExtensions'])) {
+					$field['allowedExtensions'] = implode("%,%",$field['allowedExtensions']);
+				}
+
 				$values = json_encode($field);
 
 				if (!is_empty($field['fieldset']) && isset($fieldsets[$field['fieldset']])) {
@@ -482,7 +503,7 @@ $engine->eTemplate("include","header");
 									<label for="fieldSettings_file_allowedExtensions">
 										Allowed Extensions
 									</label>
-									<ul class="unstyled" id="fieldSettings_file_allowedExtensions"></ul>
+									<div id="fieldSettings_file_allowedExtensions"></div>
 									<span class="help-block hidden"></span>
 								</div>
 
@@ -502,6 +523,86 @@ $engine->eTemplate("include","header");
 									<label class="checkbox">
 										<input type="checkbox" id="fieldSettings_file_options_thumbnail" name="fieldSettings_file_options_thumbnail"> Create Thumbnail
 									</label>
+								</div>
+
+								<div class="control-group well well-small" id="fieldSettings_container_file_convert">
+									<label for="fieldSettings_file_convert">
+										Conversions
+									</label>
+
+									<div class="row-fluid">
+										<div class="span4" id="fieldSettings_container_file_convert_height">
+											<label for="fieldSettings_file_convert_height">
+												Max Height
+											</label>
+											<input type="number" class="input-block-level" id="fieldSettings_file_convert_height" name="fieldSettings_file_convert_height" min="1" />
+										</div>
+
+										<div class="span4" id="fieldSettings_container_file_convert_width">
+											<label for="fieldSettings_file_convert_width">
+												Max Width
+											</label>
+											<input type="number" class="input-block-level" id="fieldSettings_file_convert_width" name="fieldSettings_file_convert_width" min="1" />
+										</div>
+
+										<div class="span4" id="fieldSettings_container_file_convert_extension">
+											<label for="fieldSettings_file_convert_format">
+												Format
+											</label>
+											<select class="input-block-level" id="fieldSettings_file_convert_format" name="fieldSettings_file_convert_format">
+												{local var="conversionFormats"}
+											</select>
+										</div>
+									</div>
+
+									<label class="checkbox">
+										<input type="checkbox" id="fieldSettings_file_convert_watermark" name="fieldSettings_file_convert_watermark"> Watermark
+									</label>
+									<div class="row-fluid">
+										<div class="span6">
+											<label for="fieldSettings_file_watermark_image">
+												Image
+											</label>
+											<input type="text" class="input-block-level" id="fieldSettings_file_watermark_image" name="fieldSettings_file_watermark_image" placeholder="Image URL" />
+										</div>
+										<div class="span6">
+											<label for="fieldSettings_file_watermark_location">
+												Location
+											</label>
+											<select class="input-block-level" id="fieldSettings_file_watermark_location" name="fieldSettings_file_watermark_location">
+												{local var="imageLocations"}
+											</select>
+										</div>
+									</div>
+
+									<label class="checkbox">
+										<input type="checkbox" id="fieldSettings_file_convert_border" name="fieldSettings_file_convert_border"> Border
+									</label>
+									<div class="row-fluid">
+										<div class="span4">
+											<label for="fieldSettings_file_border_height">
+												Height
+												<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Border width of the top and bottom."></i>
+											</label>
+											<input type="number" class="input-block-level" id="fieldSettings_file_border_height" name="fieldSettings_file_border_height" min="0" />
+										</div>
+
+										<div class="span4">
+											<label for="fieldSettings_file_border_width">
+												Width
+												<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Border width of the left and right."></i>
+											</label>
+											<input type="number" class="input-block-level" id="fieldSettings_file_border_width" name="fieldSettings_file_border_width" min="0" />
+										</div>
+
+										<div class="span4">
+											<label for="fieldSettings_file_border_color">
+												Color
+											</label>
+											<input type="color" class="input-block-level" id="fieldSettings_file_border_color" name="fieldSettings_file_border_color" />
+										</div>
+									</div>
+
 								</div>
 
 								<div class="control-group well well-small" id="fieldSettings_container_file_thumbnail">
@@ -524,10 +625,12 @@ $engine->eTemplate("include","header");
 											<input type="number" class="input-block-level" id="fieldSettings_file_thumbnail_width" name="fieldSettings_file_thumbnail_width" min="0" />
 										</span>
 										<span class="span4">
-											<label for="fieldSettings_file_thumbnail_type">
-												Type
+											<label for="fieldSettings_file_thumbnail_format">
+												Format
 											</label>
-											<input type="text" class="input-block-level" id="fieldSettings_file_thumbnail_type" name="fieldSettings_file_thumbnail_type" min="1" />
+											<select class="input-block-level" id="fieldSettings_file_thumbnail_format" name="fieldSettings_file_thumbnail_format">
+												{local var="conversionFormats"}
+											</select>
 										</span>
 									</div>
 								</div>

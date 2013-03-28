@@ -136,7 +136,6 @@ function settingsBindings() {
 		if (!$(this).hasClass("well")) {
 			$("#GroupingsPreview .well").removeClass("well");
 			$(this).addClass("well well-small");
-			$("#groupingTab a[href='#groupingsSettings']").tab("show");
 			showSettings($(this).attr("id"));
 		}
 	});
@@ -178,9 +177,6 @@ function showSettings(fullID) {
 	else {
 		id       = fullID.split("_")[1];
 		var type = $("#type_"+id).val();
-
-		// Select the Settings tab
-		$("#groupingTab a[href='#groupingsSettings']").tab("show");
 
 		// Show the form
 		if (type == "grouping") {
@@ -240,7 +236,7 @@ function addNew(item) {
 	if ($(item).data("formid")) {
 		vals['formID'] = $(item).data("formid");
 	}
-console.log(vals);
+
 	// Assign an id to new li
 	var newID = 0;
 	$("#GroupingsPreview li").each(function() {

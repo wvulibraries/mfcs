@@ -104,7 +104,7 @@ $(function() {
 				obj[ field[1] ] = {};
 			}
 
-			if ($(this).is('[id^="choicesOptions_"]')) {
+			if ($(this).is('[id^="choicesOptions_"]') || $(this).is('[id^="allowedExtensions_"]')) {
 				obj[ field[1] ][ field[0] ] = {};
 				obj[ field[1] ][ field[0] ] = $(this).val().split("%,%");
 			}
@@ -296,7 +296,7 @@ function showFieldSettings(fullID) {
 					$("#fieldSettings_container_placeholder").hide();
 					break;
 
-				case 'fileupload':
+				case 'file':
 					$("#fieldSettings_container_file_allowedExtensions").show();
 					$("#fieldSettings_container_file_options").show();
 					$("#fieldSettings_container_value").hide();
@@ -368,10 +368,21 @@ function showFieldSettings(fullID) {
 
 			$("#fieldSettings_file_options_multipleFiles").prop("checked",($("#multipleFiles_"+id).val()==='true'));
 			$("#fieldSettings_file_options_ocr").prop("checked",($("#ocr_"+id).val()==='true'));
+			$("#fieldSettings_file_options_convert").prop("checked",($("#convert_"+id).val()==='true')).change();
+			$("#fieldSettings_file_convert_height").val($("#convertHeight_"+id).val());
+			$("#fieldSettings_file_convert_width").val($("#convertWidth_"+id).val());
+			$("#fieldSettings_file_convert_format").val($("#convertFormat_"+id).val());
+			$("#fieldSettings_file_convert_watermark").prop("checked",($("#watermark_"+id).val()==='true')).change();
+			$("#fieldSettings_file_watermark_image").val($("#watermarkImage_"+id).val());
+			$("#fieldSettings_file_watermark_location").val($("#watermarkLocation_"+id).val());
+			$("#fieldSettings_file_convert_border").prop("checked",($("#border_"+id).val()==='true')).change();
+			$("#fieldSettings_file_border_height").val($("#borderHeight_"+id).val());
+			$("#fieldSettings_file_border_width").val($("#borderWidth_"+id).val());
+			$("#fieldSettings_file_border_color").val($("#borderColor_"+id).val());
 			$("#fieldSettings_file_options_thumbnail").prop("checked",($("#thumbnail_"+id).val()==='true')).change();
 			$("#fieldSettings_file_thumbnail_height").val($("#thumbnailHeight_"+id).val());
 			$("#fieldSettings_file_thumbnail_width").val($("#thumbnailWidth_"+id).val());
-			$("#fieldSettings_file_thumbnail_type").val($("#thumbnailType_"+id).val());
+			$("#fieldSettings_file_thumbnail_format").val($("#thumbnailFormat_"+id).val());
 
 			if ($("#type_"+id).val() != 'fieldset') {
 				$("#fieldset_"+id).val($("#fieldset_"+id).parents("li").parents("li").find(":input[name^=fieldset_]").val());
@@ -735,13 +746,13 @@ function fieldSettingsBindings() {
 
 	$("#fieldSettings_file_allowedExtensions")
 		.on("click","button[name=add]",function() {
-			$(this).parent().parent().after(addAllowedExtension());
+			$(this).parent().after(addAllowedExtension());
 		})
 		.on("click","button[name=remove]",function() {
-			if ($(this).parent().parent().siblings().length == 0) {
+			if ($(this).parent().siblings().length == 0) {
 				$(this).siblings("button[name=add]").click();
 			}
-			$(this).parent().parent().remove();
+			$(this).parent().remove();
 
 			var vals = [];
 			$("#fieldSettings_file_allowedExtensions :input[name=fieldSettings_allowedExtension_text]").each(function() {
@@ -765,6 +776,71 @@ function fieldSettingsBindings() {
 		$("#formPreview .well :input[name^=ocr_]").val($(this).is(":checked"));
 	});
 
+	$("#fieldSettings_file_options_convert").change(function() {
+		$("#formPreview .well :input[name^=convert_]").val($(this).is(":checked"));
+
+		if ($(this).is(":checked")) {
+			$("#fieldSettings_container_file_convert").show();
+		}
+		else {
+			$("#fieldSettings_container_file_convert").hide();
+		}
+	});
+
+	$("#fieldSettings_file_convert_height").change(function() {
+		$("#formPreview .well :input[name^=convertHeight_]").val($(this).val());
+	});
+
+	$("#fieldSettings_file_convert_width").change(function() {
+		$("#formPreview .well :input[name^=convertWidth_]").val($(this).val());
+	});
+
+	$("#fieldSettings_file_convert_format").keyup(function() {
+		$("#formPreview .well :input[name^=convertFormat_]").val($(this).val());
+	});
+
+	$("#fieldSettings_file_convert_watermark").change(function() {
+		$("#formPreview .well :input[name^=watermark_]").val($(this).is(":checked"));
+
+		if ($(this).is(":checked")) {
+			$(this).parent().next().show();
+		}
+		else {
+			$(this).parent().next().hide();
+		}
+	}).change();
+
+	$("#fieldSettings_file_watermark_image").keyup(function() {
+		$("#formPreview .well :input[name^=watermarkImage_]").val($(this).val());
+	});
+
+	$("#fieldSettings_file_watermark_location").change(function() {
+		$("#formPreview .well :input[name^=watermarkLocation_]").val($(this).val());
+	});
+
+	$("#fieldSettings_file_convert_border").change(function() {
+		$("#formPreview .well :input[name^=border_]").val($(this).is(":checked"));
+
+		if ($(this).is(":checked")) {
+			$(this).parent().next().show();
+		}
+		else {
+			$(this).parent().next().hide();
+		}
+	}).change();
+
+	$("#fieldSettings_file_border_height").change(function() {
+		$("#formPreview .well :input[name^=borderHeight_]").val($(this).val());
+	});
+
+	$("#fieldSettings_file_border_width").change(function() {
+		$("#formPreview .well :input[name^=borderWidth_]").val($(this).val());
+	});
+
+	$("#fieldSettings_file_border_color").change(function() {
+		$("#formPreview .well :input[name^=borderColor_]").val($(this).val());
+	});
+
 	$("#fieldSettings_file_options_thumbnail").change(function() {
 		$("#formPreview .well :input[name^=thumbnail_]").val($(this).is(":checked"));
 
@@ -774,6 +850,18 @@ function fieldSettingsBindings() {
 		else {
 			$("#fieldSettings_container_file_thumbnail").hide();
 		}
+	});
+
+	$("#fieldSettings_file_thumbnail_height").change(function() {
+		$("#formPreview .well :input[name^=thumbnailHeight_]").val($(this).val());
+	});
+
+	$("#fieldSettings_file_thumbnail_width").change(function() {
+		$("#formPreview .well :input[name^=thumbnailWidth_]").val($(this).val());
+	});
+
+	$("#fieldSettings_file_thumbnail_format").change(function() {
+		$("#formPreview .well :input[name^=thumbnailFormat_]").val($(this).val());
 	});
 
 	$("#fieldSettings_fieldset").keyup(function() {
@@ -960,7 +1048,7 @@ function newFieldPreview(id,type) {
 				break;
 
 			case 'File Upload':
-			case 'fileupload':
+			case 'file':
 				output += '<input type="file">';
 				break;
 
@@ -1076,8 +1164,8 @@ function newFieldValues(id,type,vals) {
 			break;
 
 		case 'File Upload':
-		case 'fileupload':
-			type = vals['type'] = 'fileupload';
+		case 'file':
+			type = vals['type'] = 'file';
 			break;
 
 		case 'Field Set':
@@ -1139,14 +1227,25 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="choicesField_'+id+'" name="choicesField_'+id+'" value="'+((vals['choicesField']!=undefined)?vals['choicesField']:'')+'">';
 			break;
 
-		case 'fileupload':
+		case 'file':
 			output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'" value="'+((vals['allowedExtensions']!=undefined)?vals['allowedExtensions']:'jpg%,%png%,%gif')+'">';
 			output += '<input type="hidden" id="multipleFiles_'+id+'" name="multipleFiles_'+id+'" value="'+((vals['multipleFiles']!=undefined)?vals['multipleFiles']:'')+'">';
 			output += '<input type="hidden" id="ocr_'+id+'" name="ocr_'+id+'" value="'+((vals['ocr']!=undefined)?vals['ocr']:'')+'">';
+			output += '<input type="hidden" id="convert_'+id+'" name="convert_'+id+'" value="'+((vals['convert']!=undefined)?vals['convert']:'')+'">';
+			output += '<input type="hidden" id="convertHeight_'+id+'" name="convertHeight_'+id+'" value="'+((vals['convertHeight']!=undefined)?vals['convertHeight']:'')+'">';
+			output += '<input type="hidden" id="convertWidth_'+id+'" name="convertWidth_'+id+'" value="'+((vals['convertWidth']!=undefined)?vals['convertWidth']:'')+'">';
+			output += '<input type="hidden" id="convertFormat_'+id+'" name="convertFormat_'+id+'" value="'+((vals['convertFormat']!=undefined)?vals['convertFormat']:'')+'">';
+			output += '<input type="hidden" id="watermark_'+id+'" name="watermark_'+id+'" value="'+((vals['watermark']!=undefined)?vals['watermark']:'')+'">';
+			output += '<input type="hidden" id="watermarkImage_'+id+'" name="watermarkImage_'+id+'" value="'+((vals['watermarkImage']!=undefined)?vals['watermarkImage']:'')+'">';
+			output += '<input type="hidden" id="watermarkLocation_'+id+'" name="watermarkLocation_'+id+'" value="'+((vals['watermarkLocation']!=undefined)?vals['watermarkLocation']:'')+'">';
+			output += '<input type="hidden" id="border_'+id+'" name="border_'+id+'" value="'+((vals['border']!=undefined)?vals['border']:'')+'">';
+			output += '<input type="hidden" id="borderHeight_'+id+'" name="borderHeight_'+id+'" value="'+((vals['borderHeight']!=undefined)?vals['borderHeight']:'')+'">';
+			output += '<input type="hidden" id="borderWidth_'+id+'" name="borderWidth_'+id+'" value="'+((vals['borderWidth']!=undefined)?vals['borderWidth']:'')+'">';
+			output += '<input type="hidden" id="borderColor_'+id+'" name="borderColor_'+id+'" value="'+((vals['borderColor']!=undefined)?vals['borderColor']:'')+'">';
 			output += '<input type="hidden" id="thumbnail_'+id+'" name="thumbnail_'+id+'" value="'+((vals['thumbnail']!=undefined)?vals['thumbnail']:'')+'">';
 			output += '<input type="hidden" id="thumbnailHeight_'+id+'" name="thumbnailHeight_'+id+'" value="'+((vals['thumbnailHeight']!=undefined)?vals['thumbnailHeight']:'')+'">';
 			output += '<input type="hidden" id="thumbnailWidth_'+id+'" name="thumbnailWidth_'+id+'" value="'+((vals['thumbnailWidth']!=undefined)?vals['thumbnailWidth']:'')+'">';
-			output += '<input type="hidden" id="thumbnailType_'+id+'" name="thumbnailType_'+id+'" value="'+((vals['thumbnailType']!=undefined)?vals['thumbnailType']:'')+'">';
+			output += '<input type="hidden" id="thumbnailFormat_'+id+'" name="thumbnailFormat_'+id+'" value="'+((vals['thumbnailFormat']!=undefined)?vals['thumbnailFormat']:'')+'">';
 			break;
 
 		default:
@@ -1158,25 +1257,25 @@ function newFieldValues(id,type,vals) {
 
 function addChoice(val,def) {
 	if (val == undefined) {
-		return '<div class="input-prepend input-append">'+
+		return '<div class="row-fluid input-prepend input-append">'+
 					'<button name="default" class="btn" type="button" data-toggle="buttons-radio" title="Set this choice as the default."><i class="icon-ok"></i></button>'+
-					'<input name="fieldSettings_choices_text" class="input-block-level" type="text">'+
+					'<input name="fieldSettings_choices_text" type="text">'+
 					'<button name="add" class="btn" type="button" title="Add a choice."><i class="icon-plus"></i></button>'+
 					'<button name="remove" class="btn" type="button" title="Remove this choice."><i class="icon-remove"></i></button>'+
 				'</div>';
 	}
 	else if (def == undefined) {
-		return '<div class="input-prepend input-append">'+
+		return '<div class="row-fluid input-prepend input-append">'+
 					'<button name="default" class="btn" type="button" data-toggle="buttons-radio" title="Set this choice as the default."><i class="icon-ok"></i></button>'+
-					'<input name="fieldSettings_choices_text" class="input-block-level" type="text" value="'+val+'">'+
+					'<input name="fieldSettings_choices_text" type="text" value="'+val+'">'+
 					'<button name="add" class="btn" type="button" title="Add a choice."><i class="icon-plus"></i></button>'+
 					'<button name="remove" class="btn" type="button" title="Remove this choice."><i class="icon-remove"></i></button>'+
 				'</div>';
 	}
 
-	return '<div class="input-prepend input-append">'+
+	return '<div class="row-fluid input-prepend input-append">'+
 				'<button name="default" class="btn'+(val==def?" active":"")+'" type="button" data-toggle="buttons-radio" title="Set this choice as the default."><i class="icon-ok"></i></button>'+
-				'<input name="fieldSettings_choices_text" class="input-block-level" type="text" value="'+val+'">'+
+				'<input name="fieldSettings_choices_text" type="text" value="'+val+'">'+
 				'<button name="add" class="btn" type="button" title="Add a choice."><i class="icon-plus"></i></button>'+
 				'<button name="remove" class="btn" type="button" title="Remove this choice."><i class="icon-remove"></i></button>'+
 			'</div>';
@@ -1187,9 +1286,9 @@ function addAllowedExtension(val) {
 		val = '';
 	}
 
-	return '<li><div class="input-append">'+
-				'<input name="fieldSettings_allowedExtension_text" class="input-block-level" type="text" value="'+val+'">'+
+	return '<div class="row-fluid input-append">'+
+				'<input name="fieldSettings_allowedExtension_text" type="text" value="'+val+'">'+
 				'<button name="add" class="btn" type="button" title="Add an extension."><i class="icon-plus"></i></button>'+
 				'<button name="remove" class="btn" type="button" title="Remove this extension."><i class="icon-remove"></i></button>'+
-			'</div></li>';
+			'</div>';
 }

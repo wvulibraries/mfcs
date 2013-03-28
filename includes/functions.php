@@ -31,12 +31,12 @@ function checkProjectPermissions($id) {
 		$engine->openDB->escape($username)
 		);
 	$sqlResult = $engine->openDB->query($sql);
-	
+
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
 		return FALSE;
 	}
-	
+
 	$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
 	if ((int)$row['COUNT(permissions.ID)'] > 0) {
@@ -57,12 +57,12 @@ function getProject($projectID) {
 		$engine->openDB->escape($projectID)
 		);
 	$sqlResult = $engine->openDB->query($sql);
-	
+
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
 		return FALSE;
 	}
-	
+
 	return mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
 }
@@ -75,12 +75,12 @@ function getForm($formID) {
 		$engine->openDB->escape($formID)
 		);
 	$sqlResult = $engine->openDB->query($sql);
-	
+
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
 		return FALSE;
 	}
-	
+
 	return mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 }
 
@@ -91,12 +91,12 @@ function getObject($objectID) {
 		$engine->openDB->escape($objectID)
 		);
 	$sqlResult = $engine->openDB->query($sql);
-	
+
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
 		return FALSE;
 	}
-	
+
 	return mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 }
 
@@ -108,12 +108,12 @@ function getAllObjectsForForm($formID) {
 		$engine->openDB->escape($formID)
 		);
 	$sqlResult = $engine->openDB->query($sql);
-	
+
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - getting all objects: ".$sqlResult['error'], errorHandle::DEBUG);
 		return FALSE;
 	}
-	
+
 	$objects = array();
 	while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
@@ -121,7 +121,7 @@ function getAllObjectsForForm($formID) {
 		$objects[] = $row;
 
 	}
-	
+
 	return $objects;
 
 }
@@ -196,7 +196,7 @@ function buildProjectNavigation($projectID) {
 					);
 			}
 			$currentGroup = $item['grouping'];
-		}	
+		}
 
 		$output .= "<li>";
 		if ($item['type'] == "logout") {
@@ -275,19 +275,6 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 		}
 	}
 
-	// print "<pre>";
-	// var_dump($form);
-	// print "</pre>";
-
-	// print "<pre>";
-	// var_dump($fields);
-	// print "</pre>";
-
-	// print "<pre>";
-	// var_dump($object);
-	// print "</pre>";
-    
-
 	$output = sprintf('<form action="%s?id=%s&amp;formID=%s%s" method="%s">',
 		$_SERVER['PHP_SELF'],
 		htmlSanitize($projectID),
@@ -321,11 +308,11 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 					);
 			}
 			$currentFieldset = $field['fieldset'];
-		}	
+		}
 
 
 		// build the actual input box
-		
+
 		$output .= '<div class="">';
 
 
@@ -344,9 +331,9 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 				htmlSanitize($field['class']),
 				(!isempty($field['style']))?'style="'.htmlSanitize($field['style']).'"':"",
 				//true/false type attributes
-				(uc($field['required']) == "TRUE")?"required":"",
-				(uc($field['readonly']) == "TRUE")?"readonly":"", 
-				(uc($field['disabled']) == "TRUE")?"disabled":"",
+				(strtoupper($field['required']) == "TRUE")?"required":"",
+				(strtoupper($field['readonly']) == "TRUE")?"readonly":"",
+				(strtoupper($field['disabled']) == "TRUE")?"disabled":"",
 				(isset($object['data'][$field['name']]))?htmlSanitize($object['data'][$field['name']]):htmlSanitize($field['value'])
 				);
 
@@ -482,6 +469,62 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 			$output .= "</select>";
 
 		}
+		else if ($field['type'] == 'file') {
+            // Do we display a current file?
+            if(isset($object['data'][$field['name']])){
+                $output .= sprintf('<iframe src="fileViewer.php?objectID=%s&field=%s" width="600" height="300"></iframe>',
+                    $objectID,
+                    $field['name']
+                );
+            }
+
+			$output .= sprintf('<div id="fineUploader_%s"></div>',
+				htmlSanitize($field['name'])
+				);
+			$output .= sprintf('
+				<script type="text/javascript">
+					$("#fineUploader_%s")
+						.fineUploader({
+							request: {
+								endpoint: "{local var="siteRoot"}includes/uploader.php",
+								params: {
+									engineCSRFCheck: "{engine name="csrf" insert="false"}",
+								}
+							},
+							failedUploadTextDisplay: {
+							  mode: "custom",
+							  maxChars: 40,
+							  responseProperty: "error",
+							  enableTooltip: true
+							},
+							multiple: %s,
+							validation: {
+								allowedExtensions: ["%s"],
+							},
+							text: {
+							  uploadButton: \'<i class="icon-plus icon-white"></i> Select Files\'
+							},
+							showMessage: function(message) {
+								$("#fineUploader_%s .qq-upload-list").append(\'<li class="alert alert-error">\' + message + \'</li >\');
+							},
+							classes: {
+								success: "alert alert-success",
+								fail: "alert alert-error"
+							},
+						})
+						.on("complete", function(event,id,fileName,responseJSON) {
+							$("#fineUploader_%s").after(\'<input type="hidden" name="%s[]" value="\'+responseJSON.uploadName+\'">\');
+						});
+				</script>',
+				htmlSanitize($field['name']),
+				(strtoupper($field['multipleFiles']) == "TRUE") ? "true" : "false",
+				implode('", "',$field['allowedExtensions']),
+				htmlSanitize($field['name']),
+				htmlSanitize($field['name']),
+				htmlSanitize($field['name'])
+				);
+
+		}
 		else {
 			if ($field['type'] == "idno") {
 				if (strtolower($field['managedBy']) == "system") continue;
@@ -499,9 +542,9 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 				htmlSanitize($field['class']),
 				(!isempty($field['style']))?'style="'.htmlSanitize($field['style']).'"':"",
 				//true/false type attributes
-				(uc($field['required']) == "TRUE")?"required":"",
-				(uc($field['readonly']) == "TRUE")?"readonly":"", 
-				(uc($field['disabled']) == "TRUE")?"disabled":""
+				(strtoupper($field['required']) == "TRUE")?"required":"",
+				(strtoupper($field['readonly']) == "TRUE")?"readonly":"",
+				(strtoupper($field['disabled']) == "TRUE")?"disabled":""
 				);
 		}
 
@@ -511,7 +554,7 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 	if (!isempty($currentFieldset)) {
 		$output .= "</fieldset>";
 	}
-	
+
 	$output .= sprintf('<input type="submit" value="%s" name="%s" />',
 		htmlSanitize($form["submitButton"]),
 		"submitForm"
@@ -584,7 +627,7 @@ function buildListTable($objects,$form,$projectID) {
 
 }
 
-// NOTE: data is being saved as RAW from the array. 
+// NOTE: data is being saved as RAW from the array.
 function submitForm($project,$formID,$objectID=NULL) {
 
 	$engine = EngineAPI::singleton();
@@ -603,7 +646,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 		return FALSE;
 	}
 
-	// the form is an object form, make sure that it has an ID field defined. 
+	// the form is an object form, make sure that it has an ID field defined.
 	if ($form['metadata'] == "0") {
 		$idnoInfo = getFormIDInfo($formID);
 		if ($idnoInfo === FALSE) {
@@ -625,10 +668,10 @@ function submitForm($project,$formID,$objectID=NULL) {
 	// go through all the fields, get their values
 	foreach ($fields as $field) {
 
-		if ($field['type'] == "fieldset" || $field['type'] == "idno" || $field['disabled'] == "true") continue; 
+		if ($field['type'] == "fieldset" || $field['type'] == "idno" || $field['disabled'] == "true") continue;
 
-		if (strtolower($field['required']) == "true"           && 
-			(!isset($engine->cleanPost['RAW'][$field['name']]) || 
+		if (strtolower($field['required']) == "true"           &&
+			(!isset($engine->cleanPost['RAW'][$field['name']]) ||
 			 isempty($engine->cleanPost['RAW'][$field['name']]))
 			) {
 
@@ -683,9 +726,13 @@ function submitForm($project,$formID,$objectID=NULL) {
 				$values[$field['name']] = $object['data'][$field['name']];
 			}
 			else {
-				// grab the default value from the form. 
+				// grab the default value from the form.
 				$values[$field['name']] = $field['value'];
 			}
+		}
+
+		if (strtolower($field['type']) == "file") {
+			processUploads($field,$engine->cleanPost['RAW'][$field['name']]);
 		}
 
 		$values[$field['name']] = $engine->cleanPost['RAW'][$field['name']];
@@ -715,7 +762,6 @@ function submitForm($project,$formID,$objectID=NULL) {
 			);
 	}
 	else {
-
 		// place old version into revision control
 		$return = $rcs->insertRevision($objectID);
 
@@ -739,16 +785,14 @@ function submitForm($project,$formID,$objectID=NULL) {
 			time(),
 			$engine->openDB->escape($objectID)
 			);
-		
-
 	}
 
 	$sqlResult = $engine->openDB->query($sql);
-	
+
 	if (!$sqlResult['result']) {
 		$engine->openDB->transRollback();
 		$engine->openDB->transEnd();
-		
+
 		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
 		return FALSE;
 	}
@@ -756,14 +800,14 @@ function submitForm($project,$formID,$objectID=NULL) {
 	if ($newObject === TRUE) {
 		$objectID = $sqlResult['id'];
 	}
-	
-	// Check to see if this object already exists in the objectProjects table. If not, add it. 
+
+	// Check to see if this object already exists in the objectProjects table. If not, add it.
 	$sql       = sprintf("SELECT COUNT(*) FROM `objectProjects` WHERE `objectID`='%s' AND `projectID`='%s'",
 		$engine->openDB->escape($objectID),
 		$engine->openDB->escape($project['ID'])
 		);
 	$sqlResult = $engine->openDB->query($sql);
-	
+
 	if (!$sqlResult['result']) {
 		$engine->openDB->transRollback();
 		$engine->openDB->transEnd();
@@ -771,7 +815,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 		errorHandle::newError(__METHOD__."() - error getting count: ".$sqlResult['error'], errorHandle::DEBUG);
 		return FALSE;
 	}
-	
+
 	$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
 	if ($row['COUNT(*)'] == 0) {
@@ -780,7 +824,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 			$engine->openDB->escape($project['ID'])
 			);
 		$sqlResult = $engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			$engine->openDB->transRollback();
 			$engine->openDB->transEnd();
@@ -788,15 +832,14 @@ function submitForm($project,$formID,$objectID=NULL) {
 			errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
 			return FALSE;
 		}
-		
 	}
 
-	
+
 
 	// if it is an object form (not a metadata form)
 	// do the IDNO stuff
 	if ($form['metadata'] == "0") {
-			// increment the project counter
+		// increment the project counter
 		$sql       = sprintf("UPDATE `projects` SET `count`=`count`+'1' WHERE `ID`='%s'",
 			$engine->openDB->escape($project['ID'])
 			);
@@ -811,7 +854,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 		}
 
 			// if the idno is managed by the system get a new idno
-		if ($idnoInfo['managedBy'] == "system") { 
+		if ($idnoInfo['managedBy'] == "system") {
 			$idno = $engine->openDB->escape(getIDNO($formID,$project['ID']));
 		}
 			// the idno is managed manually
@@ -830,7 +873,6 @@ function submitForm($project,$formID,$objectID=NULL) {
 			errorHandle::newError(__METHOD__."() - updating the IDNO: ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-
 	}
 
 	if ($newObject === FALSE) {
@@ -851,7 +893,6 @@ function submitForm($project,$formID,$objectID=NULL) {
 			errorHandle::newError(__METHOD__."() - removing from duplicate table: ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-
 	}
 
 		// insert all the fields into the dupeMatching table
@@ -873,8 +914,6 @@ function submitForm($project,$formID,$objectID=NULL) {
 			return FALSE;
 		}
 	}
-	
-
 
 
 	// end transactions
@@ -913,11 +952,10 @@ function isDupe($formID,$projectID=NULL,$field,$value) {
 	}
 	else if ((INT)$sqlResult['result']['COUNT(*)'] > 0) {
 		return TRUE;
-	}	
+	}
 	else {
 		return FALSE;
 	}
-
 }
 
 function getFormIDInfo($formID) {
@@ -937,7 +975,7 @@ function getIDNO($formID,$projectID,$increment=TRUE) {
 			$engine->openDB->escape($projectID)
 			)
 		);
-	
+
 	if (!$sqlResult['result']) {
 		return FALSE;
 	}
@@ -1009,5 +1047,163 @@ function dumpStuff($formID,$projectID,$increment=TRUE) {
 	print "</pre>";
 
 	return TRUE;
+}
+
+
+/**
+ * Checks if the path exists and attempts to correct problems.
+ *
+ * @param string $path
+ * @return bool
+ * @author Scott Blake
+ **/
+function prepareUploadDir($path) {
+	$permissions = 0700;
+
+	if (!is_dir($path)) {
+		mkdir($path.'/originals', $permissions, TRUE);
+		mkdir($path.'/chunks',    $permissions, TRUE);
+		mkdir($path.'/thumbs',    $permissions, TRUE);
+		mkdir($path.'/converted', $permissions, TRUE);
+		mkdir($path.'/ocr',       $permissions, TRUE);
+	}
+	else if (!is_writable($path)) {
+		if (chmod($path, $permissions)) {
+			chmod($path.'/originals', $permissions);
+			chmod($path.'/chunks',    $permissions);
+			chmod($path.'/thumbs',    $permissions);
+			chmod($path.'/converted', $permissions);
+			chmod($path.'/ocr',       $permissions);
+		}
+		else {
+			return FALSE;
+		}
+	}
+
+	return TRUE;
+}
+
+/**
+ * Performs necessary conversions, thumbnails, etc.
+ *
+ * @param array $field
+ * @param array $filenames
+ * @return bool
+ * @author Scott Blake
+ **/
+function processUploads($field,$filenames) {
+	$engine   = EngineAPI::singleton();
+    $basePath = mfcs::config('uploadPath', '/tmp/mfcs');
+
+	foreach ($filenames as $filename) {
+		if (isset($field['convert']) && str2bool($field['convert'])) {
+			$image = new Imagick();
+			$image->readImage($basePath.DIRECTORY_SEPARATOR."originals".DIRECTORY_SEPARATOR.$filename);
+
+			// Convert format
+			$image->setImageFormat($field['convertFormat']);
+
+			// Resize image
+			$image->scaleImage($field['convertWidth'], $field['convertHeight'], TRUE);
+
+			// Get new dimentions
+			$iWidth  = $image->getImageWidth();
+			$iHeight = $image->getImageHeight();
+
+			// Add a border
+			if (isset($field['border']) && str2bool($field['border'])) {
+				$image->borderImage(
+					$field['borderColor'],
+					$field['borderWidth'],
+					$field['borderHeight']
+					);
+			}
+
+			// Create a thumbnail
+			if (isset($field['thumbnail']) && str2bool($field['thumbnail'])) {
+				// Make a copy of the original
+				$thumb = $image->clone();
+
+				// Change the format
+				$thumb->setImageFormat($field['thumbnailFormat']);
+
+				// Scale to thumbnail size, constraining proportions
+				$thumb->thumbnailImage(
+					$field['thumbnailWidth'],
+					$field['thumbnailHeight'],
+					TRUE
+					);
+
+				// Store thumbnail
+				$thumb->writeImage($basePath.DIRECTORY_SEPARATOR."thumbs".DIRECTORY_SEPARATOR.basename($filename).".".$thumb->getImageFormat());
+			}
+
+			// Add a watermark
+			if (isset($field['watermark']) && str2bool($field['watermark'])) {
+				$fh = fopen($field['watermarkImage'], "rb");
+
+				$watermark = new Imagick();
+				$watermark->readImageFile($fh); // Full URL
+				// $watermark->readImage("wvc.png"); // Uses path relative to current file
+
+				// Resize the watermark
+				$watermark->scaleImage($iWidth/1.5, $iHeight/1.5, TRUE);
+
+				// Get watermark size
+				$wHeight = $watermark->getImageHeight();
+				$wWidth  = $watermark->getImageWidth();
+
+				list($positionHeight,$positionWidth) = explode("|",$field['watermarkLocation']);
+
+				// calculate the position
+				switch ($positionHeight) {
+					case 'top':
+						$y = 0;
+						break;
+
+					case 'bottom':
+						$y = $iHeight - $wHeight;
+						break;
+
+					case 'middle':
+					default:
+						$y = ($iHeight - $wHeight) / 2;
+						break;
+				}
+
+				switch ($positionWidth) {
+					case 'left':
+						$x = 0;
+						break;
+
+					case 'right':
+						$x = $iWidth - $wWidth;
+						break;
+
+					case 'center':
+					default:
+						$x = ($iWidth - $wWidth) / 2;
+						break;
+				}
+
+				// Add watermark to image
+				$image->compositeImage($watermark, Imagick::COMPOSITE_OVER, $x, $y);
+			}
+
+			// Store image
+			$image->writeImage($basePath.DIRECTORY_SEPARATOR."converted".DIRECTORY_SEPARATOR.basename($filename).".".$image->getImageFormat());
+		}
+
+		if (isset($field['ocr']) && str2bool($field['ocr'])) {
+			// Include TesseractOCR class
+			require_once 'class.tesseract_ocr.php';
+
+			$text = TesseractOCR::recognize($basePath.DIRECTORY_SEPARATOR."originals".DIRECTORY_SEPARATOR.$filename);
+
+			if (file_put_contents($basePath.DIRECTORY_SEPARATOR."ocr".DIRECTORY_SEPARATOR.basename($filename).".ocr", $text) === FALSE) {
+				errorHandle::newError("Failed to create OCR file for ".$filename,errorHandle::DEBUG);
+			}
+		}
+	}
 }
 ?>
