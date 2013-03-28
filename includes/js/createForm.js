@@ -795,7 +795,7 @@ function fieldSettingsBindings() {
 		$("#formPreview .well :input[name^=convertWidth_]").val($(this).val());
 	});
 
-	$("#fieldSettings_file_convert_format").keyup(function() {
+	$("#fieldSettings_file_convert_format").change(function() {
 		$("#formPreview .well :input[name^=convertFormat_]").val($(this).val());
 	});
 
