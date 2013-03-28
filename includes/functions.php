@@ -288,10 +288,11 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 	// print "</pre>";
     
 
-	$output = sprintf('<form action="%s?id=%s&amp;formID=%s" method="%s">',
+	$output = sprintf('<form action="%s?id=%s&amp;formID=%s%s" method="%s">',
 		$_SERVER['PHP_SELF'],
 		htmlSanitize($projectID),
 		htmlSanitize($formID),
+		(!isnull($objectID))?';objectID='.$objectID:"";
 		"post"
 		);
 

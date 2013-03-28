@@ -74,6 +74,7 @@ try {
 		}
 	}
 	else if (isset($engine->cleanPost['MYSQL']['updateForm'])) {
+		$return = submitForm($project,$engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
 		if ($return === FALSE) {
 			errorHandle::errorMsg("Error Updating Form.");
 			throw new Exception('Error');
