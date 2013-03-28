@@ -61,3 +61,15 @@ li:hover i.icon-remove {
 #GroupingsPreview li i.icon-remove {
 	left: 9px;
 }
+div.filePreview{}
+div.filePreview.open{
+    border: 1px solid #333;
+    width: 600px;
+}
+div.filePreview div{
+    margin: 5px;
+}
+div.filePreview iframe{
+    width: 100%;
+    height: 300px;
+}
