@@ -1085,7 +1085,7 @@ function prepareUploadDir($path) {
  **/
 function processUploads($field,$filenames) {
 	$engine   = EngineAPI::singleton();
-	$basePath = "/tmp/mfcs";
+    $basePath = mfcs::config('uploadPath', '/tmp/mfcs');
 
 	foreach ($filenames as $filename) {
 		if (isset($field['convert']) && str2bool($field['convert'])) {
