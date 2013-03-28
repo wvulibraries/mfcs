@@ -469,6 +469,13 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 
 		}
 		else if ($field['type'] == 'file') {
+            // Do we display a current file?
+            if(isset($object['data'][$field['name']])){
+                $output .= sprintf('<iframe src="fileViewer.php?objectID=%s&field=%s" width="600" height="300"></iframe>',
+                    $objectID,
+                    $field['name']
+                );
+            }
 
 			$output .= sprintf('<div id="fineUploader_%s"></div>',
 				htmlSanitize($field['name'])
