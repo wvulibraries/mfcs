@@ -557,7 +557,7 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 
 	$output .= sprintf('<input type="submit" value="%s" name="%s" />',
 		htmlSanitize($form["submitButton"]),
-		"submitForm"
+        $objectID ? "updateForm" : "submitForm"
 		);
 
 	$output .= "</form>";
@@ -629,7 +629,6 @@ function buildListTable($objects,$form,$projectID) {
 
 // NOTE: data is being saved as RAW from the array.
 function submitForm($project,$formID,$objectID=NULL) {
-
 	$engine = EngineAPI::singleton();
 
 	if (isnull($objectID)) {
@@ -763,6 +762,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 	}
 	else {
 		// place old version into revision control
+        $rcs = new revisionControlSystem('objects','revisions','ID','modifiedTime');
 		$return = $rcs->insertRevision($objectID);
 
 		if ($return !== TRUE) {
@@ -776,7 +776,7 @@ function submitForm($project,$formID,$objectID=NULL) {
 		}
 
 		// insert new version
-		$sql = sprintf("UPDATE `objects` SET `parentID`='%s', `formID`='%s', `defaultProject`='%s', `data`='%s', `metadata`='%s', `modifiedTime`='%s') WHERE `ID`='%s'",
+		$sql = sprintf("UPDATE `objects` SET `parentID`='%s', `formID`='%s', `defaultProject`='%s', `data`='%s', `metadata`='%s', `modifiedTime`='%s' WHERE `ID`='%s'",
 			isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",
 			$engine->openDB->escape($formID),
 			$engine->openDB->escape($project['ID']),
