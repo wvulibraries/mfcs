@@ -1169,10 +1169,6 @@ function processUploads($field,$uploadID) {
 			// Resize image
 			$image->scaleImage($field['convertWidth'], $field['convertHeight'], TRUE);
 
-			// Get new dimentions
-			$iWidth  = $image->getImageWidth();
-			$iHeight = $image->getImageHeight();
-
 			// Add a border
 			if (isset($field['border']) && str2bool($field['border'])) {
 				$image->borderImage(
@@ -1207,14 +1203,10 @@ function processUploads($field,$uploadID) {
 
 				$watermark = new Imagick();
 				$watermark->readImageFile($fh); // Full URL
-				// $watermark->readImage("wvc.png"); // Uses path relative to current file
+				// $watermark->readImage("/path/to/file.png"); // Uses path relative to current file
 
 				// Resize the watermark
-				$watermark->scaleImage($iWidth/1.5, $iHeight/1.5, TRUE);
-
-				// Get watermark size
-				$wHeight = $watermark->getImageHeight();
-				$wWidth  = $watermark->getImageWidth();
+				$watermark->scaleImage($image->getImageWidth()/1.5, $image->getImageHeight()/1.5, TRUE);
 
 				list($positionHeight,$positionWidth) = explode("|",$field['watermarkLocation']);
 
@@ -1225,12 +1217,12 @@ function processUploads($field,$uploadID) {
 						break;
 
 					case 'bottom':
-						$y = $iHeight - $wHeight;
+						$y = $image->getImageHeight() - $watermark->getImageHeight();
 						break;
 
 					case 'middle':
 					default:
-						$y = ($iHeight - $wHeight) / 2;
+						$y = ($image->getImageHeight() - $watermark->getImageHeight()) / 2;
 						break;
 				}
 
@@ -1240,12 +1232,12 @@ function processUploads($field,$uploadID) {
 						break;
 
 					case 'right':
-						$x = $iWidth - $wWidth;
+						$x = $image->getImageWidth() - $watermark->getImageWidth();
 						break;
 
 					case 'center':
 					default:
-						$x = ($iWidth - $wWidth) / 2;
+						$x = ($image->getImageWidth() - $watermark->getImageWidth()) / 2;
 						break;
 				}
 
@@ -1265,7 +1257,7 @@ function processUploads($field,$uploadID) {
 			$text = TesseractOCR::recognize(getUploadDir('originals',$uploadID).DIRECTORY_SEPARATOR.$filename);
 
 			if (file_put_contents(getUploadDir('ocr',$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt).".txt", $text) === FALSE) {
-				errorHandle::newError("Failed to create OCR file for ".$filename,errorHandle::DEBUG);
+				errorHandle::newError("Failed to create OCR file for ".getUploadDir('originals',$uploadID).DIRECTORY_SEPARATOR.$filename,errorHandle::DEBUG);
 			}
 		}
 	}
