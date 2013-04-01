@@ -1147,6 +1147,9 @@ function processUploads($field,$uploadID) {
 			continue;
 		}
 
+		// Preserve original extension
+		$origExt = ".".pathinfo(getUploadDir("originals",$uploadID).DIRECTORY_SEPARATOR.$filename, PATHINFO_EXTENSION);
+
 		// If combine files is checked, read this image and add it to the combined object
 		if (isset($field['combine']) && str2bool($field['combine'])) {
 			if (!isset($combined)) {
@@ -1195,7 +1198,7 @@ function processUploads($field,$uploadID) {
 					);
 
 				// Store thumbnail
-				$thumb->writeImage(getUploadDir("thumbs",$uploadID).DIRECTORY_SEPARATOR.basename($filename).".".$thumb->getImageFormat());
+				$thumb->writeImage(getUploadDir("thumbs",$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt).".".strtolower($thumb->getImageFormat()));
 			}
 
 			// Add a watermark
@@ -1251,7 +1254,7 @@ function processUploads($field,$uploadID) {
 			}
 
 			// Store image
-			$image->writeImages(getUploadDir('converted',$uploadID).DIRECTORY_SEPARATOR.basename($filename).".".$image->getImageFormat(), TRUE);
+			$image->writeImages(getUploadDir('converted',$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt).".".strtolower($image->getImageFormat()), TRUE);
 		}
 
 		// Create an OCR text file
@@ -1261,7 +1264,7 @@ function processUploads($field,$uploadID) {
 
 			$text = TesseractOCR::recognize(getUploadDir('originals',$uploadID).DIRECTORY_SEPARATOR.$filename);
 
-			if (file_put_contents(getUploadDir('ocr',$uploadID).DIRECTORY_SEPARATOR.basename($filename).".txt", $text) === FALSE) {
+			if (file_put_contents(getUploadDir('ocr',$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt).".txt", $text) === FALSE) {
 				errorHandle::newError("Failed to create OCR file for ".$filename,errorHandle::DEBUG);
 			}
 		}
@@ -1270,7 +1273,7 @@ function processUploads($field,$uploadID) {
 	// Write the combined PDF to disk
 	if (isset($field['combine']) && str2bool($field['combine'])) {
 		$combined->setImageFormat('pdf');
-		$combined->writeImages(getUploadDir('combined',$uploadID).DIRECTORY_SEPARATOR.basename($filename).".".$image->getImageFormat(), TRUE);
+		$combined->writeImages(getUploadDir('combined',$uploadID).DIRECTORY_SEPARATOR."combined.".strtolower($image->getImageFormat()), TRUE);
 	}
 }
 ?>
