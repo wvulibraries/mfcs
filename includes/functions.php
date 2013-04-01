@@ -163,7 +163,7 @@ function checkFormInProject($projectID,$formID) {
 }
 
 function sortFieldsByPosition($a,$b) {
-    return strnatcmp($a['position'], $b['position']);
+	return strnatcmp($a['position'], $b['position']);
 }
 
 function buildProjectNavigation($projectID) {
@@ -470,8 +470,11 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 
 		}
 		else if ($field['type'] == 'file') {
-			$output .= sprintf('<div id="fineUploader_%s"></div>',
-				htmlSanitize($field['name'])
+			$output .= sprintf('<div id="fineUploader_%s"></div><input type="hidden" id="%s" name="%s" value="%s">',
+				htmlSanitize($field['name']),
+				htmlSanitize($field['name']),
+				htmlSanitize($field['name']),
+				md5(microtime(TRUE))
 				);
 			$output .= sprintf('
 				<script type="text/javascript">
@@ -481,6 +484,7 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 								endpoint: "{local var="siteRoot"}includes/uploader.php",
 								params: {
 									engineCSRFCheck: "{engine name="csrf" insert="false"}",
+									uploadID: $("#%s").val(),
 								}
 							},
 							failedUploadTextDisplay: {
@@ -505,14 +509,12 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 							},
 						})
 						.on("complete", function(event,id,fileName,responseJSON) {
-							$("#fineUploader_%s").after(\'<input type="hidden" name="%s[]" value="\'+responseJSON.uploadName+\'">\');
 						});
 				</script>',
 				htmlSanitize($field['name']),
+				htmlSanitize($field['name']),
 				(strtoupper($field['multipleFiles']) == "TRUE") ? "true" : "false",
 				implode('", "',$field['allowedExtensions']),
-				htmlSanitize($field['name']),
-				htmlSanitize($field['name']),
 				htmlSanitize($field['name'])
 				);
 
