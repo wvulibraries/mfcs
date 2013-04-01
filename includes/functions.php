@@ -1054,31 +1054,74 @@ function dumpStuff($formID,$projectID,$increment=TRUE) {
 
 
 /**
- * Checks if the path exists and attempts to correct problems.
+ * Returns the base path to be used when uploading files
  *
- * @param string $path
+ * @return string
+ * @author Scott Blake
+ **/
+function getBaseUploadPath() {
+	return mfcs::config('uploadPath', sys_get_temp_dir().DIRECTORY_SEPARATOR.'mfcs');
+}
+
+/**
+ * Returns the path of an upload directory given an upload id.
+ *
+ * @param string $type
+ * @return string
+ * @author Scott Blake
+ **/
+function getUploadDir($type, $uploadID) {
+	return getBaseUploadPath().DIRECTORY_SEPARATOR.$type.DIRECTORY_SEPARATOR.$uploadID;
+}
+
+/**
+ * Creates the directory structure for a given upload id.
+ *
+ * @param string $uploadID
  * @return bool
  * @author Scott Blake
  **/
-function prepareUploadDir($path) {
-	$permissions = 0700;
+function prepareUploadDirs($uploadID) {
+	$permissions = 0777;
 
-	if (!is_dir($path)) {
-		mkdir($path.'/originals', $permissions, TRUE);
-		mkdir($path.'/chunks',    $permissions, TRUE);
-		mkdir($path.'/thumbs',    $permissions, TRUE);
-		mkdir($path.'/converted', $permissions, TRUE);
-		mkdir($path.'/ocr',       $permissions, TRUE);
-	}
-	else if (!is_writable($path)) {
-		if (chmod($path, $permissions)) {
-			chmod($path.'/originals', $permissions);
-			chmod($path.'/chunks',    $permissions);
-			chmod($path.'/thumbs',    $permissions);
-			chmod($path.'/converted', $permissions);
-			chmod($path.'/ocr',       $permissions);
+	if (!is_dir(getBaseUploadPath())) {
+		if (!mkdir(getBaseUploadPath(), $permissions, TRUE)) {
+			errorHandle::newError("Failed to create directory: ".getBaseUploadPath(),errorHandle::DEBUG);
+			return FALSE;
 		}
-		else {
+	}
+	if (!is_writable(getBaseUploadPath())) {
+		errorHandle::newError('Not writable: '.getBaseUploadPath(),errorHandle::DEBUG);
+		return FALSE;
+	}
+
+	if (!is_dir(getUploadDir('originals',$uploadID))) {
+		if (!mkdir(getUploadDir('originals',$uploadID), $permissions, TRUE)) {
+			errorHandle::newError("Failed to create directory: ".getUploadDir('originals',$uploadID),errorHandle::DEBUG);
+			return FALSE;
+		}
+	}
+	if (!is_dir(getUploadDir('converted',$uploadID))) {
+		if (!mkdir(getUploadDir('converted',$uploadID), $permissions, TRUE)) {
+			errorHandle::newError("Failed to create directory: ".getUploadDir('converted',$uploadID),errorHandle::DEBUG);
+			return FALSE;
+		}
+	}
+	if (!is_dir(getUploadDir('combined',$uploadID))) {
+		if (!mkdir(getUploadDir('combined',$uploadID), $permissions, TRUE)) {
+			errorHandle::newError("Failed to create directory: ".getUploadDir('combined',$uploadID),errorHandle::DEBUG);
+			return FALSE;
+		}
+	}
+	if (!is_dir(getUploadDir('thumbs',$uploadID))) {
+		if (!mkdir(getUploadDir('thumbs',$uploadID), $permissions, TRUE)) {
+			errorHandle::newError("Failed to create directory: ".getUploadDir('thumbs',$uploadID),errorHandle::DEBUG);
+			return FALSE;
+		}
+	}
+	if (!is_dir(getUploadDir('ocr',$uploadID))) {
+		if (!mkdir(getUploadDir('ocr',$uploadID), $permissions, TRUE)) {
+			errorHandle::newError("Failed to create directory: ".getUploadDir('ocr',$uploadID),errorHandle::DEBUG);
 			return FALSE;
 		}
 	}
@@ -1090,18 +1133,32 @@ function prepareUploadDir($path) {
  * Performs necessary conversions, thumbnails, etc.
  *
  * @param array $field
- * @param array $filenames
+ * @param string $uploadID
  * @return bool
  * @author Scott Blake
  **/
-function processUploads($field,$filenames) {
-	$engine   = EngineAPI::singleton();
-    $basePath = mfcs::config('uploadPath', '/tmp/mfcs');
+function processUploads($field,$uploadID) {
+	$engine = EngineAPI::singleton();
 
-	foreach ($filenames as $filename) {
+	$files = scandir(getUploadDir('originals',$uploadID));
+	foreach ($files as $filename) {
+		// Skip these
+		if (in_array($filename, array(".",".."))) {
+			continue;
+		}
+
+		// If combine files is checked, read this image and add it to the combined object
+		if (isset($field['combine']) && str2bool($field['combine'])) {
+			if (!isset($combined)) {
+				$combined = new Imagick();
+			}
+			$combined->readImage(getUploadDir("originals",$uploadID).DIRECTORY_SEPARATOR.$filename);
+		}
+
+		// Convert uploaded files into some ofhter size/format/etc
 		if (isset($field['convert']) && str2bool($field['convert'])) {
 			$image = new Imagick();
-			$image->readImage($basePath.DIRECTORY_SEPARATOR."originals".DIRECTORY_SEPARATOR.$filename);
+			$image->readImage(getUploadDir("originals",$uploadID).DIRECTORY_SEPARATOR.$filename);
 
 			// Convert format
 			$image->setImageFormat($field['convertFormat']);
@@ -1138,7 +1195,7 @@ function processUploads($field,$filenames) {
 					);
 
 				// Store thumbnail
-				$thumb->writeImage($basePath.DIRECTORY_SEPARATOR."thumbs".DIRECTORY_SEPARATOR.basename($filename).".".$thumb->getImageFormat());
+				$thumb->writeImage(getUploadDir("thumbs",$uploadID).DIRECTORY_SEPARATOR.basename($filename).".".$thumb->getImageFormat());
 			}
 
 			// Add a watermark
@@ -1194,19 +1251,26 @@ function processUploads($field,$filenames) {
 			}
 
 			// Store image
-			$image->writeImage($basePath.DIRECTORY_SEPARATOR."converted".DIRECTORY_SEPARATOR.basename($filename).".".$image->getImageFormat());
+			$image->writeImages(getUploadDir('converted',$uploadID).DIRECTORY_SEPARATOR.basename($filename).".".$image->getImageFormat(), TRUE);
 		}
 
+		// Create an OCR text file
 		if (isset($field['ocr']) && str2bool($field['ocr'])) {
 			// Include TesseractOCR class
 			require_once 'class.tesseract_ocr.php';
 
-			$text = TesseractOCR::recognize($basePath.DIRECTORY_SEPARATOR."originals".DIRECTORY_SEPARATOR.$filename);
+			$text = TesseractOCR::recognize(getUploadDir('originals',$uploadID).DIRECTORY_SEPARATOR.$filename);
 
-			if (file_put_contents($basePath.DIRECTORY_SEPARATOR."ocr".DIRECTORY_SEPARATOR.basename($filename).".ocr", $text) === FALSE) {
+			if (file_put_contents(getUploadDir('ocr',$uploadID).DIRECTORY_SEPARATOR.basename($filename).".txt", $text) === FALSE) {
 				errorHandle::newError("Failed to create OCR file for ".$filename,errorHandle::DEBUG);
 			}
 		}
+	}
+
+	// Write the combined PDF to disk
+	if (isset($field['combine']) && str2bool($field['combine'])) {
+		$combined->setImageFormat('pdf');
+		$combined->writeImages(getUploadDir('combined',$uploadID).DIRECTORY_SEPARATOR.basename($filename).".".$image->getImageFormat(), TRUE);
 	}
 }
 ?>

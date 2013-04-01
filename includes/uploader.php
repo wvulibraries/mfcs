@@ -17,14 +17,11 @@ $uploader->allowedExtensions = array();
 // Specify the input name set in the javascript.
 $uploader->inputName = 'qqfile';
 
-// If you want to use resume feature for uploader, specify the folder to save parts.
-$uploader->chunksFolder = localVars::get("basePath").'/chunks';
-
 // Ensure directories exist and permissions set properly
-prepareUploadDir(localVars::get("basePath"));
+prepareUploadDirs($engine->cleanPost['MYSQL']['uploadID']);
 
 // To save the upload with a specified name, set the second parameter.
-$result = $uploader->handleUpload(localVars::get("basePath").'/originals', md5(mt_rand()).'_'.$uploader->getName());
+$result = $uploader->handleUpload(getUploadDir('originals',$engine->cleanPost['MYSQL']['uploadID']), $uploader->getName());
 
 // To return a name used for uploaded file you can use the following line.
 $result['uploadName'] = $uploader->getUploadName();
