@@ -536,14 +536,14 @@ $engine->eTemplate("include","header");
 									<div class="row-fluid">
 										<div class="span4" id="fieldSettings_container_file_convert_height">
 											<label for="fieldSettings_file_convert_height">
-												Max Height
+												Max Height (px)
 											</label>
 											<input type="number" class="input-block-level" id="fieldSettings_file_convert_height" name="fieldSettings_file_convert_height" min="1" />
 										</div>
 
 										<div class="span4" id="fieldSettings_container_file_convert_width">
 											<label for="fieldSettings_file_convert_width">
-												Max Width
+												Max Width (px)
 											</label>
 											<input type="number" class="input-block-level" id="fieldSettings_file_convert_width" name="fieldSettings_file_convert_width" min="1" />
 										</div>
@@ -584,7 +584,7 @@ $engine->eTemplate("include","header");
 									<div class="row-fluid">
 										<div class="span4">
 											<label for="fieldSettings_file_border_height">
-												Height
+												Height (px)
 												<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Border width of the top and bottom."></i>
 											</label>
 											<input type="number" class="input-block-level" id="fieldSettings_file_border_height" name="fieldSettings_file_border_height" min="0" />
@@ -592,7 +592,7 @@ $engine->eTemplate("include","header");
 
 										<div class="span4">
 											<label for="fieldSettings_file_border_width">
-												Width
+												Width (px)
 												<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Border width of the left and right."></i>
 											</label>
 											<input type="number" class="input-block-level" id="fieldSettings_file_border_width" name="fieldSettings_file_border_width" min="0" />
@@ -615,14 +615,14 @@ $engine->eTemplate("include","header");
 									<div class="row-fluid" id="fieldSettings_file_thumbnail">
 										<span class="span4">
 											<label for="fieldSettings_file_thumbnail_height">
-												Height
+												Height (px)
 												<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
 											</label>
 											<input type="number" class="input-block-level" id="fieldSettings_file_thumbnail_height" name="fieldSettings_file_thumbnail_height" min="0" />
 										</span>
 										<span class="span4">
 											<label for="fieldSettings_file_thumbnail_width">
-												Width
+												Width (px)
 												<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
 											</label>
 											<input type="number" class="input-block-level" id="fieldSettings_file_thumbnail_width" name="fieldSettings_file_thumbnail_width" min="0" />
