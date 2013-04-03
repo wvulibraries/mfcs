@@ -1223,7 +1223,9 @@ function processUploads($field,$uploadID) {
 					);
 
 				// Store thumbnail
-				$thumb->writeImage(getUploadDir("thumbs",$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt).".".strtolower($thumb->getImageFormat()));
+				if ($thumb->writeImage(getUploadDir("thumbs",$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt).".".strtolower($thumb->getImageFormat())) === FALSE) {
+					errorHandle::errorMsg("Failed to create thumbnail: ".$filename);
+				}
 			}
 
 			// Add a watermark
@@ -1271,11 +1273,15 @@ function processUploads($field,$uploadID) {
 				}
 
 				// Add watermark to image
-				$image->compositeImage($watermark, Imagick::COMPOSITE_OVER, $x, $y);
+				if ($image->compositeImage($watermark, Imagick::COMPOSITE_OVER, $x, $y) === FALSE) {
+					errorHandle::errorMsg("Failed to create watermark: ".$filename);
+				}
 			}
 
 			// Store image
-			$image->writeImages(getUploadDir('converted',$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt).".".strtolower($image->getImageFormat()), TRUE);
+			if ($image->writeImages(getUploadDir('converted',$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt).".".strtolower($image->getImageFormat()), TRUE) === FALSE) {
+				errorHandle::errorMsg("Failed to create image: ".$filename);
+			}
 		}
 
 		// Create an OCR text file
@@ -1286,6 +1292,7 @@ function processUploads($field,$uploadID) {
 			$text = TesseractOCR::recognize(getUploadDir('originals',$uploadID).DIRECTORY_SEPARATOR.$filename);
 
 			if (file_put_contents(getUploadDir('ocr',$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt).".txt", $text) === FALSE) {
+				errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
 				errorHandle::newError("Failed to create OCR file for ".getUploadDir('originals',$uploadID).DIRECTORY_SEPARATOR.$filename,errorHandle::DEBUG);
 			}
 		}
@@ -1304,8 +1311,8 @@ function processUploads($field,$uploadID) {
 				));
 
 			if (trim($output) !== 'Writing unmodified DCT buffer.') {
+				errorHandle::errorMsg("Failed to Create PDF: ".basename($file,"jpg")."pdf");
 				errorHandle::newError("hocr2pdf Output: ".$output,errorHandle::HIGH);
-				return FALSE;
 			}
 		}
 
@@ -1316,12 +1323,12 @@ function processUploads($field,$uploadID) {
 			));
 
 		if (!is_empty($output)) {
+			errorHandle::errorMsg("Failed to combine PDFs into single PDF.");
 			errorHandle::newError("GhostScript Output: ".$output,errorHandle::HIGH);
-			return FALSE;
 		}
 
 		// Delete all the files except "combined.pdf"
-		foreach(glob($combinedDir."*", GLOB_BRACE) AS $file) {
+		foreach(glob($combinedDir."*") AS $file) {
 			if ($file !== $combinedDir."combined.pdf") {
 				unlink($file);
 			}
