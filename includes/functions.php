@@ -1152,10 +1152,39 @@ function processUploads($field,$uploadID) {
 
 		// If combine files is checked, read this image and add it to the combined object
 		if (isset($field['combine']) && str2bool($field['combine'])) {
-			if (!isset($combined)) {
-				$combined = new Imagick();
+			// Create the hocr file
+			$output = file_put_contents(
+				getBaseUploadPath().DIRECTORY_SEPARATOR."hocr",
+				"tessedit_create_hocr 1"
+				);
+
+			if ($output === FALSE) {
+				errorHandle::newError("Failed to create hocr file.",errorHandle::HIGH);
+				return FALSE;
 			}
-			$combined->readImage(getUploadDir("originals",$uploadID).DIRECTORY_SEPARATOR.$filename);
+
+			// perform hOCR on the original uploaded file which gets stored in combined as an HTML file
+			$output = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
+				escapeshellarg(getUploadDir("originals",$uploadID).DIRECTORY_SEPARATOR.$filename),
+				escapeshellarg(getUploadDir("combined",$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt)),
+				escapeshellarg(getBaseUploadPath().DIRECTORY_SEPARATOR."hocr")
+				));
+
+			if (trim($output) !== 'Tesseract Open Source OCR Engine with Leptonica') {
+				errorHandle::newError("Tesseract Output: ".$output,errorHandle::HIGH);
+				return FALSE;
+			}
+
+			// Convert original uploaded file to jpg in preparation of final combine
+			$output = shell_exec(sprintf('convert %s %s 2>&1',
+				escapeshellarg(getUploadDir("originals",$uploadID).DIRECTORY_SEPARATOR.$filename),
+				escapeshellarg(getUploadDir("combined",$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt).".jpg")
+				));
+
+			if (!is_empty($output)) {
+				errorHandle::newError("Convert Output: ".$output,errorHandle::HIGH);
+				return FALSE;
+			}
 		}
 
 		// Convert uploaded files into some ofhter size/format/etc
@@ -1264,8 +1293,36 @@ function processUploads($field,$uploadID) {
 
 	// Write the combined PDF to disk
 	if (isset($field['combine']) && str2bool($field['combine'])) {
-		$combined->setImageFormat('pdf');
-		$combined->writeImages(getUploadDir('combined',$uploadID).DIRECTORY_SEPARATOR."combined.".strtolower($image->getImageFormat()), TRUE);
+		$combinedDir = getUploadDir("combined",$uploadID).DIRECTORY_SEPARATOR;
+
+		foreach (glob($combinedDir."*.jpg") as $file) {
+			$output = shell_exec(sprintf('hocr2pdf -i %s -s -o %s < %s 2>&1',
+				escapeshellarg($file),
+				escapeshellarg($combinedDir.basename($file,"jpg")."pdf"),
+				escapeshellarg($combinedDir.basename($file,"jpg")."html")
+				));
+
+			if (trim($output) !== 'Writing unmodified DCT buffer.') {
+				errorHandle::newError("hocr2pdf Output: ".$output,errorHandle::HIGH);
+				return FALSE;
+			}
+		}
+
+		$output = shell_exec(sprintf('gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=%s -f %s 2>&1',
+			$combinedDir."combined.pdf",
+			$combinedDir."*.pdf"
+			));
+
+		if (!is_empty($output)) {
+			errorHandle::newError("GhostScript Output: ".$output,errorHandle::HIGH);
+			return FALSE;
+		}
+
+		foreach(glob($combinedDir."*", GLOB_BRACE) AS $file) {
+			if ($file !== $combinedDir."combined.pdf") {
+				unlink($file);
+			}
+		}
 	}
 }
 ?>
