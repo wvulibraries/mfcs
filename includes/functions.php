@@ -1295,6 +1295,7 @@ function processUploads($field,$uploadID) {
 	if (isset($field['combine']) && str2bool($field['combine'])) {
 		$combinedDir = getUploadDir("combined",$uploadID).DIRECTORY_SEPARATOR;
 
+		// Combine HTML and JPG files into individual PDF files
 		foreach (glob($combinedDir."*.jpg") as $file) {
 			$output = shell_exec(sprintf('hocr2pdf -i %s -s -o %s < %s 2>&1',
 				escapeshellarg($file),
@@ -1308,6 +1309,7 @@ function processUploads($field,$uploadID) {
 			}
 		}
 
+		// Combine all PDF files in directory
 		$output = shell_exec(sprintf('gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=%s -f %s 2>&1',
 			$combinedDir."combined.pdf",
 			$combinedDir."*.pdf"
@@ -1318,6 +1320,7 @@ function processUploads($field,$uploadID) {
 			return FALSE;
 		}
 
+		// Delete all the files except "combined.pdf"
 		foreach(glob($combinedDir."*", GLOB_BRACE) AS $file) {
 			if ($file !== $combinedDir."combined.pdf") {
 				unlink($file);
