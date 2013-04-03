@@ -15,9 +15,17 @@ try{
     $fieldName = $engine->cleanGet['MYSQL']['field'];
     $basePath  = mfcs::config('uploadPath', '/tmp/mfcs');
 
-    // Lookup the passed objectID
-    $object = getObject($objectID);
-    if($object === FALSE) throw new Exception('Invalid Object ID!');
+    // Are we getting a file from a current object, or from a revision?
+    if(isset($engine->cleanGet['MYSQL']['revisionID'])){
+        // Lookup the passed revision
+        $revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime');
+        $object = $revisions->getRevision('objects', $objectID, $engine->cleanGet['MYSQL']['revisionID']);
+        if($object === FALSE) throw new Exception('Invalid Revision ID!');
+    }else{
+        // Lookup the passed object
+        $object = getObject($objectID);
+        if($object === FALSE) throw new Exception('Invalid Object ID!');
+    }
 
     // Extract the object's data
     $object['data'] = decodeFields($object['data']);
