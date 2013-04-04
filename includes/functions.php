@@ -1193,6 +1193,7 @@ function processUploads($field,$uploadID) {
 			// Convert uploaded files into some ofhter size/format/etc
 			if (isset($field['convert']) && str2bool($field['convert'])) {
 				$image = new Imagick();
+				$image->readImage($origPath);
 
 				// Convert format
 				$image->setImageFormat($field['convertFormat']);
@@ -1298,6 +1299,11 @@ function processUploads($field,$uploadID) {
 					errorHandle::newError("Failed to create OCR file for ".getUploadDir('originals',$uploadID).DIRECTORY_SEPARATOR.$filename,errorHandle::DEBUG);
 				}
 			}
+		}
+
+		// Ensure this file is an audio file before audio specific processing
+		if (strpos(finfo::file($origPath, FILEINFO_MIME_TYPE), 'audio/') !== FALSE) {
+			// Perform audio processing here
 		}
 	}
 

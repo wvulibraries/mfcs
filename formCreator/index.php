@@ -514,6 +514,8 @@ $engine->eTemplate("include","header");
 									<label class="checkbox">
 										<input type="checkbox" id="fieldSettings_file_options_multipleFiles" name="fieldSettings_file_options_multipleFiles"> Allow Multiple Files in Single Upload
 									</label>
+
+									Images
 									<label class="checkbox">
 										<input type="checkbox" id="fieldSettings_file_options_combine" name="fieldSettings_file_options_combine"> Combine into Single PDF
 									</label>
@@ -525,6 +527,11 @@ $engine->eTemplate("include","header");
 									</label>
 									<label class="checkbox">
 										<input type="checkbox" id="fieldSettings_file_options_thumbnail" name="fieldSettings_file_options_thumbnail"> Create Thumbnail
+									</label>
+
+									Audio
+									<label class="checkbox">
+										<input type="checkbox" id="fieldSettings_file_options_mp3" name="fieldSettings_file_options_mp3"> Create MP3
 									</label>
 								</div>
 

@@ -384,6 +384,7 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_file_thumbnail_height").val($("#thumbnailHeight_"+id).val());
 			$("#fieldSettings_file_thumbnail_width").val($("#thumbnailWidth_"+id).val());
 			$("#fieldSettings_file_thumbnail_format").val($("#thumbnailFormat_"+id).val());
+			$("#fieldSettings_file_options_mp3").prop("checked",($("#mp3_"+id).val()==='true')).change();
 
 			if ($("#type_"+id).val() != 'fieldset') {
 				$("#fieldset_"+id).val($("#fieldset_"+id).parents("li").parents("li").find(":input[name^=fieldset_]").val());
@@ -869,6 +870,10 @@ function fieldSettingsBindings() {
 		$("#formPreview .well :input[name^=thumbnailFormat_]").val($(this).val());
 	});
 
+	$("#fieldSettings_file_options_mp3").change(function() {
+		$("#formPreview .well :input[name^=mp3_]").val($(this).val());
+	});
+
 	$("#fieldSettings_fieldset").keyup(function() {
 		$("#formPreview .well .fieldPreview legend").text($(this).val());
 		$("#formPreview .well :input[name^=fieldset_]").val($(this).val());
@@ -1252,6 +1257,7 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="thumbnailHeight_'+id+'" name="thumbnailHeight_'+id+'" value="'+((vals['thumbnailHeight']!=undefined)?vals['thumbnailHeight']:'')+'">';
 			output += '<input type="hidden" id="thumbnailWidth_'+id+'" name="thumbnailWidth_'+id+'" value="'+((vals['thumbnailWidth']!=undefined)?vals['thumbnailWidth']:'')+'">';
 			output += '<input type="hidden" id="thumbnailFormat_'+id+'" name="thumbnailFormat_'+id+'" value="'+((vals['thumbnailFormat']!=undefined)?vals['thumbnailFormat']:'')+'">';
+			output += '<input type="hidden" id="mp3_'+id+'" name="mp3_'+id+'" value="'+((vals['mp3']!=undefined)?vals['mp3']:'')+'">';
 			break;
 
 		default:
