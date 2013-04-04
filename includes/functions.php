@@ -1148,152 +1148,155 @@ function processUploads($field,$uploadID) {
 		}
 
 		// Preserve original extension
-		$origExt = ".".pathinfo(getUploadDir("originals",$uploadID).DIRECTORY_SEPARATOR.$filename, PATHINFO_EXTENSION);
+		$origPath = getUploadDir("originals",$uploadID).DIRECTORY_SEPARATOR.$filename;
+		$origExt  = ".".pathinfo($origPath, PATHINFO_EXTENSION);
 
-		// If combine files is checked, read this image and add it to the combined object
-		if (isset($field['combine']) && str2bool($field['combine'])) {
-			// Create the hocr file
-			$output = file_put_contents(
-				getBaseUploadPath().DIRECTORY_SEPARATOR."hocr",
-				"tessedit_create_hocr 1"
-				);
-
-			if ($output === FALSE) {
-				errorHandle::newError("Failed to create hocr file.",errorHandle::HIGH);
-				return FALSE;
-			}
-
-			// perform hOCR on the original uploaded file which gets stored in combined as an HTML file
-			$output = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
-				escapeshellarg(getUploadDir("originals",$uploadID).DIRECTORY_SEPARATOR.$filename),
-				escapeshellarg(getUploadDir("combined",$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt)),
-				escapeshellarg(getBaseUploadPath().DIRECTORY_SEPARATOR."hocr")
-				));
-
-			if (trim($output) !== 'Tesseract Open Source OCR Engine with Leptonica') {
-				errorHandle::newError("Tesseract Output: ".$output,errorHandle::HIGH);
-				return FALSE;
-			}
-
-			// Convert original uploaded file to jpg in preparation of final combine
-			$output = shell_exec(sprintf('convert %s %s 2>&1',
-				escapeshellarg(getUploadDir("originals",$uploadID).DIRECTORY_SEPARATOR.$filename),
-				escapeshellarg(getUploadDir("combined",$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt).".jpg")
-				));
-
-			if (!is_empty($output)) {
-				errorHandle::newError("Convert Output: ".$output,errorHandle::HIGH);
-				return FALSE;
-			}
-		}
-
-		// Convert uploaded files into some ofhter size/format/etc
-		if (isset($field['convert']) && str2bool($field['convert'])) {
-			$image = new Imagick();
-			$image->readImage(getUploadDir("originals",$uploadID).DIRECTORY_SEPARATOR.$filename);
-
-			// Convert format
-			$image->setImageFormat($field['convertFormat']);
-
-			// Resize image
-			$image->scaleImage($field['convertWidth'], $field['convertHeight'], TRUE);
-
-			// Add a border
-			if (isset($field['border']) && str2bool($field['border'])) {
-				$image->borderImage(
-					$field['borderColor'],
-					$field['borderWidth'],
-					$field['borderHeight']
-					);
-			}
-
-			// Create a thumbnail
-			if (isset($field['thumbnail']) && str2bool($field['thumbnail'])) {
-				// Make a copy of the original
-				$thumb = $image->clone();
-
-				// Change the format
-				$thumb->setImageFormat($field['thumbnailFormat']);
-
-				// Scale to thumbnail size, constraining proportions
-				$thumb->thumbnailImage(
-					$field['thumbnailWidth'],
-					$field['thumbnailHeight'],
-					TRUE
+		// Ensure this file is an image before image specific processing
+		if (getimagesize($origPath) !== FALSE) {
+			// If combine files is checked, read this image and add it to the combined object
+			if (isset($field['combine']) && str2bool($field['combine'])) {
+				// Create the hocr file
+				$output = file_put_contents(
+					getBaseUploadPath().DIRECTORY_SEPARATOR."hocr",
+					"tessedit_create_hocr 1"
 					);
 
-				// Store thumbnail
-				if ($thumb->writeImage(getUploadDir("thumbs",$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt).".".strtolower($thumb->getImageFormat())) === FALSE) {
-					errorHandle::errorMsg("Failed to create thumbnail: ".$filename);
+				if ($output === FALSE) {
+					errorHandle::newError("Failed to create hocr file.",errorHandle::HIGH);
+					return FALSE;
+				}
+
+				// perform hOCR on the original uploaded file which gets stored in combined as an HTML file
+				$output = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
+					escapeshellarg($origPath),
+					escapeshellarg(getUploadDir("combined",$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt)),
+					escapeshellarg(getBaseUploadPath().DIRECTORY_SEPARATOR."hocr")
+					));
+
+				if (trim($output) !== 'Tesseract Open Source OCR Engine with Leptonica') {
+					errorHandle::newError("Tesseract Output: ".$output,errorHandle::HIGH);
+					return FALSE;
+				}
+
+				// Convert original uploaded file to jpg in preparation of final combine
+				$output = shell_exec(sprintf('convert %s %s 2>&1',
+					escapeshellarg($origPath),
+					escapeshellarg(getUploadDir("combined",$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt).".jpg")
+					));
+
+				if (!is_empty($output)) {
+					errorHandle::newError("Convert Output: ".$output,errorHandle::HIGH);
+					return FALSE;
 				}
 			}
 
-			// Add a watermark
-			if (isset($field['watermark']) && str2bool($field['watermark'])) {
-				$fh = fopen($field['watermarkImage'], "rb");
+			// Convert uploaded files into some ofhter size/format/etc
+			if (isset($field['convert']) && str2bool($field['convert'])) {
+				$image = new Imagick();
 
-				$watermark = new Imagick();
-				$watermark->readImageFile($fh); // Full URL
-				// $watermark->readImage("/path/to/file.png"); // Uses path relative to current file
+				// Convert format
+				$image->setImageFormat($field['convertFormat']);
 
-				// Resize the watermark
-				$watermark->scaleImage($image->getImageWidth()/1.5, $image->getImageHeight()/1.5, TRUE);
+				// Resize image
+				$image->scaleImage($field['convertWidth'], $field['convertHeight'], TRUE);
 
-				list($positionHeight,$positionWidth) = explode("|",$field['watermarkLocation']);
-
-				// calculate the position
-				switch ($positionHeight) {
-					case 'top':
-						$y = 0;
-						break;
-
-					case 'bottom':
-						$y = $image->getImageHeight() - $watermark->getImageHeight();
-						break;
-
-					case 'middle':
-					default:
-						$y = ($image->getImageHeight() - $watermark->getImageHeight()) / 2;
-						break;
+				// Add a border
+				if (isset($field['border']) && str2bool($field['border'])) {
+					$image->borderImage(
+						$field['borderColor'],
+						$field['borderWidth'],
+						$field['borderHeight']
+						);
 				}
 
-				switch ($positionWidth) {
-					case 'left':
-						$x = 0;
-						break;
+				// Create a thumbnail
+				if (isset($field['thumbnail']) && str2bool($field['thumbnail'])) {
+					// Make a copy of the original
+					$thumb = $image->clone();
 
-					case 'right':
-						$x = $image->getImageWidth() - $watermark->getImageWidth();
-						break;
+					// Change the format
+					$thumb->setImageFormat($field['thumbnailFormat']);
 
-					case 'center':
-					default:
-						$x = ($image->getImageWidth() - $watermark->getImageWidth()) / 2;
-						break;
+					// Scale to thumbnail size, constraining proportions
+					$thumb->thumbnailImage(
+						$field['thumbnailWidth'],
+						$field['thumbnailHeight'],
+						TRUE
+						);
+
+					// Store thumbnail
+					if ($thumb->writeImage(getUploadDir("thumbs",$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt).".".strtolower($thumb->getImageFormat())) === FALSE) {
+						errorHandle::errorMsg("Failed to create thumbnail: ".$filename);
+					}
 				}
 
-				// Add watermark to image
-				if ($image->compositeImage($watermark, Imagick::COMPOSITE_OVER, $x, $y) === FALSE) {
-					errorHandle::errorMsg("Failed to create watermark: ".$filename);
+				// Add a watermark
+				if (isset($field['watermark']) && str2bool($field['watermark'])) {
+					$fh = fopen($field['watermarkImage'], "rb");
+
+					$watermark = new Imagick();
+					$watermark->readImageFile($fh); // Full URL
+					// $watermark->readImage("/path/to/file.png"); // Uses path relative to current file
+
+					// Resize the watermark
+					$watermark->scaleImage($image->getImageWidth()/1.5, $image->getImageHeight()/1.5, TRUE);
+
+					list($positionHeight,$positionWidth) = explode("|",$field['watermarkLocation']);
+
+					// calculate the position
+					switch ($positionHeight) {
+						case 'top':
+							$y = 0;
+							break;
+
+						case 'bottom':
+							$y = $image->getImageHeight() - $watermark->getImageHeight();
+							break;
+
+						case 'middle':
+						default:
+							$y = ($image->getImageHeight() - $watermark->getImageHeight()) / 2;
+							break;
+					}
+
+					switch ($positionWidth) {
+						case 'left':
+							$x = 0;
+							break;
+
+						case 'right':
+							$x = $image->getImageWidth() - $watermark->getImageWidth();
+							break;
+
+						case 'center':
+						default:
+							$x = ($image->getImageWidth() - $watermark->getImageWidth()) / 2;
+							break;
+					}
+
+					// Add watermark to image
+					if ($image->compositeImage($watermark, Imagick::COMPOSITE_OVER, $x, $y) === FALSE) {
+						errorHandle::errorMsg("Failed to create watermark: ".$filename);
+					}
+				}
+
+				// Store image
+				if ($image->writeImages(getUploadDir('converted',$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt).".".strtolower($image->getImageFormat()), TRUE) === FALSE) {
+					errorHandle::errorMsg("Failed to create image: ".$filename);
 				}
 			}
 
-			// Store image
-			if ($image->writeImages(getUploadDir('converted',$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt).".".strtolower($image->getImageFormat()), TRUE) === FALSE) {
-				errorHandle::errorMsg("Failed to create image: ".$filename);
-			}
-		}
+			// Create an OCR text file
+			if (isset($field['ocr']) && str2bool($field['ocr'])) {
+				// Include TesseractOCR class
+				require_once 'class.tesseract_ocr.php';
 
-		// Create an OCR text file
-		if (isset($field['ocr']) && str2bool($field['ocr'])) {
-			// Include TesseractOCR class
-			require_once 'class.tesseract_ocr.php';
+				$text = TesseractOCR::recognize(getUploadDir('originals',$uploadID).DIRECTORY_SEPARATOR.$filename);
 
-			$text = TesseractOCR::recognize(getUploadDir('originals',$uploadID).DIRECTORY_SEPARATOR.$filename);
-
-			if (file_put_contents(getUploadDir('ocr',$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt).".txt", $text) === FALSE) {
-				errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
-				errorHandle::newError("Failed to create OCR file for ".getUploadDir('originals',$uploadID).DIRECTORY_SEPARATOR.$filename,errorHandle::DEBUG);
+				if (file_put_contents(getUploadDir('ocr',$uploadID).DIRECTORY_SEPARATOR.basename($filename,$origExt).".txt", $text) === FALSE) {
+					errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
+					errorHandle::newError("Failed to create OCR file for ".getUploadDir('originals',$uploadID).DIRECTORY_SEPARATOR.$filename,errorHandle::DEBUG);
+				}
 			}
 		}
 	}
