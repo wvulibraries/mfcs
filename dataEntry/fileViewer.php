@@ -19,7 +19,7 @@ try{
     if(isset($engine->cleanGet['MYSQL']['revisionID'])){
         // Lookup the passed revision
         $revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime');
-        $object = $revisions->getRevision('objects', $objectID, $engine->cleanGet['MYSQL']['revisionID']);
+        $object = $revisions->getRevision($objectID, $engine->cleanGet['MYSQL']['revisionID']);
         if($object === FALSE) throw new Exception('Invalid Revision ID!');
     }else{
         // Lookup the passed object
