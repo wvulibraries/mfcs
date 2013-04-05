@@ -570,10 +570,10 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 }
 
 function buildListTable($objects,$form,$projectID) {
-
+    $revisionControl = new revisionControlSystem('objects','revisions','ID','modifiedTime');
 	$form['fields'] = decodeFields($form['fields']);
 
-	$header  = '<tr><th>Delete</th><th>Edit</th><th>ID No</th>';
+	$header  = '<tr><th>Delete</th><th>Edit</th><th>Revisions</th><th>ID No</th>';
 	$headers = array();
 	foreach ($form['fields'] as $field) {
 
@@ -609,6 +609,12 @@ function buildListTable($objects,$form,$projectID) {
 			htmlSanitize($form['ID']),
 			htmlSanitize($object['ID'])
 			);
+        $output .= $revisionControl->hasRevisions($object['ID'])
+            ? sprintf('<td><a href="revisions.php?id=%s&amp;formID=%s&amp;objectID=%s">View</a></td>',
+                htmlSanitize($projectID),
+                htmlSanitize($form['ID']),
+                htmlSanitize($object['ID']))
+            : '<td style="font-style: italic; color: #666;">None</td>';
 		$output .= sprintf('<td>%s</td>',
 			htmlSanitize(($form['metadata'] == "1")?$object['ID']:$object['idno'])
 			);
