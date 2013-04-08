@@ -816,7 +816,7 @@ function fieldSettingsBindings() {
 		}
 	}).change();
 
-	$("#fieldSettings_file_watermark_image").keyup(function() {
+	$("#fieldSettings_file_watermark_image").change(function() {
 		$("#formPreview .well :input[name^=watermarkImage_]").val($(this).val());
 	});
 
