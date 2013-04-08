@@ -138,6 +138,24 @@ if ($sqlResult['result']) {
 	localVars::add("formsOptions",implode(",",$tmp));
 }
 
+// Get list of watermarks for dropdown
+$sql = sprintf("SELECT `ID`, `name` FROM `%s`",
+	$engine->openDB->escape($engine->dbTables("watermarks"))
+	);
+$sqlResult = $engine->openDB->query($sql);
+
+if ($sqlResult['result']) {
+	$tmp = array();
+	while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+		$tmp[] = sprintf('<option value="%s">%s</option>',
+			$row['ID'],
+			$row['name']
+			);
+	}
+	localVars::add("watermarkList",implode("",$tmp));
+	unset($tmp);
+}
+
 
 if (!is_empty($engine->errorStack)) {
 	localVars::add("results",errorHandle::prettyPrint());
@@ -514,6 +532,8 @@ $engine->eTemplate("include","header");
 									<label class="checkbox">
 										<input type="checkbox" id="fieldSettings_file_options_multipleFiles" name="fieldSettings_file_options_multipleFiles"> Allow Multiple Files in Single Upload
 									</label>
+
+									Images
 									<label class="checkbox">
 										<input type="checkbox" id="fieldSettings_file_options_combine" name="fieldSettings_file_options_combine"> Combine into Single PDF
 									</label>
@@ -525,6 +545,11 @@ $engine->eTemplate("include","header");
 									</label>
 									<label class="checkbox">
 										<input type="checkbox" id="fieldSettings_file_options_thumbnail" name="fieldSettings_file_options_thumbnail"> Create Thumbnail
+									</label>
+
+									Audio
+									<label class="checkbox">
+										<input type="checkbox" id="fieldSettings_file_options_mp3" name="fieldSettings_file_options_mp3"> Create MP3
 									</label>
 								</div>
 
@@ -566,7 +591,9 @@ $engine->eTemplate("include","header");
 											<label for="fieldSettings_file_watermark_image">
 												Image
 											</label>
-											<input type="text" class="input-block-level" id="fieldSettings_file_watermark_image" name="fieldSettings_file_watermark_image" placeholder="Image URL" />
+											<select class="input-block-level" id="fieldSettings_file_watermark_image" name="fieldSettings_file_watermark_image">
+												{local var="watermarkList"}
+											</select>
 										</div>
 										<div class="span6">
 											<label for="fieldSettings_file_watermark_location">

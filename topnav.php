@@ -11,6 +11,7 @@
 				<ul class="dropdown-menu">
 					<li><a href="{local var="siteRoot"}admin/objectTypes.php">Manage Object Types</a></li>
 					<li><a href="{local var="siteRoot"}admin/containers.php">Manage Containers</a></li>
+					<li><a href="{local var="siteRoot"}admin/watermarks.php">Manage Watermarks</a></li>
 					<li><a href="{local var="siteRoot"}admin/users.php">Manage Users</a></li>
 				</ul>
 			</li>
