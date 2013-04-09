@@ -67,15 +67,20 @@ $sqlResult = $engine->openDB->query($sql);
 if ($sqlResult['result']) {
 	$tmp = NULL;
 	while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
-		$i = new Imagick();
-		$i->readImageBlob($row['data']);
+        try{
+            $i = new Imagick();
+            $i->readImageBlob($row['data']);
 
-		$tmp .= sprintf('<li><a href="?id=%s">%s<br><img src="data:image/%s;base64,%s"></a></li>',
-			htmlSanitize($row['ID']),
-			htmlSanitize($row['name']),
-			strtolower($i->getImageFormat()),
-			base64_encode($row['data'])
-			);
+            $tmp .= sprintf('<li><a href="?id=%s">%s<br><img src="data:image/%s;base64,%s"></a></li>',
+                htmlSanitize($row['ID']),
+                htmlSanitize($row['name']),
+                strtolower($i->getImageFormat()),
+                base64_encode($row['data'])
+            );
+        }catch (Exception $e){
+            errorHandle::newError("readImageBlob failed - {$e->getMessage()}", errorHandle::HIGH);
+            errorHandle::errorMsg("Failed to load watermark.");
+        }
 	}
 	localVars::add("existingWatermarks",$tmp);
 	unset($tmp);
