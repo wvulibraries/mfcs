@@ -4,6 +4,10 @@ require("engineInclude.php");
 recurseInsert("dbTableList.php","php");
 $engine->dbConnect("database","mfcs",TRUE);
 
+// Load the mfcs class
+require_once "includes/mfcs.php";
+mfcs::singleton();
+
 recurseInsert("includes/functions.php","php");
 recurseInsert("includes/validator.php","php");
 
