@@ -2,7 +2,6 @@
 
 /**
  * Main MFCS object
- * @author David Gersting
  */
 class mfcs {
     /**
@@ -10,6 +9,11 @@ class mfcs {
      * @var self
      */
     private static $instance;
+
+    /**
+     * @var EngineAPI
+     */
+    public static $engine;
 
     /**
      * The root path of the mfcs system
@@ -25,9 +29,12 @@ class mfcs {
 
     /**
      * Class constructor
+     *
+     * @author David Gersting
      * @param string $configFile The config file to load
      */
     private function __construct($configFile){
+        self::$engine   = EngineAPI::singleton();
         self::$mfcsRoot = realpath(__DIR__.'/..');
 
         if(is_null($configFile)) $configFile = self::$mfcsRoot.'/config.ini';
@@ -38,6 +45,8 @@ class mfcs {
 
     /**
      * Returns an instance of mfcs (singleton pattern)
+     *
+     * @author David Gersting
      * @param string $configFile The config file to load (Default: config.ini)
      * @return mfcs
      */
@@ -48,6 +57,8 @@ class mfcs {
 
     /**
      * Get a config item
+     *
+     * @author David Gersting
      * @param string $name The name of the config item
      * @param mixed $default If no config item found, return this
      * @return mixed
@@ -56,6 +67,43 @@ class mfcs {
         return isset(self::$config[$name])
             ? self::$config[$name]
             : $default;
+    }
+
+    /**
+     * Get an array of available projects
+     *
+     * This method returns an array of all available projects from the database
+     *
+     * @author David Gersting
+     * @param string|array $fields An array or CSV of fields to include
+     * @param string $orderBy
+     * @return array
+     */
+    public static function getProjects($fields='ID,projectName',$orderBy='projectName ASC'){
+        // Clean and process $fields
+        $fields = is_string($fields) ? explode(',', $fields) : $fields;
+        foreach($fields as $k => $field){
+            $fields[$k] = '`'.self::$engine->openDB->escape($field).'`';
+        }
+
+        // Clean and process $orderBy
+        $orderBy = !is_empty($orderBy) ? "ORDER BY ".self::$engine->openDB->escape($orderBy) : '';
+
+        // Build SQL
+        $sql = sprintf('SELECT %s FROM `projects` %s',
+            implode(',', $fields),
+            $orderBy);
+        $sqlResult = self::$engine->openDB->query($sql);
+        if(!$sqlResult['result']){
+            errorHandle::newError(__METHOD__."() - MySQL Error ".$sqlResult['error'], errorHandle::DEBUG);
+            return array();
+        }
+
+        $results = array();
+        while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)){
+            $results[] = $row;
+        }
+        return $results;
     }
 
 }
