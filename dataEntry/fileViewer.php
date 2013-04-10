@@ -13,7 +13,7 @@ try{
     // Get the passed info
     $objectID  = $engine->cleanGet['MYSQL']['objectID'];
     $fieldName = $engine->cleanGet['MYSQL']['field'];
-    $basePath  = mfcs::config('uploadPath', '/tmp/mfcs');
+    $basePath  = getBaseUploadPath();
 
     // Are we getting a file from a current object, or from a revision?
     if(isset($engine->cleanGet['MYSQL']['revisionID'])){

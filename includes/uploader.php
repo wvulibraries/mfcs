@@ -1,10 +1,10 @@
 <?php
 require("../engineInclude.php");
 
-localVars::add("basePath","/tmp/mfcs");
-
 // Include functions
 recurseInsert("includes/functions.php","php");
+
+localVars::add("basePath",getBaseUploadPath());
 
 // Include the uploader class
 recurseInsert("includes/class.fineUploader.php","php");
