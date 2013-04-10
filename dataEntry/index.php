@@ -22,16 +22,17 @@ try {
 		$engine->cleanGet['MYSQL']['id']
 		);
 	$sqlResult = $engine->openDB->query($sql);
-	
+
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
 		errorHandle::errorMsg("Error retrieving project.");
 		throw new Exception('Error');
 	}
-	
+
 	$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
 	localvars::add("projectName",$row['projectName']);
+	localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['id']));
 
 }
 catch(Exception $e) {
@@ -49,19 +50,13 @@ $engine->eTemplate("include","header");
 
 	{local var="results"}
 
+	<div id="left">
+		<p>{local var="leftnav"}</p>
+	</div>
 
-<div id="left">
-
-	<p>Built up left nav will go here</p>
-
-</div>
-<div id="right">
-
-	<p>Built form goes here</p>
-
-</div>
-
-
+	<div id="right">
+		<p>Other information can go here.</p>
+	</div>
 </section>
 
 
