@@ -13,3 +13,17 @@ $(function(){
         }
     });
 });
+
+function saveSelectedProjects(){
+    // Get all the IDs of selected projects
+    var selectedProjects = [];
+    $('#selectProjects :checkbox:checked').each(function(i,n){
+        selectedProjects.push($(n).val());
+    });
+    // And POST it to the server
+    $.post('index.php',{
+        engineCSRFCheck:  '{engine name="csrfGet"}',
+        action:           'updateUserProjects',
+        selectedProjects: selectedProjects
+    },function(){ alert('DONE!') });
+}
