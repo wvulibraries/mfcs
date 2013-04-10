@@ -19,7 +19,7 @@ try {
 
 		// if (checkProjectPermissions($row['ID']) === TRUE) {
 		// }
-		$formList .= sprintf('<li><a href="dataEntry/form.php?id=%s">%s</a></li>',
+		$formList .= sprintf('<li><a href="form.php?formID=%s">%s</a></li>',
 			$engine->openDB->escape($row['ID']),
 			$engine->openDB->escape($row['title'])
 			);
