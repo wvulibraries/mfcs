@@ -50,12 +50,14 @@ $engine->eTemplate("include","header");
 
 	{local var="results"}
 
-	<div id="left">
-		<p>{local var="leftnav"}</p>
-	</div>
+	<div class="row-fluid">
+		<div class="span3" id="left">
+			<p>{local var="leftnav"}</p>
+		</div>
 
-	<div id="right">
-		<p>Other information can go here.</p>
+		<div class="span9" id="right">
+			<p>Other information can go here.</p>
+		</div>
 	</div>
 </section>
 
