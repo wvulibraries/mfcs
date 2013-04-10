@@ -3,15 +3,6 @@ include("../header.php");
 
 try {
 
-	if (!isset($engine->cleanGet['MYSQL']['id'])
-		|| is_empty($engine->cleanGet['MYSQL']['id'])
-		|| !validate::integer($engine->cleanGet['MYSQL']['id'])) {
-
-		errorHandle::newError(__METHOD__."() - No Project ID Provided.", errorHandle::DEBUG);
-		errorHandle::errorMsg("No Project ID Provided.");
-		throw new Exception('Error');
-	}
-
 	if (!isset($engine->cleanGet['MYSQL']['formID'])
 		|| is_empty($engine->cleanGet['MYSQL']['formID'])
 		|| !validate::integer($engine->cleanGet['MYSQL']['formID'])) {
@@ -36,16 +27,17 @@ try {
 
 
 	// check for edit permissions on the project
-	if (checkProjectPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) {
-		errorHandle::errorMsg("Permissions denied for working on this project");
-		throw new Exception('Error');
-	}
+	// if (checkProjectPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) {
+	// 	errorHandle::errorMsg("Permissions denied for working on this project");
+	// 	throw new Exception('Error');
+	// }
 
 	// check that this form is part of the project
-	if (!checkFormInProject($engine->cleanGet['MYSQL']['id'],$engine->cleanGet['MYSQL']['formID'])) {
-		errorHandle::errorMsg("Form is not part of project.");
-		throw new Exception('Error');
-	}
+	// // TODO need forms from User
+	// if (!checkFormInProject($engine->cleanGet['MYSQL']['id'],$engine->cleanGet['MYSQL']['formID'])) {
+	// 	errorHandle::errorMsg("Form is not part of project.");
+	// 	throw new Exception('Error');
+	// }
 
 	// if an object ID is provided make sure the object is from this form
 	if (isset($engine->cleanGet['MYSQL']['objectID'])
@@ -55,13 +47,19 @@ try {
 	}
 
 	// Get the project
-	$project = getProject($engine->cleanGet['MYSQL']['id']);
+	$project = NULL; // TODO: Needs to be gotten from the user info
 	if ($project === FALSE) {
 		errorHandle::errorMsg("Error retrieving project.");
 		throw new Exception('Error');
 	}
 
-	localvars::add("projectName",$project['projectName']);
+	$form = getForm($engine->cleanGet['MYSQL']['formID']);
+	if ($form === FALSE) {
+		errorHandle::errorMsg("Error retrieving form.");
+		throw new Exception('Error');
+	}
+
+	localvars::add("formName",$form['title']);
 
 	// handle submission
 	if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
@@ -80,8 +78,7 @@ try {
 	}
 
 	// build the form for displaying
-
-	$builtForm = buildForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['id'],$engine->cleanGet['MYSQL']['objectID']);
+	$builtForm = buildForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
 	if ($builtForm === FALSE) {
 		errorHandle::errorMsg("Error building form.");
 		throw new Exception('Error');
@@ -89,7 +86,7 @@ try {
 
 	localvars::add("form",$builtForm);
 
-	localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['id']));
+	// localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['id']));
 
 }
 catch(Exception $e) {
@@ -123,7 +120,7 @@ $engine->eTemplate("include","header");
 </style>
 <section>
 	<header class="page-header">
-		<h1>{local var="projectName"}</h1>
+		<h1>{local var="formName"}</h1>
 	</header>
 
 	{local var="results"}
