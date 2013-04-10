@@ -1,8 +1,6 @@
 <?php
 include("../header.php");
 
-recurseInsert("acl.php","php");
-
 $formID = isset($engine->cleanPost['HTML']['id']) ? $engine->cleanPost['HTML']['id'] : (isset($engine->cleanGet['HTML']['id']) ? $engine->cleanGet['HTML']['id'] : NULL);
 if (is_empty($formID)) {
 	$formID = NULL;
