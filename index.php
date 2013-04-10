@@ -1,7 +1,7 @@
 <?php
 include("header.php");
 
-recurseInsert("acl.php","php");
+
 
 try {
 	$sql       = sprintf("SELECT * FROM `projects`");

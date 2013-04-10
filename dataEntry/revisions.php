@@ -1,9 +1,6 @@
 <?php
 include("../header.php");
 
-recurseInsert("acl.php","php");
-
-
 try {
     // Make sure we have id, formID, and objectID provided
     if(!isset($engine->cleanGet['MYSQL']['id'])       || is_empty($engine->cleanGet['MYSQL']['id'])       || !validate::integer($engine->cleanGet['MYSQL']['id']))       throw new Exception('No Project ID Provided.');
