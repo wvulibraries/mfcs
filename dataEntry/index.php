@@ -1,8 +1,6 @@
 <?php
 include("../header.php");
 
-recurseInsert("acl.php","php");
-
 try {
 
 	if (!isset($engine->cleanGet['MYSQL']['id']) || is_empty($engine->cleanGet['MYSQL']['id']) || !validate::integer($engine->cleanGet['MYSQL']['id'])) {

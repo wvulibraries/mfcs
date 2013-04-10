@@ -16,7 +16,13 @@
 				</ul>
 			</li>
 			<li><a href="{local var="siteRoot"}projects/">Project Management</a></li>
-			<li><a href="{local var="siteRoot"}formCreator/">Form Creator</a></li>
+			<li class="dropdown-submenu">
+				<a tabindex="-1" href="#">Form Management</a>
+				<ul class="dropdown-menu">
+					<li><a href="{local var="siteRoot"}formCreator/">New Form</a></li>
+					<li><a href="{local var="siteRoot"}formCreator/list.php">List Forms</a></li>
+				</ul>
+			</li>
 			<li class="divider"></li>
 			<li><a href="{engine var="logoutPage"}?csrf={engine name="csrfGet"}">Logout</a></li>
 		</ul>

@@ -243,7 +243,7 @@ function buildNumberAttributes($field) {
 
 }
 
-function buildForm($formID,$projectID,$objectID = NULL) {
+function buildForm($formID,$objectID = NULL) {
 
 	$engine = EngineAPI::singleton();
 
@@ -275,9 +275,8 @@ function buildForm($formID,$projectID,$objectID = NULL) {
 		}
 	}
 
-	$output = sprintf('<form action="%s?id=%s&formID=%s%s" method="%s">',
+	$output = sprintf('<form action="%s?formID=%s%s" method="%s">',
 		$_SERVER['PHP_SELF'],
-		htmlSanitize($projectID),
 		htmlSanitize($formID),
         (!isnull($objectID)) ? '&objectID='.$objectID : "",
 		"post"

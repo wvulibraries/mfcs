@@ -1,6 +1,5 @@
 <?php
 include("../header.php");
-recurseInsert("acl.php","php");
 
 // Turn off EngineAPI template engine
 $engine->obCallback = FALSE;

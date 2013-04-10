@@ -1,7 +1,7 @@
 <?php
 include("header.php");
 
-recurseInsert("acl.php","php");
+
 
 if(sizeof($engine->cleanPost['MYSQL'])){
     switch($engine->cleanPost['MYSQL']['action']){
@@ -55,6 +55,21 @@ $engine->eTemplate("include","header");
 		{local var="projectList"}
 	</ul>
 
+
+	<ul>
+		<li>
+			<a href="dataEntry/selectForm.php">Create new Object</a>
+		</li>
+		<li>
+			<a href="">List Objects</a>
+		</li>
+		<li>
+			<a href="">Metadata Forms</a>
+		</li>
+		<li>
+			<a href="">Export</a>
+		</li>
+	</ul>
 
 </section>
 
