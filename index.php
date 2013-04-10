@@ -48,6 +48,21 @@ $engine->eTemplate("include","header");
 	</ul>
 
 
+	<ul>
+		<li>
+			<a href="dataEntry/selectForm.php">Create new Object</a>
+		</li>
+		<li>
+			<a href="">List Objects</a>
+		</li>
+		<li>
+			<a href="">Metadata Forms</a>
+		</li>
+		<li>
+			<a href="">Export</a>
+		</li>
+	</ul>
+
 </section>
 
 
