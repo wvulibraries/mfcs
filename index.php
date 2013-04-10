@@ -3,6 +3,14 @@ include("header.php");
 
 recurseInsert("acl.php","php");
 
+if(sizeof($engine->cleanPost['MYSQL'])){
+    switch($engine->cleanPost['MYSQL']['action']){
+        case 'updateUserProjects':
+            die('HELLO!');
+            break;
+    }
+}
+
 try {
 	$sql       = sprintf("SELECT * FROM `projects`");
 	$sqlResult = $engine->openDB->query($sql);
