@@ -22,3 +22,21 @@
 		</ul>
 	</li>
 </ul>
+<div class="pull-right" style="padding: 8px; font-size: 18px; color: #ccc;">
+    <strong>Current projects:</strong>
+    <a href="#selectProjects" title="Click to change" data-toggle="modal">
+        <?php
+        // Global is needed because this file is loaded inside a function (and looses variable scope)
+        global $currentProjects;
+        if(isset($currentProjects) and sizeof($currentProjects)){
+            $projects = array();
+            foreach($currentProjects as $currentProjectID => $currentProjectName){
+                $projects[] = $currentProjectName;
+            }
+            echo implode(', ',$projects);
+        }else{
+            echo '<span style="color: #999; font-style: italic;">None Selected</span>';
+        }
+        ?>
+    </a>
+</div>
