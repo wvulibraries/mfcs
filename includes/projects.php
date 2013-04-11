@@ -13,6 +13,8 @@ class projects {
 	 * @return array
 	 */
 	public static function getProjects($fields='ID,projectName',$orderBy='projectName ASC'){
+		$engine = EngineAPI::singleton();
+
 		// Clean and process $fields
 		$fields = is_string($fields) ? explode(',', $fields) : $fields;
 		foreach($fields as $k => $field){
