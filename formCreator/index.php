@@ -674,10 +674,7 @@ $engine->eTemplate("include","header");
 												<input type="checkbox" id="fieldSettings_options_required" name="fieldSettings_options_required"> Required
 											</label>
 											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates"> No Duplicates - Project
-											</label>
-											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_options_duplicatesForm" name="fieldSettings_options_duplicatesForm"> No Duplicates - This Form
+												<input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates"> No Duplicates
 											</label>
 											<label class="checkbox">
 												<input type="checkbox" id="fieldSettings_options_readonly" name="fieldSettings_options_readonly"> Read Only
@@ -779,9 +776,15 @@ $engine->eTemplate("include","header");
 
 							<div class="row-fluid noHide">
 								<div class="control-group well well-small" id="formSettings_formContainer_container">
-									<input type="checkbox" id="formSettings_formContainer" name="formSettings_formContainer" {local var="formContainer"}> <label class="checkbox" for="formSettings_formContainer" style="display: inline;">Act as Container</label> <br />
-									<input type="checkbox" id="formSettings_formProduction" name="formSettings_formProduction" {local var="formProduction"}> <label class="checkbox" for="formSettings_formProduction" style="display: inline;">Production Ready</label> <br />
-									<input type="checkbox" id="formSettings_formMetadata" name="formSettings_formMetadata" {local var="formMetadata"}> <label class="checkbox" for="formSettings_formMetadata" style="display: inline;">Metadata Form</label> <br />
+									<label class="checkbox" for="formSettings_formContainer">
+										<input type="checkbox" id="formSettings_formContainer" name="formSettings_formContainer" {local var="formContainer"}> Act as Container
+									</label>
+									<label class="checkbox" for="formSettings_formProduction">
+										<input type="checkbox" id="formSettings_formProduction" name="formSettings_formProduction" {local var="formProduction"}> Production Ready
+									</label>
+									<label class="checkbox" for="formSettings_formMetadata">
+										<input type="checkbox" id="formSettings_formMetadata" name="formSettings_formMetadata" {local var="formMetadata"}> Metadata Form
+									</label>
 									<span class="help-block hidden"></span>
 								</div>
 							</div>
