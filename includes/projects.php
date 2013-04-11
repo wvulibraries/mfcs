@@ -16,17 +16,17 @@ class projects {
 		// Clean and process $fields
 		$fields = is_string($fields) ? explode(',', $fields) : $fields;
 		foreach($fields as $k => $field){
-			$fields[$k] = '`'.self::$engine->openDB->escape($field).'`';
+			$fields[$k] = '`'.$engine->openDB->escape($field).'`';
 		}
 
 		// Clean and process $orderBy
-		$orderBy = !is_empty($orderBy) ? "ORDER BY ".self::$engine->openDB->escape($orderBy) : '';
+		$orderBy = !is_empty($orderBy) ? "ORDER BY ".$engine->openDB->escape($orderBy) : '';
 
 		// Build SQL
 		$sql = sprintf('SELECT %s FROM `projects` %s',
 			implode(',', $fields),
 			$orderBy);
-		$sqlResult = self::$engine->openDB->query($sql);
+		$sqlResult = $engine->openDB->query($sql);
 		if(!$sqlResult['result']){
 			errorHandle::newError(__METHOD__."() - MySQL Error ".$sqlResult['error'], errorHandle::DEBUG);
 			return array();
