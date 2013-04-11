@@ -406,11 +406,25 @@ function fieldSettingsBindings() {
 	});
 
 	$("#fieldSettings_name").keyup(function() {
+		if ($("#formSettings_descriptiveTitle option[value="+$("#formPreview .well :input[name^=name_]").val()+"]").length > 0) {
+			$("#formSettings_descriptiveTitle option[value="+$("#formPreview .well :input[name^=name_]").val()+"]").val($(this).val());
+		}
+		else {
+			$("#formSettings_descriptiveTitle").append('<option value="'+$(this).val()+'">'+$("#formPreview .well :input[name^=label_]").val()+'</option>');
+		}
+
 		$("#formPreview .well .controls :input").prop('name',$(this).val());
 		$("#formPreview .well :input[name^=name_]").val($(this).val());
 	});
 
 	$("#fieldSettings_label").keyup(function() {
+		if ($("#formSettings_descriptiveTitle option[value="+$("#formPreview .well :input[name^=name_]").val()+"]").length > 0) {
+			$("#formSettings_descriptiveTitle option[value="+$("#formPreview .well :input[name^=name_]").val()+"]").text($(this).val());
+		}
+		else {
+			$("#formSettings_descriptiveTitle").append('<option value="'+$("#formPreview .well :input[name^=name_]").val()+'">'+$(this).val()+'</option>');
+		}
+
 		$("#formPreview .well .control-group > label").text($(this).val());
 		$("#formPreview .well :input[name^=label_]").val($(this).val());
 	});

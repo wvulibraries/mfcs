@@ -51,20 +51,22 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 							`container`='%s',
 							`production`='%s',
 							`metadata`='%s',
-							`count`='%s'
+							`count`='%s',
+							`descriptiveTitle`='%s'
 						WHERE ID='%s' LIMIT 1",
 			$engine->openDB->escape($engine->dbTables("forms")),
-			$engine->openDB->escape($form['formTitle']),      // title=
+			$engine->openDB->escape($form['formTitle']),        // title=
 			!is_empty($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL", // description=
-			encodeFields($fields),                            // fields=
-			encodeFields($idno),                              // idno=
-			$engine->openDB->escape($form['submitButton']),   // submitButton=
-			$engine->openDB->escape($form['updateButton']),   // updateButton=
-			$engine->openDB->escape($form['formContainer']),  // container=
-			$engine->openDB->escape($form['formProduction']), // production=
-			$engine->openDB->escape($form['formMetadata']),   // metadata=
-			$engine->openDB->escape($count),                  // count=
-			$engine->openDB->escape($formID)                  // ID=
+			encodeFields($fields),                              // fields=
+			encodeFields($idno),                                // idno=
+			$engine->openDB->escape($form['submitButton']),     // submitButton=
+			$engine->openDB->escape($form['updateButton']),     // updateButton=
+			$engine->openDB->escape($form['formContainer']),    // container=
+			$engine->openDB->escape($form['formProduction']),   // production=
+			$engine->openDB->escape($form['formMetadata']),     // metadata=
+			$engine->openDB->escape($count),                    // count=
+			$engine->openDB->escape($formID),                   // ID=
+			$engine->openDB->escape($form['descriptiveTitle'])  // descriptiveTitle=
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
@@ -75,7 +77,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	}
 	else {
 		// Insert into forms table
-		$sql = sprintf("INSERT INTO `%s` (title, description, fields, idno, submitButton, updateButton, container, production, metadata, count) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s','%s')",
+		$sql = sprintf("INSERT INTO `%s` (title, description, fields, idno, submitButton, updateButton, container, production, metadata, count, descriptiveTitle) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s')",
 			$engine->openDB->escape($engine->dbTables("forms")),
 			$engine->openDB->escape($form['formTitle']),
 			isset($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
@@ -86,7 +88,8 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			$engine->openDB->escape($form['formContainer']),
 			$engine->openDB->escape($form['formProduction']),
 			$engine->openDB->escape($form['formMetadata']),
-			$engine->openDB->escape($count)
+			$engine->openDB->escape($count),
+			$engine->openDB->escape($form['descriptiveTitle'])
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
@@ -219,6 +222,12 @@ if (!isnull($formID)) {
 				else if (isset($field['allowedExtensions']) && is_array($field['allowedExtensions'])) {
 					$field['allowedExtensions'] = implode("%,%",$field['allowedExtensions']);
 				}
+
+				localVars::add("descriptiveTitleOptions", sprintf('%s<option value="%s">%s</option>',
+					localVars::get("descriptiveTitleOptions"),
+					$field['name'],
+					$field['label']
+					));
 
 				$values = json_encode($field);
 
@@ -786,6 +795,16 @@ $engine->eTemplate("include","header");
 										<span class="help-block hidden"></span>
 									</div>
 								</div>
+							</div>
+
+							<div class="control-group well well-small" id="formSettings_descriptiveTitle_container">
+								<label for="formSettings_descriptiveTitle">
+									Descriptive Title
+								</label>
+								<select class="input-block-level" id="formSettings_descriptiveTitle" name="formSettings_descriptiveTitle">
+									{local var="descriptiveTitleOptions"}
+								</select>
+								<span class="help-block hidden"></span>
 							</div>
 
 							<div class="row-fluid noHide">
