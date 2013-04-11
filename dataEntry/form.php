@@ -47,11 +47,11 @@ try {
 	}
 
 	// Get the project
-	$project = NULL; // TODO: Needs to be gotten from the user info
-	if ($project === FALSE) {
-		errorHandle::errorMsg("Error retrieving project.");
-		throw new Exception('Error');
-	}
+	// $project = NULL; // TODO: Needs to be gotten from the user info
+	// if ($project === FALSE) {
+	// 	errorHandle::errorMsg("Error retrieving project.");
+	// 	throw new Exception('Error');
+	// }
 
 	$form = getForm($engine->cleanGet['MYSQL']['formID']);
 	if ($form === FALSE) {
@@ -63,14 +63,14 @@ try {
 
 	// handle submission
 	if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
-		$return = submitForm($project,$engine->cleanGet['MYSQL']['formID']);
+		$return = forms::submit($engine->cleanGet['MYSQL']['formID']);
 		if ($return === FALSE) {
 			errorHandle::errorMsg("Error Submitting Form.");
 			throw new Exception('Error');
 		}
 	}
 	else if (isset($engine->cleanPost['MYSQL']['updateForm'])) {
-		$return = submitForm($project,$engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
+		$return = forms::submit($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
 		if ($return === FALSE) {
 			errorHandle::errorMsg("Error Updating Form.");
 			throw new Exception('Error');

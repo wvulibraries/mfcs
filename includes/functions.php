@@ -208,74 +208,24 @@ function buildListTable($objects,$form,$projectID) {
 
 }
 
-// NOTE: data is being saved as RAW from the array.
-function submitForm($project,$formID,$objectID=NULL) {
-	return forms::submit($project,$formID,$objectID);
+// Deprecated
+function submitForm($formID,$objectID=NULL) {
+	return forms::submit($formID,$objectID);
 }
 
-// $value must be RAW
-function isDupe($formID,$projectID=NULL,$field,$value) {
-
-	$engine = EngineAPI::singleton();
-
-	if (isnull($projectID)) {
-		$sql = sprintf("SELECT COUNT(*) FROM dupeMatching WHERE `formID`='%s' AND `field`='%s' AND `value`='%s'",
-			$engine->openDB->escape($formID),
-			$engine->openDB->escape($field),
-			$engine->openDB->escape($value)
-			);
-	}
-	else {
-		$sql = sprintf("SELECT COUNT(*) FROM dupeMatching WHERE `formID`='%s' AND `projectID`='%s' AND `field`='%s' AND `value`='%s'",
-			$engine->openDB->escape($formID),
-			$engine->openDB->escape($projectID),
-			$engine->openDB->escape($field),
-			$engine->openDB->escape($value)
-			);
-	}
-
-	$sqlResult = $engine->openDB->sqlResult($sql);
-
-	// we return TRUE on Error, because if a dupe is encountered we want it to fail out.
-	if ($sqlResult['result'] === FALSE) {
-		return TRUE;
-	}
-	else if ((INT)$sqlResult['result']['COUNT(*)'] > 0) {
-		return TRUE;
-	}
-	else {
-		return FALSE;
-	}
+// Deprecated
+function isDupe($formID,$field,$value) {
+	return forms::isDupe($formID,$field,$value);
 }
 
+// Deprecated
 function getFormIDInfo($formID) {
-	$form = getForm($formID);
-
-	return decodeFields($form['idno']);
+	return forms::getFormIDInfo($formID);
 }
-
+	
 // if $increment is true it returns the NEXT number. if it is false it returns the current
 function getIDNO($formID,$projectID,$increment=TRUE) {
-
-	$engine         = EngineAPI::singleton();
-	$idno           = getFormIDInfo($formID);
-
-	$sqlResult = $engine->openDB->sqlResult(
-		sprintf("SELECT `count` FROM `projects` WHERE `ID`='%s'",
-			$engine->openDB->escape($projectID)
-			)
-		);
-
-	if (!$sqlResult['result']) {
-		return FALSE;
-	}
-
-	$idno                         = $idno['idnoFormat'];
-	$len                          = strrpos($idno,"#") - strpos($idno,"#") + 1;
-	$sqlResult['result']['count'] = str_pad($sqlResult['result']['count'],$len,"0",STR_PAD_LEFT);
-	$idno                         = preg_replace("/#+/", $sqlResult['result']['count'], $idno);
-
-	return $idno;
+	return mfcs::getIDNO($formID,$increment);
 }
 
 
