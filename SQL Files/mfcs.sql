@@ -206,7 +206,7 @@ CREATE TABLE IF NOT EXISTS `users_projects` (
   `projectID` int(10) unsigned NOT NULL,
   PRIMARY KEY (`UD`),
   KEY `userID` (`userID`,`projectID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COMMENT='many-many link for a user''s current projects';
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='many-many link for a user''s current projects';
 
 -- --------------------------------------------------------
 
