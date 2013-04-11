@@ -1,7 +1,7 @@
 <?php
 include("header.php");
 
-if(sizeof($engine->cleanPost['MYSQL'])){
+if(isset($engine->cleanPost['MYSQL']) && sizeof($engine->cleanPost['MYSQL'])){
     switch($engine->cleanPost['MYSQL']['action']){
         case 'updateUserProjects':
             die('HELLO!');
