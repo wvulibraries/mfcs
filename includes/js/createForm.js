@@ -222,10 +222,6 @@ function showFieldSettings(fullID) {
 					checked:  true,
 					disabled: true,
 				}).change();
-				$("#fieldSettings_options_duplicatesForm").prop({
-					checked:  false,
-					disabled: true,
-				}).change();
 				$("#fieldSettings_options_displayTable").prop({
 					checked:  true,
 					disabled: true,
@@ -237,7 +233,6 @@ function showFieldSettings(fullID) {
 				$("#fieldSettings_name").removeAttr("readonly");
 				$("#fieldSettings_options_required").removeAttr("disabled");
 				$("#fieldSettings_options_duplicates").removeAttr("disabled");
-				$("#fieldSettings_options_duplicatesForm").removeAttr("disabled");
 				$("#fieldSettings_options_readonly").removeAttr("disabled");
 				$("#fieldSettings_options_disabled").removeAttr("disabled");
 				$("#fieldSettings_options_displayTable").removeAttr("disabled");
@@ -340,7 +335,6 @@ function showFieldSettings(fullID) {
 
 			$("#fieldSettings_options_required").prop("checked",($("#required_"+id).val()==='true'));
 			$("#fieldSettings_options_duplicates").prop("checked",($("#duplicates_"+id).val()==='true'));
-			$("#fieldSettings_options_duplicatesForm").prop("checked",($("#duplicatesForm_"+id).val()==='true'));
 			$("#fieldSettings_options_readonly").prop("checked",($("#readonly_"+id).val()==='true')).change();
 			$("#fieldSettings_options_disabled").prop("checked",($("#disabled_"+id).val()==='true')).change();
 			$("#fieldSettings_options_publicRelease").prop("checked",($("#publicRelease_"+id).val()==='true')).change();
@@ -648,16 +642,6 @@ function fieldSettingsBindings() {
 
 	$("#fieldSettings_options_duplicates").change(function() {
 		$("#formPreview .well :input[name^=duplicates_]").val($(this).is(":checked"));
-		if ($(this).is(":checked")) {
-			$("#fieldSettings_options_duplicatesForm").removeAttr("checked").change();
-		}
-	});
-
-	$("#fieldSettings_options_duplicatesForm").change(function() {
-		$("#formPreview .well :input[name^=duplicatesForm_]").val($(this).is(":checked"));
-		if ($(this).is(":checked")) {
-			$("#fieldSettings_options_duplicates").removeAttr("checked").change();
-		}
 	});
 
 	$("#fieldSettings_options_readonly").change(function() {
@@ -1198,7 +1182,6 @@ function newFieldValues(id,type,vals) {
 	output += '<input type="hidden" id="style_'+id+'" name="style_'+id+'" value="'+((vals['style']!=undefined)?vals['style']:'')+'">';
 	output += '<input type="hidden" id="required_'+id+'" name="required_'+id+'" value="'+((vals['required']!=undefined)?vals['required']:'false')+'">';
 	output += '<input type="hidden" id="duplicates_'+id+'" name="duplicates_'+id+'" value="'+((vals['duplicates']!=undefined)?vals['duplicates']:'false')+'">';
-	output += '<input type="hidden" id="duplicatesForm_'+id+'" name="duplicatesForm_'+id+'" value="'+((vals['duplicatesForm']!=undefined)?vals['duplicatesForm']:'false')+'">';
 	output += '<input type="hidden" id="readonly_'+id+'" name="readonly_'+id+'" value="'+((vals['readonly']!=undefined)?vals['readonly']:'false')+'">';
 	output += '<input type="hidden" id="disabled_'+id+'" name="disabled_'+id+'" value="'+((vals['disabled']!=undefined)?vals['disabled']:'false')+'">';
 	output += '<input type="hidden" id="publicRelease_'+id+'" name="publicRelease_'+id+'" value="'+((vals['publicRelease']!=undefined)?vals['publicRelease']:'true')+'">';
