@@ -2,9 +2,9 @@
 include("../header.php");
 
 try {
-	
+
 	$forms = forms::getObjectForms();
-	
+
 	if ($forms === FALSE) {
 		errorHandle::errorMsg("Error getting Forms");
 		throw new Exception('Error');
@@ -15,7 +15,7 @@ try {
 
 		// if (checkProjectPermissions($row['ID']) === TRUE) {
 		// }
-		$formList .= sprintf('<li><a href="form.php?formID=%s">%s</a></li>',
+		$formList .= sprintf('<li><a href="object.php?formID=%s">%s</a></li>',
 			$engine->openDB->escape($form['ID']),
 			$engine->openDB->escape($form['title'])
 			);
