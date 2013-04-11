@@ -65,6 +65,30 @@ class forms {
 		return self::getForms(FALSE);
 	}
 
+	public static function checkFormInProject($projectID,$formID) {
+
+		$project = getProject($projectID);
+
+		if (!is_empty($project['forms'])) {
+
+			$currentForms = decodeFields($project['forms']);
+
+			foreach ($currentForms['metadata'] as $I=>$V) {
+				if ($V == $formID) {
+					return TRUE;
+				}
+			}
+			foreach ($currentForms['objects'] as $I=>$V) {
+				if ($V == $formID) {
+					return TRUE;
+				}
+			}
+		}
+
+		return FALSE;
+
+	}
+
 	public static function build($formID,$objectID = NULL) {
 
 		$engine = EngineAPI::singleton();

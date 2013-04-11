@@ -35,70 +35,24 @@ function getForm($formID) {
 	return forms::get($formID);
 }
 
+// Deprecated
 function getObject($objectID) {
 	return objects::get($objectID);
 }
 
+// Deprecated
 function getAllObjectsForForm($formID) {
-
-	$engine = EngineAPI::singleton();
-
-	$sql       = sprintf("SELECT * FROM `objects` WHERE `formID`='%s'",
-		$engine->openDB->escape($formID)
-		);
-	$sqlResult = $engine->openDB->query($sql);
-
-	if (!$sqlResult['result']) {
-		errorHandle::newError(__METHOD__."() - getting all objects: ".$sqlResult['error'], errorHandle::DEBUG);
-		return FALSE;
-	}
-
-	$objects = array();
-	while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-
-		$row['data'] = decodeFields($row['data']);
-		$objects[] = $row;
-
-	}
-
-	return $objects;
-
+	return objects::getAllObjectsForForm($formID);
 }
 
+// Deprecated
 function checkObjectInForm($formID,$objectID) {
-
-	$object = getObject($objectID);
-
-	if ($object['formID'] == $formID) {
-		return TRUE;
-	}
-
-	return FALSE;
-
+	return objects::checkObjectInForm($formID,$objectID);
 }
 
+// Deprecated
 function checkFormInProject($projectID,$formID) {
-
-	$project = getProject($projectID);
-
-	if (!is_empty($project['forms'])) {
-
-		$currentForms = decodeFields($project['forms']);
-
-		foreach ($currentForms['metadata'] as $I=>$V) {
-			if ($V == $formID) {
-				return TRUE;
-			}
-		}
-		foreach ($currentForms['objects'] as $I=>$V) {
-			if ($V == $formID) {
-				return TRUE;
-			}
-		}
-	}
-
-	return FALSE;
-
+	return forms::checkFormInProject($projectID,$formID);
 }
 
 function sortFieldsByPosition($a,$b) {
