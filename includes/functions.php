@@ -105,7 +105,7 @@ function buildProjectNavigation($projectID) {
 				);
 		}
 		else if ($item['type'] == "objectForm" || $item['type'] == "metadataForm") {
-			$output .= sprintf('<a href="form.php?id=%s&amp;formID=%s">%s</a>',
+			$output .= sprintf('<a href="object.php?id=%s&amp;formID=%s">%s</a>',
 				htmlSanitize($projectID),
 				htmlSanitize($item['formID']),
 				htmlSanitize($item['label'])
@@ -176,7 +176,7 @@ function buildListTable($objects,$form,$projectID) {
 		$output .= sprintf('<td><input type="checkbox" name="delete_%s" /></td>',
 			$object['ID']
 			);
-		$output .= sprintf('<td><a href="form.php?id=%s&amp;formID=%s&amp;objectID=%s">Edit</a></td>',
+		$output .= sprintf('<td><a href="object.php?id=%s&amp;formID=%s&amp;objectID=%s">Edit</a></td>',
 			htmlSanitize($projectID),
 			htmlSanitize($form['ID']),
 			htmlSanitize($object['ID'])
@@ -222,7 +222,7 @@ function isDupe($formID,$field,$value) {
 function getFormIDInfo($formID) {
 	return forms::getFormIDInfo($formID);
 }
-	
+
 // if $increment is true it returns the NEXT number. if it is false it returns the current
 function getIDNO($formID,$projectID,$increment=TRUE) {
 	return mfcs::getIDNO($formID,$increment);
