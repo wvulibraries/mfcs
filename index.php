@@ -59,7 +59,7 @@ $engine->eTemplate("include","header");
 			<a href="dataEntry/selectForm.php">Create new Object</a>
 		</li>
 		<li>
-			<a href="">List Objects</a>
+			<a href="dataView/list.php">List Objects</a>
 		</li>
 		<li>
 			<a href="">Metadata Forms</a>
