@@ -1,9 +1,14 @@
 <?php
 $engine->dbTables("containers","prod","containers");
-$engine->dbTables("fields","prod","fields");
+$engine->dbTables("dupeMatching","prod","dupeMatching");
 $engine->dbTables("forms","prod","forms");
+$engine->dbTables("objectMetadataLinks","prod","objectMetadataLinks");
+$engine->dbTables("objectProjects","prod","objectProjects");
+$engine->dbTables("objects","prod","objects");
 $engine->dbTables("objectTypes","prod","objectTypes");
+$engine->dbTables("permissions","prod","permissions");
 $engine->dbTables("projects","prod","projects");
+$engine->dbTables("revisions","prod","revisions");
 $engine->dbTables("users","prod","users");
 $engine->dbTables("watermarks","prod","watermarks");
 ?>
