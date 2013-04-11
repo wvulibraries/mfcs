@@ -40,17 +40,16 @@ function saveSelectedProjects(){
     };
     $.post('index.php?ajax',postData,function(data){
         if(data.success){
-            alert('Success!');
             var newHTML = selectedProjectIDs.length
                 ? selectedProjectNames.join(", ")
                 : '<span style="color: #999; font-style: italic;">None Selected</span>';
             $('#currentProjectsLink')
                 .html(newHTML)
                 .data('selected_projects',selectedProjectIDs.join(','));
-            $('#selectProjectsModal').modal('hide')
         }else{
-            alert("An error occurred!\n\n(check the browser console for details)")
+            alert("An error occurred!\n\n(check the browser console for details)");
             if(typeof(console) != 'undefined') console.log("Error from AJAX call: "+data.errorMsg);
         }
+        $('#selectProjectsModal').modal('hide');
     });
 }
