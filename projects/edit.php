@@ -415,7 +415,7 @@ localVars::add("results",displayMessages());
 $engine->eTemplate("include","header");
 ?>
 
-<script type="text/javascript" src="{local var="siteRoot"}includes/js/projectEdit.js"></script>
+<script type="text/javascript" src='{local var="siteRoot"}includes/js/projectEdit.js'></script>
 
 <section>
 	<header class="page-header">
