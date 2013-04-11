@@ -24,6 +24,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 
 			if ($field['type'] == 'idno') {
 				$idno = $field;
+				$count = $field['startIncrement'];
 			}
 			else if (isset($field['choicesType']) && $field['choicesType'] == 'manual') {
 				unset($fields[$I]['choicesForm']);
@@ -40,18 +41,30 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 
 	if (!isnull($formID)) {
 		// Update forms table
-		$sql = sprintf("UPDATE `%s` SET `title`='%s', `description`=%s, `fields`='%s', `idno`='%s', `submitButton`='%s', `updateButton`='%s', `container`='%s', `production`='%s', `metadata`='%s' WHERE ID='%s' LIMIT 1",
+		$sql = sprintf("UPDATE `%s`
+						SET `title`='%s',
+							`description`=%s,
+							`fields`='%s',
+							`idno`='%s',
+							`submitButton`='%s',
+							`updateButton`='%s',
+							`container`='%s',
+							`production`='%s',
+							`metadata`='%s',
+							`count`='%s'
+						WHERE ID='%s' LIMIT 1",
 			$engine->openDB->escape($engine->dbTables("forms")),
-			$engine->openDB->escape($form['formTitle']),
-			!is_empty($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
-			encodeFields($fields),
-			encodeFields($idno),
-			$engine->openDB->escape($form['submitButton']),
-			$engine->openDB->escape($form['updateButton']),
-			$engine->openDB->escape($form['formContainer']),
-			$engine->openDB->escape($form['formProduction']),
-			$engine->openDB->escape($form['formMetadata']),
-			$engine->openDB->escape($formID)
+			$engine->openDB->escape($form['formTitle']),      // title=
+			!is_empty($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL", // description=
+			encodeFields($fields),                            // fields=
+			encodeFields($idno),                              // idno=
+			$engine->openDB->escape($form['submitButton']),   // submitButton=
+			$engine->openDB->escape($form['updateButton']),   // updateButton=
+			$engine->openDB->escape($form['formContainer']),  // container=
+			$engine->openDB->escape($form['formProduction']), // production=
+			$engine->openDB->escape($form['formMetadata']),   // metadata=
+			$engine->openDB->escape($count),                  // count=
+			$engine->openDB->escape($formID)                  // ID=
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
@@ -62,7 +75,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	}
 	else {
 		// Insert into forms table
-		$sql = sprintf("INSERT INTO `%s` (title, description, fields, idno, submitButton, updateButton, container, production, metadata) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s')",
+		$sql = sprintf("INSERT INTO `%s` (title, description, fields, idno, submitButton, updateButton, container, production, metadata, count) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s','%s')",
 			$engine->openDB->escape($engine->dbTables("forms")),
 			$engine->openDB->escape($form['formTitle']),
 			isset($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
@@ -72,7 +85,8 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			$engine->openDB->escape($form['updateButton']),
 			$engine->openDB->escape($form['formContainer']),
 			$engine->openDB->escape($form['formProduction']),
-			$engine->openDB->escape($form['formMetadata'])
+			$engine->openDB->escape($form['formMetadata']),
+			$engine->openDB->escape($count)
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
