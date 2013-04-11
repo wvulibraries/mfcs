@@ -1,12 +1,59 @@
 <?php
 include("header.php");
 
-if(sizeof($engine->cleanPost['MYSQL'])){
+if(isset($engine->cleanGet['MYSQL']['ajax'])){
+    $result = array();
     switch($engine->cleanPost['MYSQL']['action']){
         case 'updateUserProjects':
-            die('HELLO!');
+            $currentProjectsIDs   = array_keys(sessionGet('currentProject'));
+            $submittedProjectsIDs = isset($engine->cleanPost['MYSQL']['selectedProjects'])
+                ? $engine->cleanPost['MYSQL']['selectedProjects']
+                : array();
+
+            try{
+                // Delete project IDs that disappeared
+                $deletedIDs = array_diff($currentProjectsIDs,$submittedProjectsIDs);
+                if(sizeof($deletedIDs)){
+                    $deleteSQL = sprintf("DELETE FROM users_projects WHERE userID='%s' AND projectID IN (%s)",
+                        mfcs::user('ID'),
+                        implode(',', $deletedIDs));
+                    $deleteSQLResult = $engine->openDB->query($deleteSQL);
+                    if(!$deleteSQLResult['result']){
+                        throw new Exception("MySQL Error - ".$deleteSQLResult['error']);
+                    }
+                }
+
+                // Add project IDs that appeared
+                $addedIDs = array_diff($submittedProjectsIDs,$currentProjectsIDs);
+                if(sizeof($addedIDs)){
+                    $keyPairs=array();
+                    foreach($addedIDs as $addedID){
+                        $keyPairs[] = sprintf("('%s','%s')", mfcs::user('ID'), $addedID);
+                    }
+                    $insertSQL = sprintf("INSERT INTO  users_projects (userID,projectID) VALUES %s", implode(',', $keyPairs));
+                    $insertSQLResult = $engine->openDB->query($insertSQL);
+                    if(!$insertSQLResult['result']){
+                        throw new Exception("MySQL Error - ".$insertSQLResult['error']);
+                    }
+                }
+
+                // If we get here either nothing happened, or everything worked (no errors happened)
+                $result = array(
+                    'success'    => TRUE,
+                    'deletedIDs' => $deletedIDs,
+                    'addedIDs'   => $addedIDs
+                );
+
+            }catch(Exception $e){
+                $result = array(
+                    'success'  => FALSE,
+                    'errorMsg' => $e->getMessage()
+                );
+            }
             break;
     }
+    header('Content-type: application/json');
+    die(json_encode($result));
 }
 
 try {
