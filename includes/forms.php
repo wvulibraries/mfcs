@@ -146,6 +146,9 @@ class forms {
 			if ($field['type'] == "fieldset") {
 				continue;
 			}
+			if ($field['type'] == "idno" && strtolower($field['managedBy']) == "system") {
+				continue;
+			}
 
 			// deal with field sets
 			if ($field['fieldset'] != $currentFieldset) {
@@ -345,7 +348,6 @@ class forms {
 			}
 			else {
 				if ($field['type'] == "idno") {
-					if (strtolower($field['managedBy']) == "system") continue;
 					$field['type'] = "text";
 				}
 
