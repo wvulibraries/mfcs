@@ -18,7 +18,7 @@ try {
 			$list = "Project";
 			break;
 		case 'all':
-			$list = "All";
+			$list = listGenerator::createAllObjectList();
 			break;
 		default:
 			$list = listGenerator::createInitialSelectList();
