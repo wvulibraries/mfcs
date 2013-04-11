@@ -42,12 +42,12 @@ class forms {
 		}
 
 		$sqlResult = $engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-		
+
 		$forms = array();
 		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 			$forms[] = $row;
@@ -329,9 +329,8 @@ class forms {
 				localvars::add("multipleFiles",(strtoupper($field['multipleFiles']) == "TRUE") ? "true" : "false");
 				localvars::add("allowedExtensions",implode('", "',$field['allowedExtensions']));
 
-
-				$output .= sprintf('<script type="text/javascript" src="%sincludes/fineUploader.formBuilder.js"></script>',
-					localvars::get("siteRoot")
+				$output .= sprintf('<script type="text/javascript">%s</script>',
+					file_get_contents(__DIR__."/js/fineUploader.formBuilder.js")
 					);
 
            		// Do we display a current file?
