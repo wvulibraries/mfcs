@@ -3,12 +3,18 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Apr 11, 2013 at 09:11 AM
--- Server version: 5.1.61
+-- Generation Time: Apr 11, 2013 at 02:52 PM
+-- Server version: 5.1.67
 -- PHP Version: 5.3.3
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
 
 --
 -- Database: `mfcs`
@@ -26,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `containers` (
   `containerName` varchar(50) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `container` (`containerName`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -43,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `dupeMatching` (
   `field` varchar(50) DEFAULT NULL,
   `value` text,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 -- --------------------------------------------------------
 
@@ -64,8 +70,9 @@ CREATE TABLE IF NOT EXISTS `forms` (
   `submitButton` varchar(20) DEFAULT 'Submit',
   `updateButton` varchar(20) DEFAULT 'Update',
   `count` int(11) NOT NULL DEFAULT '0',
+  `objectTitleField` varchar(50) DEFAULT 'title',
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -79,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `objectMetadataLinks` (
   `objectID` int(10) unsigned DEFAULT NULL,
   `metadataID` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -94,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `objectProjects` (
   `projectID` int(10) unsigned DEFAULT NULL,
   `projectNumber` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -113,7 +120,7 @@ CREATE TABLE IF NOT EXISTS `objects` (
   `idno` varchar(20) DEFAULT NULL,
   `modifiedTime` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -127,7 +134,7 @@ CREATE TABLE IF NOT EXISTS `objectTypes` (
   `objectType` varchar(50) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `objectType` (`objectType`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -142,7 +149,7 @@ CREATE TABLE IF NOT EXISTS `permissions` (
   `userID` int(10) unsigned DEFAULT NULL,
   `type` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -158,7 +165,7 @@ CREATE TABLE IF NOT EXISTS `projects` (
   `groupings` varchar(1000) CHARACTER SET utf8 DEFAULT NULL,
   `numbering` varchar(20) DEFAULT '#',
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
@@ -176,7 +183,7 @@ CREATE TABLE IF NOT EXISTS `revisions` (
   `digitalObjects` blob,
   `relatedData` text,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -192,7 +199,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `username` varchar(25) DEFAULT NULL,
   `status` varchar(25) DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
@@ -202,12 +209,12 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 DROP TABLE IF EXISTS `users_projects`;
 CREATE TABLE IF NOT EXISTS `users_projects` (
-  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `UD` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `userID` int(10) unsigned NOT NULL,
   `projectID` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`ID`),
+  PRIMARY KEY (`UD`),
   KEY `userID` (`userID`,`projectID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COMMENT='many-many link for a user''s current projects';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='many-many link for a user''s current projects' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -222,4 +229,8 @@ CREATE TABLE IF NOT EXISTS `watermarks` (
   `data` blob NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
