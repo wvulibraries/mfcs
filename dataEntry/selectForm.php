@@ -1,27 +1,23 @@
 <?php
 include("../header.php");
 
-
-
 try {
 	
-	$sql       = sprintf("SELECT `ID`, `title` FROM `forms` WHERE `metadata`='0'");
-	$sqlResult = $engine->openDB->query($sql);
+	$forms = forms::getObjectForms();
 	
-	if (!$sqlResult['result']) {
-		errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
-		errorHandle::errorMsg("Error getting Projects");
+	if ($forms === FALSE) {
+		errorHandle::errorMsg("Error getting Forms");
 		throw new Exception('Error');
 	}
 
 	$formList = "<ul>";
-	while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+	foreach ($forms as $form) {
 
 		// if (checkProjectPermissions($row['ID']) === TRUE) {
 		// }
 		$formList .= sprintf('<li><a href="form.php?formID=%s">%s</a></li>',
-			$engine->openDB->escape($row['ID']),
-			$engine->openDB->escape($row['title'])
+			$engine->openDB->escape($form['ID']),
+			$engine->openDB->escape($form['title'])
 			);
 
 	}

@@ -9,6 +9,7 @@ $engine->dbConnect("database","mfcs",TRUE);
 // Load the mfcs class
 require_once "includes/mfcs.php";
 require_once "includes/projects.php";
+require_once "includes/forms.php";
 mfcs::singleton();
 
 // Process 'my current project' from the session
