@@ -2,7 +2,12 @@
 
 class objects {
 
-	public static function get($objectID) {
+	public static function get($objectID=NULL) {
+
+		if (isnull($objectID)) {
+			return self::getObjects();
+		}
+
 		$engine = EngineAPI::singleton();
 
 		$sql       = sprintf("SELECT * FROM `objects` WHERE `ID`='%s'",
@@ -15,7 +20,62 @@ class objects {
 			return FALSE;
 		}
 
-		return mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+		$object = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+		$object['data'] = decodeFields($object['data']);
+
+		if ($object['data'] === FALSE) {
+			errorHandle::errorMsg("Error retrieving object.");
+			return FALSE;
+		}
+
+		return $object;
+	}
+
+	public static function getObjects($start=0,$length=NULL) {
+
+		if (!validate::integer($start)) {
+			errorHandle::newError(__METHOD__."() - start point not an integer", errorHandle::DEBUG);
+			errorHandle::errorMsg("Not a valid Range");
+			return(FALSE);
+		}
+
+		if (!isnull($length) && !validate::integer($length)) {
+			errorHandle::newError(__METHOD__."() - length not an integer", errorHandle::DEBUG);
+			errorHandle::errorMsg("Not a valid Range");
+			return(FALSE);
+		}
+
+		if (!isnull($length)) {
+			$start = $engine->openDB->escape($start);
+			$lengt = $engine->openDB->escape($length);
+		}
+
+		$engine = EngineAPI::singleton();
+
+		$sql       = sprintf("SELECT * FROM `objects` %s",
+			(!isnull($length))?sprintf("LIMIT %s,%s",$start,$length):""
+			);
+		$sqlResult = $engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+		$objects = array();
+		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+			$row['data'] = decodeFields($row['data']);
+
+			if ($row['data'] === FALSE) {
+				errorHandle::errorMsg("Error retrieving objects.");
+				return FALSE;
+			}
+
+			$objects[]   = $row;
+		}
+
+		return $objects;
+
 	}
 
 	public static function getAllObjectsForForm($formID) {

@@ -119,11 +119,6 @@ class forms {
 				errorHandle::errorMsg("Error retrieving object.");
 				return FALSE;
 			}
-			$object['data'] = decodeFields($object['data']);
-			if ($object['data'] === FALSE) {
-				errorHandle::errorMsg("Error retrieving object.");
-				return FALSE;
-			}
 		}
 
 		$output = sprintf('<form action="%s?formID=%s%s" method="%s">',

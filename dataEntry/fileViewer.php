@@ -26,10 +26,6 @@ try{
         if($object === FALSE) throw new Exception('Invalid Object ID!');
     }
 
-    // Extract the object's data
-    $object['data'] = decodeFields($object['data']);
-    if($object['data'] === FALSE) throw new Exception('Error retrieving object!');
-
     // Get the passed field's data
     if(isset($object['data'][$fieldName])){
         $fieldData = $object['data'][$fieldName];
