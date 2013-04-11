@@ -14,7 +14,7 @@ require_once "includes/objects.php";
 mfcs::singleton();
 
 // Process 'my current project' from the session
-$currentProjects = sessionGet('currentProject');
+$currentProjects = session::get('currentProject');
 // if(is_null($currentProjects)){
 //     // Load the user's projects from the db
 //     $currentProjects = array();

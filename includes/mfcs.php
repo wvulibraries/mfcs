@@ -46,7 +46,7 @@ class mfcs {
         }
 
         // Process the logged in user
-        $username  = sessionGet('username');
+        $username  = session::get('username');
         $sqlSelect = sprintf("SELECT * FROM users WHERE username='%s' LIMIT 1", self::$engine->openDB->escape($username));
         $sqlResult = self::$engine->openDB->query($sqlSelect);
         if(!$sqlResult['result']){
