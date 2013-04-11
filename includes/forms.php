@@ -321,98 +321,66 @@ class forms {
 					htmlSanitize($field['name']),
 					md5(microtime(TRUE))
 					);
-				$output .= sprintf('
-					<script type="text/javascript">
-					$("#fineUploader_%s")
-					.fineUploader({
-						request: {
-							endpoint: "{local var="siteRoot"}includes/uploader.php",
-							params: {
-								engineCSRFCheck: "{engine name="csrf" insert="false"}",
-								uploadID: $("#%s").val(),
-							}
-						},
-						failedUploadTextDisplay: {
-							mode: "custom",
-							maxChars: 40,
-							responseProperty: "error",
-							enableTooltip: true
-						},
-						multiple: %s,
-						validation: {
-							allowedExtensions: ["%s"],
-						},
-						text: {
-							uploadButton: \'<i class="icon-plus icon-white"></i> Select Files\'
-						},
-						showMessage: function(message) {
-							$("#fineUploader_%s .qq-upload-list").append(\'<li class="alert alert-error">\' + message + \'</li >\');
-						},
-						classes: {
-							success: "alert alert-success",
-							fail: "alert alert-error"
-						},
-					})
-				.on("complete", function(event,id,fileName,responseJSON) {
-				});
-				</script>',
-				htmlSanitize($field['name']),
-				htmlSanitize($field['name']),
-				(strtoupper($field['multipleFiles']) == "TRUE") ? "true" : "false",
-				implode('", "',$field['allowedExtensions']),
-				htmlSanitize($field['name'])
-				);
+
+				localvars::add("fieldName",htmlSanitize($field['name']));
+				localvars::add("multipleFiles",(strtoupper($field['multipleFiles']) == "TRUE") ? "true" : "false");
+				localvars::add("allowedExtensions",implode('", "',$field['allowedExtensions']));
+
+
+				$output .= sprintf('<script type="text/javascript" src="%sincludes/fineUploader.formBuilder.js"></script>',
+					localvars::get("siteRoot")
+					);
 
             // Do we display a current file?
-if(isset($object['data'][$field['name']])){
-	$output .= '<div class="filePreview"><a href="#">Click to view current file</a>';
-	$output .= sprintf('<div style="display: none;"><iframe src="fileViewer.php?objectID=%s&field=%s" sandbox="" seamless></iframe></div>',
-		$objectID,
-		$field['name']
-		);
-	$output .= '</div>';
-}
-}
-else {
-	if ($field['type'] == "idno") {
-		if (strtolower($field['managedBy']) == "system") continue;
-		$field['type'] = "text";
-	}
+				if(isset($object['data'][$field['name']])){
+					$output .= '<div class="filePreview"><a href="#">Click to view current file</a>';
+					$output .= sprintf('<div style="display: none;"><iframe src="fileViewer.php?objectID=%s&field=%s" sandbox="" seamless></iframe></div>',
+						$objectID,
+						$field['name']
+						);
+					$output .= '</div>';
+				}
+			}
+			else {
+				if ($field['type'] == "idno") {
+					if (strtolower($field['managedBy']) == "system") continue;
+					$field['type'] = "text";
+				}
 
-	$output .= sprintf('<input type="%s" name="%s" value="%s" placeholder="%s" %s id="%s" class="%s" %s %s %s %s />',
-		htmlSanitize($field['type']),
-		htmlSanitize($field['name']),
-		(isset($object['data'][$field['name']]))?htmlSanitize($object['data'][$field['name']]):htmlSanitize($field['value']),
-		htmlSanitize($field['placeholder']),
+				$output .= sprintf('<input type="%s" name="%s" value="%s" placeholder="%s" %s id="%s" class="%s" %s %s %s %s />',
+					htmlSanitize($field['type']),
+					htmlSanitize($field['name']),
+					(isset($object['data'][$field['name']]))?htmlSanitize($object['data'][$field['name']]):htmlSanitize($field['value']),
+					htmlSanitize($field['placeholder']),
 				//for numbers
-		($field['type'] == "number")?(buildNumberAttributes($field)):"",
-		htmlSanitize($field['id']),
-		htmlSanitize($field['class']),
-		(!isempty($field['style']))?'style="'.htmlSanitize($field['style']).'"':"",
+					($field['type'] == "number")?(buildNumberAttributes($field)):"",
+					htmlSanitize($field['id']),
+					htmlSanitize($field['class']),
+					(!isempty($field['style']))?'style="'.htmlSanitize($field['style']).'"':"",
 				//true/false type attributes
-		(strtoupper($field['required']) == "TRUE")?"required":"",
-		(strtoupper($field['readonly']) == "TRUE")?"readonly":"",
-		(strtoupper($field['disabled']) == "TRUE")?"disabled":""
-		);
-}
+					(strtoupper($field['required']) == "TRUE")?"required":"",
+					(strtoupper($field['readonly']) == "TRUE")?"readonly":"",
+					(strtoupper($field['disabled']) == "TRUE")?"disabled":""
+					);
+			}
 
-$output .= "</div>";
-}
+			$output .= "</div>";
+		}
 
-if (!isempty($currentFieldset)) {
-	$output .= "</fieldset>";
-}
+		if (!isempty($currentFieldset)) {
+			$output .= "</fieldset>";
+		}
 
-$output .= sprintf('<input type="submit" value="%s" name="%s" />',
-	htmlSanitize($form["submitButton"]),
-	$objectID ? "updateForm" : "submitForm"
-	);
+		$output .= sprintf('<input type="submit" value="%s" name="%s" />',
+			htmlSanitize($form["submitButton"]),
+			$objectID ? "updateForm" : "submitForm"
+			);
 
-$output .= "</form>";
+		$output .= "</form>";
 
-return $output;
+		return $output;
 
-}
+	}
 
 }
 
