@@ -52,7 +52,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 							`production`='%s',
 							`metadata`='%s',
 							`count`='%s',
-							`descriptiveTitle`='%s'
+							`objectTitleField`='%s'
 						WHERE ID='%s' LIMIT 1",
 			$engine->openDB->escape($engine->dbTables("forms")),
 			$engine->openDB->escape($form['formTitle']),        // title=
@@ -66,7 +66,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			$engine->openDB->escape($form['formMetadata']),     // metadata=
 			$engine->openDB->escape($count),                    // count=
 			$engine->openDB->escape($formID),                   // ID=
-			$engine->openDB->escape($form['descriptiveTitle'])  // descriptiveTitle=
+			$engine->openDB->escape($form['descriptiveTitle'])  // objectTitleField=
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
@@ -77,7 +77,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	}
 	else {
 		// Insert into forms table
-		$sql = sprintf("INSERT INTO `%s` (title, description, fields, idno, submitButton, updateButton, container, production, metadata, count, descriptiveTitle) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s')",
+		$sql = sprintf("INSERT INTO `%s` (title, description, fields, idno, submitButton, updateButton, container, production, metadata, count, objectTitleField) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s')",
 			$engine->openDB->escape($engine->dbTables("forms")),
 			$engine->openDB->escape($form['formTitle']),
 			isset($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
