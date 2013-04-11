@@ -24,6 +24,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 
 			if ($field['type'] == 'idno') {
 				$idno = $field;
+				$count = $field['startIncrement'];
 			}
 			else if (isset($field['choicesType']) && $field['choicesType'] == 'manual') {
 				unset($fields[$I]['choicesForm']);
@@ -40,18 +41,30 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 
 	if (!isnull($formID)) {
 		// Update forms table
-		$sql = sprintf("UPDATE `%s` SET `title`='%s', `description`=%s, `fields`='%s', `idno`='%s', `submitButton`='%s', `updateButton`='%s', `container`='%s', `production`='%s', `metadata`='%s' WHERE ID='%s' LIMIT 1",
+		$sql = sprintf("UPDATE `%s`
+						SET `title`='%s',
+							`description`=%s,
+							`fields`='%s',
+							`idno`='%s',
+							`submitButton`='%s',
+							`updateButton`='%s',
+							`container`='%s',
+							`production`='%s',
+							`metadata`='%s',
+							`count`='%s'
+						WHERE ID='%s' LIMIT 1",
 			$engine->openDB->escape($engine->dbTables("forms")),
-			$engine->openDB->escape($form['formTitle']),
-			!is_empty($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
-			encodeFields($fields),
-			encodeFields($idno),
-			$engine->openDB->escape($form['submitButton']),
-			$engine->openDB->escape($form['updateButton']),
-			$engine->openDB->escape($form['formContainer']),
-			$engine->openDB->escape($form['formProduction']),
-			$engine->openDB->escape($form['formMetadata']),
-			$engine->openDB->escape($formID)
+			$engine->openDB->escape($form['formTitle']),      // title=
+			!is_empty($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL", // description=
+			encodeFields($fields),                            // fields=
+			encodeFields($idno),                              // idno=
+			$engine->openDB->escape($form['submitButton']),   // submitButton=
+			$engine->openDB->escape($form['updateButton']),   // updateButton=
+			$engine->openDB->escape($form['formContainer']),  // container=
+			$engine->openDB->escape($form['formProduction']), // production=
+			$engine->openDB->escape($form['formMetadata']),   // metadata=
+			$engine->openDB->escape($count),                  // count=
+			$engine->openDB->escape($formID)                  // ID=
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
@@ -62,7 +75,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	}
 	else {
 		// Insert into forms table
-		$sql = sprintf("INSERT INTO `%s` (title, description, fields, idno, submitButton, updateButton, container, production, metadata) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s')",
+		$sql = sprintf("INSERT INTO `%s` (title, description, fields, idno, submitButton, updateButton, container, production, metadata, count) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s','%s')",
 			$engine->openDB->escape($engine->dbTables("forms")),
 			$engine->openDB->escape($form['formTitle']),
 			isset($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
@@ -72,7 +85,8 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			$engine->openDB->escape($form['updateButton']),
 			$engine->openDB->escape($form['formContainer']),
 			$engine->openDB->escape($form['formProduction']),
-			$engine->openDB->escape($form['formMetadata'])
+			$engine->openDB->escape($form['formMetadata']),
+			$engine->openDB->escape($count)
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
@@ -674,10 +688,7 @@ $engine->eTemplate("include","header");
 												<input type="checkbox" id="fieldSettings_options_required" name="fieldSettings_options_required"> Required
 											</label>
 											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates"> No Duplicates - Project
-											</label>
-											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_options_duplicatesForm" name="fieldSettings_options_duplicatesForm"> No Duplicates - This Form
+												<input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates"> No Duplicates
 											</label>
 											<label class="checkbox">
 												<input type="checkbox" id="fieldSettings_options_readonly" name="fieldSettings_options_readonly"> Read Only
@@ -779,9 +790,15 @@ $engine->eTemplate("include","header");
 
 							<div class="row-fluid noHide">
 								<div class="control-group well well-small" id="formSettings_formContainer_container">
-									<input type="checkbox" id="formSettings_formContainer" name="formSettings_formContainer" {local var="formContainer"}> <label class="checkbox" for="formSettings_formContainer" style="display: inline;">Act as Container</label> <br />
-									<input type="checkbox" id="formSettings_formProduction" name="formSettings_formProduction" {local var="formProduction"}> <label class="checkbox" for="formSettings_formProduction" style="display: inline;">Production Ready</label> <br />
-									<input type="checkbox" id="formSettings_formMetadata" name="formSettings_formMetadata" {local var="formMetadata"}> <label class="checkbox" for="formSettings_formMetadata" style="display: inline;">Metadata Form</label> <br />
+									<label class="checkbox" for="formSettings_formContainer">
+										<input type="checkbox" id="formSettings_formContainer" name="formSettings_formContainer" {local var="formContainer"}> Act as Container
+									</label>
+									<label class="checkbox" for="formSettings_formProduction">
+										<input type="checkbox" id="formSettings_formProduction" name="formSettings_formProduction" {local var="formProduction"}> Production Ready
+									</label>
+									<label class="checkbox" for="formSettings_formMetadata">
+										<input type="checkbox" id="formSettings_formMetadata" name="formSettings_formMetadata" {local var="formMetadata"}> Metadata Form
+									</label>
 									<span class="help-block hidden"></span>
 								</div>
 							</div>

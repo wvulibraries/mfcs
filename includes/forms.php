@@ -89,11 +89,16 @@ class forms {
 
 	}
 
+	public static function getFormIDInfo($formID) {
+		$form = getForm($formID);
+		return decodeFields($form['idno']);
+	}
+
 	public static function build($formID,$objectID = NULL) {
 
 		$engine = EngineAPI::singleton();
 
-	// Get the current Form
+		// Get the current Form
 		$form   = getForm($formID);
 
 		if ($form === FALSE) {
@@ -142,7 +147,7 @@ class forms {
 				continue;
 			}
 
-		// deal with field sets
+			// deal with field sets
 			if ($field['fieldset'] != $currentFieldset) {
 				if ($currentFieldset != "") {
 					$output .= "</fieldset>";
@@ -156,7 +161,7 @@ class forms {
 			}
 
 
-		// build the actual input box
+			// build the actual input box
 
 			$output .= '<div class="">';
 
@@ -211,9 +216,7 @@ class forms {
 			}
 			else if ($field['type'] == "checkbox" || $field['type'] == "radio") {
 
-		// }
-		// else if ($field['type'] == "radio") {
-			// Manually selected
+				// Manually selected
 				if (isset($field['choicesType']) && !isempty($field['choicesType']) && $field['choicesType'] == "manual") {
 					if (isempty($field['choicesOptions'])) {
 						errorHandle::errorMsg("No options provided for radio buttons, '".$field['label']."'");
@@ -270,7 +273,7 @@ class forms {
 					htmlSanitize($field['name'])
 					);
 
-			// Manually selected
+				// Manually selected
 				if (isset($field['choicesType']) && !isempty($field['choicesType']) && $field['choicesType'] == "manual") {
 					if (isempty($field['choicesOptions'])) {
 						errorHandle::errorMsg("No options provided for radio buttons, '".$field['label']."'");
@@ -286,7 +289,7 @@ class forms {
 					}
 
 				}
-			// Pull from another Form
+				// Pull from another Form
 				else {
 
 					$sql       = sprintf("SELECT * FROM `objects` WHERE formID='%s' and metadata='1'",
@@ -331,7 +334,7 @@ class forms {
 					localvars::get("siteRoot")
 					);
 
-            // Do we display a current file?
+           		// Do we display a current file?
 				if(isset($object['data'][$field['name']])){
 					$output .= '<div class="filePreview"><a href="#">Click to view current file</a>';
 					$output .= sprintf('<div style="display: none;"><iframe src="fileViewer.php?objectID=%s&field=%s" sandbox="" seamless></iframe></div>',
@@ -352,12 +355,12 @@ class forms {
 					htmlSanitize($field['name']),
 					(isset($object['data'][$field['name']]))?htmlSanitize($object['data'][$field['name']]):htmlSanitize($field['value']),
 					htmlSanitize($field['placeholder']),
-				//for numbers
+					//for numbers
 					($field['type'] == "number")?(buildNumberAttributes($field)):"",
 					htmlSanitize($field['id']),
 					htmlSanitize($field['class']),
 					(!isempty($field['style']))?'style="'.htmlSanitize($field['style']).'"':"",
-				//true/false type attributes
+					//true/false type attributes
 					(strtoupper($field['required']) == "TRUE")?"required":"",
 					(strtoupper($field['readonly']) == "TRUE")?"readonly":"",
 					(strtoupper($field['disabled']) == "TRUE")?"disabled":""
@@ -383,7 +386,7 @@ class forms {
 	}
 
 	// NOTE: data is being saved as RAW from the array.
-	function submit($project,$formID,$objectID=NULL) {
+	function submit($formID,$objectID=NULL) {
 		$engine = EngineAPI::singleton();
 
 		if (isnull($objectID)) {
@@ -394,7 +397,7 @@ class forms {
 		}
 
 		// Get the current Form
-		$form   = getForm($formID);
+		$form   = self::get($formID);
 
 		if ($form === FALSE) {
 			return FALSE;
@@ -402,7 +405,7 @@ class forms {
 
 		// the form is an object form, make sure that it has an ID field defined.
 		if ($form['metadata'] == "0") {
-			$idnoInfo = getFormIDInfo($formID);
+			$idnoInfo = self::getFormIDInfo($formID);
 			if ($idnoInfo === FALSE) {
 				errorHandle::newError(__METHOD__."() - no IDNO field for object form.", errorHandle::DEBUG);
 				return(FALSE);
@@ -456,16 +459,9 @@ class forms {
 				continue;
 			}
 
-			// Duplicate Checking (Project)
-			if (strtolower($field['duplicates']) == "true") {
-				if (isDupe($formID,$project['ID'],$field['name'],$engine->cleanPost['RAW'][$field['name']])) {
-					errorHandle::errorMsg("Duplicate data (in Project) provided in field '".$field['label']."'.");
-					continue;
-				}
-			}
 			// Duplicate Checking (Form)
 			if (strtolower($field['duplicatesForm']) == "true") {
-				if (isDupe($formID,NULL,$field['name'],$engine->cleanPost['RAW'][$field['name']])) {
+				if (self::isDupe($formID,$field['name'],$engine->cleanPost['RAW'][$field['name']])) {
 					errorHandle::errorMsg("Duplicate data (in form) provided in field '".$field['label']."'.");
 					continue;
 				}
@@ -475,7 +471,7 @@ class forms {
 			// need to pull the data that loaded with the form
 				if ($newObject === TRUE) {
 				// grab it from the database
-					$oldObject              = getObject($objectID);
+					$oldObject              = object::get($objectID);
 					$object['data']         = decodeFields($object['data']);
 					$values[$field['name']] = $object['data'][$field['name']];
 				}
@@ -506,10 +502,9 @@ class forms {
 		}
 
 		if ($newObject === TRUE) {
-			$sql       = sprintf("INSERT INTO `objects` (parentID,formID,defaultProject,data,metadata,modifiedTime) VALUES('%s','%s','%s','%s','%s','%s')",
+			$sql       = sprintf("INSERT INTO `objects` (parentID,formID,data,metadata,modifiedTime) VALUES('%s','%s','%s','%s','%s')",
 				isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",
 				$engine->openDB->escape($formID),
-				$engine->openDB->escape($project['ID']),
 				encodeFields($values),
 				$engine->openDB->escape($form['metadata']),
 				time()
@@ -531,10 +526,9 @@ class forms {
 			}
 
 			// insert new version
-			$sql = sprintf("UPDATE `objects` SET `parentID`='%s', `formID`='%s', `defaultProject`='%s', `data`='%s', `metadata`='%s', `modifiedTime`='%s' WHERE `ID`='%s'",
+			$sql = sprintf("UPDATE `objects` SET `parentID`='%s', `formID`='%s', `data`='%s', `metadata`='%s', `modifiedTime`='%s' WHERE `ID`='%s'",
 				isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",
 				$engine->openDB->escape($formID),
-				$engine->openDB->escape($project['ID']),
 				encodeFields($values),
 				$engine->openDB->escape($form['metadata']),
 				time(),
@@ -548,7 +542,7 @@ class forms {
 			$engine->openDB->transRollback();
 			$engine->openDB->transEnd();
 
-			errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
+			errorHandle::newError(__METHOD__."() - ".$sql." -- ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
 
@@ -557,46 +551,47 @@ class forms {
 		}
 
 		// Check to see if this object already exists in the objectProjects table. If not, add it.
-		$sql       = sprintf("SELECT COUNT(*) FROM `objectProjects` WHERE `objectID`='%s' AND `projectID`='%s'",
-			$engine->openDB->escape($objectID),
-			$engine->openDB->escape($project['ID'])
-			);
-		$sqlResult = $engine->openDB->query($sql);
+		// @TODO
+		// $sql       = sprintf("SELECT COUNT(*) FROM `objectProjects` WHERE `objectID`='%s' AND `projectID`='%s'",
+		// 	$engine->openDB->escape($objectID),
+		// 	$engine->openDB->escape($project['ID'])
+		// 	);
+		// $sqlResult = $engine->openDB->query($sql);
 
-		if (!$sqlResult['result']) {
-			$engine->openDB->transRollback();
-			$engine->openDB->transEnd();
+		// if (!$sqlResult['result']) {
+		// 	$engine->openDB->transRollback();
+		// 	$engine->openDB->transEnd();
 
-			errorHandle::newError(__METHOD__."() - error getting count: ".$sqlResult['error'], errorHandle::DEBUG);
-			return FALSE;
-		}
+		// 	errorHandle::newError(__METHOD__."() - error getting count: ".$sqlResult['error'], errorHandle::DEBUG);
+		// 	return FALSE;
+		// }
 
-		$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+		// $row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
-		if ($row['COUNT(*)'] == 0) {
-			$sql       = sprintf("INSERT INTO `objectProjects` (objectID,projectID) VALUES('%s','%s')",
-				$engine->openDB->escape($objectID),
-				$engine->openDB->escape($project['ID'])
-				);
-			$sqlResult = $engine->openDB->query($sql);
+		// if ($row['COUNT(*)'] == 0) {
+		// 	$sql       = sprintf("INSERT INTO `objectProjects` (objectID,projectID) VALUES('%s','%s')",
+		// 		$engine->openDB->escape($objectID),
+		// 		$engine->openDB->escape($project['ID'])
+		// 		);
+		// 	$sqlResult = $engine->openDB->query($sql);
 
-			if (!$sqlResult['result']) {
-				$engine->openDB->transRollback();
-				$engine->openDB->transEnd();
+		// 	if (!$sqlResult['result']) {
+		// 		$engine->openDB->transRollback();
+		// 		$engine->openDB->transEnd();
 
-				errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
-				return FALSE;
-			}
-		}
+		// 		errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
+		// 		return FALSE;
+		// 	}
+		// }
 
 
 
 		// if it is an object form (not a metadata form)
 		// do the IDNO stuff
 		if ($form['metadata'] == "0") {
-		// increment the project counter
-			$sql       = sprintf("UPDATE `projects` SET `count`=`count`+'1' WHERE `ID`='%s'",
-				$engine->openDB->escape($project['ID'])
+			// increment the project counter
+			$sql       = sprintf("UPDATE `forms` SET `count`=`count`+'1' WHERE `ID`='%s'",
+				$engine->openDB->escape($formID['ID'])
 				);
 			$sqlResult = $engine->openDB->query($sql);
 
@@ -604,13 +599,13 @@ class forms {
 				$engine->openDB->transRollback();
 				$engine->openDB->transEnd();
 
-				errorHandle::newError(__METHOD__."() - Error incrementing project counter: ".$sqlResult['error'], errorHandle::DEBUG);
+				errorHandle::newError(__METHOD__."() - Error incrementing form counter: ".$sqlResult['error'], errorHandle::DEBUG);
 				return FALSE;
 			}
 
 			// if the idno is managed by the system get a new idno
 			if ($idnoInfo['managedBy'] == "system") {
-				$idno = $engine->openDB->escape(getIDNO($formID,$project['ID']));
+				$idno = $engine->openDB->escape(mfcs::getIDNO($formID));
 			}
 			// the idno is managed manually
 			else {
@@ -631,14 +626,12 @@ class forms {
 		}
 
 		if ($newObject === FALSE) {
-			// update the object with a new idno if it is managed manually
 			// update all the fields in the dupeMatching Table
 
 			// delete all matching fields
-			$sql       = sprintf("DELETE FROM `dupeMatching` WHERE `formID`='%s' AND `objectID`='%s' AND `projectID`='%s'",
+			$sql       = sprintf("DELETE FROM `dupeMatching` WHERE `formID`='%s' AND `objectID`='%s'",
 				$engine->openDB->escape($formID),
-				$engine->openDB->escape($objectID),
-				$engine->openDB->escape($project['ID'])
+				$engine->openDB->escape($objectID)
 				);
 			$sqlResult = $engine->openDB->query($sql);
 
@@ -652,9 +645,8 @@ class forms {
 
 		// insert all the fields into the dupeMatching table
 		foreach ($values as $name=>$raw) {
-			$sql       = sprintf("INSERT INTO `dupeMatching` (`formID`,`projectID`,`objectID`,`field`,`value`) VALUES('%s','%s','%s','%s','%s')",
+			$sql       = sprintf("INSERT INTO `dupeMatching` (`formID`,`objectID`,`field`,`value`) VALUES('%s','%s','%s','%s')",
 				$engine->openDB->escape($formID),
-				$engine->openDB->escape($project['ID']),
 				$engine->openDB->escape($objectID),
 				$engine->openDB->escape($name),
 				$engine->cleanPost['MYSQL'][$name]
@@ -676,6 +668,31 @@ class forms {
 		$engine->openDB->transEnd();
 
 		return TRUE;
+	}
+
+	// $value must be RAW
+	public static function isDupe($formID,$field,$value) {
+
+		$engine = EngineAPI::singleton();
+
+		$sql = sprintf("SELECT COUNT(*) FROM dupeMatching WHERE `formID`='%s' AND `field`='%s' AND `value`='%s'",
+			$engine->openDB->escape($formID),
+			$engine->openDB->escape($field),
+			$engine->openDB->escape($value)
+			);
+
+		$sqlResult = $engine->openDB->sqlResult($sql);
+
+		// we return TRUE on Error, because if a dupe is encountered we want it to fail out.
+		if ($sqlResult['result'] === FALSE) {
+			return TRUE;
+		}
+		else if ((INT)$sqlResult['result']['COUNT(*)'] > 0) {
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
 	}
 
 }

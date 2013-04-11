@@ -63,6 +63,7 @@ CREATE TABLE IF NOT EXISTS `forms` (
   `metadata` tinyint(4) NOT NULL DEFAULT '1',
   `submitButton` varchar(20) DEFAULT 'Submit',
   `updateButton` varchar(20) DEFAULT 'Update',
+  `count` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
@@ -206,7 +207,7 @@ CREATE TABLE IF NOT EXISTS `users_projects` (
   `projectID` int(10) unsigned NOT NULL,
   PRIMARY KEY (`UD`),
   KEY `userID` (`userID`,`projectID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='many-many link for a user''s current projects';
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COMMENT='many-many link for a user''s current projects';
 
 -- --------------------------------------------------------
 

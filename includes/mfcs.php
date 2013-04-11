@@ -109,6 +109,28 @@ class mfcs {
             : $default;
     }
 
+    // if $increment is true it returns the NEXT number. if it is false it returns the current
+    public static function getIDNO($formID,$increment=TRUE) {
 
+        $engine         = self::$engine;
+        $idno           = getFormIDInfo($formID);
+
+        $sqlResult = $engine->openDB->sqlResult(
+            sprintf("SELECT `count` FROM `forms` WHERE `ID`='%s'",
+                $engine->openDB->escape($formID)
+                )
+            );
+
+        if (!$sqlResult['result']) {
+            return FALSE;
+        }
+
+        $idno                         = $idno['idnoFormat'];
+        $len                          = strrpos($idno,"#") - strpos($idno,"#") + 1;
+        $sqlResult['result']['count'] = str_pad($sqlResult['result']['count'],$len,"0",STR_PAD_LEFT);
+        $idno                         = preg_replace("/#+/", $sqlResult['result']['count'], $idno);
+
+        return $idno;
+    }
 
 }
