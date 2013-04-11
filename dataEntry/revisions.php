@@ -26,7 +26,6 @@ try {
 
     // Get the current object
     $object = getObject($engine->cleanGet['MYSQL']['objectID']);
-    $object['data'] = decodeFields($object['data']);
 
     // Catch a form submition (which would be a revision being reverted to)
     if(isset($engine->cleanPost['MYSQL']['revisionID'])){
@@ -49,7 +48,6 @@ try {
             }else{
                 // Reload the object - To refresh the data
                 $object = getObject($engine->cleanGet['MYSQL']['objectID']);
-                $object['data'] = decodeFields($object['data']);
             }
         }
     }

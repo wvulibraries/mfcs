@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Apr 11, 2013 at 10:30 AM
+-- Generation Time: Apr 11, 2013 at 02:52 PM
 -- Server version: 5.1.67
 -- PHP Version: 5.3.3
 
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `dupeMatching` (
   `field` varchar(50) DEFAULT NULL,
   `value` text,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 -- --------------------------------------------------------
 
@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS `forms` (
   `submitButton` varchar(20) DEFAULT 'Submit',
   `updateButton` varchar(20) DEFAULT 'Update',
   `count` int(11) NOT NULL DEFAULT '0',
+  `objectTitleField` varchar(50) DEFAULT 'title',
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
@@ -119,7 +120,7 @@ CREATE TABLE IF NOT EXISTS `objects` (
   `idno` varchar(20) DEFAULT NULL,
   `modifiedTime` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 

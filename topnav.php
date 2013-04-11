@@ -1,3 +1,13 @@
+<?php
+$currentProjects = sessionGet('currentProject');
+if(isset($currentProjects) and sizeof($currentProjects)){
+    localvars::add('currentProjectNames', implode(', ',array_values($currentProjects)));
+    localvars::add('currentProjectIDs',   implode(',',array_keys($currentProjects)));
+}else{
+    localvars::add('currentProjectNames', '<span style="color: #999; font-style: italic;">None Selected</span>');
+    localvars::add('currentProjectIDs',   '');
+}
+?>
 <ul class="nav">
 	<li class="dropdown">
 		<a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -30,19 +40,5 @@
 </ul>
 <div class="pull-right" style="padding: 8px; font-size: 18px; color: #ccc;">
     <strong>Current projects:</strong>
-    <a href="#selectProjects" title="Click to change" data-toggle="modal">
-        <?php
-        // Global is needed because this file is loaded inside a function (and looses variable scope)
-        global $currentProjects;
-        if(isset($currentProjects) and sizeof($currentProjects)){
-            $projects = array();
-            foreach($currentProjects as $currentProjectID => $currentProjectName){
-                $projects[] = $currentProjectName;
-            }
-            echo implode(', ',$projects);
-        }else{
-            echo '<span style="color: #999; font-style: italic;">None Selected</span>';
-        }
-        ?>
-    </a>
+    <a href="#selectProjectsModal" id="currentProjectsLink" title="Click to change" data-toggle="modal" data-selected_projects='{local var="currentProjectIDs"}'>{local var="currentProjectNames"}</a>
 </div>
