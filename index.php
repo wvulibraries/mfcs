@@ -1,8 +1,6 @@
 <?php
 include("header.php");
 
-
-
 if(sizeof($engine->cleanPost['MYSQL'])){
     switch($engine->cleanPost['MYSQL']['action']){
         case 'updateUserProjects':
