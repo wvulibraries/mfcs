@@ -95,6 +95,12 @@ class objects {
 		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
 			$row['data'] = decodeFields($row['data']);
+
+			if ($row['data'] === FALSE) {
+				errorHandle::errorMsg("Error retrieving objects.");
+				return FALSE;
+			}
+
 			$objects[] = $row;
 
 		}
