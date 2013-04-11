@@ -12,6 +12,16 @@ $(function(){
             filePreview.find('div').slideDown();
         }
     });
+
+    // Reset the modal's UI when it's hidden
+    $('#selectProjectsModal').on('hide', function (){
+        var IDs = $('#currentProjectsLink').data('selected_projects').split(',');
+        $('#selectProjectsModal :checkbox').each(function(i,n){
+            var chkBox = $(n);
+            var ID = $(n).val();
+            chkBox.prop('checked', $.inArray(ID, IDs) !== -1 );
+        });
+    });
 });
 
 function saveSelectedProjects(){
@@ -23,11 +33,12 @@ function saveSelectedProjects(){
         selectedProjectNames.push($(n).data('label'));
     });
     // And POST it to the server
-    $.post('index.php?ajax',{
+    var postData = {
         engineCSRFCheck:  $(':input[name="engineCSRFCheck"]').val(),
         action:           'updateUserProjects',
         selectedProjects: selectedProjectIDs
-    },function(data){
+    };
+    $.post('index.php?ajax',postData,function(data){
         if(data.success){
             alert('Success!');
             var newHTML = selectedProjectIDs.length
@@ -35,7 +46,7 @@ function saveSelectedProjects(){
                 : '<span style="color: #999; font-style: italic;">None Selected</span>';
             $('#currentProjectsLink')
                 .html(newHTML)
-                .data('selected_projects',selectedProjectIDs);
+                .data('selected_projects',selectedProjectIDs.join(','));
             $('#selectProjectsModal').modal('hide')
         }else{
             alert("An error occurred!\n\n(check the browser console for details)")
