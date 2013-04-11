@@ -15,9 +15,6 @@ class listGenerator {
 
 		$data = array();
 		foreach ($objects as $object) {
-			print "<pre>";
-			var_dump($object);
-			print "</pre>";
 
 			$form = forms::get($object['formID']);
 
@@ -30,6 +27,20 @@ class listGenerator {
 	}
 
 	public static function createFormSelectList() {
+
+		$engine  = EngineAPI::singleton();
+		$forms   = forms::getForms(TRUE);
+
+		$output = '<ul>';
+		foreach ($forms as $form) {
+			$output .= sprintf('<li><a href="list.php?listType=form&amp;formID=%s">%s</a></li>',
+				$form['ID'],
+				$form['title']
+				);
+		}
+		$output .= '</ul>';
+
+		return($output);
 
 	}
 

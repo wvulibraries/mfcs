@@ -6,7 +6,7 @@ try {
 
 	switch($engine->cleanGet['MYSQL']['listType']) {
 		case 'selectForm':
-			$list = "Select Form";
+			$list = listGenerator::createFormSelectList();
 			break;
 		case 'selectProject':
 			$list = "Select Form";
