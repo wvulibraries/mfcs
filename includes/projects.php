@@ -16,17 +16,17 @@ class projects {
         // Clean and process $fields
         $fields = is_string($fields) ? explode(',', $fields) : $fields;
         foreach($fields as $k => $field){
-            $fields[$k] = '`'.self::$engine->openDB->escape($field).'`';
+            $fields[$k] = '`'.mfcs::$engine->openDB->escape($field).'`';
         }
 
         // Clean and process $orderBy
-        $orderBy = !is_empty($orderBy) ? "ORDER BY ".self::$engine->openDB->escape($orderBy) : '';
+        $orderBy = !is_empty($orderBy) ? "ORDER BY ".mfcs::$engine->openDB->escape($orderBy) : '';
 
         // Build SQL
         $sql = sprintf('SELECT %s FROM `projects` %s',
             implode(',', $fields),
             $orderBy);
-        $sqlResult = self::$engine->openDB->query($sql);
+        $sqlResult = mfcs::$engine->openDB->query($sql);
         if(!$sqlResult['result']){
             errorHandle::newError(__METHOD__."() - MySQL Error ".$sqlResult['error'], errorHandle::DEBUG);
             return array();
@@ -55,12 +55,10 @@ class projects {
  			return self::getProjects();
  		}
 
-        $engine = EngineAPI::singleton();
-
         $sql       = sprintf("SELECT * FROM `projects` WHERE `ID`='%s'",
-            $engine->openDB->escape($projectID)
+            mfcs::$engine->openDB->escape($projectID)
             );
-        $sqlResult = $engine->openDB->query($sql);
+        $sqlResult = mfcs::$engine->openDB->query($sql);
 
         if (!$sqlResult['result']) {
             errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
@@ -83,17 +81,15 @@ class projects {
      */
     public static function checkPermissions($id,$username = NULL) {
 
-    	$engine = EngineAPI::singleton();
-
     	if (isnull($username)) {
     		$username = sessionGet("username");
     	}
 
     	$sql       = sprintf("SELECT COUNT(permissions.ID) FROM permissions LEFT JOIN users on users.ID=permissions.userID WHERE permissions.projectID='%s' AND users.username='%s'",
-    		$engine->openDB->escape($id),
-    		$engine->openDB->escape($username)
+            mfcs::$engine->openDB->escape($id),
+            mfcs::$engine->openDB->escape($username)
     		);
-    	$sqlResult = $engine->openDB->query($sql);
+    	$sqlResult = mfcs::$engine->openDB->query($sql);
 
     	if (!$sqlResult['result']) {
     		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
