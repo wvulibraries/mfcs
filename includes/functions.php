@@ -20,50 +20,17 @@ function decodeFields($fields) {
 
 }
 
+// Deprecated
 function checkProjectPermissions($id) {
 
-	$engine = EngineAPI::singleton();
-
-	$username = sessionGet("username");
-
-	$sql       = sprintf("SELECT COUNT(permissions.ID) FROM permissions LEFT JOIN users on users.ID=permissions.userID WHERE permissions.projectID='%s' AND users.username='%s'",
-		$engine->openDB->escape($id),
-		$engine->openDB->escape($username)
-		);
-	$sqlResult = $engine->openDB->query($sql);
-
-	if (!$sqlResult['result']) {
-		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
-		return FALSE;
-	}
-
-	$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
-
-	if ((int)$row['COUNT(permissions.ID)'] > 0) {
-		return TRUE;
-	}
-
-	return FALSE;
+	return projects::checkPermissions($id);
 
 }
 
-// returns the database object for the project ID
-// we need to add caching to this, once caching is moved from EngineCMS to EngineAPI
+// Deprecated
 function getProject($projectID) {
 
-	$engine = EngineAPI::singleton();
-
-	$sql       = sprintf("SELECT * FROM `projects` WHERE `ID`='%s'",
-		$engine->openDB->escape($projectID)
-		);
-	$sqlResult = $engine->openDB->query($sql);
-
-	if (!$sqlResult['result']) {
-		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
-		return FALSE;
-	}
-
-	return mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+	return projects::get($projectID);
 
 }
 

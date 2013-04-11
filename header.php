@@ -8,6 +8,7 @@ $engine->dbConnect("database","mfcs",TRUE);
 
 // Load the mfcs class
 require_once "includes/mfcs.php";
+require_once "includes/projects.php";
 mfcs::singleton();
 
 // Process 'my current project' from the session
@@ -48,7 +49,7 @@ localVars::add('pageHeader',"Metadata Form Creation System");
         <ul id="selectProjectsList">
             <?php
             $currentProjectsIDs = array_keys($currentProjects);
-            foreach(mfcs::getProjects() as $project){
+            foreach(projects::getProjects() as $project){
                 echo sprintf("<li><label><input type='checkbox' value='%s'%s> %s</label></li>",
                     $project['ID'],
                     in_array($project['ID'], $currentProjectsIDs) ? " checked='checked'" : '',
