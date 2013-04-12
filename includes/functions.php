@@ -453,9 +453,4 @@ function processUploads($field,$uploadID) {
 		}
 	}
 }
-
-// Deprecated
-function checkProjectPermissions($id) {
-	return projects::checkPermissions($id);
-}
 ?>

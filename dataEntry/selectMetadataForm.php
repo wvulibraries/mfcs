@@ -14,9 +14,9 @@ try {
 	foreach ($forms as $form) {
 
 		// @TODO
-		// if (checkProjectPermissions($row['ID']) === TRUE) {
+		// if (projects::checkPermissions($row['ID']) === TRUE) {
 		// }
-		
+
 		$metadataForms = forms::getObjectFormMetaForms($form['ID']);
 
 		if (count($metadataForms) < 1) continue;
@@ -28,8 +28,8 @@ try {
 		foreach ($metadataForms as $metadataForm) {
 
 			$formList .= '<li>';
-			$formList .= sprintf('<a href="metadata.php?formID=%s">%s</a>', 
-				$metadataForm['formID'], 
+			$formList .= sprintf('<a href="metadata.php?formID=%s">%s</a>',
+				$metadataForm['formID'],
 				htmlSanitize($metadataForm['title'])
 				);
 			$formList .= '</li>';

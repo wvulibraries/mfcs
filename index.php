@@ -69,7 +69,7 @@ try {
 	$projectList = "";
 	while($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
-		if (checkProjectPermissions($row['ID']) === TRUE) {
+		if (projects::checkPermissions($row['ID']) === TRUE) {
 			$projectList .= sprintf('<li><a href="dataEntry/index.php?id=%s">%s</a></li>',
 				$engine->openDB->escape($row['ID']),
 				$engine->openDB->escape($row['projectName'])

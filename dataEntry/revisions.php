@@ -27,7 +27,7 @@ try {
 
 
     // check for edit permissions on the project
-    if(checkProjectPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) {
+    if(projects::checkPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) {
         throw new Exception('Permissions denied for working on this project');
     }
 

@@ -2,10 +2,10 @@
 include("../header.php");
 
 try {
-	
+
 	$sql       = sprintf("SELECT `ID`, `title` FROM `forms` ORDER BY `metadata`, `title`");
 	$sqlResult = $engine->openDB->query($sql);
-	
+
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 		errorHandle::errorMsg("Error getting Projects");
@@ -15,7 +15,7 @@ try {
 	$formList = "<ul>";
 	while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
-		// if (checkProjectPermissions($row['ID']) === TRUE) {
+		// if (projects::checkPermissions($row['ID']) === TRUE) {
 		// }
 		$formList .= sprintf('<li><a href="index.php?id=%s">%s</a></li>',
 			$engine->openDB->escape($row['ID']),
