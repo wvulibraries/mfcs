@@ -473,9 +473,4 @@ function getObject($objectID) {
 function checkObjectInForm($formID,$objectID) {
 	return objects::checkObjectInForm($formID,$objectID);
 }
-
-// Deprecated
-function checkFormInProject($projectID,$formID) {
-	return forms::checkFormInProject($projectID,$formID);
-}
 ?>

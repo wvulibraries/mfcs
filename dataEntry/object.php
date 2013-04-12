@@ -66,7 +66,7 @@ try {
 
 	// check that this form is part of the project
 	// // TODO need forms from User
-	// if (!checkFormInProject($engine->cleanGet['MYSQL']['id'],$engine->cleanGet['MYSQL']['formID'])) {
+	// if (!forms::checkFormInProject($engine->cleanGet['MYSQL']['id'],$engine->cleanGet['MYSQL']['formID'])) {
 	// 	throw new Exception("Form is not part of project.");
 	// }
 

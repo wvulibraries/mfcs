@@ -4,8 +4,8 @@ include("../header.php");
 try {
     // Make sure we have id, formID, and objectID provided
     if(!isset($engine->cleanGet['MYSQL']['objectID']) || is_empty($engine->cleanGet['MYSQL']['objectID']) || !validate::integer($engine->cleanGet['MYSQL']['objectID'])) throw new Exception('No Object ID Provided.');
-    if(!isset($engine->cleanGet['MYSQL']['formID'])   
-        || is_empty($engine->cleanGet['MYSQL']['formID'])   
+    if(!isset($engine->cleanGet['MYSQL']['formID'])
+        || is_empty($engine->cleanGet['MYSQL']['formID'])
         || !validate::integer($engine->cleanGet['MYSQL']['formID'])) {
 
         if (!isnull($engine->cleanGet['MYSQL']['objectID'])) {
@@ -23,14 +23,14 @@ try {
         else {
             throw new Exception('No Form ID Provided.');
         }
-    }  
-    
+    }
+
 
     // check for edit permissions on the project
     if(checkProjectPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) throw new Exception('Permissions denied for working on this project');
 
     // check that this form is part of the project
-    if(!checkFormInProject($engine->cleanGet['MYSQL']['id'],$engine->cleanGet['MYSQL']['formID'])) throw new Exception('Form is not part of project.');
+    if(!forms::checkFormInProject($engine->cleanGet['MYSQL']['id'],$engine->cleanGet['MYSQL']['formID'])) throw new Exception('Form is not part of project.');
 
     // Make sure the objectID is from this form
     if(isset($engine->cleanGet['MYSQL']['objectID']) && !checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) throw new Exception('Object not from this form');
