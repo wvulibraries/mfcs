@@ -245,6 +245,19 @@ $engine->eTemplate("include","header");
 	</div>
 </section>
 
+<script type="text/javascript">
+	$(function() {
+		// Show first tab on page load
+		$(".nav-tabs a:first").tab("show");
+
+		// Disable input fields of metadata form
+		$("#metadata :input").prop("disabled",true);
+
+		// Hide metadata form submit
+		$("#metadata :input[type=submit]").hide();
+	});
+</script>
+
 <?php
 $engine->eTemplate("include","footer");
 ?>
