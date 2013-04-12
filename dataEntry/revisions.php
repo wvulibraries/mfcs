@@ -50,7 +50,7 @@ try {
     localvars::add("projectName",$project['projectName']);
 
     // Get the current object
-    $object = getObject($engine->cleanGet['MYSQL']['objectID']);
+    $object = objects::get($engine->cleanGet['MYSQL']['objectID']);
 
     // Catch a form submition (which would be a revision being reverted to)
     if(isset($engine->cleanPost['MYSQL']['revisionID'])){
@@ -72,7 +72,7 @@ try {
                 errorHandle::newError("SQL Error: ".$sqlResult['error'], errorHandle::HIGH);
             }else{
                 // Reload the object - To refresh the data
-                $object = getObject($engine->cleanGet['MYSQL']['objectID']);
+                $object = objects::get($engine->cleanGet['MYSQL']['objectID']);
             }
         }
     }

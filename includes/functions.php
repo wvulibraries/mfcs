@@ -463,9 +463,4 @@ function checkProjectPermissions($id) {
 function getProject($projectID) {
 	return projects::get($projectID);
 }
-
-// Deprecated
-function getObject($objectID) {
-	return objects::get($objectID);
-}
 ?>
