@@ -28,7 +28,7 @@ try {
 		foreach ($metadataForms as $metadataForm) {
 
 			$formList .= '<li>';
-			$formList .= sprintf('<a href="object.php?formID=%s">%s</a>', 
+			$formList .= sprintf('<a href="metadata.php?formID=%s">%s</a>', 
 				$metadataForm['formID'], 
 				htmlSanitize($metadataForm['title'])
 				);
