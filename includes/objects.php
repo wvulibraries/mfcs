@@ -136,11 +136,16 @@ class objects {
 	public static function checkObjectInForm($formID,$objectID) {
 		$object = self::get($objectID);
 
-		if ($object['formID'] == $formID) {
-			return TRUE;
+		if ($object === FALSE) {
+			return(FALSE);
 		}
 
-		return FALSE;
+		if (isset($object['formID']) && $object['formID'] == $formID) {
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
 	}
 
 	/**
