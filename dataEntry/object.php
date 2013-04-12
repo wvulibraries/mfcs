@@ -171,6 +171,12 @@ $engine->eTemplate("include","header");
 	</div>
 </section>
 
+<script type="text/javascript">
+	$(function() {
+		// Show first tab on page load
+		$(".nav-tabs a:first").tab("show");
+	});
+</script>
 
 <?php
 $engine->eTemplate("include","footer");
