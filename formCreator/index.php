@@ -218,9 +218,10 @@ if (!isnull($formID)) {
 			}
 
 			if ($field['type'] == 'text') {
-				localVars::add("objectTitleFieldOptions", sprintf('%s<option value="%s">%s</option>',
+				localVars::add("objectTitleFieldOptions", sprintf('%s<option value="%s"%s>%s</option>',
 					localVars::get("objectTitleFieldOptions"),
 					$field['name'],
+					($field['name'] == $form['objectTitleField']) ? " selected" : NULL,
 					$field['label']
 					));
 			}
