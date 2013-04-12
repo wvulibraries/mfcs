@@ -20,7 +20,22 @@ class forms {
 			return FALSE;
 		}
 
-		return mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+		$form           = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+		$form['fields'] = decodeFields($form['fields']);
+
+		if ($form['fields'] === FALSE) {
+			errorHandle::errorMsg("Error retrieving form.");
+			return FALSE;
+		}
+
+		$form['idno']   = decodeFields($form['idno']);
+
+		if ($form['idno'] === FALSE) {
+			errorHandle::errorMsg("Error retrieving form.");
+			return FALSE;
+		}
+
+		return $form;
 	}
 
 	public static function getForms($type = NULL) {
@@ -50,6 +65,21 @@ class forms {
 
 		$forms = array();
 		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+
+			$row['fields'] = decodeFields($form['fields']);
+
+			if ($row['fields'] === FALSE) {
+				errorHandle::errorMsg("Error retrieving form.");
+				return FALSE;
+			}
+
+			$row['idno']   = decodeFields($form['idno']);
+
+			if ($row['idno'] === FALSE) {
+				errorHandle::errorMsg("Error retrieving form.");
+				return FALSE;
+			}
+
 			$forms[] = $row;
 		}
 
@@ -105,7 +135,7 @@ class forms {
 			return FALSE;
 		}
 
-		$fields = decodeFields($form['fields']);
+		$fields = $form['fields'];
 
 		if (usort($fields, 'sortFieldsByPosition') !== TRUE) {
 			errorHandle::newError(__METHOD__."() - usort", errorHandle::DEBUG);
@@ -408,7 +438,7 @@ class forms {
 			}
 		}
 
-		$fields = decodeFields($form['fields']);
+		$fields = $form['fields'];
 
 		if (usort($fields, 'sortFieldsByPosition') !== TRUE) {
 			errorHandle::newError(__METHOD__."() - usort", errorHandle::DEBUG);
@@ -464,15 +494,14 @@ class forms {
 			}
 
 			if (strtolower($field['readonly']) == "true") {
-			// need to pull the data that loaded with the form
+				// need to pull the data that loaded with the form
 				if ($newObject === TRUE) {
-				// grab it from the database
+					// grab it from the database
 					$oldObject              = object::get($objectID);
-					$object['data']         = decodeFields($object['data']);
-					$values[$field['name']] = $object['data'][$field['name']];
+					$values[$field['name']] = $oldObject['data'][$field['name']];
 				}
 				else {
-				// grab the default value from the form.
+					// grab the default value from the form.
 					$values[$field['name']] = $field['value'];
 				}
 			}

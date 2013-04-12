@@ -181,6 +181,8 @@ localVars::add("thisSubmitButton","Add Form");
 if (!isnull($formID)) {
 	localVars::add("thisSubmitButton","Update Form");
 
+	// @TODO : this should use forms::get() method to get the form
+
 	// Get form info for display
 	$sql = sprintf("SELECT * FROM `%s` WHERE ID='%s' LIMIT 1",
 		$engine->openDB->escape($engine->dbTables("forms")),
@@ -202,6 +204,7 @@ if (!isnull($formID)) {
 
 		$formPreview = NULL;
 		if (!is_empty($row['fields'])) {
+			// @TODO you don't need to decode the fields if you use the forms::get() method
 			$fields = decodeFields($row['fields']);
 
 			// Get all fieldsets needed
