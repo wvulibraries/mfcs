@@ -179,50 +179,42 @@ localVars::add("thisSubmitButton","Add Form");
 if (!isnull($formID)) {
 	localVars::add("thisSubmitButton","Update Form");
 
-	// @TODO : this should use forms::get() method to get the form
+	$form = forms::get($formID);
 
-	// Get form info for display
-	$sql = sprintf("SELECT * FROM `%s` WHERE ID='%s' LIMIT 1",
-		$engine->openDB->escape($engine->dbTables("forms")),
-		$engine->openDB->escape($formID)
-		);
-	$sqlResult = $engine->openDB->query($sql);
-
-	if ($sqlResult['result']) {
-		$row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
-
-		localVars::add("formID",htmlSanitize($row['ID']));
-		localVars::add("formTitle",htmlSanitize($row['title']));
-		localVars::add("formDescription",htmlSanitize($row['description']));
-		localVars::add("submitButton",htmlSanitize($row['submitButton']));
-		localVars::add("updateButton",htmlSanitize($row['updateButton']));
-		localVars::add("formContainer",  ($row['container'] == '1')  ? "checked" : "");
-		localVars::add("formProduction", ($row['production'] == '1') ? "checked" : "");
-		localVars::add("formMetadata",   ($row['metadata'] == '1')   ? "checked" : "");
-
+	if ($form !== FALSE) {
 		$formPreview = NULL;
-		if (!is_empty($row['fields'])) {
-			// @TODO you don't need to decode the fields if you use the forms::get() method
-			$fields = decodeFields($row['fields']);
 
-			// Get all fieldsets needed
-			foreach ($fields as $I => $field) {
-				if (!is_empty($field['fieldset'])) {
-					$fieldsets[$field['fieldset']] = array(
-						"type"     => "fieldset",
-						"fieldset" => $field['fieldset'],
-						);
-				}
+		localVars::add("formID",          htmlSanitize($form['ID']));
+		localVars::add("formTitle",       htmlSanitize($form['title']));
+		localVars::add("formDescription", htmlSanitize($form['description']));
+		localVars::add("submitButton",    htmlSanitize($form['submitButton']));
+		localVars::add("updateButton",    htmlSanitize($form['updateButton']));
+		localVars::add("formContainer",   ($form['container'] == '1')  ? "checked" : "");
+		localVars::add("formProduction",  ($form['production'] == '1') ? "checked" : "");
+		localVars::add("formMetadata",    ($form['metadata'] == '1')   ? "checked" : "");
+
+		if (is_empty($form['fields'])) {
+			$form['fields'] = array();
+		}
+
+		// Get all fieldsets needed
+		foreach ($form['fields'] as $I => $field) {
+			if (!is_empty($field['fieldset'])) {
+				$fieldsets[$field['fieldset']] = array(
+					"type"     => "fieldset",
+					"fieldset" => $field['fieldset'],
+					);
 			}
+		}
 
-			$positionOffset = 0;
-			foreach((array)$fields as $I => $field) {
-				if (isset($field['choicesOptions']) && is_array($field['choicesOptions'])) {
-					$field['choicesOptions'] = implode("%,%",$field['choicesOptions']);
-				}
-				else if (isset($field['allowedExtensions']) && is_array($field['allowedExtensions'])) {
-					$field['allowedExtensions'] = implode("%,%",$field['allowedExtensions']);
-				}
+		$positionOffset = 0;
+		foreach($form['fields'] as $I => $field) {
+			if (isset($field['choicesOptions']) && is_array($field['choicesOptions'])) {
+				$field['choicesOptions'] = implode("%,%",$field['choicesOptions']);
+			}
+			else if (isset($field['allowedExtensions']) && is_array($field['allowedExtensions'])) {
+				$field['allowedExtensions'] = implode("%,%",$field['allowedExtensions']);
+			}
 
 			if ($field['type'] == 'text') {
 				localVars::add("objectTitleFieldOptions", sprintf('%s<option value="%s">%s</option>',
@@ -232,36 +224,9 @@ if (!isnull($formID)) {
 					));
 			}
 
-				$values = json_encode($field);
+			$values = json_encode($field);
 
-				if (!is_empty($field['fieldset']) && isset($fieldsets[$field['fieldset']])) {
-					$formPreview .= sprintf('
-						<li id="formPreview_%s">
-							<div class="fieldPreview">
-								<script type="text/javascript">
-									$("#formPreview_%s .fieldPreview").html(newFieldPreview("%s","%s"));
-								</script>
-							</div>
-							<div class="fieldValues">
-								<script type="text/javascript">
-									$("#formPreview_%s .fieldValues").html(newFieldValues("%s","%s",%s));
-								</script>
-							</div>
-						</li>',
-						htmlSanitize($field['position'] + $positionOffset),
-						htmlSanitize($field['position'] + $positionOffset),
-						htmlSanitize($field['position'] + $positionOffset),
-						htmlSanitize($fieldsets[$field['fieldset']]['type']),
-						htmlSanitize($field['position'] + $positionOffset),
-						htmlSanitize($field['position'] + $positionOffset),
-						htmlSanitize($fieldsets[$field['fieldset']]['type']),
-						json_encode($fieldsets[$field['fieldset']])
-						);
-
-					$positionOffset++;
-					unset($fieldsets[$field['fieldset']]);
-				}
-
+			if (!is_empty($field['fieldset']) && isset($fieldsets[$field['fieldset']])) {
 				$formPreview .= sprintf('
 					<li id="formPreview_%s">
 						<div class="fieldPreview">
@@ -278,14 +243,41 @@ if (!isnull($formID)) {
 					htmlSanitize($field['position'] + $positionOffset),
 					htmlSanitize($field['position'] + $positionOffset),
 					htmlSanitize($field['position'] + $positionOffset),
-					htmlSanitize($field['type']),
+					htmlSanitize($fieldsets[$field['fieldset']]['type']),
 					htmlSanitize($field['position'] + $positionOffset),
 					htmlSanitize($field['position'] + $positionOffset),
-					htmlSanitize($field['type']),
-					$values
+					htmlSanitize($fieldsets[$field['fieldset']]['type']),
+					json_encode($fieldsets[$field['fieldset']])
 					);
+
+				$positionOffset++;
+				unset($fieldsets[$field['fieldset']]);
 			}
+
+			$formPreview .= sprintf('
+				<li id="formPreview_%s">
+					<div class="fieldPreview">
+						<script type="text/javascript">
+							$("#formPreview_%s .fieldPreview").html(newFieldPreview("%s","%s"));
+						</script>
+					</div>
+					<div class="fieldValues">
+						<script type="text/javascript">
+							$("#formPreview_%s .fieldValues").html(newFieldValues("%s","%s",%s));
+						</script>
+					</div>
+				</li>',
+				htmlSanitize($field['position'] + $positionOffset),
+				htmlSanitize($field['position'] + $positionOffset),
+				htmlSanitize($field['position'] + $positionOffset),
+				htmlSanitize($field['type']),
+				htmlSanitize($field['position'] + $positionOffset),
+				htmlSanitize($field['position'] + $positionOffset),
+				htmlSanitize($field['type']),
+				$values
+				);
 		}
+
 		localVars::add("formPreview",$formPreview);
 	}
 }
