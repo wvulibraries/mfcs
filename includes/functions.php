@@ -11,22 +11,16 @@ function displayMessages() {
 function encodeFields($fields) {
 
 	return base64_encode(serialize($fields));
-
 }
 
 function decodeFields($fields) {
 
 	return unserialize(base64_decode($fields));
-
 }
 
 function sortFieldsByPosition($a,$b) {
 	return strnatcmp($a['position'], $b['position']);
 }
-
-
-
-
 
 function buildProjectNavigation($projectID) {
 	$project = getProject($projectID);
@@ -91,7 +85,6 @@ function buildProjectNavigation($projectID) {
 
 
 	return $output;
-
 }
 
 function buildNumberAttributes($field) {
@@ -102,25 +95,21 @@ function buildNumberAttributes($field) {
 	$output .= (!isempty($field["step"]))?' step="'.$field['step'].'"':"";
 
 	return $output;
-
 }
-
-
 
 // if $increment is true it returns the NEXT number. if it is false it returns the current
 function getIDNO($formID,$projectID,$increment=TRUE) {
 	return mfcs::getIDNO($formID,$increment);
 }
 
-
 // if $increment is true it returns the NEXT number. if it is false it returns the current
 function dumpStuff($formID,$projectID,$increment=TRUE) {
 
 	$engine         = EngineAPI::singleton();
 
-	$form           = getForm($formID);
+	$form           = forms::get($formID);
 	$form['fields'] = decodeFields($form['fields']);
-	$idno           = getFormIDInfo($formID);
+	$idno           = forms::getFormIDInfo($formID);
 
 	print "<pre>";
 	var_dump($form['fields']);
@@ -172,7 +161,6 @@ function dumpStuff($formID,$projectID,$increment=TRUE) {
 
 	return TRUE;
 }
-
 
 /**
  * Returns the base path to be used when uploading files
@@ -475,50 +463,4 @@ function checkProjectPermissions($id) {
 function getProject($projectID) {
 	return projects::get($projectID);
 }
-
-// Deprecated
-function getForm($formID) {
-	return forms::get($formID);
-}
-
-// Deprecated
-function getObject($objectID) {
-	return objects::get($objectID);
-}
-
-// Deprecated
-function getAllObjectsForForm($formID) {
-	return objects::getAllObjectsForForm($formID);
-}
-
-// Deprecated
-function checkObjectInForm($formID,$objectID) {
-	return objects::checkObjectInForm($formID,$objectID);
-}
-
-// Deprecated
-function checkFormInProject($projectID,$formID) {
-	return forms::checkFormInProject($projectID,$formID);
-}
-
-// Deprecated
-function buildForm($formID,$objectID = NULL) {
-	return forms::build($formID,$objectID);
-}
-
-// Deprecated
-function submitForm($formID,$objectID=NULL) {
-	return forms::submit($formID,$objectID);
-}
-
-// Deprecated
-function isDupe($formID,$field,$value) {
-	return forms::isDupe($formID,$field,$value);
-}
-
-// Deprecated
-function getFormIDInfo($formID) {
-	return forms::getFormIDInfo($formID);
-}
-
 ?>

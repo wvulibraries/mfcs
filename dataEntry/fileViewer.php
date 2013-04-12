@@ -22,7 +22,7 @@ try{
         if($object === FALSE) throw new Exception('Invalid Revision ID!');
     }else{
         // Lookup the passed object
-        $object = getObject($objectID);
+        $object = objects::get($objectID);
         if($object === FALSE) throw new Exception('Invalid Object ID!');
     }
 

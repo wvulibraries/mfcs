@@ -71,12 +71,12 @@ class objects {
 			(!isnull($length))?sprintf("LIMIT %s,%s",$start,$length):""
 			);
 		$sqlResult = $engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-		
+
 		$objects = array();
 		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 			$objects[] = self::get($row['ID']);
@@ -97,12 +97,12 @@ class objects {
 			$engine->openDB->escape($objectID)
 		);
 		$sqlResult = $engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-		
+
 		$children = array();
 		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 			$children[] = self::get($row['ID']);
@@ -133,7 +133,7 @@ class objects {
 	}
 
 	public static function checkObjectInForm($formID,$objectID) {
-		$object = getObject($objectID);
+		$object = self::get($objectID);
 
 		if ($object['formID'] == $formID) {
 			return TRUE;

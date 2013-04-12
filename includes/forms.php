@@ -153,7 +153,7 @@ class forms {
 	}
 
 	public static function getFormIDInfo($formID) {
-		$form = getForm($formID);
+		$form = self::get($formID);
 		return decodeFields($form['idno']);
 	}
 
@@ -162,7 +162,7 @@ class forms {
 		$engine = EngineAPI::singleton();
 
 		// Get the current Form
-		$form   = getForm($formID);
+		$form   = self::get($formID);
 
 		if ($form === FALSE) {
 			return FALSE;
@@ -177,7 +177,7 @@ class forms {
 		}
 
 		if (!isnull($objectID)) {
-			$object = getObject($objectID);
+			$object = objects::get($objectID);
 			if ($object === FALSE) {
 				errorHandle::errorMsg("Error retrieving object.");
 				return FALSE;
