@@ -3,33 +3,52 @@ include("../header.php");
 recurseInsert("acl.php","php");
 
 try {
-	$objectID = isset($engine->cleanGet['MYSQL']['objectID']) ? $engine->cleanGet['MYSQL']['objectID'] : NULL;
+	
+	if (isset($engine->cleanGet['MYSQL']['objectID'])
+		&& (is_empty($engine->cleanGet['MYSQL']['objectID'])
+			|| !validate::integer($engine->cleanGet['MYSQL']['objectID']))
+		) {
 
-	if (isnull($objectID)) {
-		throw new Exception("Object ID Not Found.");
+		errorHandle::newError(__METHOD__."() - ObjectID Provided is invalid", errorHandle::DEBUG);
+		throw new Exception("ObjectID Provided is invalid.");
 	}
 
-	$sql = sprintf("SELECT * FROM `%s` WHERE ID='%s' LIMIT 1",
-		$engine->openDB->escape($engine->dbTables("objects")),
-		$engine->openDB->escape($objectID)
-		);
-	$sqlResult = $engine->openDB->query($sql);
+	if (!isset($engine->cleanGet['MYSQL']['formID'])
+		|| is_empty($engine->cleanGet['MYSQL']['formID'])
+		|| !validate::integer($engine->cleanGet['MYSQL']['formID'])) {
+
+		if (!isnull($engine->cleanGet['MYSQL']['objectID'])) {
+			$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
+
+			if ($object === FALSE) {
+				errorHandle::newError(__METHOD__."() - No Form ID Provided, error getting Object", errorHandle::DEBUG);
+				throw new Exception("No Form ID Provided, error getting Object.");
+			}
+
+			http::setGet('formID',$object['formID']);
+
+		}
+		else {
+			errorHandle::newError(__METHOD__."() - No Form ID Provided.", errorHandle::DEBUG);
+			errorHandle::errorMsg("No Form ID Provided.");
+			throw new Exception('Error');
+		}
+	}
+
+	$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
 
 	if ($sqlResult['affectedRows'] == 0 || !$sqlResult['result']) {
-		errorHandle::newError("Failed to retrieve objectID (".$objectID."): ".$sqlResult['error'], errorHandle::DEBUG);
 		throw new Exception("Invalid Object ID.");
 	}
 
-	$object = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
-	$object['data'] = decodeFields($object['data']);
 }
 catch (Exception $e) {
-	die($e->getMessage());
+	errorHandle::errorMsg($e->getMessage());
 }
 
 // Get projects and all joined projects
 $allProjects      = projects::getProjects();
-$selectedProjects = objects::getProjects($objectID);
+$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
 
 // Submissions
 if (isset($engine->cleanPost['MYSQL']['projectForm'])) {
@@ -62,7 +81,7 @@ if (isset($engine->cleanPost['MYSQL']['projectForm'])) {
 	if (isset($deletedProjects) && !is_empty($deletedProjects)) {
 		$sql = sprintf("DELETE FROM `%s` WHERE `objectID`='%s' AND `projectID` IN ('%s')",
 			$engine->openDB->escape($engine->dbTables("objectProjects")),
-			$engine->openDB->escape($objectID),
+			$engine->openDB->escape($engine->cleanGet['MYSQL']['objectID']),
 			implode("','", $deletedProjects)
 			);
 		$sqlResult = $engine->openDB->query($sql);
@@ -77,7 +96,7 @@ if (isset($engine->cleanPost['MYSQL']['projectForm'])) {
 	if (isset($addedProjects) && !is_empty($addedProjects)) {
 		foreach ($addedProjects as $projectID) {
 			$additions[] = sprintf("('%s','%s')",
-				$engine->openDB->escape($objectID),
+				$engine->openDB->escape($engine->cleanGet['MYSQL']['objectID']),
 				$engine->openDB->escape($projectID)
 				);
 		}
@@ -113,17 +132,7 @@ unset($tmp);
 // Projects
 
 // Children
-$sql = sprintf("SELECT * FROM `%s` WHERE parentID='%s'",
-	$engine->openDB->escape($engine->dbTables("objects")),
-	$engine->openDB->escape($objectID)
-	);
-$sqlResult = $engine->openDB->query($sql);
-
-if ($sqlResult['result']) {
-	while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
-		$children[$row['ID']] = $row;
-	}
-}
+$children = objects::getChildren($engine->cleanGet['MYSQL']['objectID']);
 // Children
 
 
