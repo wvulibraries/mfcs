@@ -98,6 +98,24 @@ class forms {
 		return self::getForms(FALSE);
 	}
 
+	/*
+	 * Returns all of the linked metadata forms for an object form
+	 */
+	public static function getObjectFormMetaForms($formID) {
+		$form = self::get($formID);
+
+		$metadataForms = array();
+		foreach ($form['fields'] as $field) {
+			if (isset($field['choicesForm']) && validate::integer($field['choicesForm'])) {
+				$metaForm      = self::get($field['choicesForm']);
+				$medataForms[] = array($field['choicesForm'] => $metaForm['title']);
+			}
+		}
+
+		return $metadataForms;
+
+	}
+
 	public static function checkFormInProject($projectID,$formID) {
 
 		$project = getProject($projectID);
