@@ -114,28 +114,19 @@ class objects {
 	public static function getAllObjectsForForm($formID) {
 		$engine = EngineAPI::singleton();
 
-		$sql       = sprintf("SELECT * FROM `objects` WHERE `formID`='%s'",
+		$sql       = sprintf("SELECT `ID` FROM `objects` WHERE `formID`='%s'",
 			$engine->openDB->escape($formID)
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
-			errorHandle::newError(__METHOD__."() - getting all objects: ".$sqlResult['error'], errorHandle::DEBUG);
+			errorHandle::newError(__METHOD__."() - getting all objects for form: ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
 
 		$objects = array();
 		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-
-			$row['data'] = decodeFields($row['data']);
-
-			if ($row['data'] === FALSE) {
-				errorHandle::errorMsg("Error retrieving objects.");
-				return FALSE;
-			}
-
-			$objects[] = $row;
-
+			$objects[] = self::get($row['ID']);
 		}
 
 		return $objects;
