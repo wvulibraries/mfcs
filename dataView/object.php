@@ -4,15 +4,6 @@ recurseInsert("acl.php","php");
 
 try {
 
-	// Form ID Validation
-	if (!isset($engine->cleanGet['MYSQL']['formID'])
-		|| is_empty($engine->cleanGet['MYSQL']['formID'])
-		|| !validate::integer($engine->cleanGet['MYSQL']['formID'])) {
-
-		errorHandle::newError("No Form ID Provided.", errorHandle::DEBUG);
-		throw new Exception("No Form ID Provided.");
-	}
-
 	// Object ID Validation
 	if (!isset($engine->cleanGet['MYSQL']['objectID'])) {
 		errorHandle::newError("No Object ID Provided.", errorHandle::DEBUG);
@@ -24,11 +15,6 @@ try {
 
 		errorHandle::newError("Object ID Provided is invalid.", errorHandle::DEBUG);
 		throw new Exception("Object ID Provided is invalid.");
-	}
-
-	if (!checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
-		errorHandle::newError("Object not from this form.", errorHandle::DEBUG);
-		throw new Exception("Object not from this form");
 	}
 
 	// check for edit permissions on the project
@@ -56,6 +42,20 @@ try {
 
 	http::setGet('formID',$object['formID']);
 
+
+	// Form ID Validation
+	if (!isset($engine->cleanGet['MYSQL']['formID'])
+		|| is_empty($engine->cleanGet['MYSQL']['formID'])
+		|| !validate::integer($engine->cleanGet['MYSQL']['formID'])) {
+
+		errorHandle::newError("No Form ID Provided.", errorHandle::DEBUG);
+		throw new Exception("No Form ID Provided.");
+	}
+
+	if (!checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
+		errorHandle::newError("Object not from this form.", errorHandle::DEBUG);
+		throw new Exception("Object not from this form");
+	}
 
 	//////////
 	// Metadata Tab Stuff

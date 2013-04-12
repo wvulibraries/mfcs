@@ -4,29 +4,12 @@ recurseInsert("acl.php","php");
 
 try {
 
-	if (!isset($engine->cleanGet['MYSQL']['formID'])
-		|| is_empty($engine->cleanGet['MYSQL']['formID'])
-		|| !validate::integer($engine->cleanGet['MYSQL']['formID'])) {
+	if (isset($engine->cleanGet['MYSQL']['objectID'])
+		&& (is_empty($engine->cleanGet['MYSQL']['objectID'])
+			|| !validate::integer($engine->cleanGet['MYSQL']['objectID']))) {
 
-		errorHandle::newError("No Form ID Provided.", errorHandle::DEBUG);
-		throw new Exception("No Form ID Provided.");
-	}
-
-	if (isset($engine->cleanGet['MYSQL']['objectID'])) {
-
-		if (is_empty($engine->cleanGet['MYSQL']['objectID'])
-			|| !validate::integer($engine->cleanGet['MYSQL']['objectID'])) {
-
-			errorHandle::newError("ObjectID Provided is invalid", errorHandle::DEBUG);
-			throw new Exception("ObjectID Provided is invalid.");
-		}
-
-		// if an object ID is provided make sure the object is from this form
-		if (!checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
-			errorHandle::newError("Object not from this form.", errorHandle::DEBUG);
-			throw new Exception("Object not from this form.");
-		}
-
+		errorHandle::newError("ObjectID Provided is invalid", errorHandle::DEBUG);
+		throw new Exception("ObjectID Provided is invalid.");
 	}
 	else if (!isset($engine->cleanGet['MYSQL']['objectID'])) {
 		$engine->cleanGet['MYSQL']['objectID'] = NULL;
@@ -53,6 +36,19 @@ try {
 		}
 	}
 
+	if (!isset($engine->cleanGet['MYSQL']['formID'])
+		|| is_empty($engine->cleanGet['MYSQL']['formID'])
+		|| !validate::integer($engine->cleanGet['MYSQL']['formID'])) {
+
+		errorHandle::newError("No Form ID Provided.", errorHandle::DEBUG);
+		throw new Exception("No Form ID Provided.");
+	}
+
+	// if an object ID is provided make sure the object is from this form
+	if (!checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
+		errorHandle::newError("Object not from this form.", errorHandle::DEBUG);
+		throw new Exception("Object not from this form.");
+	}
 
 	$form = forms::get($engine->cleanGet['MYSQL']['formID']);
 	if ($form === FALSE) {
