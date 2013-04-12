@@ -253,8 +253,8 @@ $engine->eTemplate("include","header");
 		// Disable form input fields
 		$(":input").prop("disabled",true);
 
-		// Hide form submits
-		$(":input[type=submit]").hide();
+		// Remove form submits
+		$(":input[type=submit]").remove();
 
 		// Remove form actions
 		$("form").removeAttr("action");
