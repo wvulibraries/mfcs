@@ -5,7 +5,7 @@ $formID = isset($engine->cleanPost['HTML']['id']) ? $engine->cleanPost['HTML']['
 if (is_empty($formID)) {
 	$formID = NULL;
 }
- 
+
 if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	$engine->openDB->transBegin();
 
@@ -65,7 +65,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			$engine->openDB->escape($form['formProduction']),   // production=
 			$engine->openDB->escape($form['formMetadata']),     // metadata=
 			$engine->openDB->escape($count),                    // count=
-			$engine->openDB->escape($form['descriptiveTitle']), // objectTitleField=
+			$engine->openDB->escape($form['objectTitleField']), // objectTitleField=
 			$engine->openDB->escape($formID)                    // ID=
 			);
 		$sqlResult = $engine->openDB->query($sql);
@@ -89,7 +89,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			$engine->openDB->escape($form['formProduction']),
 			$engine->openDB->escape($form['formMetadata']),
 			$engine->openDB->escape($count),
-			$engine->openDB->escape($form['descriptiveTitle'])
+			$engine->openDB->escape($form['objectTitleField'])
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
@@ -226,8 +226,8 @@ if (!isnull($formID)) {
 					$field['allowedExtensions'] = implode("%,%",$field['allowedExtensions']);
 				}
 
-				localVars::add("descriptiveTitleOptions", sprintf('%s<option value="%s">%s</option>',
-					localVars::get("descriptiveTitleOptions"),
+				localVars::add("objectTitleFieldOptions", sprintf('%s<option value="%s">%s</option>',
+					localVars::get("objectTitleFieldOptions"),
 					$field['name'],
 					$field['label']
 					));
@@ -800,12 +800,12 @@ $engine->eTemplate("include","header");
 								</div>
 							</div>
 
-							<div class="control-group well well-small" id="formSettings_descriptiveTitle_container">
-								<label for="formSettings_descriptiveTitle">
+							<div class="control-group well well-small" id="formSettings_objectTitleField_container">
+								<label for="formSettings_objectTitleField">
 									Descriptive Title
 								</label>
-								<select class="input-block-level" id="formSettings_descriptiveTitle" name="formSettings_descriptiveTitle">
-									{local var="descriptiveTitleOptions"}
+								<select class="input-block-level" id="formSettings_objectTitleField" name="formSettings_objectTitleField">
+									{local var="objectTitleFieldOptions"}
 								</select>
 								<span class="help-block hidden"></span>
 							</div>
