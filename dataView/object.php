@@ -37,14 +37,22 @@ try {
 
 	$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
 
-	if ($sqlResult['affectedRows'] == 0 || !$sqlResult['result']) {
+	if ($object === FALSE) {
 		throw new Exception("Invalid Object ID.");
 	}
+
+	// build the form for displaying
+	$builtForm = forms::build($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
+	if ($builtForm === FALSE) throw new Exception('Error building form.');
+
+	localvars::add("form",$builtForm);
 
 }
 catch (Exception $e) {
 	errorHandle::errorMsg($e->getMessage());
 }
+
+// @TODO all of this chould be using exceptions to catch errors
 
 // Get projects and all joined projects
 $allProjects      = projects::getProjects();
@@ -52,6 +60,9 @@ $selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID'])
 
 // Submissions
 if (isset($engine->cleanPost['MYSQL']['projectForm'])) {
+
+	// @TODO this should be using transactions
+
 	if (!isset($engine->cleanPost['MYSQL']['projects'])) {
 		$engine->cleanPost['MYSQL']['projects'] = array();
 	}
@@ -91,6 +102,8 @@ if (isset($engine->cleanPost['MYSQL']['projectForm'])) {
 			errorHandle::errorMsg("Failed to remove projects.");
 		}
 	}
+
+	// @TODO if the deletes failed to perform, why are we performing additions?
 
 	// Perform additions
 	if (isset($addedProjects) && !is_empty($addedProjects)) {
@@ -159,11 +172,7 @@ $engine->eTemplate("include","header");
 			<div class="tab-content">
 				<div class="tab-pane" id="metadata">
 					Metadata content
-					<?php
-					print "<pre>";
-					print_r($object['data']);
-					print "</pre>";
-					?>
+					{local var="form"}
 				</div>
 
 				<div class="tab-pane" id="project">
