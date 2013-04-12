@@ -104,7 +104,7 @@ try {
 
 	localvars::add("form",$builtForm);
 
-	localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['id']));
+	localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['formID']));
 
 }
 catch(Exception $e) {
