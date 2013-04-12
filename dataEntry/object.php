@@ -29,7 +29,7 @@ try {
 				throw new Exception('Error');
 			}
 
-			$engine->cleanGet['MYSQL']['formID'] = $object['formID'];
+			http::setGet('formID',$object['formID']);
 
 		}
 		else {
