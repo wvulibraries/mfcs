@@ -3,151 +3,192 @@ include("../header.php");
 recurseInsert("acl.php","php");
 
 try {
-	
-	if (isset($engine->cleanGet['MYSQL']['objectID'])
-		&& (is_empty($engine->cleanGet['MYSQL']['objectID'])
-			|| !validate::integer($engine->cleanGet['MYSQL']['objectID']))
-		) {
 
-		errorHandle::newError(__METHOD__."() - ObjectID Provided is invalid", errorHandle::DEBUG);
-		throw new Exception("ObjectID Provided is invalid.");
-	}
-
+	// Form ID Validation
 	if (!isset($engine->cleanGet['MYSQL']['formID'])
 		|| is_empty($engine->cleanGet['MYSQL']['formID'])
 		|| !validate::integer($engine->cleanGet['MYSQL']['formID'])) {
 
-		if (!isnull($engine->cleanGet['MYSQL']['objectID'])) {
-			$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
-
-			if ($object === FALSE) {
-				errorHandle::newError(__METHOD__."() - No Form ID Provided, error getting Object", errorHandle::DEBUG);
-				throw new Exception("No Form ID Provided, error getting Object.");
-			}
-
-			http::setGet('formID',$object['formID']);
-
-		}
-		else {
-			errorHandle::newError(__METHOD__."() - No Form ID Provided.", errorHandle::DEBUG);
-			errorHandle::errorMsg("No Form ID Provided.");
-			throw new Exception('Error');
-		}
+		errorHandle::newError("No Form ID Provided.", errorHandle::DEBUG);
+		throw new Exception("No Form ID Provided.");
 	}
 
+	// Object ID Validation
+	if (!isset($engine->cleanGet['MYSQL']['objectID'])) {
+		errorHandle::newError("No Object ID Provided.", errorHandle::DEBUG);
+		throw new Exception("No Object ID Provided.");
+	}
+
+	if (is_empty($engine->cleanGet['MYSQL']['objectID'])
+		|| !validate::integer($engine->cleanGet['MYSQL']['objectID'])) {
+
+		errorHandle::newError("Object ID Provided is invalid.", errorHandle::DEBUG);
+		throw new Exception("Object ID Provided is invalid.");
+	}
+
+	if (!checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
+		errorHandle::newError("Object not from this form.", errorHandle::DEBUG);
+		throw new Exception("Object not from this form");
+	}
+
+	// check for edit permissions on the project
+	// if (checkProjectPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) {
+	// 	throw new Exception("Permissions denied for working on this project");
+	// }
+
+	// check that this form is part of the project
+	// // TODO need forms from User
+	// if (!checkFormInProject($engine->cleanGet['MYSQL']['id'],$engine->cleanGet['MYSQL']['formID'])) {
+	// 	throw new Exception("Form is not part of project.");
+	// }
+
+	// Get the project
+	// $project = NULL; // TODO: Needs to be gotten from the user info
+	// if ($project === FALSE) {
+	// 	throw new Exception("Error retrieving project.");
+	// }
+
+
 	$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
- 
 	if ($object === FALSE) {
 		throw new Exception("Invalid Object ID.");
 	}
 
+	http::setGet('formID',$object['formID']);
+
+
+	//////////
+	// Metadata Tab Stuff
+	$form = getForm($engine->cleanGet['MYSQL']['formID']);
+	if ($form === FALSE) {
+		throw new Exception("Error retrieving form.");
+	}
+
+	localvars::add("formName",$form['title']);
+
+	// Submissions
+	if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
+		$return = forms::submit($engine->cleanGet['MYSQL']['formID']);
+		if ($return === FALSE) {
+			throw new Exception("Error Submitting Form.");
+		}
+	}
+	else if (isset($engine->cleanPost['MYSQL']['updateForm'])) {
+		$return = forms::submit($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
+		if ($return === FALSE) {
+			throw new Exception("Error Updating Form.");
+		}
+	}
+	// Submissions
+
 	// build the form for displaying
 	$builtForm = forms::build($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
-	if ($builtForm === FALSE) throw new Exception('Error building form.');
+	if ($builtForm === FALSE) {
+		throw new Exception("Error building form.");
+	}
 
 	localvars::add("form",$builtForm);
+	// Metadata Tab Stuff
+	//////////
+
+	//////////
+	// Project Tab Stuff
+	$allProjects      = projects::getProjects();
+	$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
+
+	// Submissions
+	if (isset($engine->cleanPost['MYSQL']['projectForm'])) {
+		if (!isset($engine->cleanPost['MYSQL']['projects'])) {
+			$engine->cleanPost['MYSQL']['projects'] = array();
+		}
+		else {
+			$engine->cleanPost['MYSQL']['projects'] = array_keys($engine->cleanPost['MYSQL']['projects']);
+		}
+
+		foreach ($engine->cleanPost['MYSQL']['projects'] as $postProjectID) {
+			if (in_array($postProjectID, $selectedProjects)) {
+				continue;
+			}
+
+			// Add to additions
+			$addedProjects[] = $postProjectID;
+		}
+
+		foreach ($selectedProjects as $selectProjectID) {
+			if (in_array($selectProjectID, $engine->cleanPost['MYSQL']['projects'])) {
+				continue;
+			}
+
+			// Add to deletions
+			$deletedProjects[] = $selectProjectID;
+		}
+
+		// Perform deletions
+		if (isset($deletedProjects) && !is_empty($deletedProjects)) {
+			$sql = sprintf("DELETE FROM `%s` WHERE `objectID`='%s' AND `projectID` IN ('%s')",
+				$engine->openDB->escape($engine->dbTables("objectProjects")),
+				$engine->openDB->escape($engine->cleanGet['MYSQL']['objectID']),
+				implode("','", $deletedProjects)
+				);
+			$sqlResult = $engine->openDB->query($sql);
+
+			if (!$sqlResult['result']) {
+				errorHandle::newError("Failed to perform deletions - ".$sqlResult['error'],errorHandle::DEBUG);
+				throw new Exception("Failed to remove projects.");
+			}
+		}
+
+		// Perform additions
+		if (isset($addedProjects) && !is_empty($addedProjects)) {
+			foreach ($addedProjects as $projectID) {
+				$additions[] = sprintf("('%s','%s')",
+					$engine->openDB->escape($engine->cleanGet['MYSQL']['objectID']),
+					$engine->openDB->escape($projectID)
+					);
+			}
+			$sql = sprintf("INSERT INTO `%s` (`objectID`,`projectID`) VALUES %s",
+				$engine->openDB->escape($engine->dbTables("objectProjects")),
+				implode(",", $additions)
+				);
+			$sqlResult = $engine->openDB->query($sql);
+
+			if (!$sqlResult['result']) {
+				errorHandle::newError("Failed to perform additions - ".$sqlResult['error'],errorHandle::DEBUG);
+				throw new Exception("Failed to add projects.");
+			}
+		}
+
+		$selectedProjects = $engine->cleanPost['MYSQL']['projects'];
+	}
+	// Submissions
+
+	$tmp = NULL;
+	foreach ($allProjects as $project) {
+		$tmp .= sprintf('<label class="checkbox" for="%s"><input type="checkbox" id="%s" name="projects[%s]"%s> %s</label>',
+			htmlSanitize("project_".$project['ID']),                           // for=
+			htmlSanitize("project_".$project['ID']),                           // id=
+			htmlSanitize($project['ID']),                                      // name=projects[]
+			(in_array($project['ID'], $selectedProjects)) ? " checked" : NULL, // checked or not
+			htmlSanitize($project['projectName'])                              // label text
+			);
+	}
+	localVars::add("projectOptions",$tmp);
+	unset($tmp);
+	// Project Tab Stuff
+	//////////
+
+	//////////
+	// Children Tab Stuff
+	$children = objects::getChildren($engine->cleanGet['MYSQL']['objectID']);
+	// Children Tab Stuff
+	//////////
 
 }
 catch (Exception $e) {
 	errorHandle::errorMsg($e->getMessage());
 }
 
-// @TODO all of this chould be using exceptions to catch errors
-
-// Get projects and all joined projects
-$allProjects      = projects::getProjects();
-$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
-
-// Submissions
-if (isset($engine->cleanPost['MYSQL']['projectForm'])) {
-
-	// @TODO this should be using transactions
-
-	if (!isset($engine->cleanPost['MYSQL']['projects'])) {
-		$engine->cleanPost['MYSQL']['projects'] = array();
-	}
-	else {
-		$engine->cleanPost['MYSQL']['projects'] = array_keys($engine->cleanPost['MYSQL']['projects']);
-	}
-
-	foreach ($engine->cleanPost['MYSQL']['projects'] as $postProjectID) {
-		if (in_array($postProjectID, $selectedProjects)) {
-			continue;
-		}
-
-		// Add to additions
-		$addedProjects[] = $postProjectID;
-	}
-
-	foreach ($selectedProjects as $selectProjectID) {
-		if (in_array($selectProjectID, $engine->cleanPost['MYSQL']['projects'])) {
-			continue;
-		}
-
-		// Add to deletions
-		$deletedProjects[] = $selectProjectID;
-	}
-
-	// Perform deletions
-	if (isset($deletedProjects) && !is_empty($deletedProjects)) {
-		$sql = sprintf("DELETE FROM `%s` WHERE `objectID`='%s' AND `projectID` IN ('%s')",
-			$engine->openDB->escape($engine->dbTables("objectProjects")),
-			$engine->openDB->escape($engine->cleanGet['MYSQL']['objectID']),
-			implode("','", $deletedProjects)
-			);
-		$sqlResult = $engine->openDB->query($sql);
-
-		if (!$sqlResult['result']) {
-			errorHandle::newError("Failed to perform deletions - ".$sqlResult['error'],errorHandle::DEBUG);
-			errorHandle::errorMsg("Failed to remove projects.");
-		}
-	}
-
-	// @TODO if the deletes failed to perform, why are we performing additions?
-
-	// Perform additions
-	if (isset($addedProjects) && !is_empty($addedProjects)) {
-		foreach ($addedProjects as $projectID) {
-			$additions[] = sprintf("('%s','%s')",
-				$engine->openDB->escape($engine->cleanGet['MYSQL']['objectID']),
-				$engine->openDB->escape($projectID)
-				);
-		}
-		$sql = sprintf("INSERT INTO `%s` (`objectID`,`projectID`) VALUES %s",
-			$engine->openDB->escape($engine->dbTables("objectProjects")),
-			implode(",", $additions)
-			);
-		$sqlResult = $engine->openDB->query($sql);
-
-		if (!$sqlResult['result']) {
-			errorHandle::newError("Failed to perform additions - ".$sqlResult['error'],errorHandle::DEBUG);
-			errorHandle::errorMsg("Failed to add projects.");
-		}
-	}
-
-	$selectedProjects = $engine->cleanPost['MYSQL']['projects'];
-}
-// Submissions
-
-// Projects
-$tmp = NULL;
-foreach ($allProjects as $project) {
-	$tmp .= sprintf('<label class="checkbox" for="%s"><input type="checkbox" id="%s" name="projects[%s]"%s> %s</label>',
-		htmlSanitize("project_".$project['ID']),                           // for=
-		htmlSanitize("project_".$project['ID']),                           // id=
-		htmlSanitize($project['ID']),                                      // name=projects[]
-		(in_array($project['ID'], $selectedProjects)) ? " checked" : NULL, // checked or not
-		htmlSanitize($project['projectName'])                              // label text
-		);
-}
-localVars::add("projectOptions",$tmp);
-unset($tmp);
-// Projects
-
-// Children
-$children = objects::getChildren($engine->cleanGet['MYSQL']['objectID']);
-// Children
-
+localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['id']));
 localVars::add("results",displayMessages());
 
 $engine->eTemplate("include","header");
@@ -155,7 +196,7 @@ $engine->eTemplate("include","header");
 
 <section>
 	<header class="page-header">
-		<h1>Object Display</h1>
+		<h1>View Object</h1>
 	</header>
 
 	<div class="container-fluid">
@@ -172,7 +213,6 @@ $engine->eTemplate("include","header");
 
 			<div class="tab-content">
 				<div class="tab-pane" id="metadata">
-					Metadata content
 					{local var="form"}
 				</div>
 
