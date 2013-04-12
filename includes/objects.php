@@ -8,6 +8,14 @@ class objects {
 			return self::getObjects();
 		}
 
+		$mfcs      = mfcs::singleton();
+		$cachID    = "getObject:".$objectID;
+		$cache     = $mfcs->cache("get",$cachID);
+
+		if (!isnull($cache)) {
+			return($cache);
+		}
+
 		$engine = EngineAPI::singleton();
 
 		$sql       = sprintf("SELECT * FROM `objects` WHERE `ID`='%s'",
@@ -26,6 +34,11 @@ class objects {
 		if ($object['data'] === FALSE) {
 			errorHandle::errorMsg("Error retrieving object.");
 			return FALSE;
+		}
+
+		$cache = $mfcs->cache("create",$cachID,$object);
+		if ($cache === FALSE) {
+			errorHandle::newError(__METHOD__."() - unable to cache object", errorHandle::DEBUG);
 		}
 
 		return $object;
