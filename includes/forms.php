@@ -60,13 +60,13 @@ class forms {
 
 		switch ($type) {
 			case isnull($type):
-				$sql = sprintf("SELECT * FROM `forms` ORDER BY `title`");
+				$sql = sprintf("SELECT `ID` FROM `forms` ORDER BY `title`");
 				break;
 			case TRUE:
-				$sql = sprintf("SELECT * FROM `forms` WHERE `metadata`='0' ORDER BY `title`");
+				$sql = sprintf("SELECT `ID` FROM `forms` WHERE `metadata`='0' ORDER BY `title`");
 				break;
 			case FALSE:
-				$sql = sprintf("SELECT * FROM `forms` WHERE `metadata`='1' ORDER BY `title`");
+				$sql = sprintf("SELECT `ID` FROM `forms` WHERE `metadata`='1' ORDER BY `title`");
 				break;
 			default:
 				return(FALSE);
@@ -82,21 +82,8 @@ class forms {
 		$forms = array();
 		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
-			$row['fields'] = decodeFields($row['fields']);
+			$forms[] = self::get($row['ID']);
 
-			if ($row['fields'] === FALSE) {
-				errorHandle::errorMsg("Error retrieving form.");
-				return FALSE;
-			}
-
-			$row['idno']   = decodeFields($row['idno']);
-
-			if ($row['idno'] === FALSE) {
-				errorHandle::errorMsg("Error retrieving form.");
-				return FALSE;
-			}
-
-			$forms[] = $row;
 		}
 
 		return $forms;
