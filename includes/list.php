@@ -26,6 +26,22 @@ class listGenerator {
 
 	}
 
+	public static function createProjectSelectList() {
+		$engine   = EngineAPI::singleton();
+		$projects = projects::getProjects();
+
+		$output = '<ul>';
+		foreach ($projects as $project) {
+			$output .= sprintf('<li><a href="list.php?listType=project&amp;projectID=%s">%s</a></li>',
+				$project['ID'],
+				$project['projectName']
+				);
+		}
+		$output .= '</ul>';
+
+		return $output;
+	}
+
 	public static function createFormSelectList() {
 
 		$engine  = EngineAPI::singleton();

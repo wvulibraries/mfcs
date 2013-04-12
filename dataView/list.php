@@ -11,7 +11,7 @@ try {
 			$list = listGenerator::createFormSelectList();
 			break;
 		case 'selectProject':
-			$list = "Select Form";
+			$list = listGenerator::createProjectSelectList();
 			break;
 		case 'form':
 			$list = listGenerator::createFormObjectList($engine->cleanGet['MYSQL']['formID']);
