@@ -9,8 +9,7 @@ try {
 		) {
 
 		errorHandle::newError(__METHOD__."() - ObjectID Provided is invalid", errorHandle::DEBUG);
-		errorHandle::errorMsg("ObjectID Provided is invalid..");
-		throw new Exception('Error');
+		throw new Exception("ObjectID Provided is invalid.");
 	}
 	else if (!isset($engine->cleanGet['MYSQL']['objectID'])) {
 		$engine->cleanGet['MYSQL']['objectID'] = NULL;
@@ -25,8 +24,7 @@ try {
 
 			if ($object === FALSE) {
 				errorHandle::newError(__METHOD__."() - No Form ID Provided, error getting Object", errorHandle::DEBUG);
-				errorHandle::errorMsg("No Form ID Provided, error getting Object.");
-				throw new Exception('Error');
+				throw new Exception("No Form ID Provided, error getting Object.");
 			}
 
 			http::setGet('formID',$object['formID']);
@@ -34,8 +32,7 @@ try {
 		}
 		else {
 			errorHandle::newError(__METHOD__."() - No Form ID Provided.", errorHandle::DEBUG);
-			errorHandle::errorMsg("No Form ID Provided.");
-			throw new Exception('Error');
+			throw new Exception("No Form ID Provided.");
 		}
 	}
 
@@ -56,8 +53,7 @@ try {
 	// if an object ID is provided make sure the object is from this form
 	if (isset($engine->cleanGet['MYSQL']['objectID'])
 		&& !checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
-		errorHandle::errorMsg("Object not from this form");
-		throw new Exception('Error');
+		throw new Exception("Object not from this form");
 	}
 
 	// Get the project
@@ -69,8 +65,7 @@ try {
 
 	$form = getForm($engine->cleanGet['MYSQL']['formID']);
 	if ($form === FALSE) {
-		errorHandle::errorMsg("Error retrieving form.");
-		throw new Exception('Error');
+		throw new Exception("Error retrieving form.");
 	}
 
 	localvars::add("formName",$form['title']);
@@ -79,23 +74,20 @@ try {
 	if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 		$return = forms::submit($engine->cleanGet['MYSQL']['formID']);
 		if ($return === FALSE) {
-			errorHandle::errorMsg("Error Submitting Form.");
-			throw new Exception('Error');
+			throw new Exception("Error Submitting Form.");
 		}
 	}
 	else if (isset($engine->cleanPost['MYSQL']['updateForm'])) {
 		$return = forms::submit($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
 		if ($return === FALSE) {
-			errorHandle::errorMsg("Error Updating Form.");
-			throw new Exception('Error');
+			throw new Exception("Error Updating Form.");
 		}
 	}
 
 	// build the form for displaying
 	$builtForm = forms::build($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
 	if ($builtForm === FALSE) {
-		errorHandle::errorMsg("Error building form.");
-		throw new Exception('Error');
+		throw new Exception("Error building form.");
 	}
 
 	localvars::add("form",$builtForm);
@@ -104,6 +96,7 @@ try {
 
 }
 catch(Exception $e) {
+	errorHandle::errorMsg($e->getMessage());
 }
 
 localVars::add("results",displayMessages());
