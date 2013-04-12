@@ -1,5 +1,5 @@
 <?php
-
+ 
 class listGenerator {
 
 	public static function createInitialSelectList() {
@@ -18,7 +18,7 @@ class listGenerator {
 
 			$form = forms::get($object['formID']);
 
-			$data[] = array($object['ID'],$object['idno'],$object['data'][$form['objectTitleField']],"View","Edit","Revisions","Delete");
+			$data[] = array($object['ID'],$object['idno'],$object['data'][$form['objectTitleField']],self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("revisions",$object['ID']));
 
 		}
 
@@ -70,7 +70,6 @@ class listGenerator {
 		$headers[] = "View";
 		$headers[] = "Edit";
 		$headers[] = "Revisions";
-		$headers[] = "Delete";
 		$headers[] = "System IDNO";
 		$headers[] = "Form IDNO";
 		foreach($form['fields'] as $field) {
@@ -86,7 +85,7 @@ class listGenerator {
 
 			$form = forms::get($object['formID']);
 
-			$data[] = array("View","Edit","Revisions","Delete",$object['ID'],$object['idno']);
+			$data[] = array(self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("revisions",$object['ID']),$object['ID'],$object['idno']);
 			foreach($form['fields'] as $field) {
 				if (strtolower($field['type']) == "idno") continue;
 
@@ -116,7 +115,6 @@ class listGenerator {
 			$headers[] = "View";
 			$headers[] = "Edit";
 			$headers[] = "Revisions";
-			$headers[] = "Delete";
 		}
 
 		$table->headers($headers);
@@ -125,6 +123,17 @@ class listGenerator {
 		return $table->display($data);
 
 
+	}
+
+	private static function genLinkURLs($url,$objectID) {
+
+		$urls['view']      = sprintf("%sdataView/object.php?objectID=",    localvars::get("siteRoot"));
+		$urls['edit']      = sprintf("%sdataEntry/object.php?objectID=",   localvars::get("siteRoot"));
+		$urls['revisions'] = sprintf("%sdataEntry/revisions.php?objectID=",localvars::get("siteRoot"));
+
+		if (!isset($urls[strtolower($url)])) return FALSE;
+
+		return sprintf('<a href="%s%s">%s</a>',$urls[strtolower($url)],$objectID,htmlSanitize(strtolower($url)));
 	}
 
 }
