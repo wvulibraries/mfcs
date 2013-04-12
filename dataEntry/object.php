@@ -37,6 +37,15 @@ try {
 	}
 
 
+	$form = getForm($engine->cleanGet['MYSQL']['formID']);
+	if ($form === FALSE) {
+		throw new Exception("Error retrieving form.");
+	}
+
+	if (forms::isMetadataForm($engine->cleanGet['MYSQL']['formID'])) {
+		throw new Exception("Metadata form provided (Object forms only).");
+	}
+
 	// check for edit permissions on the project
 	// if (checkProjectPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) {
 	// 	errorHandle::errorMsg("Permissions denied for working on this project");
@@ -63,10 +72,9 @@ try {
 	// 	throw new Exception('Error');
 	// }
 
-	$form = getForm($engine->cleanGet['MYSQL']['formID']);
-	if ($form === FALSE) {
-		throw new Exception("Error retrieving form.");
-	}
+
+
+
 
 	localvars::add("formName",$form['title']);
 
