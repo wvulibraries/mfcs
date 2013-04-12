@@ -52,7 +52,7 @@ try {
 		throw new Exception("No Form ID Provided.");
 	}
 
-	if (!checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
+	if (!objects::checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
 		errorHandle::newError("Object not from this form.", errorHandle::DEBUG);
 		throw new Exception("Object not from this form");
 	}

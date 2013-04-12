@@ -27,13 +27,19 @@ try {
 
 
     // check for edit permissions on the project
-    if(checkProjectPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) throw new Exception('Permissions denied for working on this project');
+    if(checkProjectPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) {
+        throw new Exception('Permissions denied for working on this project');
+    }
 
     // check that this form is part of the project
-    if(!forms::checkFormInProject($engine->cleanGet['MYSQL']['id'],$engine->cleanGet['MYSQL']['formID'])) throw new Exception('Form is not part of project.');
+    if(!forms::checkFormInProject($engine->cleanGet['MYSQL']['id'],$engine->cleanGet['MYSQL']['formID'])) {
+        throw new Exception('Form is not part of project.');
+    }
 
     // Make sure the objectID is from this form
-    if(isset($engine->cleanGet['MYSQL']['objectID']) && !checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) throw new Exception('Object not from this form');
+    if(isset($engine->cleanGet['MYSQL']['objectID']) && !objects::checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
+        throw new Exception('Object not from this form');
+    }
 
     // Setup revision control
     $revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime');

@@ -45,7 +45,7 @@ try {
 	}
 
 	// if an object ID is provided make sure the object is from this form
-	if (!checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
+	if (!objects::checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
 		errorHandle::newError("Object not from this form.", errorHandle::DEBUG);
 		throw new Exception("Object not from this form.");
 	}
