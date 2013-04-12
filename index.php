@@ -109,7 +109,7 @@ $engine->eTemplate("include","header");
 			<a href="dataView/list.php">List Objects</a>
 		</li>
 		<li>
-			<a href="">Metadata Forms</a>
+			<a href="dataEntry/selectMetadataForm.php">Metadata Forms</a>
 		</li>
 		<li>
 			<a href="">Export</a>
