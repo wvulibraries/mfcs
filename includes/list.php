@@ -11,7 +11,7 @@ class listGenerator {
 	public static function createAllObjectList($start=0,$length=50,$orderBy=NULL) {
 
 		$engine  = EngineAPI::singleton();
-		$objects = objects::get();
+		$objects = objects::getObjects($start,$length);
 
 		$data = array();
 		foreach ($objects as $object) {
