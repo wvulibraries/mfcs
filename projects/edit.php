@@ -119,7 +119,7 @@ try {
 
 
 	// Get the current project from the database
-	$project = getProject($engine->cleanGet['MYSQL']['id']);
+	$project = projects::get($engine->cleanGet['MYSQL']['id']);
 	if ($project === FALSE) {
 		errorHandle::errorMsg("Error retrieving project.");
 		throw new Exception('Error');

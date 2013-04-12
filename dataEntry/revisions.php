@@ -45,7 +45,7 @@ try {
     $revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime');
 
     // Get the project
-    $project = getProject($engine->cleanGet['MYSQL']['id']);
+    $project = projects::get($engine->cleanGet['MYSQL']['id']);
     if($project === FALSE) throw new Exception('Error retrieving project.');
     localvars::add("projectName",$project['projectName']);
 

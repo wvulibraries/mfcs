@@ -23,7 +23,7 @@ function sortFieldsByPosition($a,$b) {
 }
 
 function buildProjectNavigation($projectID) {
-	$project = getProject($projectID);
+	$project = projects::get($projectID);
 
 	if ($project === FALSE) {
 		return(FALSE);
@@ -457,10 +457,5 @@ function processUploads($field,$uploadID) {
 // Deprecated
 function checkProjectPermissions($id) {
 	return projects::checkPermissions($id);
-}
-
-// Deprecated
-function getProject($projectID) {
-	return projects::get($projectID);
 }
 ?>
