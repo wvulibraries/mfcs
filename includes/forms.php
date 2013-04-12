@@ -449,7 +449,7 @@ class forms {
 		$form = self::get($formID);
 
 		// Get all objects from this form
-		$objects = getAllObjectsForForm($formID);
+		$objects = objects::getAllObjectsForForm($formID);
 
 		if (count($objects) > 0) {
 

@@ -37,7 +37,7 @@ try {
 	}
 
 
-	$form = getForm($engine->cleanGet['MYSQL']['formID']);
+	$form = forms::get($engine->cleanGet['MYSQL']['formID']);
 	if ($form === FALSE) {
 		throw new Exception("Error retrieving form.");
 	}
