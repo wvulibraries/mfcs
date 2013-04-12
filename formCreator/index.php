@@ -172,9 +172,7 @@ if ($sqlResult['result']) {
 }
 
 
-if (!is_empty($engine->errorStack)) {
-	localVars::add("results",errorHandle::prettyPrint());
-}
+localVars::add("results",displayMessages());
 
 localVars::add("thisSubmitButton","Add Form");
 
