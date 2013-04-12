@@ -36,7 +36,7 @@ try {
 	}
 
 	$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
-
+ 
 	if ($object === FALSE) {
 		throw new Exception("Invalid Object ID.");
 	}
@@ -148,6 +148,7 @@ unset($tmp);
 $children = objects::getChildren($engine->cleanGet['MYSQL']['objectID']);
 // Children
 
+localVars::add("results",displayMessages());
 
 $engine->eTemplate("include","header");
 ?>
