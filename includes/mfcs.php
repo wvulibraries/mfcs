@@ -27,7 +27,13 @@ class mfcs {
      */
     private static $config = array();
 
-    private static $user = array();
+    private static $user   = array();
+
+    /**
+     * Multi dimensional array to house various Caches that we will be using.
+     * @var array
+     */
+    private $cache         = array();
 
     /**
      * Class constructor
@@ -131,6 +137,95 @@ class mfcs {
         $idno                         = preg_replace("/#+/", $sqlResult['result']['count'], $idno);
 
         return $idno;
+    }
+
+    /**
+     * Object cache manager
+     *
+     * This function identifies cache by the class by default. So each class gets 1 cache. If you
+     * need more than 1 cache per class that should be handled internal to the calling class using
+     * the $cachID to distinguish.
+     *
+     *
+     * @param string $action create, update, delete, or get
+     * @param $cacheID
+     *        How the calling method/fucntion identifies the cache.<br>
+     *        If the calling function or class will be using multiple<br>
+     *        caches it should add cache name information to this as well.
+     * @param mixed $value
+     *        The value to be stored. (required for everything except "get")
+     * @return bool
+     */
+    public function cache($action,$cacheID,$value=NULL) {
+
+        // for security we have to determine the function ID ourselves.
+        // otherwise a malicious module/object author could overwrite the permissions cache
+        $trace  =debug_backtrace();
+        $caller = $trace[1];
+
+        $functionID = (isset($caller['class']))?$caller['class']:$caller['function'];
+
+        if ($action == "create") {
+
+            if (isnull($value)) {
+                errorHandle::newError(__METHOD__."() - value not provided.", errorHandle::DEBUG);
+                return(FALSE);
+            }
+
+            if (isset($this->cache[$functionID][$cacheID])) {
+                errorHandle::newError(__METHOD__."() - cachID found. use update", errorHandle::DEBUG);
+                return(FALSE);
+            }
+
+            $this->cache[$functionID][$cacheID] = $value;
+
+        }
+        else if ($action == "update") {
+
+            if (isnull($value)) {
+                errorHandle::newError(__METHOD__."() - value not provided.", errorHandle::DEBUG);
+                return(FALSE);
+            }
+
+            if (!isset($this->cache[$functionID][$cacheID])) {
+                errorHandle::newError(__METHOD__."() - cachID not found. use create", errorHandle::DEBUG);
+                return(FALSE);
+            }
+
+            $this->cache[$functionID][$cacheID] = $value;
+
+        }
+        else if ($action == "delete") {
+
+            if (isnull($value)) {
+                errorHandle::newError(__METHOD__."() - value not provided.", errorHandle::DEBUG);
+                return(FALSE);
+            }
+
+            if (!isset($this->cache[$functionID][$cacheID])) {
+                errorHandle::newError(__METHOD__."() - cachID not found. use create", errorHandle::DEBUG);
+                return(FALSE);
+            }
+
+            unset($this->cache[$functionID][$cacheID]);
+
+        }
+        else if ($action == "get") {
+
+            if (isset($this->cache[$functionID][$cacheID])) {
+                return($this->cache[$functionID][$cacheID]);
+            }
+
+            return(NULL);
+
+        }
+        else {
+            errorHandle::newError(__METHOD__."() - Action '".$action."' not allowed.", errorHandle::DEBUG);
+            return(FALSE);
+        }
+
+        return(TRUE);
+
     }
 
 }
