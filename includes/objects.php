@@ -45,6 +45,8 @@ class objects {
 			return(FALSE);
 		}
 
+		$engine = EngineAPI::singleton();
+
 		if (!isnull($length)) {
 			$start = $engine->openDB->escape($start);
 			$lengt = $engine->openDB->escape($length);
@@ -52,7 +54,7 @@ class objects {
 
 		$engine = EngineAPI::singleton();
 
-		$sql       = sprintf("SELECT * FROM `objects` %s",
+		$sql       = sprintf("SELECT `ID` FROM `objects` %s",
 			(!isnull($length))?sprintf("LIMIT %s,%s",$start,$length):""
 			);
 		$sqlResult = $engine->openDB->query($sql);
@@ -64,18 +66,36 @@ class objects {
 		
 		$objects = array();
 		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-			$row['data'] = decodeFields($row['data']);
-
-			if ($row['data'] === FALSE) {
-				errorHandle::errorMsg("Error retrieving objects.");
-				return FALSE;
-			}
-
-			$objects[]   = $row;
+			$objects[] = self::get($row['ID']);
 		}
 
 		return $objects;
 
+	}
+
+	public static function getChildren($objectID) {
+		if (!validate::integer($objectID)) {
+			return FALSE;
+		}
+
+		$engine = EngineAPI::singleton();
+
+		$sql       = sprintf("SELECT `ID` FROM `objects` WHERE `parentID`='%s'",
+			$engine->openDB->escape($objectID)
+		);
+		$sqlResult = $engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+		$children = array();
+		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+			$children[] = self::get($row['ID']);
+		}
+
+		return($children);
 	}
 
 	public static function getAllObjectsForForm($formID) {
