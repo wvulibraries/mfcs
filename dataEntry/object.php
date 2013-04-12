@@ -92,7 +92,7 @@ try {
 	}
 
 	// build the form for displaying
-	$builtForm = buildForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
+	$builtForm = forms::build($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
 	if ($builtForm === FALSE) {
 		errorHandle::errorMsg("Error building form.");
 		throw new Exception('Error');
