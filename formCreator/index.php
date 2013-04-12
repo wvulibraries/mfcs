@@ -794,7 +794,7 @@ $engine->eTemplate("include","header");
 
 							<div class="control-group well well-small" id="formSettings_objectTitleField_container">
 								<label for="formSettings_objectTitleField">
-									Descriptive Title
+									Title Field
 								</label>
 								<select class="input-block-level" id="formSettings_objectTitleField" name="formSettings_objectTitleField">
 									{local var="objectTitleFieldOptions"}
