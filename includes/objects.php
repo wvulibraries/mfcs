@@ -44,7 +44,7 @@ class objects {
 		return $object;
 	}
 
-	public static function getObjects($start=0,$length=NULL) {
+	public static function getObjects($start=0,$length=NULL,$metadata=TRUE) {
 
 		if (!validate::integer($start)) {
 			errorHandle::newError(__METHOD__."() - start point not an integer", errorHandle::DEBUG);
@@ -67,7 +67,8 @@ class objects {
 
 		$engine = EngineAPI::singleton();
 
-		$sql       = sprintf("SELECT `ID` FROM `objects` %s",
+		$sql       = sprintf("SELECT `ID` FROM `objects` %s %s",
+			($metadata === FALSE)?"WHERE `metadata`='0'":"",
 			(!isnull($length))?sprintf("LIMIT %s,%s",$start,$length):""
 			);
 		$sqlResult = $engine->openDB->query($sql);
