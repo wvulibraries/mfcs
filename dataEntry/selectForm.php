@@ -17,8 +17,8 @@ try {
 		// if (checkProjectPermissions($row['ID']) === TRUE) {
 		// }
 		$formList .= sprintf('<li><a href="object.php?formID=%s">%s</a></li>',
-			$engine->openDB->escape($form['ID']),
-			$engine->openDB->escape($form['title'])
+			htmlSanitize($form['ID']),
+			htmlSanitize($form['title'])
 			);
 
 	}
