@@ -11,22 +11,16 @@ function displayMessages() {
 function encodeFields($fields) {
 
 	return base64_encode(serialize($fields));
-
 }
 
 function decodeFields($fields) {
 
 	return unserialize(base64_decode($fields));
-
 }
 
 function sortFieldsByPosition($a,$b) {
 	return strnatcmp($a['position'], $b['position']);
 }
-
-
-
-
 
 function buildProjectNavigation($projectID) {
 	$project = getProject($projectID);
@@ -91,7 +85,6 @@ function buildProjectNavigation($projectID) {
 
 
 	return $output;
-
 }
 
 function buildNumberAttributes($field) {
@@ -102,16 +95,12 @@ function buildNumberAttributes($field) {
 	$output .= (!isempty($field["step"]))?' step="'.$field['step'].'"':"";
 
 	return $output;
-
 }
-
-
 
 // if $increment is true it returns the NEXT number. if it is false it returns the current
 function getIDNO($formID,$projectID,$increment=TRUE) {
 	return mfcs::getIDNO($formID,$increment);
 }
-
 
 // if $increment is true it returns the NEXT number. if it is false it returns the current
 function dumpStuff($formID,$projectID,$increment=TRUE) {
@@ -120,7 +109,7 @@ function dumpStuff($formID,$projectID,$increment=TRUE) {
 
 	$form           = forms::get($formID);
 	$form['fields'] = decodeFields($form['fields']);
-	$idno           = getFormIDInfo($formID);
+	$idno           = forms::getFormIDInfo($formID);
 
 	print "<pre>";
 	var_dump($form['fields']);
@@ -172,7 +161,6 @@ function dumpStuff($formID,$projectID,$increment=TRUE) {
 
 	return TRUE;
 }
-
 
 /**
  * Returns the base path to be used when uploading files
@@ -510,10 +498,4 @@ function submitForm($formID,$objectID=NULL) {
 function isDupe($formID,$field,$value) {
 	return forms::isDupe($formID,$field,$value);
 }
-
-// Deprecated
-function getFormIDInfo($formID) {
-	return forms::getFormIDInfo($formID);
-}
-
 ?>

@@ -119,7 +119,7 @@ class mfcs {
     public static function getIDNO($formID,$increment=TRUE) {
 
         $engine         = self::$engine;
-        $idno           = getFormIDInfo($formID);
+        $idno           = forms::getFormIDInfo($formID);
 
         $sqlResult = $engine->openDB->sqlResult(
             sprintf("SELECT `count` FROM `forms` WHERE `ID`='%s'",
