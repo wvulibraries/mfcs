@@ -116,6 +116,18 @@ class forms {
 
 	}
 
+	public static function isMetadataForm($formID) {
+		$form = self::get($formID);
+
+		if ($form['metadata'] == 1) {
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
+
+	}
+
 	public static function checkFormInProject($projectID,$formID) {
 
 		$project = getProject($projectID);
