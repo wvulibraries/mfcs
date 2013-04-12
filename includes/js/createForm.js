@@ -409,7 +409,7 @@ function fieldSettingsBindings() {
 		if ($("#formSettings_objectTitleField option[value="+$("#formPreview .well :input[name^=name_]").val()+"]").length > 0) {
 			$("#formSettings_objectTitleField option[value="+$("#formPreview .well :input[name^=name_]").val()+"]").val($(this).val());
 		}
-		else {
+		else if ($("#formPreview .well :input[name^=type_][value=text]").length > 0) {
 			$("#formSettings_objectTitleField").append('<option value="'+$(this).val()+'">'+$("#formPreview .well :input[name^=label_]").val()+'</option>');
 		}
 
@@ -421,7 +421,7 @@ function fieldSettingsBindings() {
 		if ($("#formSettings_objectTitleField option[value="+$("#formPreview .well :input[name^=name_]").val()+"]").length > 0) {
 			$("#formSettings_objectTitleField option[value="+$("#formPreview .well :input[name^=name_]").val()+"]").text($(this).val());
 		}
-		else {
+		else if ($("#formPreview .well :input[name^=type_][value=text]").length > 0) {
 			$("#formSettings_objectTitleField").append('<option value="'+$("#formPreview .well :input[name^=name_]").val()+'">'+$(this).val()+'</option>');
 		}
 

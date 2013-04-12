@@ -224,11 +224,13 @@ if (!isnull($formID)) {
 					$field['allowedExtensions'] = implode("%,%",$field['allowedExtensions']);
 				}
 
+			if ($field['type'] == 'text') {
 				localVars::add("objectTitleFieldOptions", sprintf('%s<option value="%s">%s</option>',
 					localVars::get("objectTitleFieldOptions"),
 					$field['name'],
 					$field['label']
 					));
+			}
 
 				$values = json_encode($field);
 
