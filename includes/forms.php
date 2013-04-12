@@ -21,9 +21,11 @@ class forms {
 		}
 
 		$form           = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
 		$form['fields'] = decodeFields($form['fields']);
 
 		if ($form['fields'] === FALSE) {
+			errorHandle::newError(__METHOD__."() - fields", errorHandle::DEBUG);
 			errorHandle::errorMsg("Error retrieving form.");
 			return FALSE;
 		}
@@ -31,6 +33,7 @@ class forms {
 		$form['idno']   = decodeFields($form['idno']);
 
 		if ($form['idno'] === FALSE) {
+			errorHandle::newError(__METHOD__."() - idno", errorHandle::DEBUG);
 			errorHandle::errorMsg("Error retrieving form.");
 			return FALSE;
 		}
@@ -66,14 +69,14 @@ class forms {
 		$forms = array();
 		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
-			$row['fields'] = decodeFields($form['fields']);
+			$row['fields'] = decodeFields($row['fields']);
 
 			if ($row['fields'] === FALSE) {
 				errorHandle::errorMsg("Error retrieving form.");
 				return FALSE;
 			}
 
-			$row['idno']   = decodeFields($form['idno']);
+			$row['idno']   = decodeFields($row['idno']);
 
 			if ($row['idno'] === FALSE) {
 				errorHandle::errorMsg("Error retrieving form.");
