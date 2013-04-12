@@ -22,6 +22,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 				$fields[$I]['id'] = $field['name'];
 			}
 
+			$count = NULL;
 			if ($field['type'] == 'idno') {
 				$idno = $field;
 				$count = $field['startIncrement'];
