@@ -20,44 +20,13 @@ function decodeFields($fields) {
 
 }
 
-// Deprecated
-function checkProjectPermissions($id) {
-	return projects::checkPermissions($id);
-}
-
-// Deprecated
-function getProject($projectID) {
-	return projects::get($projectID);
-}
-
-// Deprecated
-function getForm($formID) {
-	return forms::get($formID);
-}
-
-// Deprecated
-function getObject($objectID) {
-	return objects::get($objectID);
-}
-
-// Deprecated
-function getAllObjectsForForm($formID) {
-	return objects::getAllObjectsForForm($formID);
-}
-
-// Deprecated
-function checkObjectInForm($formID,$objectID) {
-	return objects::checkObjectInForm($formID,$objectID);
-}
-
-// Deprecated
-function checkFormInProject($projectID,$formID) {
-	return forms::checkFormInProject($projectID,$formID);
-}
-
 function sortFieldsByPosition($a,$b) {
 	return strnatcmp($a['position'], $b['position']);
 }
+
+
+
+
 
 function buildProjectNavigation($projectID) {
 	$project = getProject($projectID);
@@ -136,25 +105,7 @@ function buildNumberAttributes($field) {
 
 }
 
-// Deprecated
-function buildForm($formID,$objectID = NULL) {
-	return forms::build($formID,$objectID);
-}
 
-// Deprecated
-function submitForm($formID,$objectID=NULL) {
-	return forms::submit($formID,$objectID);
-}
-
-// Deprecated
-function isDupe($formID,$field,$value) {
-	return forms::isDupe($formID,$field,$value);
-}
-
-// Deprecated
-function getFormIDInfo($formID) {
-	return forms::getFormIDInfo($formID);
-}
 
 // if $increment is true it returns the NEXT number. if it is false it returns the current
 function getIDNO($formID,$projectID,$increment=TRUE) {
@@ -514,4 +465,60 @@ function processUploads($field,$uploadID) {
 		}
 	}
 }
+
+// Deprecated
+function checkProjectPermissions($id) {
+	return projects::checkPermissions($id);
+}
+
+// Deprecated
+function getProject($projectID) {
+	return projects::get($projectID);
+}
+
+// Deprecated
+function getForm($formID) {
+	return forms::get($formID);
+}
+
+// Deprecated
+function getObject($objectID) {
+	return objects::get($objectID);
+}
+
+// Deprecated
+function getAllObjectsForForm($formID) {
+	return objects::getAllObjectsForForm($formID);
+}
+
+// Deprecated
+function checkObjectInForm($formID,$objectID) {
+	return objects::checkObjectInForm($formID,$objectID);
+}
+
+// Deprecated
+function checkFormInProject($projectID,$formID) {
+	return forms::checkFormInProject($projectID,$formID);
+}
+
+// Deprecated
+function buildForm($formID,$objectID = NULL) {
+	return forms::build($formID,$objectID);
+}
+
+// Deprecated
+function submitForm($formID,$objectID=NULL) {
+	return forms::submit($formID,$objectID);
+}
+
+// Deprecated
+function isDupe($formID,$field,$value) {
+	return forms::isDupe($formID,$field,$value);
+}
+
+// Deprecated
+function getFormIDInfo($formID) {
+	return forms::getFormIDInfo($formID);
+}
+
 ?>
