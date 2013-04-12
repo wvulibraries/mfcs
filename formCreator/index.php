@@ -65,8 +65,8 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			$engine->openDB->escape($form['formProduction']),   // production=
 			$engine->openDB->escape($form['formMetadata']),     // metadata=
 			$engine->openDB->escape($count),                    // count=
-			$engine->openDB->escape($formID),                   // ID=
-			$engine->openDB->escape($form['descriptiveTitle'])  // objectTitleField=
+			$engine->openDB->escape($form['descriptiveTitle']), // objectTitleField=
+			$engine->openDB->escape($formID)                    // ID=
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
