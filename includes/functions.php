@@ -470,11 +470,6 @@ function getObject($objectID) {
 }
 
 // Deprecated
-function getAllObjectsForForm($formID) {
-	return objects::getAllObjectsForForm($formID);
-}
-
-// Deprecated
 function checkObjectInForm($formID,$objectID) {
 	return objects::checkObjectInForm($formID,$objectID);
 }
@@ -482,20 +477,5 @@ function checkObjectInForm($formID,$objectID) {
 // Deprecated
 function checkFormInProject($projectID,$formID) {
 	return forms::checkFormInProject($projectID,$formID);
-}
-
-// Deprecated
-function buildForm($formID,$objectID = NULL) {
-	return forms::build($formID,$objectID);
-}
-
-// Deprecated
-function submitForm($formID,$objectID=NULL) {
-	return forms::submit($formID,$objectID);
-}
-
-// Deprecated
-function isDupe($formID,$field,$value) {
-	return forms::isDupe($formID,$field,$value);
 }
 ?>
