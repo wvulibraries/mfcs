@@ -8,6 +8,14 @@ class forms {
 			return self::getForms();
 		}
 
+		$mfcs      = mfcs::singleton();
+		$cachID    = "getForm:".$formID;
+		$cache     = $mfcs->cache("get",$cachID);
+
+		if (!isnull($cache)) {
+			return($cache);
+		}
+
 		$engine = EngineAPI::singleton();
 
 		$sql       = sprintf("SELECT * FROM `forms` WHERE `ID`='%s'",
@@ -36,6 +44,11 @@ class forms {
 			errorHandle::newError(__METHOD__."() - idno", errorHandle::DEBUG);
 			errorHandle::errorMsg("Error retrieving form.");
 			return FALSE;
+		}
+
+		$cache = $mfcs->cache("create",$cachID,$form);
+		if ($cache === FALSE) {
+			errorHandle::newError(__METHOD__."() - unable to cache form", errorHandle::DEBUG);
 		}
 
 		return $form;
