@@ -188,7 +188,7 @@ catch (Exception $e) {
 	errorHandle::errorMsg($e->getMessage());
 }
 
-localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['id']));
+localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['formID']));
 localVars::add("results",displayMessages());
 
 $engine->eTemplate("include","header");
@@ -200,43 +200,48 @@ $engine->eTemplate("include","header");
 	</header>
 
 	<div class="container-fluid">
-		<div class="row-fluid" id="results">
-			{local var="results"}
+		<div class="span3">
+			{local var="leftnav"}
 		</div>
 
-		<div class="row-fluid">
-			<ul class="nav nav-tabs">
-				<li><a data-toggle="tab" href="#metadata">Metadata</a></li>
-				<li><a data-toggle="tab" href="#project">Project</a></li>
-				<li><a data-toggle="tab" href="#children">Children</a></li>
-			</ul>
+		<div class="span9">
+			<div class="row-fluid" id="results">
+				{local var="results"}
+			</div>
 
-			<div class="tab-content">
-				<div class="tab-pane" id="metadata">
-					{local var="form"}
-				</div>
+			<div class="row-fluid">
+				<ul class="nav nav-tabs">
+					<li><a data-toggle="tab" href="#metadata">Metadata</a></li>
+					<li><a data-toggle="tab" href="#project">Project</a></li>
+					<li><a data-toggle="tab" href="#children">Children</a></li>
+				</ul>
 
-				<div class="tab-pane" id="project">
-					<h2>Change Project Membership</h2>
+				<div class="tab-content">
+					<div class="tab-pane" id="metadata">
+						{local var="form"}
+					</div>
 
-					<form action="{phpself query="true"}" method="post">
-						{local var="projectOptions"}
-						{engine name="csrf"}
-						<input type="submit" class="btn btn-primary" name="projectForm">
-					</form>
-				</div>
+					<div class="tab-pane" id="project">
+						<h2>Change Project Membership</h2>
 
-				<div class="tab-pane" id="children">
-					Children content
-					<?php
-					print "<pre>";
-					print_r($children);
-					print "</pre>";
-					?>
+						<form action="{phpself query="true"}" method="post">
+							{local var="projectOptions"}
+							{engine name="csrf"}
+							<input type="submit" class="btn btn-primary" name="projectForm">
+						</form>
+					</div>
+
+					<div class="tab-pane" id="children">
+						Children content
+						<?php
+						print "<pre>";
+						print_r($children);
+						print "</pre>";
+						?>
+					</div>
 				</div>
 			</div>
 		</div>
-
 	</div>
 </section>
 
