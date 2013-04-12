@@ -250,11 +250,11 @@ $engine->eTemplate("include","header");
 		// Show first tab on page load
 		$(".nav-tabs a:first").tab("show");
 
-		// Disable input fields of metadata form
-		$("#metadata :input").prop("disabled",true);
+		// Disable form input fields
+		$(":input").prop("disabled",true);
 
-		// Hide metadata form submit
-		$("#metadata :input[type=submit]").hide();
+		// Hide form submits
+		$(":input[type=submit]").hide();
 	});
 </script>
 
