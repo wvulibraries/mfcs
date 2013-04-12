@@ -118,7 +118,7 @@ function dumpStuff($formID,$projectID,$increment=TRUE) {
 
 	$engine         = EngineAPI::singleton();
 
-	$form           = getForm($formID);
+	$form           = forms::get($formID);
 	$form['fields'] = decodeFields($form['fields']);
 	$idno           = getFormIDInfo($formID);
 
@@ -474,11 +474,6 @@ function checkProjectPermissions($id) {
 // Deprecated
 function getProject($projectID) {
 	return projects::get($projectID);
-}
-
-// Deprecated
-function getForm($formID) {
-	return forms::get($formID);
 }
 
 // Deprecated
