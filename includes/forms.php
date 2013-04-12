@@ -444,8 +444,116 @@ class forms {
 
 	}
 
+	public static function buildEditTable($formID) {
+
+		$form = self::get($formID);
+
+		// Get all objects from this form
+		$objects = getAllObjectsForForm($formID);
+
+		if (count($objects) > 0) {
+
+			$headers = array();
+			$headers[] = "Delete";
+			foreach ($form['fields'] as $field) {
+				$headers[] = $field['label'];
+			}
+ 
+			$tableRows = array();
+			for($I=0;$I<count($objects);$I++) {
+				$temp   = array();
+				$temp[] = sprintf('<input type="checkbox" name="delete[]" value="%s"',
+					$objects[$I]['ID']
+					);
+
+				foreach ($form['fields'] as $field) {
+					$temp[] = sprintf('<input type="%s" name="%s_%s" value="%s" />',
+						$field['type'],
+						$field['name'],
+						$objects[$I]['ID'],
+						htmlSanitize($objects[$I]['data'][$field['name']])
+						);
+				}
+
+				$tableRows[] = $temp;
+			}
+
+			$table          = new tableObject("array");
+			$table->summary = "Object Listing";
+			$table->headers($headers);
+
+			$output = sprintf('<form action="%s?formID=%s" method="%s">',
+				$_SERVER['PHP_SELF'],
+				htmlSanitize($formID),
+				"post"
+				);
+
+			$output .= sessionInsertCSRF();
+
+			$output .= $table->display($tableRows);
+
+			$output .= '<input type="submit" name="updateEdit" value="Update" />';
+			$output .= "</form>";
+
+			return $output;
+		}
+		else {
+			return "No data entered for this Metadata Form.";
+		}
+
+	}
+
+	public static function submitEditTable($formID) {
+
+		$form = self::get($formID);
+
+		if ($form === FALSE) {
+			return FALSE;
+		}
+
+		$engine = EngineAPI::singleton();
+
+		// begin transactions
+		$result = $engine->openDB->transBegin("objects");
+		if ($result !== TRUE) {
+			errorHandle::errorMsg("Database transactions could not begin.");
+			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		// Do the Updates
+		
+		
+		
+		// do the deletes
+		
+		if (isset($engine->cleanPost['MYSQL']['delete']) && count($engine->cleanPost['MYSQL']['delete']) > 0) {
+			foreach ($engine->cleanPost['MYSQL']['delete'] as $objectID) {
+				$sql       = sprintf("DELETE FROM `objects` WHERE `ID`='%s'",
+					$objectID);
+				$sqlResult = $engine->openDB->query($sql);
+
+				if (!$sqlResult['result']) {
+					$engine->openDB->transRollback();
+					$engine->openDB->transEnd();
+
+					errorHandle::errorMsg("Error deleting objects.");
+					errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+					return FALSE;
+				}
+			}
+		}
+
+		// end transactions
+		$engine->openDB->transCommit();
+		$engine->openDB->transEnd();
+
+		return TRUE;
+
+	}
+
 	// NOTE: data is being saved as RAW from the array.
-	function submit($formID,$objectID=NULL) {
+	public static function submit($formID,$objectID=NULL) {
 		$engine = EngineAPI::singleton();
 
 		if (isnull($objectID)) {
