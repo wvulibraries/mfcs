@@ -255,6 +255,9 @@ $engine->eTemplate("include","header");
 
 		// Hide form submits
 		$(":input[type=submit]").hide();
+
+		// Remove form actions
+		$("form").removeAttr("action");
 	});
 </script>
 
