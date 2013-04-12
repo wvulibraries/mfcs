@@ -3,9 +3,28 @@ include("../header.php");
 
 try {
     // Make sure we have id, formID, and objectID provided
-    if(!isset($engine->cleanGet['MYSQL']['id'])       || is_empty($engine->cleanGet['MYSQL']['id'])       || !validate::integer($engine->cleanGet['MYSQL']['id']))       throw new Exception('No Project ID Provided.');
-    if(!isset($engine->cleanGet['MYSQL']['formID'])   || is_empty($engine->cleanGet['MYSQL']['formID'])   || !validate::integer($engine->cleanGet['MYSQL']['formID']))   throw new Exception('No Form ID Provided.');
     if(!isset($engine->cleanGet['MYSQL']['objectID']) || is_empty($engine->cleanGet['MYSQL']['objectID']) || !validate::integer($engine->cleanGet['MYSQL']['objectID'])) throw new Exception('No Object ID Provided.');
+    if(!isset($engine->cleanGet['MYSQL']['formID'])   
+        || is_empty($engine->cleanGet['MYSQL']['formID'])   
+        || !validate::integer($engine->cleanGet['MYSQL']['formID'])) {
+
+        if (!isnull($engine->cleanGet['MYSQL']['objectID'])) {
+            $object = objects::get($engine->cleanGet['MYSQL']['objectID']);
+
+            if ($object === FALSE) {
+                errorHandle::newError(__METHOD__."() - No Form ID Provided, error getting Object", errorHandle::DEBUG);
+                errorHandle::errorMsg("No Form ID Provided, error getting Object.");
+                throw new Exception('Error');
+            }
+
+            http::setGet('formID',$object['formID']);
+
+        }
+        else {
+            throw new Exception('No Form ID Provided.');
+        }
+    }  
+    
 
     // check for edit permissions on the project
     if(checkProjectPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) throw new Exception('Permissions denied for working on this project');
