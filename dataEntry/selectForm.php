@@ -14,7 +14,7 @@ try {
 	foreach ($forms as $form) {
 
 		// @TODO
-		// if (checkProjectPermissions($row['ID']) === TRUE) {
+		// if (projects::checkPermissions($row['ID']) === TRUE) {
 		// }
 		$formList .= sprintf('<li><a href="object.php?formID=%s">%s</a></li>',
 			htmlSanitize($form['ID']),

@@ -130,7 +130,7 @@ class forms {
 
 	public static function checkFormInProject($projectID,$formID) {
 
-		$project = getProject($projectID);
+		$project = projects::get($projectID);
 
 		if (!is_empty($project['forms'])) {
 
