@@ -4,6 +4,8 @@ recurseInsert("acl.php","php");
 
 try {
 
+	$error = FALSE;
+
 	if (!isset($engine->cleanGet['MYSQL']['formID'])
 		|| is_empty($engine->cleanGet['MYSQL']['formID'])
 		|| !validate::integer($engine->cleanGet['MYSQL']['formID'])) {
@@ -90,10 +92,11 @@ try {
 }
 catch(Exception $e) {
 	errorHandle::errorMsg($e->getMessage());
+	$error = TRUE;
 }
 
 // build the form for displaying
-$builtForm = forms::build($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
+$builtForm = forms::build($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'],$error);
 if ($builtForm === FALSE) {
 	throw new Exception("Error building form.");
 }

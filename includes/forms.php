@@ -157,7 +157,7 @@ class forms {
 		return $form['idno'];
 	}
 
-	public static function build($formID,$objectID = NULL) {
+	public static function build($formID,$objectID = NULL,$error=FALSE) {
 
 		$engine = EngineAPI::singleton();
 
@@ -182,6 +182,10 @@ class forms {
 				errorHandle::errorMsg("Error retrieving object.");
 				return FALSE;
 			}
+		}
+		else if (isnull($objectID) && $error === TRUE) {
+			$object         = array();
+			$object['data'] = array();
 		}
 
 		$output = sprintf('<form action="%s?formID=%s%s" method="%s">',
@@ -221,6 +225,16 @@ class forms {
 				$currentFieldset = $field['fieldset'];
 			}
 
+
+			if ($error === TRUE) {
+				// @TODO should this be raw? // security issue?
+				if (isset($engine->cleanPost['RAW'][$field['name']])) {
+					$object['data'][$field['name']] = $engine->cleanPost['RAW'][$field['name']];
+					if ($field['type'] == "select") {
+						$field['choicesDefault'] = $engine->cleanPost['RAW'][$field['name']];
+					}
+				}
+			}
 
 			// build the actual input box
 
@@ -314,12 +328,13 @@ class forms {
 					while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 						$row['data'] = decodeFields($row['data']);
 
-						$output .= sprintf('<input type="checkbox" name="%s" id="%s_%s" value="%s"/><label for="%s_%s">%s</label>',
+						$output .= sprintf('<input type="checkbox" name="%s" id="%s_%s" value="%s" %s/><label for="%s_%s">%s</label>',
 							htmlSanitize($field['type']),
 							htmlSanitize($field['name']),
 							htmlSanitize($field['name']),
 							htmlSanitize(++$count),
 							htmlSanitize($row['ID']),
+							(!isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['ID'])?'checked="checked"':"",
 							htmlSanitize($field['name']),
 							htmlSanitize($count),
 							htmlSanitize($row['data'][$field['choicesField']])
@@ -344,7 +359,7 @@ class forms {
 					foreach ($field['choicesOptions'] as $I=>$option) {
 						$output .= sprintf('<option value="%s" %s/>%s</option>',
 							htmlSanitize($option),
-							(!isempty($field['choicesDefault']) && $field['choicesDefault'] == $option)?'checked="checked"':"",
+							(!isempty($field['choicesDefault']) && $field['choicesDefault'] == $option)?'selected="selected"':"",
 							htmlSanitize($option)
 							);
 					}
@@ -367,8 +382,9 @@ class forms {
 
 						$row['data'] = decodeFields($row['data']);
 
-						$output .= sprintf('<option value="%s" />%s</option>',
+						$output .= sprintf('<option value="%s" %s/>%s</option>',
 							htmlSanitize($row['ID']),
+							(!isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['ID'])?'selected="selected"':"",
 							htmlSanitize($row['data'][$field['choicesField']])
 							);
 					}
