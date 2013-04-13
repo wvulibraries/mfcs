@@ -714,6 +714,7 @@ class forms {
 
 		if ($newObject === TRUE) {
 			$objectID = $sqlResult['id'];
+			localvars::add("newObjectID",$objectID);
 		}
 
 		// Check to see if this object already exists in the objectProjects table. If not, add it.
@@ -832,6 +833,13 @@ class forms {
 		// end transactions
 		$engine->openDB->transCommit();
 		$engine->openDB->transEnd();
+
+		if ($newObject === TRUE) {
+			errorHandle::successMsg("Object created successfully.");
+		}
+		else {
+			errorHandle::successMsg("Object updated successfully.");
+		}
 
 		return TRUE;
 	}

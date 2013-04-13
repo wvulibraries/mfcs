@@ -78,6 +78,7 @@ try {
 		if ($return === FALSE) {
 			throw new Exception("Error Submitting Form.");
 		}
+		$engine->cleanGet['MYSQL']['objectID'] = localvars::get("newObjectID");
 	}
 	else if (isset($engine->cleanPost['MYSQL']['updateForm'])) {
 		$return = forms::submit($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
