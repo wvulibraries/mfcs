@@ -86,21 +86,18 @@ try {
 		}
 	}
 
-	// build the form for displaying
-	$builtForm = forms::build($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
-	if ($builtForm === FALSE) {
-		throw new Exception("Error building form.");
-	}
-
-	localvars::add("form",$builtForm);
-
-	localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['formID']));
-
 }
 catch(Exception $e) {
 	errorHandle::errorMsg($e->getMessage());
 }
 
+// build the form for displaying
+$builtForm = forms::build($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
+if ($builtForm === FALSE) {
+	throw new Exception("Error building form.");
+}
+localvars::add("form",$builtForm);
+localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['formID']));
 localVars::add("results",displayMessages());
 
 $engine->eTemplate("include","header");
