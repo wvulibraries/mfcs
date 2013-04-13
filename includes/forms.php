@@ -643,8 +643,8 @@ class forms {
 			}
 
 			// Duplicate Checking (Form)
-			if (strtolower($field['duplicates']) == "true") {
-				if (self::isDupe($formID,$field['name'],$engine->cleanPost['RAW'][$field['name']])) {
+			if (strtolower($field['duplicates']) == "true") { 
+				if (self::isDupe($formID,$field['name'],$engine->cleanPost['RAW'][$field['name']],$objectID)) {
 					errorHandle::errorMsg("Duplicate data (in form) provided in field '".$field['label']."'.");
 					continue;
 				}
@@ -861,14 +861,15 @@ class forms {
 	}
 
 	// $value must be RAW
-	public static function isDupe($formID,$field,$value) {
+	public static function isDupe($formID,$field,$value,$objectID=NULL) {
 
 		$engine = EngineAPI::singleton();
 
-		$sql = sprintf("SELECT COUNT(*) FROM `dupeMatching` WHERE `formID`='%s' AND `field`='%s' AND `value`='%s'",
+		$sql = sprintf("SELECT COUNT(*) FROM `dupeMatching` WHERE `formID`='%s' AND `field`='%s' AND `value`='%s' %s",
 			$engine->openDB->escape($formID),
 			$engine->openDB->escape($field),
-			$engine->openDB->escape($value)
+			$engine->openDB->escape($value),
+			(!isnull($objectID))?"AND `objectID`!='".$engine->openDB->escape($objectID)."'":""
 			);
 
 		$sqlResult = $engine->openDB->sqlResult($sql);
