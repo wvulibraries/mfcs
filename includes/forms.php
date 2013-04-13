@@ -154,7 +154,7 @@ class forms {
 
 	public static function getFormIDInfo($formID) {
 		$form = self::get($formID);
-		return decodeFields($form['idno']);
+		return $form['idno'];
 	}
 
 	public static function build($formID,$objectID = NULL) {
