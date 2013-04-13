@@ -434,7 +434,7 @@ class forms {
 		}
 
 		$output .= sprintf('<input type="submit" value="%s" name="%s" />',
-			htmlSanitize($form["submitButton"]),
+			(isnull($objectID))?htmlSanitize($form["submitButton"]):htmlSanitize($form["updateButton"]),
 			$objectID ? "updateForm" : "submitForm"
 			);
 
