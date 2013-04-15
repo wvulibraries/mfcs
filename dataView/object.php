@@ -41,7 +41,6 @@ try {
 	// Project Tab Stuff
 	$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
 	localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects));
-	
 	// Project Tab Stuff
 	//////////
 
