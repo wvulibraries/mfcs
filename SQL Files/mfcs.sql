@@ -209,10 +209,10 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 DROP TABLE IF EXISTS `users_projects`;
 CREATE TABLE IF NOT EXISTS `users_projects` (
-  `UD` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `userID` int(10) unsigned NOT NULL,
   `projectID` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`UD`),
+  PRIMARY KEY (`ID`),
   KEY `userID` (`userID`,`projectID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='many-many link for a user''s current projects' AUTO_INCREMENT=1 ;
 
