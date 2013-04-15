@@ -415,7 +415,7 @@ localVars::add("results",displayMessages());
 $engine->eTemplate("include","header");
 ?>
 
-<script type="text/javascript" src="{local var="siteRoot"}includes/js/projectEdit.js"></script>
+<script type="text/javascript" src='{local var="siteRoot"}includes/js/projectEdit.js'></script>
 
 <section>
 	<header class="page-header">
@@ -449,39 +449,18 @@ $engine->eTemplate("include","header");
 
 					<a name="addForms"></a>
 
-					<table>
-						<tr>
-							<th>Metadata Forms</th>
-							<th>Object Forms</th>
-						</tr>
-						<tr>
-							<td>
-								<select name="selectedMetadataForms[]" id="selectedMetadataForms" size="5" multiple="multiple">
-									{local var="selectedMetadataForms"}
-								</select>
-								<br />
-								<select name="availableMetadataForms" id="availableMetadataForms" onchange="addItemToID('selectedMetadataForms', this.options[this.selectedIndex])">
-									<option value="null">Select a Form</option>
-									{local var="availableMetadataForms"}
-								</select>
-								<br />
-								<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedMetadataForms', this.form.selectedMetadataForms)" />
-							</td>
-							<td>
-								<select name="selectedObjectForms[]" id="selectedObjectForms" size="5" multiple="multiple">
-									{local var="selectedObjectForms"}
-								</select>
-								<br />
-								<select name="availableObjectForms" id="availableObjectForms" onchange="addItemToID('selectedObjectForms', this.options[this.selectedIndex])">
-									<option value="null">Select a Form</option>
-									{local var="availableObjectForms"}
-								</select>
-								<br />
-								<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedObjectForms', this.form.selectedObjectForms)" />
-							</td>
-						</tr>
-					</table>
-				</div>
+                    <select name="selectedObjectForms[]" id="selectedObjectForms" size="5" multiple="multiple">
+                        {local var="selectedObjectForms"}
+                    </select>
+                    <br />
+                    <select name="availableObjectForms" id="availableObjectForms" onchange="addItemToID('selectedObjectForms', this.options[this.selectedIndex])">
+                        <option value="null">Select a Form</option>
+                        {local var="availableObjectForms"}
+                    </select>
+                    <br />
+                    <input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedObjectForms', this.form.selectedObjectForms)" />
+
+                </div>
 
 				<div class="row-fluid" id="groupings">
 					<header>

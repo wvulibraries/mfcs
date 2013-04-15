@@ -898,14 +898,30 @@ function formSettingsBindings() {
 	$("#formSettings_formMetadata").change(function() {
 		if ($(this).is(":checked")) {
 			if ($("#formPreview :input[name^=type_][value=idno]").length == 0) {
-				$("#fieldAdd li:contains('ID Number')").hide();
 				$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
+				$("#fieldAdd li:contains('ID Number')").hide();
+				$("#fieldAdd li:contains('Paragraph Text')").hide();
+				$("#fieldAdd li:contains('Radio')").hide();
+				$("#fieldAdd li:contains('Checkboxes')").hide();
+				$("#fieldAdd li:contains('Dropdown')").hide();
+				$("#fieldAdd li:contains('Multi-Select')").hide();
+				$("#fieldAdd li:contains('File Upload')").hide();
+				$("#fieldAdd li:contains('WYSIWYG')").hide();
+				$("#fieldAdd li:contains('Field Set')").parent().hide().prev().hide();
 			}
 			else {
 				if (confirm("Enabling this will remove any existing ID Number fields. Do you want to continue?")) {
-					$("#fieldAdd li:contains('ID Number')").hide();
 					$("#formPreview :input[name^=type_][value=idno]").parent().parent().remove();
 					$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
+					$("#fieldAdd li:contains('ID Number')").hide();
+					$("#fieldAdd li:contains('Paragraph Text')").hide();
+					$("#fieldAdd li:contains('Radio')").hide();
+					$("#fieldAdd li:contains('Checkboxes')").hide();
+					$("#fieldAdd li:contains('Dropdown')").hide();
+					$("#fieldAdd li:contains('Multi-Select')").hide();
+					$("#fieldAdd li:contains('File Upload')").hide();
+					$("#fieldAdd li:contains('WYSIWYG')").hide();
+					$("#fieldAdd li:contains('Field Set')").parent().hide().prev().hide();
 				}
 				else {
 					$(this).removeAttr('checked');
@@ -914,6 +930,14 @@ function formSettingsBindings() {
 		}
 		else {
 			$("#fieldAdd li:contains('ID Number')").show();
+			$("#fieldAdd li:contains('Paragraph Text')").show();
+			$("#fieldAdd li:contains('Radio')").show();
+			$("#fieldAdd li:contains('Checkboxes')").show();
+			$("#fieldAdd li:contains('Dropdown')").show();
+			$("#fieldAdd li:contains('Multi-Select')").show();
+			$("#fieldAdd li:contains('File Upload')").show();
+			$("#fieldAdd li:contains('WYSIWYG')").show();
+			$("#fieldAdd li:contains('Field Set')").parent().show().prev().show();
 
 			if ($("#formPreview :input[name^=type_][value=idno]").length == 0) {
 				$("#formSettings_formProduction").prop({

@@ -15,17 +15,20 @@ function defineList($tableName) {
 	$l->addField(array(
 		"field"    => "firstname",
 		"label"    => "First Name",
+        "dupes"    => TRUE
 		));
 
 	$l->addField(array(
 		"field"    => "lastname",
 		"label"    => "Last Name",
+        "dupes"    => TRUE
 		));
 
 	$l->addField(array(
 		"field"    => "status",
 		"label"    => "Status",
 		"type"     => "select",
+        "dupes"    => TRUE,
 		"options"  => array(
 			array("value"=>"Librarian","label"=>"Librarian"),
 			array("value"=>"Staff","label"=>"Staff"),
