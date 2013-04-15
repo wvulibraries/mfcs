@@ -4,45 +4,19 @@ recurseInsert("acl.php","php");
 
 try {
 
-	$error = FALSE;
+	$error = FALSE; 
 
-	if (!isset($engine->cleanGet['MYSQL']['formID'])
-		|| is_empty($engine->cleanGet['MYSQL']['formID'])
-		|| !validate::integer($engine->cleanGet['MYSQL']['formID'])) {
-
-		if (!isnull($engine->cleanGet['MYSQL']['objectID'])) {
-			$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
-
-			if ($object === FALSE) {
-				errorHandle::newError(__METHOD__."() - No Form ID Provided, error getting Object", errorHandle::DEBUG);
-				throw new Exception("No Form ID Provided, error getting Object.");
-			}
-
-			http::setGet('formID',$object['formID']);
-
-		}
-		else {
-			errorHandle::newError(__METHOD__."() - No Form ID Provided.", errorHandle::DEBUG);
-			throw new Exception("No Form ID Provided.");
-		}
+	if (objects::validID() === FALSE) {
+		throw new Exception("ObjectID Provided is invalid.");
 	}
 
-	if (isset($engine->cleanGet['MYSQL']['objectID'])) {
-		if (is_empty($engine->cleanGet['MYSQL']['objectID'])
-			|| !validate::integer($engine->cleanGet['MYSQL']['objectID'])) {
-
-			errorHandle::newError("ObjectID Provided is invalid", errorHandle::DEBUG);
-			throw new Exception("ObjectID Provided is invalid.");
-		}
-
-		// if an object ID is provided make sure the object is from this form
-		if (!objects::checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
-			errorHandle::newError("Object not from this form.", errorHandle::DEBUG);
-			throw new Exception("Object not from this form.");
-		}
+	if (forms::validID() === FALSE) {
+		throw new Exception("No Form ID Provided.");
 	}
-	else if (!isset($engine->cleanGet['MYSQL']['objectID'])) {
-		$engine->cleanGet['MYSQL']['objectID'] = NULL;
+
+	// if an object ID is provided make sure the object is from this form
+	if (!isnull($engine->cleanGet['MYSQL']['objectID']) && !objects::checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
+		throw new Exception("Object not from this form.");
 	}
 
 	$form = forms::get($engine->cleanGet['MYSQL']['formID']);
@@ -53,6 +27,13 @@ try {
 	if (forms::isMetadataForm($engine->cleanGet['MYSQL']['formID'])) {
 		throw new Exception("Metadata form provided (Object forms only).");
 	}
+
+	//////////
+	// Project Tab Stuff
+	$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
+	localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects));
+	// Project Tab Stuff
+	//////////
 
 	// check for edit permissions on the project
 	// if (projects::checkPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) {
@@ -88,6 +69,69 @@ try {
 			throw new Exception("Error Updating Form.");
 		}
 	}
+	else if (isset($engine->cleanPost['MYSQL']['projectForm'])) {
+		if (!isset($engine->cleanPost['MYSQL']['projects'])) {
+			$engine->cleanPost['MYSQL']['projects'] = array();
+		}
+		else {
+			$engine->cleanPost['MYSQL']['projects'] = array_keys($engine->cleanPost['MYSQL']['projects']);
+		}
+
+		foreach ($engine->cleanPost['MYSQL']['projects'] as $postProjectID) {
+			if (in_array($postProjectID, $selectedProjects)) {
+				continue;
+			}
+
+			// Add to additions
+			$addedProjects[] = $postProjectID;
+		}
+
+		foreach ($selectedProjects as $selectProjectID) {
+			if (in_array($selectProjectID, $engine->cleanPost['MYSQL']['projects'])) {
+				continue;
+			}
+
+			// Add to deletions
+			$deletedProjects[] = $selectProjectID;
+		}
+
+		// Perform deletions
+		if (isset($deletedProjects) && !is_empty($deletedProjects)) {
+			$sql = sprintf("DELETE FROM `%s` WHERE `objectID`='%s' AND `projectID` IN ('%s')",
+				$engine->openDB->escape($engine->dbTables("objectProjects")),
+				$engine->openDB->escape($engine->cleanGet['MYSQL']['objectID']),
+				implode("','", $deletedProjects)
+				);
+			$sqlResult = $engine->openDB->query($sql);
+
+			if (!$sqlResult['result']) {
+				errorHandle::newError("Failed to perform deletions - ".$sqlResult['error'],errorHandle::DEBUG);
+				throw new Exception("Failed to remove projects.");
+			}
+		}
+
+		// Perform additions
+		if (isset($addedProjects) && !is_empty($addedProjects)) {
+			foreach ($addedProjects as $projectID) {
+				$additions[] = sprintf("('%s','%s')",
+					$engine->openDB->escape($engine->cleanGet['MYSQL']['objectID']),
+					$engine->openDB->escape($projectID)
+					);
+			}
+			$sql = sprintf("INSERT INTO `%s` (`objectID`,`projectID`) VALUES %s",
+				$engine->openDB->escape($engine->dbTables("objectProjects")),
+				implode(",", $additions)
+				);
+			$sqlResult = $engine->openDB->query($sql);
+
+			if (!$sqlResult['result']) {
+				errorHandle::newError("Failed to perform additions - ".$sqlResult['error'],errorHandle::DEBUG);
+				throw new Exception("Failed to add projects.");
+			}
+		}
+
+		$selectedProjects = $engine->cleanPost['MYSQL']['projects'];
+	}
 
 }
 catch(Exception $e) {
@@ -96,12 +140,20 @@ catch(Exception $e) {
 }
 
 // build the form for displaying
-$builtForm = forms::build($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'],$error);
-if ($builtForm === FALSE) {
-	throw new Exception("Error building form.");
+if (forms::validID()) {
+	try {
+		$builtForm = forms::build($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'],$error);
+		if ($builtForm === FALSE) {
+			throw new Exception("Error building form.");
+		}
+		localvars::add("form",$builtForm);
+		localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['formID']));
+	}
+	catch (Exception $e) {
+		errorHandle::errorMsg($e->getMessage());
+	}
 }
-localvars::add("form",$builtForm);
-localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['formID']));
+
 localVars::add("results",displayMessages());
 
 $engine->eTemplate("include","header");

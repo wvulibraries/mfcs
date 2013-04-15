@@ -2,6 +2,16 @@
 
 class projects {
 
+    public static function validID($id) {
+
+        if (!validate::integer($id)) {
+            return FALSE;
+        }
+
+        return TRUE;
+
+    }
+
 	    /**
      * Get an array of available projects
      *
@@ -103,6 +113,30 @@ class projects {
     	}
 
     	return FALSE;
+
+    }
+
+    // $selected is an array of projectIDs
+    public static function generateProjectCheckList($selected=array()) {
+
+    	if (!is_array($selected)) {
+    		return(FALSE);
+    	}
+
+        $allProjects      = projects::getProjects();
+
+        $output = "";
+        foreach ($allProjects as $project) {
+            $output .= sprintf('<label class="checkbox" for="%s"><input type="checkbox" id="%s" name="projects[%s]"%s> %s</label>',
+            	htmlSanitize("project_".$project['ID']),                           // for=
+            	htmlSanitize("project_".$project['ID']),                           // id=
+            	htmlSanitize($project['ID']),                                      // name=projects[]
+            	(in_array($project['ID'], $selected)) ? " checked" : NULL, // checked or not
+           		 htmlSanitize($project['projectName'])                              // label text
+            );
+        }
+
+        return $output;
 
     }
 

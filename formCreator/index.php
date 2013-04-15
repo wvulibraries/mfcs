@@ -325,20 +325,20 @@ $engine->eTemplate("include","header");
 										<li><a href="#" class="btn btn-block">Paragraph Text</a></li>
 										<li><a href="#" class="btn btn-block">Radio</a></li>
 										<li><a href="#" class="btn btn-block">Checkboxes</a></li>
-										<li><a href="#" class="btn btn-block">Dropdown</a></li>
-										<li><a href="#" class="btn btn-block">Multi-Select</a></li>
-										<li><a href="#" class="btn btn-block">File Upload</a></li>
+										<li><a href="#" class="btn btn-block">Number</a></li>
+										<li><a href="#" class="btn btn-block">Email</a></li>
+										<li><a href="#" class="btn btn-block">Phone</a></li>
 									</ul>
 								</div>
 								<div class="span6">
 									<ul class="unstyled draggable">
-										<li><a href="#" class="btn btn-block">Number</a></li>
-										<li><a href="#" class="btn btn-block">Email</a></li>
-										<li><a href="#" class="btn btn-block">Phone</a></li>
+										<li><a href="#" class="btn btn-block">Dropdown</a></li>
+										<li><a href="#" class="btn btn-block">Multi-Select</a></li>
+										<li><a href="#" class="btn btn-block">File Upload</a></li>
+										<li><a href="#" class="btn btn-block">WYSIWYG</a></li>
 										<li><a href="#" class="btn btn-block">Date</a></li>
 										<li><a href="#" class="btn btn-block">Time</a></li>
 										<li><a href="#" class="btn btn-block">Website</a></li>
-										<li><a href="#" class="btn btn-block">WYSIWYG</a></li>
 									</ul>
 								</div>
 							</div>
