@@ -375,14 +375,6 @@ $engine->eTemplate("include","header");
 		</div>
 
 		<?php if(is_empty($engine->errorStack)){ ?>
-        <div class="row-fluid" id="pageNav">
-            <ul>
-                <li><a href="#addForms">Add Forms</a></li>
-                <li><a href="#groupings">Groupings</a></li>
-                <li><a href="#permissions">Permissions</a></li>
-                <li><a href="#numbering">Project Numbering</a></li>
-            </ul>
-        </div>
 
 
         <div class="alert alert-block" style="display: none;" id="updateProjectAlert">
@@ -394,13 +386,13 @@ $engine->eTemplate("include","header");
             {engine name="csrf"}
 
             <ul class="nav nav-tabs">
-                <li class="active"><a href="#home" data-toggle="tab">Edit Project</a></li>
-                <li><a href="#forms" data-toggle="tab">Forms</a></li>
+                <!-- <li class="active"><a href="#home" data-toggle="tab">Edit Project</a></li> -->
+                <li class="active"><a href="#forms" data-toggle="tab">Forms</a></li>
                 <li><a href="#groupings" data-toggle="tab">Groupings</a></li>
                 <li><a href="#permissions" data-toggle="tab">Permissions</a></li>
             </ul>
             <div class="tab-content">
-                <div class="tab-pane active" id="home">...</div>
+                <!-- <div class="tab-pane active" id="home">...</div> -->
                 <div class="tab-pane" id="forms">
                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos dolor ea illum nesciunt temporibus? Blanditiis consequatur distinctio, ex harum modi nostrum quaerat, quas quod sequi similique ut velit veritatis voluptates?</p>
                     <select name="selectedObjectForms[]" id="selectedObjectForms" size="5" multiple="multiple">
