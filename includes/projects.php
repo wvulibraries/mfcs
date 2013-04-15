@@ -2,6 +2,16 @@
 
 class projects {
 
+    public static function validID($id) {
+
+        if (!validate::integer($id)) {
+            return FALSE;
+        }
+
+        return TRUE;
+
+    }
+
 	    /**
      * Get an array of available projects
      *
