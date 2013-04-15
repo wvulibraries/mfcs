@@ -5,50 +5,11 @@ recurseInsert("acl.php","php");
 try {
 
 	// Object ID Validation
-	if (!isset($engine->cleanGet['MYSQL']['objectID'])) {
-		errorHandle::newError("No Object ID Provided.", errorHandle::DEBUG);
-		throw new Exception("No Object ID Provided.");
+	if (objects::validID(TRUE) === FALSE) {
+		throw new Exception("ObjectID Provided is invalid.");
 	}
 
-	if (is_empty($engine->cleanGet['MYSQL']['objectID'])
-		|| !validate::integer($engine->cleanGet['MYSQL']['objectID'])) {
-
-		errorHandle::newError("Object ID Provided is invalid.", errorHandle::DEBUG);
-		throw new Exception("Object ID Provided is invalid.");
-	}
-
-	// check for edit permissions on the project
-	// if (projects::checkPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) {
-	// 	throw new Exception("Permissions denied for working on this project");
-	// }
-
-	// check that this form is part of the project
-	// // TODO need forms from User
-	// if (!forms::checkFormInProject($engine->cleanGet['MYSQL']['id'],$engine->cleanGet['MYSQL']['formID'])) {
-	// 	throw new Exception("Form is not part of project.");
-	// }
-
-	// Get the project
-	// $project = NULL; // TODO: Needs to be gotten from the user info
-	// if ($project === FALSE) {
-	// 	throw new Exception("Error retrieving project.");
-	// }
-
-
-	$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
-	if ($object === FALSE) {
-		throw new Exception("Invalid Object ID.");
-	}
-
-	http::setGet('formID',$object['formID']);
-
-
-	// Form ID Validation
-	if (!isset($engine->cleanGet['MYSQL']['formID'])
-		|| is_empty($engine->cleanGet['MYSQL']['formID'])
-		|| !validate::integer($engine->cleanGet['MYSQL']['formID'])) {
-
-		errorHandle::newError("No Form ID Provided.", errorHandle::DEBUG);
+	if (forms::validID() === FALSE) {
 		throw new Exception("No Form ID Provided.");
 	}
 
@@ -65,21 +26,6 @@ try {
 	}
 
 	localvars::add("formName",$form['title']);
-
-	// Submissions
-	if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
-		$return = forms::submit($engine->cleanGet['MYSQL']['formID']);
-		if ($return === FALSE) {
-			throw new Exception("Error Submitting Form.");
-		}
-	}
-	else if (isset($engine->cleanPost['MYSQL']['updateForm'])) {
-		$return = forms::submit($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
-		if ($return === FALSE) {
-			throw new Exception("Error Updating Form.");
-		}
-	}
-	// Submissions
 
 	// build the form for displaying
 	$builtForm = forms::build($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
