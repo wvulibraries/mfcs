@@ -2,6 +2,32 @@
 
 class forms {
 
+	function validID() {
+		$engine = EngineAPI::singleton();
+
+		if (!isset($engine->cleanGet['MYSQL']['formID'])
+			|| is_empty($engine->cleanGet['MYSQL']['formID'])
+			|| !validate::integer($engine->cleanGet['MYSQL']['formID'])) {
+
+			if (objects::validID($engine->cleanGet['MYSQL']['objectID'])) {
+				$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
+
+				if ($object === FALSE) {
+					return FALSE;
+				}
+
+				http::setGet('formID',$object['formID']);
+
+			}
+			else {
+				return FALSE;
+			}
+		}
+
+		return TRUE;
+
+	}
+
 	function get($formID=NULL) {
 
 		if (isnull($formID)) {
