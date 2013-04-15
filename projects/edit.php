@@ -9,7 +9,6 @@ try {
 
 
 	// Submission
-    echo '<pre><tt>'.print_r($engine->cleanPost,true).'</tt></pre>';
 	if (isset($engine->cleanPost['MYSQL']['submitProjectEdits'])) {
         try{
             // trans: begin transaction
@@ -161,45 +160,28 @@ try {
         localvars::add("metadataForms",  '');
     }
 
-
 	// Object Forms
-	foreach ($currentForms['objects'] as $I => $V) {
-		$sql       = sprintf("SELECT ID, title FROM `forms` WHERE ID='%s'",
-			$engine->openDB->escape($V)
-			);
-		$sqlResult = $engine->openDB->query($sql);
+	if(isset($currentForms['objects'])){
+        foreach ($currentForms['objects'] as $i => $objectID) {
+            $sql = sprintf("SELECT ID, title FROM `forms` WHERE ID='%s'",
+                $engine->openDB->escape($objectID)
+            );
+            $sqlResult = $engine->openDB->query($sql);
+            if(!$sqlResult['result']) throw new Exception("MySQL error - getting form titles ({$sqlResult['error']})");
 
-		if (!$sqlResult['result']) {
-			errorHandle::newError(__METHOD__."() - getting form titles (object)", errorHandle::DEBUG);
-			errorHandle::errorMsg("Error Building Page");
-			throw new Exception('Error');
-		}
+            $row  = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+            $targetVar = ($i % 2) ? 'objectFormsOdd' : 'objectFormsOdd';
+            $$targetVar = sprintf('<li data-type="objectForm" data-formID="%s"><a href="#" class="btn btn-block">%s</a></li>',
+                htmlSanitize($row['ID']),
+                htmlSanitize($row['title'])
+            );
+            $selectedObjectForms .= sprintf('<option value="%s">%s</option>',
+                $engine->openDB->escape($row['ID']),
+                $engine->openDB->escape($row['title'])
+            );
+        }
+    }
 
-		$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
-
-		$objectForms[] = array(
-			"ID"    => $row['ID'],
-			"title" => $row['title'],
-			);
-		$selectedObjectForms .= sprintf('<option value="%s">%s</option>',
-			$engine->openDB->escape($row['ID']),
-			$engine->openDB->escape($row['title'])
-			);
-	}
-
-	foreach ($objectForms as $I => $form) {
-		$tmp = sprintf('<li data-type="objectForm" data-formID="%s"><a href="#" class="btn btn-block">%s</a></li>',
-			htmlSanitize($form['ID']),
-			htmlSanitize($form['title'])
-			);
-
-		if ($I % 2 == 0) { // even
-			$objectFormsEven .= $tmp;
-		}
-		else { // odd
-			$objectFormsOdd .= $tmp;
-		}
-	}
 
 	localVars::add("objectFormsEven",$objectFormsEven);
 	localVars::add("objectFormsOdd",$objectFormsOdd);
@@ -209,16 +191,11 @@ try {
 	// Get all the Object forms
 	$sql       = sprintf("SELECT * FROM `forms` WHERE `production`='1' ORDER BY `title`");
 	$sqlResult = $engine->openDB->query($sql);
-
-	if (!$sqlResult['result']) {
-		errorHandle::newError(__METHOD__."() - Error getting forms", errorHandle::DEBUG);
-		errorHandle::errorMsg("Error Building Page");
-		throw new Exception('Error');
-	}
+	if(!$sqlResult['result']) throw new Exception("MySQL Error - Error getting forms ({$sqlResult['error']})");
 
 	$availableMetadataForms = "";
 	$availableObjectForms   = "";
-	while($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+	while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 		if ($row['metadata'] == "1") {
 			$availableMetadataForms .= sprintf('<option value="%s">%s</option>',
 				htmlSanitize($row['ID']),
@@ -241,12 +218,7 @@ try {
 		$engine->cleanGet['MYSQL']['id']
 		);
 	$sqlResult = $engine->openDB->query($sql);
-
-	if (!$sqlResult['result']) {
-		errorHandle::newError(__METHOD__."() - Error getting project", errorHandle::DEBUG);
-		errorHandle::errorMsg("Error Building Page");
-		throw new Exception('Error');
-	}
+	if(!$sqlResult['result']) throw new Exception("MySQL Error - Error getting project ({$sqlResult['error']})");
 
 	$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
@@ -350,12 +322,7 @@ try {
 		$engine->cleanGet['MYSQL']['id']
 		);
 	$sqlResult = $engine->openDB->query($sql);
-
-	if (!$sqlResult['result']) {
-		errorHandle::newError(__METHOD__."() - getting permissions", errorHandle::DEBUG);
-		errorHandle::errorMsg("Error retrieving users.");
-		throw new Exception('Error');
-	}
+	if(!$sqlResult['result']) throw new Exception("MySQL Error - getting permissions ({$sqlResult['error']})");
 
 	while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
         $optionHTML = sprintf('<option value="%s">%s, %s (%s)</option>',
@@ -383,7 +350,7 @@ try {
 }
 catch (Exception $e) {
     errorHandle::newError("{$e->getFile()}:{$e->getLine()} {$e->getMessage()}", errorHandle::DEBUG);
-    errorHandle::errorMsg($e->getMessage());
+    errorHandle::errorMsg("Error Building Page");
 }
 
 
