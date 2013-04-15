@@ -372,6 +372,8 @@ function selectAllOnSubmit(id) {
 function entrySubmit() {
 	selectAllOnSubmit("selectedMetadataForms");
 	selectAllOnSubmit("selectedObjectForms");
+	selectAllOnSubmit("selectedEntryUsers");
+	selectAllOnSubmit("selectedViewUsers");
 	selectAllOnSubmit("selectedUsersAdmins");
 
 	return true;
