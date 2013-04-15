@@ -200,6 +200,24 @@ class objects {
 		return $return;
 	}
 
+	public static function deleteAllProjects($objectID) {
+
+		$engine = EngineAPI::singleton();
+
+		$sql       = sprintf("DELETE FROM `objectProjects` WHERE `objectID`='%s'",
+			$engine->openDB->escape($objectID)
+			);
+		$sqlResult = $engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		return TRUE;
+
+	}
+
 }
 
 ?>
