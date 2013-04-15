@@ -127,11 +127,12 @@ class projects {
 
         $output = "";
         foreach ($allProjects as $project) {
-            $output .= sprintf('<label class="checkbox" for="%s"><input type="checkbox" id="%s" name="projects[%s]"%s> %s</label>',
+
+            $output .= sprintf('<label class="checkbox" for="%s"><input type="checkbox" id="%s" name="projects[]" value="%s"%s> %s</label>',
             	htmlSanitize("project_".$project['ID']),                           // for=
             	htmlSanitize("project_".$project['ID']),                           // id=
-            	htmlSanitize($project['ID']),                                      // name=projects[]
-            	(in_array($project['ID'], $selected)) ? " checked" : NULL, // checked or not
+            	htmlSanitize($project['ID']),                                      // value=
+            	(in_array($project['ID'], $selected)) ? " checked" : "", // checked or not
            		 htmlSanitize($project['projectName'])                              // label text
             );
         }

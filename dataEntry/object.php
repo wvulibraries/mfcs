@@ -2,9 +2,11 @@
 include("../header.php");
 recurseInsert("acl.php","php");
 
+$selectedProjects = NULL;
+
 try {
 
-	$error = FALSE; 
+	$error = FALSE;
 
 	if (objects::validID() === FALSE) {
 		throw new Exception("ObjectID Provided is invalid.");
@@ -33,6 +35,12 @@ try {
 	$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
 	localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects));
 	// Project Tab Stuff
+	//////////
+
+	//////////
+	// Children Tab Stuff
+	localVars::add("childrenList",objects::displayChildrenList($engine->cleanGet['MYSQL']['objectID']));
+	// Children Tab Stuff
 	//////////
 
 	// check for edit permissions on the project
@@ -70,67 +78,42 @@ try {
 		}
 	}
 	else if (isset($engine->cleanPost['MYSQL']['projectForm'])) {
+
+		$result = $engine->openDB->transBegin("objectProjects");
+		if ($result !== TRUE) {
+			errorHandle::errorMsg("Database transactions could not begin.");
+			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
+			return FALSE;
+		}
+
 		if (!isset($engine->cleanPost['MYSQL']['projects'])) {
-			$engine->cleanPost['MYSQL']['projects'] = array();
+			// If no projects are set, we are deleting all the projects
+			if (objects::deleteAllProjects($engine->cleanGet['MYSQL']['objectID']) === FALSE) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+				throw new Exception("Error removing all projects from Object.");
+			}
 		}
 		else {
-			$engine->cleanPost['MYSQL']['projects'] = array_keys($engine->cleanPost['MYSQL']['projects']);
-		}
-
-		foreach ($engine->cleanPost['MYSQL']['projects'] as $postProjectID) {
-			if (in_array($postProjectID, $selectedProjects)) {
-				continue;
+			// There are changes.
+			// Delete all the old ones
+			if (objects::deleteAllProjects($engine->cleanGet['MYSQL']['objectID']) === FALSE) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+				throw new Exception("Error removing all projects from Object.");
 			}
 
-			// Add to additions
-			$addedProjects[] = $postProjectID;
-		}
-
-		foreach ($selectedProjects as $selectProjectID) {
-			if (in_array($selectProjectID, $engine->cleanPost['MYSQL']['projects'])) {
-				continue;
+			// Add All the new ones
+			if (objects::addProjects($engine->cleanGet['MYSQL']['objectID'],$engine->cleanPost['MYSQL']['projects']) === FALSE) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+				throw new Exception("Error adding projects to Object.");
 			}
 
-			// Add to deletions
-			$deletedProjects[] = $selectProjectID;
+			$engine->openDB->transCommit();
+			$engine->openDB->transEnd();
 		}
 
-		// Perform deletions
-		if (isset($deletedProjects) && !is_empty($deletedProjects)) {
-			$sql = sprintf("DELETE FROM `%s` WHERE `objectID`='%s' AND `projectID` IN ('%s')",
-				$engine->openDB->escape($engine->dbTables("objectProjects")),
-				$engine->openDB->escape($engine->cleanGet['MYSQL']['objectID']),
-				implode("','", $deletedProjects)
-				);
-			$sqlResult = $engine->openDB->query($sql);
-
-			if (!$sqlResult['result']) {
-				errorHandle::newError("Failed to perform deletions - ".$sqlResult['error'],errorHandle::DEBUG);
-				throw new Exception("Failed to remove projects.");
-			}
-		}
-
-		// Perform additions
-		if (isset($addedProjects) && !is_empty($addedProjects)) {
-			foreach ($addedProjects as $projectID) {
-				$additions[] = sprintf("('%s','%s')",
-					$engine->openDB->escape($engine->cleanGet['MYSQL']['objectID']),
-					$engine->openDB->escape($projectID)
-					);
-			}
-			$sql = sprintf("INSERT INTO `%s` (`objectID`,`projectID`) VALUES %s",
-				$engine->openDB->escape($engine->dbTables("objectProjects")),
-				implode(",", $additions)
-				);
-			$sqlResult = $engine->openDB->query($sql);
-
-			if (!$sqlResult['result']) {
-				errorHandle::newError("Failed to perform additions - ".$sqlResult['error'],errorHandle::DEBUG);
-				throw new Exception("Failed to add projects.");
-			}
-		}
-
-		$selectedProjects = $engine->cleanPost['MYSQL']['projects'];
 	}
 
 }
@@ -148,6 +131,13 @@ if (forms::validID()) {
 		}
 		localvars::add("form",$builtForm);
 		localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['formID']));
+
+		//////////
+		// Project Tab Stuff
+		$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
+		localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects));
+		// Project Tab Stuff
+		//////////
 	}
 	catch (Exception $e) {
 		errorHandle::errorMsg($e->getMessage());
@@ -197,12 +187,7 @@ $engine->eTemplate("include","header");
 					</div>
 
 					<div class="tab-pane" id="children">
-						Children content
-						<?php
-						print "<pre>";
-						// print_r($children);
-						print "</pre>";
-						?>
+						{local var="childrenList"}
 					</div>
 				</div>
 			</div>
