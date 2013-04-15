@@ -56,24 +56,19 @@ class forms {
 
 		$form           = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
-		$form['fields'] = decodeFields($form['fields']);
-
-		if ($form['fields'] === FALSE) {
+		if (($form['fields'] = decodeFields($form['fields'])) === FALSE) {
 			errorHandle::newError(__METHOD__."() - fields", errorHandle::DEBUG);
 			errorHandle::errorMsg("Error retrieving form.");
 			return FALSE;
 		}
 
-		$form['idno']   = decodeFields($form['idno']);
-
-		if ($form['idno'] === FALSE) {
+		if (($form['idno'] = decodeFields($form['idno'])) === FALSE) {
 			errorHandle::newError(__METHOD__."() - idno", errorHandle::DEBUG);
 			errorHandle::errorMsg("Error retrieving form.");
 			return FALSE;
 		}
 
-		$cache = $mfcs->cache("create",$cachID,$form);
-		if ($cache === FALSE) {
+		if ($mfcs->cache("create",$cachID,$form) === FALSE) {
 			errorHandle::newError(__METHOD__."() - unable to cache form", errorHandle::DEBUG);
 		}
 
