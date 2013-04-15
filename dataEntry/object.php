@@ -2,6 +2,8 @@
 include("../header.php");
 recurseInsert("acl.php","php");
 
+$selectedProjects = NULL;
+
 try {
 
 	$error = FALSE; 
@@ -27,13 +29,6 @@ try {
 	if (forms::isMetadataForm($engine->cleanGet['MYSQL']['formID'])) {
 		throw new Exception("Metadata form provided (Object forms only).");
 	}
-
-	//////////
-	// Project Tab Stuff
-	$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
-	localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects));
-	// Project Tab Stuff
-	//////////
 
 	// check for edit permissions on the project
 	// if (projects::checkPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) {
@@ -70,21 +65,42 @@ try {
 		}
 	}
 	else if (isset($engine->cleanPost['MYSQL']['projectForm'])) {
+
+		$result = $engine->openDB->transBegin("objectProjects");
+		if ($result !== TRUE) {
+			errorHandle::errorMsg("Database transactions could not begin.");
+			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
+			return FALSE;
+		}
+
 		if (!isset($engine->cleanPost['MYSQL']['projects'])) {
-			$engine->cleanPost['MYSQL']['projects'] = array();
+			// If no projects are set, we are deleting all the projects
+			if (objects::deleteAllProjects($engine->cleanGet['MYSQL']['objectID']) === FALSE) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+				throw new Exception("Error removing all projects from Object.");
+			}
 		}
 		else {
-					print "<pre>";
-		var_dump($engine->cleanPost['MYSQL']['projects']);
-		print "</pre>";
-			$engine->cleanPost['MYSQL']['projects'] = array_keys($engine->cleanPost['MYSQL']['projects']);
+			// There are changes. 
+			// Delete all the old ones
+			if (objects::deleteAllProjects($engine->cleanGet['MYSQL']['objectID']) === FALSE) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+				throw new Exception("Error removing all projects from Object.");
+			}
+
+			// Add All the new ones
+			if (objects::addProjects($engine->cleanGet['MYSQL']['objectID'],$engine->cleanPost['MYSQL']['projects']) === FALSE) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+				throw new Exception("Error adding projects to Object.");
+			}
+
+			$engine->openDB->transCommit();
+			$engine->openDB->transEnd();
 		}
 
-		print "<pre>";
-		var_dump($engine->cleanPost['MYSQL']['projects']);
-		print "</pre>";
-
-		$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
 	}
 
 }
@@ -102,6 +118,13 @@ if (forms::validID()) {
 		}
 		localvars::add("form",$builtForm);
 		localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['formID']));
+
+		//////////
+		// Project Tab Stuff
+		$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
+		localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects));
+		// Project Tab Stuff
+		//////////
 	}
 	catch (Exception $e) {
 		errorHandle::errorMsg($e->getMessage());
