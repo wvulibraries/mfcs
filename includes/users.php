@@ -22,7 +22,7 @@ class users {
 
 		$currentProjects = array();
 		$sql = sprintf("SELECT projects.ID,projectName FROM `projects` LEFT JOIN users_projects ON users_projects.projectID=projects.ID WHERE users_projects.userID=%s",
-			$engine->openDB->escape(mfcs::user('ID'))
+			$engine->openDB->escape(self::user('ID'))
 			);
 		$sqlResult = $engine->openDB->query($sql);
 		if (!$sqlResult['result']) {
