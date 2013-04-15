@@ -283,6 +283,14 @@ if (!isnull($formID)) {
 		localVars::add("formPreview",$formPreview);
 	}
 }
+else {
+	localVars::add("displayModal",'
+		<script type="text/javascript">
+			$(function() {
+				$("#formTypeSelector").modal("show");
+			});
+		</script>');
+}
 
 if (is_empty(localVars::get("submitButton"))) {
 	localVars::add("submitButton","Submit");
@@ -847,6 +855,17 @@ $engine->eTemplate("include","header");
 		</div>
 	</div>
 </section>
+
+<div class="modal hide fade" id="formTypeSelector">
+	<div class="modal-header">
+		<h3>What type of form will this be?</h3>
+	</div>
+	<div class="modal-body text-center">
+		<button class="btn btn-large">Metadata</button>
+		<button class="btn btn-large">Object</button>
+	</div>
+</div>
+{local var="displayModal"}
 
 <?php
 $engine->eTemplate("include","footer");
