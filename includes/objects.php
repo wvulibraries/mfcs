@@ -140,15 +140,14 @@ class objects {
 	 * @return string|bool
 	 * @author Scott Blake
 	 **/
-	public static function displayChildrenList($objectID,$link=TRUE) {
+	public static function generateChildList($objectID,$link=TRUE) {
 		if (!validate::integer($objectID)) {
 			return FALSE;
 		}
 
 		$engine = EngineAPI::singleton();
 
-		$children = self::getChildren($objectID);
-		if ($children === FALSE) {
+		if (($children = self::getChildren($objectID)) === FALSE) {
 			return FALSE;
 		}
 
@@ -157,9 +156,9 @@ class objects {
 			$form = forms::get($child['formID']);
 
 			$output .= sprintf('<li>%s%s%s</li>',
-				($link === TRUE) ? '<a href="?objectID='.$child['ID'].'">' : NULL,
+				($link === TRUE) ? '<a href="?objectID='.$child['ID'].'">' : "",
 				htmlSanitize($child['data'][$form['objectTitleField']]),
-				($link === TRUE) ? '</a>' : NULL
+				($link === TRUE) ? '</a>' : ""
 				);
 		}
 
