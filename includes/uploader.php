@@ -1,9 +1,6 @@
 <?php
 require("../engineInclude.php");
-
-// Include functions
-recurseInsert("includes/functions.php","php");
-
+require("../header.php");
 localVars::add("basePath",getBaseUploadPath());
 
 // Include the uploader class
