@@ -21,8 +21,7 @@ try {
 		throw new Exception("Object not from this form.");
 	}
 
-	$form = forms::get($engine->cleanGet['MYSQL']['formID']);
-	if ($form === FALSE) {
+	if (($form = forms::get($engine->cleanGet['MYSQL']['formID'])) === FALSE) {
 		throw new Exception("Error retrieving form.");
 	}
 
@@ -65,22 +64,19 @@ try {
 
 	// handle submission
 	if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
-		$return = forms::submit($engine->cleanGet['MYSQL']['formID']);
-		if ($return === FALSE) {
+		if (forms::submit($engine->cleanGet['MYSQL']['formID']) === FALSE) {
 			throw new Exception("Error Submitting Form.");
 		}
 		$engine->cleanGet['MYSQL']['objectID'] = localvars::get("newObjectID");
 	}
 	else if (isset($engine->cleanPost['MYSQL']['updateForm'])) {
-		$return = forms::submit($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
-		if ($return === FALSE) {
+		if (forms::submit($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']) === FALSE) {
 			throw new Exception("Error Updating Form.");
 		}
 	}
 	else if (isset($engine->cleanPost['MYSQL']['projectForm'])) {
 
-		$result = $engine->openDB->transBegin("objectProjects");
-		if ($result !== TRUE) {
+		if ($engine->openDB->transBegin("objectProjects") !== TRUE) {
 			errorHandle::errorMsg("Database transactions could not begin.");
 			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
 			return FALSE;
@@ -125,8 +121,7 @@ catch(Exception $e) {
 // build the form for displaying
 if (forms::validID()) {
 	try {
-		$builtForm = forms::build($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'],$error);
-		if ($builtForm === FALSE) {
+		if (($builtForm = forms::build($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'],$error)) === FALSE) {
 			throw new Exception("Error building form.");
 		}
 		localvars::add("form",$builtForm);
