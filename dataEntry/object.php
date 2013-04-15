@@ -62,6 +62,69 @@ try {
 			throw new Exception("Error Updating Form.");
 		}
 	}
+	else if (isset($engine->cleanPost['MYSQL']['projectForm'])) {
+		if (!isset($engine->cleanPost['MYSQL']['projects'])) {
+			$engine->cleanPost['MYSQL']['projects'] = array();
+		}
+		else {
+			$engine->cleanPost['MYSQL']['projects'] = array_keys($engine->cleanPost['MYSQL']['projects']);
+		}
+
+		foreach ($engine->cleanPost['MYSQL']['projects'] as $postProjectID) {
+			if (in_array($postProjectID, $selectedProjects)) {
+				continue;
+			}
+
+			// Add to additions
+			$addedProjects[] = $postProjectID;
+		}
+
+		foreach ($selectedProjects as $selectProjectID) {
+			if (in_array($selectProjectID, $engine->cleanPost['MYSQL']['projects'])) {
+				continue;
+			}
+
+			// Add to deletions
+			$deletedProjects[] = $selectProjectID;
+		}
+
+		// Perform deletions
+		if (isset($deletedProjects) && !is_empty($deletedProjects)) {
+			$sql = sprintf("DELETE FROM `%s` WHERE `objectID`='%s' AND `projectID` IN ('%s')",
+				$engine->openDB->escape($engine->dbTables("objectProjects")),
+				$engine->openDB->escape($engine->cleanGet['MYSQL']['objectID']),
+				implode("','", $deletedProjects)
+				);
+			$sqlResult = $engine->openDB->query($sql);
+
+			if (!$sqlResult['result']) {
+				errorHandle::newError("Failed to perform deletions - ".$sqlResult['error'],errorHandle::DEBUG);
+				throw new Exception("Failed to remove projects.");
+			}
+		}
+
+		// Perform additions
+		if (isset($addedProjects) && !is_empty($addedProjects)) {
+			foreach ($addedProjects as $projectID) {
+				$additions[] = sprintf("('%s','%s')",
+					$engine->openDB->escape($engine->cleanGet['MYSQL']['objectID']),
+					$engine->openDB->escape($projectID)
+					);
+			}
+			$sql = sprintf("INSERT INTO `%s` (`objectID`,`projectID`) VALUES %s",
+				$engine->openDB->escape($engine->dbTables("objectProjects")),
+				implode(",", $additions)
+				);
+			$sqlResult = $engine->openDB->query($sql);
+
+			if (!$sqlResult['result']) {
+				errorHandle::newError("Failed to perform additions - ".$sqlResult['error'],errorHandle::DEBUG);
+				throw new Exception("Failed to add projects.");
+			}
+		}
+
+		$selectedProjects = $engine->cleanPost['MYSQL']['projects'];
+	}
 
 }
 catch(Exception $e) {
