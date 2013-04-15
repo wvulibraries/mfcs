@@ -46,7 +46,7 @@ try {
 
 	//////////
 	// Children Tab Stuff
-	localVars::add("childrenList",objects::displayChildrenList($engine->cleanGet['MYSQL']['objectID']));
+	localVars::add("childrenList",objects::generateChildList($engine->cleanGet['MYSQL']['objectID']));
 	// Children Tab Stuff
 	//////////
 
