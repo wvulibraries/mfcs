@@ -3,120 +3,110 @@
 include("../header.php");
 
 try {
-
 	if (!isset($engine->cleanGet['MYSQL']['id']) || is_empty($engine->cleanGet['MYSQL']['id']) || !validate::integer($engine->cleanGet['MYSQL']['id'])) {
-		errorHandle::newError(__METHOD__."() - No Project ID Provided.", errorHandle::DEBUG);
-		errorHandle::errorMsg("No Project ID Provided.");
-		throw new Exception('Error');
+		throw new Exception('No Project ID Provided.');
 	}
 
 
 	// Submission
+    echo '<pre><tt>'.print_r($engine->cleanPost,true).'</tt></pre>';
 	if (isset($engine->cleanPost['MYSQL']['submitProjectEdits'])) {
-		// trans: begin transaction
-		$engine->openDB->transBegin();
+        try{
+            // trans: begin transaction
+            $engine->openDB->transBegin();
 
-		// update permissions
-		$sql       = sprintf("DELETE FROM `permissions` WHERE `projectID`='%s'",
-			$engine->cleanGet['MYSQL']['id']
-			);
-		$sqlResult = $engine->openDB->query($sql);
+            // update permissions
+            $sql = sprintf("DELETE FROM `permissions` WHERE `projectID`='%s'",
+                $engine->cleanGet['MYSQL']['id']
+            );
+            $sqlResult = $engine->openDB->query($sql);
+            if(!$sqlResult['result']) throw new Exception("MySQL Error - Wipe Permissions ({$sqlResult['error']} -- $sql)");
+            $permissionValueGroups = array();
+            if (isset($engine->cleanPost['MYSQL']['selectedViewUsers'])) {
+                foreach($engine->cleanPost['MYSQL']['selectedViewUsers'] as $key => $value) {
+                    $permissionValueGroups[] = sprintf("('%s','%s','%s')",
+                        $engine->openDB->escape($value),
+                        $engine->cleanGet['MYSQL']['id'],
+                        mfcs::AUTH_VIEW
+                    );
+                }
+            }
+            if (isset($engine->cleanPost['MYSQL']['selectedEntryUsers'])) {
+                foreach($engine->cleanPost['MYSQL']['selectedEntryUsers'] as $key => $value) {
+                    $permissionValueGroups[] = sprintf("('%s','%s','%s')",
+                        $engine->openDB->escape($value),
+                        $engine->cleanGet['MYSQL']['id'],
+                        mfcs::AUTH_ENTRY
+                    );
+                }
+            }
+            if (isset($engine->cleanPost['MYSQL']['selectedUsersAdmins'])) {
+                foreach($engine->cleanPost['MYSQL']['selectedUsersAdmins'] as $key => $value) {
+                    $permissionValueGroups[] = sprintf("('%s','%s','%s')",
+                        $engine->openDB->escape($value),
+                        $engine->cleanGet['MYSQL']['id'],
+                        mfcs::AUTH_ADMIN
+                    );
+                }
+            }
 
-		if (!$sqlResult['result']) {
-			errorHandle::newError(__METHOD__."() - deleting previous permissions: ".$sqlResult['error']." -- ".$sql, errorHandle::DEBUG);
-			errorHandle::errorMsg("Error Updating Project");
-			$engine->openDB->transRollback();
-			$engine->openDB->transEnd();
-			throw new Exception('Error');
-		}
+            if(sizeof($permissionValueGroups)){
+                $sql = sprintf("INSERT INTO `permissions` (userID,projectID,type) VALUES%s",
+                    implode(',', $permissionValueGroups)
+                );
+                $sqlResult = $engine->openDB->query($sql);
+                if(!$sqlResult['result']) throw new Exception("MySQL Error - Insert Permissions ({$sqlResult['error']} -- $sql)");
+            }
 
+            // generate forms serialized arrays
+            $forms             = array();
+            $forms['metadata'] = array();
+            $forms['objects']  = array();
+            if (isset($engine->cleanPost['MYSQL']['selectedMetadataForms'])) {
+                foreach($engine->cleanPost['MYSQL']['selectedMetadataForms'] as $I=>$V) {
+                    $forms['metadata'][] = $V;
+                }
+            }
 
-		if (isset($engine->cleanPost['MYSQL']['selectedUsers'])) {
-			foreach($engine->cleanPost['MYSQL']['selectedUsers'] as $I=>$V) {
-				$sql       = sprintf("INSERT INTO `permissions` (userID,projectID,type) VALUES('%s','%s','0')",
-					$engine->openDB->escape($V),
-					$engine->cleanGet['MYSQL']['id']
-					);
-				$sqlResult = $engine->openDB->query($sql);
+            if (isset($engine->cleanPost['MYSQL']['selectedObjectForms'])) {
+                foreach($engine->cleanPost['MYSQL']['selectedObjectForms'] as $I=>$V) {
+                    $forms['objects'][] = $V;
+                }
+            }
 
-				if (!$sqlResult['result']) {
-					errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
-					errorHandle::errorMsg("Error Updating Project");
-					$engine->openDB->transRollback();
-					$engine->openDB->transEnd();
-					throw new Exception('Error');
-				}
-			}
-		}
+            $groupings = json_decode($engine->cleanPost['RAW']['groupings'], TRUE);
 
-		if (isset($engine->cleanPost['MYSQL']['selectedUsersAdmins'])) {
-			foreach($engine->cleanPost['MYSQL']['selectedUsersAdmins'] as $I=>$V) {
-				$sql       = sprintf("INSERT INTO `permissions` (userID,projectID,type) VALUES('%s','%s','1')",
-					$engine->openDB->escape($V),
-					$engine->cleanGet['MYSQL']['id']
-					);
-				$sqlResult = $engine->openDB->query($sql);
+            if (!is_empty($groupings)) {
+                foreach ($groupings as $I => $grouping) {
+                    $positions[$I] = $grouping['position'];
+                }
 
-				if (!$sqlResult['result']) {
-					errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
-					errorHandle::errorMsg("Error Updating Project");
-					$engine->openDB->transRollback();
-					$engine->openDB->transEnd();
-					throw new Exception('Error');
-				}
-			}
-		}
+                array_multisort($positions, SORT_ASC, $groupings);
+            }
 
-		// generate forms serialized arrays
-		$forms             = array();
-		$forms['metadata'] = array();
-		$forms['objects']  = array();
-		if (isset($engine->cleanPost['MYSQL']['selectedMetadataForms'])) {
-			foreach($engine->cleanPost['MYSQL']['selectedMetadataForms'] as $I=>$V) {
-				$forms['metadata'][] = $V;
-			}
-		}
+            $forms     = encodeFields($forms);
+            $groupings = encodeFields($groupings);
 
-		if (isset($engine->cleanPost['MYSQL']['selectedObjectForms'])) {
-			foreach($engine->cleanPost['MYSQL']['selectedObjectForms'] as $I=>$V) {
-				$forms['objects'][] = $V;
-			}
-		}
+            $sql       = sprintf("UPDATE `projects` SET `forms`='%s', `groupings`='%s' WHERE `ID`='%s'",
+                $engine->openDB->escape($forms),
+                $engine->openDB->escape($groupings),
+                $engine->cleanGet['MYSQL']['id']
+            );
+            $sqlResult = $engine->openDB->query($sql);
+            if(!$sqlResult['result']) throw new Exception("MySQL Error - Inserting Forms ({$sqlResult['error']} -- $sql)");
 
-		$groupings = json_decode($engine->cleanPost['RAW']['groupings'], TRUE);
+            // If we get here then the project successfully updated!
+            $engine->openDB->transCommit();
+            $engine->openDB->transEnd();
+            errorHandle::successMsg("Successfully updated Project.");
 
-		if (!is_empty($groupings)) {
-			foreach ($groupings as $I => $grouping) {
-				$positions[$I] = $grouping['position'];
-			}
-
-			array_multisort($positions, SORT_ASC, $groupings);
-		}
-
-		$forms     = encodeFields($forms);
-		$groupings = encodeFields($groupings);
-
-		$sql       = sprintf("UPDATE `projects` SET `forms`='%s', `groupings`='%s' WHERE `ID`='%s'",
-			$engine->openDB->escape($forms),
-			$engine->openDB->escape($groupings),
-			$engine->cleanGet['MYSQL']['id']
-			);
-		$sqlResult = $engine->openDB->query($sql);
-
-		if (!$sqlResult['result']) {
-			errorHandle::newError(__METHOD__."() - Inserting Forms", errorHandle::DEBUG);
-			errorHandle::errorMsg("Error Updating Project");
-			$engine->openDB->transRollback();
-			$engine->openDB->transEnd();
-			throw new Exception('Error');
-		}
-
-		$engine->openDB->transCommit();
-		$engine->openDB->transEnd();
-		errorHandle::successMsg("Successfully updated Project.");
-
+        }catch(Exception $e){
+            errorHandle::newError("{$e->getFile()}:{$e->getLine()} {$e->getMessage()}", errorHandle::DEBUG);
+            errorHandle::errorMsg("Error Updating Project");
+            $engine->openDB->transRollback();
+            $engine->openDB->transEnd();
+        }
 	}
-
 
 	// Get the current project from the database
 	$project = projects::get($engine->cleanGet['MYSQL']['id']);
@@ -135,7 +125,7 @@ try {
 		$currentForms = array();
 	}
 
-	$metadataForms         = array();
+	$metadataForms         = forms::getObjectFormMetaForms($engine->cleanGet['MYSQL']['id']);
 	$objectForms           = array();
 	$objectFormsEven       = NULL;
 	$objectFormsOdd        = NULL;
@@ -143,31 +133,6 @@ try {
 	$metadataFormsOdd      = NULL;
 	$selectedMetadataForms = "";
 	$selectedObjectForms   = "";
-
-	// Metadata Forms
-	foreach ($currentForms['metadata'] as $I => $V) {
-		$sql       = sprintf("SELECT ID, title FROM `forms` WHERE ID='%s'",
-			$engine->openDB->escape($V)
-			);
-		$sqlResult = $engine->openDB->query($sql);
-
-		if (!$sqlResult['result']) {
-			errorHandle::newError(__METHOD__."() - getting form titles (metadata)", errorHandle::DEBUG);
-			errorHandle::errorMsg("Error Building Page");
-			throw new Exception('Error');
-		}
-
-		$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
-
-		$metadataForms[] = array(
-			"ID"    => $row['ID'],
-			"title" => $row['title'],
-			);
-		$selectedMetadataForms .= sprintf('<option value="%s">%s</option>',
-			$engine->openDB->escape($row['ID']),
-			$engine->openDB->escape($row['title'])
-			);
-	}
 
 	foreach ($metadataForms as $I => $form) {
 		$tmp = sprintf('<li data-type="metadataForm" data-formid="%s"><a href="#" class="btn btn-block">%s</a></li>',
@@ -183,9 +148,18 @@ try {
 		}
 	}
 
-	localVars::add("metadataFormsEven",$metadataFormsEven);
-	localVars::add("metadataFormsOdd",$metadataFormsOdd);
 	localvars::add("selectedMetadataForms",$selectedMetadataForms);
+    if(!empty($metadataFormsEven) and !empty($metadataFormsOdd)){
+        localvars::add("metadataForms", sprintf('
+        <h3>Metadata Forms</h3>
+        <div class="row-fluid">
+            <ul class="unstyled draggable span6">%s</ul>
+            <ul class="unstyled draggable span6">%s</ul>
+        </div>
+	', $metadataFormsEven, $metadataFormsOdd));
+    }else{
+        localvars::add("metadataForms",  '');
+    }
 
 
 	// Object Forms
@@ -363,12 +337,13 @@ try {
 			htmlSanitize($row['ID']),
 			htmlSanitize($row['lastname']),
 			htmlSanitize($row['firstname']),
-			htmlSanitize($row['status'])
+			htmlSanitize($row['username'])
 			);
 	}
 	localvars::add("availableUsersList",$availableUsersList);
 
-	$selectedUsers       = "";
+    $selectedEntryUsers  = "";
+	$selectedViewUsers   = "";
 	$selectedUsersAdmins = "";
 
 	$sql       = sprintf("SELECT permissions.type as type, users.status as status, users.firstname as firstname, users.lastname as lastname, users.ID as userID FROM permissions LEFT JOIN users ON permissions.userID=users.ID WHERE permissions.projectID='%s'",
@@ -383,29 +358,32 @@ try {
 	}
 
 	while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-		if ($row['type'] == "0") {
-			$selectedUsers .= sprintf('<option value="%s">%s, %s (%s)</option>',
-				$engine->openDB->escape($row['userID']),
-				$engine->openDB->escape($row['lastname']),
-				$engine->openDB->escape($row['firstname']),
-				$engine->openDB->escape($row['status'])
-				);
-		}
-		if ($row['type'] == "1") {
-			$selectedUsersAdmins .= sprintf('<option value="%s">%s, %s (%s)</option>',
-				$engine->openDB->escape($row['userID']),
-				$engine->openDB->escape($row['lastname']),
-				$engine->openDB->escape($row['firstname']),
-				$engine->openDB->escape($row['status'])
-				);
-		}
+        $optionHTML = sprintf('<option value="%s">%s, %s (%s)</option>',
+            $engine->openDB->escape($row['userID']),
+            $engine->openDB->escape($row['lastname']),
+            $engine->openDB->escape($row['firstname']),
+            $engine->openDB->escape($row['status']));
+        switch($row['type']){
+            case mfcs::AUTH_VIEW:
+                $selectedViewUsers .= $optionHTML;
+                break;
+            case mfcs::AUTH_ENTRY:
+                $selectedEntryUsers .= $optionHTML;
+                break;
+            case mfcs::AUTH_ADMIN:
+                $selectedUsersAdmins .= $optionHTML;
+                break;
+        }
 	}
 
-	localvars::add("selectedUsers",$selectedUsers);
+	localvars::add("selectedEntryUsers",$selectedEntryUsers);
+	localvars::add("selectedViewUsers",$selectedViewUsers);
 	localvars::add("selectedUsersAdmins",$selectedUsersAdmins);
 
 }
 catch (Exception $e) {
+    errorHandle::newError("{$e->getFile()}:{$e->getLine()} {$e->getMessage()}", errorHandle::DEBUG);
+    errorHandle::errorMsg($e->getMessage());
 }
 
 
@@ -427,165 +405,165 @@ $engine->eTemplate("include","header");
 			{local var="results"}
 		</div>
 
-		<?php
-		if (is_empty($engine->errorStack)) {
-			?>
-			<div class="row-fluid" id="pageNav">
-				<ul>
-					<li><a href="#addForms">Add Forms</a></li>
-					<li><a href="#groupings">Groupings</a></li>
-					<li><a href="#permissions">Permissions</a></li>
-					<li><a href="#numbering">Project Numbering</a></li>
-				</ul>
-			</div>
+		<?php if(is_empty($engine->errorStack)){ ?>
+        <div class="row-fluid" id="pageNav">
+            <ul>
+                <li><a href="#addForms">Add Forms</a></li>
+                <li><a href="#groupings">Groupings</a></li>
+                <li><a href="#permissions">Permissions</a></li>
+                <li><a href="#numbering">Project Numbering</a></li>
+            </ul>
+        </div>
 
-			<form name="projectEdits" action="{phpself query="true"}" method="post">
-				{engine name="csrf"}
 
-				<div class="row-fluid" id="addForms">
-					<header>
-						<h1>Add Forms</h1>
-					</header>
+        <div class="alert alert-block" style="display: none;" id="updateProjectAlert">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <h4>Update Project!</h4>
+            Update project to reload UI
+        </div>
+        <form name="projectEdits" action='{phpself query="true"}' method="post">
+            {engine name="csrf"}
 
-					<a name="addForms"></a>
-
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#home" data-toggle="tab">Edit Project</a></li>
+                <li><a href="#forms" data-toggle="tab">Forms</a></li>
+                <li><a href="#groupings" data-toggle="tab">Groupings</a></li>
+                <li><a href="#permissions" data-toggle="tab">Permissions</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="home">...</div>
+                <div class="tab-pane" id="forms">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos dolor ea illum nesciunt temporibus? Blanditiis consequatur distinctio, ex harum modi nostrum quaerat, quas quod sequi similique ut velit veritatis voluptates?</p>
                     <select name="selectedObjectForms[]" id="selectedObjectForms" size="5" multiple="multiple">
                         {local var="selectedObjectForms"}
                     </select>
                     <br />
-                    <select name="availableObjectForms" id="availableObjectForms" onchange="addItemToID('selectedObjectForms', this.options[this.selectedIndex])">
+                    <select name="availableObjectForms" id="availableObjectForms" onchange="addItemToID('selectedObjectForms', this.options[this.selectedIndex]);$('#updateProjectAlert').show();">
                         <option value="null">Select a Form</option>
                         {local var="availableObjectForms"}
                     </select>
                     <br />
-                    <input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedObjectForms', this.form.selectedObjectForms)" />
+                    <input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedObjectForms', this.form.selectedObjectForms);$('#updateProjectAlert').show();" />
+                </div>
+                <div class="tab-pane" id="groupings">
+                    <div class="row-fluid">
+                        <div class="span6">
+                            <ul class="nav nav-tabs" id="groupingTab">
+                                <li><a href="#groupingsAdd" data-toggle="tab">Add</a></li>
+                                <li><a href="#groupingsSettings" data-toggle="tab">Settings</a></li>
+                            </ul>
+
+                            <div class="tab-content">
+                                <div class="tab-pane" id="groupingsAdd">
+                                    <ul class="unstyled draggable span6">
+                                        <li><a href="#" class="btn btn-block">New Grouping</a></li>
+                                        <li><a href="#" class="btn btn-block">Log Out</a></li>
+                                    </ul>
+                                    <ul class="unstyled draggable span6">
+                                        <li><a href="#" class="btn btn-block">Export Link (needs definable properties)</a></li>
+                                        <li><a href="#" class="btn btn-block">Link</a></li>
+                                    </ul>
+
+                                    <h3>Object Forms</h3>
+                                    <div class="row-fluid">
+                                        <ul class="unstyled draggable span6">{local var="objectFormsEven"}</ul>
+                                        <ul class="unstyled draggable span6">{local var="objectFormsOdd"}</ul>
+                                    </div>
+
+                                    {local var="metadataForms"}
+                                </div>
+
+                                <div class="tab-pane" id="groupingsSettings">
+                                    <div class="alert alert-block" id="noGroupingSelected">
+                                        <h4>No Grouping Selected</h4>
+                                        To change a grouping, click on it in the preview to the right.
+                                    </div>
+
+                                    <div class="control-group well well-small" id="groupingsSettings_container_grouping">
+                                        <label for="groupingsSettings_grouping">
+                                            Grouping Label
+                                        </label>
+                                        <input type="text" class="input-block-level" id="groupingsSettings_grouping" name="groupingsSettings_grouping" />
+                                        <span class="help-block hidden"></span>
+                                    </div>
+
+                                    <div class="control-group well well-small" id="groupingsSettings_container_label">
+                                        <label for="groupingsSettings_label">
+                                            Label
+                                        </label>
+                                        <input type="text" class="input-block-level" id="groupingsSettings_label" name="groupingsSettings_label" />
+                                        <span class="help-block hidden"></span>
+                                    </div>
+
+                                    <div class="control-group well well-small" id="groupingsSettings_container_url">
+                                        <label for="groupingsSettings_url">
+                                            Address
+                                        </label>
+                                        <input type="text" class="input-block-level" id="groupingsSettings_url" name="groupingsSettings_url" />
+                                        <span class="help-block hidden"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" name="groupings">
+                        </div>
+
+                        <div class="span6">
+                            <ul class="sortable unstyled" id="GroupingsPreview">
+                                {local var="existingGroupings"}
+                            </ul>
+                        </div>
+                    </div>
 
                 </div>
+                <div class="tab-pane" id="permissions">
+                    <table>
+                        <tr>
+                            <th>Data Entry Users</th>
+                            <th>Data View Users</th>
+                            <th>Administrators</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <select name="selectedEntryUsers[]" id="selectedEntryUsers" size="5" multiple="multiple">
+                                    {local var="selectedEntryUsers"}
+                                </select>
+                                <br />
+                                <select name="availableEntryUsers" id="availableEntryUsers" onchange="addItemToID('selectedEntryUsers', this.options[this.selectedIndex])">
+                                    {local var="availableUsersList"}
+                                </select>
+                                <br />
+                                <input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedEntryUsers', this.form.selectedEntryUsers)" />
+                            </td>
+                            <td>
+                                <select name="selectedViewUsers[]" id="selectedViewUsers" size="5" multiple="multiple">
+                                    {local var="selectedViewUsers"}
+                                </select>
+                                <br />
+                                <select name="availableViewUsers" id="availableViewUsers" onchange="addItemToID('selectedViewUsers', this.options[this.selectedIndex])">
+                                    {local var="availableUsersList"}
+                                </select>
+                                <br />
+                                <input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedViewUsers', this.form.selectedViewUsers)" />
+                            </td>
+                            <td>
+                                <select name="selectedUsersAdmins[]" id="selectedUsersAdmins" size="5" multiple="multiple">
+                                    {local var="selectedUsersAdmins"}
+                                </select>
+                                <br />
+                                <select name="availableUsersAdmins" id="availableUsersAdmins" onchange="addItemToID('selectedUsersAdmins', this.options[this.selectedIndex])">
+                                    {local var="availableUsersList"}
+                                </select>
+                                <br />
+                                <input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedUsersAdmins', this.form.selectedUsersAdmins)" />
+                            </td>
+                        <tr>
+                    </table>
+                </div>
+            </div>
 
-				<div class="row-fluid" id="groupings">
-					<header>
-						<h1>Manage Groupings</h1>
-					</header>
-					<a name="groupings"></a>
-
-					<div class="row-fluid">
-						<div class="span6">
-							<ul class="nav nav-tabs" id="groupingTab">
-								<li><a href="#groupingsAdd" data-toggle="tab">Add</a></li>
-								<li><a href="#groupingsSettings" data-toggle="tab">Settings</a></li>
-							</ul>
-
-							<div class="tab-content">
-								<div class="tab-pane" id="groupingsAdd">
-									<ul class="unstyled draggable span6">
-										<li><a href="#" class="btn btn-block">New Grouping</a></li>
-										<li><a href="#" class="btn btn-block">Log Out</a></li>
-									</ul>
-									<ul class="unstyled draggable span6">
-										<li><a href="#" class="btn btn-block">Export Link (needs definable properties)</a></li>
-										<li><a href="#" class="btn btn-block">Link</a></li>
-									</ul>
-
-									<h3>Object Forms</h3>
-									<div class="row-fluid">
-										<ul class="unstyled draggable span6">{local var="objectFormsEven"}</ul>
-										<ul class="unstyled draggable span6">{local var="objectFormsOdd"}</ul>
-									</div>
-
-									<h3>Metadata Forms</h3>
-									<div class="row-fluid">
-										<ul class="unstyled draggable span6">{local var="metadataFormsEven"}</ul>
-										<ul class="unstyled draggable span6">{local var="metadataFormsOdd"}</ul>
-									</div>
-								</div>
-
-								<div class="tab-pane" id="groupingsSettings">
-									<div class="alert alert-block" id="noGroupingSelected">
-										<h4>No Grouping Selected</h4>
-										To change a grouping, click on it in the preview to the right.
-									</div>
-
-									<div class="control-group well well-small" id="groupingsSettings_container_grouping">
-										<label for="groupingsSettings_grouping">
-											Grouping Label
-										</label>
-										<input type="text" class="input-block-level" id="groupingsSettings_grouping" name="groupingsSettings_grouping" />
-										<span class="help-block hidden"></span>
-									</div>
-
-									<div class="control-group well well-small" id="groupingsSettings_container_label">
-										<label for="groupingsSettings_label">
-											Label
-										</label>
-										<input type="text" class="input-block-level" id="groupingsSettings_label" name="groupingsSettings_label" />
-										<span class="help-block hidden"></span>
-									</div>
-
-									<div class="control-group well well-small" id="groupingsSettings_container_url">
-										<label for="groupingsSettings_url">
-											Address
-										</label>
-										<input type="text" class="input-block-level" id="groupingsSettings_url" name="groupingsSettings_url" />
-										<span class="help-block hidden"></span>
-									</div>
-								</div>
-							</div>
-							<input type="hidden" name="groupings">
-						</div>
-
-						<div class="span6">
-							<ul class="sortable unstyled" id="GroupingsPreview">
-								{local var="existingGroupings"}
-							</ul>
-						</div>
-					</div>
-				</div>
-
-				<div class="row-fluid" id="permissions">
-					<header>
-						<h1>Manage Permissions</h1>
-					</header>
-
-					<a name="permissions"></a>
-
-					<table>
-						<tr>
-							<th>Data Entry Users</th>
-							<th>Administrators</th>
-						</tr>
-						<tr>
-							<td>
-								<select name="selectedUsers[]" id="selectedUsers" size="5" multiple="multiple">
-									{local var="selectedUsers"}
-								</select>
-								<br />
-								<select name="availableUsers" id="availableUsers" onchange="addItemToID('selectedUsers', this.options[this.selectedIndex])">
-									{local var="availableUsersList"}
-								</select>
-								<br />
-								<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedUsers', this.form.selectedUsers)" />
-							</td>
-							<td>
-								<select name="selectedUsersAdmins[]" id="selectedUsersAdmins" size="5" multiple="multiple">
-									{local var="selectedUsersAdmins"}
-								</select>
-								<br />
-								<select name="availableUsersAdmins" id="availableUsersAdmins" onchange="addItemToID('selectedUsersAdmins', this.options[this.selectedIndex])">
-									{local var="availableUsersList"}
-								</select>
-								<br />
-								<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedUsersAdmins', this.form.selectedUsers)" />
-							</td>
-						<tr>
-					</table>
-				</div>
-
-				<br />
-				<input type="submit" class="btn btn-large btn-block btn-primary" name="submitProjectEdits" value="Update Project" />
-			</form>
-			<?php
-		}
-		?>
+        <input type="submit" class="btn btn-large btn-block btn-primary" name="submitProjectEdits" value="Update Project" />
+        </form>
+        <?php } ?>
 	</div>
 
 

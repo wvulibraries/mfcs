@@ -362,16 +362,18 @@ function removeItemFromID(id, item) {
 
 function selectAllOnSubmit(id) {
 	var item = document.getElementById(id);
-
-	for (i = item.length - 1; i >= 0; i--) {
-		item.options[i].selected = true;
-	}
+    if(item != null){
+        for (i = item.length - 1; i >= 0; i--) {
+            item.options[i].selected = true;
+        }
+    }
 }
 
 function entrySubmit() {
 	selectAllOnSubmit("selectedMetadataForms");
 	selectAllOnSubmit("selectedObjectForms");
-	selectAllOnSubmit("selectedUsers");
+	selectAllOnSubmit("selectedEntryUsers");
+	selectAllOnSubmit("selectedViewUsers");
 	selectAllOnSubmit("selectedUsersAdmins");
 
 	return true;

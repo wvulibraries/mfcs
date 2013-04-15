@@ -4,6 +4,11 @@
  * Main MFCS object
  */
 class mfcs {
+    const AUTH_NONE=0;
+    const AUTH_VIEW=1;
+    const AUTH_ENTRY=2;
+    const AUTH_ADMIN=3; // Bitwise of all auth's
+
     /**
      * Instance of self
      * @var self

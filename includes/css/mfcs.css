@@ -81,3 +81,6 @@ div.filePreview iframe{
 #selectProjectsList input{
     margin: 0;
 }
+.groupingPreview ul.sortable {
+    min-height: 25px;
+}

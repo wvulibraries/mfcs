@@ -38,7 +38,7 @@ function saveSelectedProjects(){
         action:           'updateUserProjects',
         selectedProjects: selectedProjectIDs
     };
-    $.post('index.php?ajax',postData,function(data){
+    $.post(siteRoot+'?ajax',postData,function(data){
         if(data.success){
             var newHTML = selectedProjectIDs.length
                 ? selectedProjectNames.join(", ")

@@ -70,6 +70,7 @@ $(function() {
 	// Set all the black magic bindings
 	fieldSettingsBindings();
 	formSettingsBindings();
+	modalBindings();
 
 	// Form submit handler
 	$("form[name=submitForm]").submit(function(e) {
@@ -951,6 +952,49 @@ function formSettingsBindings() {
 			}
 		}
 	}).change();
+}
+
+function modalBindings() {
+	$("#formTypeSelector")
+		.modal({
+			show:     false,
+			keyboard: false,
+			backdrop: "static"
+		})
+		.on("click", "button:contains('Metadata')", function() {
+			// Select Metadata form
+			$("#formSettings_formMetadata").prop("checked", true).change();
+
+			// Hide modal
+			$("#formTypeSelector").modal("hide");
+		})
+		.on("click", "button:contains('Object')", function() {
+			// Deselect object form
+			$("#formSettings_formMetadata").removeAttr("checked").change();
+
+			// Add IDNO field and select options
+			$("#fieldAdd li:contains('ID Number')").click();
+			$("#formPreview .well :input[name^=label_]").val('IDNO').keyup();
+			$("#formPreview .well :input[name^=sortable_]").val('true').change();
+			$("#formPreview .well :input[name^=searchable_]").val('true').change();
+
+			// Add Title field and select options
+			$("#fieldAdd li:contains('Single Line Text')").click();
+			$("#fieldSettings_name").val('title').keyup();
+			$("#fieldSettings_label").val('Title').keyup();
+			$("#fieldSettings_options_required").prop("checked", true).change();
+			$("#fieldSettings_options_duplicates").prop("checked", true).change();
+			$("#fieldSettings_options_sortable").prop("checked", true).change();
+			$("#fieldSettings_options_searchable").prop("checked", true).change();
+			$("#fieldSettings_options_displayTable").prop("checked", true).change();
+
+			// Click through each field and then back to add field tab to update form preview
+			$("#formPreview li").click();
+			$("#fieldTab li:last a").click();
+
+			// Hide modal
+			$("#formTypeSelector").modal("hide");
+		});
 }
 
 function addNewField(item) {
