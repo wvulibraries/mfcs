@@ -11,48 +11,11 @@ function displayMessages() {
 function encodeFields($fields) {
 
 	return base64_encode(serialize($fields));
-
 }
 
 function decodeFields($fields) {
 
 	return unserialize(base64_decode($fields));
-
-}
-
-// Deprecated
-function checkProjectPermissions($id) {
-	return projects::checkPermissions($id);
-}
-
-// Deprecated
-function getProject($projectID) {
-	return projects::get($projectID);
-}
-
-// Deprecated
-function getForm($formID) {
-	return forms::get($formID);
-}
-
-// Deprecated
-function getObject($objectID) {
-	return objects::get($objectID);
-}
-
-// Deprecated
-function getAllObjectsForForm($formID) {
-	return objects::getAllObjectsForForm($formID);
-}
-
-// Deprecated
-function checkObjectInForm($formID,$objectID) {
-	return objects::checkObjectInForm($formID,$objectID);
-}
-
-// Deprecated
-function checkFormInProject($projectID,$formID) {
-	return forms::checkFormInProject($projectID,$formID);
 }
 
 function sortFieldsByPosition($a,$b) {
@@ -60,7 +23,7 @@ function sortFieldsByPosition($a,$b) {
 }
 
 function buildProjectNavigation($projectID) {
-	$project = getProject($projectID);
+	$project = projects::get($projectID);
 
 	if ($project === FALSE) {
 		return(FALSE);
@@ -122,7 +85,6 @@ function buildProjectNavigation($projectID) {
 
 
 	return $output;
-
 }
 
 function buildNumberAttributes($field) {
@@ -133,94 +95,6 @@ function buildNumberAttributes($field) {
 	$output .= (!isempty($field["step"]))?' step="'.$field['step'].'"':"";
 
 	return $output;
-
-}
-
-// Deprecated
-function buildForm($formID,$objectID = NULL) {
-	return forms::build($formID,$objectID);
-}
-
-function buildListTable($objects,$form,$projectID) {
-    $revisionControl = new revisionControlSystem('objects','revisions','ID','modifiedTime');
-	$form['fields'] = decodeFields($form['fields']);
-
-	$header  = '<tr><th>Delete</th><th>Edit</th><th>Revisions</th><th>ID No</th>';
-	$headers = array();
-	foreach ($form['fields'] as $field) {
-
-		if (strtolower($field['type']) == "idno") continue;
-
-		if ($field['displayTable'] == "true") {
-			$header .= sprintf('<th>%s</th>',
-				$field['label']
-				);
-			$headers[$field['name']] = $field['label'];
-		}
-	}
-	$header .= '</tr>';
-
-	$output = sprintf('<form action="%s?id=%s&amp;formID=%s" method="%s">',
-		$_SERVER['PHP_SELF'],
-		htmlSanitize($projectID),
-		htmlSanitize($form['ID']),
-		"post"
-		);
-	$output .= sessionInsertCSRF();
-
-	$output .= '<table>';
-	$output .= $header;
-
-	foreach($objects as $object) {
-		$output .= "<tr>";
-		$output .= sprintf('<td><input type="checkbox" name="delete_%s" /></td>',
-			$object['ID']
-			);
-		$output .= sprintf('<td><a href="object.php?id=%s&amp;formID=%s&amp;objectID=%s">Edit</a></td>',
-			htmlSanitize($projectID),
-			htmlSanitize($form['ID']),
-			htmlSanitize($object['ID'])
-			);
-        $output .= $revisionControl->hasRevisions($object['ID'])
-            ? sprintf('<td><a href="revisions.php?id=%s&amp;formID=%s&amp;objectID=%s">View</a></td>',
-                htmlSanitize($projectID),
-                htmlSanitize($form['ID']),
-                htmlSanitize($object['ID']))
-            : '<td style="font-style: italic; color: #666;">None</td>';
-		$output .= sprintf('<td>%s</td>',
-			htmlSanitize(($form['metadata'] == "1")?$object['ID']:$object['idno'])
-			);
-		foreach ($headers as $headerName => $headerLabel) {
-			$output .= sprintf('<td>%s</td>',
-				htmlSanitize($object['data'][$headerName])
-				);
-		}
-		$output .= "</tr>";
-
-	}
-
-
-	$output .= '</table>';
-
-	$output .= "</form>";
-
-	return $output;
-
-}
-
-// Deprecated
-function submitForm($formID,$objectID=NULL) {
-	return forms::submit($formID,$objectID);
-}
-
-// Deprecated
-function isDupe($formID,$field,$value) {
-	return forms::isDupe($formID,$field,$value);
-}
-
-// Deprecated
-function getFormIDInfo($formID) {
-	return forms::getFormIDInfo($formID);
 }
 
 // if $increment is true it returns the NEXT number. if it is false it returns the current
@@ -228,15 +102,14 @@ function getIDNO($formID,$projectID,$increment=TRUE) {
 	return mfcs::getIDNO($formID,$increment);
 }
 
-
 // if $increment is true it returns the NEXT number. if it is false it returns the current
 function dumpStuff($formID,$projectID,$increment=TRUE) {
 
 	$engine         = EngineAPI::singleton();
 
-	$form           = getForm($formID);
+	$form           = forms::get($formID);
 	$form['fields'] = decodeFields($form['fields']);
-	$idno           = getFormIDInfo($formID);
+	$idno           = forms::getFormIDInfo($formID);
 
 	print "<pre>";
 	var_dump($form['fields']);
@@ -288,7 +161,6 @@ function dumpStuff($formID,$projectID,$increment=TRUE) {
 
 	return TRUE;
 }
-
 
 /**
  * Returns the base path to be used when uploading files

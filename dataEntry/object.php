@@ -1,63 +1,76 @@
 <?php
 include("../header.php");
+recurseInsert("acl.php","php");
 
 try {
+
+	$error = FALSE;
 
 	if (!isset($engine->cleanGet['MYSQL']['formID'])
 		|| is_empty($engine->cleanGet['MYSQL']['formID'])
 		|| !validate::integer($engine->cleanGet['MYSQL']['formID'])) {
 
-		errorHandle::newError(__METHOD__."() - No Project ID Provided.", errorHandle::DEBUG);
-		errorHandle::errorMsg("No Form ID Provided.");
-		throw new Exception('Error');
+		if (!isnull($engine->cleanGet['MYSQL']['objectID'])) {
+			$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
+
+			if ($object === FALSE) {
+				errorHandle::newError(__METHOD__."() - No Form ID Provided, error getting Object", errorHandle::DEBUG);
+				throw new Exception("No Form ID Provided, error getting Object.");
+			}
+
+			http::setGet('formID',$object['formID']);
+
+		}
+		else {
+			errorHandle::newError(__METHOD__."() - No Form ID Provided.", errorHandle::DEBUG);
+			throw new Exception("No Form ID Provided.");
+		}
 	}
 
-	if (isset($engine->cleanGet['MYSQL']['objectID'])
-		&& (is_empty($engine->cleanGet['MYSQL']['objectID'])
-			|| !validate::integer($engine->cleanGet['MYSQL']['objectID']))
-		) {
+	if (isset($engine->cleanGet['MYSQL']['objectID'])) {
+		if (is_empty($engine->cleanGet['MYSQL']['objectID'])
+			|| !validate::integer($engine->cleanGet['MYSQL']['objectID'])) {
 
-		errorHandle::newError(__METHOD__."() - ObjectID Provided is invalid", errorHandle::DEBUG);
-		errorHandle::errorMsg("ObjectID Provided is invalid..");
-		throw new Exception('Error');
+			errorHandle::newError("ObjectID Provided is invalid", errorHandle::DEBUG);
+			throw new Exception("ObjectID Provided is invalid.");
+		}
+
+		// if an object ID is provided make sure the object is from this form
+		if (!objects::checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
+			errorHandle::newError("Object not from this form.", errorHandle::DEBUG);
+			throw new Exception("Object not from this form.");
+		}
 	}
 	else if (!isset($engine->cleanGet['MYSQL']['objectID'])) {
 		$engine->cleanGet['MYSQL']['objectID'] = NULL;
 	}
 
+	$form = forms::get($engine->cleanGet['MYSQL']['formID']);
+	if ($form === FALSE) {
+		throw new Exception("Error retrieving form.");
+	}
+
+	if (forms::isMetadataForm($engine->cleanGet['MYSQL']['formID'])) {
+		throw new Exception("Metadata form provided (Object forms only).");
+	}
 
 	// check for edit permissions on the project
-	// if (checkProjectPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) {
-	// 	errorHandle::errorMsg("Permissions denied for working on this project");
-	// 	throw new Exception('Error');
+	// if (projects::checkPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) {
+	// 	throw new Exception("Permissions denied for working on this project");
 	// }
 
 	// check that this form is part of the project
 	// // TODO need forms from User
-	// if (!checkFormInProject($engine->cleanGet['MYSQL']['id'],$engine->cleanGet['MYSQL']['formID'])) {
-	// 	errorHandle::errorMsg("Form is not part of project.");
-	// 	throw new Exception('Error');
+	// if (!forms::checkFormInProject($engine->cleanGet['MYSQL']['id'],$engine->cleanGet['MYSQL']['formID'])) {
+	// 	throw new Exception("Form is not part of project.");
 	// }
-
-	// if an object ID is provided make sure the object is from this form
-	if (isset($engine->cleanGet['MYSQL']['objectID'])
-		&& !checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
-		errorHandle::errorMsg("Object not from this form");
-		throw new Exception('Error');
-	}
 
 	// Get the project
 	// $project = NULL; // TODO: Needs to be gotten from the user info
 	// if ($project === FALSE) {
-	// 	errorHandle::errorMsg("Error retrieving project.");
-	// 	throw new Exception('Error');
+	// 	throw new Exception("Error retrieving project.");
 	// }
 
-	$form = getForm($engine->cleanGet['MYSQL']['formID']);
-	if ($form === FALSE) {
-		errorHandle::errorMsg("Error retrieving form.");
-		throw new Exception('Error');
-	}
 
 	localvars::add("formName",$form['title']);
 
@@ -65,76 +78,92 @@ try {
 	if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 		$return = forms::submit($engine->cleanGet['MYSQL']['formID']);
 		if ($return === FALSE) {
-			errorHandle::errorMsg("Error Submitting Form.");
-			throw new Exception('Error');
+			throw new Exception("Error Submitting Form.");
 		}
+		$engine->cleanGet['MYSQL']['objectID'] = localvars::get("newObjectID");
 	}
 	else if (isset($engine->cleanPost['MYSQL']['updateForm'])) {
 		$return = forms::submit($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
 		if ($return === FALSE) {
-			errorHandle::errorMsg("Error Updating Form.");
-			throw new Exception('Error');
+			throw new Exception("Error Updating Form.");
 		}
 	}
 
-	// build the form for displaying
-	$builtForm = buildForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
-	if ($builtForm === FALSE) {
-		errorHandle::errorMsg("Error building form.");
-		throw new Exception('Error');
-	}
-
-	localvars::add("form",$builtForm);
-
-	// localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['id']));
-
 }
 catch(Exception $e) {
+	errorHandle::errorMsg($e->getMessage());
+	$error = TRUE;
 }
 
+// build the form for displaying
+$builtForm = forms::build($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'],$error);
+if ($builtForm === FALSE) {
+	throw new Exception("Error building form.");
+}
+localvars::add("form",$builtForm);
+localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['formID']));
 localVars::add("results",displayMessages());
 
 $engine->eTemplate("include","header");
 ?>
 
-<link rel="stylesheet" type="text/css" href="{local var="siteRoot"}includes/css/fineuploader.css" />
-<script type="text/javascript" src="{local var="siteRoot"}includes/js/jquery.fineuploader.min.js"></script>
-<style>
-  /* Fine Uploader
-  -------------------------------------------------- */
-  .qq-upload-list {
-    text-align: left;
-  }
-
-  li.alert-success {
-    background-color: #DFF0D8;
-  }
-
-  li.alert-error {
-    background-color: #F2DEDE;
-  }
-
-  .alert-error .qq-upload-failed-text {
-    display: inline;
-  }
-</style>
 <section>
 	<header class="page-header">
-		<h1>{local var="formName"}</h1>
+		<h1>Edit Object</h1>
 	</header>
 
-	{local var="results"}
-
-	<div class="row-fluid">
-		<div class="span3" id="left">
+	<div class="container-fluid">
+		<div class="span3">
 			{local var="leftnav"}
 		</div>
-		<div class="span9" id="right">
-			{local var="form"}
+
+		<div class="span9">
+			<div class="row-fluid" id="results">
+				{local var="results"}
+			</div>
+
+			<div class="row-fluid">
+				<ul class="nav nav-tabs">
+					<li><a data-toggle="tab" href="#metadata">Metadata</a></li>
+					<li><a data-toggle="tab" href="#project">Project</a></li>
+					<li><a data-toggle="tab" href="#children">Children</a></li>
+				</ul>
+
+				<div class="tab-content">
+					<div class="tab-pane" id="metadata">
+						{local var="form"}
+					</div>
+
+					<div class="tab-pane" id="project">
+						<h2>Change Project Membership</h2>
+
+						<form action="{phpself query="true"}" method="post">
+							{local var="projectOptions"}
+							{engine name="csrf"}
+							<input type="submit" class="btn btn-primary" name="projectForm">
+						</form>
+					</div>
+
+					<div class="tab-pane" id="children">
+						Children content
+						<?php
+						print "<pre>";
+						// print_r($children);
+						print "</pre>";
+						?>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </section>
 
+<script type="text/javascript">
+	$(function() {
+		// Show first tab on page load
+		$(".nav-tabs a:first").tab("show");
+	});
+</script>
 
 <?php
 $engine->eTemplate("include","footer");

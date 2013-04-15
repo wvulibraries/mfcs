@@ -2,7 +2,20 @@
 
 class objects {
 
-	public static function get($objectID) {
+	public static function get($objectID=NULL) {
+
+		if (isnull($objectID)) {
+			return self::getObjects();
+		}
+
+		$mfcs      = mfcs::singleton();
+		$cachID    = "getObject:".$objectID;
+		$cache     = $mfcs->cache("get",$cachID);
+
+		if (!isnull($cache)) {
+			return($cache);
+		}
+
 		$engine = EngineAPI::singleton();
 
 		$sql       = sprintf("SELECT * FROM `objects` WHERE `ID`='%s'",
@@ -15,41 +28,124 @@ class objects {
 			return FALSE;
 		}
 
-		return mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+		$object = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+		$object['data'] = decodeFields($object['data']);
+
+		if ($object['data'] === FALSE) {
+			errorHandle::errorMsg("Error retrieving object.");
+			return FALSE;
+		}
+
+		$cache = $mfcs->cache("create",$cachID,$object);
+		if ($cache === FALSE) {
+			errorHandle::newError(__METHOD__."() - unable to cache object", errorHandle::DEBUG);
+		}
+
+		return $object;
+	}
+
+	public static function getObjects($start=0,$length=NULL,$metadata=TRUE) {
+
+		if (!validate::integer($start)) {
+			errorHandle::newError(__METHOD__."() - start point not an integer", errorHandle::DEBUG);
+			errorHandle::errorMsg("Not a valid Range");
+			return(FALSE);
+		}
+
+		if (!isnull($length) && !validate::integer($length)) {
+			errorHandle::newError(__METHOD__."() - length not an integer", errorHandle::DEBUG);
+			errorHandle::errorMsg("Not a valid Range");
+			return(FALSE);
+		}
+
+		$engine = EngineAPI::singleton();
+
+		if (!isnull($length)) {
+			$start = $engine->openDB->escape($start);
+			$lengt = $engine->openDB->escape($length);
+		}
+
+		$engine = EngineAPI::singleton();
+
+		$sql       = sprintf("SELECT `ID` FROM `objects` %s %s",
+			($metadata === FALSE)?"WHERE `metadata`='0'":"",
+			(!isnull($length))?sprintf("LIMIT %s,%s",$start,$length):""
+			);
+		$sqlResult = $engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		$objects = array();
+		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+			$objects[] = self::get($row['ID']);
+		}
+
+		return $objects;
+
+	}
+
+	public static function getChildren($objectID) {
+		if (!validate::integer($objectID)) {
+			return FALSE;
+		}
+
+		$engine = EngineAPI::singleton();
+
+		$sql       = sprintf("SELECT `ID` FROM `objects` WHERE `parentID`='%s'",
+			$engine->openDB->escape($objectID)
+		);
+		$sqlResult = $engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		$children = array();
+		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+			$children[] = self::get($row['ID']);
+		}
+
+		return($children);
 	}
 
 	public static function getAllObjectsForForm($formID) {
 		$engine = EngineAPI::singleton();
 
-		$sql       = sprintf("SELECT * FROM `objects` WHERE `formID`='%s'",
+		$sql       = sprintf("SELECT `ID` FROM `objects` WHERE `formID`='%s'",
 			$engine->openDB->escape($formID)
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
-			errorHandle::newError(__METHOD__."() - getting all objects: ".$sqlResult['error'], errorHandle::DEBUG);
+			errorHandle::newError(__METHOD__."() - getting all objects for form: ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
 
 		$objects = array();
 		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-
-			$row['data'] = decodeFields($row['data']);
-			$objects[] = $row;
-
+			$objects[] = self::get($row['ID']);
 		}
 
 		return $objects;
 	}
 
 	public static function checkObjectInForm($formID,$objectID) {
-		$object = getObject($objectID);
+		$object = self::get($objectID);
 
-		if ($object['formID'] == $formID) {
-			return TRUE;
+		if ($object === FALSE) {
+			return(FALSE);
 		}
 
-		return FALSE;
+		if (isset($object['formID']) && $object['formID'] == $formID) {
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
 	}
 
 	/**

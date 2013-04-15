@@ -3,30 +3,54 @@ include("../header.php");
 
 try {
     // Make sure we have id, formID, and objectID provided
-    if(!isset($engine->cleanGet['MYSQL']['id'])       || is_empty($engine->cleanGet['MYSQL']['id'])       || !validate::integer($engine->cleanGet['MYSQL']['id']))       throw new Exception('No Project ID Provided.');
-    if(!isset($engine->cleanGet['MYSQL']['formID'])   || is_empty($engine->cleanGet['MYSQL']['formID'])   || !validate::integer($engine->cleanGet['MYSQL']['formID']))   throw new Exception('No Form ID Provided.');
     if(!isset($engine->cleanGet['MYSQL']['objectID']) || is_empty($engine->cleanGet['MYSQL']['objectID']) || !validate::integer($engine->cleanGet['MYSQL']['objectID'])) throw new Exception('No Object ID Provided.');
+    if(!isset($engine->cleanGet['MYSQL']['formID'])
+        || is_empty($engine->cleanGet['MYSQL']['formID'])
+        || !validate::integer($engine->cleanGet['MYSQL']['formID'])) {
+
+        if (!isnull($engine->cleanGet['MYSQL']['objectID'])) {
+            $object = objects::get($engine->cleanGet['MYSQL']['objectID']);
+
+            if ($object === FALSE) {
+                errorHandle::newError(__METHOD__."() - No Form ID Provided, error getting Object", errorHandle::DEBUG);
+                errorHandle::errorMsg("No Form ID Provided, error getting Object.");
+                throw new Exception('Error');
+            }
+
+            http::setGet('formID',$object['formID']);
+
+        }
+        else {
+            throw new Exception('No Form ID Provided.');
+        }
+    }
+
 
     // check for edit permissions on the project
-    if(checkProjectPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) throw new Exception('Permissions denied for working on this project');
+    if(projects::checkPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) {
+        throw new Exception('Permissions denied for working on this project');
+    }
 
     // check that this form is part of the project
-    if(!checkFormInProject($engine->cleanGet['MYSQL']['id'],$engine->cleanGet['MYSQL']['formID'])) throw new Exception('Form is not part of project.');
+    if(!forms::checkFormInProject($engine->cleanGet['MYSQL']['id'],$engine->cleanGet['MYSQL']['formID'])) {
+        throw new Exception('Form is not part of project.');
+    }
 
     // Make sure the objectID is from this form
-    if(isset($engine->cleanGet['MYSQL']['objectID']) && !checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) throw new Exception('Object not from this form');
+    if(isset($engine->cleanGet['MYSQL']['objectID']) && !objects::checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
+        throw new Exception('Object not from this form');
+    }
 
     // Setup revision control
     $revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime');
 
     // Get the project
-    $project = getProject($engine->cleanGet['MYSQL']['id']);
+    $project = projects::get($engine->cleanGet['MYSQL']['id']);
     if($project === FALSE) throw new Exception('Error retrieving project.');
     localvars::add("projectName",$project['projectName']);
 
     // Get the current object
-    $object = getObject($engine->cleanGet['MYSQL']['objectID']);
-    $object['data'] = decodeFields($object['data']);
+    $object = objects::get($engine->cleanGet['MYSQL']['objectID']);
 
     // Catch a form submition (which would be a revision being reverted to)
     if(isset($engine->cleanPost['MYSQL']['revisionID'])){
@@ -48,8 +72,7 @@ try {
                 errorHandle::newError("SQL Error: ".$sqlResult['error'], errorHandle::HIGH);
             }else{
                 // Reload the object - To refresh the data
-                $object = getObject($engine->cleanGet['MYSQL']['objectID']);
-                $object['data'] = decodeFields($object['data']);
+                $object = objects::get($engine->cleanGet['MYSQL']['objectID']);
             }
         }
     }

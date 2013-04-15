@@ -4,21 +4,23 @@ include("../header.php");
 
 try {
 
+	if (!isset($engine->cleanGet['MYSQL'])) $engine->cleanGet['MYSQL'] = array("listType" => "");
+
 	switch($engine->cleanGet['MYSQL']['listType']) {
 		case 'selectForm':
-			$list = "Select Form";
+			$list = listGenerator::createFormSelectList();
 			break;
 		case 'selectProject':
-			$list = "Select Form";
+			$list = listGenerator::createProjectSelectList();
 			break;
 		case 'form':
-			$list = "Form";
+			$list = listGenerator::createFormObjectList($engine->cleanGet['MYSQL']['formID']);
 			break;
 		case 'project':
 			$list = "Project";
 			break;
 		case 'all':
-			$list = "All";
+			$list = listGenerator::createAllObjectList();
 			break;
 		default:
 			$list = listGenerator::createInitialSelectList();

@@ -16,10 +16,28 @@ try {
 		// @TODO
 		// if (projects::checkPermissions($row['ID']) === TRUE) {
 		// }
-		$formList .= sprintf('<li><a href="object.php?formID=%s">%s</a></li>',
-			htmlSanitize($form['ID']),
-			htmlSanitize($form['title'])
-			);
+
+		$metadataForms = forms::getObjectFormMetaForms($form['ID']);
+
+		if (count($metadataForms) < 1) continue;
+
+		$formList .= '<li>';
+		$formList .= htmlSanitize($form['title']);
+		$formList .= '<ul>';
+
+		foreach ($metadataForms as $metadataForm) {
+
+			$formList .= '<li>';
+			$formList .= sprintf('<a href="metadata.php?formID=%s">%s</a>',
+				$metadataForm['formID'],
+				htmlSanitize($metadataForm['title'])
+				);
+			$formList .= '</li>';
+
+		}
+
+		$formList .= '</ul>';
+		$formList .= '</li>';
 
 	}
 	$formList .= "<ul>";

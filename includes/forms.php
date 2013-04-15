@@ -8,6 +8,14 @@ class forms {
 			return self::getForms();
 		}
 
+		$mfcs      = mfcs::singleton();
+		$cachID    = "getForm:".$formID;
+		$cache     = $mfcs->cache("get",$cachID);
+
+		if (!isnull($cache)) {
+			return($cache);
+		}
+
 		$engine = EngineAPI::singleton();
 
 		$sql       = sprintf("SELECT * FROM `forms` WHERE `ID`='%s'",
@@ -20,7 +28,30 @@ class forms {
 			return FALSE;
 		}
 
-		return mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+		$form           = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+		$form['fields'] = decodeFields($form['fields']);
+
+		if ($form['fields'] === FALSE) {
+			errorHandle::newError(__METHOD__."() - fields", errorHandle::DEBUG);
+			errorHandle::errorMsg("Error retrieving form.");
+			return FALSE;
+		}
+
+		$form['idno']   = decodeFields($form['idno']);
+
+		if ($form['idno'] === FALSE) {
+			errorHandle::newError(__METHOD__."() - idno", errorHandle::DEBUG);
+			errorHandle::errorMsg("Error retrieving form.");
+			return FALSE;
+		}
+
+		$cache = $mfcs->cache("create",$cachID,$form);
+		if ($cache === FALSE) {
+			errorHandle::newError(__METHOD__."() - unable to cache form", errorHandle::DEBUG);
+		}
+
+		return $form;
 	}
 
 	public static function getForms($type = NULL) {
@@ -29,28 +60,30 @@ class forms {
 
 		switch ($type) {
 			case isnull($type):
-				$sql = sprintf("SELECT * FROM `forms` ORDER BY `title`");
+				$sql = sprintf("SELECT `ID` FROM `forms` ORDER BY `title`");
 				break;
 			case TRUE:
-				$sql = sprintf("SELECT * FROM `forms` WHERE `metadata`='0' ORDER BY `title`");
+				$sql = sprintf("SELECT `ID` FROM `forms` WHERE `metadata`='0' ORDER BY `title`");
 				break;
 			case FALSE:
-				$sql = sprintf("SELECT * FROM `forms` WHERE `metadata`='1' ORDER BY `title`");
+				$sql = sprintf("SELECT `ID` FROM `forms` WHERE `metadata`='1' ORDER BY `title`");
 				break;
 			default:
 				return(FALSE);
 		}
 
 		$sqlResult = $engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-		
+
 		$forms = array();
 		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-			$forms[] = $row;
+
+			$forms[] = self::get($row['ID']);
+
 		}
 
 		return $forms;
@@ -65,9 +98,39 @@ class forms {
 		return self::getForms(FALSE);
 	}
 
+	/*
+	 * Returns all of the linked metadata forms for an object form
+	 */
+	public static function getObjectFormMetaForms($formID) {
+		$form = self::get($formID);
+
+		$metadataForms = array();
+		foreach ($form['fields'] as $field) {
+			if (isset($field['choicesForm']) && validate::integer($field['choicesForm'])) {
+				$metaForm        = self::get($field['choicesForm']);
+				$metadataForms[] = array('formID' => $field['choicesForm'], 'title' => $metaForm['title']);
+			}
+		}
+
+		return $metadataForms;
+
+	}
+
+	public static function isMetadataForm($formID) {
+		$form = self::get($formID);
+
+		if ($form['metadata'] == 1) {
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
+
+	}
+
 	public static function checkFormInProject($projectID,$formID) {
 
-		$project = getProject($projectID);
+		$project = projects::get($projectID);
 
 		if (!is_empty($project['forms'])) {
 
@@ -90,22 +153,22 @@ class forms {
 	}
 
 	public static function getFormIDInfo($formID) {
-		$form = getForm($formID);
-		return decodeFields($form['idno']);
+		$form = self::get($formID);
+		return $form['idno'];
 	}
 
-	public static function build($formID,$objectID = NULL) {
+	public static function build($formID,$objectID = NULL,$error=FALSE) {
 
 		$engine = EngineAPI::singleton();
 
 		// Get the current Form
-		$form   = getForm($formID);
+		$form   = self::get($formID);
 
 		if ($form === FALSE) {
 			return FALSE;
 		}
 
-		$fields = decodeFields($form['fields']);
+		$fields = $form['fields'];
 
 		if (usort($fields, 'sortFieldsByPosition') !== TRUE) {
 			errorHandle::newError(__METHOD__."() - usort", errorHandle::DEBUG);
@@ -114,16 +177,15 @@ class forms {
 		}
 
 		if (!isnull($objectID)) {
-			$object = getObject($objectID);
+			$object = objects::get($objectID);
 			if ($object === FALSE) {
 				errorHandle::errorMsg("Error retrieving object.");
 				return FALSE;
 			}
-			$object['data'] = decodeFields($object['data']);
-			if ($object['data'] === FALSE) {
-				errorHandle::errorMsg("Error retrieving object.");
-				return FALSE;
-			}
+		}
+		else if (isnull($objectID) && $error === TRUE) {
+			$object         = array();
+			$object['data'] = array();
 		}
 
 		$output = sprintf('<form action="%s?formID=%s%s" method="%s">',
@@ -146,6 +208,9 @@ class forms {
 			if ($field['type'] == "fieldset") {
 				continue;
 			}
+			if ($field['type'] == "idno" && strtolower($field['managedBy']) == "system") {
+				continue;
+			}
 
 			// deal with field sets
 			if ($field['fieldset'] != $currentFieldset) {
@@ -160,6 +225,16 @@ class forms {
 				$currentFieldset = $field['fieldset'];
 			}
 
+
+			if ($error === TRUE) {
+				// @TODO should this be raw? // security issue?
+				if (isset($engine->cleanPost['RAW'][$field['name']])) {
+					$object['data'][$field['name']] = $engine->cleanPost['RAW'][$field['name']];
+					if ($field['type'] == "select") {
+						$field['choicesDefault'] = $engine->cleanPost['RAW'][$field['name']];
+					}
+				}
+			}
 
 			// build the actual input box
 
@@ -253,12 +328,13 @@ class forms {
 					while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 						$row['data'] = decodeFields($row['data']);
 
-						$output .= sprintf('<input type="checkbox" name="%s" id="%s_%s" value="%s"/><label for="%s_%s">%s</label>',
+						$output .= sprintf('<input type="checkbox" name="%s" id="%s_%s" value="%s" %s/><label for="%s_%s">%s</label>',
 							htmlSanitize($field['type']),
 							htmlSanitize($field['name']),
 							htmlSanitize($field['name']),
 							htmlSanitize(++$count),
 							htmlSanitize($row['ID']),
+							(!isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['ID'])?'checked="checked"':"",
 							htmlSanitize($field['name']),
 							htmlSanitize($count),
 							htmlSanitize($row['data'][$field['choicesField']])
@@ -283,7 +359,7 @@ class forms {
 					foreach ($field['choicesOptions'] as $I=>$option) {
 						$output .= sprintf('<option value="%s" %s/>%s</option>',
 							htmlSanitize($option),
-							(!isempty($field['choicesDefault']) && $field['choicesDefault'] == $option)?'checked="checked"':"",
+							(!isempty($field['choicesDefault']) && $field['choicesDefault'] == $option)?'selected="selected"':"",
 							htmlSanitize($option)
 							);
 					}
@@ -306,8 +382,9 @@ class forms {
 
 						$row['data'] = decodeFields($row['data']);
 
-						$output .= sprintf('<option value="%s" />%s</option>',
+						$output .= sprintf('<option value="%s" %s/>%s</option>',
 							htmlSanitize($row['ID']),
+							(!isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['ID'])?'selected="selected"':"",
 							htmlSanitize($row['data'][$field['choicesField']])
 							);
 					}
@@ -329,9 +406,8 @@ class forms {
 				localvars::add("multipleFiles",(strtoupper($field['multipleFiles']) == "TRUE") ? "true" : "false");
 				localvars::add("allowedExtensions",implode('", "',$field['allowedExtensions']));
 
-
-				$output .= sprintf('<script type="text/javascript" src="%sincludes/fineUploader.formBuilder.js"></script>',
-					localvars::get("siteRoot")
+				$output .= sprintf('<script type="text/javascript">%s</script>',
+					file_get_contents(__DIR__."/js/fineUploader.formBuilder.js")
 					);
 
            		// Do we display a current file?
@@ -346,7 +422,6 @@ class forms {
 			}
 			else {
 				if ($field['type'] == "idno") {
-					if (strtolower($field['managedBy']) == "system") continue;
 					$field['type'] = "text";
 				}
 
@@ -375,7 +450,7 @@ class forms {
 		}
 
 		$output .= sprintf('<input type="submit" value="%s" name="%s" />',
-			htmlSanitize($form["submitButton"]),
+			(isnull($objectID))?htmlSanitize($form["submitButton"]):htmlSanitize($form["updateButton"]),
 			$objectID ? "updateForm" : "submitForm"
 			);
 
@@ -385,8 +460,116 @@ class forms {
 
 	}
 
+	public static function buildEditTable($formID) {
+
+		$form = self::get($formID);
+
+		// Get all objects from this form
+		$objects = objects::getAllObjectsForForm($formID);
+
+		if (count($objects) > 0) {
+
+			$headers = array();
+			$headers[] = "Delete";
+			foreach ($form['fields'] as $field) {
+				$headers[] = $field['label'];
+			}
+ 
+			$tableRows = array();
+			for($I=0;$I<count($objects);$I++) {
+				$temp   = array();
+				$temp[] = sprintf('<input type="checkbox" name="delete[]" value="%s"',
+					$objects[$I]['ID']
+					);
+
+				foreach ($form['fields'] as $field) {
+					$temp[] = sprintf('<input type="%s" name="%s_%s" value="%s" />',
+						$field['type'],
+						$field['name'],
+						$objects[$I]['ID'],
+						htmlSanitize($objects[$I]['data'][$field['name']])
+						);
+				}
+
+				$tableRows[] = $temp;
+			}
+
+			$table          = new tableObject("array");
+			$table->summary = "Object Listing";
+			$table->headers($headers);
+
+			$output = sprintf('<form action="%s?formID=%s" method="%s">',
+				$_SERVER['PHP_SELF'],
+				htmlSanitize($formID),
+				"post"
+				);
+
+			$output .= sessionInsertCSRF();
+
+			$output .= $table->display($tableRows);
+
+			$output .= '<input type="submit" name="updateEdit" value="Update" />';
+			$output .= "</form>";
+
+			return $output;
+		}
+		else {
+			return "No data entered for this Metadata Form.";
+		}
+
+	}
+
+	public static function submitEditTable($formID) {
+
+		$form = self::get($formID);
+
+		if ($form === FALSE) {
+			return FALSE;
+		}
+
+		$engine = EngineAPI::singleton();
+
+		// begin transactions
+		$result = $engine->openDB->transBegin("objects");
+		if ($result !== TRUE) {
+			errorHandle::errorMsg("Database transactions could not begin.");
+			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		// Do the Updates
+		
+		
+		
+		// do the deletes
+		
+		if (isset($engine->cleanPost['MYSQL']['delete']) && count($engine->cleanPost['MYSQL']['delete']) > 0) {
+			foreach ($engine->cleanPost['MYSQL']['delete'] as $objectID) {
+				$sql       = sprintf("DELETE FROM `objects` WHERE `ID`='%s'",
+					$objectID);
+				$sqlResult = $engine->openDB->query($sql);
+
+				if (!$sqlResult['result']) {
+					$engine->openDB->transRollback();
+					$engine->openDB->transEnd();
+
+					errorHandle::errorMsg("Error deleting objects.");
+					errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+					return FALSE;
+				}
+			}
+		}
+
+		// end transactions
+		$engine->openDB->transCommit();
+		$engine->openDB->transEnd();
+
+		return TRUE;
+
+	}
+
 	// NOTE: data is being saved as RAW from the array.
-	function submit($formID,$objectID=NULL) {
+	public static function submit($formID,$objectID=NULL) {
 		$engine = EngineAPI::singleton();
 
 		if (isnull($objectID)) {
@@ -412,7 +595,7 @@ class forms {
 			}
 		}
 
-		$fields = decodeFields($form['fields']);
+		$fields = $form['fields'];
 
 		if (usort($fields, 'sortFieldsByPosition') !== TRUE) {
 			errorHandle::newError(__METHOD__."() - usort", errorHandle::DEBUG);
@@ -460,23 +643,22 @@ class forms {
 			}
 
 			// Duplicate Checking (Form)
-			if (strtolower($field['duplicatesForm']) == "true") {
-				if (self::isDupe($formID,$field['name'],$engine->cleanPost['RAW'][$field['name']])) {
+			if (strtolower($field['duplicates']) == "true") { 
+				if (self::isDupe($formID,$field['name'],$engine->cleanPost['RAW'][$field['name']],$objectID)) {
 					errorHandle::errorMsg("Duplicate data (in form) provided in field '".$field['label']."'.");
 					continue;
 				}
 			}
 
 			if (strtolower($field['readonly']) == "true") {
-			// need to pull the data that loaded with the form
+				// need to pull the data that loaded with the form
 				if ($newObject === TRUE) {
-				// grab it from the database
+					// grab it from the database
 					$oldObject              = object::get($objectID);
-					$object['data']         = decodeFields($object['data']);
-					$values[$field['name']] = $object['data'][$field['name']];
+					$values[$field['name']] = $oldObject['data'][$field['name']];
 				}
 				else {
-				// grab the default value from the form.
+					// grab the default value from the form.
 					$values[$field['name']] = $field['value'];
 				}
 			}
@@ -548,6 +730,7 @@ class forms {
 
 		if ($newObject === TRUE) {
 			$objectID = $sqlResult['id'];
+			localvars::add("newObjectID",$objectID);
 		}
 
 		// Check to see if this object already exists in the objectProjects table. If not, add it.
@@ -667,18 +850,26 @@ class forms {
 		$engine->openDB->transCommit();
 		$engine->openDB->transEnd();
 
+		if ($newObject === TRUE) {
+			errorHandle::successMsg("Object created successfully.");
+		}
+		else {
+			errorHandle::successMsg("Object updated successfully.");
+		}
+
 		return TRUE;
 	}
 
 	// $value must be RAW
-	public static function isDupe($formID,$field,$value) {
+	public static function isDupe($formID,$field,$value,$objectID=NULL) {
 
 		$engine = EngineAPI::singleton();
 
-		$sql = sprintf("SELECT COUNT(*) FROM dupeMatching WHERE `formID`='%s' AND `field`='%s' AND `value`='%s'",
+		$sql = sprintf("SELECT COUNT(*) FROM `dupeMatching` WHERE `formID`='%s' AND `field`='%s' AND `value`='%s' %s",
 			$engine->openDB->escape($formID),
 			$engine->openDB->escape($field),
-			$engine->openDB->escape($value)
+			$engine->openDB->escape($value),
+			(!isnull($objectID))?"AND `objectID`!='".$engine->openDB->escape($objectID)."'":""
 			);
 
 		$sqlResult = $engine->openDB->sqlResult($sql);

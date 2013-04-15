@@ -69,7 +69,7 @@ try {
 	$projectList = "";
 	while($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
-		if (checkProjectPermissions($row['ID']) === TRUE) {
+		if (projects::checkPermissions($row['ID']) === TRUE) {
 			$projectList .= sprintf('<li><a href="dataEntry/index.php?id=%s">%s</a></li>',
 				$engine->openDB->escape($row['ID']),
 				$engine->openDB->escape($row['projectName'])
@@ -106,10 +106,10 @@ $engine->eTemplate("include","header");
 			<a href="dataEntry/selectForm.php">Create new Object</a>
 		</li>
 		<li>
-			<a href="">List Objects</a>
+			<a href="dataView/list.php">List Objects</a>
 		</li>
 		<li>
-			<a href="">Metadata Forms</a>
+			<a href="dataEntry/selectMetadataForm.php">Metadata Forms</a>
 		</li>
 		<li>
 			<a href="">Export</a>
