@@ -39,22 +39,9 @@ try {
 
 	//////////
 	// Project Tab Stuff
-	$allProjects      = projects::getProjects();
 	$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
-
-
-	$tmp = NULL;
-	foreach ($allProjects as $project) {
-		$tmp .= sprintf('<label class="checkbox" for="%s"><input type="checkbox" id="%s" name="projects[%s]"%s> %s</label>',
-			htmlSanitize("project_".$project['ID']),                           // for=
-			htmlSanitize("project_".$project['ID']),                           // id=
-			htmlSanitize($project['ID']),                                      // name=projects[]
-			(in_array($project['ID'], $selectedProjects)) ? " checked" : NULL, // checked or not
-			htmlSanitize($project['projectName'])                              // label text
-			);
-	}
-	localVars::add("projectOptions",$tmp);
-	unset($tmp);
+	localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects));
+	
 	// Project Tab Stuff
 	//////////
 

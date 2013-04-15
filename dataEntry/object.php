@@ -28,6 +28,13 @@ try {
 		throw new Exception("Metadata form provided (Object forms only).");
 	}
 
+	//////////
+	// Project Tab Stuff
+	$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
+	localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects));
+	// Project Tab Stuff
+	//////////
+
 	// check for edit permissions on the project
 	// if (projects::checkPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) {
 	// 	throw new Exception("Permissions denied for working on this project");
