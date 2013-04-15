@@ -15,7 +15,7 @@ if(isset($engine->cleanGet['MYSQL']['ajax'])){
                 $deletedIDs = array_diff($currentProjectsIDs,$submittedProjectsIDs);
                 if(sizeof($deletedIDs)){
                     $deleteSQL = sprintf("DELETE FROM users_projects WHERE userID='%s' AND projectID IN (%s)",
-                        mfcs::user('ID'),
+                        users::user('ID'),
                         implode(',', $deletedIDs));
                     $deleteSQLResult = $engine->openDB->query($deleteSQL);
                     if(!$deleteSQLResult['result']){
@@ -28,7 +28,7 @@ if(isset($engine->cleanGet['MYSQL']['ajax'])){
                 if(sizeof($addedIDs)){
                     $keyPairs=array();
                     foreach($addedIDs as $addedID){
-                        $keyPairs[] = sprintf("('%s','%s')", mfcs::user('ID'), $addedID);
+                        $keyPairs[] = sprintf("('%s','%s')", users::user('ID'), $addedID);
                     }
                     $insertSQL = sprintf("INSERT INTO  users_projects (userID,projectID) VALUES %s", implode(',', $keyPairs));
                     $insertSQLResult = $engine->openDB->query($insertSQL);
