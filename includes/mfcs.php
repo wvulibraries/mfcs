@@ -60,20 +60,23 @@ class mfcs {
         $username  = sessionGet('username');
         $sqlSelect = sprintf("SELECT * FROM users WHERE username='%s' LIMIT 1", self::$engine->openDB->escape($username));
         $sqlResult = self::$engine->openDB->query($sqlSelect);
-        if(!$sqlResult['result']){
+        if (!$sqlResult['result']) {
             errorHandle::newError(__METHOD__."() - Failed to lookup user ({$sqlResult['error']})", errorHandle::HIGH);
-        }else{
-            if(!$sqlResult['numRows']){
+        }
+        else {
+            if (!$sqlResult['numRows']) {
                 // No user found, add them!
                 $sqlInsert = sprintf("INSERT INTO users (username) VALUES('%s')", self::$engine->openDB->escape($username));
                 $sqlResult = self::$engine->openDB->query($sqlInsert);
-                if(!$sqlResult['result']){
+                if (!$sqlResult['result']) {
                     errorHandle::newError(__METHOD__."() - Failed to insert new user ({$sqlResult['error']})", errorHandle::DEBUG);
-                }else{
+                }
+                else {
                     $sqlResult = self::$engine->openDB->query($sqlSelect);
                     self::$user = mysql_fetch_assoc($sqlResult['result']);
                 }
-            }else{
+            }
+            else {
                 self::$user = mysql_fetch_assoc($sqlResult['result']);
             }
 
