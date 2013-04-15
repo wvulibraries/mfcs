@@ -124,7 +124,7 @@ try {
 		$currentForms = array();
 	}
 
-	$metadataForms         = forms::getObjectFormMetaForms($engine->cleanGet['MYSQL']['id']);
+	$metadataForms         = array();
 	$objectForms           = array();
 	$objectFormsEven       = NULL;
 	$objectFormsOdd        = NULL;
@@ -133,18 +133,20 @@ try {
 	$selectedMetadataForms = "";
 	$selectedObjectForms   = "";
 
-	foreach ($metadataForms as $I => $form) {
-		$tmp = sprintf('<li data-type="metadataForm" data-formid="%s"><a href="#" class="btn btn-block">%s</a></li>',
-			htmlSanitize($form['ID']),
-			htmlSanitize($form['title'])
-			);
+    // If there's forms, then start looping through them grabbing their metadataForms
+    if(sizeof($currentForms['objects'])){
+        foreach($currentForms['objects'] as $i => $formID){
+            $metadataForms = array_merge($metadataForms, forms::getObjectFormMetaForms($formID));
+        }
+    }
 
-		if ($I % 2 == 0) { // even
-			$metadataFormsEven .= $tmp;
-		}
-		else { // odd
-			$metadataFormsOdd .= $tmp;
-		}
+    // Now loop through all the metadata forms building their HTML and putting it in the right place
+	foreach ($metadataForms as $i => $form) {
+        $targetVar = ($i % 2) ? 'metadataFormsOdd' : 'metadataFormsEven';
+        $$targetVar .= sprintf('<li data-type="metadataForm" data-formid="%s"><a href="#" class="btn btn-block">%s</a></li>',
+            htmlSanitize($form['ID']),
+            htmlSanitize($form['title'])
+        );
 	}
 
 	localvars::add("selectedMetadataForms",$selectedMetadataForms);
