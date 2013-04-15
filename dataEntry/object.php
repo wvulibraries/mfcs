@@ -6,7 +6,7 @@ $selectedProjects = NULL;
 
 try {
 
-	$error = FALSE; 
+	$error = FALSE;
 
 	if (objects::validID() === FALSE) {
 		throw new Exception("ObjectID Provided is invalid.");
@@ -29,6 +29,19 @@ try {
 	if (forms::isMetadataForm($engine->cleanGet['MYSQL']['formID'])) {
 		throw new Exception("Metadata form provided (Object forms only).");
 	}
+
+	//////////
+	// Project Tab Stuff
+	$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
+	localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects));
+	// Project Tab Stuff
+	//////////
+
+	//////////
+	// Children Tab Stuff
+	localVars::add("childrenList",objects::displayChildrenList($engine->cleanGet['MYSQL']['objectID']));
+	// Children Tab Stuff
+	//////////
 
 	// check for edit permissions on the project
 	// if (projects::checkPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) {
@@ -82,7 +95,7 @@ try {
 			}
 		}
 		else {
-			// There are changes. 
+			// There are changes.
 			// Delete all the old ones
 			if (objects::deleteAllProjects($engine->cleanGet['MYSQL']['objectID']) === FALSE) {
 				$engine->openDB->transRollback();
@@ -174,12 +187,7 @@ $engine->eTemplate("include","header");
 					</div>
 
 					<div class="tab-pane" id="children">
-						Children content
-						<?php
-						print "<pre>";
-						// print_r($children);
-						print "</pre>";
-						?>
+						{local var="childrenList"}
 					</div>
 				</div>
 			</div>

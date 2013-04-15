@@ -46,7 +46,7 @@ try {
 
 	//////////
 	// Children Tab Stuff
-	$children = objects::getChildren($engine->cleanGet['MYSQL']['objectID']);
+	localVars::add("childrenList",objects::displayChildrenList($engine->cleanGet['MYSQL']['objectID']));
 	// Children Tab Stuff
 	//////////
 
@@ -99,12 +99,7 @@ $engine->eTemplate("include","header");
 					</div>
 
 					<div class="tab-pane" id="children">
-						Children content
-						<?php
-						print "<pre>";
-						print_r($children);
-						print "</pre>";
-						?>
+						{local var="childrenList"}
 					</div>
 				</div>
 			</div>

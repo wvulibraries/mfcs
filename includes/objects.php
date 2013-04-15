@@ -88,8 +88,6 @@ class objects {
 			$lengt = $engine->openDB->escape($length);
 		}
 
-		$engine = EngineAPI::singleton();
-
 		$sql       = sprintf("SELECT `ID` FROM `objects` %s %s",
 			($metadata === FALSE)?"WHERE `metadata`='0'":"",
 			(!isnull($length))?sprintf("LIMIT %s,%s",$start,$length):""
@@ -133,6 +131,39 @@ class objects {
 		}
 
 		return($children);
+	}
+
+	/**
+	 * Display a list, with optional links, of children for a given object
+	 *
+	 * @param string $objectID The ID of the object
+	 * @return string|bool
+	 * @author Scott Blake
+	 **/
+	public static function displayChildrenList($objectID,$link=TRUE) {
+		if (!validate::integer($objectID)) {
+			return FALSE;
+		}
+
+		$engine = EngineAPI::singleton();
+
+		$children = self::getChildren($objectID);
+		if ($children === FALSE) {
+			return FALSE;
+		}
+
+		$output = '';
+		foreach ($children as $child) {
+			$form = forms::get($child['formID']);
+
+			$output .= sprintf('<li>%s%s%s</li>',
+				($link === TRUE) ? '<a href="?objectID='.$child['ID'].'">' : NULL,
+				htmlSanitize($child['data'][$form['objectTitleField']]),
+				($link === TRUE) ? '</a>' : NULL
+				);
+		}
+
+		return $output;
 	}
 
 	public static function getAllObjectsForForm($formID) {
