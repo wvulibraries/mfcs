@@ -410,7 +410,7 @@ class forms {
 
 						$output .= sprintf('<option value="%s" %s/>%s</option>',
 							htmlSanitize($row['ID']),
-							(!isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['ID'])?'selected="selected"':"",
+							(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['ID'])?'selected="selected"':"",
 							htmlSanitize($row['data'][$field['choicesField']])
 							);
 					}
