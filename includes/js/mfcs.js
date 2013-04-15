@@ -15,7 +15,9 @@ $(function(){
 
     // Reset the modal's UI when it's hidden
     $('#selectProjectsModal').on('hide', function (){
-        var IDs = $('#currentProjectsLink').data('selected_projects').split(',');
+        var IDs = $('#currentProjectsLink').data('selected_projects');
+        if(typeof(IDs) != 'string') IDs = IDs.toString();
+        if(typeof(IDs) != 'array')  IDs = IDs.split(',');
         $('#selectProjectsModal :checkbox').each(function(i,n){
             var chkBox = $(n);
             var ID = $(n).val();
