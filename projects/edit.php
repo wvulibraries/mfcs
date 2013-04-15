@@ -172,8 +172,8 @@ try {
             if(!$sqlResult['result']) throw new Exception("MySQL error - getting form titles ({$sqlResult['error']})");
 
             $row  = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
-            $targetVar = ($i % 2) ? 'objectFormsOdd' : 'objectFormsOdd';
-            $$targetVar = sprintf('<li data-type="objectForm" data-formID="%s"><a href="#" class="btn btn-block">%s</a></li>',
+            $targetVar = ($i % 2) ? 'objectFormsOdd' : 'objectFormsEven';
+            $$targetVar .= sprintf('<li data-type="objectForm" data-formID="%s"><a href="#" class="btn btn-block">%s</a></li>',
                 htmlSanitize($row['ID']),
                 htmlSanitize($row['title'])
             );
