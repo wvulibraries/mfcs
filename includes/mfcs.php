@@ -109,20 +109,6 @@ class mfcs {
             : $default;
     }
 
-    /**
-     * Get a user field
-     *
-     * @author David Gersting
-     * @param string $name The name of the user field
-     * @param mixed $default If no field value found, return this
-     * @return mixed
-     */
-    public static function user($name,$default=NULL){
-        return (isset(self::$user[$name]) and !empty(self::$user[$name]))
-            ? self::$user[$name]
-            : $default;
-    }
-
     // if $increment is true it returns the NEXT number. if it is false it returns the current
     public static function getIDNO($formID,$increment=TRUE) {
 

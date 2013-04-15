@@ -2,6 +2,20 @@
 
 class users {
 
+	/**
+     * Get a user field
+     *
+     * @author David Gersting
+     * @param string $name The name of the user field
+     * @param mixed $default If no field value found, return this
+     * @return mixed
+     */
+    public static function user($name,$default=NULL){
+        return (isset(mfcs::$user[$name]) and !empty(mfcs::$user[$name]))
+            ? mfcs::$user[$name]
+            : $default;
+    }
+
 	public static function loadProjects() {
 
 		$engine = EngineAPI::singleton();
