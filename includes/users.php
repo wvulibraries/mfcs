@@ -2,6 +2,8 @@
 
 class users {
 
+	private static $user   = array();
+
 	/**
      * Get a user field
      *
@@ -11,8 +13,8 @@ class users {
      * @return mixed
      */
     public static function user($name,$default=NULL){
-        return (isset(mfcs::$user[$name]) and !empty(mfcs::$user[$name]))
-            ? mfcs::$user[$name]
+        return (isset(self::$user[$name]) and !empty(self::$user[$name]))
+            ? self::$user[$name]
             : $default;
     }
 
@@ -37,6 +39,44 @@ class users {
 
 		return $currentProjects;
 
+	}
+
+	public static function processUser() {
+
+		$engine = EngineAPI::singleton();
+
+		$username  = sessionGet('username');
+        $sqlSelect = sprintf("SELECT * FROM users WHERE username='%s' LIMIT 1", 
+        	$engine->openDB->escape($username)
+        	);
+        $sqlResult = $engine->openDB->query($sqlSelect);
+        if (!$sqlResult['result']) {
+            errorHandle::newError(__METHOD__."() - Failed to lookup user ({$sqlResult['error']})", errorHandle::HIGH);
+            return FALSE;
+        }
+        else {
+            if (!$sqlResult['numRows']) {
+                // No user found, add them!
+                $sqlInsert = sprintf("INSERT INTO users (username) VALUES('%s')", 
+                	$engine->openDB->escape($username)
+                	);
+                $sqlResult = $engine->openDB->query($sqlInsert);
+                if (!$sqlResult['result']) {
+                    errorHandle::newError(__METHOD__."() - Failed to insert new user ({$sqlResult['error']})", errorHandle::DEBUG);
+                    return FALSE;
+                }
+                else {
+                    $sqlResult = $engine->openDB->query($sqlSelect);
+                    self::$user = mysql_fetch_assoc($sqlResult['result']);
+                }
+            }
+            else {
+                self::$user = mysql_fetch_assoc($sqlResult['result']);
+            }
+
+        }
+
+        return TRUE;
 	}
 
 }
