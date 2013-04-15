@@ -38,3 +38,7 @@ if (in_array($_SERVER['SCRIPT_NAME'], $fineuploader)) {
 	<?php
 }
 ?>
+
+<script>
+    var siteRoot = '{local var="siteRoot"}';
+</script>
