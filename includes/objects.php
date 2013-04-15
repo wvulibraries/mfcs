@@ -218,6 +218,50 @@ class objects {
 
 	}
 
+	public static function addProject($objectID,$projectID) {
+
+		$engine = EngineAPI::singleton();
+
+		$sql       = sprintf("INSERT INTO `objectProjects` (`objectID`,`projectID`) VALUES('%s','%s')",
+			$engine->openDB->escape($objectID),
+			$engine->openDB->escape($projectID)
+			);
+		$sqlResult = $engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+		return TRUE;
+
+	}
+
+	public static function addProjects($objectID,$projects) {
+
+		if (!is_array($projects)) {
+			return FALSE;
+		}
+
+		$engine = EngineAPI::singleton();
+
+		$result = $engine->openDB->transBegin("objectProjects");
+
+		foreach ($projects as $projectID) { 
+			if (self::addProject($objectID,$projectID) === FALSE) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+				return FALSE;
+			}
+		}
+
+		$engine->openDB->transCommit();
+		$engine->openDB->transEnd();
+
+		return TRUE;
+
+	}
+
 }
 
 ?>
