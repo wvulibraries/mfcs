@@ -227,6 +227,76 @@ class forms {
 		return $choices;
 	}
 
+	private static function drawCheckBoxes($field,$fieldChoices) {
+
+		$output = "";
+
+		foreach ($fieldChoices as $choice) {
+			$output .= sprintf('<input type="%s" name="%s" id="%s_%s" value="%s" %s/><label for="%s_%s">%s</label>',
+				htmlSanitize($field['type']),
+				htmlSanitize($field['name']),
+				htmlSanitize($field['name']),
+				htmlSanitize($choice['index']),
+				htmlSanitize($choice['value']),
+				(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $option)?'checked="checked"':"",
+				htmlSanitize($field['name']),
+				htmlSanitize($choice['index']),
+				htmlSanitize($choice['display'])
+				);
+		}
+
+		return $output;
+
+	}
+
+	private static function drawSelectDropdowns($field,$fieldChoices) {
+		$output = "";
+		foreach ($fieldChoices as $choice) {
+			$output .= sprintf('<option value="%s" %s/>%s</option>',
+				htmlSanitize($choice['value']),
+				(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['value'])?'selected="selected"':"",
+				htmlSanitize($choice['display'])
+				);
+		}
+		return $output;
+	}
+
+	private static function drawMultiselectBoxes($field,$fieldChoices) {
+		$output = "";
+		foreach ($fieldChoices as $choice) {
+			$output .= sprintf('<option value="%s" %s/>%s</option>',
+				htmlSanitize($choice['value']),
+				(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['value'])?'selected="selected"':"",
+				htmlSanitize($choice['display'])
+				);
+		}
+		return $output;
+	}
+
+	public static function drawFieldChoices($field,$choices) {
+
+		if (!isset($field['type'])) return FALSE;
+
+		switch($field['type']) {
+			case "checkbox":
+			case "radio":
+				return self::drawCheckBoxes($field,$choices);
+				break;
+			case "select":
+				return self::drawSelectDropdowns($field,$choices);
+				break;
+			case "multiselect":
+				return self::drawMultiselectBoxes($field,$choices);
+				break;
+			default:
+				return FALSE;
+				break;
+		}
+
+		return FALSE;
+
+	}
+
 	public static function build($formID,$objectID = NULL,$error=FALSE) {
 
 		$engine = EngineAPI::singleton();
@@ -366,22 +436,12 @@ class forms {
 				}
 
 				$output .= sprintf('<div %s>',
-					(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
+					(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':""
 					);
 
-				foreach ($fieldChoices as $choice) {
-						$output .= sprintf('<input type="%s" name="%s" id="%s_%s" value="%s" %s/><label for="%s_%s">%s</label>',
-							htmlSanitize($field['type']),
-							htmlSanitize($field['name']),
-							htmlSanitize($field['name']),
-							htmlSanitize($choice['index']),
-							htmlSanitize($choice['value']),
-							(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $option)?'checked="checked"':"",
-							htmlSanitize($field['name']),
-							htmlSanitize($choice['index']),
-							htmlSanitize($choice['display'])
-							);
-				}
+
+				$output .= self::drawFieldChoices($field,$fieldChoices);
+
 				$output .= '</div>';
 
 			}
@@ -397,13 +457,7 @@ class forms {
 					(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':""
 					);
 
-				foreach ($fieldChoices as $choice) {
-					$output .= sprintf('<option value="%s" %s/>%s</option>',
-						htmlSanitize($choice['value']),
-						(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['value'])?'selected="selected"':"",
-						htmlSanitize($choice['display'])
-						);
-				}
+				$output .= self::drawFieldChoices($field,$fieldChoices);
 
 				$output .= "</select>";
 
@@ -435,13 +489,9 @@ class forms {
 					htmlSanitize($field['name']),
 					htmlSanitize($field['name'])
 					);
-				foreach ($fieldChoices as $choice) {
-					$output .= sprintf('<option value="%s" %s/>%s</option>',
-						htmlSanitize($choice['value']),
-						(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['value'])?'selected="selected"':"",
-						htmlSanitize($choice['display'])
-						);
-				}
+
+				$output .= self::drawFieldChoices($field,$fieldChoices);
+
 				$output .= '</select>';
 			}
 			else if ($field['type'] == 'file') {
