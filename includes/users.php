@@ -30,6 +30,7 @@ class users {
 		if (!$sqlResult['result']) {
 			errorHandle::newError("Failed to load user's projects ({$sqlResult['error']})", errorHandle::HIGH);
 			errorHandle::errorMsg("Failed to load your current projects.");
+            return FALSE;
 		}
 		else {
 			while ($row = mysql_fetch_assoc($sqlResult['result'])) {
