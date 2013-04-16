@@ -162,8 +162,10 @@ $engine->eTemplate("include","header");
 			<div class="row-fluid">
 				<ul class="nav nav-tabs">
 					<li><a data-toggle="tab" href="#metadata">Metadata</a></li>
+					<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
 					<li><a data-toggle="tab" href="#project">Project</a></li>
 					<li><a data-toggle="tab" href="#children">Children</a></li>
+					<?php } ?>
 				</ul>
 
 				<div class="tab-content">
@@ -171,6 +173,7 @@ $engine->eTemplate("include","header");
 						{local var="form"}
 					</div>
 
+					<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
 					<div class="tab-pane" id="project">
 						<h2>Change Project Membership</h2>
 
@@ -184,6 +187,7 @@ $engine->eTemplate("include","header");
 					<div class="tab-pane" id="children">
 						{local var="childrenList"}
 					</div>
+					<?php } ?>
 				</div>
 			</div>
 		</div>
