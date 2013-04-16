@@ -178,6 +178,39 @@ class forms {
 		return $form['idno'];
 	}
 
+	private static function getFieldChoices($field) {
+
+		$choices = array();
+
+		// Manually selected
+		if (isset($field['choicesType']) && !isempty($field['choicesType']) && $field['choicesType'] == "manual") {
+			if (isempty($field['choicesOptions'])) {
+				errorHandle::errorMsg("No options provided, '".$field['label']."'");
+				return FALSE;
+			}
+
+			foreach ($field['choicesOptions'] as $I=>$option) {
+				$choices[] = array("value" => $option, "index" => $I, "display" => $option);
+			}
+
+		}
+		// Pull from another Form
+		else {
+
+			if (($objects = objects::getAllObjectsForForm($field['choicesForm'])) === FALSE) {
+				errorHandle::errorMsg("Can't retrieved linked metadata objects.");
+				return FALSE;
+			}
+
+			foreach ($objects as $object) {
+				$choices[] = array("value" => $object['ID'], "index" => $object['ID'], "display" => $object['data'][$field['choicesField']]);
+			}
+
+		}
+
+		return $choices;
+	}
+
 	public static function build($formID,$objectID = NULL,$error=FALSE) {
 
 		$engine = EngineAPI::singleton();
@@ -312,108 +345,81 @@ class forms {
 			}
 			else if ($field['type'] == "checkbox" || $field['type'] == "radio") {
 
-				// Manually selected
-				if (isset($field['choicesType']) && !isempty($field['choicesType']) && $field['choicesType'] == "manual") {
-					if (isempty($field['choicesOptions'])) {
-						errorHandle::errorMsg("No options provided for radio buttons, '".$field['label']."'");
-						return FALSE;
-					}
+				if (($fieldChoices = forms::getFieldChoices($field)) === FALSE) {
+					return FALSE;
+				}
 
-					foreach ($field['choicesOptions'] as $I=>$option) {
+				foreach ($fieldChoices as $choice) {
 						$output .= sprintf('<input type="%s" name="%s" id="%s_%s" value="%s" %s/><label for="%s_%s">%s</label>',
 							htmlSanitize($field['type']),
 							htmlSanitize($field['name']),
 							htmlSanitize($field['name']),
-							htmlSanitize($I),
-							htmlSanitize($option),
-							(!isempty($field['choicesDefault']) && $field['choicesDefault'] == $option)?'checked="checked"':"",
+							htmlSanitize($choice['index']),
+							htmlSanitize($choice['value']),
+							(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $option)?'checked="checked"':"",
 							htmlSanitize($field['name']),
-							htmlSanitize($I),
-							htmlSanitize($option)
+							htmlSanitize($choice['index']),
+							htmlSanitize($choice['display'])
 							);
-					}
-
 				}
-				else {
-					$sql       = sprintf("SELECT * FROM `objects` WHERE formID='%s' and metadata='1'",
-						$engine->openDB->escape($field['choicesForm'])
-						);
-					$sqlResult = $engine->openDB->query($sql);
 
-					if (!$sqlResult['result']) {
-						errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
-						return FALSE;
-					}
-
-					$count = 0;
-					while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-						$row['data'] = decodeFields($row['data']);
-
-						$output .= sprintf('<input type="checkbox" name="%s" id="%s_%s" value="%s" %s/><label for="%s_%s">%s</label>',
-							htmlSanitize($field['type']),
-							htmlSanitize($field['name']),
-							htmlSanitize($field['name']),
-							htmlSanitize(++$count),
-							htmlSanitize($row['ID']),
-							(!isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['ID'])?'checked="checked"':"",
-							htmlSanitize($field['name']),
-							htmlSanitize($count),
-							htmlSanitize($row['data'][$field['choicesField']])
-							);
-					}
-
-				}
 			}
 			else if ($field['type'] == "select") {
+
+				if (($fieldChoices = forms::getFieldChoices($field)) === FALSE) {
+					return FALSE;
+				}
+
 				$output .= sprintf('<select name="%s" id="%s">',
 					htmlSanitize($field['name']),
 					htmlSanitize($field['name'])
 					);
 
-				// Manually selected
-				if (isset($field['choicesType']) && !isempty($field['choicesType']) && $field['choicesType'] == "manual") {
-					if (isempty($field['choicesOptions'])) {
-						errorHandle::errorMsg("No options provided for radio buttons, '".$field['label']."'");
-						return FALSE;
-					}
-
-					foreach ($field['choicesOptions'] as $I=>$option) {
-						$output .= sprintf('<option value="%s" %s/>%s</option>',
-							htmlSanitize($option),
-							(!isempty($field['choicesDefault']) && $field['choicesDefault'] == $option)?'selected="selected"':"",
-							htmlSanitize($option)
-							);
-					}
-
-				}
-				// Pull from another Form
-				else {
-
-					$sql       = sprintf("SELECT * FROM `objects` WHERE formID='%s' and metadata='1'",
-						$engine->openDB->escape($field['choicesForm'])
+				foreach ($fieldChoices as $choice) {
+					$output .= sprintf('<option value="%s" %s/>%s</option>',
+						htmlSanitize($choice['value']),
+						(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['value'])?'selected="selected"':"",
+						htmlSanitize($choice['display'])
 						);
-					$sqlResult = $engine->openDB->query($sql);
-
-					if (!$sqlResult['result']) {
-						errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
-						return FALSE;
-					}
-
-					while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-
-						$row['data'] = decodeFields($row['data']);
-
-						$output .= sprintf('<option value="%s" %s/>%s</option>',
-							htmlSanitize($row['ID']),
-							(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['ID'])?'selected="selected"':"",
-							htmlSanitize($row['data'][$field['choicesField']])
-							);
-					}
-
 				}
 
 				$output .= "</select>";
 
+			}
+			else if ($field['type'] == 'multiselect') {
+
+				if (($fieldChoices = forms::getFieldChoices($field)) === FALSE) {
+					return FALSE;
+				}
+
+				$output .= sprintf('<select name="%s[]" id="%s" size="5" multiple="multiple">',
+					htmlSanitize($field['name']),
+					htmlSanitize($field['name'])
+					);
+
+				if (isset($object['data'][$field['name']])) {
+					foreach ($object['data'][$field['name']] as $selectedItem) {
+						$tmpObj  = objects::get($selectedItem);
+						$output .= sprintf('<option value="%s">%s</option>',
+							$engine->openDB->escape($selectedItem),
+							$engine->openDB->escape($tmpObj['data'][$field['choicesField']])
+							);
+					}
+				}
+				$output .= '</select><br />';
+				$output .= sprintf('<select name="%s_available" id="%s_available" onchange="addItemToID(\'%s\', this.options[this.selectedIndex]);">',
+					htmlSanitize($field['name']),
+					htmlSanitize($field['name']),
+					htmlSanitize($field['name'])
+					);
+				foreach ($fieldChoices as $choice) {
+					$output .= sprintf('<option value="%s" %s/>%s</option>',
+						htmlSanitize($choice['value']),
+						(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['value'])?'selected="selected"':"",
+						htmlSanitize($choice['display'])
+						);
+				}
+				$output .= '</select>';
 			}
 			else if ($field['type'] == 'file') {
 				$output .= sprintf('<div id="fineUploader_%s"></div><input type="hidden" id="%s" name="%s" value="%s">',
@@ -559,7 +565,9 @@ class forms {
 		}
 
 		// Do the Updates
-		
+		if (($currentProjects = users::loadProjects()) === FALSE) {
+			return FALSE;
+		}  
 		
 		
 		// do the deletes
@@ -866,6 +874,21 @@ class forms {
 			}
 		}
 
+		// Add it to the users current projects
+		if ($newObject === TRUE) {
+			if (($currentProjects = users::loadProjects()) === FALSE) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+				return FALSE;
+			}  
+			foreach ($currentProjects as $projectID => $projectName) {
+				if ((objects::addProject($objectID,$projectID)) === FALSE) {
+					$engine->openDB->transRollback();
+					$engine->openDB->transEnd();
+					return FALSE;
+				}
+			}
+		}
 
 		// end transactions
 		$engine->openDB->transCommit();

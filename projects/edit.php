@@ -105,6 +105,7 @@ try {
             $engine->openDB->transRollback();
             $engine->openDB->transEnd();
         }
+
 	}
 
 	// Get the current project from the database
@@ -374,7 +375,7 @@ $engine->eTemplate("include","header");
 			{local var="results"}
 		</div>
 
-		<?php if(is_empty($engine->errorStack)){ ?>
+		<?php if(is_empty($engine->errorStack['error'])){ ?>
 
 
         <div class="alert alert-block" style="display: none;" id="updateProjectAlert">
@@ -393,7 +394,7 @@ $engine->eTemplate("include","header");
             </ul>
             <div class="tab-content">
                 <!-- <div class="tab-pane active" id="home">...</div> -->
-                <div class="tab-pane" id="forms">
+                <div class="tab-pane active" id="forms">
                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos dolor ea illum nesciunt temporibus? Blanditiis consequatur distinctio, ex harum modi nostrum quaerat, quas quod sequi similique ut velit veritatis voluptates?</p>
                     <select name="selectedObjectForms[]" id="selectedObjectForms" size="5" multiple="multiple">
                         {local var="selectedObjectForms"}

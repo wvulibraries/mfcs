@@ -100,6 +100,24 @@ class listGenerator {
 
 	}
 
+	public static function createProjectObjectList($projectID) {
+
+		$engine  = EngineAPI::singleton();
+		$objects = objects::getAllObjectsForProject($projectID);
+
+		$data = array();
+		foreach ($objects as $object) {
+
+			$form = forms::get($object['formID']);
+
+			$data[] = array($object['ID'],$object['idno'],$object['data'][$form['objectTitleField']],self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("revisions",$object['ID']));
+
+		}
+
+		return self::createTable($data);
+
+	}
+
 	private static function createTable($data,$headers = NULL) {
 
 		$table = new tableObject("array");
@@ -134,6 +152,49 @@ class listGenerator {
 		if (!isset($urls[strtolower($url)])) return FALSE;
 
 		return sprintf('<a href="%s%s">%s</a>',$urls[strtolower($url)],$objectID,htmlSanitize(strtolower($url)));
+	}
+
+	public static function generateFormSelectList() {
+
+		if (($forms = forms::getObjectForms()) === FALSE) {
+			return FALSE;
+		}
+
+		if (($currentProjects = users::loadProjects()) === FALSE) {
+			return FALSE;
+		}  
+
+		$currentProjectFormList = "Current Projects: <br /><ul>";
+		$formList               = "All Other Forms: <br /><ul>";
+
+		foreach ($forms as $form) {
+
+			// @TODO
+			// if (projects::checkPermissions($row['ID']) === TRUE) {
+			// }
+			
+			foreach ($currentProjects as $projectID => $projectName) {
+				if (forms::checkFormInProject($projectID,$form['ID'])) {
+					$currentProjectFormList .= sprintf('<li><a href="object.php?formID=%s">%s</a></li>',
+						htmlSanitize($form['ID']),
+						htmlSanitize($form['title'])
+						);
+
+					continue 2;
+				}
+			}
+
+			$formList .= sprintf('<li><a href="object.php?formID=%s">%s</a></li>',
+				htmlSanitize($form['ID']),
+				htmlSanitize($form['title'])
+				);
+
+		}
+		$formList               .= "</ul>";
+		$currentProjectFormList .= "</ul>";
+
+		return $currentProjectFormList . $formList;
+
 	}
 
 }

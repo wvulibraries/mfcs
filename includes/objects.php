@@ -186,6 +186,29 @@ class objects {
 		return $objects;
 	}
 
+	public static function getAllObjectsForProject($projectID) {
+
+		$engine = EngineAPI::singleton();
+
+		$sql       = sprintf("SELECT `objects`.`ID` as `ID` FROM `objects` LEFT JOIN `objectProjects` ON `objectProjects`.`objectID`=`objects`.`ID` WHERE `objectProjects`.`projectID`='%s'",
+			$engine->openDB->escape($projectID)
+			);
+		$sqlResult = $engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - getting all objects for form: ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		$objects = array();
+		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+			$objects[] = self::get($row['ID']);
+		}
+
+		return $objects;
+
+	}
+
 	public static function checkObjectInForm($formID,$objectID) {
 		$object = self::get($objectID);
 
