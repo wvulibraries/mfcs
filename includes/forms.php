@@ -365,6 +365,10 @@ class forms {
 					return FALSE;
 				}
 
+				$output .= sprintf('<div %s>',
+					(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
+					);
+
 				foreach ($fieldChoices as $choice) {
 						$output .= sprintf('<input type="%s" name="%s" id="%s_%s" value="%s" %s/><label for="%s_%s">%s</label>',
 							htmlSanitize($field['type']),
@@ -378,6 +382,7 @@ class forms {
 							htmlSanitize($choice['display'])
 							);
 				}
+				$output .= '</div>';
 
 			}
 			else if ($field['type'] == "select") {
@@ -386,9 +391,10 @@ class forms {
 					return FALSE;
 				}
 
-				$output .= sprintf('<select name="%s" id="%s">',
+				$output .= sprintf('<select name="%s" id="%s" %s>',
 					htmlSanitize($field['name']),
-					htmlSanitize($field['name'])
+					htmlSanitize($field['name']),
+					(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':""
 					);
 
 				foreach ($fieldChoices as $choice) {
@@ -408,9 +414,10 @@ class forms {
 					return FALSE;
 				}
 
-				$output .= sprintf('<select name="%s[]" id="%s" size="5" multiple="multiple">',
+				$output .= sprintf('<select name="%s[]" id="%s" size="5" multiple="multiple" %s>',
 					htmlSanitize($field['name']),
-					htmlSanitize($field['name'])
+					htmlSanitize($field['name']),
+					(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':""
 					);
 
 				if (isset($object['data'][$field['name']])) {
