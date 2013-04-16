@@ -6,7 +6,7 @@ include("../header.php");
 
 try {
 
-	if (($formList = forms::generateSelectList()) === FALSE) {
+	if (($formList = listGenerator::generateFormSelectList()) === FALSE) {
 		errorHandle::errorMsg("Error getting Forms Listing");
 		throw new Exception('Error');
 	}
