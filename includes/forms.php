@@ -178,7 +178,23 @@ class forms {
 		return $form['idno'];
 	}
 
-	private static function getFieldChoices($field) {
+	public static function getField($formID,$fieldName) {
+
+		if (($form = self::get($formID)) === FALSE) {
+			return FALSE;
+		}
+
+		foreach ($form['fields'] as $field) {
+			if ($field['name'] == $fieldName) {
+				return $field;
+			}
+		}
+
+		return FALSE;
+
+	}
+
+	public static function getFieldChoices($field) {
 
 		$choices = array();
 
