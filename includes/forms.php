@@ -883,17 +883,14 @@ class forms {
 
 	// $value must be RAW
 	public static function isDupe($formID,$field,$value,$objectID=NULL) {
-
-		$engine = EngineAPI::singleton();
-
 		$sql = sprintf("SELECT COUNT(*) FROM `dupeMatching` WHERE `formID`='%s' AND `field`='%s' AND `value`='%s' %s",
-			$engine->openDB->escape($formID),
-			$engine->openDB->escape($field),
-			$engine->openDB->escape($value),
-			(!isnull($objectID))?"AND `objectID`!='".$engine->openDB->escape($objectID)."'":""
+            mfcs::$engine->openDB->escape($formID),
+            mfcs::$engine->openDB->escape($field),
+            mfcs::$engine->openDB->escape($value),
+			(!isnull($objectID))?"AND `objectID`!='".mfcs::$engine->openDB->escape($objectID)."'":""
 			);
 
-		$sqlResult = $engine->openDB->sqlResult($sql);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 
 		// we return TRUE on Error, because if a dupe is encountered we want it to fail out.
 		if ($sqlResult['result'] === FALSE) {
