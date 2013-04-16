@@ -93,7 +93,7 @@ class mfcs {
         $engine         = self::$engine;
         $idno           = forms::getFormIDInfo($formID);
 
-        $sqlResult = $engine->openDB->sqlResult(
+        $sqlResult = $engine->openDB->query(
             sprintf("SELECT `count` FROM `forms` WHERE `ID`='%s'",
                 $engine->openDB->escape($formID)
                 )
@@ -103,10 +103,10 @@ class mfcs {
             return FALSE;
         }
 
-        $idno                         = $idno['idnoFormat'];
-        $len                          = strrpos($idno,"#") - strpos($idno,"#") + 1;
-        $sqlResult['result']['count'] = str_pad($sqlResult['result']['count'],$len,"0",STR_PAD_LEFT);
-        $idno                         = preg_replace("/#+/", $sqlResult['result']['count'], $idno);
+        $idno                 = $idno['idnoFormat'];
+        $len                  = strrpos($idno,"#") - strpos($idno,"#") + 1;
+        $sqlResult['numrows'] = str_pad($sqlResult['numrows'],$len,"0",STR_PAD_LEFT);
+        $idno                 = preg_replace("/#+/", $sqlResult['result']['count'], $idno);
 
         return $idno;
     }
