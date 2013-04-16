@@ -100,6 +100,24 @@ class listGenerator {
 
 	}
 
+	public static function createProjectObjectList($projectID) {
+
+		$engine  = EngineAPI::singleton();
+		$objects = objects::getAllObjectsForProject($projectID);
+
+		$data = array();
+		foreach ($objects as $object) {
+
+			$form = forms::get($object['formID']);
+
+			$data[] = array($object['ID'],$object['idno'],$object['data'][$form['objectTitleField']],self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("revisions",$object['ID']));
+
+		}
+
+		return self::createTable($data);
+
+	}
+
 	private static function createTable($data,$headers = NULL) {
 
 		$table = new tableObject("array");
