@@ -3,12 +3,14 @@ include("header.php");
 
 if(isset($engine->cleanGet['MYSQL']['ajax'])){
     $result = array();
-    switch($engine->cleanPost['MYSQL']['action']){
-        case 'updateUserProjects':
+    if (isset($engine->cleanPost['MYSQL']['action'])) {
+        switch($engine->cleanPost['MYSQL']['action']){
+            case 'updateUserProjects':
+            // @TODO this case statement should be broken off into another file or class
             $currentProjectsIDs   = array_keys(sessionGet('currentProject'));
             $submittedProjectsIDs = isset($engine->cleanPost['MYSQL']['selectedProjects'])
-                ? $engine->cleanPost['MYSQL']['selectedProjects']
-                : array();
+            ? $engine->cleanPost['MYSQL']['selectedProjects']
+            : array();
 
             try{
                 // Delete project IDs that disappeared
@@ -42,15 +44,24 @@ if(isset($engine->cleanGet['MYSQL']['ajax'])){
                     'success'    => TRUE,
                     'deletedIDs' => $deletedIDs,
                     'addedIDs'   => $addedIDs
-                );
+                    );
 
             }catch(Exception $e){
                 $result = array(
                     'success'  => FALSE,
                     'errorMsg' => $e->getMessage()
-                );
+                    );
             }
             break;
+        }
+    }
+    else if (isset($engine->cleanGet['MYSQL']['action'])) {
+        switch($engine->cleanGet['MYSQL']['action']){
+            case 'selectChoices':
+            $field  = forms::getField("5","untitled9");
+            $result = forms::getFieldChoices($field);
+            break;
+        }
     }
     header('Content-type: application/json');
     die(json_encode($result));
