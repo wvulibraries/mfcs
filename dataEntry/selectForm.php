@@ -1,30 +1,18 @@
 <?php
 include("../header.php");
 
+// @TODO
+// Check if the user has an editing privileges here
+
 try {
 
-	$forms = forms::getObjectForms();
-
-	if ($forms === FALSE) {
-		errorHandle::errorMsg("Error getting Forms");
+	if (($formList = forms::generateSelectList()) === FALSE) {
+		errorHandle::errorMsg("Error getting Forms Listing");
 		throw new Exception('Error');
 	}
-
-	$formList = "<ul>";
-	foreach ($forms as $form) {
-
-		// @TODO
-		// if (projects::checkPermissions($row['ID']) === TRUE) {
-		// }
-		$formList .= sprintf('<li><a href="object.php?formID=%s">%s</a></li>',
-			htmlSanitize($form['ID']),
-			htmlSanitize($form['title'])
-			);
-
+	else {
+		localvars::add("formList",$formList);
 	}
-	$formList .= "<ul>";
-
-	localvars::add("formList",$formList);
 
 }
 catch(Exception $e) {
