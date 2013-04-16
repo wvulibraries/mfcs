@@ -386,7 +386,41 @@ class forms {
 				$output .= "</select>";
 
 			}
-			
+			else if ($field['type'] == 'multiselect') {
+
+				if (($fieldChoices = forms::getFieldChoices($field)) === FALSE) {
+					return FALSE;
+				}
+
+				$output .= sprintf('<select name="%s[]" id="%s" size="5" multiple="multiple">',
+					htmlSanitize($field['name']),
+					htmlSanitize($field['name'])
+					);
+
+				if (isset($object['data'][$field['name']])) {
+					foreach ($object['data'][$field['name']] as $selectedItem) {
+						$tmpObj  = objects::get($selectedItem);
+						$output .= sprintf('<option value="%s">%s</option>',
+							$engine->openDB->escape($selectedItem),
+							$engine->openDB->escape($tmpObj['data'][$field['choicesField']])
+							);
+					}
+				}
+				$output .= '</select><br />';
+				$output .= sprintf('<select name="%s_available" id="%s_available" onchange="addItemToID(\'%s\', this.options[this.selectedIndex]);">',
+					htmlSanitize($field['name']),
+					htmlSanitize($field['name']),
+					htmlSanitize($field['name'])
+					);
+				foreach ($fieldChoices as $choice) {
+					$output .= sprintf('<option value="%s" %s/>%s</option>',
+						htmlSanitize($choice['value']),
+						(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['value'])?'selected="selected"':"",
+						htmlSanitize($choice['display'])
+						);
+				}
+				$output .= '</select>';
+			}
 			else if ($field['type'] == 'file') {
 				$output .= sprintf('<div id="fineUploader_%s"></div><input type="hidden" id="%s" name="%s" value="%s">',
 					htmlSanitize($field['name']),
