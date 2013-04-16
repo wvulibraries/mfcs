@@ -119,6 +119,49 @@ class forms {
 		return self::getForms(FALSE);
 	}
 
+	public static function generateSelectList() {
+
+		if (($forms = forms::getObjectForms()) === FALSE) {
+			return FALSE;
+		}
+
+		if (($currentProjects = users::loadProjects()) === FALSE) {
+			return FALSE;
+		}  
+
+		$currentProjectFormList = "Current Projects: <br /><ul>";
+		$formList               = "All Other Forms: <br /><ul>";
+
+		foreach ($forms as $form) {
+
+			// @TODO
+			// if (projects::checkPermissions($row['ID']) === TRUE) {
+			// }
+			
+			foreach ($currentProjects as $projectID => $projectName) {
+				if (self::checkFormInProject($projectID,$form['ID'])) {
+					$currentProjectFormList .= sprintf('<li><a href="object.php?formID=%s">%s</a></li>',
+						htmlSanitize($form['ID']),
+						htmlSanitize($form['title'])
+						);
+
+					continue 2;
+				}
+			}
+
+			$formList .= sprintf('<li><a href="object.php?formID=%s">%s</a></li>',
+				htmlSanitize($form['ID']),
+				htmlSanitize($form['title'])
+				);
+
+		}
+		$formList               .= "</ul>";
+		$currentProjectFormList .= "</ul>";
+
+		return $currentProjectFormList . $formList;
+
+	}
+
 	/*
 	 * Returns all of the linked metadata forms for an object form
 	 */
@@ -559,7 +602,9 @@ class forms {
 		}
 
 		// Do the Updates
-		
+		if (($currentProjects = users::loadProjects()) === FALSE) {
+			return FALSE;
+		}  
 		
 		
 		// do the deletes
@@ -866,6 +911,21 @@ class forms {
 			}
 		}
 
+		// Add it to the users current projects
+		if ($newObject === TRUE) {
+			if (($currentProjects = users::loadProjects()) === FALSE) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+				return FALSE;
+			}  
+			foreach ($currentProjects as $projectID => $projectName) {
+				if ((objects::addProject($objectID,$projectID)) === FALSE) {
+					$engine->openDB->transRollback();
+					$engine->openDB->transEnd();
+					return FALSE;
+				}
+			}
+		}
 
 		// end transactions
 		$engine->openDB->transCommit();
