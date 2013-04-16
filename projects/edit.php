@@ -105,6 +105,7 @@ try {
             $engine->openDB->transRollback();
             $engine->openDB->transEnd();
         }
+
 	}
 
 	// Get the current project from the database
@@ -374,7 +375,7 @@ $engine->eTemplate("include","header");
 			{local var="results"}
 		</div>
 
-		<?php if(is_empty($engine->errorStack)){ ?>
+		<?php if(is_empty($engine->errorStack['error'])){ ?>
 
 
         <div class="alert alert-block" style="display: none;" id="updateProjectAlert">
