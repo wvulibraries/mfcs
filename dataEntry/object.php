@@ -3,6 +3,7 @@ include("../header.php");
 recurseInsert("acl.php","php");
 
 $selectedProjects = NULL;
+$parentObject     = NULL;
 
 try {
 
@@ -14,6 +15,10 @@ try {
 
 	if (forms::validID() === FALSE) {
 		throw new Exception("No Form ID Provided.");
+	}
+
+	if (isset($engine->cleanGet['MYSQL']['parentID']) && objects::validID(TRUE,$engine->cleanGet['MYSQL']['parentID']) === FALSE) {
+		throw new Exception("ParentID Provided is invalid.");
 	}
 
 	// if an object ID is provided make sure the object is from this form
@@ -28,6 +33,12 @@ try {
 	if (forms::isMetadataForm($engine->cleanGet['MYSQL']['formID'])) {
 		throw new Exception("Metadata form provided (Object forms only).");
 	}
+
+	/* Parent Object 'Stuff' */
+	if (isset($engine->cleanGet['MYSQL']['parentID']) && ($parentObject = objects::get(isset($engine->cleanGet['MYSQL']['parentID']))) === FALSE ) {
+		throw new Exception("Unable to retrieve parent object");
+	}
+	/* End Parent Object 'Stuff' */
 
 	//////////
 	// Project Tab Stuff
