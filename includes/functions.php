@@ -29,7 +29,7 @@ function buildProjectNavigation($projectID) {
 		return(FALSE);
 	}
 
-	$nav = decodeFields($project['groupings']);
+	$nav = $project['groupings'];
 
 	// print "<pre>";
 	// var_dump($nav);
@@ -100,66 +100,6 @@ function buildNumberAttributes($field) {
 // if $increment is true it returns the NEXT number. if it is false it returns the current
 function getIDNO($formID,$projectID,$increment=TRUE) {
 	return mfcs::getIDNO($formID,$increment);
-}
-
-// if $increment is true it returns the NEXT number. if it is false it returns the current
-function dumpStuff($formID,$projectID,$increment=TRUE) {
-
-	$engine         = EngineAPI::singleton();
-
-	$form           = forms::get($formID);
-	$form['fields'] = decodeFields($form['fields']);
-	$idno           = forms::getFormIDInfo($formID);
-
-	print "<pre>";
-	var_dump($form['fields']);
-	print "</pre>";
-
-	print "<pre>";
-	var_dump($idno);
-	print "</pre>";
-
-	$sqlResult = $engine->openDB->sqlResult(
-		sprintf("SELECT `count` FROM `projects` WHERE `ID`='%s'",
-			$engine->openDB->escape($projectID)
-			)
-		);
-
-	print "<pre>";
-	var_dump($sqlResult);
-	print "</pre>";
-
-	$sqlResult = $engine->openDB->sqlResult(
-		sprintf("SELECT * FROM `projects`",
-			$engine->openDB->escape($projectID)
-			)
-		);
-
-	print "<pre>";
-	var_dump($sqlResult);
-	print "</pre>";
-
-	$sqlResult = $engine->openDB->sqlResult(
-		sprintf("INSERT INTO containers (containerName) VALUES('foo')",
-			$engine->openDB->escape($projectID)
-			)
-		);
-
-	print "<pre>";
-	var_dump($sqlResult);
-	print "</pre>";
-
-	$sqlResult = $engine->openDB->sqlResult(
-		sprintf("UPDATE containers SET containerName='bar' WHERE ID='1'",
-			$engine->openDB->escape($projectID)
-			)
-		);
-
-	print "<pre>";
-	var_dump($sqlResult);
-	print "</pre>";
-
-	return TRUE;
 }
 
 /**
