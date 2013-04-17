@@ -38,7 +38,7 @@ try {
 
 	//////////
 	// Children Tab Stuff
-	if (($formList = listGenerator::generateFormSelectList()) === FALSE) {
+	if (($formList = listGenerator::generateFormSelectList($engine->cleanGet['MYSQL']['objectID'])) === FALSE) {
 		errorHandle::errorMsg("Error getting Forms Listing");
 		throw new Exception('Error');
 	}
