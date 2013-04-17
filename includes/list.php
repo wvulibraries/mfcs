@@ -197,6 +197,37 @@ class listGenerator {
 
 	}
 
+	public static function generateFormSelectListForFormCreator($metadata = TRUE) {
+
+		$engine  = EngineAPI::singleton();
+
+		// @TODO object forms and metadata forms need separated
+		$sql       = sprintf("SELECT `ID`, `title` FROM `forms` ORDER BY `metadata`, `title`");
+		$sqlResult = $engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			errorHandle::errorMsg("Error getting Projects");
+			return FALSE;
+		}
+
+		$formList = '<ul class="pickList">';
+		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+
+		// if (projects::checkPermissions($row['ID']) === TRUE) {
+		// }
+			$formList .= sprintf('<li><a href="index.php?id=%s" class="btn">%s</a></li>',
+				$engine->openDB->escape($row['ID']),
+				$engine->openDB->escape($row['title'])
+				);
+
+		}
+		$formList .= "<ul>";
+
+		return $formList;
+
+	}
+
 }
 
 ?>
