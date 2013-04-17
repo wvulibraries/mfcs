@@ -107,6 +107,12 @@ $engine->eTemplate("include","header");
 		<h1>Select a Task</h1>
 	</header>
 
+    <nav id="breadcrumbs">
+        <ul>
+            <li><a href="{local var="siteRoot"}">Home</a></li>
+        </ul>
+    </nav>  
+
 	{local var="results"}
 
 	<ul>

@@ -1,3 +1,7 @@
+#breadcrumbs ul li {
+	display: inline;
+}
+
 .pickList {
 	list-style: none;
 	width: 220px;

@@ -149,6 +149,13 @@ $engine->eTemplate("include","header");
 		<h1>Edit Object</h1>
 	</header>
 
+	<nav id="breadcrumbs">
+        <ul>
+            <li><a href="{local var="siteRoot"}">Home</a></li>
+            <li><a href="{local var="siteRoot"}/dataEntry/selectForm.php">Select a Form</a></li>
+        </ul>
+    </nav> 
+
 	<div class="container-fluid">
 		<div class="span3">
 			{local var="leftnav"}
