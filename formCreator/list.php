@@ -3,6 +3,7 @@ include("../header.php");
 
 try {
 
+	// @TODO this needs moved into the listGen class
 	$sql       = sprintf("SELECT `ID`, `title` FROM `forms` ORDER BY `metadata`, `title`");
 	$sqlResult = $engine->openDB->query($sql);
 
@@ -12,12 +13,12 @@ try {
 		throw new Exception('Error');
 	}
 
-	$formList = "<ul>";
+	$formList = '<ul class="pickList">';
 	while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
 		// if (projects::checkPermissions($row['ID']) === TRUE) {
 		// }
-		$formList .= sprintf('<li><a href="index.php?id=%s">%s</a></li>',
+		$formList .= sprintf('<li><a href="index.php?id=%s" class="btn">%s</a></li>',
 			$engine->openDB->escape($row['ID']),
 			$engine->openDB->escape($row['title'])
 			);
