@@ -168,14 +168,12 @@ class forms {
 
 		if (!is_empty($project['forms'])) {
 
-			$currentForms = decodeFields($project['forms']);
-
-			foreach ($currentForms['metadata'] as $I=>$V) {
+			foreach ($project['forms']['metadata'] as $I=>$V) {
 				if ($V == $formID) {
 					return TRUE;
 				}
 			}
-			foreach ($currentForms['objects'] as $I=>$V) {
+			foreach ($project['forms']['objects'] as $I=>$V) {
 				if ($V == $formID) {
 					return TRUE;
 				}
@@ -184,6 +182,34 @@ class forms {
 
 		return FALSE;
 
+	}
+
+	// Gets all the forms that are in all the projects that that $objectID is in
+	public static function getObjectProjectForms($objectID) {
+		if (($object = objects::get($objectID)) === FALSE) {
+			return FALSE;
+		}
+
+		if (($projects = projects::getAllObjectProjects($objectID)) === FALSE) {
+			return FALSE;
+		}
+
+		$formsByID = array();
+		foreach ($projects as $project) {
+			foreach ($project['forms']['objects'] as $formID) {
+
+				if (($formsByID[$formID] = self::get($formID)) === FALSE) {
+					return FALSE;
+				}
+			}
+		}
+
+		$forms = array();
+		foreach ($formsByID as $form) {
+			$forms[] = $form;
+		}
+
+		return $forms;
 	}
 
 	public static function getFormIDInfo($formID) {
