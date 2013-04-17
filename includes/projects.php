@@ -22,31 +22,31 @@ class projects {
      * @param string $orderBy
      * @return array
      */
-    public static function getProjects($fields='ID,projectName',$orderBy='projectName ASC'){
-        // Clean and process $fields
-        $fields = is_string($fields) ? explode(',', $fields) : $fields;
-        foreach($fields as $k => $field){
-            $fields[$k] = '`'.mfcs::$engine->openDB->escape($field).'`';
-        }
+    public static function getProjects($orderBy='projectName ASC'){
 
         // Clean and process $orderBy
         $orderBy = !is_empty($orderBy) ? "ORDER BY ".mfcs::$engine->openDB->escape($orderBy) : '';
 
         // Build SQL
-        $sql = sprintf('SELECT %s FROM `projects` %s',
-            implode(',', $fields),
-            $orderBy);
+        $sql = sprintf('SELECT `ID` FROM `projects` %s',
+            $orderBy
+            );
         $sqlResult = mfcs::$engine->openDB->query($sql);
+
         if(!$sqlResult['result']){
             errorHandle::newError(__METHOD__."() - MySQL Error ".$sqlResult['error'], errorHandle::DEBUG);
-            return array();
+            return FALSE; 
         }
 
-        $results = array();
+        $projects = array();
         while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)){
-            $results[] = $row;
+
+            if (($projects[] = self::get($row['ID'])) === FALSE) {
+                return FALSE;
+            }
+
         }
-        return $results;
+        return $projects;
     }
 
  
@@ -76,10 +76,10 @@ class projects {
         }
 
         $project = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
-        if (($project['forms'] = decodeFields($project['forms'])) === FALSE) {
+        if (!isempty($project['forms']) && ($project['forms'] = decodeFields($project['forms'])) === FALSE) {
             return FALSE;
         }
-        if (($project['groupings'] = decodeFields($project['groupings'])) === FALSE) {
+        if (!isempty($project['groupings']) && ($project['groupings'] = decodeFields($project['groupings'])) === FALSE) {
             return FALSE;
         }
 
