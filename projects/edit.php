@@ -119,7 +119,7 @@ try {
 
 	// Get the forms that belong to this project
 	if (!is_empty($project['forms'])) {
-		$currentForms = decodeFields($project['forms']);
+		$currentForms = $project['forms'];
 	}
 	else {
 		$currentForms = array();
