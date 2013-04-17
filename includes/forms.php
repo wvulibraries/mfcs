@@ -119,6 +119,19 @@ class forms {
 		return self::getForms(FALSE);
 	}
 
+	public static function isContainer($formID) {
+		$form = self::get($formID);
+
+		if ((int)$form['container'] === 1) {
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
+
+		return FALSE;
+	}
+
 	/*
 	 * Returns all of the linked metadata forms for an object form
 	 */
