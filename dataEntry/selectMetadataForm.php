@@ -10,7 +10,7 @@ try {
 		throw new Exception('Error');
 	}
 
-	$formList = "<ul>";
+	$formList = '<ul class="pickList">';
 	foreach ($forms as $form) {
 
 		// @TODO
@@ -22,13 +22,15 @@ try {
 		if (count($metadataForms) < 1) continue;
 
 		$formList .= '<li>';
-		$formList .= htmlSanitize($form['title']);
-		$formList .= '<ul>';
+		$formList .= sprintf('<h1 class="pickListHeader">%s</h1>',
+			htmlSanitize($form['title'])
+			);
+		$formList .= '<ul class="pickList">';
 
 		foreach ($metadataForms as $metadataForm) {
 
 			$formList .= '<li>';
-			$formList .= sprintf('<a href="metadata.php?formID=%s">%s</a>',
+			$formList .= sprintf('<a href="metadata.php?formID=%s" class="btn">%s</a>',
 				$metadataForm['formID'],
 				htmlSanitize($metadataForm['title'])
 				);

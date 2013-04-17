@@ -58,8 +58,10 @@ if(isset($engine->cleanGet['MYSQL']['ajax'])){
     else if (isset($engine->cleanGet['MYSQL']['action'])) {
         switch($engine->cleanGet['MYSQL']['action']){
             case 'selectChoices':
-            $field  = forms::getField("5","untitled9");
-            $result = forms::getFieldChoices($field);
+            $field        = forms::getField($engine->cleanGet["MYSQL"]['formID'],$engine->cleanGet["MYSQL"]['fieldName']);
+            $fieldChoices = forms::getFieldChoices($field);
+            $result       = forms::drawFieldChoices($field,$fieldChoices);
+            die($result);
             break;
         }
     }
@@ -102,7 +104,7 @@ $engine->eTemplate("include","header");
 
 <section>
 	<header class="page-header">
-		<h1>Select a Project</h1>
+		<h1>Select a Task</h1>
 	</header>
 
 	{local var="results"}
@@ -112,19 +114,22 @@ $engine->eTemplate("include","header");
 	</ul>
 
 
-	<ul>
+	<ul class="pickList">
 		<li>
-			<a href="dataEntry/selectForm.php">Create new Object</a>
+			<a href="dataEntry/selectForm.php" class="btn">Create new Object</a>
 		</li>
 		<li>
-			<a href="dataView/list.php">List Objects</a>
+			<a href="dataView/list.php" class="btn">List Objects</a>
 		</li>
 		<li>
-			<a href="dataEntry/selectMetadataForm.php">Metadata Forms</a>
+			<a href="dataEntry/selectMetadataForm.php" class="btn">Metadata Forms</a>
 		</li>
 		<li>
-			<a href="">Export</a>
+			<a href="" class="btn">Export</a>
 		</li>
+        <li>
+            <a href="" class="btn">Statistics</a>
+        </li>
 	</ul>
 
 </section>

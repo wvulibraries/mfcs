@@ -30,9 +30,9 @@ class listGenerator {
 		$engine   = EngineAPI::singleton();
 		$projects = projects::getProjects();
 
-		$output = '<ul>';
+		$output = '<ul class="pickList">';
 		foreach ($projects as $project) {
-			$output .= sprintf('<li><a href="list.php?listType=project&amp;projectID=%s">%s</a></li>',
+			$output .= sprintf('<li><a href="list.php?listType=project&amp;projectID=%s" class="btn">%s</a></li>',
 				$project['ID'],
 				$project['projectName']
 				);
@@ -47,9 +47,9 @@ class listGenerator {
 		$engine  = EngineAPI::singleton();
 		$forms   = forms::getForms(TRUE);
 
-		$output = '<ul>';
+		$output = '<ul class="pickList">';
 		foreach ($forms as $form) {
-			$output .= sprintf('<li><a href="list.php?listType=form&amp;formID=%s">%s</a></li>',
+			$output .= sprintf('<li><a href="list.php?listType=form&amp;formID=%s" class="btn">%s</a></li>',
 				$form['ID'],
 				$form['title']
 				);
@@ -164,8 +164,8 @@ class listGenerator {
 			return FALSE;
 		}  
 
-		$currentProjectFormList = "Current Projects: <br /><ul>";
-		$formList               = "All Other Forms: <br /><ul>";
+		$currentProjectFormList = '<h1 class="pickListHeader">Current Projects:</h1> <br /><ul class="pickList">';
+		$formList               = '<h1 class="pickListHeader">All Other Forms:</h1> <br /><ul class="pickList">';
 
 		foreach ($forms as $form) {
 
@@ -175,7 +175,7 @@ class listGenerator {
 			
 			foreach ($currentProjects as $projectID => $projectName) {
 				if (forms::checkFormInProject($projectID,$form['ID'])) {
-					$currentProjectFormList .= sprintf('<li><a href="object.php?formID=%s">%s</a></li>',
+					$currentProjectFormList .= sprintf('<li><a href="object.php?formID=%s" class="btn">%s</a></li>',
 						htmlSanitize($form['ID']),
 						htmlSanitize($form['title'])
 						);
@@ -184,7 +184,7 @@ class listGenerator {
 				}
 			}
 
-			$formList .= sprintf('<li><a href="object.php?formID=%s">%s</a></li>',
+			$formList .= sprintf('<li><a href="object.php?formID=%s" class="btn">%s</a></li>',
 				htmlSanitize($form['ID']),
 				htmlSanitize($form['title'])
 				);

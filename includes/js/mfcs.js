@@ -24,7 +24,39 @@ $(function(){
             chkBox.prop('checked', $.inArray(ID, IDs) !== -1 );
         });
     });
+
+    $(document)
+        .on('click', '.metadataObjectEditor', handler_displayMetadataFormModal)
+
+
 });
+
+function handler_displayMetadataFormModal() {
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    var choicesForm = $(this).attr("data-name");
+
+    $("[data-choicesForm='"+choicesForm+"']").each(function() {
+        var dataFieldName = $(this).attr("data-fieldname");
+        var url           = siteRoot+'?ajax&action=selectChoices&formID='+$(this).attr("data-formid")+"&fieldName="+dataFieldName;
+
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "html",
+            success: function(responseData) {
+                console.log(responseData);
+                $("[data-fieldname='"+dataFieldName+"']").html(responseData);
+            },
+            error: function(jqXHR,error,exception) {
+            $('#'+target).html("An Error has occurred: "+error);
+        }
+        });
+    });
+
+}
 
 function saveSelectedProjects(){
     // Get all the IDs of selected projects

@@ -152,6 +152,7 @@ $engine->eTemplate("include","header");
 	<div class="container-fluid">
 		<div class="span3">
 			{local var="leftnav"}
+			<a href="" data-name="4" class="metadataObjectEditor">Personal Names</a>
 		</div>
 
 		<div class="span9">

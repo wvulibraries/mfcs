@@ -1,3 +1,25 @@
+.pickList {
+	list-style: none;
+	width: 220px;
+	margin-left: auto;
+	margin-right: auto;
+}
+ 
+.pickList li {
+	margin-bottom: 10px;
+}
+
+.pickList li a {
+	width: 200px;
+}
+
+.pickListHeader {
+	width: 220px;
+	margin-left: auto;
+	margin-right: auto;
+	font-size: 110%;
+}
+
 #groupingsAdd li,
 #fieldAdd li {
 	margin-bottom: 10px;

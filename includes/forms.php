@@ -435,7 +435,10 @@ class forms {
 					return FALSE;
 				}
 
-				$output .= sprintf('<div %s>',
+				$output .= sprintf('<div data-type="%s" data-formid="%s" data-fieldname="%s" %s>',
+					$field['type'],
+					$formID,
+					htmlSanitize($field['name']),
 					(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':""
 					);
 
@@ -451,8 +454,11 @@ class forms {
 					return FALSE;
 				}
 
-				$output .= sprintf('<select name="%s" id="%s" %s>',
+				$output .= sprintf('<select name="%s" id="%s" data-type="%s" data-formid="%s" data-fieldname="%s" %s>',
 					htmlSanitize($field['name']),
+					htmlSanitize($field['name']),
+					$field['type'],
+					$formID,
 					htmlSanitize($field['name']),
 					(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':""
 					);
@@ -468,10 +474,9 @@ class forms {
 					return FALSE;
 				}
 
-				$output .= sprintf('<select name="%s[]" id="%s" size="5" multiple="multiple" %s>',
+				$output .= sprintf('<select name="%s[]" id="%s" size="5" multiple="multiple">',
 					htmlSanitize($field['name']),
-					htmlSanitize($field['name']),
-					(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':""
+					htmlSanitize($field['name'])
 					);
 
 				if (isset($object['data'][$field['name']])) {
@@ -484,9 +489,13 @@ class forms {
 					}
 				}
 				$output .= '</select><br />';
-				$output .= sprintf('<select name="%s_available" id="%s_available" onchange="addItemToID(\'%s\', this.options[this.selectedIndex]);">',
+				$output .= sprintf('<select name="%s_available" id="%s_available" data-type="%s" data-formid="%s" data-fieldname="%s" %s onchange="addItemToID(\'%s\', this.options[this.selectedIndex]);">',
 					htmlSanitize($field['name']),
 					htmlSanitize($field['name']),
+					$field['type'],
+					$formID,
+					htmlSanitize($field['name']),
+					(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
 					htmlSanitize($field['name'])
 					);
 

@@ -25,7 +25,7 @@ $engine->eTemplate("include","header");
 
 <section>
 	<header class="page-header">
-		<h1>Select a Form.</h1>
+		<h1>Select a Form</h1>
 	</header>
 
 	{local var="results"}
