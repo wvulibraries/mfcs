@@ -38,6 +38,13 @@ try {
 
 	//////////
 	// Children Tab Stuff
+	if (($formList = listGenerator::generateFormSelectList()) === FALSE) {
+		errorHandle::errorMsg("Error getting Forms Listing");
+		throw new Exception('Error');
+	}
+	else {
+		localvars::add("formList",$formList);
+	}
 	localVars::add("childrenList",objects::generateChildList($engine->cleanGet['MYSQL']['objectID']));
 	// Children Tab Stuff
 	//////////
@@ -196,7 +203,22 @@ $engine->eTemplate("include","header");
 					<?php if(forms::isContainer($engine->cleanGet['MYSQL']['formID'])) { ?>
 					<div class="tab-pane" id="children">
 
+						<div class="accordion" id="accordion2">
+							<div class="accordion-group">
+								<div class="accordion-heading">
+									<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+										Add a Child Object
+									</a>
+								</div>
+								<div id="collapseOne" class="accordion-body collapse">
+									<div class="accordion-inner">
+										Select a Form:
 
+										{local var="formList"}
+									</div>
+								</div>
+							</div>
+						</div>
 
 						{local var="childrenList"}
 					</div>
