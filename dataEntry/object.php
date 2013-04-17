@@ -171,8 +171,10 @@ $engine->eTemplate("include","header");
 				<ul class="nav nav-tabs">
 					<li><a data-toggle="tab" href="#metadata">Metadata</a></li>
 					<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
-					<li><a data-toggle="tab" href="#project">Project</a></li>
-					<li><a data-toggle="tab" href="#children">Children</a></li>
+						<li><a data-toggle="tab" href="#project">Project</a></li>
+						<?php if(forms::isContainer($engine->cleanGet['MYSQL']['formID'])) { ?>
+							<li><a data-toggle="tab" href="#children">Children</a></li>
+						<?php } ?>
 					<?php } ?>
 				</ul>
 
@@ -191,10 +193,11 @@ $engine->eTemplate("include","header");
 							<input type="submit" class="btn btn-primary" name="projectForm">
 						</form>
 					</div>
-
+					<?php if(forms::isContainer($engine->cleanGet['MYSQL']['formID'])) { ?>
 					<div class="tab-pane" id="children">
 						{local var="childrenList"}
 					</div>
+					<?php } ?>
 					<?php } ?>
 				</div>
 			</div>
