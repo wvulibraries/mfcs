@@ -150,9 +150,9 @@ $engine->eTemplate("include","header");
 	</header>
 
 	<nav id="breadcrumbs">
-        <ul>
-            <li><a href="{local var="siteRoot"}">Home</a></li>
-            <li><a href="{local var="siteRoot"}/dataEntry/selectForm.php">Select a Form</a></li>
+        <ul class="breadcrumb">
+            <li><a href="{local var="siteRoot"}">Home</a> <span class="divider">/</span></li>
+            <li><a href="{local var="siteRoot"}/dataEntry/selectForm.php">Select a Form</a> <span class="divider">/</span></li>
         </ul>
     </nav> 
 
@@ -195,6 +195,9 @@ $engine->eTemplate("include","header");
 					</div>
 					<?php if(forms::isContainer($engine->cleanGet['MYSQL']['formID'])) { ?>
 					<div class="tab-pane" id="children">
+
+
+
 						{local var="childrenList"}
 					</div>
 					<?php } ?>
