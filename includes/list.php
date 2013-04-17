@@ -178,8 +178,9 @@ class listGenerator {
 			
 			foreach ($currentProjects as $projectID => $projectName) {
 				if (forms::checkFormInProject($projectID,$form['ID'])) {
-					$currentProjectFormList .= sprintf('<li><a href="object.php?formID=%s" class="btn">%s</a></li>',
+					$currentProjectFormList .= sprintf('<li><a href="object.php?formID=%s%s" class="btn">%s</a></li>',
 						htmlSanitize($form['ID']),
+						(!isnull($objectID))?"&amp;parentID=".$objectID:"", // parent information
 						htmlSanitize($form['title'])
 						);
 
@@ -187,8 +188,9 @@ class listGenerator {
 				}
 			}
 
-			$formList .= sprintf('<li><a href="object.php?formID=%s" class="btn">%s</a></li>',
+			$formList .= sprintf('<li><a href="object.php?formID=%s%s" class="btn">%s</a></li>',
 				htmlSanitize($form['ID']),
+				(!isnull($objectID))?"&amp;parentID=".$objectID:"", // parent information
 				htmlSanitize($form['title'])
 				);
 
