@@ -79,6 +79,9 @@ class projects {
         if (($project['forms'] = decodeFields($project['forms'])) === FALSE) {
             return FALSE;
         }
+        if (($project['groupings'] = decodeFields($project['groupings'])) === FALSE) {
+            return FALSE;
+        }
 
         return $project;
 
