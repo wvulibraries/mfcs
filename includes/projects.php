@@ -75,7 +75,12 @@ class projects {
             return FALSE;
         }
 
-        return mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+        $project = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+        if (($project['forms'] = decodeFields($project['forms'])) === FALSE) {
+            return FALSE;
+        }
+
+        return $project;
 
     }
 
@@ -138,6 +143,32 @@ class projects {
         }
 
         return $output;
+
+    }
+
+    // returns an array with all the projects that an object belongs too
+    public static function getAllObjectProjects($objectID) {
+
+        $engine = EngineAPI::singleton();
+
+        $sql       = sprintf("SELECT projectID FROM `objectProjects` WHERE `objectID`='%s'",
+            $engine->openDB->escape($objectID)
+            );
+        $sqlResult = $engine->openDB->query($sql);
+        
+        if (!$sqlResult['result']) {
+            errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+            return FALSE;
+        }
+        
+        $projects = array();
+        while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+            if (($projects[] = self::get($row['projectID'])) === FALSE) {
+                return FALSE;
+            }
+        }
+
+        return $projects;
 
     }
 
