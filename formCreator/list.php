@@ -3,34 +3,15 @@ include("../header.php");
 
 try {
 
-	// @TODO this needs moved into the listGen class
-	// @TODO object forms and metadata forms need separated
-	$sql       = sprintf("SELECT `ID`, `title` FROM `forms` ORDER BY `metadata`, `title`");
-	$sqlResult = $engine->openDB->query($sql);
-
-	if (!$sqlResult['result']) {
-		errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
-		errorHandle::errorMsg("Error getting Projects");
-		throw new Exception('Error');
+	if (($formList = listGenerator::generateFormSelectListForFormCreator()) === FALSE) {
+		throw new Exception("Error generating form list.");
 	}
-
-	$formList = '<ul class="pickList">';
-	while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-
-		// if (projects::checkPermissions($row['ID']) === TRUE) {
-		// }
-		$formList .= sprintf('<li><a href="index.php?id=%s" class="btn">%s</a></li>',
-			$engine->openDB->escape($row['ID']),
-			$engine->openDB->escape($row['title'])
-			);
-
-	}
-	$formList .= "<ul>";
 
 	localvars::add("formList",$formList);
 
 }
 catch(Exception $e) {
+	errorHandle::errorMsg($e->getMessage());
 }
 
 localVars::add("results",displayMessages());
