@@ -2,10 +2,16 @@
 
 class objects {
 
-	public static function validID($required = FALSE) {
+	public static function validID($required = FALSE,$objectID=NULL) {
 		$engine = EngineAPI::singleton();
 
-		if (isset($engine->cleanGet['MYSQL']['objectID'])) {
+		if (!isnull($objectID) && validate::integer($objectID)) {
+			return TRUE;
+		}
+		else if (!isnull($objectID) && !validate::integer($objectID)) {
+			return FALSE;
+		}
+		else if (isset($engine->cleanGet['MYSQL']['objectID'])) {
 			if (is_empty($engine->cleanGet['MYSQL']['objectID'])
 				|| !validate::integer($engine->cleanGet['MYSQL']['objectID'])) {
 
