@@ -4,6 +4,7 @@ include("../header.php");
 try {
 
 	// @TODO this needs moved into the listGen class
+	// @TODO object forms and metadata forms need separated
 	$sql       = sprintf("SELECT `ID`, `title` FROM `forms` ORDER BY `metadata`, `title`");
 	$sqlResult = $engine->openDB->query($sql);
 
