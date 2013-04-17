@@ -154,9 +154,12 @@ class listGenerator {
 		return sprintf('<a href="%s%s">%s</a>',$urls[strtolower($url)],$objectID,htmlSanitize(strtolower($url)));
 	}
 
-	public static function generateFormSelectList() {
+	public static function generateFormSelectList($objectID = NULL) {
 
-		if (($forms = forms::getObjectForms()) === FALSE) {
+		if (isnull($objectID) && ($forms = forms::getObjectForms()) === FALSE) {
+			return FALSE;
+		}
+		else if (!isnull($objectID) && ($forms = forms::getObjectProjectForms($objectID)) === FALSE) {
 			return FALSE;
 		}
 
