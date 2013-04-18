@@ -28,7 +28,7 @@ class forms {
 
 	}
 
-    public static function get($formID=NULL) {
+	public static function get($formID=NULL) {
 
 		if (isnull($formID)) {
 			return self::getForms();
@@ -46,7 +46,7 @@ class forms {
 
 		$sql       = sprintf("SELECT * FROM `forms` WHERE `ID`='%s'",
 			$engine->openDB->escape($formID)
-			);
+		);
 		$sqlResult = $engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
@@ -281,7 +281,7 @@ class forms {
 				htmlSanitize($field['name']),
 				htmlSanitize($choice['index']),
 				htmlSanitize($choice['display'])
-				);
+			);
 		}
 
 		return $output;
@@ -295,7 +295,7 @@ class forms {
 				htmlSanitize($choice['value']),
 				(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['value'])?'selected="selected"':"",
 				htmlSanitize($choice['display'])
-				);
+			);
 		}
 		return $output;
 	}
@@ -307,7 +307,7 @@ class forms {
 				htmlSanitize($choice['value']),
 				(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['value'])?'selected="selected"':"",
 				htmlSanitize($choice['display'])
-				);
+			);
 		}
 		return $output;
 	}
@@ -372,7 +372,7 @@ class forms {
 			htmlSanitize($formID),
 			(!isnull($objectID)) ? '&objectID='.$objectID : "",
 			"post"
-			);
+		);
 
 		$output .= sessionInsertCSRF();
 
@@ -399,7 +399,7 @@ class forms {
 				if (!isempty($field['fieldset'])) {
 					$output .= sprintf('<fieldset><legend>%s</legend>',
 						$field['fieldset']
-						);
+					);
 				}
 				$currentFieldset = $field['fieldset'];
 			}
@@ -424,44 +424,44 @@ class forms {
 				$output .= sprintf('<label for="%s">%s</label>',
 					htmlSanitize($field['id']),
 					htmlSanitize($field['label'])
-					);
+				);
 			}
 
-			if ($field['type']      == "textarea" || $field['type']      == "wysiwyg") {
+			if ($field['type'] == "textarea" || $field['type'] == "wysiwyg") {
 				$output .= sprintf('<textarea name="%s" placeholder="%s" id="%s" class="%s" %s %s %s %s>%s</textarea>',
 					htmlSanitize($field['name']),
 					htmlSanitize($field['placeholder']),
 					htmlSanitize($field['id']),
 					htmlSanitize($field['class']),
 					(!isempty($field['style']))?'style="'.htmlSanitize($field['style']).'"':"",
-				//true/false type attributes
+					//true/false type attributes
 					(strtoupper($field['required']) == "TRUE")?"required":"",
 					(strtoupper($field['readonly']) == "TRUE")?"readonly":"",
 					(strtoupper($field['disabled']) == "TRUE")?"disabled":"",
 					(isset($object['data'][$field['name']]))?htmlSanitize($object['data'][$field['name']]):htmlSanitize($field['value'])
-					);
+				);
 
 				if ($field['type'] == "wysiwyg") {
 					$output .= sprintf('<script type="text/javascript">window.CKEDITOR_BASEPATH="%s/includes/js/CKEditor/"</script>',
 						localvars::get("siteRoot")
-						);
+					);
 					$output .= sprintf('<script type="text/javascript" src="%s/includes/js/CKEditor/ckeditor.js"></script>',
 						localvars::get("siteRoot")
-						);
+					);
 					$output .= '<script type="text/javascript">';
 					$output .= sprintf('if (CKEDITOR.instances["%s"]) { CKEDITOR.remove(CKEDITOR.instances["%s"]); }',
 						htmlSanitize($field['id']),
 						htmlSanitize($field['id'])
-						);
+					);
 					$output .= sprintf('CKEDITOR.replace("%s");',
 						htmlSanitize($field['id'])
-						);
+					);
 
 					$output .= 'htmlParser = "";';
 					$output .= 'if (CKEDITOR.instances["'.$I['field'].'_insert"].dataProcessor) {';
 					$output .= sprintf('    htmlParser = CKEDITOR.instances["%s"].dataProcessor.htmlFilter;',
 						htmlSanitize($field['id'])
-						);
+					);
 					$output .= '}';
 
 					$output .= '</script>';
@@ -479,7 +479,7 @@ class forms {
 					$formID,
 					htmlSanitize($field['name']),
 					(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':""
-					);
+				);
 
 
 				$output .= self::drawFieldChoices($field,$fieldChoices);
@@ -500,7 +500,7 @@ class forms {
 					$formID,
 					htmlSanitize($field['name']),
 					(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':""
-					);
+				);
 
 				$output .= self::drawFieldChoices($field,$fieldChoices);
 
@@ -516,7 +516,7 @@ class forms {
 				$output .= sprintf('<select name="%s[]" id="%s" size="5" multiple="multiple">',
 					htmlSanitize($field['name']),
 					htmlSanitize($field['name'])
-					);
+				);
 
 				if (isset($object['data'][$field['name']])) {
 					foreach ($object['data'][$field['name']] as $selectedItem) {
@@ -524,7 +524,7 @@ class forms {
 						$output .= sprintf('<option value="%s">%s</option>',
 							$engine->openDB->escape($selectedItem),
 							$engine->openDB->escape($tmpObj['data'][$field['choicesField']])
-							);
+						);
 					}
 				}
 				$output .= '</select><br />';
@@ -536,7 +536,7 @@ class forms {
 					htmlSanitize($field['name']),
 					(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
 					htmlSanitize($field['name'])
-					);
+				);
 
 				$output .= self::drawFieldChoices($field,$fieldChoices);
 
@@ -548,7 +548,7 @@ class forms {
 					htmlSanitize($field['name']),
 					htmlSanitize($field['name']),
 					md5(microtime(TRUE))
-					);
+				);
 
 				localvars::add("fieldName",htmlSanitize($field['name']));
 				localvars::add("multipleFiles",(strtoupper($field['multipleFiles']) == "TRUE") ? "true" : "false");
@@ -556,28 +556,28 @@ class forms {
 
 				$output .= sprintf('<script type="text/javascript">%s</script>',
 					file_get_contents(__DIR__."/js/fineUploader.formBuilder.js")
-					);
+				);
 
-           		// Do we display a current file?
+				// Do we display a current file?
 				if(isset($object['data'][$field['name']])){
-                    if(str2bool($field['multipleFiles'])){
-                        for($i=1;$i<=sizeof($object['data'][$field['name']]); $i++){
-                            $output .= sprintf('<div class="filePreview"><a href="#">Click to view file #%s</a>', $i);
-                            $output .= sprintf('<div style="display: none;"><iframe src="fileViewer.php?objectID=%s&field=%s&fileNum=%s" sandbox="" seamless></iframe></div>',
-                                $objectID,
-                                $field['name'],
-                                $i
-                            );
-                            $output .= '</div>';
-                        }
-                    }else{
-                        $output .= '<div class="filePreview"><a href="#">Click to view current file</a>';
-                        $output .= sprintf('<div style="display: none;"><iframe src="fileViewer.php?objectID=%s&field=%s" sandbox="" seamless></iframe></div>',
-                            $objectID,
-                            $field['name']
-                        );
-                        $output .= '</div>';
-                    }
+					if(str2bool($field['multipleFiles'])){
+						for($i=1;$i<=sizeof($object['data'][$field['name']]); $i++){
+							$output .= sprintf('<div class="filePreview"><a href="#">Click to view file #%s</a>', $i);
+							$output .= sprintf('<div style="display: none;"><iframe src="fileViewer.php?objectID=%s&field=%s&fileNum=%s" sandbox="" seamless></iframe></div>',
+								$objectID,
+								$field['name'],
+								$i
+							);
+							$output .= '</div>';
+						}
+					}else{
+						$output .= '<div class="filePreview"><a href="#">Click to view current file</a>';
+						$output .= sprintf('<div style="display: none;"><iframe src="fileViewer.php?objectID=%s&field=%s" sandbox="" seamless></iframe></div>',
+							$objectID,
+							$field['name']
+						);
+						$output .= '</div>';
+					}
 				}
 			}
 			else {
@@ -599,7 +599,7 @@ class forms {
 					(strtoupper($field['required']) == "TRUE")?"required":"",
 					(strtoupper($field['readonly']) == "TRUE")?"readonly":"",
 					(strtoupper($field['disabled']) == "TRUE")?"disabled":""
-					);
+				);
 			}
 
 			$output .= "</div>";
@@ -612,7 +612,7 @@ class forms {
 		$output .= sprintf('<input type="submit" value="%s" name="%s" />',
 			(isnull($objectID))?htmlSanitize($form["submitButton"]):htmlSanitize($form["updateButton"]),
 			$objectID ? "updateForm" : "submitForm"
-			);
+		);
 
 		$output .= "</form>";
 
@@ -634,13 +634,13 @@ class forms {
 			foreach ($form['fields'] as $field) {
 				$headers[] = $field['label'];
 			}
- 
+
 			$tableRows = array();
 			for($I=0;$I<count($objects);$I++) {
 				$temp   = array();
 				$temp[] = sprintf('<input type="checkbox" name="delete[]" value="%s"',
 					$objects[$I]['ID']
-					);
+				);
 
 				foreach ($form['fields'] as $field) {
 					$temp[] = sprintf('<input type="%s" name="%s_%s" value="%s" />',
@@ -648,7 +648,7 @@ class forms {
 						$field['name'],
 						$objects[$I]['ID'],
 						htmlSanitize($objects[$I]['data'][$field['name']])
-						);
+					);
 				}
 
 				$tableRows[] = $temp;
@@ -662,7 +662,7 @@ class forms {
 				$_SERVER['PHP_SELF'],
 				htmlSanitize($formID),
 				"post"
-				);
+			);
 
 			$output .= sessionInsertCSRF();
 
@@ -700,11 +700,11 @@ class forms {
 		// Do the Updates
 		if (($currentProjects = users::loadProjects()) === FALSE) {
 			return FALSE;
-		}  
-		
-		
+		}
+
+
 		// do the deletes
-		
+
 		if (isset($engine->cleanPost['MYSQL']['delete']) && count($engine->cleanPost['MYSQL']['delete']) > 0) {
 			foreach ($engine->cleanPost['MYSQL']['delete'] as $objectID) {
 				$sql       = sprintf("DELETE FROM `objects` WHERE `ID`='%s'",
@@ -775,7 +775,7 @@ class forms {
 			if (strtolower($field['required']) == "true"           &&
 				(!isset($engine->cleanPost['RAW'][$field['name']]) ||
 					isempty($engine->cleanPost['RAW'][$field['name']]))
-				) {
+			) {
 
 				errorHandle::errorMsg("Missing data for required field '".$field['label']."'.");
 				continue;
@@ -805,7 +805,7 @@ class forms {
 			}
 
 			// Duplicate Checking (Form)
-			if (strtolower($field['duplicates']) == "true") { 
+			if (strtolower($field['duplicates']) == "true") {
 				if (self::isDupe($formID,$field['name'],$engine->cleanPost['RAW'][$field['name']],$objectID)) {
 					errorHandle::errorMsg("Duplicate data (in form) provided in field '".$field['label']."'.");
 					continue;
@@ -826,10 +826,10 @@ class forms {
 			}
 
 			if (strtolower($field['type']) == "file") {
-                $values[$field['name']] = (array)processUploads($field,$engine->cleanPost['RAW'][$field['name']]);
+				$values[$field['name']] = (array)processUploads($field,$engine->cleanPost['RAW'][$field['name']]);
 			}
 
-            if(is_null($values[$field['name']])) $values[$field['name']] = $engine->cleanPost['RAW'][$field['name']];
+			if(is_null($values[$field['name']])) $values[$field['name']] = $engine->cleanPost['RAW'][$field['name']];
 		}
 
 		if (!is_empty($engine->errorStack)) {
@@ -851,7 +851,7 @@ class forms {
 				encodeFields($values),
 				$engine->openDB->escape($form['metadata']),
 				time()
-				);
+			);
 		}
 		else {
 			// place old version into revision control
@@ -876,7 +876,7 @@ class forms {
 				$engine->openDB->escape($form['metadata']),
 				time(),
 				$engine->openDB->escape($objectID)
-				);
+			);
 		}
 
 		$sqlResult = $engine->openDB->query($sql);
@@ -936,7 +936,7 @@ class forms {
 			// increment the project counter
 			$sql       = sprintf("UPDATE `forms` SET `count`=`count`+'1' WHERE `ID`='%s'",
 				$engine->openDB->escape($formID['ID'])
-				);
+			);
 			$sqlResult = $engine->openDB->query($sql);
 
 			if (!$sqlResult['result']) {
@@ -960,7 +960,7 @@ class forms {
 			$sql       = sprintf("UPDATE `objects` SET `idno`='%s' WHERE `ID`='%s'",
 				$idno, // Cleaned above when assigned
 				$engine->openDB->escape($objectID)
-				);
+			);
 			$sqlResult = $engine->openDB->query($sql);
 
 			if (!$sqlResult['result']) {
@@ -976,7 +976,7 @@ class forms {
 			$sql       = sprintf("DELETE FROM `dupeMatching` WHERE `formID`='%s' AND `objectID`='%s'",
 				$engine->openDB->escape($formID),
 				$engine->openDB->escape($objectID)
-				);
+			);
 			$sqlResult = $engine->openDB->query($sql);
 
 			if (!$sqlResult['result']) {
@@ -994,7 +994,7 @@ class forms {
 				$engine->openDB->escape($objectID),
 				$engine->openDB->escape($name),
 				$engine->cleanPost['MYSQL'][$name]
-				);
+			);
 			$sqlResult = $engine->openDB->query($sql);
 
 			if (!$sqlResult['result']) {
@@ -1012,7 +1012,7 @@ class forms {
 				$engine->openDB->transRollback();
 				$engine->openDB->transEnd();
 				return FALSE;
-			}  
+			}
 			foreach ($currentProjects as $projectID => $projectName) {
 				if ((objects::addProject($objectID,$projectID)) === FALSE) {
 					$engine->openDB->transRollback();
@@ -1039,11 +1039,11 @@ class forms {
 	// $value must be RAW
 	public static function isDupe($formID,$field,$value,$objectID=NULL) {
 		$sql = sprintf("SELECT COUNT(*) FROM `dupeMatching` WHERE `formID`='%s' AND `field`='%s' AND `value`='%s' %s",
-            mfcs::$engine->openDB->escape($formID),
-            mfcs::$engine->openDB->escape($field),
-            mfcs::$engine->openDB->escape($value),
+			mfcs::$engine->openDB->escape($formID),
+			mfcs::$engine->openDB->escape($field),
+			mfcs::$engine->openDB->escape($value),
 			(!isnull($objectID))?"AND `objectID`!='".mfcs::$engine->openDB->escape($objectID)."'":""
-			);
+		);
 
 		$sqlResult = mfcs::$engine->openDB->query($sql);
 

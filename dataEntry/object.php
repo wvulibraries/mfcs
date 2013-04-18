@@ -158,7 +158,7 @@ if (forms::validID()) {
 }
 
 localVars::add("results",displayMessages());
- 
+
 localvars::add("actionHeader",(isnull($engine->cleanGet['MYSQL']['objectID']))?"Add":"Edit");
 localvars::add("parentHeader",(isnull($parentObject))?"":"<h2>Adding Child to Parent '".$parentObject['data'][$form['objectTitleField']]."'</h2>");
 
@@ -172,11 +172,11 @@ $engine->eTemplate("include","header");
 	</header>
 
 	<nav id="breadcrumbs">
-        <ul class="breadcrumb">
-            <li><a href="{local var="siteRoot"}">Home</a> <span class="divider">/</span></li>
-            <li><a href="{local var="siteRoot"}/dataEntry/selectForm.php">Select a Form</a> <span class="divider">/</span></li>
-        </ul>
-    </nav> 
+		<ul class="breadcrumb">
+			<li><a href="{local var="siteRoot"}">Home</a> <span class="divider">/</span></li>
+			<li><a href="{local var="siteRoot"}/dataEntry/selectForm.php">Select a Form</a> <span class="divider">/</span></li>
+		</ul>
+	</nav>
 
 	<div class="container-fluid">
 		<div class="span3">
@@ -206,44 +206,44 @@ $engine->eTemplate("include","header");
 					</div>
 
 					<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
-					<div class="tab-pane" id="project">
-						<h2>Change Project Membership</h2>
+						<div class="tab-pane" id="project">
+							<h2>Change Project Membership</h2>
 
-						<form action="{phpself query="true"}" method="post">
+							<form action="{phpself query="true"}" method="post">
 							{local var="projectOptions"}
 							{engine name="csrf"}
 							<input type="submit" class="btn btn-primary" name="projectForm">
-						</form>
-					</div>
-					<?php if(forms::isContainer($engine->cleanGet['MYSQL']['formID'])) { ?>
-					<div class="tab-pane" id="children">
+							</form>
+						</div>
+						<?php if(forms::isContainer($engine->cleanGet['MYSQL']['formID'])) { ?>
+							<div class="tab-pane" id="children">
 
-						<div class="accordion" id="accordion2">
-							<div class="accordion-group">
-								<div class="accordion-heading">
-									<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-										Add a Child Object
-									</a>
-								</div>
-								<div id="collapseOne" class="accordion-body collapse">
-									<div class="accordion-inner">
-										Select a Form:
+								<div class="accordion" id="accordion2">
+									<div class="accordion-group">
+										<div class="accordion-heading">
+											<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+												Add a Child Object
+											</a>
+										</div>
+										<div id="collapseOne" class="accordion-body collapse">
+											<div class="accordion-inner">
+												Select a Form:
 
-										{local var="formList"}
+												{local var="formList"}
+											</div>
+										</div>
 									</div>
 								</div>
+
+								<section>
+									<header>
+										<h1>Children</h1>
+									</header>
+
+									{local var="childrenList"}
+								</section>
 							</div>
-						</div>
-
-						<section>
-							<header>
-								<h1>Children</h1>
-							</header>
-
-							{local var="childrenList"}
-						</section>
-					</div>
-					<?php } ?>
+						<?php } ?>
 					<?php } ?>
 				</div>
 			</div>

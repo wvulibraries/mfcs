@@ -49,7 +49,7 @@ function buildProjectNavigation($projectID) {
 			if (!isempty($item['grouping'])) {
 				$output .= sprintf('<li><strong>%s</strong><ul>',
 					$item['grouping']
-					);
+				);
 			}
 			$currentGroup = $item['grouping'];
 		}
@@ -59,25 +59,25 @@ function buildProjectNavigation($projectID) {
 			$output .= sprintf('<a href="%s">%s</a>',
 				htmlSanitize($item['url']),
 				htmlSanitize($item['label'])
-				);
+			);
 		}
 		else if ($item['type'] == "link") {
 			$output .= sprintf('<a href="%s">%s</a>',
 				htmlSanitize($item['url']),
 				htmlSanitize($item['label'])
-				);
+			);
 		}
 		else if ($item['type'] == "objectForm" || $item['type'] == "metadataForm") {
 			$output .= sprintf('<a href="object.php?id=%s&amp;formID=%s">%s</a>',
 				htmlSanitize($projectID),
 				htmlSanitize($item['formID']),
 				htmlSanitize($item['label'])
-				);
+			);
 		}
 		else {
 			$output .= sprintf('%s',
 				htmlSanitize($item['label'])
-				);
+			);
 		}
 		$output .= "</li>";
 
@@ -121,12 +121,12 @@ function getBaseUploadPath() {
  * @return string
  */
 function getSaveDir($type,$fileUUID){
-    // error checking - allow a full filename to be passed (aka: stip off the fileExt)
-    if(FALSE !== strpos($fileUUID,'.')) $fileUUID = pathinfo($fileUUID,PATHINFO_FILENAME);
+	// error checking - allow a full filename to be passed (aka: stip off the fileExt)
+	if(FALSE !== strpos($fileUUID,'.')) $fileUUID = pathinfo($fileUUID,PATHINFO_FILENAME);
 
-    $savePath   = mfcs::config('savePath');
-    $newFileSubpath = implode(DIRECTORY_SEPARATOR, explode('-', $fileUUID));
-    return $savePath.DIRECTORY_SEPARATOR.trim(strtolower($type)).DIRECTORY_SEPARATOR.$newFileSubpath;
+	$savePath   = mfcs::config('savePath');
+	$newFileSubpath = implode(DIRECTORY_SEPARATOR, explode('-', $fileUUID));
+	return $savePath.DIRECTORY_SEPARATOR.trim(strtolower($type)).DIRECTORY_SEPARATOR.$newFileSubpath;
 }
 
 /**
@@ -224,16 +224,16 @@ function newFileUUID(){
  **/
 function processUploads($field,$uploadID) {
 	$engine     = EngineAPI::singleton();
-    $results    = array();
-    $uploadPath = getBaseUploadPath().DIRECTORY_SEPARATOR.$uploadID;
-    $savePath   = mfcs::config('savePath');
+	$results    = array();
+	$uploadPath = getBaseUploadPath().DIRECTORY_SEPARATOR.$uploadID;
+	$savePath   = mfcs::config('savePath');
 	$files      = scandir($uploadPath);
 
 	// Sort the files in 'natural order' and then start looping!
 	natsort($files);
 	foreach ($files as $filename) {
 		// Skip hidden stuff
-        if($filename{0} == '.') continue;
+		if($filename{0} == '.') continue;
 
 		// Figure out the details of the file we're working with
 		$fileUUID     = newFileUUID();
@@ -243,9 +243,9 @@ function processUploads($field,$uploadID) {
 		$origFilepath = $uploadPath.DIRECTORY_SEPARATOR.$filename;
 		$newFilepath  = getSaveDir('originals',$fileUUID).DIRECTORY_SEPARATOR.strtolower($newFilename);
 
-        // Move the file to it's now (originals) home and save it's file extension
-        if(!is_dir(getSaveDir('originals',$fileUUID))) mkdir(getSaveDir('originals',$fileUUID), 0777, TRUE);
-        rename($origFilepath, $newFilepath);
+		// Move the file to it's now (originals) home and save it's file extension
+		if(!is_dir(getSaveDir('originals',$fileUUID))) mkdir(getSaveDir('originals',$fileUUID), 0777, TRUE);
+		rename($origFilepath, $newFilepath);
 
 		// Ensure this file is an image before image specific processing
 		if (getimagesize($newFilepath) !== FALSE) {
@@ -255,7 +255,7 @@ function processUploads($field,$uploadID) {
 				$output = file_put_contents(
 					$savePath.DIRECTORY_SEPARATOR."hocr",
 					"tessedit_create_hocr 1"
-					);
+				);
 
 				if ($output === FALSE) {
 					errorHandle::newError("Failed to create hocr file.",errorHandle::HIGH);
@@ -267,7 +267,7 @@ function processUploads($field,$uploadID) {
 					escapeshellarg($newFilepath),
 					escapeshellarg(getSaveDir('combined', $fileUUID).DIRECTORY_SEPARATOR.basename($filename,".$fileExt")),
 					escapeshellarg($savePath.DIRECTORY_SEPARATOR."hocr")
-					));
+				));
 
 				if (trim($output) !== 'Tesseract Open Source OCR Engine with Leptonica') {
 					errorHandle::newError("Tesseract Output: ".$output,errorHandle::HIGH);
@@ -278,7 +278,7 @@ function processUploads($field,$uploadID) {
 				$output = shell_exec(sprintf('convert %s %s 2>&1',
 					escapeshellarg($newFilepath),
 					escapeshellarg(getSaveDir('combined', $fileUUID).DIRECTORY_SEPARATOR.basename($filename,".$fileExt").".jpg")
-					));
+				));
 
 				if (!is_empty($output)) {
 					errorHandle::newError("Convert Output: ".$output,errorHandle::HIGH);
@@ -303,7 +303,7 @@ function processUploads($field,$uploadID) {
 						$field['borderColor'],
 						$field['borderWidth'],
 						$field['borderHeight']
-						);
+					);
 				}
 
 				// Create a thumbnail
@@ -319,7 +319,7 @@ function processUploads($field,$uploadID) {
 						$field['thumbnailWidth'],
 						$field['thumbnailHeight'],
 						TRUE
-						);
+					);
 
 					// Store thumbnail
 					if ($thumb->writeImage(getSaveDir('thumbs', $fileUUID).DIRECTORY_SEPARATOR.basename($filename,".$fileExt").".".strtolower($thumb->getImageFormat())) === FALSE) {
@@ -398,9 +398,9 @@ function processUploads($field,$uploadID) {
 		}
 
 		// Ensure this file is an audio file before audio specific processing
-        $fi = new finfo(FILEINFO_MIME);
-        $mimeType = $fi->file($newFilepath, FILEINFO_MIME_TYPE);
-        if(strpos($mimeType, 'audio/') !== FALSE){
+		$fi = new finfo(FILEINFO_MIME);
+		$mimeType = $fi->file($newFilepath, FILEINFO_MIME_TYPE);
+		if(strpos($mimeType, 'audio/') !== FALSE){
 			// Perform audio processing here
 		}
 	}
@@ -415,7 +415,7 @@ function processUploads($field,$uploadID) {
 				escapeshellarg($file),
 				escapeshellarg($combinedDir.basename($file,"jpg")."pdf"),
 				escapeshellarg($combinedDir.basename($file,"jpg")."html")
-				));
+			));
 
 			if (trim($output) !== 'Writing unmodified DCT buffer.') {
 				errorHandle::errorMsg("Failed to Create PDF: ".basename($file,"jpg")."pdf");
@@ -427,7 +427,7 @@ function processUploads($field,$uploadID) {
 		$output = shell_exec(sprintf('gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=%s -f %s 2>&1',
 			$combinedDir."combined.pdf",
 			$combinedDir."*.pdf"
-			));
+		));
 
 		if (!is_empty($output)) {
 			errorHandle::errorMsg("Failed to combine PDFs into single PDF.");
@@ -442,6 +442,6 @@ function processUploads($field,$uploadID) {
 		}
 	}
 
-    return $results;
+	return $results;
 }
 ?>
