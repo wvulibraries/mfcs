@@ -5,34 +5,34 @@ class objects {
 	public static function validID($required = FALSE,$objectID=NULL) {
 		$engine = EngineAPI::singleton();
 
+		// Validates $objectID if it is passed in
 		if (!isnull($objectID) && validate::integer($objectID)) {
 			return TRUE;
 		}
-		else if (!isnull($objectID) && !validate::integer($objectID)) {
-			return FALSE;
-		}
+		// Handles validation from query string
 		else if (isset($engine->cleanGet['MYSQL']['objectID'])) {
-			if (is_empty($engine->cleanGet['MYSQL']['objectID'])
-				|| !validate::integer($engine->cleanGet['MYSQL']['objectID'])) {
+			if (!is_empty($engine->cleanGet['MYSQL']['objectID'])
+				&& validate::integer($engine->cleanGet['MYSQL']['objectID'])) {
 
-				return FALSE;
+				return TRUE;
 
 			}
-
+ 
 		}
 		else if (!isset($engine->cleanGet['MYSQL']['objectID']) && $required === FALSE) {
 			$engine->cleanGet['MYSQL']['objectID'] = NULL;
+			return TRUE;
 		}
 		else {
 			return FALSE;
 		}
 
-		return TRUE;
+		return FALSE;
 
 	}
 
 	public static function get($objectID=NULL) {
-
+  
 		if (isnull($objectID)) {
 			return self::getObjects();
 		}
@@ -58,9 +58,8 @@ class objects {
 		}
 
 		$object = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
-		$object['data'] = decodeFields($object['data']);
 
-		if ($object['data'] === FALSE) {
+		if (($object['data'] = decodeFields($object['data'])) === FALSE) {
 			errorHandle::errorMsg("Error retrieving object.");
 			return FALSE;
 		}
@@ -139,38 +138,6 @@ class objects {
 		return($children);
 	}
 
-	/**
-	 * Display a list, with optional links, of children for a given object
-	 *
-	 * @param string $objectID The ID of the object
-	 * @return string|bool
-	 * @author Scott Blake
-	 **/
-	public static function generateChildList($objectID,$link=TRUE) {
-		if (!validate::integer($objectID)) {
-			return FALSE;
-		}
-
-		$engine = EngineAPI::singleton();
-
-		if (($children = self::getChildren($objectID)) === FALSE) {
-			return FALSE;
-		}
-
-		$output = '';
-		foreach ($children as $child) {
-			$form = forms::get($child['formID']);
-
-			$output .= sprintf('<li>%s%s%s</li>',
-				($link === TRUE) ? '<a href="?objectID='.$child['ID'].'">' : "",
-				htmlSanitize($child['data'][$form['objectTitleField']]),
-				($link === TRUE) ? '</a>' : ""
-				);
-		}
-
-		return $output;
-	}
-
 	public static function getAllObjectsForForm($formID) {
 		$engine = EngineAPI::singleton();
 
@@ -228,6 +195,34 @@ class objects {
 		else {
 			return FALSE;
 		}
+	}
+
+	// @TODO 
+	// puts all the needed stuff into $cleanPost, then submits it using forms::submit
+	public static function add($formID,$metadata,$objectID = NULL) {
+
+		if (!is_array($metadata)) {
+			return FALSE;
+		}
+
+		if (self::validID(FALSE,$objectID)) {
+			return FALSE;
+		}
+
+		// populate cleanPost
+		
+		// submit to forms::submit 
+		return forms::submit($formID,$objectID);
+
+	}
+
+	public static function update($formID,$metadata,$objectID) {
+
+		if (!is_array($metadata)) {
+			return FALSE;
+		}
+
+		return self::add($formID,$metadata,$objectID);
 	}
 
 	/**

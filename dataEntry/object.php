@@ -35,7 +35,7 @@ try {
 	}
 
 	/* Parent Object 'Stuff' */
-	if (isset($engine->cleanGet['MYSQL']['parentID']) && ($parentObject = objects::get(isset($engine->cleanGet['MYSQL']['parentID']))) === FALSE ) {
+	if (isset($engine->cleanGet['MYSQL']['parentID']) && ($parentObject = objects::get($engine->cleanGet['MYSQL']['parentID'])) === FALSE ) {
 		throw new Exception("Unable to retrieve parent object");
 	}
 	/* End Parent Object 'Stuff' */
@@ -56,7 +56,7 @@ try {
 	else {
 		localvars::add("formList",$formList);
 	}
-	localVars::add("childrenList",objects::generateChildList($engine->cleanGet['MYSQL']['objectID']));
+	localVars::add("childrenList",listGenerator::generateChildList($engine->cleanGet['MYSQL']['objectID']));
 	// Children Tab Stuff
 	//////////
 
@@ -158,13 +158,17 @@ if (forms::validID()) {
 }
 
 localVars::add("results",displayMessages());
+ 
+localvars::add("actionHeader",(isnull($engine->cleanGet['MYSQL']['objectID']))?"Add":"Edit");
+localvars::add("parentHeader",(isnull($parentObject))?"":"<h2>Adding Child to Parent '".$parentObject['data'][$form['objectTitleField']]."'</h2>");
 
 $engine->eTemplate("include","header");
 ?>
 
 <section>
 	<header class="page-header">
-		<h1>Edit Object</h1>
+		<h1>{local var="actionHeader"} Object</h1>
+		{local var="parentHeader"}
 	</header>
 
 	<nav id="breadcrumbs">
@@ -231,7 +235,13 @@ $engine->eTemplate("include","header");
 							</div>
 						</div>
 
-						{local var="childrenList"}
+						<section>
+							<header>
+								<h1>Children</h1>
+							</header>
+
+							{local var="childrenList"}
+						</section>
 					</div>
 					<?php } ?>
 					<?php } ?>

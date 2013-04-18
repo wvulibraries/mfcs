@@ -85,14 +85,16 @@ class listGenerator {
 
 			$form = forms::get($object['formID']);
 
-			$data[] = array(self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("revisions",$object['ID']),$object['ID'],$object['idno']);
+			$tmp = array(self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("revisions",$object['ID']),$object['ID'],$object['idno']);
 			foreach($form['fields'] as $field) {
 				if (strtolower($field['type']) == "idno") continue;
 
 				if ($field['displayTable'] == "true") {
-					$data[] = $object['data'][$field['name']];
+					$tmp[] = $object['data'][$field['name']];
 				}
 			}
+
+			$data[] = $tmp;
 
 		}
 
@@ -231,6 +233,38 @@ class listGenerator {
 
 		return $formList;
 
+	}
+
+		/**
+	 * Display a list, with optional links, of children for a given object
+	 *
+	 * @param string $objectID The ID of the object
+	 * @return string|bool
+	 * @author Scott Blake
+	 **/
+	public static function generateChildList($objectID,$link=TRUE) {
+		if (!validate::integer($objectID)) {
+			return FALSE;
+		}
+
+		$engine = EngineAPI::singleton();
+
+		if (($children = objects::getChildren($objectID)) === FALSE) {
+			return FALSE;
+		}
+
+		$output = '';
+		foreach ($children as $child) {
+			$form = forms::get($child['formID']);
+
+			$output .= sprintf('<li>%s%s%s</li>',
+				($link === TRUE) ? '<a href="?objectID='.$child['ID'].'">' : "",
+				htmlSanitize($child['data'][$form['objectTitleField']]),
+				($link === TRUE) ? '</a>' : ""
+				);
+		}
+
+		return $output;
 	}
 
 }
