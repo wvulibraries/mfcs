@@ -121,6 +121,9 @@ function getBaseUploadPath() {
  * @return string
  */
 function getSaveDir($type,$fileUUID){
+    // error checking - allow a full filename to be passed (aka: stip off the fileExt)
+    if(FALSE !== strpos($fileUUID,'.')) $fileUUID = pathinfo($fileUUID,PATHINFO_FILENAME);
+
     $savePath   = mfcs::config('savePath');
     $newFileSubpath = implode(DIRECTORY_SEPARATOR, explode('-', $fileUUID));
     return $savePath.DIRECTORY_SEPARATOR.trim(strtolower($type)).DIRECTORY_SEPARATOR.$newFileSubpath;
