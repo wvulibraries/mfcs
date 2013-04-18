@@ -188,12 +188,12 @@ function prepareUploadDirs($uploadID) {
  *
  * @param array $field
  * @param string $uploadID
- * @return bool
+ * @return bool|array
  * @author Scott Blake
  **/
 function processUploads($field,$uploadID) {
 	$engine = EngineAPI::singleton();
-
+    $results = array();
     $uploadPath = getBaseUploadPath().DIRECTORY_SEPARATOR.$uploadID;
     $savePath   = mfcs::config('savePath');
 	$files = scandir($uploadPath);
@@ -202,6 +202,7 @@ function processUploads($field,$uploadID) {
         if($filename{0} == '.') continue;
 
         // Figure out full paths to old, and new files and save it's file extensionn
+        $results[]    = $filename;
         $fileUUID     = pathinfo($filename, PATHINFO_FILENAME);
         $origFilepath = $uploadPath.DIRECTORY_SEPARATOR.$filename;
         $newFilepath  = getSaveDir('originals',$fileUUID).DIRECTORY_SEPARATOR.strtolower($filename);
@@ -405,5 +406,7 @@ function processUploads($field,$uploadID) {
 			}
 		}
 	}
+
+    return $results;
 }
 ?>

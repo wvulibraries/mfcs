@@ -814,11 +814,10 @@ class forms {
 			}
 
 			if (strtolower($field['type']) == "file") {
-				processUploads($field,$engine->cleanPost['RAW'][$field['name']]);
+                $values[$field['name']] = (array)processUploads($field,$engine->cleanPost['RAW'][$field['name']]);
 			}
 
-			$values[$field['name']] = $engine->cleanPost['RAW'][$field['name']];
-
+            if(is_null($values[$field['name']])) $values[$field['name']] = $engine->cleanPost['RAW'][$field['name']];
 		}
 
 		if (!is_empty($engine->errorStack)) {
