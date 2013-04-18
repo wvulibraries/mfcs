@@ -969,9 +969,6 @@ function modalBindings() {
 			$("#formTypeSelector").modal("hide");
 		})
 		.on("click", "button:contains('Object')", function() {
-			// Deselect object form
-			$("#formSettings_formMetadata").removeAttr("checked").change();
-
 			// Add IDNO field and select options
 			$("#fieldAdd li:contains('ID Number')").click();
 			$("#formPreview .well :input[name^=label_]").val('IDNO').keyup();
@@ -991,6 +988,9 @@ function modalBindings() {
 			// Click through each field and then back to add field tab to update form preview
 			$("#formPreview li").click();
 			$("#fieldTab li:last a").click();
+
+			// Deselect object form
+			$("#formSettings_formMetadata").removeAttr("checked").change();
 
 			// Hide modal
 			$("#formTypeSelector").modal("hide");
