@@ -560,12 +560,24 @@ class forms {
 
            		// Do we display a current file?
 				if(isset($object['data'][$field['name']])){
-					$output .= '<div class="filePreview"><a href="#">Click to view current file</a>';
-					$output .= sprintf('<div style="display: none;"><iframe src="fileViewer.php?objectID=%s&field=%s" sandbox="" seamless></iframe></div>',
-						$objectID,
-						$field['name']
-						);
-					$output .= '</div>';
+                    if(str2bool($field['multipleFiles'])){
+                        for($i=1;$i<=sizeof($object['data'][$field['name']]); $i++){
+                            $output .= sprintf('<div class="filePreview"><a href="#">Click to view file #%s</a>', $i);
+                            $output .= sprintf('<div style="display: none;"><iframe src="fileViewer.php?objectID=%s&field=%s&fileNum=%s" sandbox="" seamless></iframe></div>',
+                                $objectID,
+                                $field['name'],
+                                $i
+                            );
+                            $output .= '</div>';
+                        }
+                    }else{
+                        $output .= '<div class="filePreview"><a href="#">Click to view current file</a>';
+                        $output .= sprintf('<div style="display: none;"><iframe src="fileViewer.php?objectID=%s&field=%s" sandbox="" seamless></iframe></div>',
+                            $objectID,
+                            $field['name']
+                        );
+                        $output .= '</div>';
+                    }
 				}
 			}
 			else {

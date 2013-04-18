@@ -33,8 +33,14 @@ try{
         throw new Exception('Invalid Object Field!');
     }
 
+    // Get the object's files array and grab the correct file we are showing
+    $files = $object['data'][$fieldName];
+    $filename = isset($engine->cleanGet['MYSQL']['fileNum'])
+        ? $files[$engine->cleanGet['MYSQL']['fileNum']-1]
+        : $files[0];
+
     // Build the full path to the object we're showing
-    $fullPath = "$basePath/originals/{$fieldData[0]}";
+    $fullPath = getSaveDir('originals',$filename).DIRECTORY_SEPARATOR.strtolower($filename);
 
     // Get the object's contents
     $fileContents = file_get_contents($fullPath);
