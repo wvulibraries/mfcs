@@ -145,7 +145,7 @@ try {
 	foreach ($metadataForms as $i => $form) {
         $targetVar = ($i % 2) ? 'metadataFormsOdd' : 'metadataFormsEven';
         $$targetVar .= sprintf('<li data-type="metadataForm" data-formid="%s"><a href="#" class="btn btn-block">%s</a></li>',
-            htmlSanitize($form['ID']),
+            htmlSanitize($form['formID']),
             htmlSanitize($form['title'])
         );
 	}
@@ -375,7 +375,7 @@ $engine->eTemplate("include","header");
 			{local var="results"}
 		</div>
 
-		<?php if(is_empty($engine->errorStack['error'])){ ?>
+		<?php if(!isset($engine->errorStack['error']) || (isset($engine->errorStack['error']) && is_empty($engine->errorStack['error']))){ ?>
 
 
         <div class="alert alert-block" style="display: none;" id="updateProjectAlert">
