@@ -158,13 +158,15 @@ if (forms::validID()) {
 }
 
 localVars::add("results",displayMessages());
+ 
+localvars::add("actionHeader",(isnull($engine->cleanGet['MYSQL']['objectID']))?"Add":"Edit");
 
 $engine->eTemplate("include","header");
 ?>
 
 <section>
 	<header class="page-header">
-		<h1>Edit Object</h1>
+		<h1>{local var="actionHeader"} Object</h1>
 	</header>
 
 	<nav id="breadcrumbs">
