@@ -20,6 +20,7 @@ try{
         $revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime');
         $object = $revisions->getRevision($objectID, $engine->cleanGet['MYSQL']['revisionID']);
         if($object === FALSE) throw new Exception('Invalid Revision ID!');
+        $object['data'] = decodeFields($object['data']);
     }else{
         // Lookup the passed object
         $object = objects::get($objectID);
