@@ -197,6 +197,34 @@ class objects {
 		}
 	}
 
+	// @TODO 
+	// puts all the needed stuff into $cleanPost, then submits it using forms::submit
+	public static function add($formID,$metadata,$objectID = NULL) {
+
+		if (!is_array($metadata)) {
+			return FALSE;
+		}
+
+		if (self::validID(FALSE,$objectID)) {
+			return FALSE;
+		}
+
+		// populate cleanPost
+		
+		// submit to forms::submit 
+		return forms::submit($formID,$objectID);
+
+	}
+
+	public static function update($formID,$metadata,$objectID) {
+
+		if (!is_array($metadata)) {
+			return FALSE;
+		}
+
+		return self::add($formID,$metadata,$objectID);
+	}
+
 	/**
 	 * Retrieve a list of projects that a given object has been added to
 	 *
