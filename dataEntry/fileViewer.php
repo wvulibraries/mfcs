@@ -50,9 +50,16 @@ try{
     $fi = new finfo(FILEINFO_MIME);
     $mimeType = $fi->buffer(file_get_contents($fullPath));
 
-    // Lastly, set the MIME Type header, and display the object
-    header("Content-type: $mimeType");
-    die($fileContents); // Die so nothing else will be displayed
+    // Set the correct MIME-Type headers
+	if(isset($engine->cleanGet['MYSQL']['download']) and str2bool($engine->cleanGet['MYSQL']['download'])){
+		header("Content-Disposition: attachment; filename='$filename'");
+		header("Content-Type: application/octet-stream");
+	}else{
+		header("Content-type:$mimeType");
+	}
+
+	// Lastly, display the object (and die so nothing else will be displayed)
+    die($fileContents);
 }catch(Exception $e){
     errorHandle::newError($e->getMessage(), errorHandle::DEBUG);
     die($e->getMessage());
