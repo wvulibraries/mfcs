@@ -203,7 +203,7 @@ function processUploads($field,$uploadID) {
         if($filename{0} == '.') continue;
 
         // Figure out full paths to old, and new files and save it's file extensionn
-        $results[]    = $filename;
+        $results[]    = strtolower($filename);
         $fileUUID     = pathinfo($filename, PATHINFO_FILENAME);
         $origFilepath = $uploadPath.DIRECTORY_SEPARATOR.$filename;
         $newFilepath  = getSaveDir('originals',$fileUUID).DIRECTORY_SEPARATOR.strtolower($filename);
