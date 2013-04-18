@@ -103,10 +103,12 @@ class mfcs {
             return FALSE;
         }
 
+        $row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
         $idno                 = $idno['idnoFormat'];
         $len                  = strrpos($idno,"#") - strpos($idno,"#") + 1;
-        $sqlResult['numrows'] = str_pad($sqlResult['numrows'],$len,"0",STR_PAD_LEFT);
-        $idno                 = preg_replace("/#+/", $sqlResult['result']['count'], $idno);
+        $padding  = str_pad($row['count'],$len,"0",STR_PAD_LEFT);
+        $idno                 = preg_replace("/#+/", $padding, $idno);
 
         return $idno;
     }
