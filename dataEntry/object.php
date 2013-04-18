@@ -235,7 +235,13 @@ $engine->eTemplate("include","header");
 							</div>
 						</div>
 
-						{local var="childrenList"}
+						<section>
+							<header>
+								<h1>Children</h1>
+							</header>
+
+							{local var="childrenList"}
+						</section>
 					</div>
 					<?php } ?>
 					<?php } ?>
