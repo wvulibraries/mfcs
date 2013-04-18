@@ -209,7 +209,6 @@ $engine->eTemplate("include","header");
 </style>
 <script>
     function scrollSync(iFrameObj){
-        console.log('Here!');
         $($(iFrameObj).contents()).scroll(function(){
             if($('#revisionSelector').val()){
                 var thisObj     = $(this);
@@ -219,7 +218,6 @@ $engine->eTemplate("include","header");
                 var targetClass = iFrameClass=='rightFileViewer' ? 'leftFileViewer' : 'rightFileViewer';
                 var scrollTop   = thisObj.scrollTop();
                 var scrollLeft  = thisObj.scrollLeft();
-                console.log('.'+targetClass+'[data-field_name="'+fieldName+'"]');
                 $('.'+targetClass+'[data-field_name="'+fieldName+'"]').contents().scrollTop(scrollTop).scrollLeft(scrollLeft);
             }
         });
