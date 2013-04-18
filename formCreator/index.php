@@ -323,7 +323,71 @@ $engine->eTemplate("include","header");
 				</div>
 
 				<div class="row-fluid">
-					<!-- Navigation HTML Here -->
+					<div class="span6">
+						<ul class="nav nav-tabs" id="groupingTab">
+							<li><a href="#groupingsAdd" data-toggle="tab">Add</a></li>
+							<li><a href="#groupingsSettings" data-toggle="tab">Settings</a></li>
+						</ul>
+
+						<div class="tab-content">
+							<div class="tab-pane" id="groupingsAdd">
+								<ul class="unstyled draggable span6">
+									<li><a href="#" class="btn btn-block">New Grouping</a></li>
+									<li><a href="#" class="btn btn-block">Log Out</a></li>
+								</ul>
+								<ul class="unstyled draggable span6">
+									<li><a href="#" class="btn btn-block">Export Link (needs definable properties)</a></li>
+									<li><a href="#" class="btn btn-block">Link</a></li>
+								</ul>
+
+								<h3>Object Forms</h3>
+								<div class="row-fluid">
+									<ul class="unstyled draggable span6">{local var="objectFormsEven"}</ul>
+									<ul class="unstyled draggable span6">{local var="objectFormsOdd"}</ul>
+								</div>
+
+								{local var="metadataForms"}
+							</div>
+
+							<div class="tab-pane" id="groupingsSettings">
+								<div class="alert alert-block" id="noGroupingSelected">
+									<h4>No Grouping Selected</h4>
+									To change a grouping, click on it in the preview to the right.
+								</div>
+
+								<div class="control-group well well-small" id="groupingsSettings_container_grouping">
+									<label for="groupingsSettings_grouping">
+										Grouping Label
+									</label>
+									<input type="text" class="input-block-level" id="groupingsSettings_grouping" name="groupingsSettings_grouping" />
+									<span class="help-block hidden"></span>
+								</div>
+
+								<div class="control-group well well-small" id="groupingsSettings_container_label">
+									<label for="groupingsSettings_label">
+										Label
+									</label>
+									<input type="text" class="input-block-level" id="groupingsSettings_label" name="groupingsSettings_label" />
+									<span class="help-block hidden"></span>
+								</div>
+
+								<div class="control-group well well-small" id="groupingsSettings_container_url">
+									<label for="groupingsSettings_url">
+										Address
+									</label>
+									<input type="text" class="input-block-level" id="groupingsSettings_url" name="groupingsSettings_url" />
+									<span class="help-block hidden"></span>
+								</div>
+							</div>
+						</div>
+						<input type="hidden" name="groupings">
+					</div>
+
+					<div class="span6">
+						<ul class="sortable unstyled" id="GroupingsPreview">
+							{local var="existingGroupings"}
+						</ul>
+					</div>
 				</div>
 			</div>
 		</div>
