@@ -329,10 +329,8 @@ function showFieldSettings(fullID) {
 				}
 				$("#fieldSettings_choices_manual :input[name=fieldSettings_choices_text]").keyup();
 			}
-			else {
-				$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
-				$("#fieldSettings_choices_fieldSelect").val($("#choicesField_"+id).val()).change();
-			}
+			$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
+			$("#fieldSettings_choices_fieldSelect").val($("#choicesField_"+id).val()).change();
 
 			$("#fieldSettings_options_required").prop("checked",($("#required_"+id).val()==='true'));
 			$("#fieldSettings_options_duplicates").prop("checked",($("#duplicates_"+id).val()==='true'));
@@ -465,8 +463,6 @@ function fieldSettingsBindings() {
 		else if ($(this).val() == 'form') {
 			$("#fieldSettings_choices_manual").hide();
 			$("#fieldSettings_choices_form").show();
-			$("#fieldSettings_choices_formSelect").change();
-			$("#fieldSettings_choices_fieldSelect").change();
 		}
 	}).change();
 
@@ -643,8 +639,8 @@ function fieldSettingsBindings() {
 				});
 			}
 
-			$("#formPreview .well :input[name^=choicesForm_]").val(val);
-			$("#fieldSettings_choices_fieldSelect").html(choicesFields[val]);
+			$("#formPreview .well :input[name^=choicesForm_]").val(val).change();
+			$("#fieldSettings_choices_fieldSelect").html(choicesFields[val]).change();
 		})
 		.on("change","#fieldSettings_choices_fieldSelect",function() {
 			$("#formPreview .well :input[name^=choicesField_]").val($(this).val());
