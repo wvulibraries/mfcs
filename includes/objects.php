@@ -5,29 +5,29 @@ class objects {
 	public static function validID($required = FALSE,$objectID=NULL) {
 		$engine = EngineAPI::singleton();
 
+		// Validates $objectID if it is passed in
 		if (!isnull($objectID) && validate::integer($objectID)) {
 			return TRUE;
 		}
-		else if (!isnull($objectID) && !validate::integer($objectID)) {
-			return FALSE;
-		}
+		// Handles validation from query string
 		else if (isset($engine->cleanGet['MYSQL']['objectID'])) {
-			if (is_empty($engine->cleanGet['MYSQL']['objectID'])
-				|| !validate::integer($engine->cleanGet['MYSQL']['objectID'])) {
+			if (!is_empty($engine->cleanGet['MYSQL']['objectID'])
+				&& validate::integer($engine->cleanGet['MYSQL']['objectID'])) {
 
-				return FALSE;
+				return TRUE;
 
 			}
-
+ 
 		}
 		else if (!isset($engine->cleanGet['MYSQL']['objectID']) && $required === FALSE) {
 			$engine->cleanGet['MYSQL']['objectID'] = NULL;
+			return TRUE;
 		}
 		else {
 			return FALSE;
 		}
 
-		return TRUE;
+		return FALSE;
 
 	}
 
