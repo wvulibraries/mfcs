@@ -955,7 +955,48 @@ $engine->eTemplate("include","header");
 				</div>
 
 				<div class="row-fluid">
-					<!-- Permissions HTML Here -->
+					<table>
+						<tr>
+							<th>Data Entry Users</th>
+							<th>Data View Users</th>
+							<th>Administrators</th>
+						</tr>
+						<tr>
+							<td>
+								<select name="selectedEntryUsers[]" id="selectedEntryUsers" size="5" multiple="multiple">
+									{local var="selectedEntryUsers"}
+								</select>
+								<br />
+								<select name="availableEntryUsers" id="availableEntryUsers" onchange="addItemToID('selectedEntryUsers', this.options[this.selectedIndex])">
+									{local var="availableUsersList"}
+								</select>
+								<br />
+								<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedEntryUsers', this.form.selectedEntryUsers)" />
+							</td>
+							<td>
+								<select name="selectedViewUsers[]" id="selectedViewUsers" size="5" multiple="multiple">
+									{local var="selectedViewUsers"}
+								</select>
+								<br />
+								<select name="availableViewUsers" id="availableViewUsers" onchange="addItemToID('selectedViewUsers', this.options[this.selectedIndex])">
+									{local var="availableUsersList"}
+								</select>
+								<br />
+								<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedViewUsers', this.form.selectedViewUsers)" />
+							</td>
+							<td>
+								<select name="selectedUsersAdmins[]" id="selectedUsersAdmins" size="5" multiple="multiple">
+									{local var="selectedUsersAdmins"}
+								</select>
+								<br />
+								<select name="availableUsersAdmins" id="availableUsersAdmins" onchange="addItemToID('selectedUsersAdmins', this.options[this.selectedIndex])">
+									{local var="availableUsersList"}
+								</select>
+								<br />
+								<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedUsersAdmins', this.form.selectedUsersAdmins)" />
+							</td>
+						<tr>
+					</table>
 				</div>
 			</div>
 		</div>
