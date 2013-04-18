@@ -1,53 +1,73 @@
 <?php
 include("../header.php");
 
+function generateFieldDisplay($field,$data,$side,$revisionID=NULL){
+    $engine = mfcs::$engine;
+    $output='';
+    switch($field['type']){
+        case 'idno':
+            /*
+            $output .= sprintf('<li><div>%s</div>%s</li>',
+                $field['label'],
+                $object['data'][ $field['name'] ]
+            );
+            */
+            break;
+
+        case 'text':
+            $output .= sprintf('<li><div>%s</div>%s</li>',
+                $field['label'],
+                $data[ $field['name'] ]
+            );
+            break;
+
+        case 'file':
+            $output .= sprintf('<li><div>%s</div>', $field['label']);
+
+            $fileViewerBaseParams = array(
+                'objectID' => $engine->cleanGet['MYSQL']['objectID'],
+                'field' => $field['name']
+            );
+            if(!is_null($revisionID)) $fileViewerBaseParams['revisionID'] = $revisionID;
+
+            if(str2bool($field['multipleFiles'])){
+                $files = $data[ $field['name'] ];
+                for($i=1;$i<=sizeof($files); $i++){
+                    $fileViewerBaseParams['fileNum'] = $i;
+                    $output .= sprintf('<iframe class="%sFileViewer" src="fileViewer.php?%s#%sFileViewer" data-field_name="%s" onload="scrollSync(this)" seamless></iframe>',
+                        trim(strtolower($side)),
+                        http_build_query($fileViewerBaseParams),
+                        trim(strtolower($side)),
+                        $field['name']
+                    );
+                }
+            }else{
+                $output .= '<div class="filePreview"><a href="#">Click to view current file</a>';
+                $output .= sprintf('<iframe class="%sFileViewer" src="fileViewer.php?%s#%sFileViewer" data-field_name="%s" onload="scrollSync(this)" seamless></iframe>',
+                    trim(strtolower($side)),
+                    http_build_query($fileViewerBaseParams),
+                    trim(strtolower($side)),
+                    $field['name']
+                );
+            }
+
+            $output .= '</li>';
+            break;
+    }
+    return $output;
+}
+
 try {
     // Make sure we have id, formID, and objectID provided
     if(!isset($engine->cleanGet['MYSQL']['objectID']) || is_empty($engine->cleanGet['MYSQL']['objectID']) || !validate::integer($engine->cleanGet['MYSQL']['objectID'])) throw new Exception('No Object ID Provided.');
-    if(!isset($engine->cleanGet['MYSQL']['formID'])
-        || is_empty($engine->cleanGet['MYSQL']['formID'])
-        || !validate::integer($engine->cleanGet['MYSQL']['formID'])) {
+    localvars::add("objectID", $engine->cleanGet['MYSQL']['objectID']);
 
-        if (!isnull($engine->cleanGet['MYSQL']['objectID'])) {
-            $object = objects::get($engine->cleanGet['MYSQL']['objectID']);
-
-            if ($object === FALSE) {
-                errorHandle::newError(__METHOD__."() - No Form ID Provided, error getting Object", errorHandle::DEBUG);
-                errorHandle::errorMsg("No Form ID Provided, error getting Object.");
-                throw new Exception('Error');
-            }
-
-            http::setGet('formID',$object['formID']);
-
-        }
-        else {
-            throw new Exception('No Form ID Provided.');
-        }
-    }
-
-
-    // check for edit permissions on the project
-    if(projects::checkPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) {
-        throw new Exception('Permissions denied for working on this project');
-    }
-
-    // check that this form is part of the project
-    if(!forms::checkFormInProject($engine->cleanGet['MYSQL']['id'],$engine->cleanGet['MYSQL']['formID'])) {
-        throw new Exception('Form is not part of project.');
-    }
-
-    // Make sure the objectID is from this form
-    if(isset($engine->cleanGet['MYSQL']['objectID']) && !objects::checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
-        throw new Exception('Object not from this form');
-    }
+    $object = objects::get($engine->cleanGet['MYSQL']['objectID']);
+    $form   = forms::get($object['formID']);
+    localvars::add("formName",$form['title']);
 
     // Setup revision control
     $revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime');
-
-    // Get the project
-    $project = projects::get($engine->cleanGet['MYSQL']['id']);
-    if($project === FALSE) throw new Exception('Error retrieving project.');
-    localvars::add("projectName",$project['projectName']);
 
     // Get the current object
     $object = objects::get($engine->cleanGet['MYSQL']['objectID']);
@@ -77,36 +97,28 @@ try {
         }
     }
 
-    // Setup some local vars
-    localvars::add("id", $engine->cleanGet['MYSQL']['id']);
-    localvars::add("formID", $engine->cleanGet['MYSQL']['formID']);
-    localvars::add("objectID", $engine->cleanGet['MYSQL']['objectID']);
-    localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['id']));
-
     // Is this just a revision AJAX request?
-    if((isset($engine->cleanGet['MYSQL']['revisionTable']))){
-        echo $revisions->generateRevisionTable($engine->cleanGet['MYSQL']['objectID'], array(
-            array('field' => 'parentID', 'label' => 'Parent ID'),
-            array('field' => 'formID', 'label' => 'Form ID'),
-            array('field' => 'modifiedTime', 'label' => 'Last Updated'),
-        ));
-    }
-
     if((isset($engine->cleanGet['MYSQL']['revisionID']))){
         $revision = $revisions->getRevision($engine->cleanGet['MYSQL']['objectID'], $engine->cleanGet['MYSQL']['revisionID']);
         $revision['data'] = decodeFields($revision['data']);
         echo '<ul class="objectFields">';
-        foreach($revision['data'] as $name => $value){
-            echo !is_array($value)
-                ? sprintf('<li><div>%s</div>%s<br>%s</li>', $name, $value, $revisions->manualDiff($object['data'][$name], $revision['data'][$name]))
-                : sprintf('<li><div>%s</div><iframe class="rightFileViewer" src="fileViewer.php?objectID=%s&field=%s&revisionID=%s#rightFileViewer" data-field_name="%s" onload="scrollSync(this)" seamless></iframe></li>', $name, $engine->cleanGet['MYSQL']['objectID'], $name, $engine->cleanGet['MYSQL']['revisionID'], $name);
+        foreach($form['fields'] as $field){
+            echo generateFieldDisplay($field,$revision['data'],'right',$engine->cleanGet['MYSQL']['revisionID']);
         }
         echo '</ul>';
         exit();
     }
+
+    // Build current version
+    $output='';
+    foreach($form['fields'] as $field){
+        $output .= generateFieldDisplay($field,$object['data'],'left');
+    }
+    localvars::add("currentVersion", $output);
+
 }
 catch(Exception $e) {
-    errorHandle::newError(__METHOD__."() - ".$e->getMessage(), errorHandle::DEBUG);
+    errorHandle::newError($e->getMessage(), errorHandle::DEBUG);
     errorHandle::errorMsg($e->getMessage());
 }
 
@@ -122,7 +134,7 @@ $engine->eTemplate("include","header");
 
 
 <header class="page-header">
-    <h1>{local var="projectName"}</h1>
+    <h1>{local var="formName"}</h1>
 </header>
 
 <div id="left">
@@ -132,15 +144,7 @@ $engine->eTemplate("include","header");
 <div id="objectComparator">
     <section class="revisionSection" id="current"">
     <header>Current Version:</header>
-    <ul class="objectFields">
-        <?php
-        foreach($object['data'] as $name => $value){
-            echo !is_array($value)
-                ? sprintf('<li><div>%s</div>%s</li>', $name, $value)
-                : sprintf('<li><div>%s</div><iframe class="leftFileViewer" src="fileViewer.php?objectID=%s&field=%s#leftFileViewer" data-field_name="%s" onload="scrollSync(this)" seamless></iframe></li>', $name, $engine->cleanGet['MYSQL']['objectID'], $name, $name);
-        }
-        ?>
-    </ul>
+    <ul class="objectFields">{local var="currentVersion"}</ul>
     </section>
     <section class="revisionSection" id="revisions">
         <header>
@@ -205,6 +209,7 @@ $engine->eTemplate("include","header");
 </style>
 <script>
     function scrollSync(iFrameObj){
+        console.log('Here!');
         $($(iFrameObj).contents()).scroll(function(){
             if($('#revisionSelector').val()){
                 var thisObj     = $(this);
@@ -214,6 +219,7 @@ $engine->eTemplate("include","header");
                 var targetClass = iFrameClass=='rightFileViewer' ? 'leftFileViewer' : 'rightFileViewer';
                 var scrollTop   = thisObj.scrollTop();
                 var scrollLeft  = thisObj.scrollLeft();
+                console.log('.'+targetClass+'[data-field_name="'+fieldName+'"]');
                 $('.'+targetClass+'[data-field_name="'+fieldName+'"]').contents().scrollTop(scrollTop).scrollLeft(scrollLeft);
             }
         });
@@ -223,7 +229,7 @@ $engine->eTemplate("include","header");
 
     $(function(){
        $('#revisionSelector').change(function(){
-           var url = '?id={local var="id"}&formID={local var="formID"}&objectID={local var="objectID"}&revisionID='+$(this).val();
+           var url = '?objectID={local var="objectID"}&revisionID='+$(this).val();
            $('#revisionViewer').load(url);
        });
         $('#revertBtn').click(function(){
