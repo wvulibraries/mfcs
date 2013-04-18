@@ -85,14 +85,16 @@ class listGenerator {
 
 			$form = forms::get($object['formID']);
 
-			$data[] = array(self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("revisions",$object['ID']),$object['ID'],$object['idno']);
+			$tmp = array(self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("revisions",$object['ID']),$object['ID'],$object['idno']);
 			foreach($form['fields'] as $field) {
 				if (strtolower($field['type']) == "idno") continue;
 
 				if ($field['displayTable'] == "true") {
-					$data[] = $object['data'][$field['name']];
+					$tmp[] = $object['data'][$field['name']];
 				}
 			}
+
+			$data[] = $tmp;
 
 		}
 
