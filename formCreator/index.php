@@ -114,6 +114,76 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	}
 }
 
+if (isset($engine->cleanPost['MYSQL']['submitPermissions'])) {
+	try{
+		// trans: begin transaction
+		$engine->openDB->transBegin();
+
+		// update permissions
+		$sql = sprintf("DELETE FROM `%s` WHERE `projectID`='%s'",
+			$engine->openDB->escape($engine->dbTables("permissions")),
+			$engine->cleanGet['MYSQL']['id']
+		);
+		$sqlResult = $engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			throw new Exception("MySQL Error - Wipe Permissions ({$sqlResult['error']} -- $sql)");
+		}
+
+		$permissionValueGroups = array();
+		if (isset($engine->cleanPost['MYSQL']['selectedViewUsers']) && is_array($engine->cleanPost['MYSQL']['selectedViewUsers'])) {
+			foreach($engine->cleanPost['MYSQL']['selectedViewUsers'] as $value) {
+				$permissionValueGroups[] = sprintf("('%s','%s','%s')",
+					$engine->openDB->escape($value),
+					$engine->cleanGet['MYSQL']['id'],
+					mfcs::AUTH_VIEW
+				);
+			}
+		}
+		if (isset($engine->cleanPost['MYSQL']['selectedEntryUsers']) && is_array($engine->cleanPost['MYSQL']['selectedEntryUsers'])) {
+			foreach($engine->cleanPost['MYSQL']['selectedEntryUsers'] as $value) {
+				$permissionValueGroups[] = sprintf("('%s','%s','%s')",
+					$engine->openDB->escape($value),
+					$engine->cleanGet['MYSQL']['id'],
+					mfcs::AUTH_ENTRY
+				);
+			}
+		}
+		if (isset($engine->cleanPost['MYSQL']['selectedUsersAdmins']) && is_array($engine->cleanPost['MYSQL']['selectedUsersAdmins'])) {
+			foreach($engine->cleanPost['MYSQL']['selectedUsersAdmins'] as $value) {
+				$permissionValueGroups[] = sprintf("('%s','%s','%s')",
+					$engine->openDB->escape($value),
+					$engine->cleanGet['MYSQL']['id'],
+					mfcs::AUTH_ADMIN
+				);
+			}
+		}
+
+		if (sizeof($permissionValueGroups)) {
+			$sql = sprintf("INSERT INTO `%s` (userID,projectID,type) VALUES %s",
+				$engine->openDB->escape($engine->dbTables("permissions")),
+				implode(',', $permissionValueGroups)
+			);
+			$sqlResult = $engine->openDB->query($sql);
+
+			if (!$sqlResult['result']) {
+				throw new Exception("MySQL Error - Insert Permissions ({$sqlResult['error']} -- $sql)");
+			}
+		}
+
+		// If we get here then the project successfully updated!
+		$engine->openDB->transCommit();
+		$engine->openDB->transEnd();
+		errorHandle::successMsg("Successfully updated Permissions");
+	}
+	catch (Exception $e) {
+		errorHandle::newError("{$e->getFile()}:{$e->getLine()} {$e->getMessage()}", errorHandle::DEBUG);
+		errorHandle::errorMsg("Error Updating Project");
+		$engine->openDB->transRollback();
+		$engine->openDB->transEnd();
+	}
+}
+
 $tmp = NULL;
 foreach (Imagick::queryFormats() as $format) {
 	$tmp .= '<option value="'.$format.'">'.$format.'</option>';
