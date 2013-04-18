@@ -1047,11 +1047,15 @@ class forms {
 
 		$sqlResult = mfcs::$engine->openDB->query($sql);
 
-		// we return TRUE on Error, because if a dupe is encountered we want it to fail out.
 		if ($sqlResult['result'] === FALSE) {
 			return TRUE;
 		}
-		else if ((INT)$sqlResult['result']['COUNT(*)'] > 0) {
+
+		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+		// we return TRUE on Error, because if a dupe is encountered we want it to fail out.
+
+		if ((INT)$row['COUNT(*)'] > 0) {
 			return TRUE;
 		}
 		else {
