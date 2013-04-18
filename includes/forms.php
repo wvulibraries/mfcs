@@ -367,10 +367,11 @@ class forms {
 			$object['data'] = array();
 		}
 
-		$output = sprintf('<form action="%s?formID=%s%s" method="%s">',
+		$output = sprintf('<form action="%s?formID=%s%s%s" method="%s">',
 			$_SERVER['PHP_SELF'],
 			htmlSanitize($formID),
 			(!isnull($objectID)) ? '&objectID='.$objectID : "",
+			(isset($engine->cleanGet['HTML']['parentID']) && !isempty($engine->cleanGet['HTML']['parentID']))?'&parentID='.$engine->cleanGet['HTML']['parentID']:"",
 			"post"
 			);
 
