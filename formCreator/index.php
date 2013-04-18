@@ -6,6 +6,47 @@ if (is_empty($formID)) {
 	$formID = NULL;
 }
 
+if (isset($engine->cleanPost['MYSQL']['submitNavigation'])) {
+	try{
+		// trans: begin transaction
+		$engine->openDB->transBegin();
+
+		$groupings = json_decode($engine->cleanPost['RAW']['groupings'], TRUE);
+
+		if (!is_empty($groupings)) {
+			foreach ($groupings as $I => $grouping) {
+				$positions[$I] = $grouping['position'];
+			}
+
+			array_multisort($positions, SORT_ASC, $groupings);
+		}
+
+		$groupings = encodeFields($groupings);
+
+		$sql = sprintf("UPDATE `%s` SET `groupings`='%s' WHERE `ID`='%s'",
+			$engine->openDB->escape($engine->dbTables("projects")),
+			$engine->openDB->escape($groupings),
+			$engine->cleanGet['MYSQL']['id']
+		);
+		$sqlResult = $engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			throw new Exception("MySQL Error - Updating Navigation ({$sqlResult['error']} -- $sql)");
+		}
+
+		// If we get here then the navigation successfully updated!
+		$engine->openDB->transCommit();
+		$engine->openDB->transEnd();
+		errorHandle::successMsg("Successfully updated Project.");
+	}
+	catch (Exception $e) {
+		errorHandle::newError("{$e->getFile()}:{$e->getLine()} {$e->getMessage()}", errorHandle::DEBUG);
+		errorHandle::errorMsg("Error Updating Navigation");
+		$engine->openDB->transRollback();
+		$engine->openDB->transEnd();
+	}
+}
+
 if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	$engine->openDB->transBegin();
 
@@ -111,6 +152,76 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 		$engine->openDB->transCommit();
 		$engine->openDB->transEnd();
 		errorHandle::successMsg("Successfully submitted form.");
+	}
+}
+
+if (isset($engine->cleanPost['MYSQL']['submitPermissions'])) {
+	try{
+		// trans: begin transaction
+		$engine->openDB->transBegin();
+
+		// update permissions
+		$sql = sprintf("DELETE FROM `%s` WHERE `projectID`='%s'",
+			$engine->openDB->escape($engine->dbTables("permissions")),
+			$engine->cleanGet['MYSQL']['id']
+		);
+		$sqlResult = $engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			throw new Exception("MySQL Error - Wipe Permissions ({$sqlResult['error']} -- $sql)");
+		}
+
+		$permissionValueGroups = array();
+		if (isset($engine->cleanPost['MYSQL']['selectedViewUsers']) && is_array($engine->cleanPost['MYSQL']['selectedViewUsers'])) {
+			foreach($engine->cleanPost['MYSQL']['selectedViewUsers'] as $value) {
+				$permissionValueGroups[] = sprintf("('%s','%s','%s')",
+					$engine->openDB->escape($value),
+					$engine->cleanGet['MYSQL']['id'],
+					mfcs::AUTH_VIEW
+				);
+			}
+		}
+		if (isset($engine->cleanPost['MYSQL']['selectedEntryUsers']) && is_array($engine->cleanPost['MYSQL']['selectedEntryUsers'])) {
+			foreach($engine->cleanPost['MYSQL']['selectedEntryUsers'] as $value) {
+				$permissionValueGroups[] = sprintf("('%s','%s','%s')",
+					$engine->openDB->escape($value),
+					$engine->cleanGet['MYSQL']['id'],
+					mfcs::AUTH_ENTRY
+				);
+			}
+		}
+		if (isset($engine->cleanPost['MYSQL']['selectedUsersAdmins']) && is_array($engine->cleanPost['MYSQL']['selectedUsersAdmins'])) {
+			foreach($engine->cleanPost['MYSQL']['selectedUsersAdmins'] as $value) {
+				$permissionValueGroups[] = sprintf("('%s','%s','%s')",
+					$engine->openDB->escape($value),
+					$engine->cleanGet['MYSQL']['id'],
+					mfcs::AUTH_ADMIN
+				);
+			}
+		}
+
+		if (sizeof($permissionValueGroups)) {
+			$sql = sprintf("INSERT INTO `%s` (userID,projectID,type) VALUES %s",
+				$engine->openDB->escape($engine->dbTables("permissions")),
+				implode(',', $permissionValueGroups)
+			);
+			$sqlResult = $engine->openDB->query($sql);
+
+			if (!$sqlResult['result']) {
+				throw new Exception("MySQL Error - Insert Permissions ({$sqlResult['error']} -- $sql)");
+			}
+		}
+
+		// If we get here then the permissions successfully updated!
+		$engine->openDB->transCommit();
+		$engine->openDB->transEnd();
+		errorHandle::successMsg("Successfully updated Permissions");
+	}
+	catch (Exception $e) {
+		errorHandle::newError("{$e->getFile()}:{$e->getLine()} {$e->getMessage()}", errorHandle::DEBUG);
+		errorHandle::errorMsg("Error Updating Project");
+		$engine->openDB->transRollback();
+		$engine->openDB->transEnd();
 	}
 }
 
@@ -302,7 +413,9 @@ if (is_empty(localVars::get("updateButton"))) {
 $engine->eTemplate("include","header");
 ?>
 
-<script type="text/javascript" src="{local var="siteRoot"}includes/js/createForm.js"></script>
+<script type="text/javascript" src="{local var="siteRoot"}includes/js/createForm_nav.js"></script>
+<script type="text/javascript" src="{local var="siteRoot"}includes/js/createForm_form.js"></script>
+<script type="text/javascript" src="{local var="siteRoot"}includes/js/createForm_permissions.js"></script>
 
 <section>
 	<ul class="nav nav-tabs">
@@ -323,7 +436,71 @@ $engine->eTemplate("include","header");
 				</div>
 
 				<div class="row-fluid">
-					<!-- Navigation HTML Here -->
+					<div class="span6">
+						<ul class="nav nav-tabs" id="groupingTab">
+							<li><a href="#groupingsAdd" data-toggle="tab">Add</a></li>
+							<li><a href="#groupingsSettings" data-toggle="tab">Settings</a></li>
+						</ul>
+
+						<div class="tab-content">
+							<div class="tab-pane" id="groupingsAdd">
+								<ul class="unstyled draggable span6">
+									<li><a href="#" class="btn btn-block">New Grouping</a></li>
+									<li><a href="#" class="btn btn-block">Log Out</a></li>
+								</ul>
+								<ul class="unstyled draggable span6">
+									<li><a href="#" class="btn btn-block">Export Link (needs definable properties)</a></li>
+									<li><a href="#" class="btn btn-block">Link</a></li>
+								</ul>
+
+								<h3>Object Forms</h3>
+								<div class="row-fluid">
+									<ul class="unstyled draggable span6">{local var="objectFormsEven"}</ul>
+									<ul class="unstyled draggable span6">{local var="objectFormsOdd"}</ul>
+								</div>
+
+								{local var="metadataForms"}
+							</div>
+
+							<div class="tab-pane" id="groupingsSettings">
+								<div class="alert alert-block" id="noGroupingSelected">
+									<h4>No Grouping Selected</h4>
+									To change a grouping, click on it in the preview to the right.
+								</div>
+
+								<div class="control-group well well-small" id="groupingsSettings_container_grouping">
+									<label for="groupingsSettings_grouping">
+										Grouping Label
+									</label>
+									<input type="text" class="input-block-level" id="groupingsSettings_grouping" name="groupingsSettings_grouping" />
+									<span class="help-block hidden"></span>
+								</div>
+
+								<div class="control-group well well-small" id="groupingsSettings_container_label">
+									<label for="groupingsSettings_label">
+										Label
+									</label>
+									<input type="text" class="input-block-level" id="groupingsSettings_label" name="groupingsSettings_label" />
+									<span class="help-block hidden"></span>
+								</div>
+
+								<div class="control-group well well-small" id="groupingsSettings_container_url">
+									<label for="groupingsSettings_url">
+										Address
+									</label>
+									<input type="text" class="input-block-level" id="groupingsSettings_url" name="groupingsSettings_url" />
+									<span class="help-block hidden"></span>
+								</div>
+							</div>
+						</div>
+						<input type="hidden" name="groupings">
+					</div>
+
+					<div class="span6">
+						<ul class="sortable unstyled" id="GroupingsPreview">
+							{local var="existingGroupings"}
+						</ul>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -891,7 +1068,48 @@ $engine->eTemplate("include","header");
 				</div>
 
 				<div class="row-fluid">
-					<!-- Permissions HTML Here -->
+					<table>
+						<tr>
+							<th>Data Entry Users</th>
+							<th>Data View Users</th>
+							<th>Administrators</th>
+						</tr>
+						<tr>
+							<td>
+								<select name="selectedEntryUsers[]" id="selectedEntryUsers" size="5" multiple="multiple">
+									{local var="selectedEntryUsers"}
+								</select>
+								<br />
+								<select name="availableEntryUsers" id="availableEntryUsers" onchange="addItemToID('selectedEntryUsers', this.options[this.selectedIndex])">
+									{local var="availableUsersList"}
+								</select>
+								<br />
+								<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedEntryUsers', this.form.selectedEntryUsers)" />
+							</td>
+							<td>
+								<select name="selectedViewUsers[]" id="selectedViewUsers" size="5" multiple="multiple">
+									{local var="selectedViewUsers"}
+								</select>
+								<br />
+								<select name="availableViewUsers" id="availableViewUsers" onchange="addItemToID('selectedViewUsers', this.options[this.selectedIndex])">
+									{local var="availableUsersList"}
+								</select>
+								<br />
+								<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedViewUsers', this.form.selectedViewUsers)" />
+							</td>
+							<td>
+								<select name="selectedUsersAdmins[]" id="selectedUsersAdmins" size="5" multiple="multiple">
+									{local var="selectedUsersAdmins"}
+								</select>
+								<br />
+								<select name="availableUsersAdmins" id="availableUsersAdmins" onchange="addItemToID('selectedUsersAdmins', this.options[this.selectedIndex])">
+									{local var="availableUsersList"}
+								</select>
+								<br />
+								<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedUsersAdmins', this.form.selectedUsersAdmins)" />
+							</td>
+						<tr>
+					</table>
 				</div>
 			</div>
 		</div>
