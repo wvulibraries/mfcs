@@ -28,7 +28,7 @@ class forms {
 
 	}
 
-	function get($formID=NULL) {
+    public static function get($formID=NULL) {
 
 		if (isnull($formID)) {
 			return self::getForms();
@@ -367,17 +367,6 @@ class forms {
 			$object['data'] = array();
 		}
 
-		// determine parentID 
-		if (!isnull($objectID)) {
-			$parentID = $object['parentID'];
-		}
-		else if (isset($engine->cleanGet['HTML']['parentID']) && !isempty($engine->cleanGet['HTML']['parentID'])) {
-			$parentID = $engine->cleanGet['HTML']['parentID'];
-		}
-		else {
-			$parentID = "0";
-		}
-
 		$output = sprintf('<form action="%s?formID=%s%s" method="%s">',
 			$_SERVER['PHP_SELF'],
 			htmlSanitize($formID),
@@ -386,9 +375,6 @@ class forms {
 			);
 
 		$output .= sessionInsertCSRF();
-		$output .= sprintf('<input type="hidden" name="parentID" value="%s" />',
-			$engine->openDB->escape($parentID)
-			);
 
 		$output .= sprintf('<header><h1>%s</h1><h2>%s</h2></header>',
 			htmlSanitize($form['title']),
