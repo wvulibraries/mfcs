@@ -187,6 +187,34 @@ function prepareUploadDirs($uploadID) {
 */
 
 /**
+ * Generate a new UUID for file uploads
+ *
+ * This function will generate a UUID (v4) which is guaranteed to be unique on the filesystem at the time of execution.
+ *
+ * @author David Gersting
+ * @return string
+ */
+function newFileUUID(){
+	// Loop until no file is found with generated UUID
+	do{
+		/**
+		 * Generate a UUID (version 4)
+		 * @see http://www.php.net/manual/en/function.uniqid.php#94959
+		 */
+		$uuid = sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+			mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
+			mt_rand( 0, 0xffff ),
+			mt_rand( 0, 0x0fff ) | 0x4000,
+			mt_rand( 0, 0x3fff ) | 0x8000,
+			mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
+		);
+		$testFilename = getSaveDir('originals',$uuid).DIRECTORY_SEPARATOR.$uuid.".*";
+	}while(sizeof(glob($testFilename)));
+	// Return the valid uuid
+	return $uuid;
+}
+
+/**
  * Performs necessary conversions, thumbnails, etc.
  *
  * @param array $field
@@ -201,18 +229,21 @@ function processUploads($field,$uploadID) {
     $savePath   = mfcs::config('savePath');
 	$files      = scandir($uploadPath);
 
+	// Sort the files in 'natural order' and then start looping!
+	natsort($files);
 	foreach ($files as $filename) {
 		// Skip hidden stuff
         if($filename{0} == '.') continue;
 
-        // Figure out full paths to old, and new files and save it's file extensionn
-        $results[]    = strtolower($filename);
-        $fileUUID     = pathinfo($filename, PATHINFO_FILENAME);
-        $origFilepath = $uploadPath.DIRECTORY_SEPARATOR.$filename;
-        $newFilepath  = getSaveDir('originals',$fileUUID).DIRECTORY_SEPARATOR.strtolower($filename);
-        $fileExt      = ".".pathinfo($filename, PATHINFO_EXTENSION);
+		// Figure out the details of the file we're working with
+		$fileUUID     = newFileUUID();
+		$fileExt      = pathinfo($filename, PATHINFO_EXTENSION);
+		$newFilename  = strtolower("$fileUUID.$fileExt");
+		$results[]    = $newFilename;
+		$origFilepath = $uploadPath.DIRECTORY_SEPARATOR.$filename;
+		$newFilepath  = getSaveDir('originals',$fileUUID).DIRECTORY_SEPARATOR.strtolower($newFilename);
 
-        // Move the file to it's now (originals) home and save it's file extention
+        // Move the file to it's now (originals) home and save it's file extension
         if(!is_dir(getSaveDir('originals',$fileUUID))) mkdir(getSaveDir('originals',$fileUUID), 0777, TRUE);
         rename($origFilepath, $newFilepath);
 
@@ -234,7 +265,7 @@ function processUploads($field,$uploadID) {
 				// perform hOCR on the original uploaded file which gets stored in combined as an HTML file
 				$output = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
 					escapeshellarg($newFilepath),
-					escapeshellarg(getSaveDir('combined', $fileUUID).DIRECTORY_SEPARATOR.basename($filename,$fileExt)),
+					escapeshellarg(getSaveDir('combined', $fileUUID).DIRECTORY_SEPARATOR.basename($filename,".$fileExt")),
 					escapeshellarg($savePath.DIRECTORY_SEPARATOR."hocr")
 					));
 
@@ -246,7 +277,7 @@ function processUploads($field,$uploadID) {
 				// Convert original uploaded file to jpg in preparation of final combine
 				$output = shell_exec(sprintf('convert %s %s 2>&1',
 					escapeshellarg($newFilepath),
-					escapeshellarg(getSaveDir('combined', $fileUUID).DIRECTORY_SEPARATOR.basename($filename,$fileExt).".jpg")
+					escapeshellarg(getSaveDir('combined', $fileUUID).DIRECTORY_SEPARATOR.basename($filename,".$fileExt").".jpg")
 					));
 
 				if (!is_empty($output)) {
@@ -291,7 +322,7 @@ function processUploads($field,$uploadID) {
 						);
 
 					// Store thumbnail
-					if ($thumb->writeImage(getSaveDir('thumbs', $fileUUID).DIRECTORY_SEPARATOR.basename($filename,$fileExt).".".strtolower($thumb->getImageFormat())) === FALSE) {
+					if ($thumb->writeImage(getSaveDir('thumbs', $fileUUID).DIRECTORY_SEPARATOR.basename($filename,".$fileExt").".".strtolower($thumb->getImageFormat())) === FALSE) {
 						errorHandle::errorMsg("Failed to create thumbnail: ".$filename);
 					}
 				}
@@ -347,7 +378,7 @@ function processUploads($field,$uploadID) {
 				}
 
 				// Store image
-				if ($image->writeImages(getUploadDir('converted',$uploadID).DIRECTORY_SEPARATOR.basename($filename,$fileExt).".".strtolower($image->getImageFormat()), TRUE) === FALSE) {
+				if ($image->writeImages(getUploadDir('converted',$uploadID).DIRECTORY_SEPARATOR.basename($filename,".$fileExt").".".strtolower($image->getImageFormat()), TRUE) === FALSE) {
 					errorHandle::errorMsg("Failed to create image: ".$filename);
 				}
 			}
@@ -359,7 +390,7 @@ function processUploads($field,$uploadID) {
 
 				$text = TesseractOCR::recognize(getUploadDir('originals',$uploadID).DIRECTORY_SEPARATOR.$filename);
 
-				if (file_put_contents(getUploadDir('ocr',$uploadID).DIRECTORY_SEPARATOR.basename($filename,$fileExt).".txt", $text) === FALSE) {
+				if (file_put_contents(getUploadDir('ocr',$uploadID).DIRECTORY_SEPARATOR.basename($filename,".$fileExt").".txt", $text) === FALSE) {
 					errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
 					errorHandle::newError("Failed to create OCR file for ".getUploadDir('originals',$uploadID).DIRECTORY_SEPARATOR.$filename,errorHandle::DEBUG);
 				}

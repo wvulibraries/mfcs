@@ -36,8 +36,12 @@ $fileExt  = ".".pathinfo($filename, PATHINFO_EXTENSION);
 
 // To save the upload with a specified name, set the second parameter.
 $uploadPath = UPLOAD_PATH.DIRECTORY_SEPARATOR.$engine->cleanPost['MYSQL']['uploadID'];
+
+// Make sure the upload temp dir exits
 if(!is_dir($uploadPath)) mkdir($uploadPath, PERMISSONS, TRUE);
-$result = $uploader->handleUpload($uploadPath, $engine->cleanPost['MYSQL']['qquuid'].$fileExt);
+
+// Save the upload! (the ltrim() ensures that uploaded hidden files become un-hidden)
+$result = $uploader->handleUpload($uploadPath, ltrim($uploader->getName(),'.'));
 
 // To return a name used for uploaded file you can use the following line.
 $result['uploadName'] = $uploader->getUploadName();
