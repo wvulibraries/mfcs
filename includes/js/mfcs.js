@@ -1,5 +1,5 @@
 $(function(){
-    $('div.filePreview a').click(function(){
+    $('div.filePreview a.previewLink').click(function(){
         var filePreview = $(this).closest('div')
         if(filePreview.hasClass('open')){
             // Closing
