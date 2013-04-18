@@ -6,6 +6,47 @@ if (is_empty($formID)) {
 	$formID = NULL;
 }
 
+if (isset($engine->cleanPost['MYSQL']['submitNavigation'])) {
+	try{
+		// trans: begin transaction
+		$engine->openDB->transBegin();
+
+		$groupings = json_decode($engine->cleanPost['RAW']['groupings'], TRUE);
+
+		if (!is_empty($groupings)) {
+			foreach ($groupings as $I => $grouping) {
+				$positions[$I] = $grouping['position'];
+			}
+
+			array_multisort($positions, SORT_ASC, $groupings);
+		}
+
+		$groupings = encodeFields($groupings);
+
+		$sql = sprintf("UPDATE `%s` SET `groupings`='%s' WHERE `ID`='%s'",
+			$engine->openDB->escape($engine->dbTables("projects")),
+			$engine->openDB->escape($groupings),
+			$engine->cleanGet['MYSQL']['id']
+		);
+		$sqlResult = $engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			throw new Exception("MySQL Error - Updating Navigation ({$sqlResult['error']} -- $sql)");
+		}
+
+		// If we get here then the navigation successfully updated!
+		$engine->openDB->transCommit();
+		$engine->openDB->transEnd();
+		errorHandle::successMsg("Successfully updated Project.");
+	}
+	catch (Exception $e) {
+		errorHandle::newError("{$e->getFile()}:{$e->getLine()} {$e->getMessage()}", errorHandle::DEBUG);
+		errorHandle::errorMsg("Error Updating Navigation");
+		$engine->openDB->transRollback();
+		$engine->openDB->transEnd();
+	}
+}
+
 if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	$engine->openDB->transBegin();
 
@@ -171,7 +212,7 @@ if (isset($engine->cleanPost['MYSQL']['submitPermissions'])) {
 			}
 		}
 
-		// If we get here then the project successfully updated!
+		// If we get here then the permissions successfully updated!
 		$engine->openDB->transCommit();
 		$engine->openDB->transEnd();
 		errorHandle::successMsg("Successfully updated Permissions");
