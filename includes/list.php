@@ -247,7 +247,7 @@ class listGenerator {
 
 		$engine = EngineAPI::singleton();
 
-		if (($children = self::getChildren($objectID)) === FALSE) {
+		if (($children = objects::getChildren($objectID)) === FALSE) {
 			return FALSE;
 		}
 
