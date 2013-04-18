@@ -233,6 +233,38 @@ class listGenerator {
 
 	}
 
+		/**
+	 * Display a list, with optional links, of children for a given object
+	 *
+	 * @param string $objectID The ID of the object
+	 * @return string|bool
+	 * @author Scott Blake
+	 **/
+	public static function generateChildList($objectID,$link=TRUE) {
+		if (!validate::integer($objectID)) {
+			return FALSE;
+		}
+
+		$engine = EngineAPI::singleton();
+
+		if (($children = self::getChildren($objectID)) === FALSE) {
+			return FALSE;
+		}
+
+		$output = '';
+		foreach ($children as $child) {
+			$form = forms::get($child['formID']);
+
+			$output .= sprintf('<li>%s%s%s</li>',
+				($link === TRUE) ? '<a href="?objectID='.$child['ID'].'">' : "",
+				htmlSanitize($child['data'][$form['objectTitleField']]),
+				($link === TRUE) ? '</a>' : ""
+				);
+		}
+
+		return $output;
+	}
+
 }
 
 ?>

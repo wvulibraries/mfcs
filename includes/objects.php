@@ -32,7 +32,7 @@ class objects {
 	}
 
 	public static function get($objectID=NULL) {
-
+  
 		if (isnull($objectID)) {
 			return self::getObjects();
 		}
@@ -58,9 +58,8 @@ class objects {
 		}
 
 		$object = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
-		$object['data'] = decodeFields($object['data']);
 
-		if ($object['data'] === FALSE) {
+		if (($object['data'] = decodeFields($object['data'])) === FALSE) {
 			errorHandle::errorMsg("Error retrieving object.");
 			return FALSE;
 		}
@@ -137,38 +136,6 @@ class objects {
 		}
 
 		return($children);
-	}
-
-	/**
-	 * Display a list, with optional links, of children for a given object
-	 *
-	 * @param string $objectID The ID of the object
-	 * @return string|bool
-	 * @author Scott Blake
-	 **/
-	public static function generateChildList($objectID,$link=TRUE) {
-		if (!validate::integer($objectID)) {
-			return FALSE;
-		}
-
-		$engine = EngineAPI::singleton();
-
-		if (($children = self::getChildren($objectID)) === FALSE) {
-			return FALSE;
-		}
-
-		$output = '';
-		foreach ($children as $child) {
-			$form = forms::get($child['formID']);
-
-			$output .= sprintf('<li>%s%s%s</li>',
-				($link === TRUE) ? '<a href="?objectID='.$child['ID'].'">' : "",
-				htmlSanitize($child['data'][$form['objectTitleField']]),
-				($link === TRUE) ? '</a>' : ""
-				);
-		}
-
-		return $output;
 	}
 
 	public static function getAllObjectsForForm($formID) {
