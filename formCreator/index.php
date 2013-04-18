@@ -419,12 +419,15 @@ $engine->eTemplate("include","header");
 
 <section>
 	<ul class="nav nav-tabs">
-		<li><a href="#navigation" data-toggle="tab">Navigation Creator</a></li>
 		<li class="active"><a href="#formCreator" data-toggle="tab">Form Creator</a></li>
+		<?php if (!isnull($formID)) { ?>
+		<li><a href="#navigation" data-toggle="tab">Navigation Creator</a></li>
 		<li><a href="#permissions" data-toggle="tab">Form Permissions</a></li>
+		<?php } ?>
 	</ul>
 
 	<div class="tab-content">
+		<?php if (!isnull($formID)) { ?>
 		<div class="tab-pane" id="navigation">
 			<header class="page-header">
 				<h1>Navigation Creator</h1>
@@ -504,6 +507,7 @@ $engine->eTemplate("include","header");
 				</div>
 			</div>
 		</div>
+		<?php } ?>
 
 		<div class="tab-pane active" id="formCreator">
 			<header class="page-header">
@@ -1057,6 +1061,7 @@ $engine->eTemplate("include","header");
 			</div>
 		</div>
 
+		<?php if (!isnull($formID)) { ?>
 		<div class="tab-pane" id="permissions">
 			<header class="page-header">
 				<h1>Form Permissions</h1>
@@ -1113,6 +1118,7 @@ $engine->eTemplate("include","header");
 				</div>
 			</div>
 		</div>
+		<?php } ?>
 	</div>
 </section>
 
