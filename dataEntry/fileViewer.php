@@ -57,13 +57,4 @@ try{
     die($e->getMessage());
 }
 
-// Get the needed IDs
-$projectID = $engine->cleanGet['MYSQL']['projectID'];
-$formID    = $engine->cleanGet['MYSQL']['formID'];
-$objectID  = $engine->cleanGet['MYSQL']['objectID'];
-$fieldName = $engine->cleanGet['MYSQL']['field'];
-
-
-
-
 ?>
