@@ -192,11 +192,12 @@ function prepareUploadDirs($uploadID) {
  * @author Scott Blake
  **/
 function processUploads($field,$uploadID) {
-	$engine = EngineAPI::singleton();
-    $results = array();
+	$engine     = EngineAPI::singleton();
+    $results    = array();
     $uploadPath = getBaseUploadPath().DIRECTORY_SEPARATOR.$uploadID;
     $savePath   = mfcs::config('savePath');
-	$files = scandir($uploadPath);
+	$files      = scandir($uploadPath);
+
 	foreach ($files as $filename) {
 		// Skip hidden stuff
         if($filename{0} == '.') continue;
