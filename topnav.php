@@ -26,6 +26,7 @@ if(isset($currentProjects) and sizeof($currentProjects)){
 				</ul>
 			</li>
 			<li><a href="{local var="siteRoot"}projects/">Project Management</a></li>
+			<li><a href="{local var="siteRoot"}dataView/list.php">List Objects</a></li>
 			<li class="dropdown-submenu">
 				<a tabindex="-1" href="#">Form Management</a>
 				<ul class="dropdown-menu">
