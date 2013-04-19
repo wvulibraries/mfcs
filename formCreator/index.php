@@ -358,7 +358,7 @@ if (is_empty(localVars::get("updateButton"))) {
 
 if (!isnull($formID)) {
 	try {
-	// Setup permissions stuff. 
+	// Setup permissions stuff.
 		if (($users = users::getUsers()) === FALSE) {
 			throw new Exception("Error getting users");
 		}
@@ -426,82 +426,6 @@ $engine->eTemplate("include","header");
 	</ul>
 
 	<div class="tab-content">
-		<?php if (!isnull($formID)) { ?>
-		<div class="tab-pane" id="navigation">
-			<header class="page-header">
-				<h1>Navigation Creator</h1>
-			</header>
-
-			<div class="container-fluid">
-				<div class="row-fluid" id="results">
-					{local var="results"}
-				</div>
-
-				<div class="row-fluid">
-					<div class="span6">
-						<ul class="nav nav-tabs" id="groupingTab">
-							<li><a href="#groupingsAdd" data-toggle="tab">Add</a></li>
-							<li><a href="#groupingsSettings" data-toggle="tab">Settings</a></li>
-						</ul>
-
-						<div class="tab-content">
-							<div class="tab-pane" id="groupingsAdd">
-								<ul class="unstyled draggable span6">
-									<li><a href="#" class="btn btn-block">New Grouping</a></li>
-									<li><a href="#" class="btn btn-block">Log Out</a></li>
-								</ul>
-								<ul class="unstyled draggable span6">
-									<li><a href="#" class="btn btn-block">Export Link (needs definable properties)</a></li>
-									<li><a href="#" class="btn btn-block">Link</a></li>
-								</ul>
-
-								{local var="metadataForms"}
-							</div>
-
-							<div class="tab-pane" id="groupingsSettings">
-								<div class="alert alert-block" id="noGroupingSelected">
-									<h4>No Grouping Selected</h4>
-									To change a grouping, click on it in the preview to the right.
-								</div>
-
-								<div class="control-group well well-small" id="groupingsSettings_container_grouping">
-									<label for="groupingsSettings_grouping">
-										Grouping Label
-									</label>
-									<input type="text" class="input-block-level" id="groupingsSettings_grouping" name="groupingsSettings_grouping" />
-									<span class="help-block hidden"></span>
-								</div>
-
-								<div class="control-group well well-small" id="groupingsSettings_container_label">
-									<label for="groupingsSettings_label">
-										Label
-									</label>
-									<input type="text" class="input-block-level" id="groupingsSettings_label" name="groupingsSettings_label" />
-									<span class="help-block hidden"></span>
-								</div>
-
-								<div class="control-group well well-small" id="groupingsSettings_container_url">
-									<label for="groupingsSettings_url">
-										Address
-									</label>
-									<input type="text" class="input-block-level" id="groupingsSettings_url" name="groupingsSettings_url" />
-									<span class="help-block hidden"></span>
-								</div>
-							</div>
-						</div>
-						<input type="hidden" name="groupings">
-					</div>
-
-					<div class="span6">
-						<ul class="sortable unstyled" id="GroupingsPreview">
-							{local var="existingGroupings"}
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-		<?php } ?>
-
 		<div class="tab-pane active" id="formCreator">
 			<header class="page-header">
 				<h1>Form Creator</h1>
@@ -1055,6 +979,80 @@ $engine->eTemplate("include","header");
 		</div>
 
 		<?php if (!isnull($formID)) { ?>
+		<div class="tab-pane" id="navigation">
+			<header class="page-header">
+				<h1>Navigation Creator</h1>
+			</header>
+
+			<div class="container-fluid">
+				<div class="row-fluid" id="results">
+					{local var="results"}
+				</div>
+
+				<div class="row-fluid">
+					<div class="span6">
+						<ul class="nav nav-tabs" id="groupingTab">
+							<li><a href="#groupingsAdd" data-toggle="tab">Add</a></li>
+							<li><a href="#groupingsSettings" data-toggle="tab">Settings</a></li>
+						</ul>
+
+						<div class="tab-content">
+							<div class="tab-pane" id="groupingsAdd">
+								<ul class="unstyled draggable span6">
+									<li><a href="#" class="btn btn-block">New Grouping</a></li>
+									<li><a href="#" class="btn btn-block">Log Out</a></li>
+								</ul>
+								<ul class="unstyled draggable span6">
+									<li><a href="#" class="btn btn-block">Export Link (needs definable properties)</a></li>
+									<li><a href="#" class="btn btn-block">Link</a></li>
+								</ul>
+
+								{local var="metadataForms"}
+							</div>
+
+							<div class="tab-pane" id="groupingsSettings">
+								<div class="alert alert-block" id="noGroupingSelected">
+									<h4>No Grouping Selected</h4>
+									To change a grouping, click on it in the preview to the right.
+								</div>
+
+								<div class="control-group well well-small" id="groupingsSettings_container_grouping">
+									<label for="groupingsSettings_grouping">
+										Grouping Label
+									</label>
+									<input type="text" class="input-block-level" id="groupingsSettings_grouping" name="groupingsSettings_grouping" />
+									<span class="help-block hidden"></span>
+								</div>
+
+								<div class="control-group well well-small" id="groupingsSettings_container_label">
+									<label for="groupingsSettings_label">
+										Label
+									</label>
+									<input type="text" class="input-block-level" id="groupingsSettings_label" name="groupingsSettings_label" />
+									<span class="help-block hidden"></span>
+								</div>
+
+								<div class="control-group well well-small" id="groupingsSettings_container_url">
+									<label for="groupingsSettings_url">
+										Address
+									</label>
+									<input type="text" class="input-block-level" id="groupingsSettings_url" name="groupingsSettings_url" />
+									<span class="help-block hidden"></span>
+								</div>
+							</div>
+						</div>
+						<input type="hidden" name="groupings">
+					</div>
+
+					<div class="span6">
+						<ul class="sortable unstyled" id="GroupingsPreview">
+							{local var="existingGroupings"}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<div class="tab-pane" id="permissions">
 			<header class="page-header">
 				<h1>Form Permissions</h1>
