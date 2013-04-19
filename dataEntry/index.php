@@ -5,14 +5,12 @@ try {
 
 	if (!isset($engine->cleanGet['MYSQL']['id']) || is_empty($engine->cleanGet['MYSQL']['id']) || !validate::integer($engine->cleanGet['MYSQL']['id'])) {
 		errorHandle::newError(__METHOD__."() - No Project ID Provided.", errorHandle::DEBUG);
-		errorHandle::errorMsg("No Project ID Provided.");
-		throw new Exception('Error');
+		throw new Exception("No Project ID Provided.");
 	}
 
 	// check for edit permissions on the project
 	if (projects::checkPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) {
-		errorHandle::errorMsg("Permissions denied for working on this project");
-		throw new Exception('Error');
+		throw new Exception("Permissions denied for working on this project");
 	}
 
 	// Get the project
@@ -23,8 +21,7 @@ try {
 
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
-		errorHandle::errorMsg("Error retrieving project.");
-		throw new Exception('Error');
+		throw new Exception("Error retrieving project.");
 	}
 
 	$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
@@ -34,6 +31,7 @@ try {
 
 }
 catch(Exception $e) {
+	errorHandle::errorMsg($e->getMessage());
 }
 
 localVars::add("results",displayMessages());
