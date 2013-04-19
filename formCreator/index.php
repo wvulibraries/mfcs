@@ -8,8 +8,7 @@ if (is_empty($formID)) {
 
 if (isset($engine->cleanPost['MYSQL']['submitNavigation'])) {
 	try{
-
-		if ((navigation::updateFormNav($engine->cleanPost['RAW']['groupings'])) === FALSE) {
+		if (navigation::updateFormNav($engine->cleanPost['RAW']['groupings']) === FALSE) {
 			throw new Exception("Error saving navigation");
 		}
 
@@ -1031,7 +1030,15 @@ $engine->eTemplate("include","header");
 								</div>
 							</div>
 						</div>
-						<input type="hidden" name="groupings">
+
+						<div class="row-fluid">
+							<form class="form form-horizontal" id="submitNavigation" name="submitNavigation" method="post">
+								<input type="hidden" name="id" value="{local var="formID"}">
+								<input type="hidden" name="groupings">
+								<input type="submit" class="btn btn-large btn-block btn-primary" name="submitNavigation" value="Update Navigation">
+								{engine name="csrf"}
+							</form>
+						</div>
 					</div>
 
 					<div class="span6">
@@ -1054,7 +1061,7 @@ $engine->eTemplate("include","header");
 				</div>
 
 				<div class="row-fluid">
-					<form method="post">
+					<form name="submitPermissions" method="post">
 						{engine name="csrf"}
 						<table>
 							<tr>
@@ -1098,7 +1105,7 @@ $engine->eTemplate("include","header");
 								</td>
 							</tr>
 						</table>
-						<input type="submit" class="btn btn-large btn-block btn-primary" name="submitPermissions" value="update permissions" />
+						<input type="submit" class="btn btn-large btn-block btn-primary" name="submitPermissions" value="Update Permissions" />
 					</form>
 				</div>
 			</div>
