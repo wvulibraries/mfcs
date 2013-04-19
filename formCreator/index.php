@@ -136,7 +136,7 @@ if (isset($engine->cleanPost['MYSQL']['submitPermissions'])) {
 		$engine->openDB->transBegin();
 
 		// update permissions
-		if (mfcsPerms::delete() === FALSE) {
+		if (mfcsPerms::delete($formID) === FALSE) {
 			throw new Exception("MySQL Error - Wipe Permissions ({$sqlResult['error']} -- $sql)");
 		}
 
@@ -168,55 +168,57 @@ if (isset($engine->cleanPost['MYSQL']['submitPermissions'])) {
 	}
 }
 
-$tmp = NULL;
-foreach (Imagick::queryFormats() as $format) {
-	$tmp .= '<option value="'.$format.'">'.$format.'</option>';
-}
-localVars::add("conversionFormats",$tmp);
-unset($tmp);
-
-$tmp = NULL;
-foreach (array("top","middle","bottom") as $h) {
-	foreach (array("left","center","right") as $w) {
-		$tmp .= '<option value="'.$h.'|'.$w.'">'.ucfirst($h).' '.ucfirst($w).'</option>';
+try {
+	$tmp = NULL;
+	foreach (Imagick::queryFormats() as $format) {
+		$tmp .= '<option value="'.$format.'">'.$format.'</option>';
 	}
-}
-localVars::add("imageLocations",$tmp);
-unset($tmp);
+	localVars::add("conversionFormats",$tmp);
+	unset($tmp);
 
-$tmp = '<option value="">None</option>';
-foreach (validate::validationMethods() as $val => $text) {
-	$tmp .= '<option value="'.$val.'">'.$text.'</option>';
-}
-localVars::add("validationTypes",$tmp);
-unset($tmp);
+	$tmp = NULL;
+	foreach (array("top","middle","bottom") as $h) {
+		foreach (array("left","center","right") as $w) {
+			$tmp .= '<option value="'.$h.'|'.$w.'">'.ucfirst($h).' '.ucfirst($w).'</option>';
+		}
+	}
+	localVars::add("imageLocations",$tmp);
+	unset($tmp);
 
-// Get list of forms for choices dropdown
-// @TODO this should be using the forms class/method to get all the metadata forms
-$sql = sprintf("SELECT ID, `title` FROM `%s` WHERE metadata='1' ORDER BY `title`",
-	$engine->openDB->escape($engine->dbTables("forms"))
-	);
-$sqlResult = $engine->openDB->query($sql);
+	$tmp = '<option value="">None</option>';
+	foreach (validate::validationMethods() as $val => $text) {
+		$tmp .= '<option value="'.$val.'">'.$text.'</option>';
+	}
+	localVars::add("validationTypes",$tmp);
+	unset($tmp);
 
-if ($sqlResult['result']) {
+	// Get list of forms for choices dropdown
+	if ($metadataForms = forms::getMetadataForms() === FALSE) {
+		throw new Exception("Errer retreiving metadata forms");
+	}
+
 	$tmp = array();
-	while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
-		$tmp[] = sprintf('<option value="%s">%s</option>',
-			$row['ID'],
-			$row['title']
-			);
+	if (is_array($metadataForms)) {
+		foreach ($metadataForms as $form) {
+			$tmp[] = sprintf('<option value="%s">%s</option>',
+				$form['ID'],
+				$form['title']
+				);
+		}
 	}
 	localVars::add("formsOptions",implode(",",$tmp));
-}
-// @TODO shouldn't this be erroring when there is no result?
+	unset($tmp);
 
-// Get list of watermarks for dropdown
-$sql = sprintf("SELECT `ID`, `name` FROM `%s`",
-	$engine->openDB->escape($engine->dbTables("watermarks"))
-	);
-$sqlResult = $engine->openDB->query($sql);
+	// Get list of watermarks for dropdown
+	$sql = sprintf("SELECT `ID`, `name` FROM `%s`",
+		$engine->openDB->escape($engine->dbTables("watermarks"))
+		);
+	$sqlResult = $engine->openDB->query($sql);
 
-if ($sqlResult['result']) {
+	if (!$sqlResult['result']) {
+		throw new Exception("Error retreiving watermarks");
+	}
+
 	$tmp = array();
 	while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
 		$tmp[] = sprintf('<option value="%s">%s</option>',
@@ -227,9 +229,9 @@ if ($sqlResult['result']) {
 	localVars::add("watermarkList",implode("",$tmp));
 	unset($tmp);
 }
-// @TODO shouldn't this be erroring when there is no result?
-
-localVars::add("results",displayMessages());
+catch (Exception $e) {
+	errorHandle::errorMsg($e->getMessage());
+}
 
 localVars::add("thisSubmitButton","Add Form");
 
@@ -489,6 +491,8 @@ if (!isnull($formID)) {
 		errorHandle::errorMsg($e->getMessage());
 	}
 }
+
+localVars::add("results",displayMessages());
 
 $engine->eTemplate("include","header");
 ?>

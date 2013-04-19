@@ -1,5 +1,5 @@
 <?php
- 
+
 class listGenerator {
 
 	public static function createInitialSelectList() {
@@ -179,7 +179,7 @@ class listGenerator {
 
 		if (($currentProjects = users::loadProjects()) === FALSE) {
 			return FALSE;
-		}  
+		}
 
 		$currentProjectFormList = '<h1 class="pickListHeader">Current Projects:</h1> <br /><ul class="pickList">';
 		$formList               = '<h1 class="pickListHeader">All Other Forms:</h1> <br /><ul class="pickList">';
@@ -189,7 +189,7 @@ class listGenerator {
 			// @TODO
 			// if (projects::checkPermissions($row['ID']) === TRUE) {
 			// }
-			
+
 			foreach ($currentProjects as $projectID => $projectName) {
 				if (forms::checkFormInProject($projectID,$form['ID'])) {
 					$currentProjectFormList .= sprintf('<li><a href="object.php?formID=%s%s" class="btn">%s</a></li>',
@@ -287,10 +287,17 @@ class listGenerator {
 
 		$availableUsersList = '<option value="null">Select a User</option>';
 		foreach($users as $row) {
-			$availableUsersList .= sprintf('<option value="%s">%s, %s (%s)</option>',
+			$name = array();
+			if (!is_empty($row['lastname'])) {
+				$name[] = htmlSanitize($row['lastname']);
+			}
+			if (!is_empty($row['firstname'])) {
+				$name[] = htmlSanitize($row['firstname']);
+			}
+
+			$availableUsersList .= sprintf('<option value="%s">%s (%s)</option>',
 				htmlSanitize($row['ID']),
-				htmlSanitize($row['lastname']), // @TODO first and last names need checked
-				htmlSanitize($row['firstname']), // comma should be removed if empty
+				implode(", ",$name),
 				htmlSanitize($row['username'])
 				);
 		}

@@ -27,7 +27,7 @@ localvars::add('projectModalList', $projectListHTML);
 <div id="selectProjectsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-		<h3 id="myModalLabel">Your current projects:</h3>
+		<h3>Your current projects:</h3>
 	</div>
 	<div class="modal-body">{local var="projectModalList"}</div>
 	<div class="modal-footer">
@@ -36,3 +36,14 @@ localvars::add('projectModalList', $projectListHTML);
 	</div>
 </div>
 
+<div id="metadataModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="metadataModalHeader"></h3>
+	</div>
+	<div class="modal-body" id="metadataModalBody"></div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		<button class="btn btn-primary" onclick="submitMetadataModal();">Save changes</button>
+	</div>
+</div>
