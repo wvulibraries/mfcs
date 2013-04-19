@@ -161,54 +161,22 @@ if (isset($engine->cleanPost['MYSQL']['submitPermissions'])) {
 		$engine->openDB->transBegin();
 
 		// update permissions
-		$sql = sprintf("DELETE FROM `%s` WHERE `projectID`='%s'",
-			$engine->openDB->escape($engine->dbTables("permissions")),
-			$engine->cleanGet['MYSQL']['id']
-		);
-		$sqlResult = $engine->openDB->query($sql);
-
-		if (!$sqlResult['result']) {
+		if (mfcsPerms::delete() === FALSE) {
 			throw new Exception("MySQL Error - Wipe Permissions ({$sqlResult['error']} -- $sql)");
 		}
 
-		$permissionValueGroups = array();
-		if (isset($engine->cleanPost['MYSQL']['selectedViewUsers']) && is_array($engine->cleanPost['MYSQL']['selectedViewUsers'])) {
-			foreach($engine->cleanPost['MYSQL']['selectedViewUsers'] as $value) {
-				$permissionValueGroups[] = sprintf("('%s','%s','%s')",
-					$engine->openDB->escape($value),
-					$engine->cleanGet['MYSQL']['id'],
-					mfcs::AUTH_VIEW
-				);
-			}
-		}
-		if (isset($engine->cleanPost['MYSQL']['selectedEntryUsers']) && is_array($engine->cleanPost['MYSQL']['selectedEntryUsers'])) {
-			foreach($engine->cleanPost['MYSQL']['selectedEntryUsers'] as $value) {
-				$permissionValueGroups[] = sprintf("('%s','%s','%s')",
-					$engine->openDB->escape($value),
-					$engine->cleanGet['MYSQL']['id'],
-					mfcs::AUTH_ENTRY
-				);
-			}
-		}
-		if (isset($engine->cleanPost['MYSQL']['selectedUsersAdmins']) && is_array($engine->cleanPost['MYSQL']['selectedUsersAdmins'])) {
-			foreach($engine->cleanPost['MYSQL']['selectedUsersAdmins'] as $value) {
-				$permissionValueGroups[] = sprintf("('%s','%s','%s')",
-					$engine->openDB->escape($value),
-					$engine->cleanGet['MYSQL']['id'],
-					mfcs::AUTH_ADMIN
-				);
-			}
-		}
+		$tmp = array("selectedViewUsers"   => mfcs::AUTH_VIEW,
+			         "selectedEntryUsers"  => mfcs::AUTH_ENTRY,
+			         "selectedUsersAdmins" => mfcs::AUTH_ADMIN
+			         );
 
-		if (sizeof($permissionValueGroups)) {
-			$sql = sprintf("INSERT INTO `%s` (userID,projectID,type) VALUES %s",
-				$engine->openDB->escape($engine->dbTables("permissions")),
-				implode(',', $permissionValueGroups)
-			);
-			$sqlResult = $engine->openDB->query($sql);
+		foreach ($tmp as $I => $K) {
+			if (!isset($engine->cleanPost['MYSQL'][$I]) || !is_array($engine->cleanPost['MYSQL'][$I])) continue;
 
-			if (!$sqlResult['result']) {
-				throw new Exception("MySQL Error - Insert Permissions ({$sqlResult['error']} -- $sql)");
+			foreach ($engine->cleanPost['MYSQL'][$I] as $userID) {
+				if (mfcsPerms::add($userID,$formID,$K) === FALSE) {
+					throw new Exception("Error adding Permissions");
+				}
 			}
 		}
 
@@ -1092,48 +1060,52 @@ $engine->eTemplate("include","header");
 				</div>
 
 				<div class="row-fluid">
-					<table>
-						<tr>
-							<th>Data Entry Users</th>
-							<th>Data View Users</th>
-							<th>Administrators</th>
-						</tr>
-						<tr>
-							<td>
-								<select name="selectedEntryUsers[]" id="selectedEntryUsers" size="5" multiple="multiple">
-									{local var="selectedEntryUsers"}
-								</select>
-								<br />
-								<select name="availableEntryUsers" id="availableEntryUsers" onchange="addItemToID('selectedEntryUsers', this.options[this.selectedIndex])">
-									{local var="availableUsersList"}
-								</select>
-								<br />
-								<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedEntryUsers', this.form.selectedEntryUsers)" />
-							</td>
-							<td>
-								<select name="selectedViewUsers[]" id="selectedViewUsers" size="5" multiple="multiple">
-									{local var="selectedViewUsers"}
-								</select>
-								<br />
-								<select name="availableViewUsers" id="availableViewUsers" onchange="addItemToID('selectedViewUsers', this.options[this.selectedIndex])">
-									{local var="availableUsersList"}
-								</select>
-								<br />
-								<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedViewUsers', this.form.selectedViewUsers)" />
-							</td>
-							<td>
-								<select name="selectedUsersAdmins[]" id="selectedUsersAdmins" size="5" multiple="multiple">
-									{local var="selectedUsersAdmins"}
-								</select>
-								<br />
-								<select name="availableUsersAdmins" id="availableUsersAdmins" onchange="addItemToID('selectedUsersAdmins', this.options[this.selectedIndex])">
-									{local var="availableUsersList"}
-								</select>
-								<br />
-								<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedUsersAdmins', this.form.selectedUsersAdmins)" />
-							</td>
-						<tr>
-					</table>
+					<form method="post">
+						{engine name="csrf"}
+						<table>
+							<tr>
+								<th>Data Entry Users</th>
+								<th>Data View Users</th>
+								<th>Administrators</th>
+							</tr>
+							<tr>
+								<td>
+									<select name="selectedEntryUsers[]" id="selectedEntryUsers" size="5" multiple="multiple">
+										{local var="selectedEntryUsers"}
+									</select>
+									<br />
+									<select name="availableEntryUsers" id="availableEntryUsers" onchange="addItemToID('selectedEntryUsers', this.options[this.selectedIndex])">
+										{local var="availableUsersList"}
+									</select>
+									<br />
+									<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedEntryUsers', this.form.selectedEntryUsers)" />
+								</td>
+								<td>
+									<select name="selectedViewUsers[]" id="selectedViewUsers" size="5" multiple="multiple">
+										{local var="selectedViewUsers"}
+									</select>
+									<br />
+									<select name="availableViewUsers" id="availableViewUsers" onchange="addItemToID('selectedViewUsers', this.options[this.selectedIndex])">
+										{local var="availableUsersList"}
+									</select>
+									<br />
+									<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedViewUsers', this.form.selectedViewUsers)" />
+								</td>
+								<td>
+									<select name="selectedUsersAdmins[]" id="selectedUsersAdmins" size="5" multiple="multiple">
+										{local var="selectedUsersAdmins"}
+									</select>
+									<br />
+									<select name="availableUsersAdmins" id="availableUsersAdmins" onchange="addItemToID('selectedUsersAdmins', this.options[this.selectedIndex])">
+										{local var="availableUsersList"}
+									</select>
+									<br />
+									<input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedUsersAdmins', this.form.selectedUsersAdmins)" />
+								</td>
+							</tr>
+						</table>
+						<input type="submit" class="btn btn-large btn-block btn-primary" name="submitPermissions" value="update permissions" />
+					</form>
 				</div>
 			</div>
 		</div>
