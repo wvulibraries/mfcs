@@ -376,7 +376,7 @@ class forms {
 			$object['data'] = array();
 		}
 
-		$output = sprintf('<form action="%s?formID=%s%s" method="%s">',
+		$output = sprintf('<form action="%s?formID=%s%s" method="%s" name="insertForm">',
 			$_SERVER['PHP_SELF'],
 			htmlSanitize($formID),
 			(!isnull($objectID)) ? '&objectID='.$objectID : "",
@@ -676,7 +676,7 @@ class forms {
 			$table->summary = "Object Listing";
 			$table->headers($headers);
 
-			$output = sprintf('<form action="%s?formID=%s" method="%s">',
+			$output = sprintf('<form action="%s?formID=%s" method="%s" name="updateForm">',
 				$_SERVER['PHP_SELF'],
 				htmlSanitize($formID),
 				"post"
@@ -737,6 +737,22 @@ class forms {
 					errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 					return FALSE;
 				}
+
+				$sql       = sprintf("DELETE FROM `dupeMatching` WHERE `objectID`='%s'",
+					$objectID
+					);
+				$sqlResult = $engine->openDB->query($sql);
+				
+				if (!$sqlResult['result']) {
+					$engine->openDB->transRollback();
+					$engine->openDB->transEnd();
+
+					errorHandle::errorMsg("Error deleting objects.");
+					errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+					return FALSE;
+				}
+				
+				$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 			}
 		}
 
