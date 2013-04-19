@@ -59,6 +59,15 @@ $engine->eTemplate("include","header");
 	<header class="page-header">
 		<h1>Select a Form.</h1>
 	</header>
+	<nav id="breadcrumbs">
+		<ul class="breadcrumb">
+			<li>
+				<a href="{local var="siteRoot"}">Home</a>
+				<span class="divider">/</span>
+				<a href="{local var="siteRoot"}/dataEntry/selectMetadataForm.php">Select Metadata Form</a>
+			</li>
+		</ul>
+	</nav>
 
 	{local var="results"}
 
