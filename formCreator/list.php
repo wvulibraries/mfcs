@@ -3,11 +3,16 @@ include("../header.php");
 
 try {
 
-	if (($formList = listGenerator::generateFormSelectListForFormCreator()) === FALSE) {
-		throw new Exception("Error generating form list.");
+	if (($objectFormList = listGenerator::generateFormSelectListForFormCreator(FALSE)) === FALSE) {
+		throw new Exception("Error generating object form list.");
 	}
 
-	localvars::add("formList",$formList);
+	if (($metadataFormList = listGenerator::generateFormSelectListForFormCreator(TRUE)) === FALSE) {
+		throw new Exception("Error generating metadata form list.");
+	}
+
+	localvars::add("objectFormList",$objectFormList);
+	localvars::add("metadataFormList",$metadataFormList);
 
 }
 catch(Exception $e) {
@@ -26,7 +31,21 @@ $engine->eTemplate("include","header");
 
 	{local var="results"}
 
-	{local var="formList"}
+	<div class="container-fluid">
+		<div class="span6">
+			<header>
+				<h2>Object Forms</h2>
+			</header>
+			{local var="objectFormList"}
+		</div>
+
+		<div class="span6">
+			<header>
+				<h2>Metadata Forms</h2>
+			</header>
+			{local var="metadataFormList"}
+		</div>
+	</div>
 
 </section>
 
