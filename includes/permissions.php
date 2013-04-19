@@ -71,19 +71,10 @@ class mfcsPerms {
 
 	}
 
-	public static function delete($id = NULL) {
+	public static function delete($id) {
 
-		if (!isnull($id)) {
-			$whereClause = sprintf("WHERE `formID`='%s'",
-				mfcs::$engine->openDB->escape($id)
-				);
-		}
-		else {
-			$whereClause = "";
-		}
-
-		$sql       = sprintf("DELETE FROM `permissions` %s",
-			$whereClause
+		$sql       = sprintf("DELETE FROM `permissions` WHERE `formID`='%s'",
+			mfcs::$engine->openDB->escape($id)
 			);
 		$sqlResult = mfcs::$engine->openDB->query($sql);
 		
