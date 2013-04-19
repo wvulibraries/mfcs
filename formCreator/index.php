@@ -198,11 +198,13 @@ try {
 	}
 
 	$tmp = array();
-	foreach ($metadataForms as $form) {
-		$tmp[] = sprintf('<option value="%s">%s</option>',
-			$form['ID'],
-			$form['title']
-			);
+	if (is_array($metadataForms)) {
+		foreach ($metadataForms as $form) {
+			$tmp[] = sprintf('<option value="%s">%s</option>',
+				$form['ID'],
+				$form['title']
+				);
+		}
 	}
 	localVars::add("formsOptions",implode(",",$tmp));
 	unset($tmp);
