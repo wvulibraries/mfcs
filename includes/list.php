@@ -267,6 +267,25 @@ class listGenerator {
 		return $output;
 	}
 
+	public static function availableUsersList($users) {
+
+		if (!is_array($users)) {
+			return FALSE;
+		}
+
+		$availableUsersList = '<option value="null">Select a User</option>';
+		foreach($users as $row) {
+			$availableUsersList .= sprintf('<option value="%s">%s, %s (%s)</option>',
+				htmlSanitize($row['ID']),
+				htmlSanitize($row['lastname']), // @TODO first and last names need checked
+				htmlSanitize($row['firstname']), // comma should be removed if empty
+				htmlSanitize($row['username'])
+				);
+		}
+
+		return $availableUsersList;
+	}
+
 }
 
 ?>
