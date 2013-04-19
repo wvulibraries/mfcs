@@ -72,7 +72,7 @@ class files {
 	public static function processUploads($field,$uploadID) {
 		$engine     = EngineAPI::singleton();
 		$results    = array();
-		$uploadPath = getBaseUploadPath().DIRECTORY_SEPARATOR.$uploadID;
+		$uploadPath = files::getBaseUploadPath().DIRECTORY_SEPARATOR.$uploadID;
 		$savePath   = mfcs::config('savePath');
 		$files      = scandir($uploadPath);
 
@@ -86,7 +86,10 @@ class files {
 			$fileUUID     = files::newFileUUID();
 			$fileExt      = pathinfo($filename, PATHINFO_EXTENSION);
 			$newFilename  = strtolower("$fileUUID.$fileExt");
-			$results[]    = $newFilename;
+			$results[]    = array(
+				'originalName' => $filename,
+				'systemName'   => $newFilename
+			);
 			$origFilepath = $uploadPath.DIRECTORY_SEPARATOR.$filename;
 			$newFilepath  = self::getSaveDir('originals',$fileUUID).DIRECTORY_SEPARATOR.strtolower($newFilename);
 
