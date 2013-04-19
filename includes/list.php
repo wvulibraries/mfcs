@@ -218,26 +218,28 @@ class listGenerator {
 
 	public static function generateFormSelectListForFormCreator($metadata = TRUE) {
 
-		$engine  = EngineAPI::singleton();
-
-		// @TODO object forms and metadata forms need separated
-		$sql       = sprintf("SELECT `ID`, `title` FROM `forms` ORDER BY `metadata`, `title`");
-		$sqlResult = $engine->openDB->query($sql);
-
-		if (!$sqlResult['result']) {
-			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
-			errorHandle::errorMsg("Error getting Projects");
-			return FALSE;
+		if ($metadata === TRUE) {
+			if (($forms = forms::getMetadataForms()) === FALSE) {
+				errorHandle::errorMsg("Error getting Metadata Forms");
+				return FALSE;
+			}
+		}
+		else if ($metadata === FALSE) {
+			if (($forms = forms::getObjectForms()) === FALSE) {
+				errorHandle::errorMsg("Error getting Object Forms");
+				return FALSE;
+			}
 		}
 
 		$formList = '<ul class="pickList">';
-		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+		foreach ($forms as $form) {
 
+		// @TODO Permission check
 		// if (projects::checkPermissions($row['ID']) === TRUE) {
 		// }
 			$formList .= sprintf('<li><a href="index.php?id=%s" class="btn">%s</a></li>',
-				$engine->openDB->escape($row['ID']),
-				$engine->openDB->escape($row['title'])
+				htmlSanitize($form['ID']),
+				htmlSanitize($form['title'])
 				);
 
 		}
