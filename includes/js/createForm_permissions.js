@@ -1,3 +1,9 @@
+$(function() {
+	$("form[name=submitPermissions]").submit(function() {
+		entrySubmit();
+	});
+});
+
 function addItemToID(id, item) {
 	var theSelect = document.getElementById(id);
 
@@ -38,8 +44,6 @@ function selectAllOnSubmit(id) {
 }
 
 function entrySubmit() {
-	selectAllOnSubmit("selectedMetadataForms");
-	selectAllOnSubmit("selectedObjectForms");
 	selectAllOnSubmit("selectedEntryUsers");
 	selectAllOnSubmit("selectedViewUsers");
 	selectAllOnSubmit("selectedUsersAdmins");

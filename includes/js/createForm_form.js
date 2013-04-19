@@ -9,8 +9,8 @@ $(function() {
 	});
 
 	// Make field types draggable, linked to preview pane
-	$(".draggable li").draggable({
-		connectToSortable: "ul.sortable",
+	$("#fieldAdd .draggable li").draggable({
+		connectToSortable: "#formCreator ul.sortable",
 		helper: "clone",
 		revert: "invalid",
 	});
@@ -21,7 +21,7 @@ $(function() {
 
 		$(this).clone().appendTo($("#formPreview"));
 		addNewField($("#formPreview li:last"));
-		sortable();
+		sortableForm();
 	});
 
 	// Delete icon binding
@@ -65,7 +65,7 @@ $(function() {
 	});
 
 	// Make the preview pane sortable -- sort order determines position
-	sortable();
+	sortableForm();
 
 	// Set all the black magic bindings
 	fieldSettingsBindings();
@@ -158,9 +158,9 @@ $(function() {
 	});
 });
 
-function sortable() {
-	$("ul.sortable").sortable({
-		connectWith: "ul.sortable",
+function sortableForm() {
+	$("#formCreator ul.sortable").sortable({
+		connectWith: "#formCreator ul.sortable",
 		revert: true,
 		placeholder: "highlight",
 		update: function(event, ui) {
@@ -179,7 +179,7 @@ function sortable() {
 			$(ui.item).parents("li").click();
 			$(ui.item).click();
 
-			sortable();
+			sortableForm();
 		}
 	});
 }
