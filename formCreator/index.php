@@ -249,6 +249,7 @@ localVars::add("validationTypes",$tmp);
 unset($tmp);
 
 // Get list of forms for choices dropdown
+// @TODO this should be using the forms class/method to get all the metadata forms
 $sql = sprintf("SELECT ID, `title` FROM `%s` WHERE metadata='1' ORDER BY `title`",
 	$engine->openDB->escape($engine->dbTables("forms"))
 	);
@@ -264,6 +265,7 @@ if ($sqlResult['result']) {
 	}
 	localVars::add("formsOptions",implode(",",$tmp));
 }
+// @TODO shouldn't this be erroring when there is no result?
 
 // Get list of watermarks for dropdown
 $sql = sprintf("SELECT `ID`, `name` FROM `%s`",
@@ -282,7 +284,7 @@ if ($sqlResult['result']) {
 	localVars::add("watermarkList",implode("",$tmp));
 	unset($tmp);
 }
-
+// @TODO shouldn't this be erroring when there is no result?
 
 localVars::add("results",displayMessages());
 
@@ -408,6 +410,23 @@ if (is_empty(localVars::get("submitButton"))) {
 }
 if (is_empty(localVars::get("updateButton"))) {
 	localVars::add("updateButton","Update");
+}
+
+try {
+	// Setup permissions stuff. 
+	if (($users = users::getUsers()) === FALSE) {
+		throw new Exception("Error getting users");
+	}
+
+	if (($availableUsersList = listGenerator::availableUsersList($users)) === FALSE) {
+		throw new Exception("Error getting users list.");
+	}
+
+	localvars::add("availableUsersList",$availableUsersList);
+
+}
+catch (Exception $e) {
+	errorHandle::errorMsg($e->getMessage());
 }
 
 $engine->eTemplate("include","header");
