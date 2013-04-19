@@ -70,7 +70,6 @@ class files {
 	 * @author Scott Blake
 	 **/
 	public static function processUploads($field,$uploadID) {
-		$engine     = EngineAPI::singleton();
 		$results    = array();
 		$uploadPath = files::getBaseUploadPath().DIRECTORY_SEPARATOR.$uploadID;
 		$savePath   = mfcs::config('savePath');
