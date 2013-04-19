@@ -36,6 +36,9 @@ try {
 		}
 	}
 
+	if (mfcsPerms::isAdmin($engine->cleanGet['MYSQL']['formID']) === FALSE) {
+		throw new Exception("Permission Denied to view objects created with this form.");
+	}
 
 	$form = forms::get($engine->cleanGet['MYSQL']['formID']);
 	if ($form === FALSE) {

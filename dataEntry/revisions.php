@@ -66,6 +66,10 @@ try {
 	$form   = forms::get($object['formID']);
 	localvars::add("formName",$form['title']);
 
+	if (mfcsPerms::isEditor($form['ID']) === FALSE) {
+		throw new Exception("Permission Denied to view objects created with this form.");
+	}
+
 	// Setup revision control
 	$revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime');
 

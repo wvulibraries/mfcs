@@ -17,6 +17,10 @@ try {
 		throw new Exception("No Form ID Provided.");
 	}
 
+	if (mfcsPerms::isEditor($engine->cleanGet['MYSQL']['formID']) === FALSE) {
+		throw new Exception("Permission Denied to view objects created with this form.");
+	}
+
 	if (isset($engine->cleanGet['MYSQL']['parentID']) && objects::validID(TRUE,$engine->cleanGet['MYSQL']['parentID']) === FALSE) {
 		throw new Exception("ParentID Provided is invalid.");
 	}

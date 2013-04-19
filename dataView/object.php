@@ -13,6 +13,10 @@ try {
 		throw new Exception("No Form ID Provided.");
 	}
 
+	if (mfcsPerms::isViewer($engine->cleanGet['MYSQL']['formID']) === FALSE) {
+		throw new Exception("Permission Denied to view objects created with this form.");
+	}
+
 	if (!objects::checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
 		errorHandle::newError("Object not from this form.", errorHandle::DEBUG);
 		throw new Exception("Object not from this form");
@@ -46,7 +50,14 @@ try {
 
 	//////////
 	// Children Tab Stuff
-	localVars::add("childrenList",objects::generateChildList($engine->cleanGet['MYSQL']['objectID']));
+	if (($formList = listGenerator::generateFormSelectList($engine->cleanGet['MYSQL']['objectID'])) === FALSE) {
+		errorHandle::errorMsg("Error getting Forms Listing");
+		throw new Exception('Error');
+	}
+	else {
+		localvars::add("formList",$formList);
+	}
+	localVars::add("childrenList",listGenerator::generateChildList($engine->cleanGet['MYSQL']['objectID']));
 	// Children Tab Stuff
 	//////////
 
