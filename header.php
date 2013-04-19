@@ -10,6 +10,7 @@ $engine->dbConnect("database","mfcs",TRUE);
 require_once "includes/mfcs.php";
 require_once "includes/forms.php";
 require_once "includes/list.php";
+require_once "includes/navigation.php";
 require_once "includes/objects.php";
 require_once "includes/permissions.php";
 require_once "includes/projects.php";
