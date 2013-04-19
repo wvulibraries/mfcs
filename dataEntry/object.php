@@ -64,24 +64,6 @@ try {
 	// Children Tab Stuff
 	//////////
 
-	// check for edit permissions on the project
-	// if (projects::checkPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) {
-	// 	throw new Exception("Permissions denied for working on this project");
-	// }
-
-	// check that this form is part of the project
-	// // TODO need forms from User
-	// if (!forms::checkFormInProject($engine->cleanGet['MYSQL']['id'],$engine->cleanGet['MYSQL']['formID'])) {
-	// 	throw new Exception("Form is not part of project.");
-	// }
-
-	// Get the project
-	// $project = NULL; // TODO: Needs to be gotten from the user info
-	// if ($project === FALSE) {
-	// 	throw new Exception("Error retrieving project.");
-	// }
-
-
 	localvars::add("formName",$form['title']);
 
 	// handle submission
@@ -185,7 +167,6 @@ $engine->eTemplate("include","header");
 	<div class="container-fluid">
 		<div class="span3">
 			{local var="leftnav"}
-			<a href="" data-name="4" class="metadataObjectEditor">Personal Names</a>
 		</div>
 
 		<div class="span9">
