@@ -1,7 +1,7 @@
 <?php
 include("../header.php");
 
-if (strtolower($engine->cleanGet['HTML']['ajax']) == "true") {
+if (isset($engine->cleanGet['HTML']['ajax']) && strtolower($engine->cleanGet['HTML']['ajax']) == "true") {
 	$ajax = TRUE;
 }
 else {
@@ -78,6 +78,10 @@ try {
 }
 catch(Exception $e) {
 	errorHandle::errorMsg($e->getMessage());
+}
+
+if ($ajax) {
+	die(displayMessages());
 }
 
 localVars::add("results",displayMessages());
