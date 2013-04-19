@@ -49,35 +49,11 @@ try {
 		throw new Exception("Obejct form provided (Metadata forms only).");
 	}
 
-	// check for edit permissions on the project
-	// if (checkProjectPermissions($engine->cleanGet['MYSQL']['id']) === FALSE) {
-	// 	errorHandle::errorMsg("Permissions denied for working on this project");
-	// 	throw new Exception('Error');
-	// }
-
-	// check that this form is part of the project
-	// // TODO need forms from User
-	// if (!checkFormInProject($engine->cleanGet['MYSQL']['id'],$engine->cleanGet['MYSQL']['formID'])) {
-	// 	errorHandle::errorMsg("Form is not part of project.");
-	// 	throw new Exception('Error');
-	// }
-
 	// if an object ID is provided make sure the object is from this form
 	if (isset($engine->cleanGet['MYSQL']['objectID'])
 		&& !checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
 		throw new Exception("Object not from this form");
 	}
-
-	// Get the project
-	// $project = NULL; // TODO: Needs to be gotten from the user info
-	// if ($project === FALSE) {
-	// 	errorHandle::errorMsg("Error retrieving project.");
-	// 	throw new Exception('Error');
-	// }
-
-
-
-
 
 	localvars::add("formName",$form['title']);
 
