@@ -69,34 +69,6 @@ if(isset($engine->cleanGet['MYSQL']['ajax'])){
     die(json_encode($result));
 }
 
-try {
-	$sql       = sprintf("SELECT * FROM `projects`");
-	$sqlResult = $engine->openDB->query($sql);
-
-	if (!$sqlResult['result']) {
-		errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
-		errorHandle::errorMsg("Error getting Projects");
-		throw new Exception('Error');
-	}
-
-	$projectList = "";
-	while($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-
-		if (projects::checkPermissions($row['ID']) === TRUE) {
-			$projectList .= sprintf('<li><a href="dataEntry/index.php?id=%s">%s</a></li>',
-				$engine->openDB->escape($row['ID']),
-				$engine->openDB->escape($row['projectName'])
-				);
-		}
-
-	}
-
-	localvars::add("projectList",$projectList);
-
-}
-catch(Exception $e) {
-}
-
 localVars::add("results",displayMessages());
 
 $engine->eTemplate("include","header");
