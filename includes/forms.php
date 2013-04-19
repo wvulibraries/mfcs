@@ -142,7 +142,7 @@ class forms {
 	 * Returns all of the linked metadata forms for an object form
 	 */
 	public static function getObjectFormMetaForms($formID) {
-		
+
 		if (($form = self::get($formID)) === FALSE) {
 			return FALSE;
 		}
@@ -154,7 +154,7 @@ class forms {
 				$metadataForms[] = array('formID' => $field['choicesForm'], 'title' => $metaForm['title']);
 			}
 		}
-		
+
 		return $metadataForms;
 
 	}
@@ -300,7 +300,7 @@ class forms {
 	private static function drawSelectDropdowns($field,$fieldChoices) {
 		$output = "";
 		foreach ($fieldChoices as $choice) {
-			$output .= sprintf('<option value="%s" %s/>%s</option>',
+			$output .= sprintf('<option value="%s" %s>%s</option>',
 				htmlSanitize($choice['value']),
 				(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['value'])?'selected="selected"':"",
 				htmlSanitize($choice['display'])
@@ -312,7 +312,7 @@ class forms {
 	private static function drawMultiselectBoxes($field,$fieldChoices) {
 		$output = "";
 		foreach ($fieldChoices as $choice) {
-			$output .= sprintf('<option value="%s" %s/>%s</option>',
+			$output .= sprintf('<option value="%s" %s>%s</option>',
 				htmlSanitize($choice['value']),
 				(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['value'])?'selected="selected"':"",
 				htmlSanitize($choice['display'])
