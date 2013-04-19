@@ -39,14 +39,14 @@ $engine->eTemplate("include","header");
 	{local var="results"}
 
 	<div class="container-fluid">
-		<div class="span6">
+		<div class="span4 text-center">
 			<header>
 				<h2>Object Forms</h2>
 			</header>
 			{local var="objectFormList"}
 		</div>
 
-		<div class="span6">
+		<div class="span4 text-center">
 			<header>
 				<h2>Metadata Forms</h2>
 			</header>
