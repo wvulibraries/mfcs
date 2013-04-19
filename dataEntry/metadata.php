@@ -1,6 +1,13 @@
 <?php
 include("../header.php");
 
+if (strtolower($engine->cleanGet['HTML']['ajax']) == "true") {
+	$ajax = TRUE;
+}
+else {
+	$ajax = FALSE;
+}
+
 try {
 
 	if (objects::validID() === FALSE) {
@@ -75,7 +82,9 @@ catch(Exception $e) {
 
 localVars::add("results",displayMessages());
 
-$engine->eTemplate("include","header");
+if (!$ajax) {
+	$engine->eTemplate("include","header");
+}
 ?>
 
 <section>
@@ -99,5 +108,7 @@ $engine->eTemplate("include","header");
 
 
 <?php
-$engine->eTemplate("include","footer");
+if (!$ajax) {
+	$engine->eTemplate("include","footer");
+}
 ?>
