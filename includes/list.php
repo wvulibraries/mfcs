@@ -138,7 +138,7 @@ class listGenerator {
 
 		$table->headers($headers);
 
-		$userPaginationCount = users::user('pagination');
+		$userPaginationCount = users::user('pagination',25);
 		if(sizeof($data) > $userPaginationCount){
 			$engine                   = mfcs::$engine;
 			$pagination               = new pagination(sizeof($data));
