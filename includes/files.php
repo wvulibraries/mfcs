@@ -11,7 +11,7 @@ class files {
 	 * @return string
 	 * @author Scott Blake
 	 **/
-	function getBaseUploadPath() {
+	public static function getBaseUploadPath() {
 		return mfcs::config('uploadPath', sys_get_temp_dir().DIRECTORY_SEPARATOR.'mfcs');
 	}
 
@@ -23,7 +23,7 @@ class files {
 	 * @param string $fileUUID
 	 * @return string
 	 */
-	function getSaveDir($type,$fileUUID){
+	public static function getSaveDir($type,$fileUUID){
 		// error checking - allow a full filename to be passed (aka: stip off the fileExt)
 		if(FALSE !== strpos($fileUUID,'.')) $fileUUID = pathinfo($fileUUID,PATHINFO_FILENAME);
 
