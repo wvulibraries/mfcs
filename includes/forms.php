@@ -376,11 +376,12 @@ class forms {
 			$object['data'] = array();
 		}
 
-		$output = sprintf('<form action="%s?formID=%s%s" method="%s" name="insertForm">',
+		$output = sprintf('<form action="%s?formID=%s%s" method="%s" name="insertForm" data-formid="%s">',
 			$_SERVER['PHP_SELF'],
 			htmlSanitize($formID),
 			(!isnull($objectID)) ? '&objectID='.$objectID : "",
-			"post"
+			"post",
+			mfcs::$engine->openDB->escape($formID)
 		);
 
 		$output .= sessionInsertCSRF();
@@ -676,10 +677,11 @@ class forms {
 			$table->summary = "Object Listing";
 			$table->headers($headers);
 
-			$output = sprintf('<form action="%s?formID=%s" method="%s" name="updateForm">',
+			$output = sprintf('<form action="%s?formID=%s" method="%s" name="updateForm" data-formid="%s">',
 				$_SERVER['PHP_SELF'],
 				htmlSanitize($formID),
-				"post"
+				"post",
+				mfcs::$engine->openDB->escape($formID)
 			);
 
 			$output .= sessionInsertCSRF();
