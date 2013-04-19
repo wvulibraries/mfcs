@@ -37,6 +37,8 @@ class mfcsPerms {
 	public static function isEditor($formID, $username = NULL) {
 		if (isnull($username)) $username = sessionGet("username");
 
+		if (self::getCount($formID,$username,mfcs::AUTH_ADMIN) === TRUE) return TRUE;
+
 		return self::getCount($formID,$username,mfcs::AUTH_ENTRY);
 	}
 
@@ -44,6 +46,9 @@ class mfcsPerms {
 
 		if (isnull($username)) $username = sessionGet("username");
 
+		if (self::getCount($formID,$username,mfcs::AUTH_ADMIN) === TRUE) return TRUE;
+		if (self::getCount($formID,$username,mfcs::AUTH_ENTRY) === TRUE) return TRUE;
+		
 		return self::getCount($formID,$username,mfcs::AUTH_VIEW);
 
 	}
