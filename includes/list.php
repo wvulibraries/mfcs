@@ -121,7 +121,6 @@ class listGenerator {
 	}
 
 	private static function createTable($data,$headers = NULL) {
-
 		$table = new tableObject("array");
 
 		$table->summary = "Object Listing";
@@ -139,10 +138,23 @@ class listGenerator {
 
 		$table->headers($headers);
 
-		
-		return $table->display($data);
+		$userPaginationCount = users::user('pagination');
+		if(sizeof($data) > $userPaginationCount){
+			$engine                   = mfcs::$engine;
+			$pagination               = new pagination(sizeof($data));
+			$pagination->itemsPerPage = $userPaginationCount;
+			$pagination->currentPage  = isset($engine->cleanGet['MYSQL'][ $pagination->urlVar ])
+				? $engine->cleanGet['MYSQL'][ $pagination->urlVar ]
+				: 1;
 
-
+			$startPos   = $userPaginationCount*($pagination->currentPage-1);
+			$dataNodes  = array_slice($data, $startPos, $userPaginationCount);
+			$tableHTML  = $table->display($dataNodes);
+			$tableHTML .= $pagination->nav_bar();
+			return $tableHTML;
+		}else{
+			return $table->display($data);
+		}
 	}
 
 	private static function genLinkURLs($url,$objectID) {

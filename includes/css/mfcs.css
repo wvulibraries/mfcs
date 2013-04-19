@@ -110,3 +110,13 @@ div.filePreview iframe{
 .groupingPreview ul.sortable {
     min-height: 25px;
 }
+
+.pagination_bar ul{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.pagination_bar ul li{
+	display: inline;
+	padding: 0 5px;
+}
