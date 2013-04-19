@@ -285,6 +285,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `lastname` varchar(25) DEFAULT NULL,
   `username` varchar(25) DEFAULT NULL,
   `status` varchar(25) DEFAULT NULL,
+	`pagination` int(10) unsigned NOT NULL DEFAULT '25',
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
