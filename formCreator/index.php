@@ -136,7 +136,7 @@ if (isset($engine->cleanPost['MYSQL']['submitPermissions'])) {
 		$engine->openDB->transBegin();
 
 		// update permissions
-		if (mfcsPerms::delete() === FALSE) {
+		if (mfcsPerms::delete($formID) === FALSE) {
 			throw new Exception("MySQL Error - Wipe Permissions ({$sqlResult['error']} -- $sql)");
 		}
 
