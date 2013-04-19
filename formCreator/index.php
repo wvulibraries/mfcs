@@ -401,7 +401,89 @@ if (!isnull($formID)) {
 			localvars::add("metadataForms",  '');
 		}
 
+		// Get existing groupings
+		$sql = sprintf("SELECT * FROM `forms` WHERE `ID`='%s' LIMIT 1",
+			$engine->cleanGet['MYSQL']['id']
+		);
+		$sqlResult = $engine->openDB->query($sql);
 
+		if (!$sqlResult['result']) {
+			errorHandle::newError("MySQL Error - Error getting project ({$sqlResult['error']})",errorHandle::DEBUG);
+			throw new Exception("Error getting navigation");
+		}
+
+		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+		if (!is_empty($row['navigation'])) {
+			$tmp       = decodeFields($row['navigation']);
+			$groupings = array();
+			$preview   = NULL;
+
+			// Get all groupings needed
+			foreach ($tmp as $I => $V) {
+				if (!is_empty($V['grouping'])) {
+					$groupings[$V['grouping']] = array(
+						"type"     => "grouping",
+						"grouping" => $V['grouping'],
+					);
+				}
+			}
+
+			$positionOffset = 0;
+			foreach ($tmp as $I => $V) {
+				$values = json_encode($V);
+
+				if (!is_empty($V['grouping']) && isset($groupings[$V['grouping']])) {
+					$preview .= sprintf('
+						<li id="GroupingsPreview_%s">
+							<div class="groupingPreview">
+								<script type="text/javascript">
+									$("#GroupingsPreview_%s .groupingPreview").html(newGroupingPreview("%s"));
+								</script>
+							</div>
+							<div class="groupingValues">
+								<script type="text/javascript">
+									$("#GroupingsPreview_%s .groupingValues").html(newGroupingValues("%s","%s",%s));
+								</script>
+							</div>
+						</li>',
+						htmlSanitize($V['position'] + $positionOffset),
+						htmlSanitize($V['position'] + $positionOffset),
+						htmlSanitize($groupings[$V['grouping']]['type']),
+						htmlSanitize($V['position'] + $positionOffset),
+						htmlSanitize($V['position'] + $positionOffset),
+						htmlSanitize($groupings[$V['grouping']]['type']),
+						json_encode($groupings[$V['grouping']])
+					);
+
+					$positionOffset++;
+					unset($groupings[$V['grouping']]);
+				}
+
+				$preview .= sprintf('
+					<li id="GroupingsPreview_%s">
+						<div class="groupingPreview">
+							<script type="text/javascript">
+								$("#GroupingsPreview_%s .groupingPreview").html(newGroupingPreview("%s"));
+							</script>
+						</div>
+						<div class="groupingValues">
+							<script type="text/javascript">
+								$("#GroupingsPreview_%s .groupingValues").html(newGroupingValues("%s","%s",%s));
+							</script>
+						</div>
+					</li>',
+					htmlSanitize($V['position'] + $positionOffset),
+					htmlSanitize($V['position'] + $positionOffset),
+					htmlSanitize($V['type']),
+					htmlSanitize($V['position'] + $positionOffset),
+					htmlSanitize($V['position'] + $positionOffset),
+					htmlSanitize($V['type']),
+					$values
+				);
+			}
+			localvars::add("existingGroupings",$preview);
+		}
 	}
 	catch (Exception $e) {
 		errorHandle::errorMsg($e->getMessage());
