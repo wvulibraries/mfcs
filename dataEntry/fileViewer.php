@@ -12,7 +12,7 @@ try{
 	// Get the passed info
 	$objectID  = $engine->cleanGet['MYSQL']['objectID'];
 	$fieldName = $engine->cleanGet['MYSQL']['field'];
-	$basePath  = getBaseUploadPath();
+	$basePath  = files::getBaseUploadPath();
 
 	// Are we getting a file from a current object, or from a revision?
 	if(isset($engine->cleanGet['MYSQL']['revisionID'])){
@@ -41,7 +41,7 @@ try{
 		: $files[0];
 
 	// Build the full path to the object we're showing
-	$fullPath = getSaveDir('originals',$filename).DIRECTORY_SEPARATOR.strtolower($filename);
+	$fullPath = files::getSaveDir('originals',$filename).DIRECTORY_SEPARATOR.strtolower($filename);
 
 	// Get the object's contents
 	$fileContents = file_get_contents($fullPath);
