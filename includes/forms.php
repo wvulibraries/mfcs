@@ -86,14 +86,14 @@ class forms {
 		$engine = EngineAPI::singleton();
 
 		switch ($type) {
-			case isnull($type):
-				$sql = sprintf("SELECT `ID` FROM `forms` ORDER BY `title`");
-				break;
 			case TRUE:
 				$sql = sprintf("SELECT `ID` FROM `forms` WHERE `metadata`='0' ORDER BY `title`");
 				break;
 			case FALSE:
 				$sql = sprintf("SELECT `ID` FROM `forms` WHERE `metadata`='1' ORDER BY `title`");
+				break;
+			case NULL:
+				$sql = sprintf("SELECT `ID` FROM `forms` ORDER BY `title`");
 				break;
 			default:
 				return(FALSE);
