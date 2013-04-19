@@ -1,7 +1,7 @@
 <?php
 
 class navigation {
-	
+
 	public static function updateFormNav($groupings) {
 
 		$groupings = json_decode($groupings, TRUE);
@@ -13,6 +13,8 @@ class navigation {
 
 			array_multisort($positions, SORT_ASC, $groupings);
 		}
+
+		$engine = EngineAPI::singleton();
 
 		$groupings = encodeFields($groupings);
 
