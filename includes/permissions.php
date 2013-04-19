@@ -2,15 +2,49 @@
 
 class mfcsPerms {
 
-	public static function isadmin($formID, $username = NULL) {
+	private static function getCount($formID,$username,$type) {
 
+		$sql       = sprintf("SELECT COUNT(permissions.ID) FROM permissions LEFT JOIN users on users.ID=permissions.userID WHERE permissions.formID='%s' AND users.username='%s'",
+            mfcs::$engine->openDB->escape($formID),
+            mfcs::$engine->openDB->escape($username)
+    		);
+    	$sqlResult = mfcs::$engine->openDB->query($sql);
+
+    	if (!$sqlResult['result']) {
+    		errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
+    		return FALSE;
+    	}
+
+    	$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+    	if ((int)$row['COUNT(permissions.ID)'] > 0) {
+    		return TRUE;
+    	}
+    	else {
+    		return FALSE;
+    	}
+
+    	return FALSE;
+
+	}
+
+	public static function isAdmin($formID, $username = NULL) {
+		if (isnull($username)) $username = sessionGet("username");
+
+		return self::getCount($formID,$username,mfcs::AUTH_ADMIN);
 	}
 
 	public static function isEditor($formID, $username = NULL) {
+		if (isnull($username)) $username = sessionGet("username");
 
+		return self::getCount($formID,$username,mfcs::AUTH_ENTRY);
 	}
 
 	public static function isViewer($formID, $username = NULL) {
+
+		if (isnull($username)) $username = sessionGet("username");
+
+		return self::getCount($formID,$username,mfcs::AUTH_VIEW);
 
 	}
 
