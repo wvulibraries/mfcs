@@ -841,7 +841,7 @@ class forms {
 				$values[$field['name']] = (array)files::processUploads($field,$engine->cleanPost['RAW'][$field['name']]);
 			}
 
-			if(is_null($values[$field['name']])) $values[$field['name']] = $engine->cleanPost['RAW'][$field['name']];
+			if(!isset($values[$field['name']])) $values[$field['name']] = $engine->cleanPost['RAW'][$field['name']];
 		}
 
 		if (!is_empty($engine->errorStack)) {
