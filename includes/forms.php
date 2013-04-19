@@ -136,7 +136,10 @@ class forms {
 	 * Returns all of the linked metadata forms for an object form
 	 */
 	public static function getObjectFormMetaForms($formID) {
-		$form = self::get($formID);
+		
+		if (($form = self::get($formID)) === FALSE) {
+			return FALSE;
+		}
 
 		$metadataForms = array();
 		foreach ($form['fields'] as $field) {
