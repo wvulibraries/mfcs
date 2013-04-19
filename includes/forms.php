@@ -68,6 +68,12 @@ class forms {
 			return FALSE;
 		}
 
+		if (!isempty($form['navigation']) && ($form['navigation'] = decodeFields($form['navigation'])) === FALSE) {
+			errorHandle::newError(__METHOD__."() - navigation!", errorHandle::DEBUG);
+			errorHandle::errorMsg("Error retrieving form.");
+			return FALSE;
+		}
+
 		if ($mfcs->cache("create",$cachID,$form) === FALSE) {
 			errorHandle::newError(__METHOD__."() - unable to cache form", errorHandle::DEBUG);
 		}
