@@ -867,16 +867,6 @@ $engine->eTemplate("include","header");
 											</span>
 										</div>
 									</form>
-
-									<div class="row-fluid noHide">
-										<form class="form form-horizontal" id="submitForm" name="submitForm" method="post">
-											<input type="hidden" name="id" value="{local var="formID"}">
-											<input type="hidden" name="form">
-											<input type="hidden" name="fields">
-											<input type="submit" class="btn btn-large btn-block btn-primary" name="submitForm" value="{local var="thisSubmitButton"}">
-											{engine name="csrf"}
-										</form>
-									</div>
 								</div>
 
 								<div class="tab-pane" id="formSettings">
@@ -948,17 +938,17 @@ $engine->eTemplate("include","header");
 											<span class="help-block hidden"></span>
 										</div>
 									</div>
-
-									<div class="row-fluid noHide">
-										<form class="form form-horizontal" id="submitForm" name="submitForm" method="post">
-											<input type="hidden" name="id" value="{local var="formID"}">
-											<input type="hidden" name="form">
-											<input type="hidden" name="fields">
-											<input type="submit" class="btn btn-large btn-block btn-primary" name="submitForm" value="{local var="thisSubmitButton"}">
-											{engine name="csrf"}
-										</form>
-									</div>
 								</div>
+							</div>
+
+							<div class="row-fluid">
+								<form class="form form-horizontal" id="submitForm" name="submitForm" method="post">
+									<input type="hidden" name="id" value="{local var="formID"}">
+									<input type="hidden" name="form">
+									<input type="hidden" name="fields">
+									<input type="submit" class="btn btn-large btn-block btn-primary" name="submitForm" value="{local var="thisSubmitButton"}">
+									{engine name="csrf"}
+								</form>
 							</div>
 						</div>
 					</div>
