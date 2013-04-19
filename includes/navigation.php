@@ -17,7 +17,6 @@ class navigation {
 		$groupings = encodeFields($groupings);
 
 		$sql = sprintf("UPDATE `forms` SET `navigation`='%s' WHERE `ID`='%s'",
-			mfcs::$engine->openDB->escape($engine->dbTables("projects")),
 			mfcs::$engine->openDB->escape($groupings),
 			mfcs::$engine->cleanGet['MYSQL']['id']
 		);
