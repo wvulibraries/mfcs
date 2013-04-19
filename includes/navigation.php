@@ -14,16 +14,14 @@ class navigation {
 			array_multisort($positions, SORT_ASC, $groupings);
 		}
 
-		$engine = EngineAPI::singleton();
-
 		$groupings = encodeFields($groupings);
 
 		$sql = sprintf("UPDATE `forms` SET `navigation`='%s' WHERE `ID`='%s'",
-			$engine->openDB->escape($engine->dbTables("projects")),
-			$engine->openDB->escape($groupings),
-			$engine->cleanGet['MYSQL']['id']
+			mfcs::$engine->openDB->escape($engine->dbTables("projects")),
+			mfcs::$engine->openDB->escape($groupings),
+			mfcs::$engine->cleanGet['MYSQL']['id']
 		);
-		$sqlResult = $engine->openDB->query($sql);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
