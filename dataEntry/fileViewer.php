@@ -12,7 +12,7 @@ try{
 	// Get the passed info
 	$objectID  = $engine->cleanGet['MYSQL']['objectID'];
 	$fieldName = $engine->cleanGet['MYSQL']['field'];
-	$basePath  = getBaseUploadPath();
+	$basePath  = files::getBaseUploadPath();
 
 	// Are we getting a file from a current object, or from a revision?
 	if(isset($engine->cleanGet['MYSQL']['revisionID'])){
@@ -36,12 +36,12 @@ try{
 
 	// Get the object's files array and grab the correct file we are showing
 	$files = $object['data'][$fieldName];
-	$filename = isset($engine->cleanGet['MYSQL']['fileNum'])
+	$file = isset($engine->cleanGet['MYSQL']['fileNum'])
 		? $files[$engine->cleanGet['MYSQL']['fileNum']-1]
 		: $files[0];
 
 	// Build the full path to the object we're showing
-	$fullPath = getSaveDir('originals',$filename).DIRECTORY_SEPARATOR.strtolower($filename);
+	$fullPath = files::getSaveDir('originals',$file['systemName']).DIRECTORY_SEPARATOR.strtolower($file['systemName']);
 
 	// Get the object's contents
 	$fileContents = file_get_contents($fullPath);
@@ -50,16 +50,21 @@ try{
 	$fi = new finfo(FILEINFO_MIME);
 	$mimeType = $fi->buffer(file_get_contents($fullPath));
 
-	// Set the correct MIME-Type headers
+	// Set the correct MIME-Type headers, and output the file's content
 	if(isset($engine->cleanGet['MYSQL']['download']) and str2bool($engine->cleanGet['MYSQL']['download'])){
-		header("Content-Disposition: attachment; filename='$filename'");
+		header(sprintf("Content-Disposition: attachment; filename='%s'", $file['originalName']));
 		header("Content-Type: application/octet-stream");
+		die($fileContents); // die so nothing else will be displayed
 	}else{
-		header("Content-type:$mimeType");
+		if($mimeType == 'application/x-empty'){
+			errorHandle::newError("Failed to locate file to display! (objectID: {$engine->cleanGet['MYSQL']['objectID']}, field: {$engine->cleanGet['MYSQL']['field']})", errorHandle::HIGH);
+			header("Content-type: text/plain");
+			die("Failed to locate requested file!"); // die so nothing else will be displayed
+		}else{
+			header("Content-type: $mimeType");
+			die($fileContents); // die so nothing else will be displayed
+		}
 	}
-
-	// Lastly, display the object (and die so nothing else will be displayed)
-	die($fileContents);
 }catch(Exception $e){
 	errorHandle::newError($e->getMessage(), errorHandle::DEBUG);
 	die($e->getMessage());

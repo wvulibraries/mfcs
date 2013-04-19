@@ -15,6 +15,7 @@ require_once "includes/objects.php";
 require_once "includes/permissions.php";
 require_once "includes/projects.php";
 require_once "includes/users.php";
+require_once "includes/files.php";
 mfcs::singleton();
 
 // Load the user's current projects

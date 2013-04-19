@@ -1,7 +1,7 @@
 <?php
 require("../engineInclude.php");
 require("../header.php");
-define('UPLOAD_PATH', getBaseUploadPath());
+define('UPLOAD_PATH', files::getBaseUploadPath());
 define('SAVE_PATH', mfcs::config('savePath'));
 define('PERMISSONS', 0777);
 
