@@ -80,6 +80,56 @@ class users {
         return TRUE;
 	}
 
+    // userID can be mysql ID or username
+    public static function get($userID) {
+
+        if (validate::integer($userID)) {
+            $whereClause = sprintf("WHERE `ID`='%s'",
+                mfcs::$engine->openDB->escape($userID)
+                );
+        }
+        else {
+            $whereClause = sprintf("WHERE `username`='%s'",
+                mfcs::$engine->openDB->escape($userID)
+                );
+        }
+
+        $sql       = sprintf("SELECT * FROM `users` %s LIMIT 1",
+            $whereClause
+            );
+        $sqlResult = mfcs::$engine->openDB->query($sql);
+        
+        if (!$sqlResult['result']) {
+            errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+            return FALSE;
+        }
+        
+        return mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+    }
+
+    public static function getUsers() {
+
+        $sql       = sprintf("SELECT `ID` FROM `users`");
+        $sqlResult = mfcs::$engine->openDB->query($sql);
+        
+        if (!$sqlResult['result']) {
+            errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+            return FALSE;
+        }
+        
+        $users = array();
+        while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+            if (($user = self::get($row['ID'])) == FALSE) {
+                return FALSE;
+            }
+            $users[] = $user;
+        }
+
+        return $users;
+
+    }
+
 }
 
 ?>
