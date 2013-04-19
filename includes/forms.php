@@ -148,7 +148,7 @@ class forms {
 				$metadataForms[] = array('formID' => $field['choicesForm'], 'title' => $metaForm['title']);
 			}
 		}
-
+		
 		return $metadataForms;
 
 	}

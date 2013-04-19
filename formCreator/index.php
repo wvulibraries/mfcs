@@ -368,6 +368,40 @@ try {
 
 	localvars::add("availableUsersList",$availableUsersList);
 
+	// Setup Navigation stuff.
+	$metadataForms         = array();
+	$metadataFormsEven     = NULL;
+	$metadataFormsOdd      = NULL;
+	$selectedMetadataForms = "";
+
+	if (($metadataForms = forms::getObjectFormMetaForms($formID)) === FALSE) {
+		throw new Exception("Error getting linked metadata forms.");
+	}
+
+	// Now loop through all the metadata forms building their HTML and putting it in the right place
+	foreach ($metadataForms as $i => $form) {
+		$targetVar   = ($i % 2) ? 'metadataFormsOdd' : 'metadataFormsEven';
+		$$targetVar .= sprintf('<li data-type="metadataForm" data-formid="%s"><a href="#" class="btn btn-block">%s</a></li>',
+			htmlSanitize($form['formID']),
+			htmlSanitize($form['title'])
+		);
+	}
+
+	localvars::add("selectedMetadataForms",$selectedMetadataForms);
+	if(!empty($metadataFormsEven) and !empty($metadataFormsOdd)){
+		localvars::add("metadataForms", sprintf('
+        <h3>Metadata Forms</h3>
+        <div class="row-fluid">
+            <ul class="unstyled draggable span6">%s</ul>
+            <ul class="unstyled draggable span6">%s</ul>
+        </div>
+	', $metadataFormsEven, $metadataFormsOdd));
+	}
+	else{
+		localvars::add("metadataForms",  '');
+	}
+
+
 }
 catch (Exception $e) {
 	errorHandle::errorMsg($e->getMessage());
