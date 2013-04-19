@@ -37,6 +37,8 @@ public static function buildProjectNavigation($formID) {
 		return(FALSE);
 	}
 
+	localvars::add("formID",htmlSanitize($formID));
+
 	$output       = "";
 	$currentGroup = "";
 
