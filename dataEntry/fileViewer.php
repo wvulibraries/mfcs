@@ -36,12 +36,12 @@ try{
 
 	// Get the object's files array and grab the correct file we are showing
 	$files = $object['data'][$fieldName];
-	$filename = isset($engine->cleanGet['MYSQL']['fileNum'])
+	$file = isset($engine->cleanGet['MYSQL']['fileNum'])
 		? $files[$engine->cleanGet['MYSQL']['fileNum']-1]
 		: $files[0];
 
 	// Build the full path to the object we're showing
-	$fullPath = files::getSaveDir('originals',$filename).DIRECTORY_SEPARATOR.strtolower($filename);
+	$fullPath = files::getSaveDir('originals',$file['systemName']).DIRECTORY_SEPARATOR.strtolower($file['systemName']);
 
 	// Get the object's contents
 	$fileContents = file_get_contents($fullPath);
@@ -52,7 +52,7 @@ try{
 
 	// Set the correct MIME-Type headers, and output the file's content
 	if(isset($engine->cleanGet['MYSQL']['download']) and str2bool($engine->cleanGet['MYSQL']['download'])){
-		header("Content-Disposition: attachment; filename='$filename'");
+		header(sprintf("Content-Disposition: attachment; filename='%s'", $file['originalName']));
 		header("Content-Type: application/octet-stream");
 		die($fileContents); // die so nothing else will be displayed
 	}else{
