@@ -127,27 +127,6 @@ localVars::add("results",displayMessages());
 $engine->eTemplate("include","header");
 ?>
 
-<link rel="stylesheet" type="text/css" href="{local var="siteRoot"}includes/css/fineuploader.css" />
-<script type="text/javascript" src="{local var="siteRoot"}includes/js/jquery.fineuploader.min.js"></script>
-<style>
-  /* Fine Uploader
-  -------------------------------------------------- */
-  .qq-upload-list {
-    text-align: left;
-  }
-
-  li.alert-success {
-    background-color: #DFF0D8;
-  }
-
-  li.alert-error {
-    background-color: #F2DEDE;
-  }
-
-  .alert-error .qq-upload-failed-text {
-    display: inline;
-  }
-</style>
 <section>
 	<header class="page-header">
 		<h1>{local var="formName"}</h1>
