@@ -69,8 +69,9 @@ public static function buildProjectNavigation($formID) {
 			);
 		}
 		else if ($item['type'] == "objectForm" || $item['type'] == "metadataForm") {
-			$output .= sprintf('<a href="%s.php?formID=%s">%s</a>',
+			$output .= sprintf('<a href="%s.php?formID=%s" data-name="%s" class="metadataObjectEditor">%s</a>',
 				($item['type'] == "objectForm")?"object":"metadata",
+				htmlSanitize($item['formID']),
 				htmlSanitize($item['formID']),
 				htmlSanitize($item['label'])
 			);
