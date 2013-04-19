@@ -60,4 +60,30 @@
 			}
 		}
 
+
+// Best of both worlds?
+// You can also do something like this, or you could use the add method to cache the additions and insert all at once
+
+	$permissionValueGroups = array();
+	$tmp = array("selectedViewUsers"   => mfcs::AUTH_VIEW,
+		         "selectedEntryUsers"  => mfcs::AUTH_ENTRY,
+		         "selectedUsersAdmins" => mfcs::AUTH_ADMIN
+		         );
+
+	foreach ($tmp as $I => $K) {
+		if (!isset($engine->cleanPost['MYSQL'][$I]) || !is_array($engine->cleanPost['MYSQL'][$I])) continue;
+
+		foreach ($engine->cleanPost['MYSQL'][$I] as $userID) {
+			$permissionValueGroups[] = sprintf("('%s','%s','%s')",
+				$userID,
+				$formID,
+				$K
+			);
+		}
+
+		if (mfcsPerms::add($permissionValueGroups) === FALSE) {
+			throw new Exception("Error adding Permissions");
+		}
+	}
+
 ?>
