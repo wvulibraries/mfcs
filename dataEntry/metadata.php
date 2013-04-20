@@ -72,6 +72,7 @@ try {
 
 	localvars::add("form",$builtForm);
 	localvars::add("metadataEditTable",$builtEditTable);
+	localvars::add("formID",$form['ID']);
 
 	// localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['id']));
 
@@ -95,6 +96,14 @@ if (!$ajax) {
 	<header class="page-header">
 		<h1>{local var="formName"}</h1>
 	</header>
+
+	<nav id="breadcrumbs">
+		<ul class="breadcrumb">
+			<li><a href="{local var="siteRoot"}">Home</a> <span class="divider">/</span></li>
+			<li><a href="{local var="siteRoot"}/dataEntry/selectForm.php">Select a Form</a> <span class="divider">/</span></li>
+			<li class="pull-right"><a href="{local var="siteRoot"}/formCreator/index.php?id={local var="formID"}">Edit Form</a></li>
+		</ul>
+	</nav>
 
 	{local var="results"}
 

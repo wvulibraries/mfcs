@@ -65,6 +65,7 @@ try {
 	//////////
 
 	localvars::add("formName",$form['title']);
+	localvars::add("formID",$form['ID']);
 
 	// handle submission
 	if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
@@ -161,6 +162,7 @@ $engine->eTemplate("include","header");
 		<ul class="breadcrumb">
 			<li><a href="{local var="siteRoot"}">Home</a> <span class="divider">/</span></li>
 			<li><a href="{local var="siteRoot"}/dataEntry/selectForm.php">Select a Form</a> <span class="divider">/</span></li>
+			<li class="pull-right"><a href="{local var="siteRoot"}/formCreator/index.php?id={local var="formID"}">Edit Form</a></li>
 		</ul>
 	</nav>
 
