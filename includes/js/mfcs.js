@@ -37,7 +37,8 @@ function handler_setupMetadataModal() {
     $("#metadataModal .modal-header h3").html($(this).attr("data-header"));
 
     var dataFieldName = $(this).attr("data-fieldname");
-    var url           = siteRoot+'/dataEntry/metadata.php?formID='+$(this).attr('data-formID')+'&amp;ajax=true';
+    var formID        = $(this).attr('data-formid');
+    var url           = siteRoot+'/dataEntry/metadata.php?formID='+formID+'&amp;ajax=true';
 
     $.ajax({
         type: "GET",
@@ -49,22 +50,26 @@ function handler_setupMetadataModal() {
              $("#metadataModalBody :submit").remove();
              $("#metadataModalBody header").remove();
              $("#metadataModalBody footer").remove();
+             $("#metadataModalBody form").data("choicesform",formID);
+
+             $('#metadataModal').modal('show');
         },
         error: function(jqXHR,error,exception) {
             $('#metadataModalBody').html("An Error has occurred: "+error);
         }
-    });
+    }); 
 
 }
 
 function handler_displayMetadataFormModal(formID) {
 
-    event.preventDefault();
-    event.stopImmediatePropagation();
+    // event.preventDefault();
+    // event.stopImmediatePropagation();
 
     var choicesForm = formID;//$(this).attr("data-formID");
 
     $("[data-choicesForm='"+choicesForm+"']").each(function() {
+        console.log("here"); 
         var dataFieldName = $(this).attr("data-fieldname");
         var url           = siteRoot+'?ajax&action=selectChoices&formID='+$(this).attr("data-formid")+"&fieldName="+dataFieldName;
 
@@ -85,9 +90,12 @@ function handler_displayMetadataFormModal(formID) {
 
 function submitMetadataModal() {
 
+    var metadataFormID = 0;
+    
     $("#metadataModalBody form").each(function() {
 
-        data = $(this).serialize();
+        data           = $(this).serialize();
+        metadataFormID = $(this).data("choicesform");
 
         if ($(this).attr("name") == "insertForm") {
             data = data + "&submitForm=TRUE"
@@ -111,9 +119,9 @@ function submitMetadataModal() {
         });
 
     });
-
+    
     $('#metadataModal').modal('hide');
-    handler_displayMetadataFormModal($(this).attr("data-formid"));
+    handler_displayMetadataFormModal(metadataFormID);
 
 }
 
