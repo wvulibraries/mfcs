@@ -718,9 +718,115 @@ class forms {
 		}
 
 		// Do the Updates
-		if (($currentProjects = users::loadProjects()) === FALSE) {
-			return FALSE;
-		}
+		$objects = objects::getAllObjectsForForm($formID);
+		if (count($objects) > 0) {
+			foreach ($objects as $object) {
+
+				$values = array();
+
+				foreach ($form['fields'] as $field) {
+
+					// @TODO this needs to be broken off into a method, duplicated in submit() as well
+					if ($field['type'] == "fieldset" || $field['type'] == "idno" || $field['disabled'] == "true") continue;
+
+					if (strtolower($field['required']) == "true"           &&
+						(!isset($engine->cleanPost['RAW'][$field['name']."_".$object['ID']]) ||
+							isempty($engine->cleanPost['RAW'][$field['name']."_".$object['ID']]))
+						) {
+
+						errorHandle::errorMsg("Missing data for required field '".$field['label']."'.");
+					continue;
+
+				}
+
+				// perform validations here
+				if (isempty($field['validation']) || $field['validation'] == "none") {
+					$valid = TRUE;
+				}
+				else {
+					$return = validate::isValidMethod($field['validation']);
+					$valid  = FALSE;
+					if ($return === TRUE) {
+						if ($field['validation'] == "regexp") {
+							$valid = validate::$field['validation']($field['validationRegex'],$field['value']);
+						}
+						else {
+							$valid = validate::$field['validation']($engine->cleanPost['RAW'][$field['name']."_".$object['ID']]);
+						}
+					}
+				}
+
+				if ($valid === FALSE) {
+					errorHandle::errorMsg("Invalid data provided in field '".$field['label']."'.");
+					continue;
+				}
+
+				// Duplicate Checking (Form)
+				if (strtolower($field['duplicates']) == "true") {
+					if (self::isDupe($formID,$field['name'],$engine->cleanPost['RAW'][$field['name']."_".$object['ID']],$object['ID'])) {
+						errorHandle::errorMsg("Duplicate data (in form) provided in field '".$field['label']."'.");
+						continue;
+					}
+				}
+
+				if (strtolower($field['readonly']) == "true") {
+				// need to pull the data that loaded with the form
+					if ($newObject === TRUE) {
+					// grab it from the database
+						$oldObject              = object::get($objectID);
+						$values[$field['name']] = $oldObject['data'][$field['name']];
+					}
+					else {
+					// grab the default value from the form.
+						$values[$field['name']] = $field['value'];
+					}
+				}
+
+				if (strtolower($field['type']) == "file") {
+					$values[$field['name']] = (array)files::processUploads($field,$engine->cleanPost['RAW'][$field['name']."_".$object['ID']]);
+				}
+
+				if(!isset($values[$field['name']])) $values[$field['name']] = $engine->cleanPost['RAW'][$field['name']."_".$object['ID']];
+				
+
+				if (!is_empty($engine->errorStack)) {
+					return FALSE;
+				}
+
+			// place old version into revision control
+				$rcs = new revisionControlSystem('objects','revisions','ID','modifiedTime');
+				$return = $rcs->insertRevision($object['ID']);
+
+				if ($return !== TRUE) {
+
+					$engine->openDB->transRollback();
+					$engine->openDB->transEnd();
+
+					errorHandle::errorMsg("Error inserting revision.");
+					errorHandle::newError(__METHOD__."() - unable to insert revisions", errorHandle::DEBUG);
+					return FALSE;
+				}
+
+			// insert new version
+				$sql = sprintf("UPDATE `objects` SET `data`='%s', `modifiedTime`='%s' WHERE `ID`='%s'",
+					encodeFields($values),
+					time(),
+					$engine->openDB->escape($object['ID'])
+					);
+
+				$sqlResult = $engine->openDB->query($sql);
+			}
+
+			if (!$sqlResult['result']) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+
+				errorHandle::newError(__METHOD__."() - ".$sql." -- ".$sqlResult['error'], errorHandle::DEBUG);
+				return FALSE;
+			}
+
+		}}
+
 
 
 		// do the deletes
@@ -754,7 +860,6 @@ class forms {
 					return FALSE;
 				}
 				
-				$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 			}
 		}
 
