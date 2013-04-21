@@ -132,6 +132,8 @@ if (forms::validID()) {
 		localvars::add("form",$builtForm);
 		localvars::add("leftnav",navigation::buildProjectNavigation($engine->cleanGet['MYSQL']['formID']));
 
+		localvars::add("objectID",$engine->cleanGet['MYSQL']['objectID']);
+
 		//////////
 		// Project Tab Stuff
 		$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
@@ -162,7 +164,11 @@ $engine->eTemplate("include","header");
 		<ul class="breadcrumb">
 			<li><a href="{local var="siteRoot"}">Home</a> <span class="divider">/</span></li>
 			<li><a href="{local var="siteRoot"}/dataEntry/selectForm.php">Select a Form</a> <span class="divider">/</span></li>
-			<li class="pull-right"><a href="{local var="siteRoot"}/formCreator/index.php?id={local var="formID"}">Edit Form</a></li>
+			<!-- FLoat Right -->
+			<li class="pull-right"><a href="{local var="siteRoot"}formCreator/index.php?id={local var="formID"}">Edit Form</a></li>
+			<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
+				<li class="pull-right"><a href="{local var="siteRoot"}dataEntry/revisions.php?objectID={local var="objectID"}">Revisions</a></li>
+			<?php } ?>			
 		</ul>
 	</nav>
 
