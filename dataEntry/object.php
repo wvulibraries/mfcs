@@ -2,6 +2,9 @@
 include("../header.php");
 recurseInsert("acl.php","php");
 
+// Setup revision control
+$revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime');
+
 $selectedProjects = NULL;
 $parentObject     = NULL;
 
@@ -166,7 +169,7 @@ $engine->eTemplate("include","header");
 			<li><a href="{local var="siteRoot"}/dataEntry/selectForm.php">Select a Form</a> <span class="divider">/</span></li>
 			<!-- FLoat Right -->
 			<li class="pull-right"><a href="{local var="siteRoot"}formCreator/index.php?id={local var="formID"}">Edit Form</a></li>
-			<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
+			<?php if (!isnull($engine->cleanGet['MYSQL']['objectID']) and $revisions->hasRevisions($engine->cleanGet['MYSQL']['objectID'])) { ?>
 				<li class="pull-right"><a href="{local var="siteRoot"}dataEntry/revisions.php?objectID={local var="objectID"}">Revisions</a></li>
 			<?php } ?>			
 		</ul>
