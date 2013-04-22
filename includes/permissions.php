@@ -25,12 +25,12 @@ class mfcsPerms {
 
 	public static function isEditor($formID, $username = NULL) {
 		if (isnull($username)) $username = sessionGet("username");
-		return self::isAdmin($formID,$username) || self::getCount($formID,$username,mfcs::AUTH_ENTRY);
+		return self::getCount($formID,$username,mfcs::AUTH_ENTRY) || self::isAdmin($formID,$username);
 	}
 
 	public static function isViewer($formID, $username = NULL) {
 		if (isnull($username)) $username = sessionGet("username");
-		return self::isAdmin($formID,$username) || self::isEditor($formID,$username) || self::getCount($formID,$username,mfcs::AUTH_VIEW);
+		return self::getCount($formID,$username,mfcs::AUTH_VIEW) || self::isEditor($formID,$username);
 	}
 
 	public static function add($userID,$formID,$type) {
