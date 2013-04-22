@@ -132,14 +132,18 @@ $(function() {
 	// Make the left panel fixed if the viewport is big enough to hold the content
 	$(window).scroll(function() {
 		var left = $('#leftPanel');
-		var height = $('#leftPanel .tab-content').outerHeight() + $('#fieldTab').outerHeight() + 170;
+		var leftParent = left.closest('.row-fluid');
+		var leftParentTop = leftParent.offset().top - 55;
+		var leftHeight = $('#leftPanel .tab-content').outerHeight() + $('#fieldTab').outerHeight() + 170;
 
 		// Is the window big enough?
-		if ($(window).height() > height) {
+		if ($(window).height() > leftHeight) {
 			// Yes - should we fix it?
-			if (!left.hasClass("fix") && $(window).scrollTop() - left.offset().top + 170 > 0) {
+			if($(window).scrollTop() >= leftParentTop){
 				left.addClass('fix');
 				left.css("width",left.parent().width());
+			}else{
+				left.removeClass('fix');
 			}
 		}
 		else {
