@@ -31,7 +31,7 @@ class mfcsPerms {
 	public static function isAdmin($formID, $username = NULL) {
 		if (isnull($username)) $username = sessionGet("username");
 
-		return self::getCount($formID,$username,mfcs::AUTH_ADMIN);
+		return self::getCount($formID,$username,mfcs::AUTH_ADMIN) || trim(strtolower(users::user('status','user'))) == 'systems';
 	}
 
 	public static function isEditor($formID, $username = NULL) {
