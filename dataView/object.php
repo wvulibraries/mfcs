@@ -4,6 +4,12 @@ recurseInsert("acl.php","php");
 
 try {
 
+	// If we have an objectID and no formID, lookup the formID from the object and set it back into the GET
+	if(isset($engine->cleanGet['MYSQL']['objectID']) and !isset($engine->cleanGet['MYSQL']['formID'])){
+		$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
+		http::setGet('formID', $object['formID']);
+	}
+
 	// Object ID Validation
 	if (objects::validID(TRUE) === FALSE) {
 		throw new Exception("ObjectID Provided is invalid.");
