@@ -42,6 +42,7 @@ class navigation {
 		$output       = "";
 		$currentGroup = "";
 
+		if(!is_array($form['navigation'])) return $output;
 		foreach ($form['navigation'] as $item) {
 
 			// deal with field sets
