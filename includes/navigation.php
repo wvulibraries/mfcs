@@ -31,64 +31,64 @@ class navigation {
 
 	}
 
-public static function buildProjectNavigation($formID) {
-	
-	if (($form = forms::get($formID)) === FALSE) {
-		return(FALSE);
-	}
+	public static function buildProjectNavigation($formID) {
 
-	localvars::add("formID",htmlSanitize($formID));
+		if (($form = forms::get($formID)) === FALSE) {
+			return(FALSE);
+		}
 
-	$output       = "";
-	$currentGroup = "";
+		localvars::add("formID",htmlSanitize($formID));
 
-	foreach ($form['navigation'] as $item) {
+		$output       = "";
+		$currentGroup = "";
 
-		// deal with field sets
-		if ($item['grouping'] != $currentGroup) {
-			if ($currentGroup != "") {
-				$output .= "</ul></li>";
+		foreach ($form['navigation'] as $item) {
+
+			// deal with field sets
+			if ($item['grouping'] != $currentGroup) {
+				if ($currentGroup != "") {
+					$output .= "</ul></li>";
+				}
+				if (!isempty($item['grouping'])) {
+					$output .= sprintf('<li><strong>%s</strong><ul>',
+						$item['grouping']
+					);
+				}
+				$currentGroup = $item['grouping'];
 			}
-			if (!isempty($item['grouping'])) {
-				$output .= sprintf('<li><strong>%s</strong><ul>',
-					$item['grouping']
+
+			$output .= "<li>";
+			if ($item['type'] == "logout") {
+				$output .= sprintf('<a href="%s">%s</a>',
+					htmlSanitize($item['url']),
+					htmlSanitize($item['label'])
 				);
 			}
-			$currentGroup = $item['grouping'];
+			else if ($item['type'] == "link") {
+				$output .= sprintf('<a href="%s">%s</a>',
+					htmlSanitize($item['url']),
+					htmlSanitize($item['label'])
+				);
+			}
+			else if ($item['type'] == "objectForm" || $item['type'] == "metadataForm") {
+				$output .= sprintf('<a href="" data-formID="%s" data-header="%s" data-toggle="modal" class="metadataObjectEditor">%s</a>',
+					htmlSanitize($item['formID']),
+					htmlSanitize($item['label']),
+					htmlSanitize($item['label'])
+				);
+			}
+			else {
+				$output .= sprintf('%s',
+					htmlSanitize($item['label'])
+				);
+			}
+			$output .= "</li>";
+
 		}
 
-		$output .= "<li>";
-		if ($item['type'] == "logout") {
-			$output .= sprintf('<a href="%s">%s</a>',
-				htmlSanitize($item['url']),
-				htmlSanitize($item['label'])
-			);
-		}
-		else if ($item['type'] == "link") {
-			$output .= sprintf('<a href="%s">%s</a>',
-				htmlSanitize($item['url']),
-				htmlSanitize($item['label'])
-			);
-		}
-		else if ($item['type'] == "objectForm" || $item['type'] == "metadataForm") {
-			$output .= sprintf('<a href="" data-formID="%s" data-header="%s" data-toggle="modal" class="metadataObjectEditor">%s</a>',
-				htmlSanitize($item['formID']),
-				htmlSanitize($item['label']),
-				htmlSanitize($item['label'])
-			);
-		}
-		else {
-			$output .= sprintf('%s',
-				htmlSanitize($item['label'])
-			);
-		}
-		$output .= "</li>";
 
+		return $output;
 	}
-
-
-	return $output;
-}
 
 }
 
