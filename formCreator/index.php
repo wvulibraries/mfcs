@@ -492,6 +492,38 @@ if (!isnull($formID)) {
 	}
 }
 
+// Build the list of users for the form permissions select boxes
+$selectedEntryUsers  = "";
+$selectedViewUsers   = "";
+$selectedUsersAdmins = "";
+
+$sql = sprintf("SELECT permissions.type, users.status, users.firstname, users.lastname, users.username, users.ID as userID FROM permissions LEFT JOIN users ON permissions.userID=users.ID WHERE permissions.formID='%s'", $engine->cleanGet['MYSQL']['id']);
+$sqlResult = $engine->openDB->query($sql);
+if(!$sqlResult['result']) throw new Exception("MySQL Error - getting permissions ({$sqlResult['error']})");
+
+while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+	$optionHTML = sprintf('<option value="%s">%s, %s (%s)</option>',
+		$engine->openDB->escape($row['userID']),
+		$engine->openDB->escape($row['lastname']),
+		$engine->openDB->escape($row['firstname']),
+		$engine->openDB->escape($row['username']));
+	switch($row['type']){
+		case mfcs::AUTH_VIEW:
+			$selectedViewUsers .= $optionHTML;
+			break;
+		case mfcs::AUTH_ENTRY:
+			$selectedEntryUsers .= $optionHTML;
+			break;
+		case mfcs::AUTH_ADMIN:
+			$selectedUsersAdmins .= $optionHTML;
+			break;
+	}
+}
+
+localvars::add("selectedEntryUsers",$selectedEntryUsers);
+localvars::add("selectedViewUsers",$selectedViewUsers);
+localvars::add("selectedUsersAdmins",$selectedUsersAdmins);
+
 localVars::add("results",displayMessages());
 
 $engine->eTemplate("include","header");
