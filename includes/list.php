@@ -157,15 +157,25 @@ class listGenerator {
 		}
 	}
 
-	private static function genLinkURLs($url,$objectID) {
-
-		$urls['view']      = sprintf("%sdataView/object.php?objectID=",    localvars::get("siteRoot"));
-		$urls['edit']      = sprintf("%sdataEntry/object.php?objectID=",   localvars::get("siteRoot"));
-		$urls['revisions'] = sprintf("%sdataEntry/revisions.php?objectID=",localvars::get("siteRoot"));
-
-		if (!isset($urls[strtolower($url)])) return FALSE;
-
-		return sprintf('<a href="%s%s">%s</a>',$urls[strtolower($url)],$objectID,htmlSanitize(strtolower($url)));
+	private static function genLinkURLs($type,$objectID) {
+		switch(trim(strtolower($type))){
+			case 'view':
+				return sprintf('<a href="%sdataView/object.php?objectID=%s">View</a>', localvars::get("siteRoot"), $objectID);
+				break;
+			case 'edit':
+				return sprintf('<a href="%sdataEntry/object.php?objectID=%s">Edit</a>', localvars::get("siteRoot"), $objectID);
+				break;
+			case 'revisions':
+				$revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime');
+				return $revisions->hasRevisions($objectID)
+					? sprintf('<a href="%sdataEntry/revisions.php?objectID=%s">View</a>', localvars::get("siteRoot"), $objectID)
+					: '<span style="font-style:italic; color:#ccc;">View</span>';
+				break;
+			default:
+				errorHandle::newError(__METHOD__."() - Invalid type passed!", errorHandle::LOW);
+				return '';
+				break;
+		}
 	}
 
 	public static function generateFormSelectList($objectID = NULL) {
