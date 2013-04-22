@@ -72,7 +72,7 @@ catch (Exception $e) {
 	errorHandle::errorMsg($e->getMessage());
 }
 
-localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['formID']));
+localvars::add("leftnav",navigation::buildProjectNavigation($engine->cleanGet['MYSQL']['formID']));
 localVars::add("results",displayMessages());
 
 $engine->eTemplate("include","header");
