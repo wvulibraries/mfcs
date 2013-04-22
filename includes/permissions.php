@@ -44,11 +44,7 @@ class mfcsPerms {
 
 		if (isnull($username)) $username = sessionGet("username");
 
-		if (self::getCount($formID,$username,mfcs::AUTH_ADMIN) === TRUE) return TRUE;
-		if (self::getCount($formID,$username,mfcs::AUTH_ENTRY) === TRUE) return TRUE;
-		
-		return self::getCount($formID,$username,mfcs::AUTH_VIEW);
-
+		return self::isAdmin($formID,$username) || self::isEditor($formID,$username) || self::getCount($formID,$username,mfcs::AUTH_VIEW);
 	}
 
 	public static function add($userID,$formID,$type) {
