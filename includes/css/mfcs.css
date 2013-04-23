@@ -1,6 +1,14 @@
 #breadcrumbs ul li.pull-right {
 	margin-right: 10px;
 }
+#breadcrumbs ul li:before{
+	content: '/';
+	color: #999;
+	margin: 0 6px;
+}
+#breadcrumbs ul li:first-child:before{
+	content: none;
+}
 
 .pickList {
 	list-style: none;
