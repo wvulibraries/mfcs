@@ -63,7 +63,8 @@ try {
 	else {
 		localvars::add("formList",$formList);
 	}
-	localVars::add("childrenList",listGenerator::generateChildList($engine->cleanGet['MYSQL']['objectID']));
+	$childList = listGenerator::generateChildList($engine->cleanGet['MYSQL']['objectID']);
+	localVars::add("childrenList", is_empty($childList) ? 'No children available' : $childList);
 	// Children Tab Stuff
 	//////////
 
