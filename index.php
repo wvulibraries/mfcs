@@ -106,7 +106,7 @@ $engine->eTemplate("include","header");
 			<a href="" class="btn">Export</a>
 		</li>
         <li>
-            <a href="" class="btn">Statistics</a>
+            <a href="stats/" class="btn">Statistics</a>
         </li>
 	</ul>
 
