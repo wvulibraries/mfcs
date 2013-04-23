@@ -9,6 +9,9 @@
 #breadcrumbs ul li:first-child:before{
 	content: none;
 }
+#breadcrumbs ul li.noDivider:before{
+	content: none;
+}
 
 .pickList {
 	list-style: none;
