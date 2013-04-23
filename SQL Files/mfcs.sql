@@ -136,7 +136,6 @@ CREATE TABLE IF NOT EXISTS `objectProjects` (
   `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `objectID` int(10) unsigned DEFAULT NULL,
   `projectID` int(10) unsigned DEFAULT NULL,
-  `projectNumber` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=19 ;
 
@@ -144,17 +143,17 @@ CREATE TABLE IF NOT EXISTS `objectProjects` (
 -- Dumping data for table `objectProjects`
 --
 
-INSERT INTO `objectProjects` (`ID`, `objectID`, `projectID`, `projectNumber`) VALUES
-(4, 6, 2, NULL),
-(5, 7, 2, NULL),
-(6, 8, 2, NULL),
-(7, 9, 2, NULL),
-(13, 15, 2, NULL),
-(14, 16, 2, NULL),
-(15, 17, 2, NULL),
-(16, 18, 2, NULL),
-(17, 19, 2, NULL),
-(18, 20, 2, NULL);
+INSERT INTO `objectProjects` (`ID`, `objectID`, `projectID`) VALUES
+(4, 6, 2),
+(5, 7, 2),
+(6, 8, 2),
+(7, 9, 2),
+(13, 15, 2),
+(14, 16, 2),
+(15, 17, 2),
+(16, 18, 2),
+(17, 19, 2),
+(18, 20, 2);
 
 -- --------------------------------------------------------
 
