@@ -1204,6 +1204,91 @@ class forms {
 		}
 	}
 
+	public static function getProjects($formID) {
+		$engine = EngineAPI::singleton();
+		$return = array();
+
+		$sql = sprintf("SELECT `projectID` FROM `%s` WHERE formID='%s'",
+			$engine->openDB->escape($engine->dbTables("formsProjects")),
+			$engine->openDB->escape($formID)
+		);
+		$sqlResult = $engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
+			return array();
+		}
+
+		while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+			$return[] = $row['projectID'];
+		}
+
+		return $return;
+	}
+	public static function deleteAllProjects($formID) {
+
+		$engine = EngineAPI::singleton();
+
+		$sql       = sprintf("DELETE FROM `%s` WHERE `formID`='%s'",
+			$engine->openDB->escape($engine->dbTables("formsProjects")),
+			$engine->openDB->escape($formID)
+		);
+		$sqlResult = $engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		return TRUE;
+
+	}
+
+	public static function addProject($formID,$projectID) {
+
+		$engine = EngineAPI::singleton();
+
+		$sql       = sprintf("INSERT INTO `%s` (`formID`,`projectID`) VALUES('%s','%s')",
+			$engine->openDB->escape($engine->dbTables("formsProjects")),
+			$engine->openDB->escape($formID),
+			$engine->openDB->escape($projectID)
+		);
+		$sqlResult = $engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		return TRUE;
+
+	}
+
+	public static function addProjects($formID,$projects) {
+
+		if (!is_array($projects)) {
+			return FALSE;
+		}
+
+		$engine = EngineAPI::singleton();
+
+		$result = $engine->openDB->transBegin("objectProjects");
+
+		foreach ($projects as $projectID) {
+			if (self::addProject($formID,$projectID) === FALSE) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+				return FALSE;
+			}
+		}
+
+		$engine->openDB->transCommit();
+		$engine->openDB->transEnd();
+
+		return TRUE;
+
+	}
+
 }
 
 ?>

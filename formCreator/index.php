@@ -168,6 +168,39 @@ if (isset($engine->cleanPost['MYSQL']['submitPermissions'])) {
 	}
 }
 
+if (isset($engine->cleanPost['MYSQL']['projectForm'])) {
+	$engine->openDB->transBegin();
+
+	if (!isset($engine->cleanPost['MYSQL']['projects'])) {
+		// If no projects are set, we are deleting all the projects
+		if (forms::deleteAllProjects($engine->cleanGet['MYSQL']['id']) === FALSE) {
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
+			throw new Exception("Error removing all projects from Object.");
+		}
+	}
+	else {
+		// There are changes.
+		// Delete all the old ones
+		if (forms::deleteAllProjects($engine->cleanGet['MYSQL']['id']) === FALSE) {
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
+			throw new Exception("Error removing all projects from Object.");
+		}
+
+		// Add All the new ones
+		if (forms::addProjects($engine->cleanGet['MYSQL']['id'],$engine->cleanPost['MYSQL']['projects']) === FALSE) {
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
+			throw new Exception("Error adding projects to Object.");
+		}
+
+		$engine->openDB->transCommit();
+		$engine->openDB->transEnd();
+	}
+
+}
+
 try {
 	$tmp = NULL;
 	foreach (Imagick::queryFormats() as $format) {
@@ -527,6 +560,8 @@ localvars::add("selectedUsersAdmins",$selectedUsersAdmins);
 localVars::add("results",displayMessages());
 
 $engine->eTemplate("include","header");
+$selectedProjects = forms::getProjects(isset($engine->cleanGet['MYSQL']['id']) ? $engine->cleanGet['MYSQL']['id'] : 0);
+localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects));
 ?>
 
 <script type="text/javascript" src='{local var="siteRoot"}includes/js/createForm_nav.js'></script>
@@ -536,6 +571,7 @@ $engine->eTemplate("include","header");
 <section>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="#formCreator" data-toggle="tab">Form Creator</a></li>
+		<li><a href="#projects" data-toggle="tab">Assigned Projects</a></li>
 		<?php if (!isnull($formID)) { ?>
 		<li><a href="#navigation" data-toggle="tab">Navigation Creator</a></li>
 		<li><a href="#permissions" data-toggle="tab">Form Permissions</a></li>
@@ -1083,6 +1119,16 @@ $engine->eTemplate("include","header");
 					</div>
 				</div>
 			</div>
+		</div>
+
+		<div class="tab-pane" id="projects">
+			<h2>Change Project Membership</h2>
+
+			<form action="{phpself query="true"}" method="post">
+			{local var="projectOptions"}
+			{engine name="csrf"}
+			<input type="submit" class="btn btn-primary" name="projectForm">
+			</form>
 		</div>
 
 		<?php if (!isnull($formID)) { ?>
