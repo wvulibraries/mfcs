@@ -2,6 +2,7 @@
 $engine->dbTables("containers","prod","containers");
 $engine->dbTables("dupeMatching","prod","dupeMatching");
 $engine->dbTables("forms","prod","forms");
+$engine->dbTables("formsProjects","prod","forms_projects");
 $engine->dbTables("objectMetadataLinks","prod","objectMetadataLinks");
 $engine->dbTables("objectProjects","prod","objectProjects");
 $engine->dbTables("objects","prod","objects");
