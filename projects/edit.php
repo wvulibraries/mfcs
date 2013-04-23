@@ -259,7 +259,7 @@ $engine->eTemplate("include","header");
 				</div>
 				<form name="projectEdits" action='{phpself query="true"}' method="post">
 					{engine name="csrf"}
-					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dignissimos dolor ea illum nesciunt temporibus? Blanditiis consequatur distinctio, ex harum modi nostrum quaerat, quas quod sequi similique ut velit veritatis voluptates?</p>
+					<p>Here you can select the forms that are a part of this project.</p>
 					<select name="selectedObjectForms[]" id="selectedObjectForms" size="5" multiple="multiple">
 						{local var="selectedObjectForms"}
 					</select>
