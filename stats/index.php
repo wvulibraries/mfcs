@@ -11,8 +11,8 @@ $stats = new mfcsStats(".");
 
 	<nav id="breadcrumbs">
 		<ul class="breadcrumb">
-			<li><a href="{local var="siteRoot"}">Home</a> <span class="divider">/</span></li>
-			<li><a href="{local var="siteRoot"}/stats/">Stats</a> <span class="divider">/</span></li>
+			<li><a href="{local var="siteRoot"}">Home</a></li>
+			<li><a href="{local var="siteRoot"}/stats/">Stats</a></li>
 		</ul>
 	</nav>
 

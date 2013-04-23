@@ -50,7 +50,13 @@ try {
 	}
 
 	localvars::add("list",$list);
-	localvars::add("breadcrumbs", implode('<span class="divider">/</span>', $breadCrumbs));
+
+	// Make breadcrumbs
+	$crumbs = '';
+	foreach($breadCrumbs as $breadCrumb){
+		$crumbs .= "<li>$breadCrumb</li>";
+	}
+	localvars::add("breadcrumbs", $crumbs);
 
 }
 catch(Exception $e) {
@@ -67,9 +73,7 @@ $engine->eTemplate("include","header");
 	</header>
 	<nav id="breadcrumbs">
 		<ul class="breadcrumb">
-			<li>
-				{local var="breadcrumbs"}
-			</li>
+			{local var="breadcrumbs"}
 		</ul>
 	</nav>
 

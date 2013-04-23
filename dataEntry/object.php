@@ -165,15 +165,15 @@ $engine->eTemplate("include","header");
 
 	<nav id="breadcrumbs">
 		<ul class="breadcrumb">
-			<li><a href="{local var="siteRoot"}">Home</a> <span class="divider">/</span></li>
-			<li><a href="{local var="siteRoot"}/dataEntry/selectForm.php">Select a Form</a> <span class="divider">/</span></li>
+			<li><a href="{local var="siteRoot"}">Home</a></li>
+			<li><a href="{local var="siteRoot"}/dataEntry/selectForm.php">Select a Form</a></li>
 			<!-- FLoat Right -->
 			<?php if(mfcsPerms::isAdmin($engine->cleanGet['MYSQL']['formID'])){ ?>
-			<li class="pull-right"><a href="{local var="siteRoot"}formCreator/index.php?id={local var="formID"}">Edit Form</a></li>
+			<li class="pull-right noDivider"><a href="{local var="siteRoot"}formCreator/index.php?id={local var="formID"}">Edit Form</a></li>
 			<?php
 			}
 			if (!isnull($engine->cleanGet['MYSQL']['objectID']) and $revisions->hasRevisions($engine->cleanGet['MYSQL']['objectID'])) { ?>
-				<li class="pull-right"><a href="{local var="siteRoot"}dataEntry/revisions.php?objectID={local var="objectID"}">Revisions</a></li>
+				<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions.php?objectID={local var="objectID"}">Revisions</a></li>
 			<?php } ?>			
 		</ul>
 	</nav>

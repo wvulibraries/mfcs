@@ -61,11 +61,8 @@ $engine->eTemplate("include","header");
 	</header>
 	<nav id="breadcrumbs">
 		<ul class="breadcrumb">
-			<li>
-				<a href="{local var="siteRoot"}">Home</a>
-				<span class="divider">/</span>
-				<a href="{local var="siteRoot"}/dataEntry/selectMetadataForm.php">Select Metadata Form</a>
-			</li>
+			<li><a href="{local var="siteRoot"}">Home</a></li>
+			<li><a href="{local var="siteRoot"}/dataEntry/selectMetadataForm.php">Select Metadata Form</a></li>
 		</ul>
 	</nav>
 
