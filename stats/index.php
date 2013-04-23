@@ -19,3 +19,6 @@ $stats = new mfcsStats(".");
 	<?php $stats->showStatFiles(); ?>
 
 </section>
+<?php
+$engine->eTemplate("include","footer");
+?>
