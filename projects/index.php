@@ -13,6 +13,12 @@ function defineList($tableName) {
 		"label"    => "Project Name",
 		));
 
+	$l->addField(array(
+		"field"    => "projectID",
+		"label"    => "Project ID (Short Name)",
+		"validate" => "alphaNoSpaces"
+		));
+
 	$l->addField (
 
 		array(
