@@ -433,7 +433,6 @@ if (!isnull($formID)) {
 		}
 
 		// Get existing groupings
-		// @TODO -- cleanGet isn't always set if formID isn't null, but formID is html safe not mysql safe. 
 		$sql = sprintf("SELECT * FROM `forms` WHERE `ID`='%s' LIMIT 1",
 			$engine->openDB->escape($formID) 
 		);
