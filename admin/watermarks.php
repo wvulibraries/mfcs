@@ -87,8 +87,7 @@ if (!isnull($ID)) {
 	localVars::add("headerText","Update Watermark");
 	localVars::add("submitBtn",'<button type="submit" name="update" class="btn">Update</button><button type="submit" name="delete" class="btn">Delete</button>');
 
-	$sql = sprintf("SELECT * FROM `%s` WHERE ID='%s' LIMIT 1",
-		$engine->openDB->escape($engine->dbTables("watermarks")),
+	$sql = sprintf("SELECT * FROM `watermarks` WHERE ID='%s' LIMIT 1",
 		$engine->openDB->escape($ID)
 		);
 	$sqlResult = $engine->openDB->query($sql);
