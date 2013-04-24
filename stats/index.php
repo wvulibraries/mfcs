@@ -3,6 +3,7 @@ include("../header.php");
 $engine->eTemplate("include","header");
 
 $stats = new mfcsStats(".");
+localvars::add("statsList",$stats->showStatFiles());
 ?>
 <section>
 	<header class="page-header">
@@ -16,7 +17,7 @@ $stats = new mfcsStats(".");
 		</ul>
 	</nav>
 
-	<?php $stats->showStatFiles(); ?>
+	{local var="statsList"}
 
 </section>
 <?php

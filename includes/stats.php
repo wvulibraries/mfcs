@@ -13,7 +13,7 @@ class mfcsStats {
 		$dir = opendir($dir); // open the cwd..also do an err check.
 		while(false != ($file = readdir($dir))) {
 			if(($file != ".") && ($file != "..") && ($file != "index.php")) {
-                $statFiles[] = array('file' => $file, 'name' => str_replace("_"," ",basename($file,".php")));
+                $this->statFiles[] = array('file' => $file, 'name' => str_replace("_"," ",basename($file,".php")));
             }   
         }
         closedir($dir);
@@ -23,9 +23,14 @@ class mfcsStats {
 
 
 	public function showStatFiles() {
-		print "<pre>";
-		var_dump($this->statFiles);
-		print "</pre>";
+
+		$output = "<ul>";
+		foreach ($this->statFiles as $file) {
+			$output .= sprintf('<li><a href="'.$file['file'].'">'.$file['name'].'</a></li>');
+		}
+		$output .= "</ul>";
+
+		return $output;
 	}
 }
 ?>
