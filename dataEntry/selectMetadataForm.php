@@ -3,19 +3,16 @@ include("../header.php");
 
 try {
 
-	$forms = forms::getObjectForms();
+	if (($forms = forms::getObjectForms()) === FALSE) {
+		throw new Exception("Error getting Forms");
+	}
 
-	if ($forms === FALSE) {
-		errorHandle::errorMsg("Error getting Forms");
-		throw new Exception('Error');
+	if (($metaForms = forms::getMetadataForms()) === FALSE) {
+		throw new Exception("Errot getting Metadata Forms.");
 	}
 
 	$formList = '<ul class="pickList">';
 	foreach ($forms as $form) {
-
-		// @TODO
-		// if (projects::checkPermissions($row['ID']) === TRUE) {
-		// }
 
 		$metadataForms = forms::getObjectFormMetaForms($form['ID']);
 
@@ -29,13 +26,40 @@ try {
 
 		foreach ($metadataForms as $metadataForm) {
 
+			// Remove the array from the master list of metadata forms, so we 
+			// don't redisplay it below
+			if (in_array($metadataForm,$metaForms,TRUE)) {
+				if(($index = array_search($metadataForm, $metaForms)) !== FALSE) {
+					unset($metaForms[$index]);
+				}
+			}
+
 			$formList .= '<li>';
 			$formList .= sprintf('<a href="metadata.php?formID=%s" class="btn">%s</a>',
-				$metadataForm['formID'],
+				$metadataForm['ID'],
 				htmlSanitize($metadataForm['title'])
 				);
 			$formList .= '</li>';
 
+		}
+
+		$formList .= '</ul>';
+		$formList .= '</li>';
+
+	}
+	if (count($metaForms) > 0) {
+
+		$formList .= '<li>';
+		$formList .= '<h1 class="pickListHeader">Unassigned Metadata Forms</h1>';
+		$formList .= '<ul class="pickList">';
+
+		foreach ($metaForms as $metadataForm) {
+			$formList .= '<li>';
+			$formList .= sprintf('<a href="metadata.php?formID=%s" class="btn">%s</a>',
+				$metadataForm['ID'],
+				htmlSanitize($metadataForm['title'])
+				);
+			$formList .= '</li>';
 		}
 
 		$formList .= '</ul>';
@@ -48,6 +72,7 @@ try {
 
 }
 catch(Exception $e) {
+	errorHandle::errorMsg($e->getMessage());
 }
 
 localVars::add("results",displayMessages());
@@ -66,8 +91,10 @@ $engine->eTemplate("include","header");
 		</ul>
 	</nav>
 
-	{local var="results"}
-
+	<div class="row-fluid" id="results">
+		{local var="results"}
+	</div>
+	
 	{local var="formList"}
 
 </section>
