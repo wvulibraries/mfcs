@@ -572,9 +572,11 @@ localVars::add("projectOptions",projects::generateProjectChecklist($selectedProj
 
 <section>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="#formCreator" data-toggle="tab">Form Creator</a></li>
-		<li><a href="#projects" data-toggle="tab">Assigned Projects</a></li>
+		<li class="active"><a href="#formCreator" data-toggle="tab">Form Creator</a></li>	
 		<?php if (!isnull($formID)) { ?>
+		<?php if (!forms::isMetadataForm($formID)) { ?>
+		<li><a href="#projects" data-toggle="tab">Assigned Projects</a></li>
+		<?php } ?>
 		<li><a href="#navigation" data-toggle="tab">Navigation Creator</a></li>
 		<li><a href="#permissions" data-toggle="tab">Form Permissions</a></li>
 		<?php } ?>
@@ -1126,6 +1128,8 @@ localVars::add("projectOptions",projects::generateProjectChecklist($selectedProj
 
 
 		<?php if (!isnull($formID)) { ?>
+
+		<?php if (!forms::isMetadataForm($formID)) { ?>
 		<div class="tab-pane" id="projects">
 			<h2>Change Project Membership</h2>
 
@@ -1135,6 +1139,7 @@ localVars::add("projectOptions",projects::generateProjectChecklist($selectedProj
 			<input type="submit" class="btn btn-primary" name="projectForm">
 			</form>
 		</div>
+		<?php } ?>
 
 		<div class="tab-pane" id="navigation">
 			<header class="page-header">
