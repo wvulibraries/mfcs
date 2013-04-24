@@ -22,10 +22,11 @@ if(isset($currentProjects) and sizeof($currentProjects)){
 					<li><a href="{local var="siteRoot"}admin/objectTypes.php">Manage Object Types</a></li>
 					<li><a href="{local var="siteRoot"}admin/containers.php">Manage Containers</a></li>
 					<li><a href="{local var="siteRoot"}admin/watermarks.php">Manage Watermarks</a></li>
+					<li><a href="{local var="siteRoot"}projects/">Projects</a></li>
 					<li><a href="{local var="siteRoot"}admin/users.php">Manage Users</a></li>
 				</ul>
 			</li>
-			<li><a href="{local var="siteRoot"}projects/">Project Management</a></li>
+			
 			<li><a href="{local var="siteRoot"}dataView/list.php">List Objects</a></li>
 			<li class="dropdown-submenu">
 				<a tabindex="-1" href="#">Form Management</a>
