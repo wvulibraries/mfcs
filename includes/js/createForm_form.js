@@ -418,7 +418,13 @@ function fieldSettingsBindings() {
 
 		$("#formPreview .well .controls :input").prop('name',$(this).val());
 		$("#formPreview .well :input[name^=name_]").val($(this).val());
-	});
+	}).blur(function(){
+			var name = $(this).val();
+			var nameClean = name.replace(/[\t ]/g,'');
+			if(name != nameClean){
+				$(this).val(nameClean).keyup();
+			}
+		});
 
 	$("#fieldSettings_label").keyup(function() {
 		if ($("#formSettings_objectTitleField option[value='"+$("#formPreview .well :input[name^=name_]").val()+"']").length > 0) {
