@@ -8,8 +8,7 @@ if (isset($engine->cleanPost['MYSQL']["insert"])) {
 		errorHandle::errorMsg("Name field is required.");
 	}
 	else {
-		$sql = sprintf("INSERT INTO `%s` (`name`,`data`) VALUES ('%s','%s')",
-			$engine->openDB->escape($engine->dbTables("watermarks")),
+		$sql = sprintf("INSERT INTO `watermarks` (`name`,`data`) VALUES ('%s','%s')",
 			$engine->cleanPost['MYSQL']['name'],
 			addslashes(file_get_contents($_FILES['image']['tmp_name']))
 			);
@@ -28,8 +27,7 @@ else if (isset($engine->cleanPost['MYSQL']["update"])) {
 		errorHandle::errorMsg("Name field is required.");
 	}
 	else {
-		$sql = sprintf("UPDATE `%s` SET `name`='%s'%s WHERE ID='%s' LIMIT 1",
-			$engine->openDB->escape($engine->dbTables("watermarks")),
+		$sql = sprintf("UPDATE `watermarks` SET `name`='%s'%s WHERE ID='%s' LIMIT 1",
 			$engine->cleanPost['MYSQL']['name'],
 			($_FILES['image']['size'] > 0) ? (", `data`='".addslashes(file_get_contents($_FILES['image']['tmp_name']))."'") : NULL,
 			$engine->openDB->escape($ID)
@@ -45,8 +43,7 @@ else if (isset($engine->cleanPost['MYSQL']["update"])) {
 	}
 }
 else if (isset($engine->cleanPost['MYSQL']["delete"])) {
-	$sql = sprintf("DELETE FROM `%s` WHERE ID='%s' LIMIT 1",
-		$engine->openDB->escape($engine->dbTables("watermarks")),
+	$sql = sprintf("DELETE FROM `watermarks` WHERE ID='%s' LIMIT 1",
 		$engine->openDB->escape($ID)
 		);
 	$sqlResult = $engine->openDB->query($sql);
@@ -59,9 +56,7 @@ else if (isset($engine->cleanPost['MYSQL']["delete"])) {
 
 
 // Get List of existing watermarks
-$sql = sprintf("SELECT * FROM `%s` ORDER BY `name`",
-	$engine->openDB->escape($engine->dbTables("watermarks"))
-	);
+$sql = sprintf("SELECT * FROM `watermarks` ORDER BY `name`");
 $sqlResult = $engine->openDB->query($sql);
 
 if ($sqlResult['result']) {
