@@ -632,9 +632,10 @@ function fieldSettingsBindings() {
 
 	$("#fieldSettings_choices_form")
 		.on("change","#fieldSettings_choices_formSelect",function() {
+
 			var val = $(this).val();
 
-			if (choicesFields[val] == undefined) {
+			if (val != null && choicesFields[val] == undefined) {
 				$.ajax({
 					url: "../includes/getFormFields.php?id="+val,
 					async: false,
@@ -647,6 +648,10 @@ function fieldSettingsBindings() {
 					}
 					choicesFields[val] = options;
 				});
+			}
+			else if (val == null && choicesFields[val] == undefined) {
+					var options;
+					choicesFields[val] = options;
 			}
 
 			$("#formPreview .well :input[name^=choicesForm_]").val(val).change();
