@@ -557,7 +557,8 @@ class forms {
 				if(isset($object['data'][$field['name']]) and sizeof($object['data'][$field['name']])){
 					if(str2bool($field['multipleFiles'])){
 						for($i=1;$i<=sizeof($object['data'][$field['name']]); $i++){
-							$output .= sprintf('<div class="filePreview"><a class="previewLink" href="#">Click to view file #%s</a> | <a class="downloadLink" href="fileViewer.php?objectID=%s&field=%s&fileNum=%s&download=1">Click to download file #%s</a>',
+							$output .= sprintf('<div class="filePreview">%s: <a class="previewLink" href="#">Click to view file #%s</a> | <a class="downloadLink" href="fileViewer.php?objectID=%s&field=%s&fileNum=%s&download=1">Click to download file #%s</a>',
+								$object['data'][$field['name']][$i]['originalName'],
 								$i,
 								$objectID,
 								$field['name'],
@@ -572,7 +573,8 @@ class forms {
 							$output .= '</div>';
 						}
 					}else{
-						$output .= sprintf('<div class="filePreview"><a class="previewLink" href="#">Click to view file</a> | <a class="downloadLink" href="fileViewer.php?objectID=%s&field=%s&download=1">Click to download file</a>',
+						$output .= sprintf('<div class="filePreview">%s: <a class="previewLink" href="#">Click to view file</a> | <a class="downloadLink" href="fileViewer.php?objectID=%s&field=%s&download=1">Click to download file</a>',
+							$object['data'][$field['name']][0]['originalName'],
 							$objectID,
 							$field['name']
 						);
