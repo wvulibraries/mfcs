@@ -224,7 +224,7 @@ try {
 	unset($tmp);
 
 	// Get list of forms for choices dropdown
-	if ($metadataForms = forms::getMetadataForms() === FALSE) {
+	if (($metadataForms = forms::getMetadataForms()) === FALSE) {
 		throw new Exception("Errer retreiving metadata forms");
 	}
 
