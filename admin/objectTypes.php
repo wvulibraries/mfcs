@@ -1,7 +1,7 @@
 <?php
 include("../header.php");
 
-$tableName = $engine->dbTables("objectTypes");
+$tableName = "objectTypes";
 
 function defineList($tableName) {
 	$engine = EngineAPI::singleton();
