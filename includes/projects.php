@@ -155,7 +155,7 @@ class projects {
         $formIDs = array();
         while($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
             if ($form === TRUE) {
-                if (($formIDs[] = forms::get($row['formID'])) === FALSE) {
+                if (($formIDs[$row['formID']] = forms::get($row['formID'])) === FALSE) {
                     return(FALSE);
                 }
             }
