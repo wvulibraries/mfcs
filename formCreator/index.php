@@ -224,8 +224,7 @@ try {
 	unset($tmp);
 
 	// Get list of forms for choices dropdown
-	$metadataForms = forms::getMetadataForms();
-	if ($metadataForms === FALSE) {
+	if ($metadataForms = forms::getMetadataForms() === FALSE) {
 		throw new Exception("Errer retreiving metadata forms");
 	}
 
@@ -566,9 +565,7 @@ $selectedProjects = forms::getProjects(isset($engine->cleanGet['MYSQL']['id']) ?
 localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects));
 ?>
 
-<script type="text/javascript" src='{local var="siteRoot"}includes/js/createForm_nav.js'></script>
-<script type="text/javascript" src='{local var="siteRoot"}includes/js/createForm_form.js'></script>
-<script type="text/javascript" src='{local var="siteRoot"}includes/js/createForm_permissions.js'></script>
+<script type="text/javascript" src='{local var="siteRoot"}includes/js/createForm_functions.js'></script>
 
 <section>
 	<ul class="nav nav-tabs">
