@@ -6,8 +6,7 @@ include("../header.php");
 $formID = isset($engine->cleanGet['MYSQL']['id']) ? $engine->cleanGet['MYSQL']['id'] : NULL;
 $fields = array();
 
-$sql = sprintf("SELECT fields FROM `%s` WHERE ID='%s' LIMIT 1",
-	$engine->openDB->escape($engine->dbTables("forms")),
+$sql = sprintf("SELECT fields FROM `forms` WHERE ID='%s' LIMIT 1",
 	$engine->openDB->escape($formID)
 	);
 $sqlResult = $engine->openDB->query($sql);
