@@ -2,7 +2,7 @@
 
 include("../header.php");
 
-$tableName = $engine->dbTables("projects");
+$tableName = "projects";
 
 function defineList($tableName) {
 	// $engine = EngineAPI::singleton();
