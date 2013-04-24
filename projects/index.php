@@ -16,16 +16,6 @@ function defineList($tableName) {
 	$l->addField (
 
 		array(
-			"field" => '<a href="edit.php?id={ID}">Edit</a>',
-			"label" => "edit",
-			"type"  => "plainText"
-			)
-
-		);
-
-	$l->addField (
-
-		array(
 			'field'    => "ID",
 			'label'    => "ID",
 			'type'     => "hidden",
