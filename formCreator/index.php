@@ -166,7 +166,7 @@ if (isset($engine->cleanPost['MYSQL']['submitPermissions'])) {
 	}
 }
 
-if (isset($engine->cleanPost['MYSQL']['projectForm'])) {
+if (isset($engine->cleanPost['MYSQL']['projectForm']) && forms::isMetadataForm($formID) === FALSE) {
 	$engine->openDB->transBegin();
 
 	if (!isset($engine->cleanPost['MYSQL']['projects'])) {
@@ -435,7 +435,7 @@ if (!isnull($formID)) {
 		// Get existing groupings
 		// @TODO -- cleanGet isn't always set if formID isn't null, but formID is html safe not mysql safe. 
 		$sql = sprintf("SELECT * FROM `forms` WHERE `ID`='%s' LIMIT 1",
-			$engine->cleanGet['MYSQL']['id']
+			$engine->openDB->escape($formID) 
 		);
 		$sqlResult = $engine->openDB->query($sql);
 
