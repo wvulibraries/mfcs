@@ -82,6 +82,7 @@ try {
 		if (forms::submit($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']) === FALSE) {
 			throw new Exception("Error Updating Form.");
 		}
+		http::redirect($_SERVER['REQUEST_URI'], 301);
 	}
 	else if (isset($engine->cleanPost['MYSQL']['projectForm'])) {
 
