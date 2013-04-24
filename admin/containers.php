@@ -1,7 +1,7 @@
 <?php
 include("../header.php");
 
-$tableName = $engine->dbTables("containers");
+$tableName = "containers";
 
 function defineList($tableName) {
 	$engine = EngineAPI::singleton();
