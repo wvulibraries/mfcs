@@ -549,20 +549,9 @@ class forms {
 				$output .= '</select>';
 			}
 			else if ($field['type'] == 'file') {
-				$output .= sprintf('<div id="fineUploader_%s"></div><input type="hidden" id="%s" name="%s" value="%s">',
-					htmlSanitize($field['name']),
-					htmlSanitize($field['name']),
-					htmlSanitize($field['name']),
-					md5(microtime(TRUE))
-				);
-
 				localvars::add("fieldName",htmlSanitize($field['name']));
 				localvars::add("multipleFiles",(strtoupper($field['multipleFiles']) == "TRUE") ? "true" : "false");
 				localvars::add("allowedExtensions",implode('", "',$field['allowedExtensions']));
-
-				$output .= sprintf('<script type="text/javascript">%s</script>',
-					file_get_contents(__DIR__."/js/fineUploader.formBuilder.js")
-				);
 
 				// Do we display a current file?
 				if(isset($object['data'][$field['name']]) and sizeof($object['data'][$field['name']])){
@@ -594,6 +583,16 @@ class forms {
 						$output .= '</div>';
 					}
 				}
+
+				// Output "Select Files" button for new uploads
+				$output .= sprintf('<div id="fineUploader_%s"></div><input type="hidden" id="%s" name="%s" value="%s"><script type="text/javascript">%s</script>',
+					htmlSanitize($field['name']),
+					htmlSanitize($field['name']),
+					htmlSanitize($field['name']),
+					md5(microtime(TRUE)),
+					file_get_contents(__DIR__."/js/fineUploader.formBuilder.js")
+				);
+
 			}
 			else {
 				if ($field['type'] == "idno") {
