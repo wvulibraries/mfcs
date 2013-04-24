@@ -138,6 +138,36 @@ class projects {
 
     }
 
+    // get all the formIDs that belong to a project
+    // if $form = TRUE, returns the form instead. 
+    public static function getForms($projectID,$form=FALSE) {
+
+        $sql       = sprintf("SELECT `formID` FROM `forms_projects` WHERE `projectID`='%s'",
+            mfcs::$engine->openDB->escape($projectID)
+            );
+        $sqlResult = mfcs::$engine->openDB->query($sql);
+        
+        if (!$sqlResult['result']) {
+            errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+            return FALSE;
+        }
+        
+        $formIDs = array();
+        while($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+            if ($form === TRUE) {
+                if (($formIDs[] = forms::get($row['formID'])) === FALSE) {
+                    return(FALSE);
+                }
+            }
+            else {
+                $formIDs[] = $row['formID'];
+            }
+        }
+
+        return $formIDs;
+
+    }
+
 }
 
 ?>
