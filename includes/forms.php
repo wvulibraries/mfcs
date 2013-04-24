@@ -204,19 +204,14 @@ class forms {
 			return FALSE;
 		}
 
-		$formsByID = array();
-		foreach ($projects as $project) {
-			foreach ($project['forms']['objects'] as $formID) {
-
-				if (($formsByID[$formID] = self::get($formID)) === FALSE) {
-					return FALSE;
-				}
-			}
-		}
-
 		$forms = array();
-		foreach ($formsByID as $form) {
-			$forms[] = $form;
+		foreach ($projects as $project) {
+			$projectForms = projects::getForms($project['ID'],TRUE);
+
+			foreach ($projectForms as $formID=>$form) {
+				$forms[$formID] = $form;
+			}
+			
 		}
 
 		return $forms;
@@ -1226,6 +1221,7 @@ class forms {
 
 		return $return;
 	}
+
 	public static function deleteAllProjects($formID) {
 
 		$engine = EngineAPI::singleton();
