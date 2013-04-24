@@ -211,7 +211,7 @@ class forms {
 			foreach ($projectForms as $formID=>$form) {
 				$forms[$formID] = $form;
 			}
-			
+
 		}
 
 		return $forms;
@@ -1204,8 +1204,7 @@ class forms {
 		$engine = EngineAPI::singleton();
 		$return = array();
 
-		$sql = sprintf("SELECT `projectID` FROM `%s` WHERE formID='%s'",
-			$engine->openDB->escape($engine->dbTables("formsProjects")),
+		$sql = sprintf("SELECT `projectID` FROM `forms_projects` WHERE formID='%s'",
 			$engine->openDB->escape($formID)
 		);
 		$sqlResult = $engine->openDB->query($sql);
@@ -1226,8 +1225,7 @@ class forms {
 
 		$engine = EngineAPI::singleton();
 
-		$sql       = sprintf("DELETE FROM `%s` WHERE `formID`='%s'",
-			$engine->openDB->escape($engine->dbTables("formsProjects")),
+		$sql       = sprintf("DELETE FROM `forms_projects` WHERE `formID`='%s'",
 			$engine->openDB->escape($formID)
 		);
 		$sqlResult = $engine->openDB->query($sql);
@@ -1245,8 +1243,7 @@ class forms {
 
 		$engine = EngineAPI::singleton();
 
-		$sql       = sprintf("INSERT INTO `%s` (`formID`,`projectID`) VALUES('%s','%s')",
-			$engine->openDB->escape($engine->dbTables("formsProjects")),
+		$sql       = sprintf("INSERT INTO `forms_projects` (`formID`,`projectID`) VALUES('%s','%s')",
 			$engine->openDB->escape($formID),
 			$engine->openDB->escape($projectID)
 		);
