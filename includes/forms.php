@@ -565,7 +565,7 @@ class forms {
 				);
 
 				// Do we display a current file?
-				if(isset($object['data'][$field['name']])){
+				if(isset($object['data'][$field['name']]) and sizeof($object['data'][$field['name']])){
 					if(str2bool($field['multipleFiles'])){
 						for($i=1;$i<=sizeof($object['data'][$field['name']]); $i++){
 							$output .= sprintf('<div class="filePreview"><a class="previewLink" href="#">Click to view file #%s</a> | <a class="downloadLink" href="fileViewer.php?objectID=%s&field=%s&fileNum=%s&download=1">Click to download file #%s</a>',
