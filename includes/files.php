@@ -73,9 +73,12 @@ class files {
 		$results    = array();
 		$uploadPath = files::getBaseUploadPath().DIRECTORY_SEPARATOR.$uploadID;
 		$savePath   = mfcs::config('savePath');
-		$files      = scandir($uploadPath);
 
-		// Sort the files in 'natural order' and then start looping!
+		// If the uploadPath dosen't exist, then no files were uploaded
+		if(!is_dir($uploadPath)) return $results;
+
+		// Scan the uploadPath directory, sort the files in 'natural order', and then start looping!
+		$files = scandir($uploadPath);
 		natsort($files);
 		foreach ($files as $filename) {
 			// Skip hidden stuff

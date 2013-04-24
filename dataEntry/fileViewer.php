@@ -36,6 +36,7 @@ try{
 
 	// Get the object's files array and grab the correct file we are showing
 	$files = $object['data'][$fieldName];
+	if(!sizeof($files)) throw new Exception("No files uploaded for this field!");
 	$file = isset($engine->cleanGet['MYSQL']['fileNum'])
 		? $files[$engine->cleanGet['MYSQL']['fileNum']-1]
 		: $files[0];

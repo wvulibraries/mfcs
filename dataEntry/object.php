@@ -75,7 +75,8 @@ try {
 		if (forms::submit($engine->cleanGet['MYSQL']['formID']) === FALSE) {
 			throw new Exception("Error Submitting Form.");
 		}
-		$engine->cleanGet['MYSQL']['objectID'] = localvars::get("newObjectID");
+		// Redirect the user to the 'edit' form. (RAW is used so the URL is built correctly)
+		http::redirect(sprintf("?formID=%s&objectID=%s", $engine->cleanGet['RAW']['formID'], localvars::get("newObjectID")), 301);
 	}
 	else if (isset($engine->cleanPost['MYSQL']['updateForm'])) {
 		if (forms::submit($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']) === FALSE) {
