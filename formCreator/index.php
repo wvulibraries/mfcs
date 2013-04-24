@@ -241,9 +241,7 @@ try {
 	unset($tmp);
 
 	// Get list of watermarks for dropdown
-	$sql = sprintf("SELECT `ID`, `name` FROM `%s`",
-		$engine->openDB->escape($engine->dbTables("watermarks"))
-		);
+	$sql = sprintf("SELECT `ID`, `name` FROM `watermarks`");
 	$sqlResult = $engine->openDB->query($sql);
 
 	if (!$sqlResult['result']) {
