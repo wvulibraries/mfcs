@@ -236,8 +236,7 @@ class objects {
 		$engine = EngineAPI::singleton();
 		$return = array();
 
-		$sql = sprintf("SELECT `projectID` FROM `%s` WHERE objectID='%s'",
-			$engine->openDB->escape($engine->dbTables("objectProjects")),
+		$sql = sprintf("SELECT `projectID` FROM `objectProjects` WHERE objectID='%s'",
 			$engine->openDB->escape($objectID)
 			);
 		$sqlResult = $engine->openDB->query($sql);
