@@ -58,7 +58,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 
 	if (!isnull($formID)) {
 		// Update forms table
-		$sql = sprintf("UPDATE `%s`
+		$sql = sprintf("UPDATE `forms`
 						SET `title`='%s',
 							`description`=%s,
 							`fields`='%s',
@@ -71,7 +71,6 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 							`count`='%s',
 							`objectTitleField`='%s'
 						WHERE ID='%s' LIMIT 1",
-			$engine->openDB->escape($engine->dbTables("forms")),
 			$engine->openDB->escape($form['formTitle']),        // title=
 			!is_empty($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL", // description=
 			encodeFields($fields),                              // fields=
@@ -94,8 +93,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	}
 	else {
 		// Insert into forms table
-		$sql = sprintf("INSERT INTO `%s` (title, description, fields, idno, submitButton, updateButton, container, production, metadata, count, objectTitleField) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s')",
-			$engine->openDB->escape($engine->dbTables("forms")),
+		$sql = sprintf("INSERT INTO `forms` (title, description, fields, idno, submitButton, updateButton, container, production, metadata, count, objectTitleField) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s')",
 			$engine->openDB->escape($form['formTitle']),
 			isset($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
 			encodeFields($fields),
