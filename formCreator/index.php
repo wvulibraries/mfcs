@@ -1123,6 +1123,9 @@ localVars::add("projectOptions",projects::generateProjectChecklist($selectedProj
 			</div>
 		</div>
 
+
+
+		<?php if (!isnull($formID)) { ?>
 		<div class="tab-pane" id="projects">
 			<h2>Change Project Membership</h2>
 
@@ -1133,7 +1136,6 @@ localVars::add("projectOptions",projects::generateProjectChecklist($selectedProj
 			</form>
 		</div>
 
-		<?php if (!isnull($formID)) { ?>
 		<div class="tab-pane" id="navigation">
 			<header class="page-header">
 				<h1>Navigation Creator</h1>
