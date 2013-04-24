@@ -173,20 +173,21 @@ class forms {
 
 	public static function checkFormInProject($projectID,$formID) {
 
-		$project = projects::get($projectID);
+		$sql = sprintf("SELECT COUNT(*) FROM `forms_projects` WHERE formID='%s' AND projectID='%s'",
+			mfcs::$engine->openDB->escape($formID),
+			mfcs::$engine->openDB->escape($projectID)
+		);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 
-		if (!is_empty($project['forms'])) {
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
+			return array();
+		}
 
-			foreach ($project['forms']['metadata'] as $I=>$V) {
-				if ($V == $formID) {
-					return TRUE;
-				}
-			}
-			foreach ($project['forms']['objects'] as $I=>$V) {
-				if ($V == $formID) {
-					return TRUE;
-				}
-			}
+		$row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
+
+		if ((int) $row['COUNT(*)']){
+			return TRUE;
 		}
 
 		return FALSE;
