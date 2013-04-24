@@ -157,7 +157,7 @@ $(function() {
 			$("#leftPanel").css("width",$("#leftPanel").parent().width());
 		}
 		else {
-			$("#leftPanel").css("width",auto);
+			$("#leftPanel").css("width",'auto');
 		}
 	});
 });
