@@ -6,6 +6,11 @@ if (is_empty($formID)) {
 	$formID = NULL;
 }
 
+if(isset($engine->cleanPost['MYSQL']['deleteForm'])){
+	forms::delete($engine->cleanGet['HTML']['id']);
+	http::redirect(localvars::get('siteRoot').'/formCreator/list.php',301);
+}
+
 if (isset($engine->cleanPost['MYSQL']['submitNavigation'])) {
 	try{
 		if (navigation::updateFormNav($engine->cleanPost['RAW']['groupings']) === FALSE) {
@@ -576,6 +581,7 @@ localVars::add("projectOptions",projects::generateProjectChecklist($selectedProj
 		<?php } ?>
 		<li><a href="#navigation" data-toggle="tab">Navigation Creator</a></li>
 		<li><a href="#permissions" data-toggle="tab">Form Permissions</a></li>
+		<li><a href="#deleteForm" data-toggle="tab" style="color: red;">Delete Form</a></li>
 		<?php } ?>
 	</ul>
 
@@ -1279,6 +1285,16 @@ localVars::add("projectOptions",projects::generateProjectChecklist($selectedProj
 					</form>
 				</div>
 			</div>
+		</div>
+		<div class="tab-pane" id="deleteForm">
+			<form method="post" action="" id="deleteFormFrm">
+				{engine name="csrf"}
+				<input type="hidden" name="deleteForm" value="deleteForm">
+				<p>Are you sure you want to delete this form?</p>
+				<p>This will permanently delete this form and all associated objects, and cannot be undone.</p>
+				<input type="button" value="Cancel" class="btn" id="deleteFormBtn-Cancel">
+				<input type="button" value="Delete Form" class="btn btn-danger" id="deleteFormBtn-Submit">
+			</form>
 		</div>
 		<?php } ?>
 	</div>

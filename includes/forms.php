@@ -1174,6 +1174,41 @@ class forms {
 		return TRUE;
 	}
 
+	public static function delete($formID){
+		$engine = mfcs::$engine;
+
+		// Start the transaction
+		$engine->openDB->transBegin();
+
+		try{
+			// Delete forms_projects
+			$sql       = sprintf("DELETE FROM `forms_projects` WHERE `formID`='%s'", $engine->openDB->escape($formID));
+			$sqlResult = $engine->openDB->query($sql);
+			if(!$sqlResult['result']) throw new Exception("Failed to delete from forms_projects ({$sqlResult['error']})");
+
+			// Delete objects
+			$sql       = sprintf("DELETE FROM `objects` WHERE `formID`='%s'", $engine->openDB->escape($formID));
+			$sqlResult = $engine->openDB->query($sql);
+			if(!$sqlResult['result']) throw new Exception("Failed to delete from objects ({$sqlResult['error']})");
+
+			// Delete forms
+			$sql       = sprintf("DELETE FROM `forms` WHERE `ID`='%s'", $engine->openDB->escape($formID));
+			$sqlResult = $engine->openDB->query($sql);
+			if(!$sqlResult['result']) throw new Exception("Failed to delete from forms ({$sqlResult['error']})");
+
+			// If we get here then all went well
+			$engine->openDB->transCommit();
+			$engine->openDB->transEnd();
+			return TRUE;
+		}catch(Exception $e){
+			// Something went wrong - Report the error and rollback the transaction
+			errorHandle::newError(__METHOD__."() - ".$e->getMessage(), errorHandle::HIGH);
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
+			return FALSE;
+		}
+	}
+
 	// $value must be RAW
 	public static function isDupe($formID,$field,$value,$objectID=NULL) {
 		$sql = sprintf("SELECT COUNT(*) FROM `dupeMatching` WHERE `formID`='%s' AND `field`='%s' AND `value`='%s' %s",

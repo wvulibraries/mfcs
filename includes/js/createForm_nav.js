@@ -27,6 +27,15 @@ $(function() {
 		}
 	});
 
+	// Delete form handlers
+	$('#deleteFormBtn-Cancel').click(function(){
+		$("a[href='#formCreator']").click();
+	});
+	$('#deleteFormBtn-Submit').click(function(e){
+		if(prompt("Last chance!\nAre you sure you want to permanently delete this form?\n\nAnything but 'yes' will cancel").toLowerCase() == 'yes'){
+			$('#deleteFormFrm').submit();
+		}
+	});
 
 	// Delete icon binding
 	$("#GroupingsPreview").on("click", ".groupingPreview i.icon-remove", function() {
