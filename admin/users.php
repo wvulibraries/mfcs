@@ -2,7 +2,7 @@
 
 include("../header.php");
 
-$tableName = $engine->dbTables("users");
+$tableName = "users";
 
 function defineList($tableName) {
 	$l      = new listManagement($tableName);
