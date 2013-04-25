@@ -131,3 +131,8 @@ div.filePreview iframe{
 	display: inline;
 	padding: 0 5px;
 }
+
+
+.requiredField {
+	font-weight: bold;
+}

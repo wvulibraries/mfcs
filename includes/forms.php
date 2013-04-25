@@ -415,7 +415,7 @@ class forms {
 				$currentFieldset = $field['fieldset'];
 			}
 
-
+ 
 			if ($error === TRUE) {
 				// @TODO should this be raw? // security issue?
 				if (isset($engine->cleanPost['RAW'][$field['name']])) {
@@ -432,8 +432,9 @@ class forms {
 
 
 			if ($field['type'] != "idno" || ($field['type'] == "idno" && isset($field['managedBy']) && strtolower($field['managedBy']) != "system")) {
-				$output .= sprintf('<label for="%s">%s</label>',
+				$output .= sprintf('<label for="%s" class="%s">%s</label>',
 					htmlSanitize($field['id']),
+					(strtolower($field['required']) == "true")?"requiredField":"",
 					htmlSanitize($field['label'])
 				);
 			}
