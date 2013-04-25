@@ -1,3 +1,11 @@
+.errorMessage {
+	color: red;
+}
+
+.successMessage {
+	color: green;
+}
+
 #breadcrumbs ul li.pull-right {
 	margin-right: 10px;
 }
