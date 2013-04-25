@@ -140,7 +140,17 @@ div.filePreview iframe{
 	padding: 0 5px;
 }
 
+label {
+	display: inline-block;
+	width: 200px;
+	padding-right: 5px;
+	vertical-align: top;
+}
 
 .requiredField {
 	font-weight: bold;
+}
+
+.multiSelectContainer {
+	display: inline-block;
 }

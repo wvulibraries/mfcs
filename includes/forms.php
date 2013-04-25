@@ -432,7 +432,7 @@ class forms {
 
 
 			if ($field['type'] != "idno" || ($field['type'] == "idno" && isset($field['managedBy']) && strtolower($field['managedBy']) != "system")) {
-				$output .= sprintf('<label for="%s" class="%s">%s</label>',
+				$output .= sprintf('<label for="%s" class="%s">%s:</label>',
 					htmlSanitize($field['id']),
 					(strtolower($field['required']) == "true")?"requiredField":"",
 					htmlSanitize($field['label'])
@@ -525,6 +525,7 @@ class forms {
 					return FALSE;
 				}
 
+				$output .= '<div class="multiSelectContainer">';
 				$output .= sprintf('<select name="%s[]" id="%s" size="5" multiple="multiple">',
 					htmlSanitize($field['name']),
 					htmlSanitize($field['name'])
@@ -553,6 +554,7 @@ class forms {
 				$output .= self::drawFieldChoices($field,$fieldChoices);
 
 				$output .= '</select>';
+				$output .= "</div>";
 			}
 			else if ($field['type'] == 'file') {
 				localvars::add("fieldName",htmlSanitize($field['name']));
