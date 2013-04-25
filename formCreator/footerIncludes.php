@@ -12,8 +12,10 @@
 </div>
 
 <script type="text/javascript">
-
-$('#progressModal').modal('show');
+var url = window.location.pathname.split("/");
+if (url[url.length-1] == "index.php") {
+	$('#progressModal').modal('show');
+}
 
 </script>
 
