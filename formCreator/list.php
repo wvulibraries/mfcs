@@ -11,9 +11,13 @@ try {
 		throw new Exception("Error generating metadata form list.");
 	}
 
+	if (($accordionList = listGenerator::generateAccordionFormList()) === FALSE) {
+		throw new Exception("Error generating Form List");
+	}
+
 	localvars::add("objectFormList",$objectFormList);
 	localvars::add("metadataFormList",$metadataFormList);
-
+	localvars::add("accordionList",$accordionList);
 }
 catch(Exception $e) {
 	errorHandle::errorMsg($e->getMessage());
@@ -38,20 +42,10 @@ $engine->eTemplate("include","header");
 	{local var="results"}
 
 	<div class="container-fluid">
-		<div class="span4 text-center">
-			<header>
-				<h2>Object Forms</h2>
-			</header>
-			{local var="objectFormList"}
-		</div>
-
-		<div class="span4 text-center">
-			<header>
-				<h2>Metadata Forms</h2>
-			</header>
-			{local var="metadataFormList"}
-		</div>
+		{local var="accordionList"}
 	</div>
+
+
 
 </section>
 
