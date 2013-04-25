@@ -36,7 +36,7 @@ try {
 
 			$formList .= '<li>';
 			$formList .= sprintf('<a href="metadata.php?formID=%s" class="btn">%s</a>',
-				$metadataForm['ID'],
+				$metadataForm['formID'],
 				htmlSanitize($metadataForm['title'])
 				);
 			$formList .= '</li>';
