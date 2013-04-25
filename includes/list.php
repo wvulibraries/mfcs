@@ -226,6 +226,92 @@ class listGenerator {
 
 	}
 
+	private static function generateAccordionFormList_links($form,$entry,$metadata = FALSE) {
+
+		if (!isset($form['ID']) || !isset($form['title'])) {
+			return FALSE;
+		}
+
+		if ($entry === FALSE) {
+			return sprintf('<a href="index.php?id=%s">%s</a>',
+				htmlSanitize($form['ID']),
+				htmlSanitize($form['title'])
+				);
+		}
+		else {
+			return sprintf('<a href="%sdataEntry/%s.php?formID=%s">%s</a>',
+				localvars::get("siteRoot"),
+				($metadata === TRUE)?"metadata":"object",
+				htmlSanitize($form['ID']),
+				htmlSanitize($form['title'])
+				);
+		}
+
+	}
+
+	// if entry is TRUE, the links will go to the data entry pages, otherwise form creator
+	// pages
+	public static function generateAccordionFormList($entry=FALSE) {
+
+		if (($forms = forms::getObjectForms()) === FALSE) {
+			errorHandle::errorMsg("Error getting Object Forms");
+			return FALSE;
+		}
+
+		$output = '<div class="accordion" id="formListAccordion">';
+
+		$count = 0;
+		foreach ($forms as $form) {
+			if (($metedataForms = forms::getObjectFormMetaForms($form['ID'])) === FALSE) {
+				errorHandle::errorMsg("Error getting Metadata Forms");
+				return FALSE;
+			}
+
+			$output .= '<div class="accordion-group">';
+
+			$output .= '<div class="accordion-heading" style="padding: 5px;">';
+			$output .= '<div>';
+			
+			if (($output .= self::generateAccordionFormList_links($form,$entry)) === FALSE) {
+				return FALSE;
+			}
+			
+			$output .= sprintf('<a class="pull-right" data-toggle="collapse" data-parent="#formListAccordion" href="#collapse%s">',
+				++$count
+				);
+			$output .= "Show Metadata Forms";
+			$output .= "</a>";
+			$output .= '</div>';
+			$output .= "</div>"; // heading
+
+			$output .= sprintf('<div id="collapse%s" class="accordion-body collapse">',
+				$count
+				);
+     		$output .= '<div class="accordion-inner">';
+
+     		$output .= '<ul>';
+     		foreach ($metedataForms as $metadataForm) {
+     			$output .= '<li>';
+     			if (($output .= self::generateAccordionFormList_links($metadataForm,$entry,($entry===TRUE)?TRUE:FALSE)) === FALSE) {
+     				return FALSE;
+     			}
+     			$output .= '</li>';
+     		}
+     		$output .= '</ul>';
+
+	 		$output .= "</div>"; // inner
+	 		$output .= "</div>"; // body
+
+			$output .= "</div>"; // group
+
+		}
+
+		$output .= "</div>";
+
+		return $output;
+
+	}
+
 	public static function generateFormSelectListForFormCreator($metadata = TRUE) {
 
 		if ($metadata === TRUE) {
