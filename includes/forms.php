@@ -262,6 +262,11 @@ class forms {
 				return FALSE;
 			}
 
+			if ($field['required'] == "true" && count($objects) < 1) {
+				errorHandle::errorMsg("Required linked table doesn't have any options.");
+				return FALSE;
+			}
+
 			foreach ($objects as $object) {
 				$choices[] = array("value" => $object['ID'], "index" => $object['ID'], "display" => $object['data'][$field['choicesField']]);
 			}
