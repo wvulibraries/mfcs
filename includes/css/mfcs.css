@@ -1,3 +1,11 @@
+.errorMessage {
+	color: red;
+}
+
+.successMessage {
+	color: green;
+}
+
 #breadcrumbs ul li.pull-right {
 	margin-right: 10px;
 }
@@ -130,4 +138,19 @@ div.filePreview iframe{
 .pagination_bar ul li{
 	display: inline;
 	padding: 0 5px;
+}
+
+label {
+	display: inline-block;
+	width: 200px;
+	padding-right: 5px;
+	vertical-align: top;
+}
+
+.requiredField {
+	font-weight: bold;
+}
+
+.multiSelectContainer {
+	display: inline-block;
 }

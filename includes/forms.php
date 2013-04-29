@@ -151,7 +151,7 @@ class forms {
 		foreach ($form['fields'] as $field) {
 			if (isset($field['choicesForm']) && validate::integer($field['choicesForm'])) {
 				$metaForm        = self::get($field['choicesForm']);
-				$metadataForms[] = array('formID' => $field['choicesForm'], 'title' => $metaForm['title']);
+				$metadataForms[] = array('formID' => $field['choicesForm'], 'ID' => $field['choicesForm'], 'title' => $metaForm['title']);
 			}
 		}
 
@@ -415,7 +415,7 @@ class forms {
 				$currentFieldset = $field['fieldset'];
 			}
 
-
+ 
 			if ($error === TRUE) {
 				// @TODO should this be raw? // security issue?
 				if (isset($engine->cleanPost['RAW'][$field['name']])) {
@@ -432,8 +432,9 @@ class forms {
 
 
 			if ($field['type'] != "idno" || ($field['type'] == "idno" && isset($field['managedBy']) && strtolower($field['managedBy']) != "system")) {
-				$output .= sprintf('<label for="%s">%s</label>',
+				$output .= sprintf('<label for="%s" class="%s">%s:</label>',
 					htmlSanitize($field['id']),
+					(strtolower($field['required']) == "true")?"requiredField":"",
 					htmlSanitize($field['label'])
 				);
 			}
@@ -524,6 +525,7 @@ class forms {
 					return FALSE;
 				}
 
+				$output .= '<div class="multiSelectContainer">';
 				$output .= sprintf('<select name="%s[]" id="%s" size="5" multiple="multiple">',
 					htmlSanitize($field['name']),
 					htmlSanitize($field['name'])
@@ -552,6 +554,7 @@ class forms {
 				$output .= self::drawFieldChoices($field,$fieldChoices);
 
 				$output .= '</select>';
+				$output .= "</div>";
 			}
 			else if ($field['type'] == 'file') {
 				localvars::add("fieldName",htmlSanitize($field['name']));
