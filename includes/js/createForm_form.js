@@ -4,30 +4,36 @@ $(function() {
 	// Instantiate the bootstrap tooltip plugin
 	$("[rel='tooltip']").tooltip();
 
+	// Grab commonly used IDs
+	var formPreview = $('#formPreview');
+	var fieldAdd = $('#fieldAdd');
+	var formSettings = $('#formSettings');
+	var fieldTab = $('#fieldTab');
+	var leftPanel = $('#leftPanel');
+
 	// Blank all panes when changing tabs
 	$("#fieldTab").on("click", "a", function() {
-		$("#formPreview li").removeClass("well");
+		$('li',formPreview).removeClass("well");
 		showFieldSettings(); // blank the Field Settings pane
 	});
 
 	// Make field types draggable, linked to preview pane
-	$("#fieldAdd .draggable li").draggable({
+	$("#fieldAdd .draggable li",fieldAdd).draggable({
 		connectToSortable: "#formCreator ul.sortable",
 		helper: "clone",
-		revert: "invalid",
-	});
+		revert: "invalid"});
 
 	// Add new field on click as well as drag
-	$("#fieldAdd li").click(function() {
+	$("li",fieldAdd).click(function() {
 		event.preventDefault();
 
-		$(this).clone().appendTo($("#formPreview"));
-		addNewField($("#formPreview li:last"));
+		$(this).clone().appendTo(formPreview);
+		addNewField($("li:last",formPreview));
 		sortableForm();
 	});
 
 	// Delete icon binding
-	$("#formPreview").on("click", ".fieldPreview i.icon-remove", function() {
+	formPreview.on("click", ".fieldPreview i.icon-remove", function() {
 		if (confirm("Are you sure you want to remove this field?")) {
 			var thisLI = $(this).parent().parent();
 
@@ -40,7 +46,7 @@ $(function() {
 
 			if ($("#formSettings_formMetadata").not(":checked")) {
 				// Enable/disable Production Form setting based on whether an idno field exists
-				if ($("#formPreview :input[name^=type_][value=idno]").length == 0) {
+				if ($(":input[name^=type_][value=idno]",formPreview).length == 0) {
 					$("#formSettings_formProduction").prop({
 						checked:  false,
 						disabled: true,
@@ -70,16 +76,17 @@ $(function() {
 	sortableForm();
 
 	// Set all the black magic bindings
+	var createFormProgressBar = $('#createFormProgressBar');
 	// 25%
-	$("#createFormProgressBar").width('25%');
+	createFormProgressBar.width('25%');
 	fieldSettingsBindings();
 	// 50%
-	$("#createFormProgressBar").width('50%');
+	createFormProgressBar.width('50%');
 	formSettingsBindings();
 	// 75%
-	$("#createFormProgressBar").width('75%');
+	createFormProgressBar.width('75%');
 	modalBindings();
-	$("#createFormProgressBar").width('100%');
+	createFormProgressBar.width('100%');
 
 	// Form submit handler
 	$("form[name=submitForm]").submit(function(e) {
@@ -92,7 +99,7 @@ $(function() {
 
 		// Create a multidimentional object to store field info
 		var obj = {};
-		$("#formSettings :input").each(function() {
+		$(":input",formSettings).each(function() {
 			var form = $(this).prop("name").split("_");
 
 			if ($(this).prop("type") == "checkbox") {
@@ -135,15 +142,15 @@ $(function() {
 	});
 
 	// Click through each field and then back to add field tab on page load to update form preview
-	$("#formPreview li").click();
-	$("#fieldTab li:last a").click();
+	$("li",formPreview).click();
+	$("li:last a",fieldTab).click();
 
 	// Make the left panel fixed if the viewport is big enough to hold the content
 	$(window).scroll(function() {
 		var left = $('#leftPanel');
 		var leftParent = left.closest('.row-fluid');
 		var leftParentTop = leftParent.offset().top - 55;
-		var leftHeight = $('#leftPanel .tab-content').outerHeight() + $('#fieldTab').outerHeight() + 170;
+		var leftHeight = $('.tab-content',leftPanel).outerHeight() + $('#fieldTab').outerHeight() + 170;
 
 		// Is the window big enough?
 		if ($(window).height() > leftHeight) {
@@ -162,11 +169,11 @@ $(function() {
 	}).scroll();
 
 	$(window).resize(function() {
-		if ($("#leftPanel").hasClass("fix")) {
-			$("#leftPanel").css("width",$("#leftPanel").parent().width());
+		if (leftPanel.hasClass("fix")) {
+			leftPanel.css("width",leftPanel.parent().width());
 		}
 		else {
-			$("#leftPanel").css("width",'auto');
+			leftPanel.css("width",'auto');
 		}
 	});
 
