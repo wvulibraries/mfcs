@@ -30,6 +30,7 @@ function showFieldSettings(fullID) {
 	// Create jQuery shortcuts (code optimization)
 	var fieldSettings_form = $("#fieldSettings_form");
 	var fieldSettings_fieldset_form = $("#fieldSettings_fieldset_form");
+	var formPreview = $("#formPreview .well");
 
 	if (fullID === undefined) {
 		// Hide the form and show a warning about having nothing selected
@@ -208,12 +209,13 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_idno_format").val($("#idnoFormat_"+id).val());
 			$("#fieldSettings_idno_startIncrement").val($("#startIncrement_"+id).val());
 
-			if ($("#allowedExtensions_"+id).val() != undefined) {
-				var opts = $("#allowedExtensions_"+id).val().split("%,%");
+			var allowedExtensions_val = $("#allowedExtensions_"+id).val();
+			if (allowedExtensions_val != undefined) {
+				var opts = allowedExtensions_val.split("%,%");
 				var fieldSettings_file_allowedExtensions = $("#fieldSettings_file_allowedExtensions");
 				fieldSettings_file_allowedExtensions.html('');
 				for (var i = 0; i < opts.length; i++) {
-					$("#fieldSettings_file_allowedExtensions").append(addAllowedExtension(opts[i]));
+					fieldSettings_file_allowedExtensions.append(addAllowedExtension(opts[i]));
 				}
 				$(":input[name=fieldSettings_allowedExtension_text]", fieldSettings_file_allowedExtensions).keyup();
 			}
@@ -264,12 +266,15 @@ function fieldSettingsBindings() {
 		}
 	});
 
+	// Create jQuery shortcuts (code optimization)
+	var formPreview = $("#formPreview");
+
 	$("#fieldSettings_name")
 		.keyup(function() {
 			return;
 			var formSettings_objectTitleField = $('#formSettings_objectTitleField');
 			var formPreview = $('#formPreview');
-			var option = $("option[value='"+$("#formPreview .well :input[name^=name_]").val()+"']", formSettings_objectTitleField);
+			var option = $("option[value='"+$(":input[name^=name_]", formPreview).val()+"']", formSettings_objectTitleField);
 			if (option.length > 0) {
 				option.val($(this).val());
 			}
@@ -287,45 +292,57 @@ function fieldSettingsBindings() {
 		});
 
 	$("#fieldSettings_label").keyup(function() {
-		if ($("#formSettings_objectTitleField option[value='"+$("#formPreview .well :input[name^=name_]").val()+"']").length > 0) {
-			$("#formSettings_objectTitleField option[value='"+$("#formPreview .well :input[name^=name_]").val()+"']").text($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		if ($("#formSettings_objectTitleField option[value='"+$(":input[name^=name_]", formPreviewWell).val()+"']").length > 0) {
+			$("#formSettings_objectTitleField option[value='"+$(":input[name^=name_]", formPreviewWell).val()+"']").text($(this).val());
 		}
-		else if ($("#formPreview .well :input[name^=type_][value=text]").length > 0) {
-			$("#formSettings_objectTitleField").append('<option value="'+$("#formPreview .well :input[name^=name_]").val()+'">'+$(this).val()+'</option>');
+		else if ($(":input[name^=type_][value=text]", formPreviewWell).length > 0) {
+			$("#formSettings_objectTitleField").append('<option value="'+$(":input[name^=name_]", formPreviewWell).val()+'">'+$(this).val()+'</option>');
 		}
 
-		$("#formPreview .well .control-group > label").text($(this).val());
-		$("#formPreview .well :input[name^=label_]").val($(this).val());
+		$(".control-group > label", formPreviewWell).text($(this).val());
+		$(":input[name^=label_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_value").keyup(function() {
-		$("#formPreview .well .controls :input").val($(this).val());
-		$("#formPreview .well :input[name^=value_]").val($(this).val());
+		var val = $(this).val();
+		var formPreviewWell = $(".well",formPreview);
+		$(".controls :input", formPreviewWell).val(val);
+		$(":input[name^=value_]", formPreviewWell).val(val);
 	});
 
 	$("#fieldSettings_placeholder").keyup(function() {
-		$("#formPreview .well .controls :input").prop('placeholder',$(this).val());
-		$("#formPreview .well :input[name^=placeholder_]").val($(this).val());
+		var val = $(this).val();
+		var formPreviewWell = $(".well",formPreview);
+		$(".controls :input", formPreviewWell).prop('placeholder',val);
+		$(":input[name^=placeholder_]", formPreviewWell).val(val);
 	});
 
 	$("#fieldSettings_id").keyup(function() {
-		$("#formPreview .well .control-group > label").prop('for',$(this).val());
-		$("#formPreview .well .controls :input").prop('id',$(this).val());
-		$("#formPreview .well :input[name^=id_]").val($(this).val());
+		var val = $(this).val();
+		var formPreviewWell = $(".well",formPreview);
+		$(".control-group > label", formPreviewWell).prop('for',val);
+		$(".controls :input", formPreviewWell).prop('id',val);
+		$(":input[name^=id_]", formPreviewWell).val(val);
 	});
 
 	$("#fieldSettings_class").keyup(function() {
-		$("#formPreview .well .controls :input").prop('class',$(this).val());
-		$("#formPreview .well :input[name^=class_]").val($(this).val());
+		var val = $(this).val();
+		var formPreviewWell = $(".well",formPreview);
+		$(".controls :input", formPreviewWell).prop('class',val);
+		$(":input[name^=class_]", formPreviewWell).val(val);
 	});
 
 	$("#fieldSettings_style").keyup(function() {
-		$("#formPreview .well .controls :input").attr('style',$(this).val());
-		$("#formPreview .well :input[name^=style_]").val($(this).val());
+		var val = $(this).val();
+		var formPreviewWell = $(".well",formPreview);
+		$(".controls :input", formPreviewWell).attr('style',val);
+		$(":input[name^=style_]", formPreviewWell).val(val);
 	});
 
 	$("#fieldSettings_choices_type").change(function() {
-		$("#formPreview .well :input[name^=choicesType_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=choicesType_]", formPreviewWell).val($(this).val());
 		if ($(this).val() == 'manual') {
 			$("#fieldSettings_choices_manual").show();
 			$("#fieldSettings_choices_form").hide();
@@ -338,32 +355,33 @@ function fieldSettingsBindings() {
 
 	$("#fieldSettings_choices_manual")
 		.on("click","button[name=default]",function() {
-			switch ($("#formPreview .well :input[name^=type_]").val()) {
+			var formPreviewWell = $(".well",formPreview);
+			switch ($(":input[name^=type_]", formPreviewWell).val()) {
 				case 'select':
 					if ($(this).hasClass("active")) {
-						$("#formPreview .well .controls :input").val('');
-						$("#formPreview .well :input[name^=choicesDefault_]").val('');
+						$(".controls :input", formPreviewWell).val('');
+						$(":input[name^=choicesDefault_]", formPreviewWell).val('');
 					}
 					else {
-						$("#formPreview .well .controls :input").val($(this).siblings(":input").val());
-						$("#formPreview .well :input[name^=choicesDefault_]").val($(this).siblings(":input").val());
+						$(".controls :input", formPreviewWell).val($(this).siblings(":input").val());
+						$(":input[name^=choicesDefault_]", formPreviewWell).val($(this).siblings(":input").val());
 					}
 					$("#fieldSettings_choices_manual button[name=default]").not(this).removeClass("active");
 					break;
 
 				case 'radio':
 					if ($(this).hasClass("active")) {
-						$("#formPreview .well .controls :input").removeAttr('checked');
-						$("#formPreview .well :input[name^=choicesDefault_]").val('');
+						$(".controls :input", formPreviewWell).removeAttr('checked');
+						$(":input[name^=choicesDefault_]", formPreviewWell).val('');
 					}
 					else {
 						var val = $(this).siblings(":input").val();
-						$("#formPreview .well .controls label").each(function() {
+						$(".controls label", formPreviewWell).each(function() {
 							if ($(this).text() == val) {
 								$(":input",this).prop('checked',true);
 							}
 						});
-						$("#formPreview .well :input[name^=choicesDefault_]").val($(this).siblings(":input").val());
+						$(":input[name^=choicesDefault_]", formPreviewWell).val($(this).siblings(":input").val());
 					}
 					$("#fieldSettings_choices_manual button[name=default]").not(this).removeClass("active");
 					break;
@@ -371,14 +389,14 @@ function fieldSettingsBindings() {
 				case 'checkbox':
 					var val = $(this).siblings(":input").val();
 					if ($(this).hasClass("active")) {
-						$("#formPreview .well .controls label").each(function() {
+						$(".controls label", formPreviewWell).each(function() {
 							if ($(this).text() == val) {
 								$(":input",this).removeAttr('checked');
 							}
 						});
 					}
 					else {
-						$("#formPreview .well .controls label").each(function() {
+						$(".controls label", formPreviewWell).each(function() {
 							if ($(this).text() == val) {
 								$(":input",this).prop('checked',true);
 							}
@@ -386,21 +404,21 @@ function fieldSettingsBindings() {
 					}
 
 					var vals = [];
-					$("#formPreview .well .controls :input:checked").each(function() {
+					$(".controls :input:checked", formPreviewWell).each(function() {
 						vals.push($(this).parent().text());
 					});
 
-					$("#formPreview .well :input[name^=choicesDefault_]").val('').val(vals.join("%,%"));
+					$(":input[name^=choicesDefault_]", formPreviewWell).val('').val(vals.join("%,%"));
 					break;
 
 				case 'multiselect':
 					if ($(this).hasClass("active")) {
-						$("#formPreview .well .controls :input:last").val('');
-						$("#formPreview .well :input[name^=choicesDefault_]").val('');
+						$(".controls :input:last", formPreviewWell).val('');
+						$(":input[name^=choicesDefault_]", formPreviewWell).val('');
 					}
 					else {
-						$("#formPreview .well .controls :input:last").val($(this).siblings(":input").val());
-						$("#formPreview .well :input[name^=choicesDefault_]").val($(this).siblings(":input").val());
+						$(".controls :input:last", formPreviewWell).val($(this).siblings(":input").val());
+						$(":input[name^=choicesDefault_]", formPreviewWell).val($(this).siblings(":input").val());
 					}
 					$("#fieldSettings_choices_manual button[name=default]").not(this).removeClass("active");
 					break;
@@ -411,6 +429,8 @@ function fieldSettingsBindings() {
 			$(this).parent().after(addChoice());
 		})
 		.on("click","button[name=remove]",function() {
+			var formPreviewWell = $(".well",formPreview);
+
 			if ($(this).parent().siblings().length == 0) {
 				$(this).siblings("button[name=add]").click();
 			}
@@ -420,34 +440,34 @@ function fieldSettingsBindings() {
 			$("#fieldSettings_choices_manual input[name=fieldSettings_choices_text]").each(function() {
 				vals.push($(this).val());
 			});
-			$("#formPreview .well :input[name^=choicesOptions_]").val(vals.join("%,%"));
+			$(":input[name^=choicesOptions_]", formPreviewWell).val(vals.join("%,%"));
 
-			switch ($("#formPreview .well :input[name^=type_]").val()) {
+			switch ($(":input[name^=type_]", formPreviewWell).val()) {
 				case 'select':
-					$("#formPreview .well .controls :input").html('');
+					$(".controls :input", formPreviewWell).html('');
 					for (var i = 0; i < vals.length; i++) {
-						$("#formPreview .well .controls :input").append($("<option>").prop("value",vals[i]).text(vals[i]));
+						$(".controls :input", formPreviewWell).append($("<option>").prop("value",vals[i]).text(vals[i]));
 					}
 					break;
 
 				case 'radio':
-					$("#formPreview .well .controls").html('');
+					$(".controls", formPreviewWell).html('');
 					for (var i = 0; i < vals.length; i++) {
-						$("#formPreview .well .controls").append($("<label>").addClass("radio").append($("<input>").prop("type","radio").prop("name",$("#formPreview .well :input[name^=name_]").val())).append(vals[i]));
+						$(".controls", formPreviewWell).append($("<label>").addClass("radio").append($("<input>").prop("type","radio").prop("name",$(":input[name^=name_]", formPreviewWell).val())).append(vals[i]));
 					}
 					break;
 
 				case 'checkbox':
-					$("#formPreview .well .controls").html('');
+					$(".controls", formPreviewWell).html('');
 					for (var i = 0; i < vals.length; i++) {
-						$("#formPreview .well .controls").append($("<label>").addClass("checkbox").append($("<input>").prop("type","checkbox").prop("name",$("#formPreview .well :input[name^=name_]").val())).append(vals[i]));
+						$(".controls", formPreviewWell).append($("<label>").addClass("checkbox").append($("<input>").prop("type","checkbox").prop("name",$(":input[name^=name_]", formPreviewWell).val())).append(vals[i]));
 					}
 					break;
 
 				case 'multiselect':
-					$("#formPreview .well .controls :input:last").html('');
+					$(".controls :input:last", formPreviewWell).html('');
 					for (var i = 0; i < vals.length; i++) {
-						$("#formPreview .well .controls :input:last").append($("<option>").prop("value",vals[i]).text(vals[i]));
+						$(".controls :input:last", formPreviewWell).append($("<option>").prop("value",vals[i]).text(vals[i]));
 					}
 					break;
 			}
@@ -493,7 +513,7 @@ function fieldSettingsBindings() {
 
 	$("#fieldSettings_choices_form")
 		.on("change","#fieldSettings_choices_formSelect",function() {
-
+			var formPreviewWell = $(".well",formPreview);
 			var val = $(this).val();
 
 			if (val != null && choicesFields[val] == undefined) {
@@ -514,57 +534,63 @@ function fieldSettingsBindings() {
 					var options;
 					choicesFields[val] = options;
 			}
-
-			$("#formPreview .well :input[name^=choicesForm_]").val(val).change();
+			$(":input[name^=choicesForm_]", formPreviewWell).val(val).change();
 			$("#fieldSettings_choices_fieldSelect").html(choicesFields[val]).change();
 		})
 		.on("change","#fieldSettings_choices_fieldSelect",function() {
-			$("#formPreview .well :input[name^=choicesField_]").val($(this).val());
+			var formPreviewWell = $(".well",formPreview);
+			$(":input[name^=choicesField_]",formPreviewWell).val($(this).val());
 		});
 
 	$("#fieldSettings_options_required").change(function() {
-		var formPreview = $("#formPreview .well");
 		var checked = $(this).is(":checked");
-		$(".controls :input",formPreview).prop('required',checked);
-		$(":input[name^=required_]",formPreview).val(checked);
+		var formPreviewWell = $(".well",formPreview);
+		$(".controls :input",formPreviewWell).prop('required',checked);
+		$(":input[name^=required_]",formPreviewWell).val(checked);
 	});
 
 	$("#fieldSettings_options_duplicates").change(function() {
-		$("#formPreview .well :input[name^=duplicates_]").val($(this).is(":checked"));
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=duplicates_]", formPreviewWell).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_options_readonly").change(function() {
-		var formPreview = $("#formPreview .well");
 		var checked = $(this).is(":checked");
-		$(".controls :input",formPreview).prop('readonly',checked);
-		$(":input[name^=readonly_]",formPreview).val(checked);
+		var formPreviewWell = $(".well",formPreview);
+		$(".controls :input",formPreviewWell).prop('readonly',checked);
+		$(":input[name^=readonly_]",formPreviewWell).val(checked);
 	});
 
 	$("#fieldSettings_options_disabled").change(function() {
-		var formPreview = $("#formPreview .well");
 		var checked = $(this).is(":checked");
-		$(".controls :input",formPreview).prop('disabled',checked);
-		$(":input[name^=disabled_]",formPreview).val(checked);
+		var formPreviewWell = $(".well",formPreview);
+		$(".controls :input",formPreviewWell).prop('disabled',checked);
+		$(":input[name^=disabled_]",formPreviewWell).val(checked);
 	});
 
 	$("#fieldSettings_options_publicRelease").change(function() {
-		$("#formPreview .well :input[name^=publicRelease_]").val($(this).is(":checked"));
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=publicRelease_]", formPreviewWell).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_options_sortable").change(function() {
-		$("#formPreview .well :input[name^=sortable_]").val($(this).is(":checked"));
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=sortable_]", formPreviewWell).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_options_searchable").change(function() {
-		$("#formPreview .well :input[name^=searchable_]").val($(this).is(":checked"));
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=searchable_]", formPreviewWell).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_options_displayTable").change(function() {
-		$("#formPreview .well :input[name^=displayTable_]").val($(this).is(":checked"));
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=displayTable_]", formPreviewWell).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_validation").change(function() {
-		$("#formPreview .well :input[name^=validation_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=validation_]", formPreviewWell).val($(this).val());
 		if ($(this).val() == 'regexp') {
 			$("#fieldSettings_validationRegex").show().focus();
 		}
@@ -574,13 +600,15 @@ function fieldSettingsBindings() {
 	});
 
 	$("#fieldSettings_validationRegex").keyup(function() {
-		$("#formPreview .well :input[name^=validationRegex_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=validationRegex_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_range_min").change(function() {
 		var fieldSettings_range_min = $('#fieldSettings_range_min');
 		var fieldSettings_range_max = $('#fieldSettings_range_max');
-		$("#formPreview .well :input[name^=min_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=min_]", formPreviewWell).val($(this).val());
 		if (fieldSettings_range_min.val() > fieldSettings_range_max.val()) {
 			fieldSettings_range_max.val(fieldSettings_range_min.val()).change();
 		}
@@ -589,23 +617,27 @@ function fieldSettingsBindings() {
 	$("#fieldSettings_range_max").change(function() {
 		var fieldSettings_range_min = $('#fieldSettings_range_min');
 		var fieldSettings_range_max = $('#fieldSettings_range_max');
-		$("#formPreview .well :input[name^=max_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=max_]", formPreviewWell).val($(this).val());
 		if (fieldSettings_range_min.val() > fieldSettings_range_max.val()) {
 			fieldSettings_range_min.val(fieldSettings_range_max.val()).change();
 		}
 	});
 
 	$("#fieldSettings_range_step").change(function() {
-		$("#formPreview .well :input[name^=step_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=step_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_range_format").change(function() {
-		$("#formPreview .well :input[name^=format_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=format_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_idno_managedBy").change(function() {
-		$("#formPreview .well :input[name^=managedBy_]").val($(this).val());
-		if ($("#formPreview .well :input[name^=type_]").val() == 'idno') {
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=managedBy_]", formPreviewWell).val($(this).val());
+		if ($(":input[name^=type_]", formPreviewWell).val() == 'idno') {
 			if ($(this).val() == "system") {
 				$("#fieldSettings_options_readonly").prop("checked",true).change();
 				$("#fieldSettings_container_idno_format").show();
@@ -620,11 +652,13 @@ function fieldSettingsBindings() {
 	});
 
 	$("#fieldSettings_idno_format").keyup(function() {
-		$("#formPreview .well :input[name^=idnoFormat_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=idnoFormat_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_idno_startIncrement").change(function() {
-		$("#formPreview .well :input[name^=startIncrement_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=startIncrement_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_allowedExtensions")
@@ -637,34 +671,40 @@ function fieldSettingsBindings() {
 			}
 			$(this).parent().remove();
 
+			var formPreviewWell = $(".well",formPreview);
 			var vals = [];
 			$("#fieldSettings_file_allowedExtensions :input[name=fieldSettings_allowedExtension_text]").each(function() {
 				vals.push($(this).val());
 			});
-			$("#formPreview .well :input[name^=allowedExtensions_]").val(vals.join("%,%"));
+			$(":input[name^=allowedExtensions_]", formPreviewWell).val(vals.join("%,%"));
 		})
 		.on("keyup",":input[name=fieldSettings_allowedExtension_text]",function() {
+			var formPreviewWell = $(".well",formPreview);
 			var vals = [];
 			$("#fieldSettings_file_allowedExtensions :input[name=fieldSettings_allowedExtension_text]").each(function() {
 				vals.push($(this).val());
 			});
-			$("#formPreview .well :input[name^=allowedExtensions_]").val(vals.join("%,%"));
+			$(":input[name^=allowedExtensions_]", formPreviewWell).val(vals.join("%,%"));
 		});
 
 	$("#fieldSettings_file_options_multipleFiles").change(function() {
-		$("#formPreview .well :input[name^=multipleFiles_]").val($(this).is(":checked"));
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=multipleFiles_]", formPreviewWell).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_file_options_combine").change(function() {
-		$("#formPreview .well :input[name^=combine_]").val($(this).is(":checked"));
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=combine_]", formPreviewWell).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_file_options_ocr").change(function() {
-		$("#formPreview .well :input[name^=ocr_]").val($(this).is(":checked"));
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=ocr_]", formPreviewWell).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_file_options_convert").change(function() {
-		$("#formPreview .well :input[name^=convert_]").val($(this).is(":checked"));
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=convert_]", formPreviewWell).val($(this).is(":checked"));
 
 		if ($(this).is(":checked")) {
 			$("#fieldSettings_container_file_convert").show();
@@ -675,19 +715,23 @@ function fieldSettingsBindings() {
 	});
 
 	$("#fieldSettings_file_convert_height").change(function() {
-		$("#formPreview .well :input[name^=convertHeight_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=convertHeight_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_convert_width").change(function() {
-		$("#formPreview .well :input[name^=convertWidth_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=convertWidth_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_convert_format").change(function() {
-		$("#formPreview .well :input[name^=convertFormat_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=convertFormat_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_convert_watermark").change(function() {
-		$("#formPreview .well :input[name^=watermark_]").val($(this).is(":checked"));
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=watermark_]", formPreviewWell).val($(this).is(":checked"));
 
 		if ($(this).is(":checked")) {
 			$(this).parent().next().show();
@@ -698,15 +742,18 @@ function fieldSettingsBindings() {
 	}).change();
 
 	$("#fieldSettings_file_watermark_image").change(function() {
-		$("#formPreview .well :input[name^=watermarkImage_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=watermarkImage_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_watermark_location").change(function() {
-		$("#formPreview .well :input[name^=watermarkLocation_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=watermarkLocation_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_convert_border").change(function() {
-		$("#formPreview .well :input[name^=border_]").val($(this).is(":checked"));
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=border_]", formPreviewWell).val($(this).is(":checked"));
 
 		if ($(this).is(":checked")) {
 			$(this).parent().next().show();
@@ -717,19 +764,23 @@ function fieldSettingsBindings() {
 	}).change();
 
 	$("#fieldSettings_file_border_height").change(function() {
-		$("#formPreview .well :input[name^=borderHeight_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=borderHeight_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_border_width").change(function() {
-		$("#formPreview .well :input[name^=borderWidth_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=borderWidth_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_border_color").change(function() {
-		$("#formPreview .well :input[name^=borderColor_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=borderColor_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_options_thumbnail").change(function() {
-		$("#formPreview .well :input[name^=thumbnail_]").val($(this).is(":checked"));
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=thumbnail_]", formPreviewWell).val($(this).is(":checked"));
 
 		if ($(this).is(":checked")) {
 			$("#fieldSettings_container_file_thumbnail").show();
@@ -740,24 +791,29 @@ function fieldSettingsBindings() {
 	});
 
 	$("#fieldSettings_file_thumbnail_height").change(function() {
-		$("#formPreview .well :input[name^=thumbnailHeight_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=thumbnailHeight_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_thumbnail_width").change(function() {
-		$("#formPreview .well :input[name^=thumbnailWidth_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=thumbnailWidth_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_thumbnail_format").change(function() {
-		$("#formPreview .well :input[name^=thumbnailFormat_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=thumbnailFormat_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_options_mp3").change(function() {
-		$("#formPreview .well :input[name^=mp3_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(":input[name^=mp3_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_fieldset").keyup(function() {
-		$("#formPreview .well .fieldPreview legend").text($(this).val());
-		$("#formPreview .well :input[name^=fieldset_]").val($(this).val());
+		var formPreviewWell = $(".well",formPreview);
+		$(".fieldPreview legend", formPreviewWell).text($(this).val());
+		$(":input[name^=fieldset_]", formPreviewWell).val($(this).val());
 	});
 }
 
@@ -779,32 +835,34 @@ function formSettingsBindings() {
 	}).keyup();
 
 	$("#formSettings_formMetadata").change(function() {
+		var fieldAdd = $('#fieldAdd');
+		var idnoType = $("#formPreview :input[name^=type_][value=idno]");
 		if ($(this).is(":checked")) {
-			if ($("#formPreview :input[name^=type_][value=idno]").length == 0) {
+			if (idnoType.length == 0) {
 				$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
-				$("#fieldAdd li:contains('ID Number')").hide();
-				$("#fieldAdd li:contains('Paragraph Text')").hide();
-				$("#fieldAdd li:contains('Radio')").hide();
-				$("#fieldAdd li:contains('Checkboxes')").hide();
-				$("#fieldAdd li:contains('Dropdown')").hide();
-				$("#fieldAdd li:contains('Multi-Select')").hide();
-				$("#fieldAdd li:contains('File Upload')").hide();
-				$("#fieldAdd li:contains('WYSIWYG')").hide();
-				$("#fieldAdd li:contains('Field Set')").parent().hide().prev().hide();
+				$("li:contains('ID Number')", fieldAdd).hide();
+				$("li:contains('Paragraph Text')", fieldAdd).hide();
+				$("li:contains('Radio')", fieldAdd).hide();
+				$("li:contains('Checkboxes')", fieldAdd).hide();
+				$("li:contains('Dropdown')", fieldAdd).hide();
+				$("li:contains('Multi-Select')", fieldAdd).hide();
+				$("li:contains('File Upload')", fieldAdd).hide();
+				$("li:contains('WYSIWYG')", fieldAdd).hide();
+				$("li:contains('Field Set')", fieldAdd).parent().hide().prev().hide();
 			}
 			else {
 				if (confirm("Enabling this will remove any existing ID Number fields. Do you want to continue?")) {
-					$("#formPreview :input[name^=type_][value=idno]").parent().parent().remove();
+					idnoType.parent().parent().remove();
 					$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
-					$("#fieldAdd li:contains('ID Number')").hide();
-					$("#fieldAdd li:contains('Paragraph Text')").hide();
-					$("#fieldAdd li:contains('Radio')").hide();
-					$("#fieldAdd li:contains('Checkboxes')").hide();
-					$("#fieldAdd li:contains('Dropdown')").hide();
-					$("#fieldAdd li:contains('Multi-Select')").hide();
-					$("#fieldAdd li:contains('File Upload')").hide();
-					$("#fieldAdd li:contains('WYSIWYG')").hide();
-					$("#fieldAdd li:contains('Field Set')").parent().hide().prev().hide();
+					$("li:contains('ID Number')", fieldAdd).hide();
+					$("li:contains('Paragraph Text')", fieldAdd).hide();
+					$("li:contains('Radio')", fieldAdd).hide();
+					$("li:contains('Checkboxes')", fieldAdd).hide();
+					$("li:contains('Dropdown')", fieldAdd).hide();
+					$("li:contains('Multi-Select')", fieldAdd).hide();
+					$("li:contains('File Upload')", fieldAdd).hide();
+					$("li:contains('WYSIWYG')", fieldAdd).hide();
+					$("li:contains('Field Set')", fieldAdd).parent().hide().prev().hide();
 				}
 				else {
 					$(this).removeAttr('checked');
@@ -812,17 +870,17 @@ function formSettingsBindings() {
 			}
 		}
 		else {
-			$("#fieldAdd li:contains('ID Number')").show();
-			$("#fieldAdd li:contains('Paragraph Text')").show();
-			$("#fieldAdd li:contains('Radio')").show();
-			$("#fieldAdd li:contains('Checkboxes')").show();
-			$("#fieldAdd li:contains('Dropdown')").show();
-			$("#fieldAdd li:contains('Multi-Select')").show();
-			$("#fieldAdd li:contains('File Upload')").show();
-			$("#fieldAdd li:contains('WYSIWYG')").show();
-			$("#fieldAdd li:contains('Field Set')").parent().show().prev().show();
+			$("li:contains('ID Number')", fieldAdd).show();
+			$("li:contains('Paragraph Text')", fieldAdd).show();
+			$("li:contains('Radio')", fieldAdd).show();
+			$("li:contains('Checkboxes')", fieldAdd).show();
+			$("li:contains('Dropdown')", fieldAdd).show();
+			$("li:contains('Multi-Select')", fieldAdd).show();
+			$("li:contains('File Upload')", fieldAdd).show();
+			$("li:contains('WYSIWYG')", fieldAdd).show();
+			$("li:contains('Field Set')", fieldAdd).parent().show().prev().show();
 
-			if ($("#formPreview :input[name^=type_][value=idno]").length == 0) {
+			if (idnoType.length == 0) {
 				$("#formSettings_formProduction").prop({
 					checked:  false,
 					disabled: true,
@@ -851,14 +909,16 @@ function modalBindings() {
 			$("#formTypeSelector").modal("hide");
 		})
 		.on("click", "button:contains('Object')", function() {
+			var fieldAdd = $('#fieldAdd');
+			var formPreviewWell = $("#formPreview .well");
 			// Add IDNO field and select options
-			$("#fieldAdd li:contains('ID Number')").click();
-			$("#formPreview .well :input[name^=label_]").val('IDNO').keyup();
-			$("#formPreview .well :input[name^=sortable_]").val('true').change();
-			$("#formPreview .well :input[name^=searchable_]").val('true').change();
+			$("li:contains('ID Number')", fieldAdd).click();
+			$(":input[name^=label_]",formPreviewWell).val('IDNO').keyup();
+			$(":input[name^=sortable_]",formPreviewWell).val('true').change();
+			$(":input[name^=searchable_]",formPreviewWell).val('true').change();
 
 			// Add Title field and select options
-			$("#fieldAdd li:contains('Single Line Text')").click();
+			$("li:contains('Single Line Text')", fieldAdd).click();
 			$("#fieldSettings_name").val('title').keyup();
 			$("#fieldSettings_label").val('Title').keyup();
 			$("#fieldSettings_options_required").prop("checked", true).change();
