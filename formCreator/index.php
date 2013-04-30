@@ -439,7 +439,7 @@ if (!isnull($formID)) {
 
 		// Get existing groupings
 		$sql = sprintf("SELECT * FROM `forms` WHERE `ID`='%s' LIMIT 1",
-			$engine->openDB->escape($formID) 
+			$engine->openDB->escape($formID)
 		);
 		$sqlResult = $engine->openDB->query($sql);
 
@@ -533,7 +533,7 @@ $selectedUsersAdmins = "";
 
 if (isset($engine->cleanGet['MYSQL']['id']) && !isempty($engine->cleanGet['MYSQL']['id'])) {
 
-	$sql = sprintf("SELECT permissions.type, users.status, users.firstname, users.lastname, users.username, users.ID as userID FROM permissions LEFT JOIN users ON permissions.userID=users.ID WHERE permissions.formID='%s'", 
+	$sql = sprintf("SELECT permissions.type, users.status, users.firstname, users.lastname, users.username, users.ID as userID FROM permissions LEFT JOIN users ON permissions.userID=users.ID WHERE permissions.formID='%s'",
 		$engine->cleanGet['MYSQL']['id']
 		);
 	$sqlResult = $engine->openDB->query($sql);
@@ -541,20 +541,20 @@ if (isset($engine->cleanGet['MYSQL']['id']) && !isempty($engine->cleanGet['MYSQL
 
 	while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 		$optionHTML = sprintf('<option value="%s">%s, %s (%s)</option>',
-			$engine->openDB->escape($row['userID']),
-			$engine->openDB->escape($row['lastname']),
-			$engine->openDB->escape($row['firstname']),
-			$engine->openDB->escape($row['username']));
+			htmlSanitize($row['userID']),
+			htmlSanitize($row['lastname']),
+			htmlSanitize($row['firstname']),
+			htmlSanitize($row['username']));
 		switch($row['type']){
 			case mfcs::AUTH_VIEW:
-			$selectedViewUsers .= $optionHTML;
-			break;
+				$selectedViewUsers .= $optionHTML;
+				break;
 			case mfcs::AUTH_ENTRY:
-			$selectedEntryUsers .= $optionHTML;
-			break;
+				$selectedEntryUsers .= $optionHTML;
+				break;
 			case mfcs::AUTH_ADMIN:
-			$selectedUsersAdmins .= $optionHTML;
-			break;
+				$selectedUsersAdmins .= $optionHTML;
+				break;
 		}
 	}
 }
@@ -565,16 +565,17 @@ localvars::add("selectedUsersAdmins",$selectedUsersAdmins);
 
 localVars::add("results",displayMessages());
 
-$engine->eTemplate("include","header");
 $selectedProjects = forms::getProjects(isset($engine->cleanGet['MYSQL']['id']) ? $engine->cleanGet['MYSQL']['id'] : 0);
 localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects));
+
+$engine->eTemplate("include","header");
 ?>
 
 <script type="text/javascript" src='{local var="siteRoot"}includes/js/createForm_functions.js'></script>
 
 <section>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="#formCreator" data-toggle="tab">Form Creator</a></li>	
+		<li class="active"><a href="#formCreator" data-toggle="tab">Form Creator</a></li>
 		<?php if (!isnull($formID)) { ?>
 		<?php if (!forms::isMetadataForm($formID)) { ?>
 		<li><a href="#projects" data-toggle="tab">Assigned Projects</a></li>
