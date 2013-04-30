@@ -1,26 +1,23 @@
 <?php
 include("../header.php");
 
-// recurseInsert("acl.php","php");
-
-$formID = isset($engine->cleanGet['MYSQL']['id']) ? $engine->cleanGet['MYSQL']['id'] : NULL;
 $fields = array();
 
-$sql = sprintf("SELECT fields FROM `forms` WHERE ID='%s' LIMIT 1",
-	$engine->openDB->escape($formID)
-	);
+$sql = sprintf("SELECT ID,fields FROM `forms`");
 $sqlResult = $engine->openDB->query($sql);
 
 if ($sqlResult['result']) {
-	$row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
-
-	$tmp = decodeFields($row['fields']);
-	if (isset($tmp) && is_array($tmp)) {
-		foreach ($tmp as $field) {
-			$fields[] = array(
-				"name"   => $field['name'],
-				"label"  => $field['label'],
-				);
+	while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+		$tmp = decodeFields($row['fields']);
+		if (isset($tmp) && is_array($tmp)) {
+			$field = array();
+			foreach ($tmp as $f) {
+				$field[] = array(
+					"name"   => $f['name'],
+					"label"  => $f['label'],
+					);
+			}
+			$fields[$row['ID']] = $field;
 		}
 	}
 }

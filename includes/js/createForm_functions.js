@@ -532,23 +532,24 @@ function fieldSettingsBindings() {
 			var formPreviewWell = $(".well", formPreview);
 			var val             = $(this).val();
 
-			if (val != null && choicesFields[val] == undefined) {
-				$.ajax({
-					url: "../includes/getFormFields.php?id="+val,
-					async: false,
-				}).done(function(data) {
-					var obj = JSON.parse(data);
-					var options;
-					for(var i in obj) {
-						var field = obj[i];
-						options += '<option value="'+field.name+'">'+field.label+'</option>';
-					}
-					choicesFields[val] = options;
-				});
-			}
-			else if (val == null && choicesFields[val] == undefined) {
+			if (choicesFields[val] == undefined) {
 				var options;
-				choicesFields[val] = options;
+				choicesFields[null] = options;
+
+				$.ajax({
+					url: "../includes/getFormFields.php",
+					async: false
+				}).always(function(data) {
+					var obj = JSON.parse(data);
+
+					$.each(obj, function(I, field) {
+						var options;
+						$.each(field, function(i, f) {
+							options += '<option value="'+f.name+'">'+f.label+'</option>';
+						});
+						choicesFields[I] = options;
+					});
+				});
 			}
 			$(":input[name^=choicesForm_]", formPreviewWell).val(val).change();
 			$("#fieldSettings_choices_fieldSelect").html(choicesFields[val]).change();
