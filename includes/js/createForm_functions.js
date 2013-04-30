@@ -1,6 +1,4 @@
-
 function sortableForm() {
-
 	$("#formCreator ul.sortable").sortable({
 		connectWith: "#formCreator ul.sortable",
 		revert: true,
@@ -28,9 +26,8 @@ function sortableForm() {
 
 function showFieldSettings(fullID) {
 	// Create jQuery shortcuts (code optimization)
-	var fieldSettings_form = $("#fieldSettings_form");
+	var fieldSettings_form          = $("#fieldSettings_form");
 	var fieldSettings_fieldset_form = $("#fieldSettings_fieldset_form");
-	var formPreview = $("#formPreview .well");
 
 	if (fullID === undefined) {
 		// Hide the form and show a warning about having nothing selected
@@ -40,8 +37,8 @@ function showFieldSettings(fullID) {
 	}
 	else {
 
-		id       = fullID.split("_")[1];
-		var type = $("#type_"+id).val();
+		var id       = fullID.split("_")[1];
+		var type     = $("#type_"+id).val();
 		var fieldset = $("#fieldset_"+id);
 
 		// Select the Field Settings tab
@@ -71,7 +68,7 @@ function showFieldSettings(fullID) {
 			var fieldSettings_options_disabled     = $("#fieldSettings_options_disabled");
 
 			if (type == 'idno') {
-				fieldSettings_name.prop("readonly",true).val("idno").keyup();
+				fieldSettings_name.prop("readonly", true).val("idno").keyup();
 				fieldSettings_options_required.prop({
 					checked:  true,
 					disabled: true,
@@ -84,8 +81,8 @@ function showFieldSettings(fullID) {
 					checked:  true,
 					disabled: true,
 				}).change();
-				fieldSettings_options_readonly.prop("disabled",true);
-				fieldSettings_options_disabled.removeAttr("checked").change().prop("disabled",true);
+				fieldSettings_options_readonly.prop("disabled", true);
+				fieldSettings_options_disabled.removeAttr("checked").change().prop("disabled", true);
 			}
 			else {
 				fieldSettings_name.removeAttr("readonly");
@@ -254,26 +251,25 @@ function showFieldSettings(fullID) {
 function fieldSettingsBindings() {
 	var choicesFields = {};
 
+	// Create jQuery shortcuts (code optimization)
+	var formPreview = $("#formPreview");
+
 	// Select a field to change settings
-	$("#formPreview").on("click", "li", function(event) {
+	formPreview.on("click", "li", function(event) {
 		event.stopPropagation();
 		var li = $(this);
 		if (!li.hasClass("well")) {
-			$("#formPreview .well").removeClass("well");
+			$(".well", formPreview).removeClass("well");
 			li.addClass("well well-small");
 			$("#fieldTab a[href='#fieldSettings']").tab("show");
 			showFieldSettings(li.attr("id"));
 		}
 	});
 
-	// Create jQuery shortcuts (code optimization)
-	var formPreview = $("#formPreview");
-
 	$("#fieldSettings_name")
 		.keyup(function() {
 			return;
 			var formSettings_objectTitleField = $('#formSettings_objectTitleField');
-			var formPreview = $('#formPreview');
 			var option = $("option[value='"+$(":input[name^=name_]", formPreview).val()+"']", formSettings_objectTitleField);
 			if (option.length > 0) {
 				option.val($(this).val());
@@ -292,7 +288,8 @@ function fieldSettingsBindings() {
 		});
 
 	$("#fieldSettings_label").keyup(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		if ($("#formSettings_objectTitleField option[value='"+$(":input[name^=name_]", formPreviewWell).val()+"']").length > 0) {
 			$("#formSettings_objectTitleField option[value='"+$(":input[name^=name_]", formPreviewWell).val()+"']").text($(this).val());
 		}
@@ -305,49 +302,55 @@ function fieldSettingsBindings() {
 	});
 
 	$("#fieldSettings_value").keyup(function() {
-		var val = $(this).val();
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+		var val             = $(this).val();
+
 		$(".controls :input", formPreviewWell).val(val);
 		$(":input[name^=value_]", formPreviewWell).val(val);
 	});
 
 	$("#fieldSettings_placeholder").keyup(function() {
-		var val = $(this).val();
-		var formPreviewWell = $(".well",formPreview);
-		$(".controls :input", formPreviewWell).prop('placeholder',val);
+		var formPreviewWell = $(".well", formPreview);
+		var val             = $(this).val();
+
+		$(".controls :input", formPreviewWell).prop('placeholder', val);
 		$(":input[name^=placeholder_]", formPreviewWell).val(val);
 	});
 
 	$("#fieldSettings_id").keyup(function() {
-		var val = $(this).val();
-		var formPreviewWell = $(".well",formPreview);
-		$(".control-group > label", formPreviewWell).prop('for',val);
-		$(".controls :input", formPreviewWell).prop('id',val);
+		var formPreviewWell = $(".well", formPreview);
+		var val             = $(this).val();
+
+		$(".control-group > label", formPreviewWell).prop('for', val);
+		$(".controls :input", formPreviewWell).prop('id', val);
 		$(":input[name^=id_]", formPreviewWell).val(val);
 	});
 
 	$("#fieldSettings_class").keyup(function() {
 		var val = $(this).val();
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
 		$(".controls :input", formPreviewWell).prop('class',val);
 		$(":input[name^=class_]", formPreviewWell).val(val);
 	});
 
 	$("#fieldSettings_style").keyup(function() {
-		var val = $(this).val();
-		var formPreviewWell = $(".well",formPreview);
-		$(".controls :input", formPreviewWell).attr('style',val);
+		var formPreviewWell = $(".well", formPreview);
+		var val             = $(this).val();
+
+		$(".controls :input", formPreviewWell).attr('style', val);
 		$(":input[name^=style_]", formPreviewWell).val(val);
 	});
 
 	$("#fieldSettings_choices_type").change(function() {
-		var formPreviewWell = $(".well",formPreview);
-		$(":input[name^=choicesType_]", formPreviewWell).val($(this).val());
-		if ($(this).val() == 'manual') {
+		var formPreviewWell = $(".well", formPreview);
+		var val             = $(this).val();
+
+		$(":input[name^=choicesType_]", formPreviewWell).val(val);
+		if (val == 'manual') {
 			$("#fieldSettings_choices_manual").show();
 			$("#fieldSettings_choices_form").hide();
 		}
-		else if ($(this).val() == 'form') {
+		else if (val == 'form') {
 			$("#fieldSettings_choices_manual").hide();
 			$("#fieldSettings_choices_form").show();
 		}
@@ -355,7 +358,7 @@ function fieldSettingsBindings() {
 
 	$("#fieldSettings_choices_manual")
 		.on("click","button[name=default]",function() {
-			var formPreviewWell = $(".well",formPreview);
+			var formPreviewWell = $(".well", formPreview);
 			switch ($(":input[name^=type_]", formPreviewWell).val()) {
 				case 'select':
 					if ($(this).hasClass("active")) {
@@ -363,8 +366,10 @@ function fieldSettingsBindings() {
 						$(":input[name^=choicesDefault_]", formPreviewWell).val('');
 					}
 					else {
-						$(".controls :input", formPreviewWell).val($(this).siblings(":input").val());
-						$(":input[name^=choicesDefault_]", formPreviewWell).val($(this).siblings(":input").val());
+						var val = $(this).siblings(":input").val();
+
+						$(".controls :input", formPreviewWell).val(val);
+						$(":input[name^=choicesDefault_]", formPreviewWell).val(val);
 					}
 					$("#fieldSettings_choices_manual button[name=default]").not(this).removeClass("active");
 					break;
@@ -375,37 +380,43 @@ function fieldSettingsBindings() {
 						$(":input[name^=choicesDefault_]", formPreviewWell).val('');
 					}
 					else {
-						var val = $(this).siblings(":input").val();
+						var val  = $(this).siblings(":input").val();
+						var text = $(this).text();
+
 						$(".controls label", formPreviewWell).each(function() {
-							if ($(this).text() == val) {
-								$(":input",this).prop('checked',true);
+							if (text == val) {
+								$(":input", this).prop('checked', true);
 							}
 						});
-						$(":input[name^=choicesDefault_]", formPreviewWell).val($(this).siblings(":input").val());
+						$(":input[name^=choicesDefault_]", formPreviewWell).val(val);
 					}
 					$("#fieldSettings_choices_manual button[name=default]").not(this).removeClass("active");
 					break;
 
 				case 'checkbox':
-					var val = $(this).siblings(":input").val();
+					var val  = $(this).siblings(":input").val();
+					var text = $(this).text();
+
 					if ($(this).hasClass("active")) {
 						$(".controls label", formPreviewWell).each(function() {
-							if ($(this).text() == val) {
-								$(":input",this).removeAttr('checked');
+							if (text == val) {
+								$(":input", this).removeAttr('checked');
 							}
 						});
 					}
 					else {
 						$(".controls label", formPreviewWell).each(function() {
-							if ($(this).text() == val) {
-								$(":input",this).prop('checked',true);
+							if (text == val) {
+								$(":input",this).prop('checked', true);
 							}
 						});
 					}
 
-					var vals = [];
+					var vals       = [];
+					var parentText = $(this).parent().text();
+
 					$(".controls :input:checked", formPreviewWell).each(function() {
-						vals.push($(this).parent().text());
+						vals.push(parentText);
 					});
 
 					$(":input[name^=choicesDefault_]", formPreviewWell).val('').val(vals.join("%,%"));
@@ -417,8 +428,10 @@ function fieldSettingsBindings() {
 						$(":input[name^=choicesDefault_]", formPreviewWell).val('');
 					}
 					else {
-						$(".controls :input:last", formPreviewWell).val($(this).siblings(":input").val());
-						$(":input[name^=choicesDefault_]", formPreviewWell).val($(this).siblings(":input").val());
+						var val = $(this).siblings(":input").val();
+
+						$(".controls :input:last", formPreviewWell).val(val);
+						$(":input[name^=choicesDefault_]", formPreviewWell).val(val);
 					}
 					$("#fieldSettings_choices_manual button[name=default]").not(this).removeClass("active");
 					break;
@@ -429,16 +442,17 @@ function fieldSettingsBindings() {
 			$(this).parent().after(addChoice());
 		})
 		.on("click","button[name=remove]",function() {
-			var formPreviewWell = $(".well",formPreview);
-
 			if ($(this).parent().siblings().length == 0) {
 				$(this).siblings("button[name=add]").click();
 			}
 			$(this).parent().remove();
 
-			var vals = [];
+			var formPreviewWell = $(".well", formPreview);
+			var val             = $(this).val();
+			var vals            = [];
+
 			$("#fieldSettings_choices_manual input[name=fieldSettings_choices_text]").each(function() {
-				vals.push($(this).val());
+				vals.push(val);
 			});
 			$(":input[name^=choicesOptions_]", formPreviewWell).val(vals.join("%,%"));
 
@@ -473,39 +487,41 @@ function fieldSettingsBindings() {
 			}
 		})
 		.on("keyup",":input[name=fieldSettings_choices_text]",function() {
-			var vals = [];
-			var formPreview = ('#formPreview .well');
-			$("#fieldSettings_choices_manual input[name=fieldSettings_choices_text]").each(function() {
-				vals.push($(this).val());
-			});
-			$(".well :input[name^=choicesOptions_]",formPreview).val(vals.join("%,%"));
+			var formPreviewWell = $(".well", formPreview);
+			var val             = $(this).val();
+			var vals            = [];
 
-			switch ($(".well :input[name^=type_]",formPreview).val()) {
+			$("#fieldSettings_choices_manual input[name=fieldSettings_choices_text]").each(function() {
+				vals.push(val);
+			});
+			$(":input[name^=choicesOptions_]", formPreviewWell).val(vals.join("%,%"));
+
+			switch ($(":input[name^=type_]", formPreviewWell).val()) {
 				case 'select':
-					$(".controls :input",formPreview).html('');
+					$(".controls :input", formPreviewWell).html('');
 					for (var i = 0; i < vals.length; i++) {
-						$(".well .controls :input",formPreview).append($("<option>").prop("value",vals[i]).text(vals[i]));
+						$(".controls :input", formPreviewWell).append($("<option>").prop("value",vals[i]).text(vals[i]));
 					}
 					break;
 
 				case 'radio':
-					$(".controls",formPreview).html('');
+					$(".controls", formPreviewWell).html('');
 					for (var i = 0; i < vals.length; i++) {
-						$("#formPreview .well .controls",formPreview).append($("<label>").addClass("radio").append($("<input>").prop("type","radio").prop("name",$(".well :input[name^=name_]",formPreview).val())).append(vals[i]));
+						$(".controls", formPreviewWell).append($("<label>").addClass("radio").append($("<input>").prop("type","radio").prop("name",$(".well :input[name^=name_]",formPreview).val())).append(vals[i]));
 					}
 					break;
 
 				case 'checkbox':
-					$(".controls",formPreview).html('');
+					$(".controls", formPreviewWell).html('');
 					for (var i = 0; i < vals.length; i++) {
-						$(".well .controls",formPreview).append($("<label>").addClass("checkbox").append($("<input>").prop("type","checkbox").prop("name",$(".well :input[name^=name_]",formPreview).val())).append(vals[i]));
+						$(".controls", formPreviewWell).append($("<label>").addClass("checkbox").append($("<input>").prop("type","checkbox").prop("name",$(".well :input[name^=name_]",formPreview).val())).append(vals[i]));
 					}
 					break;
 
 				case 'multiselect':
-					$(".controls :input:last",formPreview).html('');
+					$(".controls :input:last", formPreviewWell).html('');
 					for (var i = 0; i < vals.length; i++) {
-						$(".well .controls :input:last",formPreview).append($("<option>").prop("value",vals[i]).text(vals[i]));
+						$(".controls :input:last", formPreviewWell).append($("<option>").prop("value",vals[i]).text(vals[i]));
 					}
 					break;
 			}
@@ -513,8 +529,8 @@ function fieldSettingsBindings() {
 
 	$("#fieldSettings_choices_form")
 		.on("change","#fieldSettings_choices_formSelect",function() {
-			var formPreviewWell = $(".well",formPreview);
-			var val = $(this).val();
+			var formPreviewWell = $(".well", formPreview);
+			var val             = $(this).val();
 
 			if (val != null && choicesFields[val] == undefined) {
 				$.ajax({
@@ -531,65 +547,75 @@ function fieldSettingsBindings() {
 				});
 			}
 			else if (val == null && choicesFields[val] == undefined) {
-					var options;
-					choicesFields[val] = options;
+				var options;
+				choicesFields[val] = options;
 			}
 			$(":input[name^=choicesForm_]", formPreviewWell).val(val).change();
 			$("#fieldSettings_choices_fieldSelect").html(choicesFields[val]).change();
 		})
 		.on("change","#fieldSettings_choices_fieldSelect",function() {
-			var formPreviewWell = $(".well",formPreview);
+			var formPreviewWell = $(".well", formPreview);
+
 			$(":input[name^=choicesField_]",formPreviewWell).val($(this).val());
 		});
 
 	$("#fieldSettings_options_required").change(function() {
-		var checked = $(this).is(":checked");
-		var formPreviewWell = $(".well",formPreview);
-		$(".controls :input",formPreviewWell).prop('required',checked);
-		$(":input[name^=required_]",formPreviewWell).val(checked);
+		var checked         = $(this).is(":checked");
+		var formPreviewWell = $(".well", formPreview);
+
+		$(".controls :input", formPreviewWell).prop('required',checked);
+		$(":input[name^=required_]", formPreviewWell).val(checked);
 	});
 
 	$("#fieldSettings_options_duplicates").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=duplicates_]", formPreviewWell).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_options_readonly").change(function() {
-		var checked = $(this).is(":checked");
-		var formPreviewWell = $(".well",formPreview);
-		$(".controls :input",formPreviewWell).prop('readonly',checked);
-		$(":input[name^=readonly_]",formPreviewWell).val(checked);
+		var checked         = $(this).is(":checked");
+		var formPreviewWell = $(".well", formPreview);
+
+		$(".controls :input", formPreviewWell).prop('readonly',checked);
+		$(":input[name^=readonly_]", formPreviewWell).val(checked);
 	});
 
 	$("#fieldSettings_options_disabled").change(function() {
-		var checked = $(this).is(":checked");
-		var formPreviewWell = $(".well",formPreview);
-		$(".controls :input",formPreviewWell).prop('disabled',checked);
-		$(":input[name^=disabled_]",formPreviewWell).val(checked);
+		var checked         = $(this).is(":checked");
+		var formPreviewWell = $(".well", formPreview);
+
+		$(".controls :input", formPreviewWell).prop('disabled',checked);
+		$(":input[name^=disabled_]", formPreviewWell).val(checked);
 	});
 
 	$("#fieldSettings_options_publicRelease").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=publicRelease_]", formPreviewWell).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_options_sortable").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=sortable_]", formPreviewWell).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_options_searchable").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=searchable_]", formPreviewWell).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_options_displayTable").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=displayTable_]", formPreviewWell).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_validation").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=validation_]", formPreviewWell).val($(this).val());
 		if ($(this).val() == 'regexp') {
 			$("#fieldSettings_validationRegex").show().focus();
@@ -600,14 +626,16 @@ function fieldSettingsBindings() {
 	});
 
 	$("#fieldSettings_validationRegex").keyup(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=validationRegex_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_range_min").change(function() {
 		var fieldSettings_range_min = $('#fieldSettings_range_min');
 		var fieldSettings_range_max = $('#fieldSettings_range_max');
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell         = $(".well", formPreview);
+
 		$(":input[name^=min_]", formPreviewWell).val($(this).val());
 		if (fieldSettings_range_min.val() > fieldSettings_range_max.val()) {
 			fieldSettings_range_max.val(fieldSettings_range_min.val()).change();
@@ -617,7 +645,8 @@ function fieldSettingsBindings() {
 	$("#fieldSettings_range_max").change(function() {
 		var fieldSettings_range_min = $('#fieldSettings_range_min');
 		var fieldSettings_range_max = $('#fieldSettings_range_max');
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell         = $(".well", formPreview);
+
 		$(":input[name^=max_]", formPreviewWell).val($(this).val());
 		if (fieldSettings_range_min.val() > fieldSettings_range_max.val()) {
 			fieldSettings_range_min.val(fieldSettings_range_max.val()).change();
@@ -625,25 +654,29 @@ function fieldSettingsBindings() {
 	});
 
 	$("#fieldSettings_range_step").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=step_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_range_format").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=format_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_idno_managedBy").change(function() {
-		var formPreviewWell = $(".well",formPreview);
-		$(":input[name^=managedBy_]", formPreviewWell).val($(this).val());
+		var formPreviewWell = $(".well", formPreview);
+		var val             = $(this).val();
+
+		$(":input[name^=managedBy_]", formPreviewWell).val(val);
 		if ($(":input[name^=type_]", formPreviewWell).val() == 'idno') {
-			if ($(this).val() == "system") {
+			if (val == "system") {
 				$("#fieldSettings_options_readonly").prop("checked",true).change();
 				$("#fieldSettings_container_idno_format").show();
 				$("#fieldSettings_container_idno_startIncrement").show();
 			}
-			else if ($(this).val() == "user") {
+			else if (val == "user") {
 				$("#fieldSettings_options_readonly").removeAttr("checked").change();
 				$("#fieldSettings_container_idno_format").hide();
 				$("#fieldSettings_container_idno_startIncrement").hide();
@@ -652,12 +685,14 @@ function fieldSettingsBindings() {
 	});
 
 	$("#fieldSettings_idno_format").keyup(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=idnoFormat_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_idno_startIncrement").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=startIncrement_]", formPreviewWell).val($(this).val());
 	});
 
@@ -671,39 +706,47 @@ function fieldSettingsBindings() {
 			}
 			$(this).parent().remove();
 
-			var formPreviewWell = $(".well",formPreview);
-			var vals = [];
+			var formPreviewWell = $(".well", formPreview);
+			var val             = $(this).val();
+			var vals            = [];
+
 			$("#fieldSettings_file_allowedExtensions :input[name=fieldSettings_allowedExtension_text]").each(function() {
-				vals.push($(this).val());
+				vals.push(val);
 			});
 			$(":input[name^=allowedExtensions_]", formPreviewWell).val(vals.join("%,%"));
 		})
 		.on("keyup",":input[name=fieldSettings_allowedExtension_text]",function() {
-			var formPreviewWell = $(".well",formPreview);
-			var vals = [];
+			var formPreviewWell = $(".well", formPreview);
+			var val             = $(this).val();
+			var vals            = [];
+
 			$("#fieldSettings_file_allowedExtensions :input[name=fieldSettings_allowedExtension_text]").each(function() {
-				vals.push($(this).val());
+				vals.push(val);
 			});
 			$(":input[name^=allowedExtensions_]", formPreviewWell).val(vals.join("%,%"));
 		});
 
 	$("#fieldSettings_file_options_multipleFiles").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=multipleFiles_]", formPreviewWell).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_file_options_combine").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=combine_]", formPreviewWell).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_file_options_ocr").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=ocr_]", formPreviewWell).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_file_options_convert").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=convert_]", formPreviewWell).val($(this).is(":checked"));
 
 		if ($(this).is(":checked")) {
@@ -715,25 +758,30 @@ function fieldSettingsBindings() {
 	});
 
 	$("#fieldSettings_file_convert_height").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=convertHeight_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_convert_width").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=convertWidth_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_convert_format").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=convertFormat_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_convert_watermark").change(function() {
-		var formPreviewWell = $(".well",formPreview);
-		$(":input[name^=watermark_]", formPreviewWell).val($(this).is(":checked"));
+		var formPreviewWell = $(".well", formPreview);
+		var checked         = $(this).is(":checked");
 
-		if ($(this).is(":checked")) {
+		$(":input[name^=watermark_]", formPreviewWell).val(checked);
+
+		if (checked) {
 			$(this).parent().next().show();
 		}
 		else {
@@ -742,20 +790,24 @@ function fieldSettingsBindings() {
 	}).change();
 
 	$("#fieldSettings_file_watermark_image").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=watermarkImage_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_watermark_location").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=watermarkLocation_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_convert_border").change(function() {
-		var formPreviewWell = $(".well",formPreview);
-		$(":input[name^=border_]", formPreviewWell).val($(this).is(":checked"));
+		var formPreviewWell = $(".well", formPreview);
+		var checked         = $(this).is(":checked");
 
-		if ($(this).is(":checked")) {
+		$(":input[name^=border_]", formPreviewWell).val(checked);
+
+		if (checked) {
 			$(this).parent().next().show();
 		}
 		else {
@@ -764,25 +816,30 @@ function fieldSettingsBindings() {
 	}).change();
 
 	$("#fieldSettings_file_border_height").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=borderHeight_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_border_width").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=borderWidth_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_border_color").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=borderColor_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_options_thumbnail").change(function() {
-		var formPreviewWell = $(".well",formPreview);
-		$(":input[name^=thumbnail_]", formPreviewWell).val($(this).is(":checked"));
+		var formPreviewWell = $(".well", formPreview);
+		var checked         = $(this).is(":checked");
 
-		if ($(this).is(":checked")) {
+		$(":input[name^=thumbnail_]", formPreviewWell).val(checked);
+
+		if (checked) {
 			$("#fieldSettings_container_file_thumbnail").show();
 		}
 		else {
@@ -791,29 +848,35 @@ function fieldSettingsBindings() {
 	});
 
 	$("#fieldSettings_file_thumbnail_height").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=thumbnailHeight_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_thumbnail_width").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=thumbnailWidth_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_thumbnail_format").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=thumbnailFormat_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_file_options_mp3").change(function() {
-		var formPreviewWell = $(".well",formPreview);
+		var formPreviewWell = $(".well", formPreview);
+
 		$(":input[name^=mp3_]", formPreviewWell).val($(this).val());
 	});
 
 	$("#fieldSettings_fieldset").keyup(function() {
-		var formPreviewWell = $(".well",formPreview);
-		$(".fieldPreview legend", formPreviewWell).text($(this).val());
-		$(":input[name^=fieldset_]", formPreviewWell).val($(this).val());
+		var formPreviewWell = $(".well", formPreview);
+		var val             = $(this).val();
+
+		$(".fieldPreview legend", formPreviewWell).text(val);
+		$(":input[name^=fieldset_]", formPreviewWell).val(val);
 	});
 }
 
@@ -837,6 +900,7 @@ function formSettingsBindings() {
 	$("#formSettings_formMetadata").change(function() {
 		var fieldAdd = $('#fieldAdd');
 		var idnoType = $("#formPreview :input[name^=type_][value=idno]");
+
 		if ($(this).is(":checked")) {
 			if (idnoType.length == 0) {
 				$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
