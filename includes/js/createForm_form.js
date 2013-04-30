@@ -1,36 +1,35 @@
 
 $(function() {
-
 	// Instantiate the bootstrap tooltip plugin
 	$("[rel='tooltip']").tooltip();
 
 	// Grab commonly used IDs
-	var formPreview = $('#formPreview');
-	var fieldAdd = $('#fieldAdd');
+	var formPreview  = $('#formPreview');
+	var fieldAdd     = $('#fieldAdd');
 	var formSettings = $('#formSettings');
-	var fieldTab = $('#fieldTab');
-	var leftPanel = $('#leftPanel');
+	var fieldTab     = $('#fieldTab');
+	var leftPanel    = $('#leftPanel');
 
 	// Blank all panes when changing tabs
-	$("#fieldTab").on("click", "a", function() {
-		$('li',formPreview).removeClass("well");
+	fieldTab.on("click", "a", function() {
+		$('li', formPreview).removeClass("well");
 		showFieldSettings(); // blank the Field Settings pane
 	});
 
-	// Make field types draggable, linked to preview pane
-	$("#fieldAdd .draggable li",fieldAdd).draggable({
-		connectToSortable: "#formCreator ul.sortable",
-		helper: "clone",
-		revert: "invalid"});
+	$(".draggable li", fieldAdd)
+		// Make field types draggable, linked to preview pane
+		.draggable({
+			connectToSortable: "#formCreator ul.sortable",
+			helper: "clone",
+			revert: "invalid"})
+		// Add new field on click as well as drag
+		.click(function() {
+			event.preventDefault();
 
-	// Add new field on click as well as drag
-	$("li",fieldAdd).click(function() {
-		event.preventDefault();
-
-		$(this).clone().appendTo(formPreview);
-		addNewField($("li:last",formPreview));
-		sortableForm();
-	});
+			$(this).clone().appendTo(formPreview);
+			addNewField($("li:last",formPreview));
+			sortableForm();
+		});
 
 	// Delete icon binding
 	formPreview.on("click", ".fieldPreview i.icon-remove", function() {
@@ -147,10 +146,10 @@ $(function() {
 
 	// Make the left panel fixed if the viewport is big enough to hold the content
 	$(window).scroll(function() {
-		var left = $('#leftPanel');
-		var leftParent = left.closest('.row-fluid');
+		var left          = $('#leftPanel');
+		var leftParent    = left.closest('.row-fluid');
 		var leftParentTop = leftParent.offset().top - 55;
-		var leftHeight = $('.tab-content',leftPanel).outerHeight() + $('#fieldTab').outerHeight() + 170;
+		var leftHeight    = $('.tab-content',leftPanel).outerHeight() + $('#fieldTab').outerHeight() + 170;
 
 		// Is the window big enough?
 		if ($(window).height() > leftHeight) {
@@ -178,5 +177,4 @@ $(function() {
 	});
 
 	$('#progressModal').modal('hide');
-
 });

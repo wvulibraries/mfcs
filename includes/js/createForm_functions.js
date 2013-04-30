@@ -288,64 +288,74 @@ function fieldSettingsBindings() {
 		});
 
 	$("#fieldSettings_label").keyup(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell         = $(".well", formPreview);
+		var id                      = formPreviewWell.prop("id").split("_")[1];
+		var val                     = $(this).val();
+		var nameVal                 = $("#name_"+id).val();
+		var objectTitleField_option = $("#formSettings_objectTitleField option[value='"+nameVal+"']");
 
-		if ($("#formSettings_objectTitleField option[value='"+$(":input[name^=name_]", formPreviewWell).val()+"']").length > 0) {
-			$("#formSettings_objectTitleField option[value='"+$(":input[name^=name_]", formPreviewWell).val()+"']").text($(this).val());
+		if (objectTitleField_option.length > 0) {
+			objectTitleField_option.text(val);
 		}
-		else if ($(":input[name^=type_][value=text]", formPreviewWell).length > 0) {
-			$("#formSettings_objectTitleField").append('<option value="'+$(":input[name^=name_]", formPreviewWell).val()+'">'+$(this).val()+'</option>');
+		else if ($("#type_"+id+"[value=text]").length > 0) {
+			$("#formSettings_objectTitleField").append('<option value="'+nameVal+'">'+val+'</option>');
 		}
 
-		$(".control-group > label", formPreviewWell).text($(this).val());
-		$(":input[name^=label_]", formPreviewWell).val($(this).val());
+		formPreviewWell.find(".control-group > label").text(val);
+		$("#label_"+id).val(val);
 	});
 
 	$("#fieldSettings_value").keyup(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 		var val             = $(this).val();
 
-		$(".controls :input", formPreviewWell).val(val);
-		$(":input[name^=value_]", formPreviewWell).val(val);
+		formPreviewWell.find(".control-group > .controls > :input").val(val);
+		$("#value_"+id).val(val);
 	});
 
 	$("#fieldSettings_placeholder").keyup(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 		var val             = $(this).val();
 
-		$(".controls :input", formPreviewWell).prop('placeholder', val);
-		$(":input[name^=placeholder_]", formPreviewWell).val(val);
+		formPreviewWell.find(".control-group > .controls > :input").prop('placeholder', val);
+		$("#placeholder_"+id).val(val);
 	});
 
 	$("#fieldSettings_id").keyup(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 		var val             = $(this).val();
 
-		$(".control-group > label", formPreviewWell).prop('for', val);
-		$(".controls :input", formPreviewWell).prop('id', val);
-		$(":input[name^=id_]", formPreviewWell).val(val);
+		formPreviewWell.find(".control-group > label").prop('for', val);
+		formPreviewWell.find(".control-group > .controls > :input").prop('id', val);
+		$("#id_"+id).val(val);
 	});
 
 	$("#fieldSettings_class").keyup(function() {
-		var val = $(this).val();
-		var formPreviewWell = $(".well", formPreview);
-		$(".controls :input", formPreviewWell).prop('class',val);
-		$(":input[name^=class_]", formPreviewWell).val(val);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+		var val             = $(this).val();
+
+		formPreviewWell.find(".control-group > .controls > :input").prop('class',val);
+		$("#class_"+id).val(val);
 	});
 
 	$("#fieldSettings_style").keyup(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 		var val             = $(this).val();
 
-		$(".controls :input", formPreviewWell).attr('style', val);
-		$(":input[name^=style_]", formPreviewWell).val(val);
+		formPreviewWell.find(".control-group > .controls > :input").prop('style', val);
+		$("#style_"+id).val(val);
 	});
 
 	$("#fieldSettings_choices_type").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
 		var val             = $(this).val();
 
-		$(":input[name^=choicesType_]", formPreviewWell).val(val);
+		formPreviewWell.find(".fieldValues > :input[name^=choicesType_]").val(val);
 		if (val == 'manual') {
 			$("#fieldSettings_choices_manual").show();
 			$("#fieldSettings_choices_form").hide();
@@ -358,80 +368,80 @@ function fieldSettingsBindings() {
 
 	$("#fieldSettings_choices_manual")
 		.on("click","button[name=default]",function() {
-			var formPreviewWell = $(".well", formPreview);
-			switch ($(":input[name^=type_]", formPreviewWell).val()) {
+			var formPreviewWell = formPreview.find(".well");
+			var id              = formPreviewWell.prop("id").split("_")[1];
+
+			switch ($("#type_"+id).val()) {
 				case 'select':
 					if ($(this).hasClass("active")) {
-						$(".controls :input", formPreviewWell).val('');
-						$(":input[name^=choicesDefault_]", formPreviewWell).val('');
+						formPreviewWell.find(".control-group > .controls > :input").val('');
+						$("#choicesDefault_"+id).val('');
 					}
 					else {
 						var val = $(this).siblings(":input").val();
 
-						$(".controls :input", formPreviewWell).val(val);
-						$(":input[name^=choicesDefault_]", formPreviewWell).val(val);
+						formPreviewWell.find(".control-group > .controls > :input").val(val);
+						$("#choicesDefault_"+id).val(val);
 					}
 					$("#fieldSettings_choices_manual button[name=default]").not(this).removeClass("active");
 					break;
 
 				case 'radio':
 					if ($(this).hasClass("active")) {
-						$(".controls :input", formPreviewWell).removeAttr('checked');
-						$(":input[name^=choicesDefault_]", formPreviewWell).val('');
+						formPreviewWell.find(".control-group > .controls > :input").removeAttr('checked');
+						$("#choicesDefault_"+id).val('');
 					}
 					else {
 						var val  = $(this).siblings(":input").val();
 						var text = $(this).text();
 
-						$(".controls label", formPreviewWell).each(function() {
+						formPreviewWell.find(".controls label").each(function() {
 							if (text == val) {
 								$(":input", this).prop('checked', true);
 							}
 						});
-						$(":input[name^=choicesDefault_]", formPreviewWell).val(val);
+						formPreviewWell.find(".fieldValues > :input[name^=choicesDefault_]").val(val);
 					}
 					$("#fieldSettings_choices_manual button[name=default]").not(this).removeClass("active");
 					break;
 
 				case 'checkbox':
-					var val  = $(this).siblings(":input").val();
 					var text = $(this).text();
+					var val  = $(this).siblings(":input").val();
+					var vals = [];
 
 					if ($(this).hasClass("active")) {
-						$(".controls label", formPreviewWell).each(function() {
+						formPreviewWell.find(".controls label").each(function() {
 							if (text == val) {
 								$(":input", this).removeAttr('checked');
 							}
 						});
 					}
 					else {
-						$(".controls label", formPreviewWell).each(function() {
+						formPreviewWell.find(".controls label").each(function() {
 							if (text == val) {
 								$(":input",this).prop('checked', true);
 							}
 						});
 					}
 
-					var vals       = [];
-					var parentText = $(this).parent().text();
-
-					$(".controls :input:checked", formPreviewWell).each(function() {
-						vals.push(parentText);
+					formPreviewWell.find(".control-group > .controls > :input:checked").each(function() {
+						vals.push($(this).parent().text());
 					});
 
-					$(":input[name^=choicesDefault_]", formPreviewWell).val('').val(vals.join("%,%"));
+					$("#choicesDefault_"+id).val('').val(vals.join("%,%"));
 					break;
 
 				case 'multiselect':
 					if ($(this).hasClass("active")) {
-						$(".controls :input:last", formPreviewWell).val('');
-						$(":input[name^=choicesDefault_]", formPreviewWell).val('');
+						formPreviewWell.find(".control-group > .controls > :input:last").val('');
+						$("#choicesDefault_"+id).val('');
 					}
 					else {
 						var val = $(this).siblings(":input").val();
 
-						$(".controls :input:last", formPreviewWell).val(val);
-						$(":input[name^=choicesDefault_]", formPreviewWell).val(val);
+						formPreviewWell.find(".control-group > .controls > :input:last").val(val);
+						$("#choicesDefault_"+id).val(val);
 					}
 					$("#fieldSettings_choices_manual button[name=default]").not(this).removeClass("active");
 					break;
@@ -447,81 +457,99 @@ function fieldSettingsBindings() {
 			}
 			$(this).parent().remove();
 
-			var formPreviewWell = $(".well", formPreview);
+			var formPreviewWell = formPreview.find(".well");
+			var id              = formPreviewWell.prop("id").split("_")[1];
 			var val             = $(this).val();
 			var vals            = [];
 
 			$("#fieldSettings_choices_manual input[name=fieldSettings_choices_text]").each(function() {
-				vals.push(val);
+				vals.push($(this).val());
 			});
-			$(":input[name^=choicesOptions_]", formPreviewWell).val(vals.join("%,%"));
+			$("#choicesOptions_"+id).val(vals.join("%,%"));
 
-			switch ($(":input[name^=type_]", formPreviewWell).val()) {
+			switch ($("#type_"+id).val()) {
 				case 'select':
-					$(".controls :input", formPreviewWell).html('');
+					var input = formPreviewWell.find(".control-group > .controls > :input");
+
+					input.html('');
 					for (var i = 0; i < vals.length; i++) {
-						$(".controls :input", formPreviewWell).append($("<option>").prop("value",vals[i]).text(vals[i]));
+						input.append($("<option>").prop("value",vals[i]).text(vals[i]));
 					}
 					break;
 
 				case 'radio':
-					$(".controls", formPreviewWell).html('');
+					var controls = formPreviewWell.find(".controls");
+
+					controls.html('');
 					for (var i = 0; i < vals.length; i++) {
-						$(".controls", formPreviewWell).append($("<label>").addClass("radio").append($("<input>").prop("type","radio").prop("name",$(":input[name^=name_]", formPreviewWell).val())).append(vals[i]));
+						controls.append(formPreviewWell.find("<label>").addClass("radio").append($("<input>").prop("type","radio").prop("name",$(":input[name^=name_]").val())).append(vals[i]));
 					}
 					break;
 
 				case 'checkbox':
-					$(".controls", formPreviewWell).html('');
+					var controls = formPreviewWell.find(".controls");
+
+					controls.html('');
 					for (var i = 0; i < vals.length; i++) {
-						$(".controls", formPreviewWell).append($("<label>").addClass("checkbox").append($("<input>").prop("type","checkbox").prop("name",$(":input[name^=name_]", formPreviewWell).val())).append(vals[i]));
+						controls.append(formPreviewWell.find("<label>").addClass("checkbox").append($("<input>").prop("type","checkbox").prop("name",$(":input[name^=name_]").val())).append(vals[i]));
 					}
 					break;
 
 				case 'multiselect':
-					$(".controls :input:last", formPreviewWell).html('');
+					var lastInput = formPreviewWell.find(".control-group > .controls > :input:last");
+
+					lastInput.html('');
 					for (var i = 0; i < vals.length; i++) {
-						$(".controls :input:last", formPreviewWell).append($("<option>").prop("value",vals[i]).text(vals[i]));
+						lastInput.append($("<option>").prop("value",vals[i]).text(vals[i]));
 					}
 					break;
 			}
 		})
 		.on("keyup",":input[name=fieldSettings_choices_text]",function() {
-			var formPreviewWell = $(".well", formPreview);
+			var formPreviewWell = formPreview.find(".well");
+			var id              = formPreviewWell.prop("id").split("_")[1];
 			var val             = $(this).val();
 			var vals            = [];
 
 			$("#fieldSettings_choices_manual input[name=fieldSettings_choices_text]").each(function() {
-				vals.push(val);
+				vals.push($(this).val());
 			});
-			$(":input[name^=choicesOptions_]", formPreviewWell).val(vals.join("%,%"));
+			$("#choicesOptions_"+id).val(vals.join("%,%"));
 
-			switch ($(":input[name^=type_]", formPreviewWell).val()) {
+			switch ($("#type_"+id).val()) {
 				case 'select':
-					$(".controls :input", formPreviewWell).html('');
+					var input = formPreviewWell.find(".control-group > .controls > :input");
+
+					input.html('');
 					for (var i = 0; i < vals.length; i++) {
-						$(".controls :input", formPreviewWell).append($("<option>").prop("value",vals[i]).text(vals[i]));
+						input.append('<option value="'+vals[i]+'">'+vals[i]+'</option>');
 					}
 					break;
 
 				case 'radio':
-					$(".controls", formPreviewWell).html('');
+					var controls = formPreviewWell.find(".controls");
+
+					controls.html('');
 					for (var i = 0; i < vals.length; i++) {
-						$(".controls", formPreviewWell).append($("<label>").addClass("radio").append($("<input>").prop("type","radio").prop("name",$(".well :input[name^=name_]",formPreview).val())).append(vals[i]));
+						controls.append('<label class="radio"><input type="radio" name="'+$(":input[name^=name_]",formPreviewWell).val()+'">'+vals[i]+'</label>');
 					}
 					break;
 
 				case 'checkbox':
-					$(".controls", formPreviewWell).html('');
+					var controls = formPreviewWell.find(".controls");
+
+					controls.html('');
 					for (var i = 0; i < vals.length; i++) {
-						$(".controls", formPreviewWell).append($("<label>").addClass("checkbox").append($("<input>").prop("type","checkbox").prop("name",$(".well :input[name^=name_]",formPreview).val())).append(vals[i]));
+						controls.append('<label class="checkbox"><input type="checkbox" name="'+$(":input[name^=name_]",formPreviewWell).val()+'">'+vals[i]+'</label>');
 					}
 					break;
 
 				case 'multiselect':
-					$(".controls :input:last", formPreviewWell).html('');
+					var lastInput = formPreviewWell.find(".control-group > .controls > :input:last");
+
+					lastInput.html('');
 					for (var i = 0; i < vals.length; i++) {
-						$(".controls :input:last", formPreviewWell).append($("<option>").prop("value",vals[i]).text(vals[i]));
+						lastInput.append('<option value="'+vals[i]+'">'+vals[i]+'</option>');
 					}
 					break;
 			}
@@ -529,7 +557,8 @@ function fieldSettingsBindings() {
 
 	$("#fieldSettings_choices_form")
 		.on("change","#fieldSettings_choices_formSelect",function() {
-			var formPreviewWell = $(".well", formPreview);
+			var formPreviewWell = formPreview.find(".well");
+			var id              = formPreviewWell.prop("id").split("_")[1];
 			var val             = $(this).val();
 
 			if (choicesFields[val] == undefined) {
@@ -551,73 +580,84 @@ function fieldSettingsBindings() {
 					});
 				});
 			}
-			$(":input[name^=choicesForm_]", formPreviewWell).val(val).change();
+
+			$("#choicesForm_"+id).val(val).change();
 			$("#fieldSettings_choices_fieldSelect").html(choicesFields[val]).change();
 		})
 		.on("change","#fieldSettings_choices_fieldSelect",function() {
-			var formPreviewWell = $(".well", formPreview);
+			var formPreviewWell = formPreview.find(".well");
+			var id              = formPreviewWell.prop("id").split("_")[1];
 
-			$(":input[name^=choicesField_]",formPreviewWell).val($(this).val());
+			$("#choicesField_"+id).val($(this).val());
 		});
 
 	$("#fieldSettings_options_required").change(function() {
 		var checked         = $(this).is(":checked");
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(".controls :input", formPreviewWell).prop('required',checked);
-		$(":input[name^=required_]", formPreviewWell).val(checked);
+		formPreviewWell.find(".control-group > .controls > :input").prop('required',checked);
+		$("#required_"+id).val(checked);
 	});
 
 	$("#fieldSettings_options_duplicates").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=duplicates_]", formPreviewWell).val($(this).is(":checked"));
+		$("#duplicates_"+id).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_options_readonly").change(function() {
 		var checked         = $(this).is(":checked");
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(".controls :input", formPreviewWell).prop('readonly',checked);
-		$(":input[name^=readonly_]", formPreviewWell).val(checked);
+		formPreviewWell.find(".control-group > .controls > :input").prop('readonly',checked);
+		$("#readonly_"+id).val(checked);
 	});
 
 	$("#fieldSettings_options_disabled").change(function() {
 		var checked         = $(this).is(":checked");
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(".controls :input", formPreviewWell).prop('disabled',checked);
-		$(":input[name^=disabled_]", formPreviewWell).val(checked);
+		formPreviewWell.find(".control-group > .controls > :input").prop('disabled',checked);
+		$("#disabled_"+id).val(checked);
 	});
 
 	$("#fieldSettings_options_publicRelease").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=publicRelease_]", formPreviewWell).val($(this).is(":checked"));
+		$("#publicRelease_"+id).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_options_sortable").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=sortable_]", formPreviewWell).val($(this).is(":checked"));
+		$("#sortable_"+id).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_options_searchable").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=searchable_]", formPreviewWell).val($(this).is(":checked"));
+		$("#searchable_"+id).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_options_displayTable").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=displayTable_]", formPreviewWell).val($(this).is(":checked"));
+		$("#displayTable_"+id).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_validation").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=validation_]", formPreviewWell).val($(this).val());
+		$("#validation_"+id).val($(this).val());
 		if ($(this).val() == 'regexp') {
 			$("#fieldSettings_validationRegex").show().focus();
 		}
@@ -627,17 +667,19 @@ function fieldSettingsBindings() {
 	});
 
 	$("#fieldSettings_validationRegex").keyup(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=validationRegex_]", formPreviewWell).val($(this).val());
+		$("#validationRegex_"+id).val($(this).val());
 	});
 
 	$("#fieldSettings_range_min").change(function() {
 		var fieldSettings_range_min = $('#fieldSettings_range_min');
 		var fieldSettings_range_max = $('#fieldSettings_range_max');
 		var formPreviewWell         = $(".well", formPreview);
+		var id                      = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=min_]", formPreviewWell).val($(this).val());
+		$("#min_"+id).val($(this).val());
 		if (fieldSettings_range_min.val() > fieldSettings_range_max.val()) {
 			fieldSettings_range_max.val(fieldSettings_range_min.val()).change();
 		}
@@ -647,31 +689,35 @@ function fieldSettingsBindings() {
 		var fieldSettings_range_min = $('#fieldSettings_range_min');
 		var fieldSettings_range_max = $('#fieldSettings_range_max');
 		var formPreviewWell         = $(".well", formPreview);
+		var id                      = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=max_]", formPreviewWell).val($(this).val());
+		$("#max_"+id).val($(this).val());
 		if (fieldSettings_range_min.val() > fieldSettings_range_max.val()) {
 			fieldSettings_range_min.val(fieldSettings_range_max.val()).change();
 		}
 	});
 
 	$("#fieldSettings_range_step").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=step_]", formPreviewWell).val($(this).val());
+		$("#step_"+id).val($(this).val());
 	});
 
 	$("#fieldSettings_range_format").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=format_]", formPreviewWell).val($(this).val());
+		$("#format_"+id).val($(this).val());
 	});
 
 	$("#fieldSettings_idno_managedBy").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 		var val             = $(this).val();
 
-		$(":input[name^=managedBy_]", formPreviewWell).val(val);
-		if ($(":input[name^=type_]", formPreviewWell).val() == 'idno') {
+		$("#managedBy_"+id).val(val);
+		if ($("#type_"+id).val() == 'idno') {
 			if (val == "system") {
 				$("#fieldSettings_options_readonly").prop("checked",true).change();
 				$("#fieldSettings_container_idno_format").show();
@@ -686,15 +732,17 @@ function fieldSettingsBindings() {
 	});
 
 	$("#fieldSettings_idno_format").keyup(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=idnoFormat_]", formPreviewWell).val($(this).val());
+		$("#idnoFormat_"+id).val($(this).val());
 	});
 
 	$("#fieldSettings_idno_startIncrement").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=startIncrement_]", formPreviewWell).val($(this).val());
+		$("#startIncrement_"+id).val($(this).val());
 	});
 
 	$("#fieldSettings_file_allowedExtensions")
@@ -707,48 +755,54 @@ function fieldSettingsBindings() {
 			}
 			$(this).parent().remove();
 
-			var formPreviewWell = $(".well", formPreview);
+			var formPreviewWell = formPreview.find(".well");
+			var id              = formPreviewWell.prop("id").split("_")[1];
 			var val             = $(this).val();
 			var vals            = [];
 
 			$("#fieldSettings_file_allowedExtensions :input[name=fieldSettings_allowedExtension_text]").each(function() {
-				vals.push(val);
+				vals.push($(this).val());
 			});
-			$(":input[name^=allowedExtensions_]", formPreviewWell).val(vals.join("%,%"));
+			$("#allowedExtensions_"+id).val(vals.join("%,%"));
 		})
 		.on("keyup",":input[name=fieldSettings_allowedExtension_text]",function() {
-			var formPreviewWell = $(".well", formPreview);
+			var formPreviewWell = formPreview.find(".well");
+			var id              = formPreviewWell.prop("id").split("_")[1];
 			var val             = $(this).val();
 			var vals            = [];
 
 			$("#fieldSettings_file_allowedExtensions :input[name=fieldSettings_allowedExtension_text]").each(function() {
-				vals.push(val);
+				vals.push($(this).val());
 			});
-			$(":input[name^=allowedExtensions_]", formPreviewWell).val(vals.join("%,%"));
+			$("#allowedExtensions_"+id).val(vals.join("%,%"));
 		});
 
 	$("#fieldSettings_file_options_multipleFiles").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=multipleFiles_]", formPreviewWell).val($(this).is(":checked"));
+		$("#multipleFiles_"+id).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_file_options_combine").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=combine_]", formPreviewWell).val($(this).is(":checked"));
+		$("#combine_"+id).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_file_options_ocr").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=ocr_]", formPreviewWell).val($(this).is(":checked"));
+		$("#ocr_"+id).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_file_options_convert").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=convert_]", formPreviewWell).val($(this).is(":checked"));
+		$("#convert_"+id).val($(this).is(":checked"));
 
 		if ($(this).is(":checked")) {
 			$("#fieldSettings_container_file_convert").show();
@@ -759,28 +813,31 @@ function fieldSettingsBindings() {
 	});
 
 	$("#fieldSettings_file_convert_height").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=convertHeight_]", formPreviewWell).val($(this).val());
+		$("#convertHeight_"+id).val($(this).val());
 	});
 
 	$("#fieldSettings_file_convert_width").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=convertWidth_]", formPreviewWell).val($(this).val());
+		$("#convertWidth_"+id).val($(this).val());
 	});
 
 	$("#fieldSettings_file_convert_format").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=convertFormat_]", formPreviewWell).val($(this).val());
+		$("#convertFormat_"+id).val($(this).val());
 	});
 
 	$("#fieldSettings_file_convert_watermark").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
 		var checked         = $(this).is(":checked");
 
-		$(":input[name^=watermark_]", formPreviewWell).val(checked);
+		formPreviewWell.find(".fieldValues > :input[name^=watermark_]").val(checked);
 
 		if (checked) {
 			$(this).parent().next().show();
@@ -791,22 +848,24 @@ function fieldSettingsBindings() {
 	}).change();
 
 	$("#fieldSettings_file_watermark_image").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=watermarkImage_]", formPreviewWell).val($(this).val());
+		$("#watermarkImage_"+id).val($(this).val());
 	});
 
 	$("#fieldSettings_file_watermark_location").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=watermarkLocation_]", formPreviewWell).val($(this).val());
+		$("#watermarkLocation_"+id).val($(this).val());
 	});
 
 	$("#fieldSettings_file_convert_border").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
 		var checked         = $(this).is(":checked");
 
-		$(":input[name^=border_]", formPreviewWell).val(checked);
+		formPreviewWell.find(".fieldValues > :input[name^=border_]").val(checked);
 
 		if (checked) {
 			$(this).parent().next().show();
@@ -817,28 +876,32 @@ function fieldSettingsBindings() {
 	}).change();
 
 	$("#fieldSettings_file_border_height").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=borderHeight_]", formPreviewWell).val($(this).val());
+		$("#borderHeight_"+id).val($(this).val());
 	});
 
 	$("#fieldSettings_file_border_width").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=borderWidth_]", formPreviewWell).val($(this).val());
+		$("#borderWidth_"+id).val($(this).val());
 	});
 
 	$("#fieldSettings_file_border_color").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=borderColor_]", formPreviewWell).val($(this).val());
+		$("#borderColor_"+id).val($(this).val());
 	});
 
 	$("#fieldSettings_file_options_thumbnail").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 		var checked         = $(this).is(":checked");
 
-		$(":input[name^=thumbnail_]", formPreviewWell).val(checked);
+		$("#thumbnail_"+id).val(checked);
 
 		if (checked) {
 			$("#fieldSettings_container_file_thumbnail").show();
@@ -849,35 +912,40 @@ function fieldSettingsBindings() {
 	});
 
 	$("#fieldSettings_file_thumbnail_height").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=thumbnailHeight_]", formPreviewWell).val($(this).val());
+		$("#thumbnailHeight_"+id).val($(this).val());
 	});
 
 	$("#fieldSettings_file_thumbnail_width").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=thumbnailWidth_]", formPreviewWell).val($(this).val());
+		$("#thumbnailWidth_"+id).val($(this).val());
 	});
 
 	$("#fieldSettings_file_thumbnail_format").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=thumbnailFormat_]", formPreviewWell).val($(this).val());
+		$("#thumbnailFormat_"+id).val($(this).val());
 	});
 
 	$("#fieldSettings_file_options_mp3").change(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$(":input[name^=mp3_]", formPreviewWell).val($(this).val());
+		$("#mp3_"+id).val($(this).val());
 	});
 
 	$("#fieldSettings_fieldset").keyup(function() {
-		var formPreviewWell = $(".well", formPreview);
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
 		var val             = $(this).val();
 
-		$(".fieldPreview legend", formPreviewWell).text(val);
-		$(":input[name^=fieldset_]", formPreviewWell).val(val);
+		formPreviewWell.find(".fieldPreview legend").text(val);
+		$("#fieldset_"+id).val(val);
 	});
 }
 
