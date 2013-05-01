@@ -184,8 +184,10 @@ function showFieldSettings(fullID) {
 				fieldSettings_choices_manual.append(tmp);
 				$(":input[name=fieldSettings_choices_text]", fieldSettings_choices_manual).keyup();
 			}
-			$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
-			$("#fieldSettings_choices_fieldSelect").val($("#choicesField_"+id).val()).change();
+			else {
+				$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
+				$("#fieldSettings_choices_fieldSelect").val($("#choicesField_"+id).val()).change();
+			}
 
 			fieldSettings_options_required.prop("checked",($("#required_"+id).val()==='true'));
 			fieldSettings_options_duplicates.prop("checked",($("#duplicates_"+id).val()==='true'));
@@ -215,8 +217,8 @@ function showFieldSettings(fullID) {
 				for (var i = 0; i < opts.length; i++) {
 					tmp += addAllowedExtension(opts[i]);
 				}
-				$(":input[name=fieldSettings_allowedExtension_text]", fieldSettings_file_allowedExtensions).keyup();
 				fieldSettings_file_allowedExtensions.append(tmp);
+				fieldSettings_file_allowedExtensions.find(":input[name=fieldSettings_allowedExtension_text]:first").keyup();
 			}
 
 			$("#fieldSettings_file_options_multipleFiles").prop("checked",($("#multipleFiles_"+id).val()==='true'));
@@ -359,12 +361,13 @@ function fieldSettingsBindings() {
 
 		formPreviewWell.find(".fieldValues > :input[name^=choicesType_]").val(val);
 		if (val == 'manual') {
-			$("#fieldSettings_choices_manual").show();
+			$("#fieldSettings_choices_manual").show().find("input[name=fieldSettings_choices_text]:first").keyup();
 			$("#fieldSettings_choices_form").hide();
 		}
 		else if (val == 'form') {
 			$("#fieldSettings_choices_manual").hide();
 			$("#fieldSettings_choices_form").show();
+			formPreviewWell.find(".control-group > .controls > :input").html('');
 		}
 	}).change();
 
@@ -515,65 +518,63 @@ function fieldSettingsBindings() {
 					break;
 			}
 		})
-		.on("keyup",":input[name=fieldSettings_choices_text]",function() {
+		.on("keyup","input[name=fieldSettings_choices_text]",function() {
 			var formPreviewWell = formPreview.find(".well");
 			var id              = formPreviewWell.prop("id").split("_")[1];
 			var val             = $(this).val();
 			var vals            = [];
 
-			$("#fieldSettings_choices_manual input[name=fieldSettings_choices_text]").each(function() {
+			$("#fieldSettings_choices_manual").find("input[name=fieldSettings_choices_text]").each(function() {
 				vals.push($(this).val());
 			});
 			$("#choicesOptions_"+id).val(vals.join("%,%"));
 
-			switch ($("#type_"+id).val()) {
-				case 'select':
-					var input = formPreviewWell.find(".control-group > .controls > :input");
-
-					input.html('');
-					for (var i = 0; i < vals.length; i++) {
-					}
-					break;
-
-				case 'radio':
-					var controls = formPreviewWell.find(".controls");
-
-					controls.html('');
-					for (var i = 0; i < vals.length; i++) {
-					}
-					break;
-
-				case 'checkbox':
-					var controls = formPreviewWell.find(".controls");
-
-					controls.html('');
-					for (var i = 0; i < vals.length; i++) {
-					}
-					break;
-
-				case 'multiselect':
-					var lastInput = formPreviewWell.find(".control-group > .controls > :input:last");
-
-					lastInput.html('');
-					for (var i = 0; i < vals.length; i++) {
-					}
-					break;
+			if ($("#fieldSettings_choices_type").val() == 'manual') {
+				switch ($("#type_"+id).val()) {
+					case 'select':
+						var input = formPreviewWell.find(".control-group > .controls > :input");
 						var tmp   = '';
 
+						input.html('');
+						for (var i = 0; i < vals.length; i++) {
 							tmp += '<option value="'+vals[i]+'">'+vals[i]+'</option>';
+						}
 						input.append(tmp);
+						break;
+
+					case 'radio':
+						var controls = formPreviewWell.find(".controls");
 						var tmp      = '';
 
+						controls.html('');
+						for (var i = 0; i < vals.length; i++) {
 							tmp += '<label class="radio"><input type="radio" name="'+$("#name_"+id).val()+'">'+vals[i]+'</label>';
+						}
 						controls.append(tmp);
+						break;
+
+					case 'checkbox':
+						var controls = formPreviewWell.find(".controls");
 						var tmp      = '';
 
+						controls.html('');
+						for (var i = 0; i < vals.length; i++) {
 							tmp += '<label class="checkbox"><input type="checkbox" name="'+$("#name_"+id).val()+'">'+vals[i]+'</label>';
+						}
 						controls.append(tmp);
+						break;
+
+					case 'multiselect':
+						var lastInput = formPreviewWell.find(".control-group > .controls > :input:last");
 						var tmp       = '';
 
+						lastInput.html('');
+						for (var i = 0; i < vals.length; i++) {
 							tmp += '<option value="'+vals[i]+'">'+vals[i]+'</option>';
+						}
 						lastInput.append(tmp);
+						break;
+				}
 			}
 		});
 
