@@ -387,6 +387,12 @@ class forms {
 
 		$output .= sessionInsertCSRF();
 
+		if (isset($engine->cleanGet['HTML']['parentID'])) {
+			$output .= sprintf('<input type="hidden" name="parentID" value="%s">',
+				$engine->cleanGet['HTML']['parentID']
+				);
+		}
+
 		$output .= sprintf('<header><h1>%s</h1><h2>%s</h2></header>',
 			htmlSanitize($form['title']),
 			htmlSanitize($form['description']));
@@ -415,7 +421,7 @@ class forms {
 				$currentFieldset = $field['fieldset'];
 			}
 
- 
+
 			if ($error === TRUE) {
 				// @TODO should this be raw? // security issue?
 				if (isset($engine->cleanPost['RAW'][$field['name']])) {
@@ -792,7 +798,7 @@ class forms {
 				}
 
 				if(!isset($values[$field['name']])) $values[$field['name']] = $engine->cleanPost['RAW'][$field['name']."_".$object['ID']];
-				
+
 
 				if (!is_empty($engine->errorStack)) {
 					return FALSE;
@@ -855,7 +861,7 @@ class forms {
 					$objectID
 					);
 				$sqlResult = $engine->openDB->query($sql);
-				
+
 				if (!$sqlResult['result']) {
 					$engine->openDB->transRollback();
 					$engine->openDB->transEnd();
@@ -864,7 +870,7 @@ class forms {
 					errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 					return FALSE;
 				}
-				
+
 			}
 		}
 
