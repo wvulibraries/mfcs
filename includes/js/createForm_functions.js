@@ -112,9 +112,7 @@ function showFieldSettings(fullID) {
 					$("#fieldSettings_range_max").parent().addClass("span4").removeClass("span3");
 
 					$("#fieldSettings_range_format option").remove();
-					$("#fieldSettings_range_format")
-						.append('<option value="characters">Characters</option')
-						.append('<option value="words">Words</option')
+					$("#fieldSettings_range_format").append('<option value="characters">Characters</option><option value="words">Words</option>')
 					break;
 
 				case 'radio':
@@ -136,9 +134,7 @@ function showFieldSettings(fullID) {
 					$("#fieldSettings_range_max").parent().addClass("span3").removeClass("span4");
 
 					$("#fieldSettings_range_format option").remove();
-					$("#fieldSettings_range_format")
-						.append('<option value="value">Value</option')
-						.append('<option value="digits">Digits</option')
+					$("#fieldSettings_range_format").append('<option value="value">Value</option><option value="digits">Digits</option>')
 					break;
 
 				case 'wysiwyg':
@@ -175,14 +171,17 @@ function showFieldSettings(fullID) {
 
 			$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change();
 
-			var choicesOptions_var = $("#choicesOptions_"+id).val();
-			if (choicesOptions_var != undefined) {
-				var opts = choicesOptions_var.split("%,%");
-				var fieldSettings_choices_manual = $("#fieldSettings_choices_manual")
+			var choicesOptions_val = $("#choicesOptions_"+id).val();
+			if (choicesOptions_val != undefined) {
+				var opts                         = choicesOptions_val.split("%,%");
+				var fieldSettings_choices_manual = $("#fieldSettings_choices_manual");
+				var tmp                          = '';
+
 				fieldSettings_choices_manual.html('');
 				for (var i = 0; i < opts.length; i++) {
-					fieldSettings_choices_manual.append(addChoice(opts[i],$("#choicesDefault_"+id).val()));
+					tmp += addChoice(opts[i],$("#choicesDefault_"+id).val());
 				}
+				fieldSettings_choices_manual.append(tmp);
 				$(":input[name=fieldSettings_choices_text]", fieldSettings_choices_manual).keyup();
 			}
 			$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
@@ -208,13 +207,16 @@ function showFieldSettings(fullID) {
 
 			var allowedExtensions_val = $("#allowedExtensions_"+id).val();
 			if (allowedExtensions_val != undefined) {
-				var opts = allowedExtensions_val.split("%,%");
+				var opts                                 = allowedExtensions_val.split("%,%");
 				var fieldSettings_file_allowedExtensions = $("#fieldSettings_file_allowedExtensions");
+				var tmp                                  = '';
+
 				fieldSettings_file_allowedExtensions.html('');
 				for (var i = 0; i < opts.length; i++) {
-					fieldSettings_file_allowedExtensions.append(addAllowedExtension(opts[i]));
+					tmp += addAllowedExtension(opts[i]);
 				}
 				$(":input[name=fieldSettings_allowedExtension_text]", fieldSettings_file_allowedExtensions).keyup();
+				fieldSettings_file_allowedExtensions.append(tmp);
 			}
 
 			$("#fieldSettings_file_options_multipleFiles").prop("checked",($("#multipleFiles_"+id).val()==='true'));
@@ -338,7 +340,7 @@ function fieldSettingsBindings() {
 		var id              = formPreviewWell.prop("id").split("_")[1];
 		var val             = $(this).val();
 
-		formPreviewWell.find(".control-group > .controls > :input").prop('class',val);
+		formPreviewWell.find(".control-group > .controls > :input").prop('class', val);
 		$("#class_"+id).val(val);
 	});
 
@@ -470,38 +472,46 @@ function fieldSettingsBindings() {
 			switch ($("#type_"+id).val()) {
 				case 'select':
 					var input = formPreviewWell.find(".control-group > .controls > :input");
+					var tmp   = '';
 
 					input.html('');
 					for (var i = 0; i < vals.length; i++) {
-						input.append($("<option>").prop("value",vals[i]).text(vals[i]));
+						tmp += '<option value="'+vals[i]+'">'+vals[i]+'</option>';
 					}
+					input.append(tmp);
 					break;
 
 				case 'radio':
 					var controls = formPreviewWell.find(".controls");
+					var tmp      = '';
 
 					controls.html('');
 					for (var i = 0; i < vals.length; i++) {
-						controls.append(formPreviewWell.find("<label>").addClass("radio").append($("<input>").prop("type","radio").prop("name",$(":input[name^=name_]").val())).append(vals[i]));
+						tmp += '<label class="radio"><input type="radio" name="'+$("#name_"+id).val()+'">'+vals[i]+'</label>';
 					}
+					controls.append(tmp);
 					break;
 
 				case 'checkbox':
 					var controls = formPreviewWell.find(".controls");
+					var tmp      = '';
 
 					controls.html('');
 					for (var i = 0; i < vals.length; i++) {
-						controls.append(formPreviewWell.find("<label>").addClass("checkbox").append($("<input>").prop("type","checkbox").prop("name",$(":input[name^=name_]").val())).append(vals[i]));
+						tmp += '<label class="checkbox"><input type="checkbox" name="'+$("#name_"+id).val()+'">'+vals[i]+'</label>';
 					}
+					controls.append(tmp);
 					break;
 
 				case 'multiselect':
 					var lastInput = formPreviewWell.find(".control-group > .controls > :input:last");
+					var tmp       = '';
 
 					lastInput.html('');
 					for (var i = 0; i < vals.length; i++) {
-						lastInput.append($("<option>").prop("value",vals[i]).text(vals[i]));
+						tmp += '<option value="'+vals[i]+'">'+vals[i]+'</option>';
 					}
+					lastInput.append(tmp);
 					break;
 			}
 		})
@@ -522,7 +532,6 @@ function fieldSettingsBindings() {
 
 					input.html('');
 					for (var i = 0; i < vals.length; i++) {
-						input.append('<option value="'+vals[i]+'">'+vals[i]+'</option>');
 					}
 					break;
 
@@ -531,7 +540,6 @@ function fieldSettingsBindings() {
 
 					controls.html('');
 					for (var i = 0; i < vals.length; i++) {
-						controls.append('<label class="radio"><input type="radio" name="'+$(":input[name^=name_]",formPreviewWell).val()+'">'+vals[i]+'</label>');
 					}
 					break;
 
@@ -540,7 +548,6 @@ function fieldSettingsBindings() {
 
 					controls.html('');
 					for (var i = 0; i < vals.length; i++) {
-						controls.append('<label class="checkbox"><input type="checkbox" name="'+$(":input[name^=name_]",formPreviewWell).val()+'">'+vals[i]+'</label>');
 					}
 					break;
 
@@ -549,9 +556,24 @@ function fieldSettingsBindings() {
 
 					lastInput.html('');
 					for (var i = 0; i < vals.length; i++) {
-						lastInput.append('<option value="'+vals[i]+'">'+vals[i]+'</option>');
 					}
 					break;
+						var tmp   = '';
+
+							tmp += '<option value="'+vals[i]+'">'+vals[i]+'</option>';
+						input.append(tmp);
+						var tmp      = '';
+
+							tmp += '<label class="radio"><input type="radio" name="'+$("#name_"+id).val()+'">'+vals[i]+'</label>';
+						controls.append(tmp);
+						var tmp      = '';
+
+							tmp += '<label class="checkbox"><input type="checkbox" name="'+$("#name_"+id).val()+'">'+vals[i]+'</label>';
+						controls.append(tmp);
+						var tmp       = '';
+
+							tmp += '<option value="'+vals[i]+'">'+vals[i]+'</option>';
+						lastInput.append(tmp);
 			}
 		});
 
@@ -596,7 +618,7 @@ function fieldSettingsBindings() {
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		formPreviewWell.find(".control-group > .controls > :input").prop('required',checked);
+		formPreviewWell.find(".control-group > .controls > :input").prop('required', checked);
 		$("#required_"+id).val(checked);
 	});
 
@@ -612,7 +634,7 @@ function fieldSettingsBindings() {
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		formPreviewWell.find(".control-group > .controls > :input").prop('readonly',checked);
+		formPreviewWell.find(".control-group > .controls > :input").prop('readonly', checked);
 		$("#readonly_"+id).val(checked);
 	});
 
@@ -621,7 +643,7 @@ function fieldSettingsBindings() {
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		formPreviewWell.find(".control-group > .controls > :input").prop('disabled',checked);
+		formPreviewWell.find(".control-group > .controls > :input").prop('disabled', checked);
 		$("#disabled_"+id).val(checked);
 	});
 
