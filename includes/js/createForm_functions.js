@@ -173,6 +173,24 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_class").val($("#class_"+id).val()).keyup();
 			$("#fieldSettings_style").val($("#style_"+id).val()).keyup();
 
+			var fieldHelp = $("#help_"+id).val().split(",");
+		if(fieldHelp.length == 2){
+				$("#fieldSettings_help_type").val(fieldHelp[0]).change();
+				switch(fieldHelp[0]){
+					case 'text':
+						$("#fieldSettings_help_text").val(fieldHelp[1]).keyup();
+						break;
+					case 'html':
+						$("#fieldSettings_help_html").val(fieldHelp[1]).keyup();
+						break;
+					case 'web':
+						$("#fieldSettings_help_url").val(fieldHelp[1]).keyup();
+						break;
+				}
+			}else{
+				$("#fieldSettings_help_type").val('').change();
+			}
+
 			$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change();
 
 			var choicesOptions_var = $("#choicesOptions_"+id).val();
@@ -365,6 +383,71 @@ function fieldSettingsBindings() {
 			$("#fieldSettings_choices_form").show();
 		}
 	}).change();
+
+	$("#fieldSettings_help_type").change(function() {
+		var formPreviewWell = formPreview.find(".well");
+		if(!formPreviewWell.length) return;
+
+		var id                       = formPreviewWell.prop("id").split("_")[1];
+		var val                      = $(this).val();
+		var $fieldSettings_help_text = $("#fieldSettings_help_text");
+		var $fieldSettings_help_html = $("#fieldSettings_help_html");
+		var $fieldSettings_help_url  = $("#fieldSettings_help_url");
+		var $helpPreview             = formPreviewWell.find('.helpPreview');
+		var $helpPreviewModal        = formPreviewWell.find('.helpPreviewModal');
+
+		$fieldSettings_help_text.hide().val('');
+		$fieldSettings_help_html.hide().val('');
+		$fieldSettings_help_url.hide().val('');
+		$helpPreview.hide().tooltip('destroy').popover('destroy');
+		$helpPreviewModal.hide()
+		switch(val){
+			case '':
+				$helpPreview.hide();
+				break;
+			case 'text':
+				$fieldSettings_help_text.show().focus();
+				$helpPreview.show();
+				break;
+			case 'html':
+				$fieldSettings_help_html.show().focus();
+				$helpPreview.show();
+				break;
+			case 'web':
+				$fieldSettings_help_url.show().focus();
+				$helpPreviewModal.show();
+				break;
+		}
+	}).change();
+	$("#fieldSettings_help_text").keyup(function() {
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+		var val             = $(this).val();
+		$("#help_"+id).val($('#fieldSettings_help_type').val()+','+val);
+		formPreviewWell.find('.helpPreview').tooltip('destroy').tooltip({
+			placement: 'right',
+			title: $(this).val()
+		});
+	});
+	$("#fieldSettings_help_html").keyup(function() {
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+		var val             = $(this).val();
+		$("#help_"+id).val($('#fieldSettings_help_type').val()+','+val);
+		formPreviewWell.find('.helpPreview').popover('destroy').popover({
+			placement: 'right',
+			trigger: 'hover',
+			html: true,
+			content: $(this).val()
+		});
+	});
+	$("#fieldSettings_help_url").keyup(function() {
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+		var val             = $(this).val();
+		$("#help_"+id).val($('#fieldSettings_help_type').val()+','+val);
+		$("#fieldHelpModalURL").attr('src', val);
+	});
 
 	$("#fieldSettings_choices_manual")
 		.on("click","button[name=default]",function() {
@@ -1207,7 +1290,8 @@ function newFieldPreview(id,type) {
 			default:
 				break;
 		}
-
+		output += ' <span class="icon-question-sign helpPreview" style="display: none; cursor: pointer;"></span>';
+		output += ' <span class="icon-question-sign helpPreviewModal" style="display: none; cursor: pointer;" title="Click to view help" onclick="$(\'#fieldHelpModal\').modal(\'show\')"></span>';
 		output += '</div></div>';
 	}
 
@@ -1339,6 +1423,7 @@ function newFieldValues(id,type,vals) {
 	output += '<input type="hidden" id="id_'+id+'" name="id_'+id+'" value="'+((vals['id']!=undefined)?vals['id']:'')+'">';
 	output += '<input type="hidden" id="class_'+id+'" name="class_'+id+'" value="'+((vals['class']!=undefined)?vals['class']:'')+'">';
 	output += '<input type="hidden" id="style_'+id+'" name="style_'+id+'" value="'+((vals['style']!=undefined)?vals['style']:'')+'">';
+	output += '<input type="hidden" id="help_'+id+'" name="help_'+id+'" value="'+((vals['help']!=undefined)?vals['help']:'')+'">';
 	output += '<input type="hidden" id="required_'+id+'" name="required_'+id+'" value="'+((vals['required']!=undefined)?vals['required']:'false')+'">';
 	output += '<input type="hidden" id="duplicates_'+id+'" name="duplicates_'+id+'" value="'+((vals['duplicates']!=undefined)?vals['duplicates']:'false')+'">';
 	output += '<input type="hidden" id="readonly_'+id+'" name="readonly_'+id+'" value="'+((vals['readonly']!=undefined)?vals['readonly']:'false')+'">';

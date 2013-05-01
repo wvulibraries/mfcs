@@ -740,6 +740,33 @@ $engine->eTemplate("include","header");
 											</div>
 										</div>
 
+										<div class="row-fluid noHide">
+											<div class="control-group well well-small" id="fieldSettings_container_style">
+												<label for="fieldSettings_style">
+													Field Help
+													<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="You can set any help text you want displayed with this field."></i>
+												</label>
+												<select class="input-block-level" id="fieldSettings_help_type" name="fieldSettings_help_type">
+													<option value="">None</option>
+													<option value="text">Plain text</option>
+													<option value="html">HTML text</option>
+													<option value="web">Webpage (URL)</option>
+												</select>
+												<input type="text" class="input-block-level" id="fieldSettings_help_text" name="fieldSettings_help_text" style="display: none;">
+												<textarea class="input-block-level" id="fieldSettings_help_html" name="fieldSettings_help_html" style="display: none;"></textarea>
+												<input type="text" class="input-block-level" id="fieldSettings_help_url" name="fieldSettings_help_url" style="display: none;" placeholder="http://example.com">
+												<span class="help-block hidden"></span>
+											</div>
+											<div id="fieldHelpModal" class="modal hide fade">
+												<div class="modal-header">
+													<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+													<h3 id="myModalLabel">Field Help</h3>
+												</div>
+												<div class="modal-body">
+													<iframe id="fieldHelpModalURL" seamless="seamless" style="width: 100%; height: 100%;"></iframe>
+												</div>
+											</div>
+										</div>
 										<div class="control-group well well-small" id="fieldSettings_container_choices">
 											<label for="fieldSettings_choices">
 												Choices
