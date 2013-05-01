@@ -182,7 +182,7 @@ function showFieldSettings(fullID) {
 					tmp += addChoice(opts[i],$("#choicesDefault_"+id).val());
 				}
 				fieldSettings_choices_manual.append(tmp);
-				$(":input[name=fieldSettings_choices_text]", fieldSettings_choices_manual).keyup();
+				fieldSettings_choices_manual.find("input[name=fieldSettings_choices_text]").keyup();
 			}
 			else {
 				$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
@@ -263,7 +263,7 @@ function fieldSettingsBindings() {
 		event.stopPropagation();
 		var li = $(this);
 		if (!li.hasClass("well")) {
-			$(".well", formPreview).removeClass("well");
+			formPreview.find(".well").removeClass("well");
 			li.addClass("well well-small");
 			$("#fieldTab a[href='#fieldSettings']").tab("show");
 			showFieldSettings(li.attr("id"));
@@ -292,7 +292,7 @@ function fieldSettingsBindings() {
 		});
 
 	$("#fieldSettings_label").keyup(function() {
-		var formPreviewWell         = $(".well", formPreview);
+		var formPreviewWell         = formPreview.find(".well");
 		var id                      = formPreviewWell.prop("id").split("_")[1];
 		var val                     = $(this).val();
 		var nameVal                 = $("#name_"+id).val();
@@ -467,7 +467,7 @@ function fieldSettingsBindings() {
 			var val             = $(this).val();
 			var vals            = [];
 
-			$("#fieldSettings_choices_manual input[name=fieldSettings_choices_text]").each(function() {
+			$("#fieldSettings_choices_manual").find("input[name=fieldSettings_choices_text]").each(function() {
 				vals.push($(this).val());
 			});
 			$("#choicesOptions_"+id).val(vals.join("%,%"));
@@ -699,7 +699,7 @@ function fieldSettingsBindings() {
 	$("#fieldSettings_range_min").change(function() {
 		var fieldSettings_range_min = $('#fieldSettings_range_min');
 		var fieldSettings_range_max = $('#fieldSettings_range_max');
-		var formPreviewWell         = $(".well", formPreview);
+		var formPreviewWell         = formPreview.find(".well");
 		var id                      = formPreviewWell.prop("id").split("_")[1];
 
 		$("#min_"+id).val($(this).val());
@@ -711,7 +711,7 @@ function fieldSettingsBindings() {
 	$("#fieldSettings_range_max").change(function() {
 		var fieldSettings_range_min = $('#fieldSettings_range_min');
 		var fieldSettings_range_max = $('#fieldSettings_range_max');
-		var formPreviewWell         = $(".well", formPreview);
+		var formPreviewWell         = formPreview.find(".well");
 		var id                      = formPreviewWell.prop("id").split("_")[1];
 
 		$("#max_"+id).val($(this).val());
@@ -783,7 +783,7 @@ function fieldSettingsBindings() {
 			var val             = $(this).val();
 			var vals            = [];
 
-			$("#fieldSettings_file_allowedExtensions :input[name=fieldSettings_allowedExtension_text]").each(function() {
+			$("#fieldSettings_file_allowedExtensions").find("input[name=fieldSettings_allowedExtension_text]").each(function() {
 				vals.push($(this).val());
 			});
 			$("#allowedExtensions_"+id).val(vals.join("%,%"));
@@ -794,7 +794,7 @@ function fieldSettingsBindings() {
 			var val             = $(this).val();
 			var vals            = [];
 
-			$("#fieldSettings_file_allowedExtensions :input[name=fieldSettings_allowedExtension_text]").each(function() {
+			$("#fieldSettings_file_allowedExtensions").find("input[name=fieldSettings_allowedExtension_text]").each(function() {
 				vals.push($(this).val());
 			});
 			$("#allowedExtensions_"+id).val(vals.join("%,%"));
@@ -991,34 +991,36 @@ function formSettingsBindings() {
 
 	$("#formSettings_formMetadata").change(function() {
 		var fieldAdd = $('#fieldAdd');
-		var idnoType = $("#formPreview :input[name^=type_][value=idno]");
+		var idnoType = $("#formPreview").find("input[name^=type_][value=idno]");
 
 		if ($(this).is(":checked")) {
 			if (idnoType.length == 0) {
 				$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
-				$("li:contains('ID Number')", fieldAdd).hide();
-				$("li:contains('Paragraph Text')", fieldAdd).hide();
-				$("li:contains('Radio')", fieldAdd).hide();
-				$("li:contains('Checkboxes')", fieldAdd).hide();
-				$("li:contains('Dropdown')", fieldAdd).hide();
-				$("li:contains('Multi-Select')", fieldAdd).hide();
-				$("li:contains('File Upload')", fieldAdd).hide();
-				$("li:contains('WYSIWYG')", fieldAdd).hide();
-				$("li:contains('Field Set')", fieldAdd).parent().hide().prev().hide();
+				fieldAdd
+					.find("li:contains('ID Number')").hide()
+					.find("li:contains('Paragraph Text')").hide()
+					.find("li:contains('Radio')").hide()
+					.find("li:contains('Checkboxes')").hide()
+					.find("li:contains('Dropdown')").hide()
+					.find("li:contains('Multi-Select')").hide()
+					.find("li:contains('File Upload')").hide()
+					.find("li:contains('WYSIWYG')").hide()
+					.find("li:contains('Field Set')").parent().hide().prev().hide();
 			}
 			else {
 				if (confirm("Enabling this will remove any existing ID Number fields. Do you want to continue?")) {
 					idnoType.parent().parent().remove();
 					$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
-					$("li:contains('ID Number')", fieldAdd).hide();
-					$("li:contains('Paragraph Text')", fieldAdd).hide();
-					$("li:contains('Radio')", fieldAdd).hide();
-					$("li:contains('Checkboxes')", fieldAdd).hide();
-					$("li:contains('Dropdown')", fieldAdd).hide();
-					$("li:contains('Multi-Select')", fieldAdd).hide();
-					$("li:contains('File Upload')", fieldAdd).hide();
-					$("li:contains('WYSIWYG')", fieldAdd).hide();
-					$("li:contains('Field Set')", fieldAdd).parent().hide().prev().hide();
+					fieldAdd
+						.find("li:contains('ID Number')").hide()
+						.find("li:contains('Paragraph Text')").hide()
+						.find("li:contains('Radio')").hide()
+						.find("li:contains('Checkboxes')").hide()
+						.find("li:contains('Dropdown')").hide()
+						.find("li:contains('Multi-Select')").hide()
+						.find("li:contains('File Upload')").hide()
+						.find("li:contains('WYSIWYG')").hide()
+						.find("li:contains('Field Set')").parent().hide().prev().hide();
 				}
 				else {
 					$(this).removeAttr('checked');
@@ -1026,15 +1028,16 @@ function formSettingsBindings() {
 			}
 		}
 		else {
-			$("li:contains('ID Number')", fieldAdd).show();
-			$("li:contains('Paragraph Text')", fieldAdd).show();
-			$("li:contains('Radio')", fieldAdd).show();
-			$("li:contains('Checkboxes')", fieldAdd).show();
-			$("li:contains('Dropdown')", fieldAdd).show();
-			$("li:contains('Multi-Select')", fieldAdd).show();
-			$("li:contains('File Upload')", fieldAdd).show();
-			$("li:contains('WYSIWYG')", fieldAdd).show();
-			$("li:contains('Field Set')", fieldAdd).parent().show().prev().show();
+			fieldAdd
+				.find("li:contains('ID Number')").show()
+				.find("li:contains('Paragraph Text')").show()
+				.find("li:contains('Radio')").show()
+				.find("li:contains('Checkboxes')").show()
+				.find("li:contains('Dropdown')").show()
+				.find("li:contains('Multi-Select')").show()
+				.find("li:contains('File Upload')").show()
+				.find("li:contains('WYSIWYG')").show()
+				.find("li:contains('Field Set')").parent().show().prev().show();
 
 			if (idnoType.length == 0) {
 				$("#formSettings_formProduction").prop({
@@ -1065,16 +1068,18 @@ function modalBindings() {
 			$("#formTypeSelector").modal("hide");
 		})
 		.on("click", "button:contains('Object')", function() {
-			var fieldAdd = $('#fieldAdd');
+			var fieldAdd        = $('#fieldAdd');
 			var formPreviewWell = $("#formPreview .well");
+			var id              = formPreviewWell.prop("id").split("_")[1];
+
 			// Add IDNO field and select options
-			$("li:contains('ID Number')", fieldAdd).click();
-			$(":input[name^=label_]",formPreviewWell).val('IDNO').keyup();
-			$(":input[name^=sortable_]",formPreviewWell).val('true').change();
-			$(":input[name^=searchable_]",formPreviewWell).val('true').change();
+			fieldAdd.find("li:contains('ID Number')").click();
+			$("#label_"+id).val('IDNO').keyup();
+			$("#sortable_"+id).val('true').change();
+			$("#searchable_"+id).val('true').change();
 
 			// Add Title field and select options
-			$("li:contains('Single Line Text')", fieldAdd).click();
+			fieldAdd.find("li:contains('Single Line Text')").click();
 			$("#fieldSettings_name").val('title').keyup();
 			$("#fieldSettings_label").val('Title').keyup();
 			$("#fieldSettings_options_required").prop("checked", true).change();
@@ -1112,24 +1117,17 @@ function addNewField(item) {
 			}
 		}
 	});
-	$(item).attr("id","formPreview_"+newID);
 
-	// Add base html
-	$(item).html('<div class="fieldPreview"></div>');
-
-	// Add field specific html to .fieldPreview
-	$(".fieldPreview", item).html(newFieldPreview(newID,type));
-
-	// Container for hidden fields
-	$(item).append('<div class="fieldValues"></div>');
-	$(".fieldValues", item).html(newFieldValues(newID,type));
+	$(item)
+		.attr("id","formPreview_"+newID)
+		.html('<div class="fieldPreview">'+newFieldPreview(newID,type)+'</div><div class="fieldValues">'+newFieldValues(newID,type)+'</div>');
 
 	// Display settings for new field
 	$("#formPreview_"+newID).click();
 
 	if ($("#formSettings_formMetadata").not(":checked")) {
 		// Enable/disable Production Form setting based on whether an idno field exists
-		if ($("#formPreview :input[name^=type_][value=idno]").length == 0) {
+		if ($("#formPreview").find("input[name^=type_][value=idno]").length == 0) {
 			$("#formSettings_formProduction").prop({
 				checked:  false,
 				disabled: true,
