@@ -720,7 +720,7 @@ $engine->eTemplate("include","header");
 																	<b>%date(FORMAT)%</b><br>
 																	You can specify a custom format when creating dates and times where FORMAT is a PHP <a href="http://us2.php.net/manual/en/function.date.php" target="_blank">date()</a> format string.
 																	<br>
-																	<b><i>Example:</i></b> %date(l, m j, Y)% becomes <?php echo forms::applyFieldVariables('%date(l, m j, Y)%') ?>
+																	<b><i>Example:</i></b> %date(l, m j Y)% becomes <?php echo forms::applyFieldVariables('%date(l, F j Y)%') ?>
 																</li>
 															</ul>
 														</div>
