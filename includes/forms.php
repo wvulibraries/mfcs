@@ -632,6 +632,31 @@ class forms {
 				);
 			}
 
+			// Output field's help (if needed)
+			if($field['help']){
+				list($helpType,$helpValue) = explode(',', $field['help'], 2);
+				switch($helpType){
+					case 'text':
+						$output .= sprintf(' <a href="javascript:;" rel="tooltip" class="icon-question-sign" data-placement="right" data-title="%s"></a>', $helpValue);
+						break;
+					case 'html':
+						$output .= sprintf(' <a href="javascript:;" rel="popover" class="icon-question-sign" data-html="true" data-placement="right" data-trigger="hover" data-content="%s"></a>', $helpValue);
+						break;
+					case 'web':
+						$output .= sprintf(' <a href="javascript:;" title="Click for help" class="icon-question-sign" onclick="$(\'#helpModal_%s\').modal(\'show\');"></a>', $field['id']);
+						$output .= sprintf('<div id="helpModal_%s" rel="modal" class="modal hide fade" data-show="false">', $field['id']);
+						$output .= '	<div class="modal-header">';
+						$output .= '		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>';
+						$output .= '		<h3 id="myModalLabel">Field Help</h3>';
+						$output .= '	</div>';
+						$output .= '	<div class="modal-body">';
+						$output .= sprintf('		<iframe src="%s" seamless="seamless" style="width: 100%%; height: 100%%;"></iframe>', $helpValue);
+						$output .= '	</div>';
+						$output .= '</div>';
+						break;
+				}
+			}
+
 			$output .= "</div>";
 		}
 
