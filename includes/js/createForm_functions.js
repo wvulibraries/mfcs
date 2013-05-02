@@ -170,7 +170,7 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_style").val($("#style_"+id).val()).keyup();
 
 			var fieldHelp = $("#help_"+id).val().split(",");
-		if(fieldHelp.length == 2){
+			if(fieldHelp.length == 2){
 				$("#fieldSettings_help_type").val(fieldHelp[0]).change();
 				switch(fieldHelp[0]){
 					case 'text':
