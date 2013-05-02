@@ -615,10 +615,13 @@ class forms {
 					$field['type'] = "text";
 				}
 
+				$fieldValue = isset($object['data'][$field['name']])
+					? htmlSanitize($object['data'][$field['name']])
+					: htmlSanitize(self::applyFieldVariables($field['value']));
 				$output .= sprintf('<input type="%s" name="%s" value="%s" placeholder="%s" %s id="%s" class="%s" %s %s %s %s />',
 					htmlSanitize($field['type']),
 					htmlSanitize($field['name']),
-					(isset($object['data'][$field['name']]))?htmlSanitize($object['data'][$field['name']]):htmlSanitize($field['value']),
+					$fieldValue,
 					htmlSanitize($field['placeholder']),
 					//for numbers
 					($field['type'] == "number")?(buildNumberAttributes($field)):"",
@@ -1358,6 +1361,26 @@ class forms {
 
 	}
 
+	public static function applyFieldVariables($formatString){
+		// Process user variables
+		if(stripos($formatString, '%userid%') !== FALSE)    $formatString = str_ireplace('%userid%', users::user('ID'), $formatString);
+		if(stripos($formatString, '%username%') !== FALSE)  $formatString = str_ireplace('%username%', users::user('username'), $formatString);
+		if(stripos($formatString, '%firstname%') !== FALSE) $formatString = str_ireplace('%firstname%', users::user('firstname'), $formatString);
+		if(stripos($formatString, '%lastname%') !== FALSE)  $formatString = str_ireplace('%lastname%', users::user('lastname'), $formatString);
+		// Process static (no custom format) date/time variables
+		if(stripos($formatString, '%date%') !== FALSE)      $formatString = str_ireplace('%date%', date('m/d/Y'), $formatString);
+		if(stripos($formatString, '%time%') !== FALSE)      $formatString = str_ireplace('%time%', date('H:i:s'), $formatString);
+		if(stripos($formatString, '%time12%') !== FALSE)    $formatString = str_ireplace('%time12%', date('g:i:s A'), $formatString);
+		if(stripos($formatString, '%time24%') !== FALSE)    $formatString = str_ireplace('%time24%', date('H:i:s'), $formatString);
+		if(stripos($formatString, '%timestamp%') !== FALSE) $formatString = str_ireplace('%timestamp%', time(), $formatString);
+		// Process custom date/time variables
+		$formatString = preg_replace_callback('/%date\((.+?)\)%/i', function($matches){
+			return date($matches[1]);
+		}, $formatString);
+
+		// And, return the result
+		return $formatString;
+	}
 }
 
 ?>
