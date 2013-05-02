@@ -1,8 +1,5 @@
 
 $(function() {
-	// Instantiate the bootstrap tooltip plugin
-	$("[rel='tooltip']").tooltip();
-
 	// Grab commonly used IDs
 	var formPreview  = $('#formPreview');
 	var fieldAdd     = $('#fieldAdd');

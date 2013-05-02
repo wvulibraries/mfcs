@@ -1,5 +1,8 @@
 $(function(){
-    $('div.filePreview a.previewLink').click(function(){
+	// Instantiate the bootstrap tooltip plugin
+	$("[rel='tooltip']").tooltip();
+
+	$('div.filePreview a.previewLink').click(function(){
         var filePreview = $(this).closest('div')
         if(filePreview.hasClass('open')){
             // Closing
