@@ -1,5 +1,10 @@
 $(function(){
-    $('div.filePreview a.previewLink').click(function(){
+	// Instantiate the bootstrap tooltip, popover, and modal plugins
+	$("[rel='tooltip']").tooltip();
+	$("[rel='popover']").popover();
+	$("[rel='modal']").modal();
+
+	$('div.filePreview a.previewLink').click(function(){
         var filePreview = $(this).closest('div')
         if(filePreview.hasClass('open')){
             // Closing

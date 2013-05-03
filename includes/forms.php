@@ -387,6 +387,12 @@ class forms {
 
 		$output .= sessionInsertCSRF();
 
+		if (isset($engine->cleanGet['HTML']['parentID'])) {
+			$output .= sprintf('<input type="hidden" name="parentID" value="%s">',
+				$engine->cleanGet['HTML']['parentID']
+				);
+		}
+
 		$output .= sprintf('<header><h1>%s</h1><h2>%s</h2></header>',
 			htmlSanitize($form['title']),
 			htmlSanitize($form['description']));
@@ -415,7 +421,7 @@ class forms {
 				$currentFieldset = $field['fieldset'];
 			}
 
- 
+
 			if ($error === TRUE) {
 				// @TODO should this be raw? // security issue?
 				if (isset($engine->cleanPost['RAW'][$field['name']])) {
@@ -609,10 +615,13 @@ class forms {
 					$field['type'] = "text";
 				}
 
+				$fieldValue = isset($object['data'][$field['name']])
+					? htmlSanitize($object['data'][$field['name']])
+					: htmlSanitize(self::applyFieldVariables($field['value']));
 				$output .= sprintf('<input type="%s" name="%s" value="%s" placeholder="%s" %s id="%s" class="%s" %s %s %s %s />',
 					htmlSanitize($field['type']),
 					htmlSanitize($field['name']),
-					(isset($object['data'][$field['name']]))?htmlSanitize($object['data'][$field['name']]):htmlSanitize($field['value']),
+					$fieldValue,
 					htmlSanitize($field['placeholder']),
 					//for numbers
 					($field['type'] == "number")?(buildNumberAttributes($field)):"",
@@ -624,6 +633,31 @@ class forms {
 					(strtoupper($field['readonly']) == "TRUE")?"readonly":"",
 					(strtoupper($field['disabled']) == "TRUE")?"disabled":""
 				);
+			}
+
+			// Output field's help (if needed)
+			if($field['help']){
+				list($helpType,$helpValue) = explode(',', $field['help'], 2);
+				switch($helpType){
+					case 'text':
+						$output .= sprintf(' <a href="javascript:;" rel="tooltip" class="icon-question-sign" data-placement="right" data-title="%s"></a>', $helpValue);
+						break;
+					case 'html':
+						$output .= sprintf(' <a href="javascript:;" rel="popover" class="icon-question-sign" data-html="true" data-placement="right" data-trigger="hover" data-content="%s"></a>', $helpValue);
+						break;
+					case 'web':
+						$output .= sprintf(' <a href="javascript:;" title="Click for help" class="icon-question-sign" onclick="$(\'#helpModal_%s\').modal(\'show\');"></a>', $field['id']);
+						$output .= sprintf('<div id="helpModal_%s" rel="modal" class="modal hide fade" data-show="false">', $field['id']);
+						$output .= '	<div class="modal-header">';
+						$output .= '		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>';
+						$output .= '		<h3 id="myModalLabel">Field Help</h3>';
+						$output .= '	</div>';
+						$output .= '	<div class="modal-body">';
+						$output .= sprintf('		<iframe src="%s" seamless="seamless" style="width: 100%%; height: 100%%;"></iframe>', $helpValue);
+						$output .= '	</div>';
+						$output .= '</div>';
+						break;
+				}
 			}
 
 			$output .= "</div>";
@@ -792,7 +826,7 @@ class forms {
 				}
 
 				if(!isset($values[$field['name']])) $values[$field['name']] = $engine->cleanPost['RAW'][$field['name']."_".$object['ID']];
-				
+
 
 				if (!is_empty($engine->errorStack)) {
 					return FALSE;
@@ -855,7 +889,7 @@ class forms {
 					$objectID
 					);
 				$sqlResult = $engine->openDB->query($sql);
-				
+
 				if (!$sqlResult['result']) {
 					$engine->openDB->transRollback();
 					$engine->openDB->transEnd();
@@ -864,7 +898,7 @@ class forms {
 					errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 					return FALSE;
 				}
-				
+
 			}
 		}
 
@@ -1327,6 +1361,26 @@ class forms {
 
 	}
 
+	public static function applyFieldVariables($formatString){
+		// Process user variables
+		if(stripos($formatString, '%userid%') !== FALSE)    $formatString = str_ireplace('%userid%', users::user('ID'), $formatString);
+		if(stripos($formatString, '%username%') !== FALSE)  $formatString = str_ireplace('%username%', users::user('username'), $formatString);
+		if(stripos($formatString, '%firstname%') !== FALSE) $formatString = str_ireplace('%firstname%', users::user('firstname'), $formatString);
+		if(stripos($formatString, '%lastname%') !== FALSE)  $formatString = str_ireplace('%lastname%', users::user('lastname'), $formatString);
+		// Process static (no custom format) date/time variables
+		if(stripos($formatString, '%date%') !== FALSE)      $formatString = str_ireplace('%date%', date('m/d/Y'), $formatString);
+		if(stripos($formatString, '%time%') !== FALSE)      $formatString = str_ireplace('%time%', date('H:i:s'), $formatString);
+		if(stripos($formatString, '%time12%') !== FALSE)    $formatString = str_ireplace('%time12%', date('g:i:s A'), $formatString);
+		if(stripos($formatString, '%time24%') !== FALSE)    $formatString = str_ireplace('%time24%', date('H:i:s'), $formatString);
+		if(stripos($formatString, '%timestamp%') !== FALSE) $formatString = str_ireplace('%timestamp%', time(), $formatString);
+		// Process custom date/time variables
+		$formatString = preg_replace_callback('/%date\((.+?)\)%/i', function($matches){
+			return date($matches[1]);
+		}, $formatString);
+
+		// And, return the result
+		return $formatString;
+	}
 }
 
 ?>

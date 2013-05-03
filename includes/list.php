@@ -235,7 +235,7 @@ class listGenerator {
 		if ($entry === FALSE) {
 			return sprintf('<a href="index.php?id=%s">%s</a>',
 				htmlSanitize($form['ID']),
-				htmlSanitize($form['title'])
+				htmlSanitize(!empty($form['title']) ? $form['title'] : '[No form title]')
 				);
 		}
 		else {
@@ -243,7 +243,7 @@ class listGenerator {
 				localvars::get("siteRoot"),
 				($metadata === TRUE)?"metadata":"object",
 				htmlSanitize($form['ID']),
-				htmlSanitize($form['title'])
+				htmlSanitize(!empty($form['title']) ? $form['title'] : '[No form title]')
 				);
 		}
 

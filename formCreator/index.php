@@ -439,7 +439,7 @@ if (!isnull($formID)) {
 
 		// Get existing groupings
 		$sql = sprintf("SELECT * FROM `forms` WHERE `ID`='%s' LIMIT 1",
-			$engine->openDB->escape($formID) 
+			$engine->openDB->escape($formID)
 		);
 		$sqlResult = $engine->openDB->query($sql);
 
@@ -533,7 +533,7 @@ $selectedUsersAdmins = "";
 
 if (isset($engine->cleanGet['MYSQL']['id']) && !isempty($engine->cleanGet['MYSQL']['id'])) {
 
-	$sql = sprintf("SELECT permissions.type, users.status, users.firstname, users.lastname, users.username, users.ID as userID FROM permissions LEFT JOIN users ON permissions.userID=users.ID WHERE permissions.formID='%s'", 
+	$sql = sprintf("SELECT permissions.type, users.status, users.firstname, users.lastname, users.username, users.ID as userID FROM permissions LEFT JOIN users ON permissions.userID=users.ID WHERE permissions.formID='%s'",
 		$engine->cleanGet['MYSQL']['id']
 		);
 	$sqlResult = $engine->openDB->query($sql);
@@ -541,20 +541,20 @@ if (isset($engine->cleanGet['MYSQL']['id']) && !isempty($engine->cleanGet['MYSQL
 
 	while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 		$optionHTML = sprintf('<option value="%s">%s, %s (%s)</option>',
-			$engine->openDB->escape($row['userID']),
-			$engine->openDB->escape($row['lastname']),
-			$engine->openDB->escape($row['firstname']),
-			$engine->openDB->escape($row['username']));
+			htmlSanitize($row['userID']),
+			htmlSanitize($row['lastname']),
+			htmlSanitize($row['firstname']),
+			htmlSanitize($row['username']));
 		switch($row['type']){
 			case mfcs::AUTH_VIEW:
-			$selectedViewUsers .= $optionHTML;
-			break;
+				$selectedViewUsers .= $optionHTML;
+				break;
 			case mfcs::AUTH_ENTRY:
-			$selectedEntryUsers .= $optionHTML;
-			break;
+				$selectedEntryUsers .= $optionHTML;
+				break;
 			case mfcs::AUTH_ADMIN:
-			$selectedUsersAdmins .= $optionHTML;
-			break;
+				$selectedUsersAdmins .= $optionHTML;
+				break;
 		}
 	}
 }
@@ -565,16 +565,17 @@ localvars::add("selectedUsersAdmins",$selectedUsersAdmins);
 
 localVars::add("results",displayMessages());
 
-$engine->eTemplate("include","header");
 $selectedProjects = forms::getProjects(isset($engine->cleanGet['MYSQL']['id']) ? $engine->cleanGet['MYSQL']['id'] : 0);
 localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects));
+
+$engine->eTemplate("include","header");
 ?>
 
 <script type="text/javascript" src='{local var="siteRoot"}includes/js/createForm_functions.js'></script>
 
 <section>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="#formCreator" data-toggle="tab">Form Creator</a></li>	
+		<li class="active"><a href="#formCreator" data-toggle="tab">Form Creator</a></li>
 		<?php if (!isnull($formID)) { ?>
 		<?php if (!forms::isMetadataForm($formID)) { ?>
 		<li><a href="#projects" data-toggle="tab">Assigned Projects</a></li>
@@ -687,8 +688,43 @@ localVars::add("projectOptions",projects::generateProjectChecklist($selectedProj
 														Value
 														<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="When the form is first displayed, this value will already be prepopulated."></i>
 													</label>
+													<a href="javascript:;" class="pull-right" onclick="$('#defaultValueVariables').modal('show')">Variables</a>
 													<input type="text" class="input-block-level" id="fieldSettings_value" name="fieldSettings_value" />
 													<span class="help-block hidden"></span>
+													<div id="defaultValueVariables" class="modal hide fade" rel="modal" data-show="false">
+														<div class="modal-header">
+															<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+															<h3 id="myModalLabel">Available variables for default value</h3>
+														</div>
+														<div class="modal-body">
+															<b>User</b>
+															<ul style="list-style: none;">
+																<li><b>%userid%</b><br>The user id for the currently logged in user. (<i>Example: <?php echo forms::applyFieldVariables('%userid%') ?></i>)</li>
+																<li><b>%username%</b><br>The username for the currently logged in user. (<i>Example: <?php echo forms::applyFieldVariables('%username%') ?></i>)</li>
+																<li><b>%firstname%</b><br>The first name for the currently logged in user. (<i>Example: <?php echo forms::applyFieldVariables('%firstname%') ?></i>)</li>
+																<li><b>%lastname%</b><br>The last name for the currently logged in user. (<i>Example: <?php echo forms::applyFieldVariables('%lastname%') ?></i>)</li>
+															</ul>
+															<hr>
+															<b>Static Date/Time</b>
+															<ul style="list-style: none;">
+																<li><b>%date%</b><br>The current date in MM/DD/YYYY format. (<i>Example: <?php echo forms::applyFieldVariables('%date%') ?></i>)</li>
+																<li><b>%time%</b><br>The current time in HH:MM:SS format. (<i>Example: <?php echo forms::applyFieldVariables('%time%') ?></i>)</li>
+																<li><b>%time12%</b><br>The current time in 12-hr format. (<i>Example: <?php echo forms::applyFieldVariables('%time12%') ?></i>)</li>
+																<li><b>%time24%</b><br>The current time inn 24-hr format. (<i>Example: <?php echo forms::applyFieldVariables('%time24%') ?></i>)</li>
+																<li><b>%timestamp%</b><br>The current UNIX system timestamp. (<i>Example: <?php echo forms::applyFieldVariables('%timestamp%') ?></i>)</li>
+															</ul>
+															<hr>
+															<b>Custom Date/Time</b>
+															<ul style="list-style: none;">
+																<li>
+																	<b>%date(FORMAT)%</b><br>
+																	You can specify a custom format when creating dates and times where FORMAT is a PHP <a href="http://us2.php.net/manual/en/function.date.php" target="_blank">date()</a> format string.
+																	<br>
+																	<b><i>Example:</i></b> %date(l, m j Y)% becomes <?php echo forms::applyFieldVariables('%date(l, F j Y)%') ?>
+																</li>
+															</ul>
+														</div>
+													</div>
 												</div>
 											</span>
 
@@ -739,6 +775,33 @@ localVars::add("projectOptions",projects::generateProjectChecklist($selectedProj
 											</div>
 										</div>
 
+										<div class="row-fluid noHide">
+											<div class="control-group well well-small" id="fieldSettings_container_style">
+												<label for="fieldSettings_style">
+													Field Help
+													<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="You can set any help text you want displayed with this field."></i>
+												</label>
+												<select class="input-block-level" id="fieldSettings_help_type" name="fieldSettings_help_type">
+													<option value="">None</option>
+													<option value="text">Plain text</option>
+													<option value="html">HTML text</option>
+													<option value="web">Webpage (URL)</option>
+												</select>
+												<input type="text" class="input-block-level" id="fieldSettings_help_text" name="fieldSettings_help_text" style="display: none;">
+												<textarea class="input-block-level" id="fieldSettings_help_html" name="fieldSettings_help_html" style="display: none;"></textarea>
+												<input type="text" class="input-block-level" id="fieldSettings_help_url" name="fieldSettings_help_url" style="display: none;" placeholder="http://example.com">
+												<span class="help-block hidden"></span>
+											</div>
+											<div id="fieldHelpModal" class="modal hide fade">
+												<div class="modal-header">
+													<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+													<h3 id="myModalLabel">Field Help</h3>
+												</div>
+												<div class="modal-body">
+													<iframe id="fieldHelpModalURL" seamless="seamless" style="width: 100%; height: 100%;"></iframe>
+												</div>
+											</div>
+										</div>
 										<div class="control-group well well-small" id="fieldSettings_container_choices">
 											<label for="fieldSettings_choices">
 												Choices

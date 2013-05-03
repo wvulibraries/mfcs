@@ -12,11 +12,9 @@
 </div>
 
 <script type="text/javascript">
-var url = window.location.pathname.split("/");
-if (url[url.length-1] == "index.php") {
-	$('#progressModal').modal('show');
-}
-
+	var pattern  = /id=/i;
+	var queryStr = location.search;
+	if(pattern.test(queryStr)) $('#progressModal').modal('show');
 </script>
 
 <script type="text/javascript" src='{local var="siteRoot"}includes/js/createForm_nav.js'></script>
