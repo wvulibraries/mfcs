@@ -109,7 +109,7 @@ class forms {
 		$forms = array();
 		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
-			$forms[] = self::get($row['ID']);
+			$forms[$row['ID']] = self::get($row['ID']);
 
 		}
 
@@ -151,7 +151,7 @@ class forms {
 		foreach ($form['fields'] as $field) {
 			if (isset($field['choicesForm']) && validate::integer($field['choicesForm'])) {
 				$metaForm        = self::get($field['choicesForm']);
-				$metadataForms[] = array('formID' => $field['choicesForm'], 'ID' => $field['choicesForm'], 'title' => $metaForm['title']);
+				$metadataForms[$field['choicesForm']] = array('formID' => $field['choicesForm'], 'ID' => $field['choicesForm'], 'title' => $metaForm['title']);
 			}
 		}
 
