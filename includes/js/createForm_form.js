@@ -72,17 +72,9 @@ $(function() {
 	sortableForm();
 
 	// Set all the black magic bindings
-	var createFormProgressBar = $('#createFormProgressBar');
-	// 25%
-	createFormProgressBar.width('25%');
 	fieldSettingsBindings();
-	// 50%
-	createFormProgressBar.width('50%');
 	formSettingsBindings();
-	// 75%
-	createFormProgressBar.width('75%');
 	modalBindings();
-	createFormProgressBar.width('100%');
 
 	// Form submit handler
 	$("form[name=submitForm]").submit(function(e) {
