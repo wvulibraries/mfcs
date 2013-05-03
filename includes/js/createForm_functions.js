@@ -1177,13 +1177,12 @@ function modalBindings() {
 		.on("click", "button:contains('Object')", function() {
 			var fieldAdd        = $('#fieldAdd');
 			var formPreviewWell = $("#formPreview .well");
-			var id              = formPreviewWell.prop("id").split("_")[1];
 
 			// Add IDNO field and select options
 			fieldAdd.find("li:contains('ID Number')").click();
-			$("#label_"+id).val('IDNO').keyup();
-			$("#sortable_"+id).val('true').change();
-			$("#searchable_"+id).val('true').change();
+			formPreviewWell.find("input[name^=label_]").val('IDNO').keyup();
+			formPreviewWell.find("input[name^=sortable_]").val('true').change();
+			formPreviewWell.find("input[name^=searchable_]").val('true').change();
 
 			// Add Title field and select options
 			fieldAdd.find("li:contains('Single Line Text')").click();
