@@ -707,10 +707,10 @@ $engine->eTemplate("include","header");
 															<hr>
 															<b>Static Date/Time</b>
 															<ul style="list-style: none;">
-																<li><b>%date%</b><br>The current date in MM/DD/YYYY format. (<i>Example: <?php echo forms::applyFieldVariables('%date%') ?></i>)</li>
-																<li><b>%time%</b><br>The current time in HH:MM:SS format. (<i>Example: <?php echo forms::applyFieldVariables('%time%') ?></i>)</li>
-																<li><b>%time12%</b><br>The current time in 12-hr format. (<i>Example: <?php echo forms::applyFieldVariables('%time12%') ?></i>)</li>
-																<li><b>%time24%</b><br>The current time inn 24-hr format. (<i>Example: <?php echo forms::applyFieldVariables('%time24%') ?></i>)</li>
+																<li><b>%date%</b><br>The current date as MM/DD/YYYY. (<i>Example: <?php echo forms::applyFieldVariables('%date%') ?></i>)</li>
+																<li><b>%time%</b><br>The current time as HH:MM:SS. (<i>Example: <?php echo forms::applyFieldVariables('%time%') ?></i>)</li>
+																<li><b>%time12%</b><br>The current 12-hr time. (<i>Example: <?php echo forms::applyFieldVariables('%time12%') ?></i>)</li>
+																<li><b>%time24%</b><br>The current 24-hr time. (<i>Example: <?php echo forms::applyFieldVariables('%time24%') ?></i>)</li>
 																<li><b>%timestamp%</b><br>The current UNIX system timestamp. (<i>Example: <?php echo forms::applyFieldVariables('%timestamp%') ?></i>)</li>
 															</ul>
 															<hr>
