@@ -285,6 +285,7 @@ if (!isnull($formID)) {
 		localVars::add("formDescription", htmlSanitize($form['description']));
 		localVars::add("submitButton",    htmlSanitize($form['submitButton']));
 		localVars::add("updateButton",    htmlSanitize($form['updateButton']));
+		localVars::add("displayTitle",    htmlSanitize($form['displayTitle']));
 		localVars::add("formContainer",   ($form['container'] == '1')  ? "checked" : "");
 		localVars::add("formProduction",  ($form['production'] == '1') ? "checked" : "");
 		localVars::add("formMetadata",    ($form['metadata'] == '1')   ? "checked" : "");
@@ -1144,7 +1145,7 @@ $engine->eTemplate("include","header");
 										<label for="formSettings_objectDisplayTitle">
 											Display Title
 										</label>
-										<input type="text" class="input-block-level" id="formSettings_objectDisplayTitle" name="formSettings_objectDisplayTitle">
+										<input type="text" class="input-block-level" id="formSettings_objectDisplayTitle" name="formSettings_objectDisplayTitle" value="{local var="displayTitle"}">
 										<span class="help-block hidden"></span>
 									</div>
 
