@@ -1,6 +1,7 @@
 <?php
 include("header.php");
 
+// @TODO all this logic should be removed and placed in another file. Calling it from here is fine (and logical) but it needs moved.
 if(isset($engine->cleanGet['MYSQL']['ajax'])){
     $result = array();
     if (isset($engine->cleanPost['MYSQL']['action'])) {
@@ -99,6 +100,9 @@ $engine->eTemplate("include","header");
 		<li>
 			<a href="dataView/list.php" class="btn">List Objects</a>
 		</li>
+        <li>
+            <a href="dataView/search.php" class="btn">Search Objects</a>
+        </li>
 		<li>
 			<a href="dataEntry/selectMetadataForm.php" class="btn">Metadata Forms</a>
 		</li>
