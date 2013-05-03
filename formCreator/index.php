@@ -900,31 +900,25 @@ $engine->eTemplate("include","header");
 										</div>
 
 										<div class="control-group well well-small" id="fieldSettings_container_file_options">
-											<label for="fieldSettings_file_options">
-												File Upload Options
-											</label>
-											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_file_options_multipleFiles" name="fieldSettings_file_options_multipleFiles"> Allow Multiple Files in Single Upload
-											</label>
-
-											Images
-											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_file_options_combine" name="fieldSettings_file_options_combine"> Combine into Single PDF
-											</label>
-											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_file_options_ocr" name="fieldSettings_file_options_ocr"> Optical Character Recognition (OCR)
-											</label>
-											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_file_options_convert" name="fieldSettings_file_options_convert"> Convert Uploaded File
-											</label>
-											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_file_options_thumbnail" name="fieldSettings_file_options_thumbnail"> Create Thumbnail
-											</label>
-
-											Audio
-											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_file_options_mp3" name="fieldSettings_file_options_mp3"> Create MP3
-											</label>
+											File Upload Options
+											<div>
+												<div style="float: left; margin-top: 5px;">
+													Images
+													<ul class="checkboxList">
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_multipleFiles" name="fieldSettings_file_options_multipleFiles"> Allow Multiple Files in Single Upload</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_combine" name="fieldSettings_file_options_combine"> Combine into Single PDF</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_ocr" name="fieldSettings_file_options_ocr"> Optical Character Recognition (OCR)</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_convert" name="fieldSettings_file_options_convert"> Convert Uploaded File</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_thumbnail" name="fieldSettings_file_options_thumbnail"> Create Thumbnail</label></li>
+													</ul>
+												</div>
+												<div style="float: left; margin-top: 5px;">
+													Audio
+													<ul class="checkboxList">
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_mp3" name="fieldSettings_file_options_mp3"> Create MP3</label></li>
+													</ul>
+												</div>
+											</div>
 										</div>
 
 										<div class="control-group well well-small" id="fieldSettings_container_file_convert">
@@ -957,56 +951,56 @@ $engine->eTemplate("include","header");
 												</div>
 											</div>
 
-											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_file_convert_watermark" name="fieldSettings_file_convert_watermark"> Watermark
-											</label>
-											<div class="row-fluid">
-												<div class="span6">
-													<label for="fieldSettings_file_watermark_image">
-														Image
-													</label>
-													<select class="input-block-level" id="fieldSettings_file_watermark_image" name="fieldSettings_file_watermark_image">
-														{local var="watermarkList"}
-													</select>
-												</div>
-												<div class="span6">
-													<label for="fieldSettings_file_watermark_location">
-														Location
-													</label>
-													<select class="input-block-level" id="fieldSettings_file_watermark_location" name="fieldSettings_file_watermark_location">
-														{local var="imageLocations"}
-													</select>
-												</div>
-											</div>
+											<ul class="checkboxList">
+												<li>
+													<label class="checkbox"><input type="checkbox" id="fieldSettings_file_convert_watermark" name="fieldSettings_file_convert_watermark">Watermark</label>
+													<div class="row-fluid">
+														<div class="span6">
+															<label for="fieldSettings_file_watermark_image">
+																Image
+															</label>
+															<select class="input-block-level" id="fieldSettings_file_watermark_image" name="fieldSettings_file_watermark_image">
+																{local var="watermarkList"}
+															</select>
+														</div>
+														<div class="span6">
+															<label for="fieldSettings_file_watermark_location">
+																Location
+															</label>
+															<select class="input-block-level" id="fieldSettings_file_watermark_location" name="fieldSettings_file_watermark_location">
+																{local var="imageLocations"}
+															</select>
+														</div>
+													</div>
+												</li>
+												<li>
+													<label class="checkbox"><input type="checkbox" id="fieldSettings_file_convert_border" name="fieldSettings_file_convert_border"> Border</label>
+													<div class="row-fluid">
+														<div class="span4">
+															<label for="fieldSettings_file_border_height">
+																Height (px)
+																<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Border width of the top and bottom."></i>
+															</label>
+															<input type="number" class="input-block-level" id="fieldSettings_file_border_height" name="fieldSettings_file_border_height" min="0" />
+														</div>
 
-											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_file_convert_border" name="fieldSettings_file_convert_border"> Border
-											</label>
-											<div class="row-fluid">
-												<div class="span4">
-													<label for="fieldSettings_file_border_height">
-														Height (px)
-														<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Border width of the top and bottom."></i>
-													</label>
-													<input type="number" class="input-block-level" id="fieldSettings_file_border_height" name="fieldSettings_file_border_height" min="0" />
-												</div>
+														<div class="span4">
+															<label for="fieldSettings_file_border_width">
+																Width (px)
+																<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Border width of the left and right."></i>
+															</label>
+															<input type="number" class="input-block-level" id="fieldSettings_file_border_width" name="fieldSettings_file_border_width" min="0" />
+														</div>
 
-												<div class="span4">
-													<label for="fieldSettings_file_border_width">
-														Width (px)
-														<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Border width of the left and right."></i>
-													</label>
-													<input type="number" class="input-block-level" id="fieldSettings_file_border_width" name="fieldSettings_file_border_width" min="0" />
-												</div>
-
-												<div class="span4">
-													<label for="fieldSettings_file_border_color">
-														Color
-													</label>
-													<input type="color" class="input-block-level" id="fieldSettings_file_border_color" name="fieldSettings_file_border_color" />
-												</div>
-											</div>
-
+														<div class="span4">
+															<label for="fieldSettings_file_border_color">
+																Color
+															</label>
+															<input type="color" class="input-block-level" id="fieldSettings_file_border_color" name="fieldSettings_file_border_color" />
+														</div>
+													</div>
+												</li>
+											</ul>
 										</div>
 
 										<div class="control-group well well-small" id="fieldSettings_container_file_thumbnail">
@@ -1043,33 +1037,17 @@ $engine->eTemplate("include","header");
 										<div class="row-fluid noHide">
 											<span class="span6">
 												<div class="control-group well well-small" id="fieldSettings_container_options">
-													<label for="fieldSettings_options">
-														Options
-													</label>
-													<label class="checkbox">
-														<input type="checkbox" id="fieldSettings_options_required" name="fieldSettings_options_required"> Required
-													</label>
-													<label class="checkbox">
-														<input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates"> No Duplicates
-													</label>
-													<label class="checkbox">
-														<input type="checkbox" id="fieldSettings_options_readonly" name="fieldSettings_options_readonly"> Read Only
-													</label>
-													<label class="checkbox">
-														<input type="checkbox" id="fieldSettings_options_disabled" name="fieldSettings_options_disabled"> Disabled
-													</label>
-													<label class="checkbox">
-														<input type="checkbox" id="fieldSettings_options_publicRelease" name="fieldSettings_options_publicRelease"> Public Release
-													</label>
-													<label class="checkbox">
-														<input type="checkbox" id="fieldSettings_options_sortable" name="fieldSettings_options_sortable"> Sortable
-													</label>
-													<label class="checkbox">
-														<input type="checkbox" id="fieldSettings_options_searchable" name="fieldSettings_options_searchable"> Searchable
-													</label>
-													<label class="checkbox">
-														<input type="checkbox" id="fieldSettings_options_displayTable" name="fieldSettings_options_displayTable"> Display in List Table
-													</label>
+													Options
+													<ul class="checkboxList">
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_required" name="fieldSettings_options_required"> Required</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates"> No Duplicates</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_readonly" name="fieldSettings_options_readonly"> Read Only</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_disabled" name="fieldSettings_options_disabled"> Disabled</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_publicRelease" name="fieldSettings_options_publicRelease"> Public Release</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_sortable" name="fieldSettings_options_sortable"> Sortable</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_searchable" name="fieldSettings_options_searchable"> Searchable</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_displayTable" name="fieldSettings_options_displayTable"> Display in List Table</label></li>
+													</ul>
 												</div>
 											</span>
 											<span class="span6">
