@@ -1175,24 +1175,26 @@ function modalBindings() {
 			$("#formTypeSelector").modal("hide");
 		})
 		.on("click", "button:contains('Object')", function() {
-			var fieldAdd        = $('#fieldAdd');
-			var formPreviewWell = $("#formPreview .well");
+			var fieldAdd                         = $('#fieldAdd');
+			var formPreviewWell                  = $("#formPreview .well");
+			var fieldSettings_label              = $("#fieldSettings_label");
+			var fieldSettings_options_sortable   = $("#fieldSettings_options_sortable");
+			var fieldSettings_options_searchable = $("#fieldSettings_options_searchable");
 
 			// Add IDNO field and select options
 			fieldAdd.find("li:contains('ID Number')").click();
-			$("#fieldSettings_name").val('idno').keyup();
-			$("#fieldSettings_label").val('IDNO').keyup();
-			$("#fieldSettings_options_sortable").prop("checked", true).change();
-			$("#fieldSettings_options_searchable").prop("checked", true).change();
+			fieldSettings_label.val('IDNO').keyup();
+			fieldSettings_options_sortable.prop("checked", true).change();
+			fieldSettings_options_searchable.prop("checked", true).change();
 
 			// Add Title field and select options
 			fieldAdd.find("li:contains('Single Line Text')").click();
 			$("#fieldSettings_name").val('title').keyup();
-			$("#fieldSettings_label").val('Title').keyup();
+			fieldSettings_label.val('Title').keyup();
 			$("#fieldSettings_options_required").prop("checked", true).change();
 			$("#fieldSettings_options_duplicates").prop("checked", true).change();
-			$("#fieldSettings_options_sortable").prop("checked", true).change();
-			$("#fieldSettings_options_searchable").prop("checked", true).change();
+			fieldSettings_options_sortable.prop("checked", true).change();
+			fieldSettings_options_searchable.prop("checked", true).change();
 			$("#fieldSettings_options_displayTable").prop("checked", true).change();
 
 			// Click through each field and then back to add field tab to update form preview
