@@ -93,7 +93,7 @@ foreach (array_keys(sessionGet('currentProject')) as $projectID) {
 		continue;
 	}
 
-	localVars::add("projectWarning",'<div class="pull-right">'.errorHandle::errorMsg("This form is not associated with any of your current projects.").'</div>');
+	localVars::add("projectWarning",'<div class="pull-right">'.errorHandle::errorMsg("This form is not associated with one of your current projects.").'</div>');
 	break;
 }
 
