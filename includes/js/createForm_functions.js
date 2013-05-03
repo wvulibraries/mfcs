@@ -293,39 +293,37 @@ function fieldSettingsBindings() {
 		}
 	});
 
-	$("#fieldSettings_name")
-		.keyup(function() {
-			return;
-			var formSettings_objectTitleField = $('#formSettings_objectTitleField');
-			var option = $("option[value='"+$(":input[name^=name_]", formPreview).val()+"']", formSettings_objectTitleField);
-			if (option.length > 0) {
-				option.val($(this).val());
-			}
-			else if ($(".well :input[name^=type_][value=text]", formPreview).length > 0) {
-				$("#formSettings_objectTitleField").append('<option value="'+$(this).val()+'">'+$(".well :input[name^=label_]",formPreview).val()+'</option>');
-			}
+	$("#fieldSettings_name").keyup(function() {
+		var formPreviewWell               = formPreview.find(".well");
+		var id                            = formPreviewWell.prop("id").split("_")[1];
+		var val                           = $(this).val();
+		var formSettings_objectTitleField = $('#formSettings_objectTitleField');
 
-			$(".well .controls :input", formPreview).prop('name',$(this).val());
-			$(".well :input[name^=name_]", formPreview).val($(this).val());
-		})
-		.blur(function(){
-			var name = $(this).val();
-			var nameClean = name.replace(/[\t ]/g,'');
-			if(name != nameClean) $(this).val(nameClean).keyup();
-		});
-
-	$("#fieldSettings_label").keyup(function() {
-		var formPreviewWell         = formPreview.find(".well");
-		var id                      = formPreviewWell.prop("id").split("_")[1];
-		var val                     = $(this).val();
-		var nameVal                 = $("#name_"+id).val();
-		var objectTitleField_option = $("#formSettings_objectTitleField option[value='"+nameVal+"']");
-
-		if (objectTitleField_option.length > 0) {
-			objectTitleField_option.text(val);
+		var option = formSettings_objectTitleField.find("option[value='"+$("#name_"+id).val()+"']");
+		if (option.length > 0) {
+			option.val(val);
 		}
 		else if ($("#type_"+id+"[value=text]").length > 0) {
-			$("#formSettings_objectTitleField").append('<option value="'+nameVal+'">'+val+'</option>');
+			formSettings_objectTitleField.append('<option value="'+val+'">'+$("#label_"+id).val()+'</option>');
+		}
+
+		formPreviewWell.find(".control-group > .controls > :input").prop('name', val);
+		$("#name_"+id).val(val);
+	});
+
+	$("#fieldSettings_label").keyup(function() {
+		var formPreviewWell               = formPreview.find(".well");
+		var id                            = formPreviewWell.prop("id").split("_")[1];
+		var val                           = $(this).val();
+		var nameVal                       = $("#name_"+id).val();
+		var formSettings_objectTitleField = $('#formSettings_objectTitleField');
+
+		var option = formSettings_objectTitleField.find("option[value='"+nameVal+"']");
+		if (option.length > 0) {
+			option.text(val);
+		}
+		else if ($("#type_"+id+"[value=text]").length > 0) {
+			formSettings_objectTitleField.append('<option value="'+nameVal+'">'+val+'</option>');
 		}
 
 		formPreviewWell.find(".control-group > label").text(val);
@@ -1175,23 +1173,26 @@ function modalBindings() {
 			$("#formTypeSelector").modal("hide");
 		})
 		.on("click", "button:contains('Object')", function() {
-			var fieldAdd        = $('#fieldAdd');
-			var formPreviewWell = $("#formPreview .well");
+			var fieldAdd                         = $('#fieldAdd');
+			var formPreviewWell                  = $("#formPreview .well");
+			var fieldSettings_label              = $("#fieldSettings_label");
+			var fieldSettings_options_sortable   = $("#fieldSettings_options_sortable");
+			var fieldSettings_options_searchable = $("#fieldSettings_options_searchable");
 
 			// Add IDNO field and select options
 			fieldAdd.find("li:contains('ID Number')").click();
-			formPreviewWell.find("input[name^=label_]").val('IDNO').keyup();
-			formPreviewWell.find("input[name^=sortable_]").val('true').change();
-			formPreviewWell.find("input[name^=searchable_]").val('true').change();
+			fieldSettings_label.val('IDNO').keyup();
+			fieldSettings_options_sortable.prop("checked", true).change();
+			fieldSettings_options_searchable.prop("checked", true).change();
 
 			// Add Title field and select options
 			fieldAdd.find("li:contains('Single Line Text')").click();
 			$("#fieldSettings_name").val('title').keyup();
-			$("#fieldSettings_label").val('Title').keyup();
+			fieldSettings_label.val('Title').keyup();
 			$("#fieldSettings_options_required").prop("checked", true).change();
 			$("#fieldSettings_options_duplicates").prop("checked", true).change();
-			$("#fieldSettings_options_sortable").prop("checked", true).change();
-			$("#fieldSettings_options_searchable").prop("checked", true).change();
+			fieldSettings_options_sortable.prop("checked", true).change();
+			fieldSettings_options_searchable.prop("checked", true).change();
 			$("#fieldSettings_options_displayTable").prop("checked", true).change();
 
 			// Click through each field and then back to add field tab to update form preview
