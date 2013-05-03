@@ -1180,9 +1180,10 @@ function modalBindings() {
 
 			// Add IDNO field and select options
 			fieldAdd.find("li:contains('ID Number')").click();
-			formPreviewWell.find("input[name^=label_]").val('IDNO').keyup();
-			formPreviewWell.find("input[name^=sortable_]").val('true').change();
-			formPreviewWell.find("input[name^=searchable_]").val('true').change();
+			$("#fieldSettings_name").val('idno').keyup();
+			$("#fieldSettings_label").val('IDNO').keyup();
+			$("#fieldSettings_options_sortable").prop("checked", true).change();
+			$("#fieldSettings_options_searchable").prop("checked", true).change();
 
 			// Add Title field and select options
 			fieldAdd.find("li:contains('Single Line Text')").click();
