@@ -150,8 +150,9 @@ class forms {
 		$metadataForms = array();
 		foreach ($form['fields'] as $field) {
 			if (isset($field['choicesForm']) && validate::integer($field['choicesForm'])) {
-				$metaForm        = self::get($field['choicesForm']);
-				$metadataForms[$field['choicesForm']] = array('formID' => $field['choicesForm'], 'ID' => $field['choicesForm'], 'title' => $metaForm['title']);
+				$metaForm           = self::get($field['choicesForm']);
+				$metaForm['formID'] = $field['choicesForm'];
+				$metadataForms[$field['choicesForm']] = $metaForm;
 			}
 		}
 

@@ -1,0 +1,1 @@
+ALTER TABLE  `forms` ADD  `displayTitle` VARCHAR( 50 ) NULL DEFAULT NULL AFTER  `count`

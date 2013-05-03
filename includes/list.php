@@ -235,7 +235,7 @@ class listGenerator {
 		if ($entry === FALSE) {
 			return sprintf('<a href="index.php?id=%s">%s</a>',
 				htmlSanitize($form['ID']),
-				htmlSanitize(!empty($form['title']) ? $form['title'] : '[No form title]')
+				htmlSanitize(!empty($form['displayTitle']) ? $form['displayTitle'] : (!empty($form['title']) ? $form['title'] : '[No form title]'))
 				);
 		}
 		else {
@@ -243,7 +243,7 @@ class listGenerator {
 				localvars::get("siteRoot"),
 				($metadata === TRUE)?"metadata":"object",
 				htmlSanitize($form['ID']),
-				htmlSanitize(!empty($form['title']) ? $form['title'] : '[No form title]')
+				htmlSanitize(!empty($form['displayTitle']) ? $form['displayTitle'] : (!empty($form['title']) ? $form['title'] : '[No form title]'))
 				);
 		}
 
@@ -268,25 +268,16 @@ class listGenerator {
 			}
 
 			$output .= '<div class="accordion-group">';
-
 			$output .= '<div class="accordion-heading" style="padding: 5px;">';
 			$output .= '<div>';
-			
-			if (($output .= self::generateAccordionFormList_links($form,$entry)) === FALSE) {
-				return FALSE;
+			$output .= self::generateAccordionFormList_links($form,$entry);
+			if(sizeof(forms::getObjectFormMetaForms($form['ID']))){
+				$output .= sprintf('<a class="pull-right" data-toggle="collapse" data-parent="#formListAccordion" href="#collapse%s">Show Metadata Forms</a>',
+					++$count);
 			}
-			
-			$output .= sprintf('<a class="pull-right" data-toggle="collapse" data-parent="#formListAccordion" href="#collapse%s">',
-				++$count
-				);
-			$output .= "Show Metadata Forms";
-			$output .= "</a>";
 			$output .= '</div>';
 			$output .= "</div>"; // heading
-
-			$output .= sprintf('<div id="collapse%s" class="accordion-body collapse">',
-				$count
-				);
+			$output .= sprintf('<div id="collapse%s" class="accordion-body collapse">', $count);
      		$output .= '<div class="accordion-inner">';
 
      		$output .= '<ul>';
@@ -301,15 +292,11 @@ class listGenerator {
 
 	 		$output .= "</div>"; // inner
 	 		$output .= "</div>"; // body
-
 			$output .= "</div>"; // group
-
 		}
-
 		$output .= "</div>";
 
 		return $output;
-
 	}
 
 	public static function generateFormSelectListForFormCreator($metadata = TRUE) {

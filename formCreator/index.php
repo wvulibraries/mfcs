@@ -74,20 +74,22 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 							`production`='%s',
 							`metadata`='%s',
 							`count`='%s',
+							`displayTitle`='%s',
 							`objectTitleField`='%s'
 						WHERE ID='%s' LIMIT 1",
-			$engine->openDB->escape($form['formTitle']),        // title=
+			$engine->openDB->escape($form['formTitle']),          // title=
 			!is_empty($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL", // description=
-			encodeFields($fields),                              // fields=
-			encodeFields($idno),                                // idno=
-			$engine->openDB->escape($form['submitButton']),     // submitButton=
-			$engine->openDB->escape($form['updateButton']),     // updateButton=
-			$engine->openDB->escape($form['formContainer']),    // container=
-			$engine->openDB->escape($form['formProduction']),   // production=
-			$engine->openDB->escape($form['formMetadata']),     // metadata=
-			$engine->openDB->escape($count),                    // count=
-			$engine->openDB->escape($form['objectTitleField']), // objectTitleField=
-			$engine->openDB->escape($formID)                    // ID=
+			encodeFields($fields),                                // fields=
+			encodeFields($idno),                                  // idno=
+			$engine->openDB->escape($form['submitButton']),       // submitButton=
+			$engine->openDB->escape($form['updateButton']),       // updateButton=
+			$engine->openDB->escape($form['formContainer']),      // container=
+			$engine->openDB->escape($form['formProduction']),     // production=
+			$engine->openDB->escape($form['formMetadata']),       // metadata=
+			$engine->openDB->escape($count),                      // count=
+			$engine->openDB->escape($form['objectDisplayTitle']), // displayTitle=
+			$engine->openDB->escape($form['objectTitleField']),   // objectTitleField=
+			$engine->openDB->escape($formID)                      // ID=
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
@@ -98,7 +100,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	}
 	else {
 		// Insert into forms table
-		$sql = sprintf("INSERT INTO `forms` (title, description, fields, idno, submitButton, updateButton, container, production, metadata, count, objectTitleField) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s')",
+		$sql = sprintf("INSERT INTO `forms` (title, description, fields, idno, submitButton, updateButton, container, production, metadata, count, displayTitle, objectTitleField) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')",
 			$engine->openDB->escape($form['formTitle']),
 			isset($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
 			encodeFields($fields),
@@ -109,6 +111,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			$engine->openDB->escape($form['formProduction']),
 			$engine->openDB->escape($form['formMetadata']),
 			$engine->openDB->escape($count),
+			$engine->openDB->escape($form['objectDisplayTitle']),
 			$engine->openDB->escape($form['objectTitleField'])
 			);
 		$sqlResult = $engine->openDB->query($sql);
@@ -282,6 +285,7 @@ if (!isnull($formID)) {
 		localVars::add("formDescription", htmlSanitize($form['description']));
 		localVars::add("submitButton",    htmlSanitize($form['submitButton']));
 		localVars::add("updateButton",    htmlSanitize($form['updateButton']));
+		localVars::add("displayTitle",    htmlSanitize($form['displayTitle']));
 		localVars::add("formContainer",   ($form['container'] == '1')  ? "checked" : "");
 		localVars::add("formProduction",  ($form['production'] == '1') ? "checked" : "");
 		localVars::add("formMetadata",    ($form['metadata'] == '1')   ? "checked" : "");
@@ -707,10 +711,10 @@ $engine->eTemplate("include","header");
 															<hr>
 															<b>Static Date/Time</b>
 															<ul style="list-style: none;">
-																<li><b>%date%</b><br>The current date in MM/DD/YYYY format. (<i>Example: <?php echo forms::applyFieldVariables('%date%') ?></i>)</li>
-																<li><b>%time%</b><br>The current time in HH:MM:SS format. (<i>Example: <?php echo forms::applyFieldVariables('%time%') ?></i>)</li>
-																<li><b>%time12%</b><br>The current time in 12-hr format. (<i>Example: <?php echo forms::applyFieldVariables('%time12%') ?></i>)</li>
-																<li><b>%time24%</b><br>The current time inn 24-hr format. (<i>Example: <?php echo forms::applyFieldVariables('%time24%') ?></i>)</li>
+																<li><b>%date%</b><br>The current date as MM/DD/YYYY. (<i>Example: <?php echo forms::applyFieldVariables('%date%') ?></i>)</li>
+																<li><b>%time%</b><br>The current time as HH:MM:SS. (<i>Example: <?php echo forms::applyFieldVariables('%time%') ?></i>)</li>
+																<li><b>%time12%</b><br>The current 12-hr time. (<i>Example: <?php echo forms::applyFieldVariables('%time12%') ?></i>)</li>
+																<li><b>%time24%</b><br>The current 24-hr time. (<i>Example: <?php echo forms::applyFieldVariables('%time24%') ?></i>)</li>
 																<li><b>%timestamp%</b><br>The current UNIX system timestamp. (<i>Example: <?php echo forms::applyFieldVariables('%timestamp%') ?></i>)</li>
 															</ul>
 															<hr>
@@ -897,31 +901,25 @@ $engine->eTemplate("include","header");
 										</div>
 
 										<div class="control-group well well-small" id="fieldSettings_container_file_options">
-											<label for="fieldSettings_file_options">
-												File Upload Options
-											</label>
-											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_file_options_multipleFiles" name="fieldSettings_file_options_multipleFiles"> Allow Multiple Files in Single Upload
-											</label>
-
-											Images
-											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_file_options_combine" name="fieldSettings_file_options_combine"> Combine into Single PDF
-											</label>
-											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_file_options_ocr" name="fieldSettings_file_options_ocr"> Optical Character Recognition (OCR)
-											</label>
-											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_file_options_convert" name="fieldSettings_file_options_convert"> Convert Uploaded File
-											</label>
-											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_file_options_thumbnail" name="fieldSettings_file_options_thumbnail"> Create Thumbnail
-											</label>
-
-											Audio
-											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_file_options_mp3" name="fieldSettings_file_options_mp3"> Create MP3
-											</label>
+											File Upload Options
+											<div>
+												<div style="float: left; margin-top: 5px;">
+													Images
+													<ul class="checkboxList">
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_multipleFiles" name="fieldSettings_file_options_multipleFiles"> Allow Multiple Files in Single Upload</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_combine" name="fieldSettings_file_options_combine"> Combine into Single PDF</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_ocr" name="fieldSettings_file_options_ocr"> Optical Character Recognition (OCR)</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_convert" name="fieldSettings_file_options_convert"> Convert Uploaded File</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_thumbnail" name="fieldSettings_file_options_thumbnail"> Create Thumbnail</label></li>
+													</ul>
+												</div>
+												<div style="float: left; margin-top: 5px;">
+													Audio
+													<ul class="checkboxList">
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_mp3" name="fieldSettings_file_options_mp3"> Create MP3</label></li>
+													</ul>
+												</div>
+											</div>
 										</div>
 
 										<div class="control-group well well-small" id="fieldSettings_container_file_convert">
@@ -954,56 +952,56 @@ $engine->eTemplate("include","header");
 												</div>
 											</div>
 
-											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_file_convert_watermark" name="fieldSettings_file_convert_watermark"> Watermark
-											</label>
-											<div class="row-fluid">
-												<div class="span6">
-													<label for="fieldSettings_file_watermark_image">
-														Image
-													</label>
-													<select class="input-block-level" id="fieldSettings_file_watermark_image" name="fieldSettings_file_watermark_image">
-														{local var="watermarkList"}
-													</select>
-												</div>
-												<div class="span6">
-													<label for="fieldSettings_file_watermark_location">
-														Location
-													</label>
-													<select class="input-block-level" id="fieldSettings_file_watermark_location" name="fieldSettings_file_watermark_location">
-														{local var="imageLocations"}
-													</select>
-												</div>
-											</div>
+											<ul class="checkboxList">
+												<li>
+													<label class="checkbox"><input type="checkbox" id="fieldSettings_file_convert_watermark" name="fieldSettings_file_convert_watermark">Watermark</label>
+													<div class="row-fluid">
+														<div class="span6">
+															<label for="fieldSettings_file_watermark_image">
+																Image
+															</label>
+															<select class="input-block-level" id="fieldSettings_file_watermark_image" name="fieldSettings_file_watermark_image">
+																{local var="watermarkList"}
+															</select>
+														</div>
+														<div class="span6">
+															<label for="fieldSettings_file_watermark_location">
+																Location
+															</label>
+															<select class="input-block-level" id="fieldSettings_file_watermark_location" name="fieldSettings_file_watermark_location">
+																{local var="imageLocations"}
+															</select>
+														</div>
+													</div>
+												</li>
+												<li>
+													<label class="checkbox"><input type="checkbox" id="fieldSettings_file_convert_border" name="fieldSettings_file_convert_border"> Border</label>
+													<div class="row-fluid">
+														<div class="span4">
+															<label for="fieldSettings_file_border_height">
+																Height (px)
+																<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Border width of the top and bottom."></i>
+															</label>
+															<input type="number" class="input-block-level" id="fieldSettings_file_border_height" name="fieldSettings_file_border_height" min="0" />
+														</div>
 
-											<label class="checkbox">
-												<input type="checkbox" id="fieldSettings_file_convert_border" name="fieldSettings_file_convert_border"> Border
-											</label>
-											<div class="row-fluid">
-												<div class="span4">
-													<label for="fieldSettings_file_border_height">
-														Height (px)
-														<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Border width of the top and bottom."></i>
-													</label>
-													<input type="number" class="input-block-level" id="fieldSettings_file_border_height" name="fieldSettings_file_border_height" min="0" />
-												</div>
+														<div class="span4">
+															<label for="fieldSettings_file_border_width">
+																Width (px)
+																<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Border width of the left and right."></i>
+															</label>
+															<input type="number" class="input-block-level" id="fieldSettings_file_border_width" name="fieldSettings_file_border_width" min="0" />
+														</div>
 
-												<div class="span4">
-													<label for="fieldSettings_file_border_width">
-														Width (px)
-														<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Border width of the left and right."></i>
-													</label>
-													<input type="number" class="input-block-level" id="fieldSettings_file_border_width" name="fieldSettings_file_border_width" min="0" />
-												</div>
-
-												<div class="span4">
-													<label for="fieldSettings_file_border_color">
-														Color
-													</label>
-													<input type="color" class="input-block-level" id="fieldSettings_file_border_color" name="fieldSettings_file_border_color" />
-												</div>
-											</div>
-
+														<div class="span4">
+															<label for="fieldSettings_file_border_color">
+																Color
+															</label>
+															<input type="color" class="input-block-level" id="fieldSettings_file_border_color" name="fieldSettings_file_border_color" />
+														</div>
+													</div>
+												</li>
+											</ul>
 										</div>
 
 										<div class="control-group well well-small" id="fieldSettings_container_file_thumbnail">
@@ -1040,33 +1038,17 @@ $engine->eTemplate("include","header");
 										<div class="row-fluid noHide">
 											<span class="span6">
 												<div class="control-group well well-small" id="fieldSettings_container_options">
-													<label for="fieldSettings_options">
-														Options
-													</label>
-													<label class="checkbox">
-														<input type="checkbox" id="fieldSettings_options_required" name="fieldSettings_options_required"> Required
-													</label>
-													<label class="checkbox">
-														<input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates"> No Duplicates
-													</label>
-													<label class="checkbox">
-														<input type="checkbox" id="fieldSettings_options_readonly" name="fieldSettings_options_readonly"> Read Only
-													</label>
-													<label class="checkbox">
-														<input type="checkbox" id="fieldSettings_options_disabled" name="fieldSettings_options_disabled"> Disabled
-													</label>
-													<label class="checkbox">
-														<input type="checkbox" id="fieldSettings_options_publicRelease" name="fieldSettings_options_publicRelease"> Public Release
-													</label>
-													<label class="checkbox">
-														<input type="checkbox" id="fieldSettings_options_sortable" name="fieldSettings_options_sortable"> Sortable
-													</label>
-													<label class="checkbox">
-														<input type="checkbox" id="fieldSettings_options_searchable" name="fieldSettings_options_searchable"> Searchable
-													</label>
-													<label class="checkbox">
-														<input type="checkbox" id="fieldSettings_options_displayTable" name="fieldSettings_options_displayTable"> Display in List Table
-													</label>
+													Options
+													<ul class="checkboxList">
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_required" name="fieldSettings_options_required"> Required</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates"> No Duplicates</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_readonly" name="fieldSettings_options_readonly"> Read Only</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_disabled" name="fieldSettings_options_disabled"> Disabled</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_publicRelease" name="fieldSettings_options_publicRelease"> Public Release</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_sortable" name="fieldSettings_options_sortable"> Sortable</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_searchable" name="fieldSettings_options_searchable"> Searchable</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_displayTable" name="fieldSettings_options_displayTable"> Display in List Table</label></li>
+													</ul>
 												</div>
 											</span>
 											<span class="span6">
@@ -1135,6 +1117,14 @@ $engine->eTemplate("include","header");
 												<span class="help-block hidden"></span>
 											</div>
 										</div>
+									</div>
+
+									<div class="control-group well well-small" id="formSettings_objectDisplayTitle_container">
+										<label for="formSettings_objectDisplayTitle">
+											Display Title
+										</label>
+										<input type="text" class="input-block-level" id="formSettings_objectDisplayTitle" name="formSettings_objectDisplayTitle" value="{local var="displayTitle"}">
+										<span class="help-block hidden"></span>
 									</div>
 
 									<div class="control-group well well-small" id="formSettings_objectTitleField_container">

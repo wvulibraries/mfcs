@@ -3,7 +3,7 @@ $(function() {
 
 	// Blank all panes when changing tabs
 	$("#groupingTab").on("click", "a", function() {
-		$("#GroupingsPreview li").removeClass("well");
+		groupingsPreview.find("li").removeClass("well");
 		showSettings(); // blank the Settings pane
 	});
 
@@ -20,8 +20,8 @@ $(function() {
 		event.preventDefault();
 
 		if (!$(this).hasClass("noDrag")) {
-			$(this).clone().appendTo($("#GroupingsPreview"));
-			addNew($("#GroupingsPreview li:last"));
+			$(this).clone().appendTo(groupingsPreview);
+			addNew(groupingsPreview.find("li:last"));
 			sortableNav();
 		}
 	});

@@ -154,3 +154,11 @@ label {
 .multiSelectContainer {
 	display: inline-block;
 }
+
+ul.checkboxList{
+	list-style: none;
+	margin: 5px;
+}
+ul.checkboxList label{
+	width: initial;
+}
