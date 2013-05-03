@@ -3,20 +3,10 @@ include("../header.php");
 
 try {
 
-	if (($objectFormList = listGenerator::generateFormSelectListForFormCreator(FALSE)) === FALSE) {
-		throw new Exception("Error generating object form list.");
-	}
-
-	if (($metadataFormList = listGenerator::generateFormSelectListForFormCreator(TRUE)) === FALSE) {
-		throw new Exception("Error generating metadata form list.");
-	}
-
 	if (($accordionList = listGenerator::generateAccordionFormList()) === FALSE) {
 		throw new Exception("Error generating Form List");
 	}
 
-	localvars::add("objectFormList",$objectFormList);
-	localvars::add("metadataFormList",$metadataFormList);
 	localvars::add("accordionList",$accordionList);
 }
 catch(Exception $e) {
