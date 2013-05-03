@@ -74,20 +74,22 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 							`production`='%s',
 							`metadata`='%s',
 							`count`='%s',
+							`displayTitle`='%s',
 							`objectTitleField`='%s'
 						WHERE ID='%s' LIMIT 1",
-			$engine->openDB->escape($form['formTitle']),        // title=
+			$engine->openDB->escape($form['formTitle']),          // title=
 			!is_empty($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL", // description=
-			encodeFields($fields),                              // fields=
-			encodeFields($idno),                                // idno=
-			$engine->openDB->escape($form['submitButton']),     // submitButton=
-			$engine->openDB->escape($form['updateButton']),     // updateButton=
-			$engine->openDB->escape($form['formContainer']),    // container=
-			$engine->openDB->escape($form['formProduction']),   // production=
-			$engine->openDB->escape($form['formMetadata']),     // metadata=
-			$engine->openDB->escape($count),                    // count=
-			$engine->openDB->escape($form['objectTitleField']), // objectTitleField=
-			$engine->openDB->escape($formID)                    // ID=
+			encodeFields($fields),                                // fields=
+			encodeFields($idno),                                  // idno=
+			$engine->openDB->escape($form['submitButton']),       // submitButton=
+			$engine->openDB->escape($form['updateButton']),       // updateButton=
+			$engine->openDB->escape($form['formContainer']),      // container=
+			$engine->openDB->escape($form['formProduction']),     // production=
+			$engine->openDB->escape($form['formMetadata']),       // metadata=
+			$engine->openDB->escape($count),                      // count=
+			$engine->openDB->escape($form['objectDisplayTitle']), // displayTitle=
+			$engine->openDB->escape($form['objectTitleField']),   // objectTitleField=
+			$engine->openDB->escape($formID)                      // ID=
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
@@ -98,7 +100,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	}
 	else {
 		// Insert into forms table
-		$sql = sprintf("INSERT INTO `forms` (title, description, fields, idno, submitButton, updateButton, container, production, metadata, count, objectTitleField) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s')",
+		$sql = sprintf("INSERT INTO `forms` (title, description, fields, idno, submitButton, updateButton, container, production, metadata, count, displayTitle, objectTitleField) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')",
 			$engine->openDB->escape($form['formTitle']),
 			isset($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
 			encodeFields($fields),
@@ -109,6 +111,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			$engine->openDB->escape($form['formProduction']),
 			$engine->openDB->escape($form['formMetadata']),
 			$engine->openDB->escape($count),
+			$engine->openDB->escape($form['objectDisplayTitle']),
 			$engine->openDB->escape($form['objectTitleField'])
 			);
 		$sqlResult = $engine->openDB->query($sql);
@@ -1135,6 +1138,14 @@ $engine->eTemplate("include","header");
 												<span class="help-block hidden"></span>
 											</div>
 										</div>
+									</div>
+
+									<div class="control-group well well-small" id="formSettings_objectDisplayTitle_container">
+										<label for="formSettings_objectDisplayTitle">
+											Display Title
+										</label>
+										<input type="text" class="input-block-level" id="formSettings_objectDisplayTitle" name="formSettings_objectDisplayTitle">
+										<span class="help-block hidden"></span>
 									</div>
 
 									<div class="control-group well well-small" id="formSettings_objectTitleField_container">
