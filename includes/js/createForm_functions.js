@@ -293,39 +293,37 @@ function fieldSettingsBindings() {
 		}
 	});
 
-	$("#fieldSettings_name")
-		.keyup(function() {
-			return;
-			var formSettings_objectTitleField = $('#formSettings_objectTitleField');
-			var option = $("option[value='"+$(":input[name^=name_]", formPreview).val()+"']", formSettings_objectTitleField);
-			if (option.length > 0) {
-				option.val($(this).val());
-			}
-			else if ($(".well :input[name^=type_][value=text]", formPreview).length > 0) {
-				$("#formSettings_objectTitleField").append('<option value="'+$(this).val()+'">'+$(".well :input[name^=label_]",formPreview).val()+'</option>');
-			}
+	$("#fieldSettings_name").keyup(function() {
+		var formPreviewWell               = formPreview.find(".well");
+		var id                            = formPreviewWell.prop("id").split("_")[1];
+		var val                           = $(this).val();
+		var formSettings_objectTitleField = $('#formSettings_objectTitleField');
 
-			$(".well .controls :input", formPreview).prop('name',$(this).val());
-			$(".well :input[name^=name_]", formPreview).val($(this).val());
-		})
-		.blur(function(){
-			var name = $(this).val();
-			var nameClean = name.replace(/[\t ]/g,'');
-			if(name != nameClean) $(this).val(nameClean).keyup();
-		});
-
-	$("#fieldSettings_label").keyup(function() {
-		var formPreviewWell         = formPreview.find(".well");
-		var id                      = formPreviewWell.prop("id").split("_")[1];
-		var val                     = $(this).val();
-		var nameVal                 = $("#name_"+id).val();
-		var objectTitleField_option = $("#formSettings_objectTitleField option[value='"+nameVal+"']");
-
-		if (objectTitleField_option.length > 0) {
-			objectTitleField_option.text(val);
+		var option = formSettings_objectTitleField.find("option[value='"+$("#name_"+id).val()+"']");
+		if (option.length > 0) {
+			option.val(val);
 		}
 		else if ($("#type_"+id+"[value=text]").length > 0) {
-			$("#formSettings_objectTitleField").append('<option value="'+nameVal+'">'+val+'</option>');
+			formSettings_objectTitleField.append('<option value="'+val+'">'+$("#label_"+id).val()+'</option>');
+		}
+
+		formPreviewWell.find(".control-group > .controls > :input").prop('name', val);
+		$("#name_"+id).val(val);
+	});
+
+	$("#fieldSettings_label").keyup(function() {
+		var formPreviewWell               = formPreview.find(".well");
+		var id                            = formPreviewWell.prop("id").split("_")[1];
+		var val                           = $(this).val();
+		var nameVal                       = $("#name_"+id).val();
+		var formSettings_objectTitleField = $('#formSettings_objectTitleField');
+
+		var option = formSettings_objectTitleField.find("option[value='"+nameVal+"']");
+		if (option.length > 0) {
+			option.text(val);
+		}
+		else if ($("#type_"+id+"[value=text]").length > 0) {
+			formSettings_objectTitleField.append('<option value="'+nameVal+'">'+val+'</option>');
 		}
 
 		formPreviewWell.find(".control-group > label").text(val);
