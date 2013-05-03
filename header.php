@@ -20,6 +20,8 @@ require_once "includes/users.php";
 require_once "includes/files.php";
 mfcs::singleton();
 
+$mfcsSearch = new mfcsSearch();
+
 // Load the user's current projects
 
 sessionSet('currentProject',users::loadProjects());
