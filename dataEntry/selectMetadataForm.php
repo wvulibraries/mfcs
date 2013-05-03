@@ -24,14 +24,12 @@ try {
 			);
 		$formList .= '<ul class="pickList">';
 
-		foreach ($metadataForms as $metadataForm) {
+		foreach ($metadataForms as $I=>$metadataForm) {
 
 			// Remove the array from the master list of metadata forms, so we 
 			// don't redisplay it below
-			if (in_array($metadataForm,$metaForms,TRUE)) {
-				if(($index = array_search($metadataForm, $metaForms)) !== FALSE) {
-					unset($metaForms[$index]);
-				}
+			if (isset($metaForms[$I])) {
+				unset($metaForms[$I]);
 			}
 
 			$formList .= '<li>';

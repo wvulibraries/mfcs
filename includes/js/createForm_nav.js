@@ -1,9 +1,6 @@
 $(function() {
 	var groupingsPreview = $("#GroupingsPreview");
 
-	// Instantiate the bootstrap tooltip plugin
-	$("[rel='tooltip']").tooltip();
-
 	// Blank all panes when changing tabs
 	$("#groupingTab").on("click", "a", function() {
 		$("#GroupingsPreview li").removeClass("well");
