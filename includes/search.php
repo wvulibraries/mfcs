@@ -39,7 +39,7 @@ class mfcsSearch {
 	public static function formListing() {
 		$forms = forms::getObjectForms();
 
-		$output = "";
+		$output = '<option value="NULL">-- Select a Form --</option>';
 		foreach ($forms as $form) {
 			$output .= sprintf('<option value="%s">%s</option>',
 				$form['ID'],
@@ -48,6 +48,21 @@ class mfcsSearch {
 		}
 
 		return $output;
+	}
+
+	public static function formFieldOptions($formID) {
+		$form = forms::get($formID);
+
+		$output = '<option value="idno">IDNO</option><option value="anyField">Any Field</option><optgroup label="Form Fields">';
+		foreach ($form['fields'] as $field) {
+			$output .= sprintf('<option value="%s">%s</option>',
+				$field['name'],
+				$field['label']
+				);
+		}
+		$output .= "</optgroup>";
+
+		return($output);
 	}
 
 }

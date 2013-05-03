@@ -31,7 +31,8 @@ $(function(){
     });
 
     $(document)
-        .on('click', '.metadataObjectEditor', handler_setupMetadataModal)
+        .on('click',  '.metadataObjectEditor', handler_setupMetadataModal)
+        .on('change', '#searchFormSelect',     handler_setupSearchFormFields)
 
     $('#metadataModal').bind('keypress keydown keyup', function(e){
        if(e.keyCode == 13) { e.preventDefault(); }
@@ -40,6 +41,24 @@ $(function(){
 
 });
 
+function handler_setupSearchFormFields() {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    var formID = $('#searchFormSelect').val();
+    var url    = siteRoot+'/index.php?action=searchFormFields&formID='+formID+'&ajax=true';
+    $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "html",
+        success: function(responseData) {
+            $("#formFieldsOptGroup").html(responseData);
+        },
+        error: function(jqXHR,error,exception) {
+        }
+    }); 
+}
+
 function handler_setupMetadataModal() {
     event.preventDefault();
     event.stopImmediatePropagation();
@@ -47,7 +66,7 @@ function handler_setupMetadataModal() {
 
     var dataFieldName = $(this).attr("data-fieldname");
     var formID        = $(this).attr('data-formid');
-    var url           = siteRoot+'/dataEntry/metadata.php?formID='+formID+'&amp;ajax=true';
+    var url           = siteRoot+'/dataEntry/metadata.php?formID='+formID+'&ajax=true';
 
     $.ajax({
         type: "GET",

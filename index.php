@@ -59,11 +59,14 @@ if(isset($engine->cleanGet['MYSQL']['ajax'])){
     else if (isset($engine->cleanGet['MYSQL']['action'])) {
         switch($engine->cleanGet['MYSQL']['action']){
             case 'selectChoices':
-            $field        = forms::getField($engine->cleanGet["MYSQL"]['formID'],$engine->cleanGet["MYSQL"]['fieldName']);
-            $fieldChoices = forms::getFieldChoices($field);
-            $result       = forms::drawFieldChoices($field,$fieldChoices);
-            die($result);
-            break;
+                $field        = forms::getField($engine->cleanGet["MYSQL"]['formID'],$engine->cleanGet["MYSQL"]['fieldName']);
+                $fieldChoices = forms::getFieldChoices($field);
+                $result       = forms::drawFieldChoices($field,$fieldChoices);
+                die($result);
+                break;
+            case 'searchFormFields':
+                die(mfcsSearch::formFieldOptions($engine->cleanGet["MYSQL"]['formID']));
+                break;
         }
     }
     header('Content-type: application/json');
