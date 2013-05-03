@@ -1,4 +1,6 @@
 $(function() {
+	var groupingsPreview = $("#GroupingsPreview");
+
 	// Instantiate the bootstrap tooltip plugin
 	$("[rel='tooltip']").tooltip();
 
@@ -37,19 +39,24 @@ $(function() {
 		}
 	});
 
-	// Delete icon binding
-	$("#GroupingsPreview").on("click", ".groupingPreview i.icon-remove", function() {
-		if (confirm("Are you sure you want to remove this grouping?")) {
-			var thisLI = $(this).parent().parent();
+	groupingsPreview
+		// Delete icon binding
+		.on("click", ".groupingPreview i.icon-remove", function() {
+			if (confirm("Are you sure you want to remove this grouping?")) {
+				var thisLI = $(this).parent().parent();
 
-			// If I'm a grouping, move any groupings that are within me
-			if ($(this).parent().next().children(":input[name^=nav_type_]").val() == 'grouping') {
-				thisLI.after($(this).next().find("li"));
+				// If I'm a grouping, move any groupings that are within me
+				if ($(this).parent().next().children(":input[name^=nav_type_]").val() == 'grouping') {
+					thisLI.after($(this).next().find("li"));
+				}
+				// Delete this li
+				thisLI.remove();
 			}
-			// Delete this li
-			thisLI.remove();
-		}
-	});
+		})
+		// Disable links in preview
+		.on("click", "a", function(event) {
+			event.preventDefault();
+		});
 
 	// Re-order nesting on load
 	// This loops through <li> and finds all the fieldsets, then loops through matching all <li> that have
@@ -67,13 +74,8 @@ $(function() {
 	settingsBindings();
 
 	// Click through each field and then back to add field tab on page load to update form preview
-	$("#GroupingsPreview li").click();
+	groupingsPreview.find("li").click();
 	$("#groupingTab li:first a").click();
-
-	// Disable links in preview
-	$("#GroupingsPreview").on("click", "a", function(event) {
-		event.preventDefault();
-	});
 
 	$("form[name=submitNavigation]").submit(function(event) {
 		// event.preventDefault();
@@ -106,6 +108,6 @@ $(function() {
 		$(":input[name=groupings]", this).val(JSON.stringify(obj));
 
 		$("#groupingsSettings :input").prop("disabled", true);
-		$("#GroupingsPreview :input").prop("disabled", true);
+		groupingsPreview.find(":input").prop("disabled", true);
 	});
 });
