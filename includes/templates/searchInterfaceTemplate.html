@@ -1,0 +1,43 @@
+<form action="" method="post">
+	{engine name="csrf"}
+
+	Search
+	 
+	<select name="formList">
+		{mfcsSearch name="formList"}
+	</select>
+
+	for keyword 
+
+	<input type="text" name="query" />
+
+	in
+
+	<!-- Form Fields will be populated via ajax -->
+	<select name="fieldList">
+		<option value="idno">IDNO</option>
+		<option value="anyField">Any Field</option>
+		<optgroup label="Form Fields">
+		</optgroup>
+	</select>
+
+	<br />
+
+	<hr />
+
+	<br />
+
+	<p>Or by when records were created.</p>
+	<p><em>Will override above options</em</p>
+
+	<label for="startDate">Start Date</label>
+	<input type="date" name="startDate" />
+
+	<label for="endDate">End Date</label>
+	<input type="date" name="endDate" />
+
+	<br />
+
+	<input type="submit" name="search" value="search" />
+
+</form>
