@@ -37,7 +37,17 @@ class mfcsSearch {
 	}
 
 	public static function formListing() {
-		return '<option>Here!</option>';
+		$forms = forms::getObjectForms();
+
+		$output = "";
+		foreach ($forms as $form) {
+			$output .= sprintf('<option value="%s">%s</option>',
+				$form['ID'],
+				$form['title']
+				);
+		}
+
+		return $output;
 	}
 
 }
