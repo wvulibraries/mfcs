@@ -300,6 +300,10 @@ class forms {
 
 	private static function drawSelectDropdowns($field,$fieldChoices) {
 		$output = "";
+
+		if(str2bool($field['choicesNull'])){
+			$output .= '<option value="">Make a selection</option>';
+		}
 		foreach ($fieldChoices as $choice) {
 			$output .= sprintf('<option value="%s" %s>%s</option>',
 				htmlSanitize($choice['value']),

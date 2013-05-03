@@ -811,7 +811,7 @@ $engine->eTemplate("include","header");
 												<option value="manual">Manual</option>
 												<option value="form">Another Form</option>
 											</select>
-											<p>
+												<label style="width: 100%;"><input type="checkbox" id="fieldSettings_choices_null" name="fieldSettings_choices_null"> Include 'Make a selection' placeholder</label></span>
 												<div id="fieldSettings_choices_manual"></div>
 												<div id="fieldSettings_choices_form">
 													<label for="fieldSettings_choices_formSelect">
