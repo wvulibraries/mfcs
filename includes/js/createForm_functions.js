@@ -192,7 +192,7 @@ function showFieldSettings(fullID) {
 			}
 
 			$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change();
-			$("#fieldSettings_choices_null").prop("checked",($("#choicesNull_"+id).val()==='true'));
+			$("#fieldSettings_choices_null").prop("checked",($("#choicesNull_"+id).val()==='true')).change();
 
 			var choicesOptions_val = $("#choicesOptions_"+id).val();
 			if (choicesOptions_val != undefined) {
@@ -464,7 +464,16 @@ function fieldSettingsBindings() {
 		var id              = formPreviewWell.prop("id").split("_")[1];
 		var clickState      = $(this).prop('checked');
 		$("#choicesNull_"+id).val(clickState);
-		$('#fieldSettings_choices_manual input[name=fieldSettings_choices_text]:first').keyup();
+		if($("#fieldSettings_choices_type").val() == 'manual'){
+			$('#fieldSettings_choices_manual input[name=fieldSettings_choices_text]:first').keyup();
+		}else{
+			if(clickState){
+				formPreviewWell.find(".control-group > .controls > :input").append('<option value="">Make a selection</option>');
+			}else{
+				formPreviewWell.find(".control-group > .controls > :input").html('');
+			}
+
+		}
 	});
 	$("#fieldSettings_choices_manual")
 		.on("click","button[name=default]",function() {
