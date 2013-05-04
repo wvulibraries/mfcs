@@ -123,8 +123,11 @@ class listGenerator {
 	private static function createTable($data,$headers = NULL) {
 		$table = new tableObject("array");
 
-		$table->summary = "Object Listing";
-		$table->sortable = TRUE;
+		$table->summary  = "Object Listing";
+		$table->sortable = FALSE;
+		$table->class    = "table table-striped table-bordered";
+		$table->id       = "objectListingTable";
+		$table->layout   = TRUE;
 
 		if (isnull($headers)) {
 			$headers = array();
