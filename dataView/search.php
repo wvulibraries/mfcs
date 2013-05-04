@@ -11,8 +11,34 @@ $breadCrumbs = array(
 
 
 // Process search Submission
-if (!isset($engine->cleanPost['MYSQL'])) {
+if (isset($engine->cleanPost['MYSQL']['search'])) {
+	print "<pre>";
+	var_dump($engine->cleanPost['MYSQL']);
+	print "</pre>";
 	// throw new Exception("");	
+	
+	try {
+
+		if (isnull($engine->cleanPost['MYSQL']['formList'])) {
+			throw new Exception("No form selected.");
+		}
+
+		if (isempty($engine->cleanPost['MYSQL']['query']) && (isempty($engine->cleanPost['MYSQL']['startDate']) || isempty($engine->cleanPost['MYSQL']['endDate']))) {
+			throw new Exception("No Query Provided.");
+		}
+
+		if (($results = mfcsSearch::search($engine->cleanPost['MYSQL'])) === FALSE) {
+			throw new Exception("Error retrieving results");
+		}
+
+		print "<pre>";
+		var_dump($results);
+		print "</pre>";
+
+	}
+	catch(Exception $e) {
+		errorHandle::errorMsg($e->getMessage());
+	}
 }
 
 // build the search interface, we do this regardless of 
@@ -22,6 +48,7 @@ try {
 	localvars::add("searchInterface",$interface);
 }
 catch(Exception $e) {
+	errorHandle::errorMsg($e->getMessage());
 }
 
 // Make breadcrumbs

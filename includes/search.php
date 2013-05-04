@@ -53,7 +53,7 @@ class mfcsSearch {
 	public static function formFieldOptions($formID) {
 		$form = forms::get($formID);
 
-		$output = '<option value="idno">IDNO</option><option value="anyField">Any Field</option><optgroup label="Form Fields">';
+		$output = '<option value="idno">IDNO</option><optgroup label="Form Fields">';
 		foreach ($form['fields'] as $field) {
 			$output .= sprintf('<option value="%s">%s</option>',
 				$field['name'],
@@ -63,6 +63,65 @@ class mfcsSearch {
 		$output .= "</optgroup>";
 
 		return($output);
+	}
+
+	// post is expected to be mysql sanitized
+	public static function search($post) {
+
+		if (isempty($post['formList'])) {
+			return FALSE;
+		}
+
+		if (!isempty($post['startDate']) && !isempty($post['endDate'])) {
+			$date = TRUE;
+			$dateWhere = sprintf("`createDate`>='%s' AND createDate <='%s",
+				$post['startDate'],
+				$post['endDate']);
+		}
+		else {
+			$date = FALSE;
+			$dataWhere = "";
+		}
+
+		$sql       = sprintf("SELECT `ID` FROM `objects` WHERE `formID`='%s' %s",
+			$post['formList'],
+			$dateWhere
+			); 
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		print "<pre>";
+		var_dump($sql);
+		print "</pre>";
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		$results = array();
+		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+			if (($object = objects::get($row['ID'])) === FALSE) {
+				return FALSE;
+			}
+
+			$found = FALSE;
+			if (!isempty($post['query']) ) { 
+				if (stripos($object['data'][$post['fieldList']],$post['query']) !== FALSE) {
+					$results[$row['ID']] = $object;
+					$found = TRUE;	
+				}
+			}
+			else if (isempty($post['query']) && $date === TRUE) {
+				$found = TRUE;
+			}
+
+			if ($found === TRUE) {
+				$results[$row['ID']] = $object;
+			}
+
+		}
+
+		return($results);
 	}
 
 }
