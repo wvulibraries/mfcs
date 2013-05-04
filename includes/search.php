@@ -89,10 +89,6 @@ class mfcsSearch {
 			); 
 		$sqlResult = mfcs::$engine->openDB->query($sql);
 
-		print "<pre>";
-		var_dump($sql);
-		print "</pre>";
-
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
