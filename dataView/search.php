@@ -12,9 +12,9 @@ $breadCrumbs = array(
 
 // Process search Submission
 if (isset($engine->cleanPost['MYSQL']['search'])) {
-	print "<pre>";
-	var_dump($engine->cleanPost['MYSQL']);
-	print "</pre>";
+	// print "<pre>";
+	// var_dump($engine->cleanPost['MYSQL']);
+	// print "</pre>";
 	// throw new Exception("");	
 	
 	try {
@@ -31,9 +31,11 @@ if (isset($engine->cleanPost['MYSQL']['search'])) {
 			throw new Exception("Error retrieving results");
 		}
 
-		print "<pre>";
-		var_dump($results);
-		print "</pre>";
+		localvars::add("objectTable",listGenerator::createAllObjectList(0,50,NULL,$results));
+
+		// print "<pre>";
+		// var_dump($results);
+		// print "</pre>";
 
 	}
 	catch(Exception $e) {
@@ -77,6 +79,10 @@ $engine->eTemplate("include","header");
 
 
 	{local var="searchInterface"}
+
+	<hr />
+
+	{local var="objectTable"}
 
 
 </section>
