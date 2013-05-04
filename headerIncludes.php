@@ -3,6 +3,7 @@
 
 <script type="text/javascript" src="{local var="siteRoot"}includes/js/jquery-ui-1.10.1.custom.min.js"></script>
 <script type="text/javascript" src="{local var="siteRoot"}includes/js/jquery.ui.touch-punch.min.js"></script>
+<script type="text/javascript" src="{local var="siteRoot"}includes/js/jquery.tablesorter.min.js"></script>
 
 <?php
 // Pages that need fine uploader

@@ -38,6 +38,7 @@ $(function(){
        if(e.keyCode == 13) { e.preventDefault(); }
     });
 
+    $("#objectListingTable").tablesorter(); 
 
 });
 

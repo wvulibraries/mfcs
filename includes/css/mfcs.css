@@ -1,3 +1,21 @@
+/* tables */
+.table thead tr .header {
+	background-image: url(bg.gif);
+	background-repeat: no-repeat;
+	background-position: center right;
+	cursor: pointer;
+}
+.table thead tr .headerSortUp {
+	background-image: url(asc.gif);
+	background-color: #8dbdd8;
+}
+.table thead tr .headerSortDown {
+	background-image: url(desc.gif);
+	background-color: #8dbdd8;
+}
+
+/* *** */
+
 .errorMessage {
 	color: red;
 }
