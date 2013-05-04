@@ -8,10 +8,10 @@ class listGenerator {
 
 	}
 
-	public static function createAllObjectList($start=0,$length=50,$orderBy=NULL) {
+	public static function createAllObjectList($start=0,$length=50,$orderBy=NULL,$objects=NULL) {
 
 		$engine  = EngineAPI::singleton();
-		$objects = objects::getObjects($start,$length,FALSE);
+		if (isnull($objects)) $objects = objects::getObjects($start,$length,FALSE);
 
 		$data = array();
 		foreach ($objects as $object) {
