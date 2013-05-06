@@ -398,9 +398,9 @@ class forms {
 				);
 		}
 
-		$output .= sprintf('<header><h1>%s</h1><h2>%s</h2></header>',
-			htmlSanitize($form['title']),
-			htmlSanitize($form['description']));
+//		$output .= sprintf('<header><h1>%s</h1><h2>%s</h2></header>',
+//			htmlSanitize($form['title']),
+//			htmlSanitize($form['description']));
 
 		$currentFieldset = "";
 

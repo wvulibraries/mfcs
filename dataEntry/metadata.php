@@ -119,14 +119,9 @@ if (!$ajax) {
 	{local var="results"}
 
 	<div class="row-fluid">
-		<div class="span9" id="right">
-			{local var="form"}
-		</div>
-
-		<div class="span9">
-			{local var="metadataEditTable"}
-		</div>
-
+		{local var="form"}
+		<hr>
+		{local var="metadataEditTable"}
 	</div>
 </section>
 

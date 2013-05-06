@@ -173,7 +173,7 @@ $engine->eTemplate("include","header");
 
 <section>
 	<header class="page-header">
-		<h1>{local var="actionHeader"} Object</h1>
+		<h1>{local var="actionHeader"} Object - {local var="formName"}</h1>
 		{local var="parentHeader"}
 	</header>
 
