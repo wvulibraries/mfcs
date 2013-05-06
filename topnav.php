@@ -17,6 +17,7 @@ if(isset($currentProjects) and sizeof($currentProjects)){
 			<li><a href="{local var="siteRoot"}formCreator/list.php">List Forms</a></li>
 		</ul>
 	</li>
+	<?php if(mfcsPerms::isAdmin(NULL)){ ?>
 	<li class="dropdown">
 		<a href="#" class="dropdown-toggle" data-toggle="dropdown">Administrative Panel<b class="caret"></b></a>
 		<ul class="dropdown-menu">
@@ -27,6 +28,7 @@ if(isset($currentProjects) and sizeof($currentProjects)){
 			<li><a href="{local var="siteRoot"}admin/users.php">Users</a></li>
 		</ul>
 	</li>
+	<?php } ?>
 	<li><a href="{engine var="logoutPage"}?csrf={engine name="csrfGet"}">Logout</a></li>
 </ul>
 <div class="pull-right" style="padding: 8px; font-size: 18px; color: #ccc;">
