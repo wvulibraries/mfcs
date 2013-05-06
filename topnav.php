@@ -11,6 +11,14 @@ if(isset($currentProjects) and sizeof($currentProjects)){
 <ul class="nav">
 	<li class=""><a href='{local var="siteRoot"}'>Home</a></li>
 	<li class="dropdown">
+		<a href="#" class="dropdown-toggle" data-toggle="dropdown">Object Management<b class="caret"></b></a>
+		<ul class="dropdown-menu">
+			<li><a href="{local var="siteRoot"}/dataEntry/selectForm.php">Create</a></li>
+			<li><a href="{local var="siteRoot"}/dataView/list.php">List</a></li>
+			<li><a href="{local var="siteRoot"}/dataView/search.php">Search</a></li>
+		</ul>
+	</li>
+	<li class="dropdown">
 		<a href="#" class="dropdown-toggle" data-toggle="dropdown">Form Management<b class="caret"></b></a>
 		<ul class="dropdown-menu">
 			<li><a href="{local var="siteRoot"}formCreator/">New Form</a></li>
