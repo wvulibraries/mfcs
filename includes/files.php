@@ -144,7 +144,7 @@ class files {
 					$image->readImage($newFilepath);
 
 					// Convert format
-					$image->setImageFormat($field['convertFormat']);
+					if(!empty($field['convertFormat'])) $image->setImageFormat($field['convertFormat']);
 
 					// Resize image
 					$image->scaleImage($field['convertWidth'], $field['convertHeight'], TRUE);
@@ -230,9 +230,9 @@ class files {
 					}
 
 					// Store image
-					if ($image->writeImages(getUploadDir('converted',$uploadID).DIRECTORY_SEPARATOR.basename($filename,".$fileExt").".".strtolower($image->getImageFormat()), TRUE) === FALSE) {
-						errorHandle::errorMsg("Failed to create image: ".$filename);
-					}
+					$writeFilepath = self::getSaveDir('converted',$fileUUID).DIRECTORY_SEPARATOR.$fileUUID.".".strtolower($image->getImageFormat());
+					mkdir(dirname($writeFilepath), 0755, TRUE);
+					$image->writeImages($writeFilepath, TRUE);
 				}
 
 				// Create an OCR text file
@@ -240,11 +240,11 @@ class files {
 					// Include TesseractOCR class
 					require_once 'class.tesseract_ocr.php';
 
-					$text = TesseractOCR::recognize(getUploadDir('originals',$uploadID).DIRECTORY_SEPARATOR.$filename);
+					$text = TesseractOCR::recognize(self::getSaveDir('originals',$fileUUID).DIRECTORY_SEPARATOR.$filename);
 
-					if (file_put_contents(getUploadDir('ocr',$uploadID).DIRECTORY_SEPARATOR.basename($filename,".$fileExt").".txt", $text) === FALSE) {
+					if (file_put_contents(self::getSaveDir('ocr',$fileUUID).DIRECTORY_SEPARATOR.basename($filename,".$fileExt").".txt", $text) === FALSE) {
 						errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
-						errorHandle::newError("Failed to create OCR file for ".getUploadDir('originals',$uploadID).DIRECTORY_SEPARATOR.$filename,errorHandle::DEBUG);
+						errorHandle::newError("Failed to create OCR file for ".self::getSaveDir('originals',$fileUUID).DIRECTORY_SEPARATOR.$filename,errorHandle::DEBUG);
 					}
 				}
 			}
