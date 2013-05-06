@@ -9,35 +9,25 @@ if(isset($currentProjects) and sizeof($currentProjects)){
 }
 ?>
 <ul class="nav">
+	<li class=""><a href='{local var="siteRoot"}'>Home</a></li>
 	<li class="dropdown">
-		<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-			Navigation
-			<b class="caret"></b>
-		</a>
+		<a href="#" class="dropdown-toggle" data-toggle="dropdown">Form Management<b class="caret"></b></a>
 		<ul class="dropdown-menu">
-			<li><a href="{local var="siteRoot"}">Home</a></li>
-			<li class="dropdown-submenu">
-				<a tabindex="-1" href="#">Administrative Panel</a>
-				<ul class="dropdown-menu">
-					<li><a href="{local var="siteRoot"}admin/objectTypes.php">Object Types</a></li>
-					<li><a href="{local var="siteRoot"}admin/containers.php">Containers</a></li>
-					<li><a href="{local var="siteRoot"}admin/watermarks.php">Watermarks</a></li>
-					<li><a href="{local var="siteRoot"}projects/">Projects</a></li>
-					<li><a href="{local var="siteRoot"}admin/users.php">Users</a></li>
-				</ul>
-			</li>
-			
-			<li class="dropdown-submenu">
-				<a tabindex="-1" href="#">Form Management</a>
-				<ul class="dropdown-menu">
-					<li><a href="{local var="siteRoot"}formCreator/">New Form</a></li>
-					<li><a href="{local var="siteRoot"}formCreator/list.php">List Forms</a></li>
-				</ul>
-			</li>
-			<li class="divider"></li>
-			<li><a href="{engine var="logoutPage"}?csrf={engine name="csrfGet"}">Logout</a></li>
+			<li><a href="{local var="siteRoot"}formCreator/">New Form</a></li>
+			<li><a href="{local var="siteRoot"}formCreator/list.php">List Forms</a></li>
 		</ul>
 	</li>
+	<li class="dropdown">
+		<a href="#" class="dropdown-toggle" data-toggle="dropdown">Administrative Panel<b class="caret"></b></a>
+		<ul class="dropdown-menu">
+			<li><a href="{local var="siteRoot"}admin/objectTypes.php">Object Types</a></li>
+			<li><a href="{local var="siteRoot"}admin/containers.php">Containers</a></li>
+			<li><a href="{local var="siteRoot"}admin/watermarks.php">Watermarks</a></li>
+			<li><a href="{local var="siteRoot"}projects/">Projects</a></li>
+			<li><a href="{local var="siteRoot"}admin/users.php">Users</a></li>
+		</ul>
+	</li>
+	<li><a href="{engine var="logoutPage"}?csrf={engine name="csrfGet"}">Logout</a></li>
 </ul>
 <div class="pull-right" style="padding: 8px; font-size: 18px; color: #ccc;">
     <strong>Current projects:</strong>
