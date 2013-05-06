@@ -1030,11 +1030,12 @@ class forms {
 		}
 
 		if ($newObject === TRUE) {
-			$sql       = sprintf("INSERT INTO `objects` (parentID,formID,data,metadata,modifiedTime) VALUES('%s','%s','%s','%s','%s')",
+			$sql       = sprintf("INSERT INTO `objects` (parentID,formID,data,metadata,modifiedTime,createTime) VALUES('%s','%s','%s','%s','%s','%s')",
 				isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",
 				$engine->openDB->escape($formID),
 				encodeFields($values),
 				$engine->openDB->escape($form['metadata']),
+				time(),
 				time()
 			);
 		}

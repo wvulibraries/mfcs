@@ -8,10 +8,10 @@ class listGenerator {
 
 	}
 
-	public static function createAllObjectList($start=0,$length=50,$orderBy=NULL) {
+	public static function createAllObjectList($start=0,$length=50,$orderBy=NULL,$objects=NULL) {
 
 		$engine  = EngineAPI::singleton();
-		$objects = objects::getObjects($start,$length,FALSE);
+		if (isnull($objects)) $objects = objects::getObjects($start,$length,FALSE);
 
 		$data = array();
 		foreach ($objects as $object) {
@@ -123,8 +123,11 @@ class listGenerator {
 	private static function createTable($data,$headers = NULL) {
 		$table = new tableObject("array");
 
-		$table->summary = "Object Listing";
-		$table->sortable = TRUE;
+		$table->summary  = "Object Listing";
+		$table->sortable = FALSE;
+		$table->class    = "table table-striped table-bordered";
+		$table->id       = "objectListingTable";
+		$table->layout   = TRUE;
 
 		if (isnull($headers)) {
 			$headers = array();
@@ -272,7 +275,7 @@ class listGenerator {
 			$output .= '<div>';
 			$output .= self::generateAccordionFormList_links($form,$entry);
 			if(sizeof(forms::getObjectFormMetaForms($form['ID']))){
-				$output .= sprintf('<a class="pull-right" data-toggle="collapse" data-parent="#formListAccordion" href="#collapse%s">Show Metadata Forms</a>',
+				$output .= sprintf('<a class="pull-right metadataListAccordionToggle" data-toggle="collapse" data-parent="#formListAccordion" href="#collapse%s">Show Metadata Forms</a>',
 					++$count);
 			}
 			$output .= '</div>';

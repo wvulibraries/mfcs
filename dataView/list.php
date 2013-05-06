@@ -2,7 +2,6 @@
 
 include("../header.php");
 
-try {
 
 	if (!isset($engine->cleanGet['MYSQL'])) $engine->cleanGet['MYSQL'] = array("listType" => "");
 
@@ -58,9 +57,7 @@ try {
 	}
 	localvars::add("breadcrumbs", $crumbs);
 
-}
-catch(Exception $e) {
-}
+
 
 localVars::add("results",displayMessages());
 

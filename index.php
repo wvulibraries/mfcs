@@ -1,6 +1,7 @@
 <?php
 include("header.php");
 
+// @TODO all this logic should be removed and placed in another file. Calling it from here is fine (and logical) but it needs moved.
 if(isset($engine->cleanGet['MYSQL']['ajax'])){
     $result = array();
     if (isset($engine->cleanPost['MYSQL']['action'])) {
@@ -58,11 +59,14 @@ if(isset($engine->cleanGet['MYSQL']['ajax'])){
     else if (isset($engine->cleanGet['MYSQL']['action'])) {
         switch($engine->cleanGet['MYSQL']['action']){
             case 'selectChoices':
-            $field        = forms::getField($engine->cleanGet["MYSQL"]['formID'],$engine->cleanGet["MYSQL"]['fieldName']);
-            $fieldChoices = forms::getFieldChoices($field);
-            $result       = forms::drawFieldChoices($field,$fieldChoices);
-            die($result);
-            break;
+                $field        = forms::getField($engine->cleanGet["MYSQL"]['formID'],$engine->cleanGet["MYSQL"]['fieldName']);
+                $fieldChoices = forms::getFieldChoices($field);
+                $result       = forms::drawFieldChoices($field,$fieldChoices);
+                die($result);
+                break;
+            case 'searchFormFields':
+                die(mfcsSearch::formFieldOptions($engine->cleanGet["MYSQL"]['formID']));
+                break;
         }
     }
     header('Content-type: application/json');
@@ -99,6 +103,9 @@ $engine->eTemplate("include","header");
 		<li>
 			<a href="dataView/list.php" class="btn">List Objects</a>
 		</li>
+        <li>
+            <a href="dataView/search.php" class="btn">Search Objects</a>
+        </li>
 		<li>
 			<a href="dataEntry/selectMetadataForm.php" class="btn">Metadata Forms</a>
 		</li>

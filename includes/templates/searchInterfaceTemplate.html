@@ -1,0 +1,37 @@
+<form action="{phpself query="false"}" method="post">
+	{engine name="csrf"}
+
+	Search
+	 
+	<select name="formList" id="searchFormSelect">
+		{mfcsSearch name="formList"}
+	</select>
+
+	for keyword 
+
+	<input type="text" name="query" />
+
+	in
+
+	<!-- Form Fields will be populated via ajax -->
+	<select name="fieldList" id="formFieldsOptGroup">
+		<option value="idno">IDNO</option>
+		<!-- <option value="anyField">Any Field</option> -->
+		<optgroup label="Form Fields">
+		</optgroup>
+	</select>
+
+	<br />
+
+
+	<label for="startDate">Start Date</label>
+	<input type="date" name="startDate" />
+
+	<label for="endDate">End Date</label>
+	<input type="date" name="endDate" />
+
+	<br />
+
+	<input type="submit" name="search" value="search" />
+
+</form>

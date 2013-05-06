@@ -153,11 +153,23 @@ if (forms::validID()) {
 
 localVars::add("results",displayMessages());
 
+// Display warning if form is not part of current project
+foreach (array_keys(sessionGet('currentProject')) as $projectID) {
+	if (in_array($engine->cleanGet['MYSQL']['formID'], projects::getForms($projectID))) {
+		continue;
+	}
+
+	localVars::add("projectWarning",'<div class="pull-right">'.errorHandle::errorMsg("This form is not associated with one of your current projects.").'</div>');
+	break;
+}
+
 localvars::add("actionHeader",(isnull($engine->cleanGet['MYSQL']['objectID']))?"Add":"Edit");
 localvars::add("parentHeader",(isnull($parentObject))?"":"<h2>Adding Child to Parent '".$parentObject['data'][$form['objectTitleField']]."'</h2>");
 
 $engine->eTemplate("include","header");
 ?>
+
+{local var="projectWarning"}
 
 <section>
 	<header class="page-header">
@@ -176,7 +188,7 @@ $engine->eTemplate("include","header");
 			}
 			if (!isnull($engine->cleanGet['MYSQL']['objectID']) and $revisions->hasRevisions($engine->cleanGet['MYSQL']['objectID'])) { ?>
 				<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions.php?objectID={local var="objectID"}">Revisions</a></li>
-			<?php } ?>			
+			<?php } ?>
 		</ul>
 	</nav>
 

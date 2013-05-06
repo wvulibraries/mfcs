@@ -14,10 +14,13 @@ require_once "includes/navigation.php";
 require_once "includes/objects.php";
 require_once "includes/permissions.php";
 require_once "includes/projects.php";
+require_once "includes/search.php";
 require_once "includes/stats.php"; 
 require_once "includes/users.php";
 require_once "includes/files.php";
 mfcs::singleton();
+
+$mfcsSearch = new mfcsSearch();
 
 // Load the user's current projects
 

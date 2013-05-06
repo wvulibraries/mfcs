@@ -31,14 +31,49 @@ $(function(){
     });
 
     $(document)
-        .on('click', '.metadataObjectEditor', handler_setupMetadataModal)
+        .on('click',  '.metadataObjectEditor', handler_setupMetadataModal)
+        .on('change', '#searchFormSelect',     handler_setupSearchFormFields)
+        .on('click',  '.metadataListAccordionToggle', handler_metadataListAccordionToggle)
 
     $('#metadataModal').bind('keypress keydown keyup', function(e){
        if(e.keyCode == 13) { e.preventDefault(); }
     });
 
+    $("#objectListingTable").tablesorter(); 
 
 });
+
+function handler_metadataListAccordionToggle() {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    var currentValue = $(this).html();
+    if (currentValue == "Show Metadata Forms") {
+        $(this).html("Hide Metadata Forms");
+    }
+    else {
+        $(this).html("Show Metadata Forms");
+    }
+
+}
+
+function handler_setupSearchFormFields() {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    var formID = $('#searchFormSelect').val();
+    var url    = siteRoot+'/index.php?action=searchFormFields&formID='+formID+'&ajax=true';
+    $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "html",
+        success: function(responseData) {
+            $("#formFieldsOptGroup").html(responseData);
+        },
+        error: function(jqXHR,error,exception) {
+        }
+    }); 
+}
 
 function handler_setupMetadataModal() {
     event.preventDefault();
@@ -47,7 +82,7 @@ function handler_setupMetadataModal() {
 
     var dataFieldName = $(this).attr("data-fieldname");
     var formID        = $(this).attr('data-formid');
-    var url           = siteRoot+'/dataEntry/metadata.php?formID='+formID+'&amp;ajax=true';
+    var url           = siteRoot+'/dataEntry/metadata.php?formID='+formID+'&ajax=true';
 
     $.ajax({
         type: "GET",
