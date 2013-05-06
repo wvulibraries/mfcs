@@ -33,6 +33,7 @@ $(function(){
     $(document)
         .on('click',  '.metadataObjectEditor', handler_setupMetadataModal)
         .on('change', '#searchFormSelect',     handler_setupSearchFormFields)
+        .on('click',  '.metadataListAccordionToggle', handler_metadataListAccordionToggle)
 
     $('#metadataModal').bind('keypress keydown keyup', function(e){
        if(e.keyCode == 13) { e.preventDefault(); }
@@ -41,6 +42,20 @@ $(function(){
     $("#objectListingTable").tablesorter(); 
 
 });
+
+function handler_metadataListAccordionToggle() {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    var currentValue = $(this).html();
+    if (currentValue == "Show Metadata Forms") {
+        $(this).html("Hide Metadata Forms");
+    }
+    else {
+        $(this).html("Show Metadata Forms");
+    }
+
+}
 
 function handler_setupSearchFormFields() {
     event.preventDefault();

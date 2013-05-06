@@ -275,7 +275,7 @@ class listGenerator {
 			$output .= '<div>';
 			$output .= self::generateAccordionFormList_links($form,$entry);
 			if(sizeof(forms::getObjectFormMetaForms($form['ID']))){
-				$output .= sprintf('<a class="pull-right" data-toggle="collapse" data-parent="#formListAccordion" href="#collapse%s">Show Metadata Forms</a>',
+				$output .= sprintf('<a class="pull-right metadataListAccordionToggle" data-toggle="collapse" data-parent="#formListAccordion" href="#collapse%s">Show Metadata Forms</a>',
 					++$count);
 			}
 			$output .= '</div>';
