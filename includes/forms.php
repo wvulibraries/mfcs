@@ -443,7 +443,7 @@ class forms {
 
 
 			if ($field['type'] != "idno" || ($field['type'] == "idno" && isset($field['managedBy']) && strtolower($field['managedBy']) != "system")) {
-				$output .= sprintf('<label for="%s" class="%s">%s:</label>',
+				$output .= sprintf('<label for="%s" class="formLabel %s">%s:</label>',
 					htmlSanitize($field['id']),
 					(strtolower($field['required']) == "true")?"requiredField":"",
 					htmlSanitize($field['label'])
