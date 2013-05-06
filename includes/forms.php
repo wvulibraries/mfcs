@@ -1011,7 +1011,7 @@ class forms {
 			}
 
 			if (strtolower($field['type']) == "file") {
-				$values[$field['name']] = (array)files::processUploads($field,$engine->cleanPost['RAW'][$field['name']]);
+				$values[$field['name']] = (array)files::processUploads($field,$engine->cleanPost['MYSQL'][$field['name']]);
 			}
 
 			if(!isset($values[$field['name']])) $values[$field['name']] = $engine->cleanPost['RAW'][$field['name']];
