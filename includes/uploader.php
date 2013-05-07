@@ -38,7 +38,17 @@ $fileExt  = ".".pathinfo($filename, PATHINFO_EXTENSION);
 $uploadPath = UPLOAD_PATH.DIRECTORY_SEPARATOR.$engine->cleanPost['MYSQL']['uploadID'];
 
 // Make sure the upload temp dir exits
-if(!is_dir($uploadPath)) mkdir($uploadPath, PERMISSONS, TRUE);
+if (!is_dir($uploadPath)) {
+	mkdir($uploadPath, PERMISSONS, TRUE);
+}
+else if ($engine->cleanPost['MYSQL']['multiple']) {
+	$files = glob($uploadPath.DIRECTORY_SEPARATOR.'*'); // get all existing file names
+	foreach ($files as $file) {
+		if (is_file($file)) {
+			unlink($file);
+		}
+	}
+}
 
 // Save the upload! (the ltrim() ensures that uploaded hidden files become un-hidden)
 $result = $uploader->handleUpload($uploadPath, ltrim($uploader->getName(),'.'));
