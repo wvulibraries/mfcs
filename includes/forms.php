@@ -481,7 +481,7 @@ class forms {
 					);
 
 					$output .= 'htmlParser = "";';
-					$output .= 'if (CKEDITOR.instances["'.$I['field'].'_insert"].dataProcessor) {';
+					$output .= 'if (CKEDITOR.instances["'.$field['name'].'"].dataProcessor) {';
 					$output .= sprintf('    htmlParser = CKEDITOR.instances["%s"].dataProcessor.htmlFilter;',
 						htmlSanitize($field['id'])
 					);
