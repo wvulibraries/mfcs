@@ -657,7 +657,7 @@ class forms {
 			}
 
 			// Output field's help (if needed)
-			if(isset($field['help'])){
+			if(isset($field['help']) && $field['help']){
 				list($helpType,$helpValue) = explode(',', $field['help'], 2);
 				switch($helpType){
 					case 'text':
