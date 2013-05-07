@@ -62,6 +62,21 @@ class files {
 	}
 
 	/**
+	 * Returns the binary blob for a given watermark, or FALSE on errer
+	 * @param int $id
+	 * @return bool|string
+	 */
+	public static function getWatermarkBlob($id){
+		$sql = sprintf("SELECT data FROM watermarks WHERE ID='%s' LIMIT 1", mfcs::$engine->openDB->escape($id));
+		$res = mfcs::$engine->openDB->query($sql);
+		if($res['result']) return mysql_result($res['result'],0,'data');
+
+		// If we're here, an error happened
+		errorHandle::newError(__METHOD__."() - Failed to get watermark! (MySQL Error: {$res['error']})", errorHandle::HIGH);
+		return FALSE;
+	}
+
+	/**
 	 * Performs necessary conversions, thumbnails, etc.
 	 *
 	 * @param array $field
@@ -181,11 +196,9 @@ class files {
 
 					// Add a watermark
 					if (isset($field['watermark']) && str2bool($field['watermark'])) {
-						$fh = fopen($field['watermarkImage'], "rb");
-
-						$watermark = new Imagick();
-						$watermark->readImageFile($fh); // Full URL
-						// $watermark->readImage("/path/to/file.png"); // Uses path relative to current file
+						$watermarkBlob = self::getWatermarkBlob($field['watermarkImage']);
+						$watermark     = new Imagick();
+						$watermark->readImageBlob($watermarkBlob);
 
 						// Resize the watermark
 						$watermark->scaleImage($image->getImageWidth()/1.5, $image->getImageHeight()/1.5, TRUE);
