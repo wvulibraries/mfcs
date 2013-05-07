@@ -302,7 +302,7 @@ class forms {
 	private static function drawSelectDropdowns($field,$fieldChoices) {
 		$output = "";
 
-		if(str2bool($field['choicesNull'])){
+		if(isset($field['choicesNull']) && str2bool($field['choicesNull'])){
 			$output .= '<option value="">Make a selection</option>';
 		}
 		foreach ($fieldChoices as $choice) {
