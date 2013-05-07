@@ -154,14 +154,7 @@ if (forms::validID()) {
 localVars::add("results",displayMessages());
 
 // Display warning if form is not part of current project
-foreach (array_keys(sessionGet('currentProject')) as $projectID) {
-	if (in_array($engine->cleanGet['MYSQL']['formID'], projects::getForms($projectID))) {
-		continue;
-	}
-
-	localVars::add("projectWarning",'<div class="pull-right">'.errorHandle::errorMsg("This form is not associated with one of your current projects.").'</div>');
-	break;
-}
+forms::checkFormInCurrentProjects($engine->cleanGet['MYSQL']['formID']);
 
 localvars::add("actionHeader",(isnull($engine->cleanGet['MYSQL']['objectID']))?"Add":"Edit");
 localvars::add("parentHeader",(isnull($parentObject))?"":"<h2>Adding Child to Parent '".$parentObject['data'][$form['objectTitleField']]."'</h2>");

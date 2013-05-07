@@ -88,20 +88,15 @@ if ($ajax) {
 localVars::add("results",displayMessages());
 
 // Display warning if form is not part of current project
-foreach (array_keys(sessionGet('currentProject')) as $projectID) {
-	if (in_array($engine->cleanGet['MYSQL']['formID'], projects::getForms($projectID))) {
-		continue;
-	}
-
-	localVars::add("projectWarning",'<div class="pull-right">'.errorHandle::errorMsg("This form is not associated with one of your current projects.").'</div>');
-	break;
-}
+forms::checkFormInCurrentProjects($engine->cleanGet['MYSQL']['formID']);
 
 if (!$ajax) {
 	$engine->eTemplate("include","header");
 	echo localVars::get("projectWarning");
 }
 ?>
+
+{local var="projectWarning"}
 
 <section>
 	<header class="page-header">

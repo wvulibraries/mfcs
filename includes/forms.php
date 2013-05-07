@@ -196,9 +196,10 @@ class forms {
 	}
 
 	public static function checkFormInCurrentProjects($formID) {
-
+			
 		foreach (array_keys(sessionGet('currentProject')) as $projectID) {
-			if (forms::checkFormInProject($formID,$projectID) === FALSE) {
+
+			if (self::checkFormInProject($projectID,$formID)) {
 				continue;
 			}
 
