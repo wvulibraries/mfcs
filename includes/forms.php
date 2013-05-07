@@ -195,6 +195,20 @@ class forms {
 
 	}
 
+	public static function checkFormInCurrentProjects($formID) {
+
+		foreach (array_keys(sessionGet('currentProject')) as $projectID) {
+			if (forms::checkFormInProject($formID,$projectID) === FALSE) {
+				continue;
+			}
+
+			localVars::add("projectWarning",'<div class="pull-right">'.errorHandle::errorMsg("This form is not associated with one of your current projects.").'</div>');
+			break;
+		}
+
+		return TRUE;
+	}
+
 	// Gets all the forms that are in all the projects that that $objectID is in
 	public static function getObjectProjectForms($objectID) {
 		if (($object = objects::get($objectID)) === FALSE) {
