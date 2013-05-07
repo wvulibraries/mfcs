@@ -300,6 +300,7 @@ class forms {
 	}
 
 	private static function drawSelectDropdowns($field,$fieldChoices) {
+
 		$output = "";
 
 		if(isset($field['choicesNull']) && str2bool($field['choicesNull'])){
@@ -308,7 +309,7 @@ class forms {
 		foreach ($fieldChoices as $choice) {
 			$output .= sprintf('<option value="%s" %s>%s</option>',
 				htmlSanitize($choice['value']),
-				(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['value'])?'selected="selected"':"",
+				(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $choice['value'])?'selected="selected"':"",
 				htmlSanitize($choice['display'])
 			);
 		}
@@ -320,7 +321,7 @@ class forms {
 		foreach ($fieldChoices as $choice) {
 			$output .= sprintf('<option value="%s" %s>%s</option>',
 				htmlSanitize($choice['value']),
-				(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $row['value'])?'selected="selected"':"",
+				(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $choice['value'])?'selected="selected"':"",
 				htmlSanitize($choice['display'])
 			);
 		}
