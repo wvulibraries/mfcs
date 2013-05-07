@@ -980,14 +980,14 @@ function fieldSettingsBindings() {
 		var id              = formPreviewWell.prop("id").split("_")[1];
 
 		$("#watermarkImage_"+id).val($(this).val());
-	});
+	}).change();
 
 	$("#fieldSettings_file_watermark_location").change(function() {
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
 
 		$("#watermarkLocation_"+id).val($(this).val());
-	});
+	}).change();
 
 	$("#fieldSettings_file_convert_border").change(function() {
 		var formPreviewWell = formPreview.find(".well");
