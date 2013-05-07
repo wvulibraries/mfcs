@@ -977,16 +977,14 @@ function fieldSettingsBindings() {
 
 	$("#fieldSettings_file_watermark_image").change(function() {
 		var formPreviewWell = formPreview.find(".well");
-		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$("#watermarkImage_"+id).val($(this).val());
+		formPreviewWell.find(".fieldValues > :input[name^=watermarkImage_]").val($(this).val());
 	}).change();
 
 	$("#fieldSettings_file_watermark_location").change(function() {
 		var formPreviewWell = formPreview.find(".well");
-		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$("#watermarkLocation_"+id).val($(this).val());
+		formPreviewWell.find(".fieldValues > :input[name^=watermarkLocation_]").val($(this).val());
 	}).change();
 
 	$("#fieldSettings_file_convert_border").change(function() {
