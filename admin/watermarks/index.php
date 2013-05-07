@@ -27,7 +27,7 @@ try {
 		if (!isset($engine->cleanPost['MYSQL']['name']) || is_empty($engine->cleanPost['MYSQL']['name'])) {
 			throw new Exception("Name field is required.");
 		}
-		
+
 		$sql = sprintf("UPDATE `watermarks` SET `name`='%s'%s WHERE ID='%s' LIMIT 1",
 			$engine->cleanPost['MYSQL']['name'],
 			($_FILES['image']['size'] > 0) ? (", `data`='".addslashes(file_get_contents($_FILES['image']['tmp_name']))."'") : NULL,
@@ -120,7 +120,7 @@ $engine->eTemplate("include","header");
     <nav id="breadcrumbs">
         <ul class="breadcrumb">
             <li><a href="{local var="siteRoot"}">Home</a></li>
-            <li><a href="{local var="siteRoot"}">Admin</a></li>
+            <li><a href="{local var="siteRoot"}/admin/">Admin</a></li>
         </ul>
     </nav>  
 

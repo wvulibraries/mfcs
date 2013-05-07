@@ -64,7 +64,7 @@ $engine->eTemplate("include","header");
     <nav id="breadcrumbs">
         <ul class="breadcrumb">
             <li><a href="{local var="siteRoot"}">Home</a></li>
-            <li><a href="{local var="siteRoot"}">Admin</a></li>
+            <li><a href="{local var="siteRoot"}/admin/">Admin</a></li>
         </ul>
     </nav>  
 
