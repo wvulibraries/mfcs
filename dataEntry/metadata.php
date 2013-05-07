@@ -40,6 +40,7 @@ try {
 	localvars::add("formName",$form['title']);
 
 	// handle submission
+	$return = NULL;
 	if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 		$return = forms::submit($engine->cleanGet['MYSQL']['formID']);
 		if ($return === FALSE) {
@@ -57,6 +58,10 @@ try {
 		if ($return === FALSE) {
 			throw new Exception("Error Updating Form.");
 		}
+	}
+
+	if (!isnull($return) && $ajax === TRUE) {
+		die(displayMessages());
 	}
 
 	// build the form for displaying
@@ -81,18 +86,12 @@ catch(Exception $e) {
 	errorHandle::errorMsg($e->getMessage());
 }
 
-if ($ajax) {
-	die(displayMessages());
-}
-
 localVars::add("results",displayMessages());
 
-// Display warning if form is not part of current project
-forms::checkFormInCurrentProjects($engine->cleanGet['MYSQL']['formID']);
-
 if (!$ajax) {
+	// Display warning if form is not part of current project
+	forms::checkFormInCurrentProjects($engine->cleanGet['MYSQL']['formID']);
 	$engine->eTemplate("include","header");
-	echo localVars::get("projectWarning");
 }
 ?>
 
@@ -103,6 +102,7 @@ if (!$ajax) {
 		<h1>{local var="formName"}</h1>
 	</header>
 
+	<?php if (!$ajax) { ?>
 	<nav id="breadcrumbs">
 		<ul class="breadcrumb">
 			<li><a href="{local var="siteRoot"}">Home</a></li>
@@ -110,6 +110,7 @@ if (!$ajax) {
 			<li class="pull-right"><a href="{local var="siteRoot"}/formCreator/index.php?id={local var="formID"}">Edit Form</a></li>
 		</ul>
 	</nav>
+	<?php } ?>
 
 	{local var="results"}
 
