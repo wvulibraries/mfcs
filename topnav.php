@@ -17,6 +17,14 @@ if(isset($currentProjects) and sizeof($currentProjects)){
 		<ul class="dropdown-menu">
 			<li><a href="{local var="siteRoot"}">Home</a></li>
 			<li class="dropdown-submenu">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Object Management<b class="caret"></b></a>
+				<ul class="dropdown-menu">
+					<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Create</a></li>
+					<li><a href="{local var="siteRoot"}dataView/list.php">List</a></li>
+					<li><a href="{local var="siteRoot"}dataView/search.php">Search</a></li>
+				</ul>
+			</li>
+			<li class="dropdown-submenu">
 				<a tabindex="-1" href="#">Administrative Panel</a>
 				<ul class="dropdown-menu">
 					<li><a href="{local var="siteRoot"}admin/objectTypes.php">Object Types</a></li>
@@ -26,7 +34,6 @@ if(isset($currentProjects) and sizeof($currentProjects)){
 					<li><a href="{local var="siteRoot"}admin/users.php">Users</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown-submenu">
 				<a tabindex="-1" href="#">Form Management</a>
 				<ul class="dropdown-menu">
