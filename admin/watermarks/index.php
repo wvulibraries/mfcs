@@ -113,6 +113,13 @@ $engine->eTemplate("include","header");
 		<h1>Manage Watermarks</h1>
 	</header>
 
+    <nav id="breadcrumbs">
+        <ul class="breadcrumb">
+            <li><a href="{local var="siteRoot"}">Home</a></li>
+            <li><a href="{local var="siteRoot"}">Admin</a></li>
+        </ul>
+    </nav>  
+
 	{local var="results"}
 
 	<section>
