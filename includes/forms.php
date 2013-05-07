@@ -174,40 +174,38 @@ class forms {
 
 	public static function checkFormInProject($projectID,$formID) {
 
-		$sql = sprintf("SELECT COUNT(*) FROM `forms_projects` WHERE formID='%s' AND projectID='%s'",
-			mfcs::$engine->openDB->escape($formID),
-			mfcs::$engine->openDB->escape($projectID)
-		);
-		$sqlResult = mfcs::$engine->openDB->query($sql);
-
-		if (!$sqlResult['result']) {
-			errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
-			return array();
-		}
-
-		$row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
-
-		if ((int) $row['COUNT(*)']){
+		$projectForms = projects::getForms($projectID);
+		if (in_array($formID, projects::getForms($projectID))) {
 			return TRUE;
 		}
 
-		return FALSE;
+		foreach ($projectForms as $projectFormID) {
+
+			$metadataForms = self::getObjectFormMetaForms($projectFormID);
+
+			if (isset($metadataForms[$formID])) {
+				return TRUE;
+			}
+
+		}
+
+		return FALSE; 
 
 	}
 
 	public static function checkFormInCurrentProjects($formID) {
-			
-		foreach (array_keys(sessionGet('currentProject')) as $projectID) {
 
-			if (self::checkFormInProject($projectID,$formID)) {
-				continue;
+		foreach (sessionGet('currentProject') as $projectID=>$project) {
+
+			if (self::checkFormInProject($projectID,$formID) === TRUE) {
+				return TRUE;
 			}
 
-			localVars::add("projectWarning",'<div class="alert">This form is not associated with one of your current projects</div>');
-			break;
 		}
 
-		return TRUE;
+		localVars::add("projectWarning",'<div class="alert">This form is not associated with one of your current projects</div>');
+
+		return FALSE;
 	}
 
 	// Gets all the forms that are in all the projects that that $objectID is in
