@@ -2,6 +2,8 @@
 include("../header.php");
 recurseInsert("acl.php","php");
 
+$permissions      = TRUE;
+
 try {
 
 	// If we have an objectID and no formID, lookup the formID from the object and set it back into the GET
@@ -20,6 +22,7 @@ try {
 	}
 
 	if (mfcsPerms::isViewer($engine->cleanGet['MYSQL']['formID']) === FALSE) {
+		$permissions = FALSE;
 		throw new Exception("Permission Denied to view objects created with this form.");
 	}
 
@@ -94,6 +97,8 @@ $engine->eTemplate("include","header");
 				{local var="results"}
 			</div>
 
+			<?php if ($permissions === TRUE) { ?>
+
 			<div class="row-fluid">
 				<ul class="nav nav-tabs">
 					<li><a data-toggle="tab" href="#metadata">Metadata</a></li>
@@ -121,6 +126,7 @@ $engine->eTemplate("include","header");
 					</div>
 				</div>
 			</div>
+			<?php } // Permissions ?> 
 		</div>
 	</div>
 </section>

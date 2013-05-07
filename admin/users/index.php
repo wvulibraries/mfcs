@@ -1,6 +1,6 @@
 <?php
 
-include("../header.php");
+include("../../header.php");
 
 $tableName = "users";
 
@@ -60,6 +60,13 @@ $engine->eTemplate("include","header");
 	<header class="page-header">
 		<h1>Manage Users</h1>
 	</header>
+
+    <nav id="breadcrumbs">
+        <ul class="breadcrumb">
+            <li><a href="{local var="siteRoot"}">Home</a></li>
+            <li><a href="{local var="siteRoot"}/admin/">Admin</a></li>
+        </ul>
+    </nav>  
 
 	{local var="results"}
 

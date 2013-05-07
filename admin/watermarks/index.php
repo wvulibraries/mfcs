@@ -1,13 +1,14 @@
 <?php
-include("../header.php");
+include("../../header.php");
 
 $ID = isset($engine->cleanGet['MYSQL']['id']) ? $engine->cleanGet['MYSQL']['id'] : NULL;
 
-if (isset($engine->cleanPost['MYSQL']["insert"])) {
-	if (!isset($engine->cleanPost['MYSQL']['name']) || is_empty($engine->cleanPost['MYSQL']['name'])) {
-		errorHandle::errorMsg("Name field is required.");
-	}
-	else {
+try {
+	if (isset($engine->cleanPost['MYSQL']["insert"])) {
+		if (!isset($engine->cleanPost['MYSQL']['name']) || is_empty($engine->cleanPost['MYSQL']['name'])) {
+			throw new Exception("Name field is required.");
+		}
+
 		$sql = sprintf("INSERT INTO `watermarks` (`name`,`data`) VALUES ('%s','%s')",
 			$engine->cleanPost['MYSQL']['name'],
 			addslashes(file_get_contents($_FILES['image']['tmp_name']))
@@ -19,14 +20,14 @@ if (isset($engine->cleanPost['MYSQL']["insert"])) {
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$ID);
 		}
 
-		errorHandle::errorMsg("Failed to add watermark.");
+		throw new Exception("Failed to add watermark.");
+		
 	}
-}
-else if (isset($engine->cleanPost['MYSQL']["update"])) {
-	if (!isset($engine->cleanPost['MYSQL']['name']) || is_empty($engine->cleanPost['MYSQL']['name'])) {
-		errorHandle::errorMsg("Name field is required.");
-	}
-	else {
+	else if (isset($engine->cleanPost['MYSQL']["update"])) {
+		if (!isset($engine->cleanPost['MYSQL']['name']) || is_empty($engine->cleanPost['MYSQL']['name'])) {
+			throw new Exception("Name field is required.");
+		}
+
 		$sql = sprintf("UPDATE `watermarks` SET `name`='%s'%s WHERE ID='%s' LIMIT 1",
 			$engine->cleanPost['MYSQL']['name'],
 			($_FILES['image']['size'] > 0) ? (", `data`='".addslashes(file_get_contents($_FILES['image']['tmp_name']))."'") : NULL,
@@ -38,22 +39,25 @@ else if (isset($engine->cleanPost['MYSQL']["update"])) {
 			errorHandle::successMsg("Successfully updated watermark.");
 		}
 		else {
-			errorHandle::errorMsg("Failed to update watermark.");
+			throw new Exception("Failed to update watermark.");
 		}
+		
+	}
+	else if (isset($engine->cleanPost['MYSQL']["delete"])) {
+		$sql = sprintf("DELETE FROM `watermarks` WHERE ID='%s' LIMIT 1",
+			$engine->openDB->escape($ID)
+			);
+		$sqlResult = $engine->openDB->query($sql);
+
+		if ($sqlResult['result']) {
+			header("Location: ".$_SERVER['PHP_SELF']);
+		}
+		throw new Exception("Failed to delete watermark.");
 	}
 }
-else if (isset($engine->cleanPost['MYSQL']["delete"])) {
-	$sql = sprintf("DELETE FROM `watermarks` WHERE ID='%s' LIMIT 1",
-		$engine->openDB->escape($ID)
-		);
-	$sqlResult = $engine->openDB->query($sql);
-
-	if ($sqlResult['result']) {
-		header("Location: ".$_SERVER['PHP_SELF']);
-	}
-	errorHandle::errorMsg("Failed to delete watermark.");
+catch (Exception $e) {
+	errorHandle::errorMsg($e->getMessage());
 }
-
 
 // Get List of existing watermarks
 $sql = sprintf("SELECT * FROM `watermarks` ORDER BY `name`");
@@ -112,6 +116,13 @@ $engine->eTemplate("include","header");
 	<header class="page-header">
 		<h1>Manage Watermarks</h1>
 	</header>
+
+    <nav id="breadcrumbs">
+        <ul class="breadcrumb">
+            <li><a href="{local var="siteRoot"}">Home</a></li>
+            <li><a href="{local var="siteRoot"}/admin/">Admin</a></li>
+        </ul>
+    </nav>  
 
 	{local var="results"}
 

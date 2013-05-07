@@ -203,7 +203,7 @@ class forms {
 				continue;
 			}
 
-			localVars::add("projectWarning",'<div class="pull-right">'.errorHandle::errorMsg("This form is not associated with one of your current projects.").'</div>');
+			localVars::add("projectWarning",'<div class="alert">This form is not associated with one of your current projects</div>');
 			break;
 		}
 

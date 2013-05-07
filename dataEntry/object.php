@@ -7,6 +7,7 @@ $revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime'
 
 $selectedProjects = NULL;
 $parentObject     = NULL;
+$permissions      = TRUE;
 
 try {
 
@@ -21,6 +22,7 @@ try {
 	}
 
 	if (mfcsPerms::isEditor($engine->cleanGet['MYSQL']['formID']) === FALSE) {
+		$permissions = FALSE;
 		throw new Exception("Permission Denied to view objects created with this form.");
 	}
 
@@ -195,6 +197,8 @@ $engine->eTemplate("include","header");
 				{local var="results"}
 			</div>
 
+			<?php if ($permissions === TRUE) { ?>
+
 			<div class="row-fluid">
 				<ul class="nav nav-tabs">
 					<li><a data-toggle="tab" href="#metadata">Metadata</a></li>
@@ -253,6 +257,7 @@ $engine->eTemplate("include","header");
 					<?php } ?>
 				</div>
 			</div>
+			<?php } // permissions ?>
 		</div>
 	</div>
 </section>
