@@ -8,6 +8,8 @@ else {
 	$ajax = FALSE;
 }
 
+$permissions      = TRUE;
+
 try {
 
 	if (objects::validID() === FALSE) {
@@ -19,6 +21,7 @@ try {
 	}
 
 	if (mfcsPerms::isAdmin($engine->cleanGet['MYSQL']['formID']) === FALSE) {
+		$permissions = FALSE;
 		throw new Exception("Permission Denied to view objects created with this form.");
 	}
 
@@ -114,11 +117,15 @@ if (!$ajax) {
 
 	{local var="results"}
 
+	<?php if ($permissions === TRUE) { ?>
+
 	<div class="row-fluid">
 		{local var="form"}
 		<hr>
 		{local var="metadataEditTable"}
 	</div>
+
+	<?php } ?>
 </section>
 
 
