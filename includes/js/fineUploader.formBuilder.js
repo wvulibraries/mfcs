@@ -5,6 +5,7 @@ $("#fineUploader_{local var="fieldName"}")
 		params: {
 			engineCSRFCheck: "{engine name="csrf" insert="false"}",
 			uploadID: $("#{local var="fieldName"}").val(),
+			multiple: {local var="multipleFiles"},
 		}
 	},
 	failedUploadTextDisplay: {
