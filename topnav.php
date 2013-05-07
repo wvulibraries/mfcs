@@ -35,7 +35,6 @@ if(isset($currentProjects) and sizeof($currentProjects)){
 				<a tabindex="-1" href="#">Administrative Panel</a>
 				<ul class="dropdown-menu">
 					<li><a href="{local var="siteRoot"}admin/objectTypes.php">Object Types</a></li>
-					<li><a href="{local var="siteRoot"}admin/containers.php">Containers</a></li>
 					<li><a href="{local var="siteRoot"}admin/watermarks.php">Watermarks</a></li>
 					<li><a href="{local var="siteRoot"}projects/">Projects</a></li>
 					<li><a href="{local var="siteRoot"}admin/users.php">Users</a></li>
