@@ -22,10 +22,10 @@ $engine->eTemplate("include","header");
 			<a href="projects/" class="btn">Projects</a>
 		</li>
 		<li>
-			<a href="users.php" class="btn">Users</a>
+			<a href="users/" class="btn">Users</a>
 		</li>
         <li>
-            <a href="watermarks.php" class="btn">Watermarks</a>
+            <a href="watermarks/" class="btn">Watermarks</a>
         </li>
 	</ul>
 

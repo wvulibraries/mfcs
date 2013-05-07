@@ -1,34 +1,41 @@
 <?php
 
-include("../header.php");
+include("../../header.php");
 
-$tableName = "projects";
+$tableName = "users";
 
 function defineList($tableName) {
-	// $engine = EngineAPI::singleton();
 	$l      = new listManagement($tableName);
 
 	$l->addField(array(
-		"field"    => "projectName",
-		"label"    => "Project Name",
+		"field"    => "username",
+		"label"    => "Username",
 		));
 
 	$l->addField(array(
-		"field"    => "projectID",
-		"label"    => "Project ID (Short Name)",
-		"validate" => "alphaNoSpaces"
+		"field"    => "firstname",
+		"label"    => "First Name",
+        "dupes"    => TRUE
 		));
 
-	$l->addField (
+	$l->addField(array(
+		"field"    => "lastname",
+		"label"    => "Last Name",
+        "dupes"    => TRUE
+		));
 
-		array(
-			'field'    => "ID",
-			'label'    => "ID",
-			'type'     => "hidden",
-			'disabled' => TRUE
+	$l->addField(array(
+		"field"    => "status",
+		"label"    => "Status",
+		"type"     => "select",
+        "dupes"    => TRUE,
+		"options"  => array(
+			array("value"=>"Librarian","label"=>"Librarian"),
+			array("value"=>"Staff","label"=>"Staff"),
+			array("value"=>"Student","label"=>"Student","selected"=>TRUE),
+			array("value"=>"Systems","label"=>"Systems")
 			)
-
-		);
+		));
 
 	return $l;
 }
@@ -51,14 +58,14 @@ $engine->eTemplate("include","header");
 
 <section>
 	<header class="page-header">
-		<h1>Manage Projects</h1>
+		<h1>Manage Users</h1>
 	</header>
 
 	{local var="results"}
 
 	<section>
 		<header>
-			<h2>Add Project</h2>
+			<h2>Add User</h2>
 		</header>
 		{listObject display="insertForm"}
 	</section>
@@ -67,7 +74,7 @@ $engine->eTemplate("include","header");
 
 	<section>
 		<header>
-			<h2>Edit Projects</h2>
+			<h2>Edit Users</h2>
 		</header>
 		{listObject display="editTable"}
 	</section>

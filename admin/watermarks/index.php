@@ -1,5 +1,5 @@
 <?php
-include("../header.php");
+include("../../header.php");
 
 $ID = isset($engine->cleanGet['MYSQL']['id']) ? $engine->cleanGet['MYSQL']['id'] : NULL;
 
