@@ -41,7 +41,7 @@ $uploadPath = UPLOAD_PATH.DIRECTORY_SEPARATOR.$engine->cleanPost['MYSQL']['uploa
 if (!is_dir($uploadPath)) {
 	mkdir($uploadPath, PERMISSONS, TRUE);
 }
-else if ($engine->cleanPost['MYSQL']['multiple']) {
+else if (!$engine->cleanPost['MYSQL']['multiple']) {
 	$files = glob($uploadPath.DIRECTORY_SEPARATOR.'*'); // get all existing file names
 	foreach ($files as $file) {
 		if (is_file($file)) {
