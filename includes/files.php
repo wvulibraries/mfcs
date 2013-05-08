@@ -385,16 +385,25 @@ class files {
 				// Convert format
 				if(!empty($field['convertFormat'])) $image->setImageFormat($field['convertFormat']);
 
-				// Resize image
-				$image->scaleImage($field['convertWidth'], $field['convertHeight'], TRUE);
-
 				// Add a border
 				if (isset($field['border']) && str2bool($field['border'])) {
+					// Resize the image first, taking into account the border width
+					$image->scaleImage(
+						($field['convertWidth']  - $field['borderWidth']  * 2),
+						($field['convertHeight'] - $field['borderHeight'] * 2),
+						TRUE
+						);
+
+					// Add the border
 					$image->borderImage(
 						$field['borderColor'],
 						$field['borderWidth'],
 						$field['borderHeight']
-					);
+						);
+				}
+				else {
+					// Resize without worrying about the border
+					$image->scaleImage($field['convertWidth'], $field['convertHeight'], TRUE);
 				}
 
 				// Create a thumbnail
