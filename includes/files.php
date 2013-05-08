@@ -62,6 +62,74 @@ class files {
 	}
 
 	/**
+	 * Add a watermark to an image
+	 *
+	 * @author Scott Blake
+	 * @param Imagick $image
+	 * @param string $watermarkImage
+	 * @param string $watermarkLocation
+	 * @return Imagick
+	 **/
+	public static function addWatermark($image, $watermarkImage, $watermarkLocation) {
+		// Get watermark image data
+		$watermarkBlob = self::getWatermarkBlob($watermarkImage);
+		$watermark     = new Imagick();
+		$watermark->readImageBlob($watermarkBlob);
+
+		// Store image dimensions
+		$imageWidth  = $image->getImageWidth();
+		$imageHeight = $image->getImageHeight();
+
+		// Resize the watermark
+		$watermark->scaleImage($imageWidth/1.5, $imageHeight/1.5, TRUE);
+
+		// Store watermark dimensions
+		$watermarkWidth  = $watermark->getImageWidth();
+		$watermarkHeight = $watermark->getImageHeight();
+
+		// Get the watermark placement Example: 'top','left'
+		list($positionHeight,$positionWidth) = explode("|",$watermarkLocation);
+
+		// Calculate the position
+		switch ($positionHeight) {
+			case 'top':
+				$y = 0;
+				break;
+
+			case 'bottom':
+				$y = $imageHeight - $watermarkHeight;
+				break;
+
+			case 'middle':
+			default:
+				$y = ($imageHeight - $watermarkHeight) / 2;
+				break;
+		}
+
+		switch ($positionWidth) {
+			case 'left':
+				$x = 0;
+				break;
+
+			case 'right':
+				$x = $imageWidth - $watermarkWidth;
+				break;
+
+			case 'center':
+			default:
+				$x = ($imageWidth - $watermarkWidth) / 2;
+				break;
+		}
+
+		if ($image->compositeImage($watermark, Imagick::COMPOSITE_OVER, $x, $y) === FALSE) {
+			errorHandle::errorMsg("Failed to create watermark");
+			errorHandle::newError("Failed to create watermark");
+		}
+
+		return $image;
+	}
+
+	/**
 	 * Returns the binary blob for a given watermark, or FALSE on errer
 	 * @param int $id
 	 * @return bool|string
@@ -196,50 +264,7 @@ class files {
 
 					// Add a watermark
 					if (isset($field['watermark']) && str2bool($field['watermark'])) {
-						$watermarkBlob = self::getWatermarkBlob($field['watermarkImage']);
-						$watermark     = new Imagick();
-						$watermark->readImageBlob($watermarkBlob);
-
-						// Resize the watermark
-						$watermark->scaleImage($image->getImageWidth()/1.5, $image->getImageHeight()/1.5, TRUE);
-
-						list($positionHeight,$positionWidth) = explode("|",$field['watermarkLocation']);
-
-						// calculate the position
-						switch ($positionHeight) {
-							case 'top':
-								$y = 0;
-								break;
-
-							case 'bottom':
-								$y = $image->getImageHeight() - $watermark->getImageHeight();
-								break;
-
-							case 'middle':
-							default:
-								$y = ($image->getImageHeight() - $watermark->getImageHeight()) / 2;
-								break;
-						}
-
-						switch ($positionWidth) {
-							case 'left':
-								$x = 0;
-								break;
-
-							case 'right':
-								$x = $image->getImageWidth() - $watermark->getImageWidth();
-								break;
-
-							case 'center':
-							default:
-								$x = ($image->getImageWidth() - $watermark->getImageWidth()) / 2;
-								break;
-						}
-
-						// Add watermark to image
-						if ($image->compositeImage($watermark, Imagick::COMPOSITE_OVER, $x, $y) === FALSE) {
-							errorHandle::errorMsg("Failed to create watermark: ".$filename);
-						}
+						$image = self::addWatermark($image, $field['watermarkImage'], $field['watermarkLocation']);
 					}
 
 					// Store image
