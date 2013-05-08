@@ -127,13 +127,12 @@ class files {
 	 *
 	 * @author Scott Blake
 	 * @param Imagick $image
-	 * @param string $watermarkImage
-	 * @param string $watermarkLocation
+	 * @param array $field
 	 * @return Imagick
 	 **/
-	public static function addWatermark($image, $watermarkImage, $watermarkLocation) {
+	public static function addWatermark($image, $field) {
 		// Get watermark image data
-		$watermarkBlob = self::getWatermarkBlob($watermarkImage);
+		$watermarkBlob = self::getWatermarkBlob($field['watermarkImage']);
 		$watermark     = new Imagick();
 		$watermark->readImageBlob($watermarkBlob);
 
@@ -141,24 +140,34 @@ class files {
 		$imageWidth  = $image->getImageWidth();
 		$imageHeight = $image->getImageHeight();
 
+		// Store offset values to set watermark away from borders
+		if (isset($field['border']) && str2bool($field['border'])) {
+			$widthOffset  = isset($field['borderWidth'])  ? $field['borderWidth']  : 0;
+			$heightOffset = isset($field['borderHeight']) ? $field['borderHeight'] : 0;
+		}
+
 		// Resize the watermark
-		$watermark->scaleImage($imageWidth/1.5, $imageHeight/1.5, TRUE);
+		$watermark->scaleImage(
+			($imageWidth  - $widthOffset  * 2) / 1.5, // 75% of the image width minus borders
+			($imageHeight - $heightOffset * 2) / 1.5, // 75% of the image height minus borders
+			TRUE
+			);
 
 		// Store watermark dimensions
 		$watermarkWidth  = $watermark->getImageWidth();
 		$watermarkHeight = $watermark->getImageHeight();
 
 		// Get the watermark placement Example: 'top','left'
-		list($positionHeight,$positionWidth) = explode("|",$watermarkLocation);
+		list($positionHeight,$positionWidth) = explode("|",$field['watermarkLocation']);
 
 		// Calculate the position
 		switch ($positionHeight) {
 			case 'top':
-				$y = 0;
+				$y = $heightOffset;
 				break;
 
 			case 'bottom':
-				$y = $imageHeight - $watermarkHeight;
+				$y = $imageHeight - $heightOffset - $watermarkHeight;
 				break;
 
 			case 'middle':
@@ -169,11 +178,11 @@ class files {
 
 		switch ($positionWidth) {
 			case 'left':
-				$x = 0;
+				$x = $widthOffset;
 				break;
 
 			case 'right':
-				$x = $imageWidth - $watermarkWidth;
+				$x = $imageWidth - $widthOffset - $watermarkWidth;
 				break;
 
 			case 'center':
@@ -429,7 +438,7 @@ class files {
 
 				// Add a watermark
 				if (isset($field['watermark']) && str2bool($field['watermark'])) {
-					$image = self::addWatermark($image, $field['watermarkImage'], $field['watermarkLocation']);
+					$image = self::addWatermark($image, $field);
 				}
 
 				// Store image
