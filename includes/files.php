@@ -64,6 +64,16 @@ class files {
 	}
 
 	/**
+	 * Returns TRUE if the input is a UUID
+	 *
+	 * @param string $input
+	 * @return bool
+	 */
+	private static function isUUID($input){
+		return (bool)preg_match('/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/', $input);
+	}
+
+	/**
 	 * Add a watermark to an image
 	 *
 	 * @author Scott Blake
@@ -147,13 +157,14 @@ class files {
 	}
 
 	public static function updateObjectFiles($objectID,$objectField,$uploadID){
-		$uploadBase  = files::getBaseUploadPath().DIRECTORY_SEPARATOR.$uploadID;
-		$saveBase    = mfcs::config('savePath');
+		$uploadBase = files::getBaseUploadPath().DIRECTORY_SEPARATOR.$uploadID;
+		$saveBase   = mfcs::config('savePath');
+		$newFiles  = array();
 		if(isnull($objectID)){
 			$objectFiles = array();
 		}else{
 			$object      = objects::get($objectID);
-			$objectFiles = decodeFields($objectData[$object['data'][$objectField]]);
+			$objectFiles = (array)$object['data'][$objectField];
 		}
 
 		// If the uploadPath dosen't exist, then no files were uploaded
@@ -172,7 +183,6 @@ class files {
 		if(!sizeof($uploadedFiles)) return $results;
 
 		// Move the uploaded files into thier new home and make the new file read-only
-		$newFiles = array();
 		foreach($uploadedFiles as $uploadedFile){
 			$fileExt     = pathinfo($uploadedFile, PATHINFO_EXTENSION);
 			$newFileUUID = self::newFileUUID();
@@ -212,7 +222,6 @@ class files {
 		if(isset($field['combine']) && str2bool($field['combine'])){
 			// Create us some temp working space
 			$tmpDir = sys_get_temp_dir().DIRECTORY_SEPARATOR.uniqid();
-			echo "Temp dir: $tmpDir<br>";
 			mkdir($tmpDir,0777,TRUE);
 
 			// Create the hocr file (if needed)
@@ -226,6 +235,7 @@ class files {
 			// Build the temp array of files for our processing
 			$files = array();
 			foreach($objectFiles as $fileUUID => $fileData){
+				if(!self::isUUID($fileUUID)) continue;
 				$files[ $fileData['filepath'] ] = $fileData['filename'];
 			}
 			natsort($files);
@@ -274,10 +284,13 @@ class files {
 					escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename.".html")
 				);
 				$output = shell_exec($cmd);
-				var_dump($cmd);
 				if (trim($output) !== 'Writing unmodified DCT buffer.') {
-					errorHandle::errorMsg("Failed to Create PDF: ".basename($filename,"jpg")."pdf");
-					errorHandle::newError("hocr2pdf Output: ".$output,errorHandle::HIGH);
+					if(FALSE !== strpos($output,'Warning:')){
+						errorHandle::newError("hocr2pdf Warning: ".$output,errorHandle::LOW);
+					}else{
+						errorHandle::errorMsg("Failed to Create PDF: ".basename($filename,"jpg").".pdf");
+						errorHandle::newError("hocr2pdf Error: ".$output,errorHandle::HIGH);
+					}
 				}
 			}
 
@@ -285,8 +298,6 @@ class files {
 			$saveFilepath = self::getSaveDir('combined',$combinedFileUUID).DIRECTORY_SEPARATOR."combined.pdf";
 
 			// Combine all PDF files in directory
-			echo "saveFilepath: $saveFilepath<br>";
-			echo "File Pattern: ".$tmpDir.DIRECTORY_SEPARATOR."*.pdf<br>";
 			$output = shell_exec(sprintf('gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=%s -f %s 2>&1',
 				$saveFilepath,
 				$tmpDir.DIRECTORY_SEPARATOR."*.pdf"
@@ -303,18 +314,24 @@ class files {
 			);
 
 			// Lastly, we delete our temp working dir
-//			rmdir($tmpDir);
+			foreach(glob("$tmpDir/*.*") as $file){
+				unlink($file);
+			}
+			rmdir($tmpDir);
 		}
 
 		// Convert uploaded files into some ofhter size/format/etc
 		if (isset($field['convert']) && str2bool($field['convert'])) {
 			foreach($objectFiles as $fileUUID => $fileData){
-				$filename = $fileData['filename'];
-				$fileExt  = pathinfo($filename, PATHINFO_EXTENSION);
-				$fileBase = basename($filename,".$fileExt");
+				if(!self::isUUID($fileUUID)) continue;
 
-				$image = new Imagick();
-				$image->readImage($fileData['filepath']);
+				$filename     = $fileData['filename'];
+				$filepath     = $fileData['filepath'];
+				$originalFile = self::getSaveDir('originals',$filepath).DIRECTORY_SEPARATOR.basename($filepath);
+				$fileExt      = pathinfo($filename, PATHINFO_EXTENSION);
+				$fileBase     = basename($filename,".$fileExt");
+				$image        = new Imagick();
+				$image->readImage($originalFile);
 
 				// Convert format
 				if(!empty($field['convertFormat'])) $image->setImageFormat($field['convertFormat']);
@@ -369,6 +386,8 @@ class files {
 			require_once 'class.tesseract_ocr.php';
 
 			foreach($objectFiles as $fileUUID => $fileData){
+				if(!self::isUUID($fileUUID)) continue;
+
 				$filename = $fileData['filename'];
 				$fileExt  = pathinfo($filename, PATHINFO_EXTENSION);
 				$fileBase = basename($filename,".$fileExt");
@@ -383,6 +402,8 @@ class files {
 
 		if (isset($field['mp3']) && str2bool($field['mp3'])) {
 			foreach($objectFiles as $fileUUID => $fileData){
+				if(!self::isUUID($fileUUID)) continue;
+
 				$fi = new finfo(FILEINFO_MIME);
 				$mimeType = $fi->file($newFilepath, FILEINFO_MIME_TYPE);
 				if(strpos($mimeType, 'audio/') !== FALSE){
