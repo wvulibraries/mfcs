@@ -135,10 +135,6 @@ if (forms::validID()) {
 			throw new Exception("Error building form.");
 		}
 
-		print "<pre>";
-		var_dump($engine->cleanGet);
-		print "</pre>";
-
 		localvars::add("form",$builtForm);
 		localvars::add("leftnav",navigation::buildProjectNavigation($engine->cleanGet['MYSQL']['formID']));
 
