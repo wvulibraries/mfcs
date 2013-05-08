@@ -37,12 +37,12 @@ try{
 	// Get the object's files array and grab the correct file we are showing
 	$files = $object['data'][$fieldName];
 	if(!sizeof($files)) throw new Exception("No files uploaded for this field!");
-	$file = isset($engine->cleanGet['MYSQL']['fileNum'])
-		? $files[$engine->cleanGet['MYSQL']['fileNum']-1]
-		: $files[0];
+	$file = isset($engine->cleanGet['MYSQL']['fileKey'])
+		? $files[$engine->cleanGet['MYSQL']['fileKey']]
+		: array_pop($files);
 
 	// Build the full path to the object we're showing
-	$fullPath = files::getSaveDir('originals',$file['systemName']).DIRECTORY_SEPARATOR.strtolower($file['systemName']);
+	$fullPath = files::getSaveDir('originals',$file['filepath']).DIRECTORY_SEPARATOR.basename($file['filepath']);
 
 	// Get the object's contents
 	$fileContents = file_get_contents($fullPath);

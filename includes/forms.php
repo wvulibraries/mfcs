@@ -594,28 +594,36 @@ class forms {
 				localvars::add("allowedExtensions",implode('", "',$field['allowedExtensions']));
 
 				// Do we display a current file?
-				/* @todo UNCOMMENT
 				if(isset($object['data'][$field['name']]) and sizeof($object['data'][$field['name']])){
+					$files = $object['data'][$field['name']];
 					if(str2bool($field['multipleFiles'])){
-						for($i=1;$i<=sizeof($object['data'][$field['name']]); $i++){
-							$output .= sprintf('<div class="filePreview">%s: <a class="previewLink" href="#">Click to view file #%s</a> | <a class="downloadLink" href="fileViewer.php?objectID=%s&field=%s&fileNum=%s&download=1">Click to download file #%s</a>',
-								$object['data'][$field['name']][$i]['originalName'],
+						$i=0;
+						foreach($files as $fileKey => $fileData){
+							// Skip if not a 'uploaded' file
+							if(!files::isUUID($fileKey)) continue;
+
+							$i++;
+							$output .= sprintf('<div class="filePreview"><span title="Created: %s">%s</span><br><a class="previewLink" href="javascript:;">Click to view file #%s</a> | <a class="downloadLink" href="fileViewer.php?objectID=%s&field=%s&fileNum=%s&download=1">Click to download file #%s</a>',
+								date('D M j, Y g:i:s a',$fileData['created']),
+								$fileData['filename'],
 								$i,
 								$objectID,
 								$field['name'],
 								$i,
 								$i
 							);
-							$output .= sprintf('<div style="display: none;"><iframe src="fileViewer.php?objectID=%s&field=%s&fileNum=%s" sandbox="" seamless></iframe></div>',
+							$output .= sprintf('<div style="display: none;"><iframe src="fileViewer.php?objectID=%s&field=%s&fileID=%s" sandbox="" seamless></iframe></div>',
 								$objectID,
 								$field['name'],
-								$i
+								$fileKey
 							);
 							$output .= '</div>';
 						}
 					}else{
-						$output .= sprintf('<div class="filePreview">%s: <a class="previewLink" href="#">Click to view file</a> | <a class="downloadLink" href="fileViewer.php?objectID=%s&field=%s&download=1">Click to download file</a>',
-							$object['data'][$field['name']][0]['originalName'],
+						$file = array_pop($files);
+						$output .= sprintf('<div class="filePreview">%s<br><a class="previewLink" href="javascript:;">Click to view file</a> | <a class="downloadLink" href="fileViewer.php?objectID=%s&field=%s&download=1">Click to download file</a>',
+							date('D M j, Y g:i:s a',$file['created']),
+							$file['filename'],
 							$objectID,
 							$field['name']
 						);
@@ -626,7 +634,6 @@ class forms {
 						$output .= '</div>';
 					}
 				}
-				*/
 
 				// Output "Select Files" button for new uploads
 				$output .= sprintf('<div id="fineUploader_%s"></div><input type="hidden" id="%s" name="%s" value="%s"><script type="text/javascript">%s</script>',
