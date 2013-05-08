@@ -431,7 +431,7 @@ class files {
 					);
 
 					// Store thumbnail
-					if ($thumb->writeImage(self::getSaveDir('thumbs', $fileUUID).DIRECTORY_SEPARATOR.basename($filename,".$fileExt").".".strtolower($thumb->getImageFormat())) === FALSE) {
+					if ($thumb->writeImage(self::getSaveDir('thumbs', $fileUUID).DIRECTORY_SEPARATOR.$fileUUID.".".strtolower($thumb->getImageFormat())) === FALSE) {
 						errorHandle::errorMsg("Failed to create thumbnail: ".$filename);
 					}
 				}
