@@ -1089,6 +1089,7 @@ class forms {
 		// if it is an object form (not a metadata form)
 		// do the IDNO stuff
 		if ($form['metadata'] == "0") {
+
 			// increment the project counter
 			$sql       = sprintf("UPDATE `forms` SET `count`=`count`+'1' WHERE `ID`='%s'",
 				$engine->openDB->escape($formID['ID'])
@@ -1112,6 +1113,14 @@ class forms {
 				$idno = $engine->cleanPost['MYSQL']['idno'];
 			}
 
+			if (isempty($idno)) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+
+				errorHandle::errorMsg("Error generating / getting IDNO.");
+				return FALSE;
+			}
+
 			// update the object with the new idno
 			$sql       = sprintf("UPDATE `objects` SET `idno`='%s' WHERE `ID`='%s'",
 				$idno, // Cleaned above when assigned
@@ -1120,9 +1129,13 @@ class forms {
 			$sqlResult = $engine->openDB->query($sql);
 
 			if (!$sqlResult['result']) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+				
 				errorHandle::newError(__METHOD__."() - updating the IDNO: ".$sqlResult['error'], errorHandle::DEBUG);
 				return FALSE;
 			}
+
 		}
 
 		if ($newObject === FALSE) {
