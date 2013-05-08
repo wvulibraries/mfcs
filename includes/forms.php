@@ -1099,7 +1099,7 @@ class forms {
 
 			// increment the project counter
 			$sql       = sprintf("UPDATE `forms` SET `count`=`count`+'1' WHERE `ID`='%s'",
-				$engine->openDB->escape($formID['ID'])
+				$engine->openDB->escape($form['ID'])
 			);
 			$sqlResult = $engine->openDB->query($sql);
 
