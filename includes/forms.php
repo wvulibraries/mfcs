@@ -764,6 +764,60 @@ class forms {
 
 	}
 
+	// returns NULL when the other function should continue
+	// returns FALSE when something doesn't validate
+	// returns TRUE when something does validate
+	private static function validateSubmission($formID,$field,$value=NULL,$objectID) {
+
+
+		if ($field['type'] == "fieldset" || $field['type'] == "idno" || $field['disabled'] == "true") return NULL;
+
+		if (strtolower($field['required']) == "true" && (isnull($value) || !isset($value) || isempty($value))) {
+
+			errorHandle::errorMsg("Missing data for required field '".$field['label']."'.");
+			return FALSE;
+
+		}
+
+		// perform validations here
+		if (isempty($field['validation']) || $field['validation'] == "none") {
+			$valid = TRUE;
+		}
+		else {
+			$return = validate::isValidMethod($field['validation']);
+			$valid  = FALSE;
+			if ($return === TRUE) {
+				if ($field['validation'] == "regexp") {
+					$valid = validate::$field['validation']($field['validationRegex'],$value);
+				}
+				else {
+					$valid = validate::$field['validation']($value);
+				}
+			}
+		}
+
+		if ($valid === FALSE) {
+			errorHandle::errorMsg("Invalid data provided in field '".$field['label']."'.");
+			return FALSE;
+		}
+
+		// Duplicate Checking (Form)
+		if (strtolower($field['duplicates']) == "true") {
+			if (self::isDupe($formID,$field['name'],$value,$objectID)) {
+				errorHandle::errorMsg("Duplicate data (in form) provided in field '".$field['label']."'.");
+				return FALSE;
+			}
+		}
+
+		if (!is_empty($engine->errorStack)) {
+			return FALSE;
+		}
+		else {
+			return TRUE;
+		}
+
+	}
+
 	public static function submitEditTable($formID) {
 
 		$form = self::get($formID);
