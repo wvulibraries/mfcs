@@ -442,7 +442,14 @@ class forms {
 
 
 			if ($error === TRUE) {
-				// @TODO should this be raw? // security issue?
+				// This is RAW because it is post data being displayed back out to the user who submitted it
+				// during a submission error. we don't want to corrupt the data by sanitizing it and then 
+				// sanitizing it again on submissions
+				// 
+				// it should not be a security issue because it is being displayed back out to the user that is submissing the data.
+				// this will likely cause issues with security scans
+				// 
+				// @SECURITY False Positive 1
 				if (isset($engine->cleanPost['RAW'][$field['name']])) {
 					$object['data'][$field['name']] = $engine->cleanPost['RAW'][$field['name']];
 					if ($field['type'] == "select") {
