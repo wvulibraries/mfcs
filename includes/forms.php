@@ -612,7 +612,7 @@ class forms {
 								$i,
 								$i
 							);
-							$output .= sprintf('<div style="display: none;"><iframe src="fileViewer.php?objectID=%s&field=%s&fileID=%s" sandbox="" seamless></iframe></div>',
+							$output .= sprintf('<div style="display: none;"><iframe src="../includes/fileViewer.php?objectID=%s&field=%s&fileID=%s" sandbox="" seamless></iframe></div>',
 								$objectID,
 								$field['name'],
 								$fileKey
@@ -627,7 +627,7 @@ class forms {
 							$objectID,
 							$field['name']
 						);
-						$output .= sprintf('<div style="display: none;"><iframe src="fileViewer.php?objectID=%s&field=%s" sandbox="" seamless></iframe></div>',
+						$output .= sprintf('<div style="display: none;"><iframe src="../includes/fileViewer.php?objectID=%s&field=%s" sandbox="" seamless></iframe></div>',
 							$objectID,
 							$field['name']
 						);
