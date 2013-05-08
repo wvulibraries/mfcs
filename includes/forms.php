@@ -594,6 +594,7 @@ class forms {
 				localvars::add("allowedExtensions",implode('", "',$field['allowedExtensions']));
 
 				// Do we display a current file?
+				/* @todo UNCOMMENT
 				if(isset($object['data'][$field['name']]) and sizeof($object['data'][$field['name']])){
 					if(str2bool($field['multipleFiles'])){
 						for($i=1;$i<=sizeof($object['data'][$field['name']]); $i++){
@@ -625,6 +626,7 @@ class forms {
 						$output .= '</div>';
 					}
 				}
+				*/
 
 				// Output "Select Files" button for new uploads
 				$output .= sprintf('<div id="fineUploader_%s"></div><input type="hidden" id="%s" name="%s" value="%s"><script type="text/javascript">%s</script>',
@@ -1051,7 +1053,12 @@ class forms {
 			}
 
 			if (strtolower($field['type']) == "file") {
-				$values[$field['name']] = (array)files::processUploads($field,$engine->cleanPost['MYSQL'][$field['name']]);
+				// Process uploaded files
+				$values[$field['name']] = files::updateObjectFiles($objectID, $field['name'], $engine->cleanPost['MYSQL'][$field['name']]);
+				// Process files (if needed)
+				if(str2bool($field['combine']) || str2bool($field['convert']) || str2bool($field['ocr']) || str2bool($field['thumbnail']) || str2bool($field['mp3'])){
+					$values[$field['name']] = files::processObjectFiles($objectID,$field['name'], array($field['name'] => $values[$field['name']]));
+				}
 			}
 
 			if(!isset($values[$field['name']])) $values[$field['name']] = $engine->cleanPost['RAW'][$field['name']];
