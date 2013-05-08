@@ -266,7 +266,7 @@ class files {
 			$fi = new finfo(FILEINFO_MIME);
 			$mimeType = $fi->file($newFilepath, FILEINFO_MIME_TYPE);
 			if(strpos($mimeType, 'audio/') !== FALSE){
-				// Perform audio processing here
+				// @TODO: Perform audio processing here
 			}
 		}
 
