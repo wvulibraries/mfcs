@@ -27,9 +27,12 @@ class files {
 		// error checking - allow a full filename to be passed (aka: stip off the fileExt)
 		if(FALSE !== strpos($fileUUID,'.')) $fileUUID = pathinfo($fileUUID,PATHINFO_FILENAME);
 
-		$savePath   = mfcs::config('savePath');
-		$newFileSubpath = implode(DIRECTORY_SEPARATOR, explode('-', $fileUUID));
-		return $savePath.DIRECTORY_SEPARATOR.trim(strtolower($type)).DIRECTORY_SEPARATOR.$newFileSubpath;
+		$savePath       = mfcs::config('savePath');
+		$newFileSubpath = str_replace('-',DIRECTORY_SEPARATOR,$fileUUID);
+		$result         = $savePath.DIRECTORY_SEPARATOR.trim(strtolower($type)).DIRECTORY_SEPARATOR.$newFileSubpath;
+
+		if(!is_dir($result)) mkdir($result,0755,TRUE);
+		return $result;
 	}
 
 	/**
@@ -42,7 +45,7 @@ class files {
 	 * @return string
 	 */
 	public static function newFileUUID(){
-		// Loop until no file is found with generated UUID
+		$saveBase = mfcs::config('savePath').DIRECTORY_SEPARATOR.'originals';
 		do{
 			/**
 			 * Generate a UUID (version 4)
@@ -55,9 +58,8 @@ class files {
 				mt_rand( 0, 0x3fff ) | 0x8000,
 				mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
 			);
-			$testFilename = self::getSaveDir('originals',$uuid).DIRECTORY_SEPARATOR.$uuid.".*";
-		}while(sizeof(glob($testFilename)));
-		// Return the valid uuid
+			$uuidFilepath = str_replace('-',DIRECTORY_SEPARATOR,$uuid);
+		}while(is_dir($saveBase.DIRECTORY_SEPARATOR.$uuidFilepath));
 		return $uuid;
 	}
 
@@ -144,193 +146,251 @@ class files {
 		return FALSE;
 	}
 
-	/**
-	 * Performs necessary conversions, thumbnails, etc.
-	 *
-	 * @param array $field
-	 * @param string $uploadID
-	 * @return bool|array
-	 * @author Scott Blake
-	 **/
-	public static function processUploads($field,$uploadID) {
-		$results    = array();
-		$uploadPath = files::getBaseUploadPath().DIRECTORY_SEPARATOR.$uploadID;
-		$savePath   = mfcs::config('savePath');
+	public static function updateObjectFiles($objectID,$objectField,$uploadID){
+		$uploadBase  = files::getBaseUploadPath().DIRECTORY_SEPARATOR.$uploadID;
+		$saveBase    = mfcs::config('savePath');
+		if(isnull($objectID)){
+			$objectFiles = array();
+		}else{
+			$object      = objects::get($objectID);
+			$objectFiles = decodeFields($objectData[$object['data'][$objectField]]);
+		}
 
 		// If the uploadPath dosen't exist, then no files were uploaded
-		if(!is_dir($uploadPath)) return $results;
+		if(!is_dir($uploadBase)) return $results;
 
-		// Scan the uploadPath directory, sort the files in 'natural order', and then start looping!
-		$files = scandir($uploadPath);
+		// Build an array of all uploaded files
+		$uploadedFiles = array();
+		$files         = scandir($uploadBase);
 		natsort($files);
-		foreach ($files as $filename) {
-			// Skip hidden stuff
-			if($filename{0} == '.') continue;
+		foreach($files as $file){
+			if($file{0} == '.') continue;
+			$uploadedFiles[] = $file;
+		}
 
-			// Figure out the details of the file we're working with
-			$fileUUID     = files::newFileUUID();
-			$fileExt      = pathinfo($filename, PATHINFO_EXTENSION);
-			$newFilename  = strtolower("$fileUUID.$fileExt");
-			$results[]    = array(
-				'originalName' => $filename,
-				'systemName'   => $newFilename
+		// If $uploadedFiles is empty, then no files were uploaded. Otherwise, start processing!
+		if(!sizeof($uploadedFiles)) return $results;
+
+		// Move the uploaded files into thier new home and make the new file read-only
+		$newFiles = array();
+		foreach($uploadedFiles as $uploadedFile){
+			$fileExt     = pathinfo($uploadedFile, PATHINFO_EXTENSION);
+			$newFileUUID = self::newFileUUID();
+			$newFilepath = self::getSaveDir('originals',$newFileUUID);
+			$newFilename = "$newFilepath/$newFileUUID.$fileExt";
+			$newFiles[$newFileUUID] = array(
+				'filepath' => str_replace('-',DIRECTORY_SEPARATOR,$newFileUUID).DIRECTORY_SEPARATOR.$newFileUUID.'.'.$fileExt,
+				'filename' => $uploadedFile,
+				'created'  => time()
 			);
-			$origFilepath = $uploadPath.DIRECTORY_SEPARATOR.$filename;
-			$newFilepath  = self::getSaveDir('originals',$fileUUID).DIRECTORY_SEPARATOR.strtolower($newFilename);
+			rename("$uploadBase/$uploadedFile", $newFilename);
+			chmod($newFilename, 0444);
+		}
 
-			// Move the file to it's now (originals) home and save it's file extension
-			if(!is_dir(self::getSaveDir('originals',$fileUUID))) mkdir(self::getSaveDir('originals',$fileUUID), 0777, TRUE);
-			rename($origFilepath, $newFilepath);
+		// Remove the uploads directory (now that we're done with it)
+		rmdir($uploadBase);
 
-			// Ensure this file is an image before image specific processing
-			if (getimagesize($newFilepath) !== FALSE) {
-				// If combine files is checked, read this image and add it to the combined object
-				if (isset($field['combine']) && str2bool($field['combine'])) {
-					// Create the hocr file
-					$output = file_put_contents(
-						$savePath.DIRECTORY_SEPARATOR."hocr",
-						"tessedit_create_hocr 1"
-					);
+		return array_merge($newFiles,$objectFiles);
+	}
 
-					if ($output === FALSE) {
-						errorHandle::newError("Failed to create hocr file.",errorHandle::HIGH);
-						return FALSE;
-					}
-
-					// perform hOCR on the original uploaded file which gets stored in combined as an HTML file
-					$output = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
-						escapeshellarg($newFilepath),
-						escapeshellarg(self::getSaveDir('combined', $fileUUID).DIRECTORY_SEPARATOR.basename($filename,".$fileExt")),
-						escapeshellarg($savePath.DIRECTORY_SEPARATOR."hocr")
-					));
-
-					if (trim($output) !== 'Tesseract Open Source OCR Engine with Leptonica') {
-						errorHandle::newError("Tesseract Output: ".$output,errorHandle::HIGH);
-						return FALSE;
-					}
-
-					// Convert original uploaded file to jpg in preparation of final combine
-					$output = shell_exec(sprintf('convert %s %s 2>&1',
-						escapeshellarg($newFilepath),
-						escapeshellarg(self::getSaveDir('combined', $fileUUID).DIRECTORY_SEPARATOR.basename($filename,".$fileExt").".jpg")
-					));
-
-					if (!is_empty($output)) {
-						errorHandle::newError("Convert Output: ".$output,errorHandle::HIGH);
-						return FALSE;
-					}
-				}
-
-				// Convert uploaded files into some ofhter size/format/etc
-				if (isset($field['convert']) && str2bool($field['convert'])) {
-					$image = new Imagick();
-					$image->readImage($newFilepath);
-
-					// Convert format
-					if(!empty($field['convertFormat'])) $image->setImageFormat($field['convertFormat']);
-
-					// Resize image
-					$image->scaleImage($field['convertWidth'], $field['convertHeight'], TRUE);
-
-					// Add a border
-					if (isset($field['border']) && str2bool($field['border'])) {
-						$image->borderImage(
-							$field['borderColor'],
-							$field['borderWidth'],
-							$field['borderHeight']
-						);
-					}
-
-					// Create a thumbnail
-					if (isset($field['thumbnail']) && str2bool($field['thumbnail'])) {
-						// Make a copy of the original
-						$thumb = $image->clone();
-
-						// Change the format
-						$thumb->setImageFormat($field['thumbnailFormat']);
-
-						// Scale to thumbnail size, constraining proportions
-						$thumb->thumbnailImage(
-							$field['thumbnailWidth'],
-							$field['thumbnailHeight'],
-							TRUE
-						);
-
-						// Store thumbnail
-						if ($thumb->writeImage(self::getSaveDir('thumbs', $fileUUID).DIRECTORY_SEPARATOR.basename($filename,".$fileExt").".".strtolower($thumb->getImageFormat())) === FALSE) {
-							errorHandle::errorMsg("Failed to create thumbnail: ".$filename);
-						}
-					}
-
-					// Add a watermark
-					if (isset($field['watermark']) && str2bool($field['watermark'])) {
-						$image = self::addWatermark($image, $field['watermarkImage'], $field['watermarkLocation']);
-					}
-
-					// Store image
-					$writeFilepath = self::getSaveDir('converted',$fileUUID).DIRECTORY_SEPARATOR.$fileUUID.".".strtolower($image->getImageFormat());
-					mkdir(dirname($writeFilepath), 0755, TRUE);
-					$image->writeImages($writeFilepath, TRUE);
-				}
-
-				// Create an OCR text file
-				if (isset($field['ocr']) && str2bool($field['ocr'])) {
-					// Include TesseractOCR class
-					require_once 'class.tesseract_ocr.php';
-
-					$text = TesseractOCR::recognize(self::getSaveDir('originals',$fileUUID).DIRECTORY_SEPARATOR.$filename);
-
-					if (file_put_contents(self::getSaveDir('ocr',$fileUUID).DIRECTORY_SEPARATOR.basename($filename,".$fileExt").".txt", $text) === FALSE) {
-						errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
-						errorHandle::newError("Failed to create OCR file for ".self::getSaveDir('originals',$fileUUID).DIRECTORY_SEPARATOR.$filename,errorHandle::DEBUG);
-					}
-				}
-			}
-
-			// Ensure this file is an audio file before audio specific processing
-			$fi = new finfo(FILEINFO_MIME);
-			$mimeType = $fi->file($newFilepath, FILEINFO_MIME_TYPE);
-			if(strpos($mimeType, 'audio/') !== FALSE){
-				// @TODO: Perform audio processing here
+	public static function processObjectFiles($objectID, $objectField, $objectData=NULL){
+		$results  = array();
+		$saveBase = mfcs::config('savePath');
+		$field    = forms::getField(mfcs::$engine->cleanGet['MYSQL']['formID'], $objectField);
+		if(isset($objectData)){
+			$objectFiles = $objectData[$objectField];
+		}else{
+			if(isnull($objectID)){
+				$objectFiles = array();
+			}else{
+				$object      = objects::get($objectID);
+				$objectFiles = decodeFields($objectData[$object['data'][$objectField]]);
 			}
 		}
 
-		// Write the combined PDF to disk
-		if (isset($field['combine']) && str2bool($field['combine'])) {
-			$combinedDir = self::getSaveDir('combined', $fileUUID).DIRECTORY_SEPARATOR;
+		// If combine files is checked, read this image and add it to the combined object
+		if(isset($field['combine']) && str2bool($field['combine'])){
+			// Create us some temp working space
+			$tmpDir = sys_get_temp_dir().DIRECTORY_SEPARATOR.uniqid();
+			echo "Temp dir: $tmpDir<br>";
+			mkdir($tmpDir,0777,TRUE);
 
-			// Combine HTML and JPG files into individual PDF files
-			foreach (glob($combinedDir."*.jpg") as $file) {
-				$output = shell_exec(sprintf('hocr2pdf -i %s -s -o %s < %s 2>&1',
-					escapeshellarg($file),
-					escapeshellarg($combinedDir.basename($file,"jpg")."pdf"),
-					escapeshellarg($combinedDir.basename($file,"jpg")."html")
-				));
+			// Create the hocr file (if needed)
+			if(!file_exists("$saveBase/.hocr")){
+				if(!file_put_contents("$saveBase/.hocr", 'tessedit_create_hocr 1')){
+					errorHandle::newError("Failed to create hocr file.",errorHandle::HIGH);
+					return FALSE;
+				}
+			}
 
+			// Build the temp array of files for our processing
+			$files = array();
+			foreach($objectFiles as $fileUUID => $fileData){
+				$files[ $fileData['filepath'] ] = $fileData['filename'];
+			}
+			natsort($files);
+
+			// Start combining!
+			foreach($files as $filepath => $filename){
+				$fileExt  = pathinfo($filename, PATHINFO_EXTENSION);
+				$fileBase = basename($filename,".$fileExt");
+				$originalFile = self::getSaveDir('originals',$filepath).DIRECTORY_SEPARATOR.basename($filepath);
+
+				// perform hOCR on the original uploaded file which gets stored in combined as an HTML file
+				$cmd = sprintf('tesseract %s %s -l eng %s 2>&1',
+					escapeshellarg($originalFile),
+					escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename),
+					escapeshellarg("$saveBase/.hocr")
+				);
+				$output = shell_exec($cmd);
+
+				// If a new-line char is in the output, assume it's an error
+				if (FALSE !== strpos(trim($output), "\n")) {
+					errorHandle::newError("Tesseract Output: ".$output,errorHandle::HIGH);
+					return FALSE;
+				}
+
+				// Convert original uploaded file to jpg in preparation of final combine (if needed)
+				if($fileExt != "jpg"){
+					// Convert needed
+					$tempFilename = $tmpDir.DIRECTORY_SEPARATOR.$fileBase.".jpg";
+					$output = shell_exec(sprintf('convert %s %s 2>&1',
+						escapeshellarg($originalFile),
+						escapeshellarg($tempFilename)
+					));
+					if(!is_empty($output)){
+						errorHandle::newError("Convert Output: ".$output,errorHandle::HIGH);
+						return FALSE;
+					}
+				}else{
+					// No convert needed - but we need to move the file into the right place
+					$tempFilename = $tmpDir.DIRECTORY_SEPARATOR.$filename;
+					copy($originalFile, $tempFilename);
+				}
+
+				$cmd = sprintf('hocr2pdf -i %s -s -o %s < %s 2>&1',
+					escapeshellarg($tempFilename),
+					escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$fileBase.".pdf"),
+					escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename.".html")
+				);
+				$output = shell_exec($cmd);
+				var_dump($cmd);
 				if (trim($output) !== 'Writing unmodified DCT buffer.') {
-					errorHandle::errorMsg("Failed to Create PDF: ".basename($file,"jpg")."pdf");
+					errorHandle::errorMsg("Failed to Create PDF: ".basename($filename,"jpg")."pdf");
 					errorHandle::newError("hocr2pdf Output: ".$output,errorHandle::HIGH);
 				}
 			}
 
-			// Combine all PDF files in directory
-			$output = shell_exec(sprintf('gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=%s -f %s 2>&1',
-				$combinedDir."combined.pdf",
-				$combinedDir."*.pdf"
-			));
+			$combinedFileUUID = self::newFileUUID();
+			$saveFilepath = self::getSaveDir('combined',$combinedFileUUID).DIRECTORY_SEPARATOR."combined.pdf";
 
+			// Combine all PDF files in directory
+			echo "saveFilepath: $saveFilepath<br>";
+			echo "File Pattern: ".$tmpDir.DIRECTORY_SEPARATOR."*.pdf<br>";
+			$output = shell_exec(sprintf('gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=%s -f %s 2>&1',
+				$saveFilepath,
+				$tmpDir.DIRECTORY_SEPARATOR."*.pdf"
+			));
 			if (!is_empty($output)) {
 				errorHandle::errorMsg("Failed to combine PDFs into single PDF.");
 				errorHandle::newError("GhostScript Output: ".$output,errorHandle::HIGH);
 			}
 
-			// Delete all the files except "combined.pdf"
-			foreach(glob($combinedDir."*") AS $file) {
-				if ($file !== $combinedDir."combined.pdf") {
-					unlink($file);
+			$results['combined'] = array(
+				'filepath' => $saveFilepath,
+				'filename' => basename($saveFilepath),
+				'created'  => time()
+			);
+
+			// Lastly, we delete our temp working dir
+//			rmdir($tmpDir);
+		}
+
+		// Convert uploaded files into some ofhter size/format/etc
+		if (isset($field['convert']) && str2bool($field['convert'])) {
+			foreach($objectFiles as $fileUUID => $fileData){
+				$filename = $fileData['filename'];
+				$fileExt  = pathinfo($filename, PATHINFO_EXTENSION);
+				$fileBase = basename($filename,".$fileExt");
+
+				$image = new Imagick();
+				$image->readImage($fileData['filepath']);
+
+				// Convert format
+				if(!empty($field['convertFormat'])) $image->setImageFormat($field['convertFormat']);
+
+				// Resize image
+				$image->scaleImage($field['convertWidth'], $field['convertHeight'], TRUE);
+
+				// Add a border
+				if (isset($field['border']) && str2bool($field['border'])) {
+					$image->borderImage(
+						$field['borderColor'],
+						$field['borderWidth'],
+						$field['borderHeight']
+					);
+				}
+
+				// Create a thumbnail
+				if (isset($field['thumbnail']) && str2bool($field['thumbnail'])) {
+					// Make a copy of the original
+					$thumb = $image->clone();
+
+					// Change the format
+					$thumb->setImageFormat($field['thumbnailFormat']);
+
+					// Scale to thumbnail size, constraining proportions
+					$thumb->thumbnailImage(
+						$field['thumbnailWidth'],
+						$field['thumbnailHeight'],
+						TRUE
+					);
+
+					// Store thumbnail
+					if ($thumb->writeImage(self::getSaveDir('thumbs', $fileUUID).DIRECTORY_SEPARATOR.basename($filename,".$fileExt").".".strtolower($thumb->getImageFormat())) === FALSE) {
+						errorHandle::errorMsg("Failed to create thumbnail: ".$filename);
+					}
+				}
+
+				// Add a watermark
+				if (isset($field['watermark']) && str2bool($field['watermark'])) {
+					$image = self::addWatermark($image, $field['watermarkImage'], $field['watermarkLocation']);
+				}
+
+				// Store image
+				$writeFilepath = self::getSaveDir('converted',$fileUUID).DIRECTORY_SEPARATOR.$fileUUID.".".strtolower($image->getImageFormat());
+				$image->writeImages($writeFilepath, TRUE);
+			}
+		}
+
+		// Create an OCR text file
+		if (isset($field['ocr']) && str2bool($field['ocr'])) {
+			// Include TesseractOCR class
+			require_once 'class.tesseract_ocr.php';
+
+			foreach($objectFiles as $fileUUID => $fileData){
+				$filename = $fileData['filename'];
+				$fileExt  = pathinfo($filename, PATHINFO_EXTENSION);
+				$fileBase = basename($filename,".$fileExt");
+				$text     = TesseractOCR::recognize(self::getSaveDir('originals',$fileUUID).DIRECTORY_SEPARATOR.$filename);
+				$saveDir  = self::getSaveDir('ocr', $fileUUID).DIRECTORY_SEPARATOR.$fileBase.".txt";
+				if (file_put_contents($saveDir, $text) === FALSE) {
+					errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
+					errorHandle::newError("Failed to create OCR file for ".self::getSaveDir('originals',$fileUUID).DIRECTORY_SEPARATOR.$filename,errorHandle::DEBUG);
 				}
 			}
 		}
-		return $results;
+
+		if (isset($field['mp3']) && str2bool($field['mp3'])) {
+			foreach($objectFiles as $fileUUID => $fileData){
+				$fi = new finfo(FILEINFO_MIME);
+				$mimeType = $fi->file($newFilepath, FILEINFO_MIME_TYPE);
+				if(strpos($mimeType, 'audio/') !== FALSE){
+					// @TODO: Perform audio processing here
+				}
+			}
+		}
+
+		return array_merge($results,$objectFiles);
 	}
 }
