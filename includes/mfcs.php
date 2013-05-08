@@ -105,10 +105,16 @@ class mfcs {
 
 		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
-		$idno                 = $idno['idnoFormat'];
-		$len                  = strrpos($idno,"#") - strpos($idno,"#") + 1;
-		$padding  = str_pad($row['count'],$len,"0",STR_PAD_LEFT);
-		$idno                 = preg_replace("/#+/", $padding, $idno);
+		if ($increment === TRUE) {
+			$row['count'] = (string)((int)$row['count'] + 1);
+		}
+
+		if (isempty($idno['idnoFormat'])) return $row['count'];
+
+		$idno    = $idno['idnoFormat'];
+		$len     = strrpos($idno,"#") - strpos($idno,"#") + 1;
+		$padding = str_pad($row['count'],$len,"0",STR_PAD_LEFT);
+		$idno    = preg_replace("/#+/", $padding, $idno);
 
 		return $idno;
 	}
