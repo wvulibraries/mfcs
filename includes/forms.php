@@ -845,44 +845,11 @@ class forms {
 
 				foreach ($form['fields'] as $field) {
 
-					// @TODO this needs to be broken off into a method, duplicated in submit() as well
-					if ($field['type'] == "fieldset" || $field['type'] == "idno" || $field['disabled'] == "true") continue;
+					$value = (isset($engine->cleanPost['RAW'][$field['name']."_".$object['ID']]))?"":$engine->cleanPost['RAW'][$field['name']."_".$object['ID']];
+					$validationTests = self::validateSubmission($formID,$field,$value,$object['ID']);
 
-					if (strtolower($field['required']) == "true" && (!isset($engine->cleanPost['RAW'][$field['name']."_".$object['ID']]) || isempty($engine->cleanPost['RAW'][$field['name']."_".$object['ID']]))) {
-
-						errorHandle::errorMsg("Missing data for required field '".$field['label']."'.");
+					if (isnull($validationTests) || $validationTests === FALSE) {
 						continue;
-
-					}
-
-					// perform validations here
-					if (isempty($field['validation']) || $field['validation'] == "none") {
-						$valid = TRUE;
-					}
-					else {
-						$return = validate::isValidMethod($field['validation']);
-						$valid  = FALSE;
-						if ($return === TRUE) {
-							if ($field['validation'] == "regexp") {
-								$valid = validate::$field['validation']($field['validationRegex'],$field['value']);
-							}
-							else {
-								$valid = validate::$field['validation']($engine->cleanPost['RAW'][$field['name']."_".$object['ID']]);
-							}
-						}
-					}
-
-					if ($valid === FALSE) {
-						errorHandle::errorMsg("Invalid data provided in field '".$field['label']."'.");
-						continue;
-					}
-
-					// Duplicate Checking (Form)
-					if (strtolower($field['duplicates']) == "true") {
-						if (self::isDupe($formID,$field['name'],$engine->cleanPost['RAW'][$field['name']."_".$object['ID']],$object['ID'])) {
-							errorHandle::errorMsg("Duplicate data (in form) provided in field '".$field['label']."'.");
-							continue;
-						}
 					}
 
 					if (strtolower($field['readonly']) == "true") {
