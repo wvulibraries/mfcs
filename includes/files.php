@@ -127,13 +127,12 @@ class files {
 	 *
 	 * @author Scott Blake
 	 * @param Imagick $image
-	 * @param string $watermarkImage
-	 * @param string $watermarkLocation
+	 * @param array $field
 	 * @return Imagick
 	 **/
-	public static function addWatermark($image, $watermarkImage, $watermarkLocation) {
+	public static function addWatermark($image, $field) {
 		// Get watermark image data
-		$watermarkBlob = self::getWatermarkBlob($watermarkImage);
+		$watermarkBlob = self::getWatermarkBlob($field['watermarkImage']);
 		$watermark     = new Imagick();
 		$watermark->readImageBlob($watermarkBlob);
 
@@ -141,24 +140,34 @@ class files {
 		$imageWidth  = $image->getImageWidth();
 		$imageHeight = $image->getImageHeight();
 
+		// Store offset values to set watermark away from borders
+		if (isset($field['border']) && str2bool($field['border'])) {
+			$widthOffset  = isset($field['borderWidth'])  ? $field['borderWidth']  : 0;
+			$heightOffset = isset($field['borderHeight']) ? $field['borderHeight'] : 0;
+		}
+
 		// Resize the watermark
-		$watermark->scaleImage($imageWidth/1.5, $imageHeight/1.5, TRUE);
+		$watermark->scaleImage(
+			($imageWidth  - $widthOffset  * 2) / 1.5, // 75% of the image width minus borders
+			($imageHeight - $heightOffset * 2) / 1.5, // 75% of the image height minus borders
+			TRUE
+			);
 
 		// Store watermark dimensions
 		$watermarkWidth  = $watermark->getImageWidth();
 		$watermarkHeight = $watermark->getImageHeight();
 
 		// Get the watermark placement Example: 'top','left'
-		list($positionHeight,$positionWidth) = explode("|",$watermarkLocation);
+		list($positionHeight,$positionWidth) = explode("|",$field['watermarkLocation']);
 
 		// Calculate the position
 		switch ($positionHeight) {
 			case 'top':
-				$y = 0;
+				$y = $heightOffset;
 				break;
 
 			case 'bottom':
-				$y = $imageHeight - $watermarkHeight;
+				$y = $imageHeight - $heightOffset - $watermarkHeight;
 				break;
 
 			case 'middle':
@@ -169,11 +178,11 @@ class files {
 
 		switch ($positionWidth) {
 			case 'left':
-				$x = 0;
+				$x = $widthOffset;
 				break;
 
 			case 'right':
-				$x = $imageWidth - $watermarkWidth;
+				$x = $imageWidth - $widthOffset - $watermarkWidth;
 				break;
 
 			case 'center':
@@ -385,16 +394,25 @@ class files {
 				// Convert format
 				if(!empty($field['convertFormat'])) $image->setImageFormat($field['convertFormat']);
 
-				// Resize image
-				$image->scaleImage($field['convertWidth'], $field['convertHeight'], TRUE);
-
 				// Add a border
 				if (isset($field['border']) && str2bool($field['border'])) {
+					// Resize the image first, taking into account the border width
+					$image->scaleImage(
+						($field['convertWidth']  - $field['borderWidth']  * 2),
+						($field['convertHeight'] - $field['borderHeight'] * 2),
+						TRUE
+						);
+
+					// Add the border
 					$image->borderImage(
 						$field['borderColor'],
 						$field['borderWidth'],
 						$field['borderHeight']
-					);
+						);
+				}
+				else {
+					// Resize without worrying about the border
+					$image->scaleImage($field['convertWidth'], $field['convertHeight'], TRUE);
 				}
 
 				// Create a thumbnail
@@ -413,14 +431,14 @@ class files {
 					);
 
 					// Store thumbnail
-					if ($thumb->writeImage(self::getSaveDir('thumbs', $fileUUID).DIRECTORY_SEPARATOR.basename($filename,".$fileExt").".".strtolower($thumb->getImageFormat())) === FALSE) {
+					if ($thumb->writeImage(self::getSaveDir('thumbs', $fileUUID).DIRECTORY_SEPARATOR.$fileUUID.".".strtolower($thumb->getImageFormat())) === FALSE) {
 						errorHandle::errorMsg("Failed to create thumbnail: ".$filename);
 					}
 				}
 
 				// Add a watermark
 				if (isset($field['watermark']) && str2bool($field['watermark'])) {
-					$image = self::addWatermark($image, $field['watermarkImage'], $field['watermarkLocation']);
+					$image = self::addWatermark($image, $field);
 				}
 
 				// Store image
@@ -439,9 +457,8 @@ class files {
 
 				$filename = $fileData['filename'];
 				$fileExt  = pathinfo($filename, PATHINFO_EXTENSION);
-				$fileBase = basename($filename,".$fileExt");
-				$text     = TesseractOCR::recognize(self::getSaveDir('originals',$fileUUID).DIRECTORY_SEPARATOR.$filename);
-				$saveDir  = self::getSaveDir('ocr', $fileUUID).DIRECTORY_SEPARATOR.$fileBase.".txt";
+				$text     = TesseractOCR::recognize(self::getSaveDir('originals',$fileUUID).DIRECTORY_SEPARATOR.$fileUUID.'.'.$fileExt);
+				$saveDir  = self::getSaveDir('ocr', $fileUUID).DIRECTORY_SEPARATOR.$fileUUID.".txt";
 				if (file_put_contents($saveDir, $text) === FALSE) {
 					errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
 					errorHandle::newError("Failed to create OCR file for ".self::getSaveDir('originals',$fileUUID).DIRECTORY_SEPARATOR.$filename,errorHandle::DEBUG);
