@@ -197,7 +197,10 @@ class objects {
 		}
 	}
 
-	// @TODO 
+	// $metadata needs to be an associative array that contains key value pairs that 
+	// match what a cleanPost would give. Data is expected to be RAW, will be sanitized 
+	// when it gets put into place.
+	// 
 	// puts all the needed stuff into $cleanPost, then submits it using forms::submit
 	public static function add($formID,$metadata,$objectID = NULL) {
 
@@ -210,6 +213,9 @@ class objects {
 		}
 
 		// populate cleanPost
+		foreach ($metadata as $I=>$V) {
+			http::setPost($I,$V);
+		}
 		
 		// submit to forms::submit 
 		return forms::submit($formID,$objectID);

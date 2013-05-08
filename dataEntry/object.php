@@ -77,14 +77,12 @@ try {
 		if (forms::submit($engine->cleanGet['MYSQL']['formID']) === FALSE) {
 			throw new Exception("Error Submitting Form.");
 		}
-		// Redirect the user to the 'edit' form. (RAW is used so the URL is built correctly)
-		http::redirect(sprintf("?formID=%s&objectID=%s", $engine->cleanGet['RAW']['formID'], localvars::get("newObjectID")), 301);
+		http::setGet("objectID",localvars::get("newObjectID")); 
 	}
 	else if (isset($engine->cleanPost['MYSQL']['updateForm'])) {
 		if (forms::submit($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']) === FALSE) {
 			throw new Exception("Error Updating Form.");
 		}
-		http::redirect($_SERVER['REQUEST_URI'], 301);
 	}
 	else if (isset($engine->cleanPost['MYSQL']['projectForm'])) {
 
@@ -136,6 +134,7 @@ if (forms::validID()) {
 		if (($builtForm = forms::build($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'],$error)) === FALSE) {
 			throw new Exception("Error building form.");
 		}
+
 		localvars::add("form",$builtForm);
 		localvars::add("leftnav",navigation::buildProjectNavigation($engine->cleanGet['MYSQL']['formID']));
 

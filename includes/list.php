@@ -49,6 +49,9 @@ class listGenerator {
 
 		$output = '<ul class="pickList">';
 		foreach ($forms as $form) {
+
+			if (!mfcsPerms::isViewer($form['ID'])) continue;
+
 			$output .= sprintf('<li><a href="list.php?listType=form&amp;formID=%s" class="btn">%s</a></li>',
 				$form['ID'],
 				$form['title']
@@ -199,9 +202,7 @@ class listGenerator {
 
 		foreach ($forms as $form) {
 
-			// @TODO
-			// if (projects::checkPermissions($row['ID']) === TRUE) {
-			// }
+			if (!mfcsPerms::isViewer($form['ID'])) continue;
 
 			foreach ($currentProjects as $projectID => $projectName) {
 				if (forms::checkFormInProject($projectID,$form['ID'])) {
@@ -320,9 +321,8 @@ class listGenerator {
 		$formList = '<ul class="pickList">';
 		foreach ($forms as $form) {
 
-		// @TODO Permission check
-		// if (projects::checkPermissions($row['ID']) === TRUE) {
-		// }
+			if (!mfcsPerms::isViewer($form['ID'])) continue;
+			
 			$formList .= sprintf('<li><a href="index.php?id=%s" class="btn">%s</a></li>',
 				htmlSanitize($form['ID']),
 				htmlSanitize($form['title'])
