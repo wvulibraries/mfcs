@@ -809,7 +809,7 @@ class forms {
 			}
 		}
 
-		if (!is_empty($engine->errorStack)) {
+		if (!is_empty(mfcs::$engine->errorStack)) {
 			return FALSE;
 		}
 		else {
@@ -845,7 +845,7 @@ class forms {
 
 				foreach ($form['fields'] as $field) {
 
-					$value = (isset($engine->cleanPost['RAW'][$field['name']."_".$object['ID']]))?"":$engine->cleanPost['RAW'][$field['name']."_".$object['ID']];
+					$value = (isset($engine->cleanPost['RAW'][$field['name']."_".$object['ID']]))?$engine->cleanPost['RAW'][$field['name']."_".$object['ID']]:"";
 					$validationTests = self::validateSubmission($formID,$field,$value,$object['ID']);
 
 					if (isnull($validationTests) || $validationTests === FALSE) {
@@ -989,52 +989,17 @@ class forms {
 			errorHandle::errorMsg("Error retrieving form.");
 			return FALSE;
 		}
-
+ 
 		$values = array();
 
 		// go through all the fields, get their values
 		foreach ($fields as $field) {
 
-			if ($field['type'] == "fieldset" || $field['type'] == "idno" || $field['disabled'] == "true") continue;
+			$value = (isset($engine->cleanPost['RAW'][$field['name']]))?$engine->cleanPost['RAW'][$field['name']]:"";
+			$validationTests = self::validateSubmission($formID,$field,$value,$objectID);
 
-			if (strtolower($field['required']) == "true"           &&
-				(!isset($engine->cleanPost['RAW'][$field['name']]) ||
-					isempty($engine->cleanPost['RAW'][$field['name']]))
-			) {
-
-				errorHandle::errorMsg("Missing data for required field '".$field['label']."'.");
+			if (isnull($validationTests) || $validationTests === FALSE) {
 				continue;
-
-			}
-
-			// perform validations here
-			if (isempty($field['validation']) || $field['validation'] == "none") {
-				$valid = TRUE;
-			}
-			else {
-				$return = validate::isValidMethod($field['validation']);
-				$valid  = FALSE;
-				if ($return === TRUE) {
-					if ($field['validation'] == "regexp") {
-						$valid = validate::$field['validation']($field['validationRegex'],$field['value']);
-					}
-					else {
-						$valid = validate::$field['validation']($engine->cleanPost['RAW'][$field['name']]);
-					}
-				}
-			}
-
-			if ($valid === FALSE) {
-				errorHandle::errorMsg("Invalid data provided in field '".$field['label']."'.");
-				continue;
-			}
-
-			// Duplicate Checking (Form)
-			if (strtolower($field['duplicates']) == "true") {
-				if (self::isDupe($formID,$field['name'],$engine->cleanPost['RAW'][$field['name']],$objectID)) {
-					errorHandle::errorMsg("Duplicate data (in form) provided in field '".$field['label']."'.");
-					continue;
-				}
 			}
 
 			if (strtolower($field['readonly']) == "true") {
