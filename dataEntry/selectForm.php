@@ -1,14 +1,10 @@
 <?php
 include("../header.php");
 
-// @TODO
-// Check if the user has an editing privileges here
-
 try {
 
 	if (($formList = listGenerator::generateAccordionFormList(TRUE)) === FALSE) {
-		errorHandle::errorMsg("Error getting Forms Listing");
-		throw new Exception('Error');
+		throw new Exception("Error getting Forms Listing");
 	}
 	else {
 		localvars::add("formList",$formList);
@@ -16,6 +12,7 @@ try {
 
 }
 catch(Exception $e) {
+	errorHandle::errorMsg($e->getMessage());
 }
 
 localVars::add("results",displayMessages());
