@@ -439,9 +439,8 @@ class files {
 
 				$filename = $fileData['filename'];
 				$fileExt  = pathinfo($filename, PATHINFO_EXTENSION);
-				$fileBase = basename($filename,".$fileExt");
-				$text     = TesseractOCR::recognize(self::getSaveDir('originals',$fileUUID).DIRECTORY_SEPARATOR.$filename);
-				$saveDir  = self::getSaveDir('ocr', $fileUUID).DIRECTORY_SEPARATOR.$fileBase.".txt";
+				$text     = TesseractOCR::recognize(self::getSaveDir('originals',$fileUUID).DIRECTORY_SEPARATOR.$fileUUID.'.'.$fileExt);
+				$saveDir  = self::getSaveDir('ocr', $fileUUID).DIRECTORY_SEPARATOR.$fileUUID.".txt";
 				if (file_put_contents($saveDir, $text) === FALSE) {
 					errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
 					errorHandle::newError("Failed to create OCR file for ".self::getSaveDir('originals',$fileUUID).DIRECTORY_SEPARATOR.$filename,errorHandle::DEBUG);
