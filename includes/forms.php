@@ -1085,41 +1085,6 @@ class forms {
 			localvars::add("newObjectID",$objectID);
 		}
 
-		// Check to see if this object already exists in the objectProjects table. If not, add it.
-		// @TODO
-		// $sql       = sprintf("SELECT COUNT(*) FROM `objectProjects` WHERE `objectID`='%s' AND `projectID`='%s'",
-		// 	$engine->openDB->escape($objectID),
-		// 	$engine->openDB->escape($project['ID'])
-		// 	);
-		// $sqlResult = $engine->openDB->query($sql);
-
-		// if (!$sqlResult['result']) {
-		// 	$engine->openDB->transRollback();
-		// 	$engine->openDB->transEnd();
-
-		// 	errorHandle::newError(__METHOD__."() - error getting count: ".$sqlResult['error'], errorHandle::DEBUG);
-		// 	return FALSE;
-		// }
-
-		// $row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
-
-		// if ($row['COUNT(*)'] == 0) {
-		// 	$sql       = sprintf("INSERT INTO `objectProjects` (objectID,projectID) VALUES('%s','%s')",
-		// 		$engine->openDB->escape($objectID),
-		// 		$engine->openDB->escape($project['ID'])
-		// 		);
-		// 	$sqlResult = $engine->openDB->query($sql);
-
-		// 	if (!$sqlResult['result']) {
-		// 		$engine->openDB->transRollback();
-		// 		$engine->openDB->transEnd();
-
-		// 		errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
-		// 		return FALSE;
-		// 	}
-		// }
-
-
 
 		// if it is an object form (not a metadata form)
 		// do the IDNO stuff
