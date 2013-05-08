@@ -47,9 +47,14 @@ try{
 	// Get the object's contents
 	$fileContents = file_get_contents($fullPath);
 
-	// Determine the object's MIME type
-	$fi = new finfo(FILEINFO_MIME);
-	$mimeType = $fi->buffer(file_get_contents($fullPath));
+	// Get the MIME Type
+	if(isPHP('5.3')){
+		$fi = new finfo(FILEINFO_MIME_TYPE);
+		$mimeType = $fi->buffer($fileContents);
+	}else{
+		$fi = new finfo(FILEINFO_MIME);
+		list($mimeType,$mimeEncoding) = explode(';', $fi->buffer($fileContents));
+	}
 
 	// Set the correct MIME-Type headers, and output the file's content
 	if(isset($engine->cleanGet['MYSQL']['download']) and str2bool($engine->cleanGet['MYSQL']['download'])){
@@ -62,8 +67,8 @@ try{
 			header("Content-type: text/plain");
 			die("Failed to locate requested file!"); // die so nothing else will be displayed
 		}else{
-			header("Content-type: $mimeType");
-			die($fileContents); // die so nothing else will be displayed
+			files::generateFilePreview($fullPath, $mimeType, $fileContents);
+			exit();
 		}
 	}
 }catch(Exception $e){

@@ -5,6 +5,55 @@
  * @author David Gersting
  */
 class files {
+
+	public static function generateFilePreview($filename,$mimeType=NULL,$fileData=NULL){
+		// Determine the object's MIME type
+		if(!isset($mimeType)){
+			if(isPHP('5.3')){
+				$fi = new finfo(FILEINFO_MIME_TYPE);
+				$mimeType = $fi->buffer($fileData);
+			}else{
+				$fi = new finfo(FILEINFO_MIME);
+				list($mimeType,$mimeEncoding) = explode(';', $fi->buffer($fileData));
+			}
+		}
+
+		// Get the file's source
+		if(!isset($fileData)) $fileData = file_get_contents($filename);
+
+		// Figure out what to do with the data
+		switch(trim(strtolower($mimeType))){
+			case 'image/tiff':
+				$tmpName = tempnam(sys_get_temp_dir(), 'mfcs').".png";
+				shell_exec(sprintf('convert %s %s 2>&1',
+					escapeshellarg($filename),
+					escapeshellarg($tmpName)));
+				echo sprintf('<html><img src="data:%s;base64,%s" /></html>',
+					$mimeType,
+					base64_encode(file_get_contents($tmpName)));
+				unlink($tmpName);
+				break;
+
+			case 'image/gif':
+			case 'image/jpeg':
+			case 'image/png':
+			case 'text/css':
+			case 'text/csv':
+			case 'text/html':
+			case 'text/javascript':
+			case 'text/plain':
+			case 'text/xml':
+			case 'application/javascript':
+				header("Content-type: $mimeType");
+				echo $fileContents;
+				break;
+
+			default:
+				echo '[No preview available - Unknown file type]';
+				break;
+		}
+	}
+
 	/**
 	 * Returns the base path to be used when uploading files
 	 *
