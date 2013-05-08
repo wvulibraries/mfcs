@@ -69,7 +69,7 @@ class files {
 	 * @param string $input
 	 * @return bool
 	 */
-	private static function isUUID($input){
+	public static function isUUID($input){
 		return (bool)preg_match('/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/', $input);
 	}
 
