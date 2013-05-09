@@ -636,7 +636,7 @@ class forms {
 				}
 
 				// Output "Select Files" button for new uploads
-				$uploadID = md5(microtime(TRUE));
+				$uploadID = md5($field['name'].mt_rand());
 				$output .= sprintf('<div class="fineUploader" data-multiple="%s" data-upload_id="%s" data-allowed_extensions="%s" style="display: inline-block;"></div><input type="hidden" name="%s" value="%s">',
 					htmlSanitize($field['multipleFiles']),
 					$uploadID,
