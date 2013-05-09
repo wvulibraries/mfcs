@@ -158,7 +158,7 @@ $engine->eTemplate("include","header");
 					<option>Select a revision</option>
 					<?php
 					foreach($revisions->getSecondaryIDs($engine->cleanGet['MYSQL']['objectID'], 'DESC') as $revisionID){
-						echo sprintf('<option value="%s">%s</option>', $revisionID, date('D, M d, Y - h:i a', $revisionID));
+						printf('<option value="%s">%s</option>', $revisionID, date('D, M d, Y - h:i a', $revisionID));
 					}
 					?>
 				</select>
