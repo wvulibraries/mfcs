@@ -1025,11 +1025,21 @@ class forms {
 
 			if (strtolower($field['type']) == "file") {
 				// Process uploaded files
-				$values[$field['name']] = files::updateObjectFiles($objectID, $field['name'], $engine->cleanPost['MYSQL'][$field['name']]);
+				$uploadID = $engine->cleanPost['MYSQL'][$field['name']];
+				$assetsID = files::processObjectUploads($objectID, $uploadID);
+
 				// Process files (if needed)
-				if(str2bool($field['combine']) || str2bool($field['convert']) || str2bool($field['ocr']) || str2bool($field['thumbnail']) || str2bool($field['mp3'])){
-					$values[$field['name']] = files::processObjectFiles($objectID,$field['name'], array($field['name'] => $values[$field['name']]));
+				$combine   = str2bool($field['combine']);
+				$convert   = str2bool($field['convert']);
+				$ocr       = str2bool($field['ocr']);
+				$thumbnail = str2bool($field['thumbnail']);
+				$mp3       = str2bool($field['mp3']);
+				if(!empty($assetsID) and ($combine || $convert || $ocr || $thumbnail || $mp3)){
+					$values[$field['name']] = files::processObjectFiles($assetsID, $field);
 				}
+
+				// Lastly, save the assetsID to this field's value
+				$values[$field['name']] = $assetsID;
 			}
 
 			if(!isset($values[$field['name']])) $values[$field['name']] = $engine->cleanPost['RAW'][$field['name']];
