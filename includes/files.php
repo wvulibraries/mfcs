@@ -6,6 +6,19 @@
  */
 class files {
 
+	private static function printTiff($filename) {
+		$tmpName = tempnam(sys_get_temp_dir(), 'mfcs').".png";
+		shell_exec(sprintf('convert %s %s 2>&1',
+			escapeshellarg($filename),
+			escapeshellarg($tmpName)));
+		echo sprintf('<html><img src="data:%s;base64,%s" /></html>',
+			$mimeType,
+			base64_encode(file_get_contents($tmpName)));
+		unlink($tmpName);
+
+		return TRUE;
+	}
+
 	public static function generateFilePreview($filename,$mimeType=NULL,$fileData=NULL){
 		// Determine the object's MIME type
 		if(!isset($mimeType)){
@@ -24,14 +37,7 @@ class files {
 		// Figure out what to do with the data
 		switch(trim(strtolower($mimeType))){
 			case 'image/tiff':
-				$tmpName = tempnam(sys_get_temp_dir(), 'mfcs').".png";
-				shell_exec(sprintf('convert %s %s 2>&1',
-					escapeshellarg($filename),
-					escapeshellarg($tmpName)));
-				echo sprintf('<html><img src="data:%s;base64,%s" /></html>',
-					$mimeType,
-					base64_encode(file_get_contents($tmpName)));
-				unlink($tmpName);
+				self::printTiff($filename);
 				break;
 
 			case 'image/gif':
