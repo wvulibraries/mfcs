@@ -11,7 +11,7 @@ class files {
 		shell_exec(sprintf('convert %s %s 2>&1',
 			escapeshellarg($filename),
 			escapeshellarg($tmpName)));
-		echo sprintf('<html><img src="data:%s;base64,%s" /></html>',
+		printf('<html><img src="data:%s;base64,%s" /></html>',
 			$mimeType,
 			base64_encode(file_get_contents($tmpName)));
 		unlink($tmpName);
