@@ -18,6 +18,45 @@ $(function(){
         }
     });
 
+	// Make any file uploader div's live
+	$('div.fineUploader').each(function(i,n){
+		var $div               = $(n);
+		var uploadID           = $div.data('upload_id');
+		var allowMultipleFiles = $div.data('multiple');
+		var allowedExtentions  = $div.data('allowed_extensions').split(',');
+
+		$div.fineUploader({
+				request: {
+					endpoint: siteRoot+"/includes/uploader.php",
+					params: {
+						engineCSRFCheck: csrfToken,
+						uploadID: uploadID,
+						multiple: allowMultipleFiles
+				}
+			},
+			failedUploadTextDisplay: {
+			mode: "custom",
+				maxChars: 40,
+				responseProperty: "error",
+				enableTooltip: true
+			},
+			multiple: allowMultipleFiles,
+			validation: {
+				allowedExtensions: allowedExtentions,
+			},
+			text: {
+				uploadButton: '<i class="icon-plus icon-white"></i> Select Files'
+			},
+			showMessage: function(message) {
+				$div.find(".qq-upload-list").append('<li class="alert alert-error">'+message+'</li >');
+			},
+			classes: {
+				success: "alert alert-success",
+				fail: "alert alert-error"
+			}
+		});
+	});
+
     // Reset the modal's UI when it's hidden
     $('#selectProjectsModal').on('hide', function (){
         var IDs = $('#currentProjectsLink').data('selected_projects');

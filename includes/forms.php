@@ -636,14 +636,13 @@ class forms {
 				}
 
 				// Output "Select Files" button for new uploads
-				$output .= sprintf('<div id="fineUploader_%s"></div><input type="hidden" id="%s" name="%s" value="%s"><script type="text/javascript">%s</script>',
+				$uploadID = md5(microtime(TRUE));
+				$output .= sprintf('<div class="fineUploader" data-multiple="%s" data-upload_id="%s" data-allowed_extensions="%s" style="display: inline-block;"></div><input type="hidden" name="%s" value="%s">',
+					htmlSanitize($field['multipleFiles']),
+					$uploadID,
+					htmlSanitize(implode(',',$field['allowedExtensions'])),
 					htmlSanitize($field['name']),
-					htmlSanitize($field['name']),
-					htmlSanitize($field['name']),
-					md5(microtime(TRUE)),
-					file_get_contents(__DIR__."/js/fineUploader.formBuilder.js")
-				);
-
+					$uploadID);
 			}
 			else {
 				if ($field['type'] == "idno") {
