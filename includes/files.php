@@ -6,7 +6,7 @@
  */
 class files {
 
-	private static function printTiff($filename) {
+	private static function printTiff($filename,$mimeType) {
 		$tmpName = tempnam(sys_get_temp_dir(), 'mfcs').".png";
 		shell_exec(sprintf('convert %s %s 2>&1',
 			escapeshellarg($filename),
@@ -37,7 +37,7 @@ class files {
 		// Figure out what to do with the data
 		switch(trim(strtolower($mimeType))){
 			case 'image/tiff':
-				self::printTiff($filename);
+				self::printTiff($filename,$mimeType);
 				break;
 
 			case 'image/gif':
