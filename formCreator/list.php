@@ -35,8 +35,6 @@ $engine->eTemplate("include","header");
 		{local var="accordionList"}
 	</div>
 
-
-
 </section>
 
 

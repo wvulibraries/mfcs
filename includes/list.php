@@ -262,6 +262,11 @@ class listGenerator {
 			return FALSE;
 		}
 
+		if (($metaForms = forms::getMetadataForms()) === FALSE) {
+			errorHandle::errorMsg("Errot getting Metadata Forms.");
+			return FALSE;
+		}
+
 		$output = '<div class="accordion" id="formListAccordion">';
 
 		$count = 0;
@@ -285,7 +290,12 @@ class listGenerator {
      		$output .= '<div class="accordion-inner">';
 
      		$output .= '<ul>';
-     		foreach ($metedataForms as $metadataForm) {
+     		foreach ($metedataForms as $I=>$metadataForm) {
+
+     			if (isset($metaForms[$I])) {
+     				unset($metaForms[$I]);
+     			}
+
      			$output .= '<li>';
      			if (($output .= self::generateAccordionFormList_links($metadataForm,$entry,($entry===TRUE)?TRUE:FALSE)) === FALSE) {
      				return FALSE;
@@ -299,6 +309,20 @@ class listGenerator {
 			$output .= "</div>"; // group
 		}
 		$output .= "</div>";
+
+		if (count($metaForms) > 0) {
+			$output .= '<h1>Unassigned Metadata Forms</h1>';
+			$output .= "<ul>";
+			foreach ($metaForms as $metadataForm) {
+				$output .= '<li>';
+				$output .= sprintf('<a href="index.php?id=%s" class="btn">%s</a>',
+					$metadataForm['ID'],
+					htmlSanitize($metadataForm['title'])
+					);
+				$output .= '</li>';
+			}
+			$output .= "</ul>";
+		}
 
 		return $output;
 	}
