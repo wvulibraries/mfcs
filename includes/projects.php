@@ -99,7 +99,7 @@ class projects {
         $output = "";
         foreach ($allProjects as $project) {
 
-            $output .= sprintf('<label class="checkbox" for="%s"><input type="checkbox" id="%s" name="projects[]" value="%s"%s> %s</label>',
+            $output .= sprintf('<li><label class="checkbox" for="%s"><input type="checkbox" id="%s" name="projects[]" value="%s"%s> %s</label></li>',
             	htmlSanitize("project_".$project['ID']),                           // for=
             	htmlSanitize("project_".$project['ID']),                           // id=
             	htmlSanitize($project['ID']),                                      // value=
@@ -108,7 +108,7 @@ class projects {
             );
         }
 
-        return $output;
+        return "<ul class='checkboxList'>$output</ul>";
 
     }
 

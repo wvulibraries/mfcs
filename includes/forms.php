@@ -636,14 +636,13 @@ class forms {
 				}
 
 				// Output "Select Files" button for new uploads
-				$output .= sprintf('<div id="fineUploader_%s"></div><input type="hidden" id="%s" name="%s" value="%s"><script type="text/javascript">%s</script>',
+				$uploadID = md5($field['name'].mt_rand());
+				$output .= sprintf('<div class="fineUploader" data-multiple="%s" data-upload_id="%s" data-allowed_extensions="%s" style="display: inline-block;"></div><input type="hidden" name="%s" value="%s">',
+					htmlSanitize($field['multipleFiles']),
+					$uploadID,
+					htmlSanitize(implode(',',$field['allowedExtensions'])),
 					htmlSanitize($field['name']),
-					htmlSanitize($field['name']),
-					htmlSanitize($field['name']),
-					md5(microtime(TRUE)),
-					file_get_contents(__DIR__."/js/fineUploader.formBuilder.js")
-				);
-
+					$uploadID);
 			}
 			else {
 				if ($field['type'] == "idno") {
@@ -1026,11 +1025,21 @@ class forms {
 
 			if (strtolower($field['type']) == "file") {
 				// Process uploaded files
-				$values[$field['name']] = files::updateObjectFiles($objectID, $field['name'], $engine->cleanPost['MYSQL'][$field['name']]);
+				$uploadID = $engine->cleanPost['MYSQL'][$field['name']];
+				$assetsID = files::processObjectUploads($objectID, $uploadID);
+
 				// Process files (if needed)
-				if(str2bool($field['combine']) || str2bool($field['convert']) || str2bool($field['ocr']) || str2bool($field['thumbnail']) || str2bool($field['mp3'])){
-					$values[$field['name']] = files::processObjectFiles($objectID,$field['name'], array($field['name'] => $values[$field['name']]));
+				$combine   = str2bool($field['combine']);
+				$convert   = str2bool($field['convert']);
+				$ocr       = str2bool($field['ocr']);
+				$thumbnail = str2bool($field['thumbnail']);
+				$mp3       = str2bool($field['mp3']);
+				if(!empty($assetsID) and ($combine || $convert || $ocr || $thumbnail || $mp3)){
+					$values[$field['name']] = files::processObjectFiles($assetsID, $field);
 				}
+
+				// Lastly, save the assetsID to this field's value
+				$values[$field['name']] = $assetsID;
 			}
 
 			if(!isset($values[$field['name']])) $values[$field['name']] = $engine->cleanPost['RAW'][$field['name']];

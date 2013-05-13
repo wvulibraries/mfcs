@@ -13,8 +13,8 @@ if ($sqlResult['result']) {
 			$field = array();
 			foreach ($tmp as $f) {
 				$field[] = array(
-					"name"   => $f['name'],
-					"label"  => $f['label'],
+					"name"   => isset($f['name'])  ? $f['name']  : '[no name]',
+					"label"  => isset($f['label']) ? $f['label'] : '[no label]',
 					);
 			}
 			$fields[$row['ID']] = $field;
