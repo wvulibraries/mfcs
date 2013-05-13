@@ -315,10 +315,9 @@ class listGenerator {
 			$output .= "<ul>";
 			foreach ($metaForms as $metadataForm) {
 				$output .= '<li>';
-				$output .= sprintf('<a href="index.php?id=%s" class="btn">%s</a>',
-					$metadataForm['ID'],
-					htmlSanitize($metadataForm['title'])
-					);
+     			if (($output .= self::generateAccordionFormList_links($metadataForm,$entry,($entry===TRUE)?TRUE:FALSE)) === FALSE) {
+     				return FALSE;
+     			}
 				$output .= '</li>';
 			}
 			$output .= "</ul>";
