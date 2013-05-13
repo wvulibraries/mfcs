@@ -395,12 +395,13 @@ class files {
 						$thumb->setImageFormat($options['thumbnailFormat']);
 
 						// Scale to thumbnail size, constraining proportions
-						$thumb->thumbnailImage(
-							$options['thumbnailWidth'],
-							$options['thumbnailHeight'],
-							TRUE
-						);
-
+						if ($options['thumbnailWidth'] > 0 || $options['thumbnailHeight'] > 0) {
+							$thumb->thumbnailImage(
+								$options['thumbnailWidth'],
+								$options['thumbnailHeight'],
+								TRUE
+							);
+						}
 
 						// Store thumbnail
 						if($thumb->writeImage(self::getSaveDir($assetsID,'thumbs').$filename.'.'.strtolower($thumb->getImageFormat())) === FALSE){
