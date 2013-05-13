@@ -85,7 +85,7 @@ class files {
 			$path = mfcs::config('archivalPathMFCS').DIRECTORY_SEPARATOR.str_replace('-',DIRECTORY_SEPARATOR,$assetsID).DIRECTORY_SEPARATOR.$assetsID.DIRECTORY_SEPARATOR;
 		}
 		else {
-			$path = mfcs::config('convertedPath').DIRECTORY_SEPARATOR.str_replace('-',DIRECTORY_SEPARATOR,$assetsID).DIRECTORY_SEPARATOR;
+			$path = mfcs::config('convertedPath').DIRECTORY_SEPARATOR.str_replace('-',DIRECTORY_SEPARATOR,$assetsID).DIRECTORY_SEPARATOR.$assetsID.DIRECTORY_SEPARATOR;
 
 			// Add the type if needed
 			if (!isnull($type)) {
