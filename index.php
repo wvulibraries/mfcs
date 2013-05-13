@@ -37,9 +37,9 @@ $engine->eTemplate("include","header");
         <li>
             <a href="dataView/search.php" class="btn">Search Objects</a>
         </li>
-		<li>
+<!-- 		<li>
 			<a href="dataEntry/selectMetadataForm.php" class="btn">Metadata Forms</a>
-		</li>
+		</li> -->
 		<li>
 			<a href="" class="btn">Export</a>
 		</li>
