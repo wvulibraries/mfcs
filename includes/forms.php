@@ -189,7 +189,7 @@ class forms {
 
 		}
 
-		return FALSE; 
+		return FALSE;
 
 	}
 
@@ -443,12 +443,12 @@ class forms {
 
 			if ($error === TRUE) {
 				// This is RAW because it is post data being displayed back out to the user who submitted it
-				// during a submission error. we don't want to corrupt the data by sanitizing it and then 
+				// during a submission error. we don't want to corrupt the data by sanitizing it and then
 				// sanitizing it again on submissions
-				// 
+				//
 				// it should not be a security issue because it is being displayed back out to the user that is submissing the data.
 				// this will likely cause issues with security scans
-				// 
+				//
 				// @SECURITY False Positive 1
 				if (isset($engine->cleanPost['RAW'][$field['name']])) {
 					$object['data'][$field['name']] = $engine->cleanPost['RAW'][$field['name']];
@@ -620,7 +620,7 @@ class forms {
 							$output .= '</div>';
 						}
 					}else{
-						$file = array_pop($files);
+						$file = $files;
 						$output .= sprintf('<div class="filePreview">%s<br><a class="previewLink" href="javascript:;">Click to view file</a> | <a class="downloadLink" href="fileViewer.php?objectID=%s&field=%s&download=1">Click to download file</a>',
 							date('D M j, Y g:i:s a',$file['created']),
 							$file['filename'],
@@ -997,7 +997,7 @@ class forms {
 			errorHandle::errorMsg("Error retrieving form.");
 			return FALSE;
 		}
- 
+
 		$values = array();
 
 		// go through all the fields, get their values
@@ -1154,7 +1154,7 @@ class forms {
 			if (!$sqlResult['result']) {
 				$engine->openDB->transRollback();
 				$engine->openDB->transEnd();
-				
+
 				errorHandle::newError(__METHOD__."() - updating the IDNO: ".$sqlResult['error'], errorHandle::DEBUG);
 				return FALSE;
 			}
