@@ -2,7 +2,6 @@
 require("../engineInclude.php");
 require("../header.php");
 define('UPLOAD_PATH', files::getBaseUploadPath());
-define('SAVE_PATH', mfcs::config('savePath'));
 define('PERMISSONS', 0777);
 
 // Include the uploader class
