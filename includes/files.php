@@ -74,17 +74,30 @@ class files {
 	 * Returns the path to the save directory for a given fileUUID
 	 *
 	 * @author David Gersting
+	 * @author Scott Blake
 	 * @param string $type
 	 * @param string $fileUUID
 	 * @return string
 	 */
-	public static function getSaveDir($assetsID, $type=NULL){
-		// Build the path and add the type if needed
-		$path = mfcs::config('savePath').DIRECTORY_SEPARATOR.str_replace('-',DIRECTORY_SEPARATOR,$assetsID).DIRECTORY_SEPARATOR;
-		if(isset($type)) $path .= trim(strtolower($type)).DIRECTORY_SEPARATOR;
+	public static function getSaveDir($assetsID, $type=NULL) {
+		// Build the path
+		if (strtolower($type) == 'originals') {
+			$path = mfcs::config('archivalPathMFCS').DIRECTORY_SEPARATOR.str_replace('-',DIRECTORY_SEPARATOR,$assetsID).DIRECTORY_SEPARATOR;
+		}
+		else {
+			$path = mfcs::config('convertedPath').DIRECTORY_SEPARATOR.str_replace('-',DIRECTORY_SEPARATOR,$assetsID).DIRECTORY_SEPARATOR;
 
-		// Make sure the directory exists, and return
-		if(!is_dir($path)) mkdir($path,0755,TRUE);
+			// Add the type if needed
+			if (!isnull($type)) {
+				$path .= trim(strtolower($type)).DIRECTORY_SEPARATOR;
+			}
+		}
+
+		// Make sure the directory exists
+		if (!is_dir($path)) {
+			mkdir($path,0755,TRUE);
+		}
+
 		return $path;
 	}
 
@@ -98,7 +111,7 @@ class files {
 	 * @return string
 	 */
 	public static function newAssetsUUID(){
-		$savePath = mfcs::config('savePath');
+		$savePath = mfcs::config('convertedPath');
 		do{
 			/**
 			 * Generate a UUID (version 4)
@@ -219,7 +232,7 @@ class files {
 
 	public static function processObjectUploads($objectID,$uploadID){
 		$uploadBase = files::getBaseUploadPath().DIRECTORY_SEPARATOR.$uploadID;
-		$saveBase   = mfcs::config('savePath');
+		$saveBase   = mfcs::config('convertedPath');
 
 		// If the uploadPath dosen't exist, then no files were uploaded
 		if(!is_dir($uploadBase)) return '';
@@ -251,7 +264,7 @@ class files {
 	}
 
 	public static function processObjectFiles($assetsID, $options){
-		$saveBase          = mfcs::config('savePath');
+		$saveBase          = mfcs::config('convertedPath');
 		$assetsPath        = self::getSaveDir($assetsID);
 		$originalsFilepath = self::getSaveDir($assetsID,'originals');
 		$originalFiles     = scandir($originalsFilepath);
@@ -268,7 +281,7 @@ class files {
 					mkdir($tmpDir,0777,TRUE);
 
 					// Create the hocr file (if needed)
-					if(!file_exists("$saveBase/.hocr")){
+					if(!file_exists("$saveBase/hocr.cfg")){
 						if(!file_put_contents("$saveBase/hocr.cfg", 'tessedit_create_hocr 1')){
 							errorHandle::newError("Failed to create hocr file.",errorHandle::HIGH);
 							return FALSE;
@@ -276,7 +289,6 @@ class files {
 					}
 
 					foreach($originalFiles as $filename){
-						if($filename{0} == '.') continue;
 						if($filename{0} == '.') continue;
 
 						// Figure some stuff out about the file
