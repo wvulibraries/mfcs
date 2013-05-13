@@ -7,6 +7,14 @@ http://www.rackspace.com/knowledge_center/article/installing-rhel-epel-repo-on-c
 1. wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 1. wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 1. rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm
+
+## Image Magick
+
+* yum install ImageMagick
+* yum install php-pecl-imagick
+
+## Enable Remi Repo
+
 1. emacs /etc/yum.repos.d/remi.repo
 	* enabled=1 on [remi]
 
@@ -49,3 +57,4 @@ http://www.exactcode.com/site/open_source/exactimage
 
 * ln -s `which tesseract` /usr/bin/
 * ln -s `which hocr2pdf` /usr/bin/
+* disbale Remi Repo
