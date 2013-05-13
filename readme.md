@@ -36,6 +36,7 @@ https://code.google.com/p/tesseract-ocr
 * ./configure
 * make
 * make install
+* cp /home/mbond/Downloads/tesseract-ocr/tessdata/eng.* /usr/local/share/tessdata
 
 
 * tesseract-ocr-3.02.eng.tar.gz (English language data)
