@@ -82,7 +82,7 @@ class files {
 	public static function getSaveDir($assetsID, $type=NULL) {
 		// Build the path
 		if (strtolower($type) == 'originals') {
-			$path = mfcs::config('archivalPathMFCS').DIRECTORY_SEPARATOR.str_replace('-',DIRECTORY_SEPARATOR,$assetsID).DIRECTORY_SEPARATOR;
+			$path = mfcs::config('archivalPathMFCS').DIRECTORY_SEPARATOR.str_replace('-',DIRECTORY_SEPARATOR,$assetsID).DIRECTORY_SEPARATOR.$assetsID.DIRECTORY_SEPARATOR;
 		}
 		else {
 			$path = mfcs::config('convertedPath').DIRECTORY_SEPARATOR.str_replace('-',DIRECTORY_SEPARATOR,$assetsID).DIRECTORY_SEPARATOR;
