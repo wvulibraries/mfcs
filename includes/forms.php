@@ -598,28 +598,31 @@ class forms {
 					$files = $object['data'][$field['name']];
 					if(str2bool($field['multipleFiles'])){
 						$i=0;
-						foreach($files as $fileKey => $fileData){
+						if (is_array($files)) {
+							foreach($files as $fileKey => $fileData){
 							// Skip if not a 'uploaded' file
-							if(!files::isUUID($fileKey)) continue;
+								if(!files::isUUID($fileKey)) continue;
 
-							$i++;
-							$output .= sprintf('<div class="filePreview"><span title="Created: %s">%s</span><br><a class="previewLink" href="javascript:;">Click to view file #%s</a> | <a class="downloadLink" href="fileViewer.php?objectID=%s&field=%s&fileNum=%s&download=1">Click to download file #%s</a>',
-								date('D M j, Y g:i:s a',$fileData['created']),
-								$fileData['filename'],
-								$i,
-								$objectID,
-								$field['name'],
-								$i,
-								$i
-							);
-							$output .= sprintf('<div style="display: none;"><iframe src="../includes/fileViewer.php?objectID=%s&field=%s&fileID=%s" sandbox="" seamless></iframe></div>',
-								$objectID,
-								$field['name'],
-								$fileKey
-							);
-							$output .= '</div>';
+								$i++;
+								$output .= sprintf('<div class="filePreview"><span title="Created: %s">%s</span><br><a class="previewLink" href="javascript:;">Click to view file #%s</a> | <a class="downloadLink" href="fileViewer.php?objectID=%s&field=%s&fileNum=%s&download=1">Click to download file #%s</a>',
+									date('D M j, Y g:i:s a',$fileData['created']),
+									$fileData['filename'],
+									$i,
+									$objectID,
+									$field['name'],
+									$i,
+									$i
+									);
+								$output .= sprintf('<div style="display: none;"><iframe src="../includes/fileViewer.php?objectID=%s&field=%s&fileID=%s" sandbox="" seamless></iframe></div>',
+									$objectID,
+									$field['name'],
+									$fileKey
+									);
+								$output .= '</div>';
+							}
 						}
-					}else{
+					}
+					else {
 						$file = $files;
 						$output .= sprintf('<div class="filePreview">%s<br><a class="previewLink" href="javascript:;">Click to view file</a> | <a class="downloadLink" href="fileViewer.php?objectID=%s&field=%s&download=1">Click to download file</a>',
 							date('D M j, Y g:i:s a',$file['created']),
