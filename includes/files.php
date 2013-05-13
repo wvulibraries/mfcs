@@ -366,19 +366,22 @@ class files {
 					if(!empty($options['convertFormat'])) $image->setImageFormat($options['convertFormat']);
 
 					// Add a border
-					if(isset($options['border']) && str2bool($options['border'])){
-						// Resize the image first, taking into account the border width
-						$image->scaleImage(
-							($options['convertWidth']  - $options['borderWidth']  * 2),
-							($options['convertHeight'] - $options['borderHeight'] * 2),
-							TRUE);
+					if (isset($options['border']) && str2bool($options['border'])) {
+						if ($options['convertWidth'] > 0 || $options['convertHeight'] > 0) {
+							// Resize the image first, taking into account the border width
+							$image->scaleImage(
+								($options['convertWidth']  - $options['borderWidth']  * 2),
+								($options['convertHeight'] - $options['borderHeight'] * 2),
+								TRUE);
+						}
 
 						// Add the border
 						$image->borderImage(
 							$options['borderColor'],
 							$options['borderWidth'],
 							$options['borderHeight']);
-					}else{
+					}
+					else if ($options['convertWidth'] > 0 || $options['convertHeight'] > 0) {
 						// Resize without worrying about the border
 						$image->scaleImage($options['convertWidth'], $options['convertHeight'], TRUE);
 					}
