@@ -75,6 +75,10 @@ class files {
 		foreach($fields as $field){
 			if($field['type'] != 'file') continue;
 
+			// If there's nothing uploaded for the field, no need to continue
+			if(empty($object['data'][ $field['name'] ])) continue;
+
+			// Figure out some needed vars for later
 			$assetsID      = $object['data'][$field['name']];
 			$assetsDir     = self::getSaveDir($assetsID);
 			$originalsDir  = self::getSaveDir($assetsID,'originals');
