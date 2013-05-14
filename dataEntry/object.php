@@ -123,9 +123,10 @@ try {
 	}
 
 	// build the files list for displaying
-	$filesViewer = files::buildFilesPreview($engine->cleanGet['MYSQL']['objectID']);
-	localvars::add("filesViewer",$filesViewer);
-
+	if(isset($engine->cleanGet['MYSQL']['objectID'])){
+		$filesViewer = files::buildFilesPreview($engine->cleanGet['MYSQL']['objectID']);
+		localvars::add("filesViewer",$filesViewer);
+	}
 }
 catch(Exception $e) {
 	errorHandle::errorMsg($e->getMessage());
