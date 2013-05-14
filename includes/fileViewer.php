@@ -42,8 +42,7 @@ try{
 			break;
 
 		case 'combine':
-			// @todo I think this is a bug in the file processor, but will need to check
-			$filepath = $savePath.'../combined.pdf';
+			$filepath = $savePath.'combined.pdf';
 			break;
 	}
 

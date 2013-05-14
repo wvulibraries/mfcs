@@ -462,7 +462,7 @@ class files {
 
 					// Combine all PDF files in directory
 					$_exec = shell_exec(sprintf('gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=%s -f %s 2>&1',
-						$assetsPath.DIRECTORY_SEPARATOR."combined.pdf",
+						self::getSaveDir($assetsID,'combine')."combined.pdf",
 						$tmpDir.DIRECTORY_SEPARATOR."*.pdf"
 					));
 					if (!is_empty($_exec)) {
