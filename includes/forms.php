@@ -598,8 +598,11 @@ class forms {
 				$output .= "</div>";
 			}
 			else if ($field['type'] == 'file') {
+				$output .= '<div style="display: inline-block;">';
 				if(!isnull($objectID)){
-					$output .= '<a href="javascript:;" onclick="$(\'#filesTab\').click();">Click to view files tab</a><br>';
+					$output .= empty($object['data'][ $field['name'] ])
+						? '<span style="color: #666;font-style: italic;">No file uploaded</span><br>'
+						: '<a href="javascript:;" onclick="$(\'#filesTab\').click();">Click to view files tab</a><br>';
 				}
 				$uploadID = md5($field['name'].mt_rand());
 				$output .= sprintf('<div class="fineUploader" data-multiple="%s" data-upload_id="%s" data-allowed_extensions="%s" style="display: inline-block;"></div><input type="hidden" name="%s" value="%s">',
@@ -608,6 +611,7 @@ class forms {
 					htmlSanitize(implode(',',$field['allowedExtensions'])),
 					htmlSanitize($field['name']),
 					$uploadID);
+				$output .= '</div>';
 			}
 			else {
 				if ($field['type'] == "idno") {

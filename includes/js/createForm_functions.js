@@ -971,8 +971,6 @@ function fieldSettingsBindings() {
 
 		if (checked) {
 			$(this).parent().next().show();
-			$("#fieldSettings_file_watermark_image").change();
-			$("#fieldSettings_file_watermark_location").change();
 		}
 		else {
 			$(this).parent().next().hide();
@@ -983,13 +981,13 @@ function fieldSettingsBindings() {
 		var formPreviewWell = formPreview.find(".well");
 
 		formPreviewWell.find(".fieldValues > :input[name^=watermarkImage_]").val($(this).val());
-	});
+	}).change();
 
 	$("#fieldSettings_file_watermark_location").change(function() {
 		var formPreviewWell = formPreview.find(".well");
 
 		formPreviewWell.find(".fieldValues > :input[name^=watermarkLocation_]").val($(this).val());
-	});
+	}).change();
 
 	$("#fieldSettings_file_convert_border").change(function() {
 		var formPreviewWell = formPreview.find(".well");
