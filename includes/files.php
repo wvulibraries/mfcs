@@ -63,7 +63,7 @@ class files {
 
 	public static function buildFilesPreview($objectID,$fieldName=NULL){
 
-		if (objects::validID($objectID) === FALSE) {
+		if (objects::validID(TRUE,$objectID) === FALSE) {
 			return FALSE;
 		}
 
