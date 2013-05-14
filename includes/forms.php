@@ -598,17 +598,16 @@ class forms {
 				$output .= "</div>";
 			}
 			else if ($field['type'] == 'file') {
-				if(isnull($objectID)){
-					$uploadID = md5($field['name'].mt_rand());
-					$output .= sprintf('<div class="fineUploader" data-multiple="%s" data-upload_id="%s" data-allowed_extensions="%s" style="display: inline-block;"></div><input type="hidden" name="%s" value="%s">',
-						htmlSanitize($field['multipleFiles']),
-						$uploadID,
-						htmlSanitize(implode(',',$field['allowedExtensions'])),
-						htmlSanitize($field['name']),
-						$uploadID);
-				}else{
-					$output .= '<a href="javascript:;" onclick="$(\'#filesTab\').click();">Click to view files tab</a>';
+				if(!isnull($objectID)){
+					$output .= '<a href="javascript:;" onclick="$(\'#filesTab\').click();">Click to view files tab</a><br>';
 				}
+				$uploadID = md5($field['name'].mt_rand());
+				$output .= sprintf('<div class="fineUploader" data-multiple="%s" data-upload_id="%s" data-allowed_extensions="%s" style="display: inline-block;"></div><input type="hidden" name="%s" value="%s">',
+					htmlSanitize($field['multipleFiles']),
+					$uploadID,
+					htmlSanitize(implode(',',$field['allowedExtensions'])),
+					htmlSanitize($field['name']),
+					$uploadID);
 			}
 			else {
 				if ($field['type'] == "idno") {
