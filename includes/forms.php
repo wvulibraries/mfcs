@@ -598,6 +598,7 @@ class forms {
 				$output .= "</div>";
 			}
 			else if ($field['type'] == 'file') {
+				$output .= '<div style="display: inline-block;">';
 				if(!isnull($objectID)){
 					$output .= empty($object['data'][ $field['name'] ])
 						? '<span style="color: #666;font-style: italic;">No file uploaded</span><br>'
@@ -610,6 +611,7 @@ class forms {
 					htmlSanitize(implode(',',$field['allowedExtensions'])),
 					htmlSanitize($field['name']),
 					$uploadID);
+				$output .= '</div>';
 			}
 			else {
 				if ($field['type'] == "idno") {
