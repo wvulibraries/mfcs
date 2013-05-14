@@ -552,7 +552,7 @@ class files {
 					}
 
 					// Store image
-					if($image->writeImage(self::getSaveDir($assetsID,'processed').$filename.'.'.strtolower($thumb->getImageFormat())) === FALSE){
+					if($image->writeImage(self::getSaveDir($assetsID,'processed').$filename.'.'.strtolower($image->getImageFormat())) === FALSE){
 						throw new Exception("Failed to create processed image: ".$filename);
 					}
 				}
