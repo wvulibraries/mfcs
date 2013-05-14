@@ -252,6 +252,15 @@ class forms {
 
 	}
 
+	public static function getFields($formID) {
+		if (($form = self::get($formID)) === FALSE) {
+			return FALSE;
+		}else{
+			return $form['fields'];
+		}
+	}
+
+
 	public static function getFieldChoices($field) {
 
 		$choices = array();
@@ -589,63 +598,17 @@ class forms {
 				$output .= "</div>";
 			}
 			else if ($field['type'] == 'file') {
-				localvars::add("fieldName",htmlSanitize($field['name']));
-				localvars::add("multipleFiles",(strtoupper($field['multipleFiles']) == "TRUE") ? "true" : "false");
-				localvars::add("allowedExtensions",implode('", "',$field['allowedExtensions']));
-
-				// Do we display a current file?
-				if(isset($object['data'][$field['name']]) and sizeof($object['data'][$field['name']])){
-					$files = $object['data'][$field['name']];
-					if(str2bool($field['multipleFiles'])){
-						$i=0;
-						if (is_array($files)) {
-							foreach($files as $fileKey => $fileData){
-							// Skip if not a 'uploaded' file
-								if(!files::isUUID($fileKey)) continue;
-
-								$i++;
-								$output .= sprintf('<div class="filePreview"><span title="Created: %s">%s</span><br><a class="previewLink" href="javascript:;">Click to view file #%s</a> | <a class="downloadLink" href="fileViewer.php?objectID=%s&field=%s&fileNum=%s&download=1">Click to download file #%s</a>',
-									date('D M j, Y g:i:s a',$fileData['created']),
-									$fileData['filename'],
-									$i,
-									$objectID,
-									$field['name'],
-									$i,
-									$i
-									);
-								$output .= sprintf('<div style="display: none;"><iframe src="../includes/fileViewer.php?objectID=%s&field=%s&fileID=%s" sandbox="" seamless></iframe></div>',
-									$objectID,
-									$field['name'],
-									$fileKey
-									);
-								$output .= '</div>';
-							}
-						}
-					}
-					else {
-						$file = $files;
-						$output .= sprintf('<div class="filePreview">%s<br><a class="previewLink" href="javascript:;">Click to view file</a> | <a class="downloadLink" href="fileViewer.php?objectID=%s&field=%s&download=1">Click to download file</a>',
-							date('D M j, Y g:i:s a',$file['created']),
-							$file['filename'],
-							$objectID,
-							$field['name']
-						);
-						$output .= sprintf('<div style="display: none;"><iframe src="../includes/fileViewer.php?objectID=%s&field=%s" sandbox="" seamless></iframe></div>',
-							$objectID,
-							$field['name']
-						);
-						$output .= '</div>';
-					}
+				if(isnull($objectID)){
+					$uploadID = md5($field['name'].mt_rand());
+					$output .= sprintf('<div class="fineUploader" data-multiple="%s" data-upload_id="%s" data-allowed_extensions="%s" style="display: inline-block;"></div><input type="hidden" name="%s" value="%s">',
+						htmlSanitize($field['multipleFiles']),
+						$uploadID,
+						htmlSanitize(implode(',',$field['allowedExtensions'])),
+						htmlSanitize($field['name']),
+						$uploadID);
+				}else{
+					$output .= '<a href="javascript:;" onclick="$(\'#filesTab\').click();">Click to view files tab</a>';
 				}
-
-				// Output "Select Files" button for new uploads
-				$uploadID = md5($field['name'].mt_rand());
-				$output .= sprintf('<div class="fineUploader" data-multiple="%s" data-upload_id="%s" data-allowed_extensions="%s" style="display: inline-block;"></div><input type="hidden" name="%s" value="%s">',
-					htmlSanitize($field['multipleFiles']),
-					$uploadID,
-					htmlSanitize(implode(',',$field['allowedExtensions'])),
-					htmlSanitize($field['name']),
-					$uploadID);
 			}
 			else {
 				if ($field['type'] == "idno") {
@@ -1000,7 +963,7 @@ class forms {
 			errorHandle::errorMsg("Error retrieving form.");
 			return FALSE;
 		}
-
+ 
 		$values = array();
 
 		// go through all the fields, get their values

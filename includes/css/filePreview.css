@@ -1,0 +1,24 @@
+.filePreviewField{
+	margin-bottom: 10px;
+}
+.filePreviewField header{
+	font-size: 16px;
+	font-weight: bold;
+}
+.filePreviewField section{
+	display: none;
+	padding: 10px;
+}
+ul.filePreviews{
+	list-style: none;
+}
+ul.filePreviews > li{
+	margin-bottom: 10px;
+}
+ul.filePreviews > li div.filename{
+	font-weight: bold;
+	font-size: 14px;
+}
+.tab-content {
+	overflow:visible
+}

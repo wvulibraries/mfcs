@@ -60,6 +60,107 @@ class files {
 		}
 	}
 
+	public static function buildFilesPreview($objectID,$fieldName=NULL){
+		$output = '';
+		$object = objects::get($objectID);
+		if(isset($fieldName)){
+			$field = forms::getField($object['formID'],$fieldName);
+			$fields = array($field);
+		}else{
+			$fields = forms::getFields($object['formID']);
+		}
+
+		$fileLIs = array();
+		foreach($fields as $field){
+			if($field['type'] != 'file') continue;
+
+			$assetsID      = $object['data'][$field['name']];
+			$assetsDir     = self::getSaveDir($assetsID);
+			$originalsDir  = self::getSaveDir($assetsID,'originals');
+			$originalFiles = scandir($originalsDir);
+			$fileLinks     = array();
+
+			// Needed to put the files in the right order for processing
+			natsort($originalFiles);
+
+			$fileLIs = array();
+			foreach($originalFiles as $originalFile){
+				if($originalFile{0} == '.') continue;
+
+				$originalFile = $originalsDir.$originalFile;
+				$_filename    = pathinfo($originalFile);
+				$filename     = $_filename['filename'];
+				$fileExt      = $_filename['extension'];
+				$links        = array();
+
+				if(str2bool($field['convert'])){
+					$links['Converted'] = sprintf('%sincludes/fileViewer.php?assetsID=%s&file=%s&type=%s',
+						localvars::get('siteRoot'),
+						$assetsID,
+						basename($originalFile),
+						'convert');
+				}
+				if(str2bool($field['thumbnail'])){
+					$links['Thumbnail'] = sprintf('%sincludes/fileViewer.php?assetsID=%s&file=%s&type=%s',
+						localvars::get('siteRoot'),
+						$assetsID,
+						basename($originalFile),
+						'thumb');
+				}
+				if(str2bool($field['ocr'])){
+					$links['OCR'] = sprintf('%sincludes/fileViewer.php?assetsID=%s&file=%s&type=%s',
+						localvars::get('siteRoot'),
+						$assetsID,
+						basename($originalFile),
+						'ocr');
+				}
+				if(str2bool($field['combine'])){
+					$links['Combined'] = sprintf('%sincludes/fileViewer.php?assetsID=%s&type=%s',
+						localvars::get('siteRoot'),
+						$assetsID,
+						'combine');
+				}
+
+				// Build preview and download links
+				$previewLinks  = array();
+				$downloadLinks = array();
+				foreach($links as $linkLabel => $linkURL){
+					$previewLinks[]  = sprintf('<li><a tabindex="-1" href="javascript:;" onclick="previewFile(this,\'%s\')">%s</a></li>', $linkURL, $linkLabel);
+					$downloadLinks[] = sprintf('<li><a tabindex="-1" href="%s&download=1">%s</a></li>',$linkURL, $linkLabel);
+				}
+
+				// Build the preview dropdown HTML
+				$previewDropdown  = '<div class="btn-group">';
+				$previewDropdown .= '	<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">';
+				$previewDropdown .= '		Preview <span class="caret"></span>';
+				$previewDropdown .= '	</a>';
+				$previewDropdown .= sprintf('<ul class="dropdown-menu">%s</ul>', implode('', $previewLinks));
+				$previewDropdown .= '</div>';
+
+				// Build the download dropbox HTML
+				$downloadDropdown  = '<div class="btn-group">';
+				$downloadDropdown .= '	<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">';
+				$downloadDropdown .= '		Download <span class="caret"></span>';
+				$downloadDropdown .= '	</a>';
+				$downloadDropdown .= sprintf('<ul class="dropdown-menu">%s</ul>', implode('', $downloadLinks));
+				$downloadDropdown .= '</div>';
+
+				$fileLIs[] = sprintf('<li><div class="filename">%s</div><!-- TODO <button class="btn">Field Details</button> -->%s%s</li>',
+					basename($originalFile),
+					$previewDropdown,
+					$downloadDropdown);
+			}
+
+			$output .= sprintf('<div class="filePreviewField"><header>%s</header><ul class="filePreviews">%s</ul></div>', $field['label'], implode('', $fileLIs));
+		}
+
+		// Include the filePreview Modal, and the CSS and JavaScript links
+		$output .= '<div id="filePreviewModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3></h3></div><div class="modal-body"><iframe class="filePreview" style="width: 95%;height: 100%;"></iframe></div><div class="modal-footer"><a class="btn previewDownloadLink">Download File</a><a class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</a></div></div>';
+		$output .= sprintf('<link href="%sincludes/css/filePreview.css" rel="stylesheet">', localvars::get('siteRoot'));
+		$output .= sprintf('<script src="%sincludes/js/filePreview.js"></script>', localvars::get('siteRoot'));
+		return $output;
+	}
+
 	/**
 	 * Returns the base path to be used when uploading files
 	 *

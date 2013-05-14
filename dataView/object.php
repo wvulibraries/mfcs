@@ -47,6 +47,14 @@ try {
 	}
 
 	localvars::add("form",$builtForm);
+
+	// build the files list for displaying
+	$filesViewer = files::buildFilesPreview($engine->cleanGet['MYSQL']['objectID']);
+//	if ($filesViewer === FALSE) {
+//		throw new Exception("Error building files view.");
+//	}
+
+	localvars::add("filesViewer",$filesViewer);
 	// Metadata Tab Stuff
 	//////////
 
@@ -102,6 +110,7 @@ $engine->eTemplate("include","header");
 			<div class="row-fluid">
 				<ul class="nav nav-tabs">
 					<li><a data-toggle="tab" href="#metadata">Metadata</a></li>
+					<li><a data-toggle="tab" href="#files" id="filesTab">Files</a></li>
 					<li><a data-toggle="tab" href="#project">Project</a></li>
 					<li><a data-toggle="tab" href="#children">Children</a></li>
 				</ul>
@@ -109,6 +118,9 @@ $engine->eTemplate("include","header");
 				<div class="tab-content">
 					<div class="tab-pane" id="metadata">
 						{local var="form"}
+					</div>
+					<div class="tab-pane" id="files">
+						{local var="filesViewer"}
 					</div>
 
 					<div class="tab-pane" id="project">
@@ -126,7 +138,7 @@ $engine->eTemplate("include","header");
 					</div>
 				</div>
 			</div>
-			<?php } // Permissions ?> 
+			<?php } // Permissions ?>
 		</div>
 	</div>
 </section>
@@ -137,7 +149,7 @@ $engine->eTemplate("include","header");
 		$(".nav-tabs a:first").tab("show");
 
 		// Disable form input fields
-		$(":input").prop("disabled",true);
+		$(":input").not('.btn,.close').prop("disabled",true);
 
 		// Remove form submits
 		$(":input[type=submit]").remove();
