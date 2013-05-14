@@ -95,9 +95,12 @@ class files {
 			);
  
 
+		// check to make sure that if the $path exists that it is a directory.
+		if (file_exists($path) && !is_dir($path)) {
+			return FALSE;
+		}
+
 		// Make sure the directory exists
-		// @TODO checking for is_dir isn't sufficient. Need to check if it exists
-		// if it exists and it is NOT a directory, we should return FALSE and the calling function should error
 		if (!is_dir($path)) {
 			if ($path == "/home/exports/originals/originals/") {
 				// @TODO figure out where this is coming from and stop it. 
@@ -134,7 +137,7 @@ class files {
 				mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
 			);
 		}while(file_exists($savePath.DIRECTORY_SEPARATOR.str_replace('-',DIRECTORY_SEPARATOR,$uuid)));
-		
+
 		return $uuid;
 	}
 
