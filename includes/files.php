@@ -236,11 +236,6 @@ class files {
 
 		// Make sure the directory exists
 		if (!is_dir($path)) {
-			if ($path == "/home/exports/originals/originals/") {
-				// @TODO figure out where this is coming from and stop it.
-				return FALSE;
-			}
-
 			mkdir($path,0755,TRUE);
 		}
 
