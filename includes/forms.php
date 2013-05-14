@@ -966,7 +966,7 @@ class forms {
 			errorHandle::errorMsg("Error retrieving form.");
 			return FALSE;
 		}
- 
+
 		$values = array();
 
 		// go through all the fields, get their values
@@ -1016,7 +1016,7 @@ class forms {
 			if(!isset($values[$field['name']])) $values[$field['name']] = $engine->cleanPost['RAW'][$field['name']];
 		}
 
-		if (!is_empty($engine->errorStack)) {
+		if (isset($engine->errorStack['error'])) {
 			return FALSE;
 		}
 
