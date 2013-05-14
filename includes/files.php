@@ -120,7 +120,7 @@ class files {
 	 * @return string
 	 */
 	public static function newAssetsUUID(){
-		$savePath = mfcs::config('convertedPath');
+		$savePath = mfcs::config('archivalPathMFCS');
 		do{
 			/**
 			 * Generate a UUID (version 4)
