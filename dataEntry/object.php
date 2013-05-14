@@ -122,6 +122,10 @@ try {
 
 	}
 
+	// build the files list for displaying
+	$filesViewer = files::buildFilesPreview($engine->cleanGet['MYSQL']['objectID']);
+	localvars::add("filesViewer",$filesViewer);
+
 }
 catch(Exception $e) {
 	errorHandle::errorMsg($e->getMessage());
@@ -202,6 +206,7 @@ $engine->eTemplate("include","header");
 				<ul class="nav nav-tabs">
 					<li><a data-toggle="tab" href="#metadata">Metadata</a></li>
 					<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
+						<li><a data-toggle="tab" href="#files" id="filesTab">Files</a></li>
 						<li><a data-toggle="tab" href="#project">Project</a></li>
 						<?php if(forms::isContainer($engine->cleanGet['MYSQL']['formID'])) { ?>
 							<li><a data-toggle="tab" href="#children">Children</a></li>
@@ -215,6 +220,9 @@ $engine->eTemplate("include","header");
 					</div>
 
 					<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
+						<div class="tab-pane" id="files">
+							{local var="filesViewer"}
+						</div>
 						<div class="tab-pane" id="project">
 							<h2>Change Project Membership</h2>
 
