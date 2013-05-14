@@ -749,7 +749,9 @@ function fieldSettingsBindings() {
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		formPreviewWell.find(".control-group > .controls > :input").prop('disabled', checked);
+		if ($("#type_"+id).val() != 'file') {
+			formPreviewWell.find(".control-group > .controls > :input").prop('disabled', checked);
+		}
 		$("#disabled_"+id).val(checked);
 	});
 
@@ -1329,7 +1331,7 @@ function newFieldPreview(id,type) {
 
 			case 'File Upload':
 			case 'file':
-				output += '<input type="file">';  
+				output += '<input type="file" disabled>';
 				break;
 
 			default:
