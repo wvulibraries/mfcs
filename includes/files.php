@@ -80,18 +80,19 @@ class files {
 	 * @return string
 	 */
 	public static function getSaveDir($assetsID, $type=NULL) {
-		// Build the path
-		if (strtolower($type) == 'originals') {
-			$path = mfcs::config('archivalPathMFCS').DIRECTORY_SEPARATOR.str_replace('-',DIRECTORY_SEPARATOR,$assetsID).DIRECTORY_SEPARATOR.$assetsID.DIRECTORY_SEPARATOR;
-		}
-		else {
-			$path = mfcs::config('convertedPath').DIRECTORY_SEPARATOR.str_replace('-',DIRECTORY_SEPARATOR,$assetsID).DIRECTORY_SEPARATOR.$assetsID.DIRECTORY_SEPARATOR;
 
-			// Add the type if needed
-			if (!isnull($type)) {
-				$path .= trim(strtolower($type)).DIRECTORY_SEPARATOR;
-			}
-		}
+		// Build the path
+		$path = join(DIRECTORY_SEPARATOR,
+			array(
+				// If the type is "originals" use 'archivalPathMFCS' else use 'convertedPath' as the base path
+				((strtolower($type) == 'originals')?mfcs::config('archivalPathMFCS'):mfcs::config('convertedPath')),
+				(str_replace('-',DIRECTORY_SEPARATOR,$assetsID)),
+				// The full UID up to this point
+				$assetsID,
+				// Add the type to the path for the exports
+				((strtolower($type) == 'originals' || isnull($type))?"":trim(strtolower($type)).DIRECTORY_SEPARATOR)
+				)
+			);
 
 		// Make sure the directory exists
 		if (!is_dir($path)) {
