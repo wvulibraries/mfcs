@@ -62,14 +62,19 @@ class files {
 	}
 
 	public static function buildFilesPreview($objectID,$fieldName=NULL){
-		$output = '';
-		
+
+		if (objects::validID($objectID) === FALSE) {
+			return FALSE;
+		}
+
 		if (($object = objects::get($objectID)) === FALSE) {
 			return FALSE;
 		}
-		
+
+		$output = '';
+
 		if (isset($fieldName)) {
-			$field = forms::getField($object['formID'],$fieldName);
+			$field  = forms::getField($object['formID'],$fieldName);
 			$fields = array($field);
 		}
 		else {
