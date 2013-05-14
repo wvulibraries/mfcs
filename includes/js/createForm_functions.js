@@ -20,7 +20,7 @@ function sortableForm() {
 				addNewField(ui.item);
 			}
 
-			$(ui.item).parents("li").click();
+			$(ui.item).closest("li").click();
 			$(ui.item).click();
 
 			sortableForm();
@@ -265,7 +265,7 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_file_options_mp3").prop("checked",($("#mp3_"+id).val()==='true')).change();
 
 			if (type != 'fieldset') {
-				fieldset.val(fieldset.parents("li").parents("li").find(":input[name^=fieldset_]").val());
+				fieldset.val(fieldset.closest("li").closest("li").find(":input[name^=fieldset_]").val());
 			}
 			else {
 				$("#fieldSettings_fieldset").val(fieldset.val());
@@ -1601,7 +1601,7 @@ function sortableNav() {
 				addNew(ui.item);
 			}
 
-			$(ui.item).parents("li").click();
+			$(ui.item).closest("li").click();
 			$(ui.item).click();
 
 			sortableNav();
@@ -1702,7 +1702,7 @@ function showSettings(fullID) {
 			}
 
 			if ($("#nav_type_"+id).val() != 'grouping') {
-				$("#nav_grouping_"+id).val($("#nav_grouping_"+id).parents("li").parents("li").find("input[name^=nav_grouping_]").val());
+				$("#nav_grouping_"+id).val($("#nav_grouping_"+id).closest("li").closest("li").find("input[name^=nav_grouping_]").val());
 			}
 			else {
 				$("#groupingsSettings_grouping").val($("#nav_grouping_"+id).val());
