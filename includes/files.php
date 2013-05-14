@@ -64,9 +64,6 @@ class files {
 	public static function buildFilesPreview($objectID,$fieldName=NULL){
 
 		if (objects::validID(TRUE,$objectID) === FALSE) {
-			print "<pre>";
-			var_dump($objectID);
-			print "</pre>";
 			return FALSE;
 		}
 
