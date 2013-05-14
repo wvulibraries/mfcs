@@ -260,8 +260,9 @@ class files {
 		// Generate new assets UUID and make the directory (this should be done quickly to prevent race-conditions
 		$assetsID          = self::newAssetsUUID();
 
-		// @TODO, needs error checking for FALSE return. 
-		$originalsFilepath = self::getSaveDir($assetsID,'originals');
+		if (($originalsFilepath = self::getSaveDir($assetsID,'originals')) === FALSE) {
+			return FALSE;
+		}
 
 		// Start looping through the uploads and move them to their new home
 		$files = scandir($uploadBase);

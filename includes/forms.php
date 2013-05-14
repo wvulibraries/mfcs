@@ -1029,7 +1029,9 @@ class forms {
 			if (strtolower($field['type']) == "file") {
 				// Process uploaded files
 				$uploadID = $engine->cleanPost['MYSQL'][$field['name']];
-				$assetsID = files::processObjectUploads($objectID, $uploadID);
+				if (($assetsID = files::processObjectUploads($objectID, $uploadID)) === FALSE) {
+					return FALSE;
+				}
 
 				// Process files (if needed)
 				$combine   = str2bool($field['combine']);
