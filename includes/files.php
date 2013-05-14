@@ -68,10 +68,11 @@ class files {
 			return FALSE;
 		}
 		
-		if(isset($fieldName)){
+		if (isset($fieldName)) {
 			$field = forms::getField($object['formID'],$fieldName);
 			$fields = array($field);
-		}else{
+		}
+		else {
 			$fields = forms::getFields($object['formID']);
 		}
 
