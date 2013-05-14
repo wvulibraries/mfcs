@@ -60,10 +60,10 @@ $(function() {
 	// This loops through <li> and finds all the fieldsets, then loops through matching all <li> that have
 	// the same fieldset name and moves them inside it
 	$(".fieldValues :input[name^='type_'][value='fieldset']").each(function() {
-		var fieldset = $(this).parents("li").prop("id");
+		var fieldset = $(this).closest("li").prop("id");
 		$(".fieldValues :input[name^='fieldset_'][value='"+$(this).siblings(":input[name^='fieldset_']").val()+"']").each(function() {
-			if (fieldset != $(this).parents("li").prop("id")) {
-				$(this).parents("li").detach().appendTo($("#"+fieldset+" ul"));
+			if (fieldset != $(this).closest("li").prop("id")) {
+				$(this).closest("li").detach().appendTo($("#"+fieldset+" ul"));
 			}
 		});
 	});
