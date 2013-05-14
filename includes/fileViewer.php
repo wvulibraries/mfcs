@@ -6,32 +6,48 @@ $engine->obCallback = FALSE;
 
 try{
 	// Check for simple (stupid developer errors)
-	if(!isset($engine->cleanGet['MYSQL']['assetsID'])) throw new Exception('No Assets ID Provided!');
+	if(!isset($engine->cleanGet['MYSQL']['objectID'])) throw new Exception('No Object ID provided!');
+	if(!isset($engine->cleanGet['MYSQL']['field']))    throw new Exception('No field provided!');
 
+	// Get some vars
+	$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
+	$field = forms::getField($object['formID'], $engine->cleanGet['MYSQL']['field']);
 	$fileType = isset($engine->cleanGet['MYSQL']['type'])
 		? $engine->cleanGet['MYSQL']['type']
 		: NULL;
-	$savePath = files::getSaveDir($engine->cleanGet['MYSQL']['assetsID'], $fileType);
+	$savePath = isset($engine->cleanGet['MYSQL']['assetsID'])
+		? files::getSaveDir($engine->cleanGet['MYSQL']['assetsID'], $fileType)
+		: files::getSaveDir($object['data'][ $engine->cleanGet['MYSQL']['field'] ], $fileType);
 
-	// Figure out what file to display (either the provided one, or the 1st one in the dir)
-	if(isset($engine->cleanGet['MYSQL']['file'])){
-		// Use provided filename
-		$filepath = $savePath.$engine->cleanGet['MYSQL']['file'];
-		errorHandle::newError("fileViewer.php - No file found at '$filepath'", errorHandle::HIGH);
-		if(!file_exists($filepath)) throw new Exception('No file found!');
-	}else{
-		// Use 1st file in directory
-		$files = scandir($savePath);
-		while(!isset($filepath) and ($file = array_pop($files)) !== FALSE){
-			if($file{0} == '.') continue;
-			$filepath = $savePath.$file;
-			if(file_exists($filepath)) break;
-		}
-		if(!isset($filepath)){
-			errorHandle::newError("fileViewer.php - No file found under '$savePath'", errorHandle::HIGH);
-			throw new Exception('No file found!');
-		}
+	/*
+	 * Figure out what file to display
+	 * This is where we need to do some selective munging of the vars (depending on the type
+	 */
+	switch($fileType){
+		case 'originals':
+			if(!isset($engine->cleanGet['MYSQL']['file'])) throw new Exception('No filename provided!');
+			$filepath = $savePath.$engine->cleanGet['MYSQL']['file'];
+			break;
+
+		case 'processed':
+			$filepath = $savePath.$engine->cleanGet['MYSQL']['file'].'.'.strtolower($field['convertFormat']);
+			break;
+
+		case 'thumbs':
+			$filepath = $savePath.$engine->cleanGet['MYSQL']['file'].'.'.strtolower($field['thumbnailFormat']);
+			break;
+
+		case 'ocr':
+			$filepath = $savePath.$engine->cleanGet['MYSQL']['file'].'.txt';
+			break;
+
+		case 'combine':
+			$filepath = $savePath.'combined.pdf';
+			break;
 	}
+
+	// Make sure the file exists
+	if(!file_exists($filepath)) throw new Exception('File now found!');
 
 	// Get the object's contents
 	$fileContents = file_get_contents($filepath);
