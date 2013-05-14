@@ -70,6 +70,12 @@ class files {
 		return mfcs::config('uploadPath', sys_get_temp_dir().DIRECTORY_SEPARATOR.'mfcs');
 	}
 
+	private static function assetsIDToPath($assetsID) {
+
+		return str_replace('-',DIRECTORY_SEPARATOR,$assetsID);
+
+	}
+
 	/**
 	 * Returns the path to the save directory for a given fileUUID
 	 *
@@ -86,14 +92,13 @@ class files {
 			array(
 				// If the type is "originals" use 'archivalPathMFCS' else use 'convertedPath' as the base path
 				((strtolower($type) == 'originals')?mfcs::config('archivalPathMFCS'):mfcs::config('convertedPath')),
-				(str_replace('-',DIRECTORY_SEPARATOR,$assetsID)),
+				(self::assetsIDToPath($assetsID)),
 				// The full UID up to this point
 				$assetsID,
 				// Add the type to the path for the exports
 				((strtolower($type) == 'originals' || isnull($type))?"":trim(strtolower($type)).DIRECTORY_SEPARATOR)
 				)
 			);
- 
 
 		// check to make sure that if the $path exists that it is a directory.
 		if (file_exists($path) && !is_dir($path)) {
@@ -136,7 +141,7 @@ class files {
 				mt_rand( 0, 0x3fff ) | 0x8000,
 				mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
 			);
-		}while(file_exists($savePath.DIRECTORY_SEPARATOR.str_replace('-',DIRECTORY_SEPARATOR,$uuid)));
+		}while(file_exists($savePath.DIRECTORY_SEPARATOR.(self::assetsIDToPath($uuid))));
 
 		return $uuid;
 	}
