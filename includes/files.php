@@ -72,7 +72,9 @@ class files {
 
 	private static function assetsIDToPath($assetsID) {
 
-		return str_replace('-',DIRECTORY_SEPARATOR,$assetsID);
+		$assetsID = str_replace('-',"",$assetsID);
+		$assetsID = str_split($assetsID);
+		return implode(DIRECTORY_SEPARATOR,$assetsID);
 
 	}
 
