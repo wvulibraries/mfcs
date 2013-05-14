@@ -93,9 +93,17 @@ class files {
 				((strtolower($type) == 'originals' || isnull($type))?"":trim(strtolower($type)).DIRECTORY_SEPARATOR)
 				)
 			);
+ 
 
 		// Make sure the directory exists
+		// @TODO checking for is_dir isn't sufficient. Need to check if it exists
+		// if it exists and it is NOT a directory, we should return FALSE and the calling function should error
 		if (!is_dir($path)) {
+			if ($path == "/home/exports/originals/originals/") {
+				// @TODO figure out where this is coming from and stop it. 
+				return FALSE;
+			}
+
 			mkdir($path,0755,TRUE);
 		}
 
@@ -126,6 +134,7 @@ class files {
 				mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
 			);
 		}while(is_dir($savePath.DIRECTORY_SEPARATOR.str_replace('-',DIRECTORY_SEPARATOR,$uuid)));
+		// @TODO checking for is_dir isn't sufficient. Need to check if it exists
 		return $uuid;
 	}
 
@@ -240,6 +249,8 @@ class files {
 
 		// Generate new assets UUID and make the directory (this should be done quickly to prevent race-conditions
 		$assetsID          = self::newAssetsUUID();
+
+		// @TODO, needs error checking for FALSE return. 
 		$originalsFilepath = self::getSaveDir($assetsID,'originals');
 
 		// Start looping through the uploads and move them to their new home
@@ -265,6 +276,7 @@ class files {
 	}
 
 	public static function processObjectFiles($assetsID, $options){
+
 		$saveBase          = mfcs::config('convertedPath');
 		$assetsPath        = self::getSaveDir($assetsID);
 		$originalsFilepath = self::getSaveDir($assetsID,'originals');
