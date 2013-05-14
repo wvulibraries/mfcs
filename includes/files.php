@@ -445,8 +445,8 @@ class files {
 
 						// perform hOCR on the original uploaded file which gets stored in combined as an HTML file
 						$_exec = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
-							escapeshellarg($originalFile), // input
-							escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename), // output
+							escapeshellarg($originalFile), // input.ext
+							escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename), // output.html
 							escapeshellarg("$saveBase/hocr.cfg") // hocr config file
 							));
 
@@ -461,10 +461,10 @@ class files {
 
 						// Create an OCR'd pdf of the file
 						$_exec = shell_exec(sprintf('hocr2pdf -i %s -s -o %s < %s 2>&1',
-							escapeshellarg($originalFile),
-							// isset($jpgFile) ? escapeshellarg($jpgFile) : escapeshellarg($originalFile),
-							escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename.".pdf"),
-							escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename.".html")));
+							escapeshellarg($originalFile), // input.ext
+							escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename.".pdf"), // output.pdf
+							escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename.".html") // input.html
+							));
 
 						if (trim($_exec) !== 'Writing unmodified DCT buffer.') {
 							if (strpos($_exec,'Warning:') !== FALSE) {
@@ -475,6 +475,9 @@ class files {
 								throw new Exception("hocr2pdf Error: ".$_exec);
 							}
 						}
+
+						// We're done with this file, delete it
+						unlink($tmpDir.DIRECTORY_SEPARATOR.$filename.".html");
 					}
 
 					// Combine all PDF files in directory
