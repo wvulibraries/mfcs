@@ -172,6 +172,14 @@ class files {
 		return mfcs::config('uploadPath', sys_get_temp_dir().DIRECTORY_SEPARATOR.'mfcs');
 	}
 
+	private static function assetsIDToPath($assetsID) {
+
+		$assetsID = str_replace('-',"",$assetsID);
+		$assetsID = str_split($assetsID);
+		return implode(DIRECTORY_SEPARATOR,$assetsID);
+
+	}
+
 	/**
 	 * Returns the path to the save directory for a given fileUUID
 	 *
@@ -182,21 +190,32 @@ class files {
 	 * @return string
 	 */
 	public static function getSaveDir($assetsID, $type=NULL) {
-		// Build the path
-		if (strtolower($type) == 'originals') {
-			$path = mfcs::config('archivalPathMFCS').DIRECTORY_SEPARATOR.str_replace('-',DIRECTORY_SEPARATOR,$assetsID).DIRECTORY_SEPARATOR.$assetsID.DIRECTORY_SEPARATOR;
-		}
-		else {
-			$path = mfcs::config('convertedPath').DIRECTORY_SEPARATOR.str_replace('-',DIRECTORY_SEPARATOR,$assetsID).DIRECTORY_SEPARATOR.$assetsID.DIRECTORY_SEPARATOR;
 
-			// Add the type if needed
-			if (!isnull($type)) {
-				$path .= trim(strtolower($type)).DIRECTORY_SEPARATOR;
-			}
+		// Build the path
+		$path = join(DIRECTORY_SEPARATOR,
+			array(
+				// If the type is "originals" use 'archivalPathMFCS' else use 'convertedPath' as the base path
+				((strtolower($type) == 'originals')?mfcs::config('archivalPathMFCS'):mfcs::config('convertedPath')),
+				(self::assetsIDToPath($assetsID)),
+				// The full UID up to this point
+				$assetsID,
+				// Add the type to the path for the exports
+				((strtolower($type) == 'originals' || isnull($type))?"":trim(strtolower($type)).DIRECTORY_SEPARATOR)
+				)
+			);
+
+		// check to make sure that if the $path exists that it is a directory.
+		if (file_exists($path) && !is_dir($path)) {
+			return FALSE;
 		}
 
 		// Make sure the directory exists
 		if (!is_dir($path)) {
+			if ($path == "/home/exports/originals/originals/") {
+				// @TODO figure out where this is coming from and stop it. 
+				return FALSE;
+			}
+
 			mkdir($path,0755,TRUE);
 		}
 
@@ -213,7 +232,7 @@ class files {
 	 * @return string
 	 */
 	public static function newAssetsUUID(){
-		$savePath = mfcs::config('convertedPath');
+		$savePath = mfcs::config('archivalPathMFCS');
 		do{
 			/**
 			 * Generate a UUID (version 4)
@@ -226,7 +245,8 @@ class files {
 				mt_rand( 0, 0x3fff ) | 0x8000,
 				mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
 			);
-		}while(is_dir($savePath.DIRECTORY_SEPARATOR.str_replace('-',DIRECTORY_SEPARATOR,$uuid)));
+		}while(file_exists($savePath.DIRECTORY_SEPARATOR.(self::assetsIDToPath($uuid))));
+
 		return $uuid;
 	}
 
@@ -341,7 +361,10 @@ class files {
 
 		// Generate new assets UUID and make the directory (this should be done quickly to prevent race-conditions
 		$assetsID          = self::newAssetsUUID();
-		$originalsFilepath = self::getSaveDir($assetsID,'originals');
+
+		if (($originalsFilepath = self::getSaveDir($assetsID,'originals')) === FALSE) {
+			return FALSE;
+		}
 
 		// Start looping through the uploads and move them to their new home
 		$files = scandir($uploadBase);
@@ -366,6 +389,7 @@ class files {
 	}
 
 	public static function processObjectFiles($assetsID, $options){
+
 		$saveBase          = mfcs::config('convertedPath');
 		$assetsPath        = self::getSaveDir($assetsID);
 		$originalsFilepath = self::getSaveDir($assetsID,'originals');
@@ -417,7 +441,7 @@ class files {
 							escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename.".html")));
 						if (trim($_exec) !== 'Writing unmodified DCT buffer.') {
 							if(FALSE !== strpos($_exec,'Warning:')){
-								errorHandle::newError("hocr2pdf Warning: ".$_exec, errorHandle::LOW);
+								errorHandle::newError("hocr2pdf Warning: ".$_exec, errorHandle::DEBUG);
 							}else{
 								errorHandle::errorMsg("Failed to Create PDF: ".basename($filename,"jpg").".pdf");
 								throw new Exception("hocr2pdf Error: ".$_exec);
