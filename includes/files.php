@@ -94,31 +94,42 @@ class files {
 				$fileExt      = $_filename['extension'];
 				$links        = array();
 
+				$links['Original'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&file=%s&type=%s',
+					localvars::get('siteRoot'),
+					$objectID,
+					$field['name'],
+					basename($originalFile),
+					'originals');
+
 				if(str2bool($field['convert'])){
-					$links['Converted'] = sprintf('%sincludes/fileViewer.php?assetsID=%s&file=%s&type=%s',
+					$links['Converted'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&file=%s&type=%s',
 						localvars::get('siteRoot'),
-						$assetsID,
-						basename($originalFile),
-						'convert');
+						$objectID,
+						$field['name'],
+						$filename,
+						'processed');
 				}
 				if(str2bool($field['thumbnail'])){
-					$links['Thumbnail'] = sprintf('%sincludes/fileViewer.php?assetsID=%s&file=%s&type=%s',
+					$links['Thumbnail'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&file=%s&type=%s',
 						localvars::get('siteRoot'),
-						$assetsID,
-						basename($originalFile),
-						'thumb');
+						$objectID,
+						$field['name'],
+						$filename,
+						'thumbs');
 				}
 				if(str2bool($field['ocr'])){
-					$links['OCR'] = sprintf('%sincludes/fileViewer.php?assetsID=%s&file=%s&type=%s',
+					$links['OCR'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&file=%s&type=%s',
 						localvars::get('siteRoot'),
-						$assetsID,
-						basename($originalFile),
+						$objectID,
+						$field['name'],
+						$filename,
 						'ocr');
 				}
 				if(str2bool($field['combine'])){
-					$links['Combined'] = sprintf('%sincludes/fileViewer.php?assetsID=%s&type=%s',
+					$links['Combined'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
 						localvars::get('siteRoot'),
-						$assetsID,
+						$objectID,
+						$field['name'],
 						'combine');
 				}
 
