@@ -453,39 +453,16 @@ class files {
 						// If a new-line char is in the output, assume it's an error
 						// Tesseract failed, let's normalize the image and try again
 						if (strpos(trim($_exec), "\n") !== FALSE) {
-							$pngFile = $tmpDir.DIRECTORY_SEPARATOR.$filename.'.png';
+							errorHandle::warningMsg("Unable to process OCR for ".basename($originalFile).". Continuing&hellip;");
 
-							// Convert to PNG
-							$_exec = shell_exec(sprintf('convert -normalize -density 300 -depth 8 %s %s',
-								escapeshellarg($originalFile), // input
-								escapeshellarg($pngFile) // output
-								));
-
-							// Run tesseract on PNG, if this doesn't work, it's not going to at all
-							$_exec = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
-								escapeshellarg($pngFile), // input
-								escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename), // output
-								escapeshellarg("$saveBase/hocr.cfg") // hocr config file
-								));
-							if (strpos(trim($_exec), "\n") !== FALSE) {
-								errorHandle::warningMsg("Unable to process OCR for ".basename($originalFile).". Continuing&hellip;");
-
-								// Ensure HTML file exists
-								touch($tmpDir.DIRECTORY_SEPARATOR.$filename.".html");
-
-								$jpgFile = $tmpDir.DIRECTORY_SEPARATOR.$filename.'.jpg';
-
-								// Convert PNG to JPG for hocr2pdf
-								$_exec = shell_exec(sprintf('convert %s %s',
-									escapeshellarg($pngFile), // input
-									escapeshellarg($jpgFile)  // output
-									));
-							}
+							// Ensure HTML file exists
+							touch($tmpDir.DIRECTORY_SEPARATOR.$filename.".html");
 						}
 
 						// Create an OCR'd pdf of the file
 						$_exec = shell_exec(sprintf('hocr2pdf -i %s -s -o %s < %s 2>&1',
-							isset($jpgFile) ? escapeshellarg($jpgFile) : escapeshellarg($originalFile),
+							escapeshellarg($originalFile),
+							// isset($jpgFile) ? escapeshellarg($jpgFile) : escapeshellarg($originalFile),
 							escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename.".pdf"),
 							escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename.".html")));
 
