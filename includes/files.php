@@ -133,8 +133,8 @@ class files {
 				mt_rand( 0, 0x3fff ) | 0x8000,
 				mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
 			);
-		}while(is_dir($savePath.DIRECTORY_SEPARATOR.str_replace('-',DIRECTORY_SEPARATOR,$uuid)));
-		// @TODO checking for is_dir isn't sufficient. Need to check if it exists
+		}while(file_exists($savePath.DIRECTORY_SEPARATOR.str_replace('-',DIRECTORY_SEPARATOR,$uuid)));
+		
 		return $uuid;
 	}
 
