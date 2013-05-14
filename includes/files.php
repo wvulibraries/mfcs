@@ -236,11 +236,6 @@ class files {
 
 		// Make sure the directory exists
 		if (!is_dir($path)) {
-			if ($path == "/home/exports/originals/originals/") {
-				// @TODO figure out where this is coming from and stop it. 
-				return FALSE;
-			}
-
 			mkdir($path,0755,TRUE);
 		}
 
@@ -450,24 +445,32 @@ class files {
 
 						// perform hOCR on the original uploaded file which gets stored in combined as an HTML file
 						$_exec = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
-							escapeshellarg($originalFile),
-							escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename),
-							escapeshellarg("$saveBase/hocr.cfg")));
+							escapeshellarg($originalFile), // input
+							escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename), // output
+							escapeshellarg("$saveBase/hocr.cfg") // hocr config file
+							));
+
 						// If a new-line char is in the output, assume it's an error
-						if(FALSE !== strpos(trim($_exec), "\n")){
-							errorHandle::errorMsg("Failed to process OCR for ".basename($originalFile));
-							throw new Exception("Tesseract Error: ".$_exec);
+						// Tesseract failed, let's normalize the image and try again
+						if (strpos(trim($_exec), "\n") !== FALSE) {
+							errorHandle::warningMsg("Unable to process OCR for ".basename($originalFile).". Continuing&hellip;");
+
+							// Ensure HTML file exists
+							touch($tmpDir.DIRECTORY_SEPARATOR.$filename.".html");
 						}
 
 						// Create an OCR'd pdf of the file
 						$_exec = shell_exec(sprintf('hocr2pdf -i %s -s -o %s < %s 2>&1',
 							escapeshellarg($originalFile),
+							// isset($jpgFile) ? escapeshellarg($jpgFile) : escapeshellarg($originalFile),
 							escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename.".pdf"),
 							escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename.".html")));
+
 						if (trim($_exec) !== 'Writing unmodified DCT buffer.') {
-							if(FALSE !== strpos($_exec,'Warning:')){
+							if (strpos($_exec,'Warning:') !== FALSE) {
 								errorHandle::newError("hocr2pdf Warning: ".$_exec, errorHandle::DEBUG);
-							}else{
+							}
+							else {
 								errorHandle::errorMsg("Failed to Create PDF: ".basename($filename,"jpg").".pdf");
 								throw new Exception("hocr2pdf Error: ".$_exec);
 							}
