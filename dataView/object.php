@@ -154,6 +154,9 @@ $engine->eTemplate("include","header");
 		// Remove form submits
 		$(":input[type=submit]").remove();
 
+		// Remove file upload boxed
+		$('.fineUploader').remove();
+
 		// Remove form actions
 		$("form").removeAttr("action");
 	});
