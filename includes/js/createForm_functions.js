@@ -1329,7 +1329,7 @@ function newFieldPreview(id,type) {
 
 			case 'File Upload':
 			case 'file':
-				output += '<input type="file">';
+				output += '<input type="file">';  
 				break;
 
 			default:
