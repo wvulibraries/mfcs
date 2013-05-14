@@ -339,7 +339,7 @@ class files {
 							escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename.".html")));
 						if (trim($_exec) !== 'Writing unmodified DCT buffer.') {
 							if(FALSE !== strpos($_exec,'Warning:')){
-								errorHandle::newError("hocr2pdf Warning: ".$_exec, errorHandle::LOW);
+								errorHandle::newError("hocr2pdf Warning: ".$_exec, errorHandle::DEBUG);
 							}else{
 								errorHandle::errorMsg("Failed to Create PDF: ".basename($filename,"jpg").".pdf");
 								throw new Exception("hocr2pdf Error: ".$_exec);
