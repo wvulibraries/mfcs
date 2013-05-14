@@ -123,10 +123,12 @@ try {
 	}
 
 	// build the files list for displaying
-	if (($filesViewer = files::buildFilesPreview($engine->cleanGet['MYSQL']['objectID'])) === FALSE) {
-		throw new Exception("Error building files preview.");
+	if(isset($engine->cleanGet['MYSQL']['objectID'])){
+		if (($filesViewer = files::buildFilesPreview($engine->cleanGet['MYSQL']['objectID'])) === FALSE) {
+			throw new Exception("Error building files preview.");
+		}
+		localvars::add("filesViewer",$filesViewer);
 	}
-	localvars::add("filesViewer",$filesViewer);
 
 }
 catch(Exception $e) {
