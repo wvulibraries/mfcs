@@ -50,8 +50,9 @@ class files {
 			case 'text/plain':
 			case 'text/xml':
 			case 'application/javascript':
+			case 'application/pdf':
 				header("Content-type: $mimeType");
-				echo $fileContents;
+				echo $fileData;
 				break;
 
 			default:
