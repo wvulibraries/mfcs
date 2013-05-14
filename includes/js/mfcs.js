@@ -26,12 +26,12 @@ $(function(){
 		var allowedExtentions  = $div.data('allowed_extensions').split(',');
 
 		$div.fineUploader({
-				request: {
-					endpoint: siteRoot+"/includes/uploader.php",
-					params: {
-						engineCSRFCheck: csrfToken,
-						uploadID: uploadID,
-						multiple: allowMultipleFiles
+			request: {
+				endpoint: siteRoot+"/includes/uploader.php",
+				params: {
+					engineCSRFCheck: csrfToken,
+					uploadID: uploadID,
+					multiple: allowMultipleFiles
 				}
 			},
 			failedUploadTextDisplay: {
