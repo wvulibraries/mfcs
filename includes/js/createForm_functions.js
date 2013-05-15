@@ -918,7 +918,13 @@ function fieldSettingsBindings() {
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
 
-		$("#combine_"+id).val($(this).is(":checked"));
+		var newState = $(this).is(":checked");
+		$("#combine_"+id).val(newState);
+		if(newState){
+			$("#fieldSettings_file_options_multipleFiles").click().attr('disabled','disabled');
+		}else{
+			$("#fieldSettings_file_options_multipleFiles").removeAttr('disabled').click();
+		}
 	});
 
 	$("#fieldSettings_file_options_ocr").change(function() {
