@@ -81,7 +81,12 @@ $(function(){
         });
     });
 
-    $(document)
+    // Lock form submit button on form submittion
+	$('form').submit(function(){
+		$(this).find(':submit').addClass('disabled').attr('readonly','readonly');
+	});
+
+	$(document)
         .on('click',  '.metadataObjectEditor', handler_setupMetadataModal)
         .on('change', '#searchFormSelect',     handler_setupSearchFormFields)
         .on('click',  '.metadataListAccordionToggle', handler_metadataListAccordionToggle)
