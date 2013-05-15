@@ -10,7 +10,7 @@ foreach($uploadDirs as $uploadDir){
 	// Skip hidden stuff
 	if($uploadDir[0] == '.') continue;
 
-	$uploadDir = implode(DIRECTORY_SEPARATOR,array($uploadPath,$uploadDir);
+	$uploadDir = implode(DIRECTORY_SEPARATOR,array($uploadPath,$uploadDir));
 	$mTime     = filemtime($uploadDir);
 	if(($mTime+$config['uploadPath']) <= time()){
 		// @TODO apache cannot use 'sudo' for security reasons
