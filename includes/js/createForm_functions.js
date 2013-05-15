@@ -877,7 +877,9 @@ function fieldSettingsBindings() {
 
 	$("#fieldSettings_file_allowedExtensions")
 		.on("click","button[name=add]",function() {
-			$(this).parent().after(addAllowedExtension());
+			var $parent = $(this).parent();
+			$parent.after(addAllowedExtension());
+			$parent.next().find('input').focus();
 		})
 		.on("click","button[name=remove]",function() {
 			if ($(this).parent().siblings().length == 0) {
