@@ -7,27 +7,26 @@
 class files {
 
 	private static function printTiff($filename,$mimeType) {
-		$tmpName = tempnam(mfcs::config('mfcstmp'), 'mfcs').".png";
-		shell_exec(sprintf('convert %s %s 2>&1',
+		$tmpName = tempnam(mfcs::config('mfcstmp'), 'mfcs').".jpeg";
+		shell_exec(sprintf('convert %s -quality 50 %s 2>&1',
 			escapeshellarg($filename),
 			escapeshellarg($tmpName)));
-		printf('<html><img src="data:%s;base64,%s" /></html>',
-			$mimeType,
+		printf('<html><img src="data:image/jpeg;base64,%s" /></html>',
 			base64_encode(file_get_contents($tmpName)));
 		unlink($tmpName);
 
 		return TRUE;
 	}
 
-	public static function generateFilePreview($filename,$mimeType=NULL,$fileData=NULL){
+	public static function generateFilePreview($filename,$mimeType=NULL){
 		// Determine the object's MIME type
 		if(!isset($mimeType)){
 			if(isPHP('5.3')){
 				$fi = new finfo(FILEINFO_MIME_TYPE);
-				$mimeType = $fi->buffer($fileData);
+				$mimeType = $fi->file($filename);
 			}else{
 				$fi = new finfo(FILEINFO_MIME);
-				list($mimeType,$mimeEncoding) = explode(';', $fi->buffer($fileData));
+				list($mimeType,$mimeEncoding) = explode(';', $fi->file($filename));
 			}
 		}
 
@@ -51,8 +50,9 @@ class files {
 			case 'text/xml':
 			case 'application/javascript':
 			case 'application/pdf':
+				ini_set('memory_limit',-1);
 				header("Content-type: $mimeType");
-				echo $fileData;
+				die(file_get_contents($filename));
 				break;
 
 			default:

@@ -49,30 +49,27 @@ try{
 	// Make sure the file exists
 	if(!file_exists($filepath)) throw new Exception('File now found!');
 
-	// Get the object's contents
-	$fileContents = file_get_contents($filepath);
-
 	// Get the MIME Type
 	if(isPHP('5.3')){
 		$fi = new finfo(FILEINFO_MIME_TYPE);
-		$mimeType = $fi->buffer($fileContents);
+		$mimeType = $fi->file($filepath);
 	}else{
 		$fi = new finfo(FILEINFO_MIME);
-		list($mimeType,$mimeEncoding) = explode(';', $fi->buffer($fileContents));
+		list($mimeType,$mimeEncoding) = explode(';', $fi->file($filepath));
 	}
 
 	// Set the correct MIME-Type headers, and output the file's content
 	if(isset($engine->cleanGet['MYSQL']['download']) and str2bool($engine->cleanGet['MYSQL']['download'])){
 		header(sprintf("Content-Disposition: attachment; filename='%s'", basename($filepath)));
 		header("Content-Type: application/octet-stream");
-		die($fileContents); // die so nothing else will be displayed
+		die(file_get_contents($filepath)); // die so nothing else will be displayed
 	}else{
 		if($mimeType == 'application/x-empty'){
 			errorHandle::newError("Failed to locate file to display!", errorHandle::HIGH);
 			header("Content-type: text/plain");
 			die("Failed to locate requested file!"); // die so nothing else will be displayed
 		}else{
-			files::generateFilePreview($filepath, $mimeType, $fileContents);
+			files::generateFilePreview($filepath, $mimeType);
 			exit();
 		}
 	}
