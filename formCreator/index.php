@@ -947,6 +947,7 @@ $engine->eTemplate("include","header");
 														Format
 													</label>
 													<select class="input-block-level" id="fieldSettings_file_convert_format" name="fieldSettings_file_convert_format">
+														<option value="">Select Format</option>
 														{local var="conversionFormats"}
 													</select>
 												</div>
@@ -1028,6 +1029,7 @@ $engine->eTemplate("include","header");
 														Format
 													</label>
 													<select class="input-block-level" id="fieldSettings_file_thumbnail_format" name="fieldSettings_file_thumbnail_format">
+														<option value="">Select Format</option>
 														{local var="conversionFormats"}
 													</select>
 												</span>
