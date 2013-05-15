@@ -12,13 +12,13 @@ class TesseractOCR {
 	}
 
 	function convertImageToTif($originalImage) {
-		$tifImage = sys_get_temp_dir().'/tesseract-ocr-tif-'.rand().'.tif';
+		$tifImage = mfcs::config('mfcstmp').'/tesseract-ocr-tif-'.rand().'.tif';
 		exec("convert -colorspace gray +matte $originalImage $tifImage");
 		return $tifImage;
 	}
 
 	function generateConfigFile($arguments) {
-		$configFile = sys_get_temp_dir().'/tesseract-ocr-config-'.rand().'.conf';
+		$configFile = mfcs::config('mfcstmp').'/tesseract-ocr-config-'.rand().'.conf';
 		exec("touch $configFile");
 		$whitelist = TesseractOCR::generateWhitelist($arguments);
 		if(!empty($whitelist)) {
@@ -37,7 +37,7 @@ class TesseractOCR {
 	}
 
 	function executeTesseract($tifImage, $configFile) {
-		$outputFile = sys_get_temp_dir().'/tesseract-ocr-output-'.rand();
+		$outputFile = mfcs::config('mfcstmp').'/tesseract-ocr-output-'.rand();
 		exec("tesseract $tifImage $outputFile nobatch $configFile 2> /dev/null");
 		return $outputFile.'.txt'; //tesseract appends txt extension to output file
 	}
