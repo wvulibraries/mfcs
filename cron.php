@@ -16,3 +16,4 @@ foreach($uploadDirs as $uploadDir){
 		shell_exec("sudo rm -rf $uploadDir");
 	}
 }
+?>
