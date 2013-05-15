@@ -7,7 +7,7 @@
 class files {
 
 	private static function printTiff($filename,$mimeType) {
-		$tmpName = tempnam(sys_get_temp_dir(), 'mfcs').".png";
+		$tmpName = tempnam(mfcs::config('mfcstmp'), 'mfcs').".png";
 		shell_exec(sprintf('convert %s %s 2>&1',
 			escapeshellarg($filename),
 			escapeshellarg($tmpName)));
@@ -194,7 +194,7 @@ class files {
 	 * @author Scott Blake
 	 **/
 	public static function getBaseUploadPath() {
-		return mfcs::config('uploadPath', sys_get_temp_dir().DIRECTORY_SEPARATOR.'mfcs');
+		return mfcs::config('uploadPath', mfcs::config('mfcstmp').DIRECTORY_SEPARATOR.'mfcs');
 	}
 
 	private static function assetsIDToPath($assetsID) {
@@ -423,7 +423,7 @@ class files {
 			if(isset($options['combine']) && str2bool($options['combine'])){
 				try{
 					// Create us some temp working space
-					$tmpDir = sys_get_temp_dir().DIRECTORY_SEPARATOR.uniqid();
+					$tmpDir = mfcs::config('mfcstmp').DIRECTORY_SEPARATOR.uniqid();
 					mkdir($tmpDir,0777,TRUE);
 
 					// Create the hocr file (if needed)
