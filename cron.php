@@ -8,7 +8,7 @@ $uploadPath = $config['uploadPath'];
 $uploadDirs = scandir($uploadPath);
 foreach($uploadDirs as $uploadDir){
 	// Skip hidden stuff
-	if($uploadDir{0} == '.') continue;
+	if($uploadDir[0] == '.') continue;
 
 	$uploadDir = $uploadPath.DIRECTORY_SEPARATOR.$uploadDir;
 	$mTime     = filemtime($uploadDir);
