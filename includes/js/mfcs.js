@@ -61,7 +61,7 @@ $(function(){
 				$form
 					.data('uploads_working', ++i)
 					.find(':submit').attr('disabled','disabled');
-		}).on('complete',function(){
+		}).on('complete cancel',function(){
 				var i = parseInt($form.data('uploads_working'));
 				i--;
 				$form.data('uploads_working', i);
