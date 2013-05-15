@@ -2,22 +2,41 @@
 <?php
 $config = parse_ini_file(__DIR__.DIRECTORY_SEPARATOR."config.ini");
 
+# Functions
+####################################################################
+/**
+ * Recursively delete a directory
+ * @see http://www.php.net/manual/en/function.rmdir.php#108113
+ * @param string $dir
+ */
+function rrmdir($dir) {
+	foreach(glob($dir.DIRECTORY_SEPARATOR.'*') as $file) {
+		// Never follow links, as we don't know where they will end up
+		if(is_link($file)) continue;
+		if(is_dir($file)) rrmdir($file);
+		else unlink($file);
+	}
+	// Try and delete the directory. (We suppress errors as there might be a symlink, and this will fail)
+	@rmdir($dir);
+}
+
 # Delete old, abandoned, upload directories
 ####################################################################
-$uploadPath = $config['uploadPath'];
-$uploadDirs = scandir($uploadPath);
-foreach($uploadDirs as $uploadDir){
-	// Skip hidden stuff
-	if($uploadDir[0] == '.') continue;
+$uploadPath  = $config['uploadPath'];
+$scanPattern = $config['uploadPath'].DIRECTORY_SEPARATOR.'*';
 
-	$uploadDir = implode(DIRECTORY_SEPARATOR,array($uploadPath,$uploadDir));
-	$mTime     = filemtime($uploadDir);
-	if(($mTime+$config['uploadPath']) <= time()){
-		// @TODO apache cannot use 'sudo' for security reasons
-		// @TODO we do not use rm -rf in an automated script, o the chance that something goes wrong. 
-		//  These files will need to be unlinked using php functions
-		//  There should be a sanity check to make sure we are not deleting starting at / or in the archives directory by accident. 
-		// shell_exec("sudo rm -rf $uploadDir");
+// Sanity check to make sure it's safe to proceed
+if(!empty($uploadPath) and strpos($scanPattern,'/home/') === 0){
+	// We're cleared to launch!
+	foreach(glob($scanPattern) as $uploadDir){
+		// Skip hidden stuff
+		if($uploadDir[0] == '.') continue;
+		// If the modified time is older then uploadMaxAge DELETE it
+		$mTime = filemtime($uploadDir);
+		if(($mTime+$config['uploadMaxAge']) <= time()) rrmdir($uploadDir);
 	}
+}else{
+	// Woah, something's not right!
+	trigger_error("Fetal Error - We were about to delete the world! (scan pattern: $scanPattern)", E_USER_ERRORS);
 }
 ?>
