@@ -190,8 +190,8 @@ class files {
 	/**
 	 * Returns the base path to be used when uploading files
 	 *
-	 * @return string
 	 * @author Scott Blake
+	 * @return string
 	 **/
 	public static function getBaseUploadPath() {
 		return mfcs::config('uploadPath', mfcs::config('mfcstmp').DIRECTORY_SEPARATOR.'mfcs');
@@ -285,12 +285,12 @@ class files {
 	 *
 	 * @author Scott Blake
 	 * @param Imagick $image
-	 * @param array $field
+	 * @param array $options
 	 * @return Imagick
 	 **/
-	public static function addWatermark($image, $field) {
+	public static function addWatermark($image, $options) {
 		// Get watermark image data
-		$watermarkBlob = self::getWatermarkBlob($field['watermarkImage']);
+		$watermarkBlob = self::getWatermarkBlob($options['watermarkImage']);
 		$watermark     = new Imagick();
 		$watermark->readImageBlob($watermarkBlob);
 
@@ -299,9 +299,9 @@ class files {
 		$imageHeight = $image->getImageHeight();
 
 		// Store offset values to set watermark away from borders
-		if (isset($field['border']) && str2bool($field['border'])) {
-			$widthOffset  = isset($field['borderWidth'])  ? $field['borderWidth']  : 0;
-			$heightOffset = isset($field['borderHeight']) ? $field['borderHeight'] : 0;
+		if (isset($options['border']) && str2bool($options['border'])) {
+			$widthOffset  = isset($options['borderWidth'])  ? $options['borderWidth']  : 0;
+			$heightOffset = isset($options['borderHeight']) ? $options['borderHeight'] : 0;
 		}
 
 		// Resize the watermark
@@ -316,7 +316,7 @@ class files {
 		$watermarkHeight = $watermark->getImageHeight();
 
 		// Get the watermark placement Example: 'top','left'
-		list($positionHeight,$positionWidth) = explode("|",$field['watermarkLocation']);
+		list($positionHeight,$positionWidth) = explode("|",$options['watermarkLocation']);
 
 		// Calculate the position
 		switch ($positionHeight) {
@@ -370,6 +370,43 @@ class files {
 		// If we're here, an error happened
 		errorHandle::newError(__METHOD__."() - Failed to get watermark! (MySQL Error: {$res['error']})", errorHandle::HIGH);
 		return FALSE;
+	}
+
+	/**
+	 * Create and store a thumbnail of a given Imagick image object
+	 *
+	 * @author Scott Blake
+	 * @param Imagick $image
+	 * @param array $options
+	 * @param string $savePath
+	 * @return bool
+	 **/
+	public static function createThumbnail($image, $options, $savePath) {
+		// Make a copy of the original
+		$thumb = $image->clone();
+
+		$width = 0;
+		if (isset($options['thumbnailWidth'])) {
+			$width = $options['thumbnailWidth'];
+		}
+
+		$height = 0;
+		if (isset($options['thumbnailHeight'])) {
+			$width = $options['thumbnailHeight'];
+		}
+
+		// Change the format
+		if (isset($options['thumbnailFormat'])) {
+			$thumb->setImageFormat($options['thumbnailFormat']);
+		}
+
+		// Scale to thumbnail size, constraining proportions
+		if ($width > 0 || $height > 0) {
+			$thumb->thumbnailImage($width, $height, TRUE);
+		}
+
+		// Store thumbnail, returns TRUE on success, FALSE on failure
+		return $thumb->writeImage($savePath);
 	}
 
 	public static function processObjectUploads($objectID,$uploadID){
@@ -508,7 +545,7 @@ class files {
 			}
 
 			// Convert uploaded files into some ofhter size/format/etc
-			if(isset($options['convert']) && str2bool($options['convert'])){
+			if (isset($options['convert']) && str2bool($options['convert'])) {
 				foreach($originalFiles as $filename){
 					if($filename{0} == '.') continue;
 
@@ -543,38 +580,30 @@ class files {
 						$image->scaleImage($options['convertWidth'], $options['convertHeight'], TRUE);
 					}
 
-					// Create a thumbnail
-					if(isset($options['thumbnail']) && str2bool($options['thumbnail'])){
-						// Make a copy of the original
-						$thumb = $image->clone();
-
-						// Change the format
-						$thumb->setImageFormat($options['thumbnailFormat']);
-
-						// Scale to thumbnail size, constraining proportions
-						if ($options['thumbnailWidth'] > 0 || $options['thumbnailHeight'] > 0) {
-							$thumb->thumbnailImage(
-								$options['thumbnailWidth'],
-								$options['thumbnailHeight'],
-								TRUE
-							);
-						}
-
-						// Store thumbnail
-						if($thumb->writeImage(self::getSaveDir($assetsID,'thumbs').$filename.'.'.strtolower($thumb->getImageFormat())) === FALSE){
+					// Create a thumbnail that includes converted options
+					if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
+						$savePath = self::getSaveDir($assetsID,'thumbs').$filename.'.'.strtolower($thumb->getImageFormat());
+						if (self::createThumbnail($image, $options, $savePath) === FALSE) {
 							throw new Exception("Failed to create thumbnail: ".$filename);
 						}
 					}
 
 					// Add a watermark
-					if(isset($options['watermark']) && str2bool($options['watermark'])){
+					if (isset($options['watermark']) && str2bool($options['watermark'])) {
 						$image = self::addWatermark($image, $options);
 					}
 
 					// Store image
-					if($image->writeImage(self::getSaveDir($assetsID,'processed').$filename.'.'.strtolower($image->getImageFormat())) === FALSE){
+					if ($image->writeImage(self::getSaveDir($assetsID,'processed').$filename.'.'.strtolower($image->getImageFormat())) === FALSE) {
 						throw new Exception("Failed to create processed image: ".$filename);
 					}
+				}
+			}
+			// Create a thumbnail without any conversions
+			else if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
+				$savePath = self::getSaveDir($assetsID,'thumbs').$filename.'.'.strtolower($thumb->getImageFormat());
+				if (self::createThumbnail($image, $options, $savePath) === FALSE) {
+					throw new Exception("Failed to create thumbnail: ".$filename);
 				}
 			}
 
@@ -616,7 +645,8 @@ class files {
 				}
 			}
 
-		}catch(Exception $e){
+		}
+		catch (Exception $e) {
 			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
 			return FALSE;
 		}
