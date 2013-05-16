@@ -61,6 +61,24 @@ class files {
 		}
 	}
 
+	/**
+	 * Takes a file and returns its mime type
+	 *
+	 * @author Scott Blake
+	 * @param string $filename
+	 * @return string
+	 **/
+	public static function getMimeType($filepath) {
+		if (isPHP('5.3')) {
+			$fi = new finfo(FILEINFO_MIME_TYPE);
+			return $fi->file($filepath);
+		}
+
+		$fi = new finfo(FILEINFO_MIME);
+		list($mimeType,$mimeEncoding) = explode(';', $fi->file($filepath));
+		return $mimeType;
+	}
+
 	public static function buildFilesPreview($objectID,$fieldName=NULL){
 
 		if (objects::validID(TRUE,$objectID) === FALSE) {
@@ -105,7 +123,6 @@ class files {
 				$originalFile = $originalsDir.$originalFile;
 				$_filename    = pathinfo($originalFile);
 				$filename     = $_filename['filename'];
-				$fileExt      = $_filename['extension'];
 				$links        = array();
 
 				$links['Original'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&file=%s&type=%s',
@@ -406,7 +423,7 @@ class files {
 		}
 
 		// Store thumbnail, returns TRUE on success, FALSE on failure
-		return $thumb->writeImage($savePath.'.'.strtolower($thumb->getImageFormat()));
+		return $thumb->writeImage($savePath);
 	}
 
 	public static function processObjectUploads($objectID,$uploadID){
@@ -430,7 +447,7 @@ class files {
 
 			// Clean the filename
 			$cleanedFilename = preg_replace('/[^a-z0-9-_\.]/i','',$filename);
-			$newFilename = "$originalsFilepath/$cleanedFilename";
+			$newFilename = $originalsFilepath.DIRECTORY_SEPARATOR.$cleanedFilename;
 
 			// Move the uploaded files into thier new home and make the new file read-only
 			rename("$uploadBase/$filename", $newFilename);
@@ -452,13 +469,36 @@ class files {
 		$originalsFilepath = self::getSaveDir($assetsID,'originals');
 		$originalFiles     = scandir($originalsFilepath);
 
+		// Setup return array
+		$return = array(
+			'archive'   => array(),
+			'processed' => array(),
+			'combine'   => array(),
+			'thumbs'    => array(),
+			'ocr'       => array(),
+			);
+
 		// Needed to put the files in the right order for processing
 		natsort($originalFiles);
 
-		try{
+		foreach ($originalFiles as $filename) {
+			if ($filename[0] == '.') continue;
+
+			$return['archive'][] = array(
+				'name'   => $filename,
+				'path'   => $originalsFilepath,
+				'size'   => filesize($originalsFilepath.DIRECTORY_SEPARATOR.$filename),
+				'type'   => self::getMimeType($originalsFilepath.DIRECTORY_SEPARATOR.$filename),
+				'errors' => '',
+				);
+		}
+
+		try {
 			// If combine files is checked, read this image and add it to the combined object
 			if(isset($options['combine']) && str2bool($options['combine'])){
 				try{
+					$errors = array();
+
 					// Create us some temp working space
 					$tmpDir = mfcs::config('mfcstmp').DIRECTORY_SEPARATOR.uniqid();
 					mkdir($tmpDir,0777,TRUE);
@@ -471,14 +511,13 @@ class files {
 						}
 					}
 
-					foreach($originalFiles as $filename) {
-						if($filename[0] == '.') continue;
+					foreach ($originalFiles as $filename) {
+						if ($filename[0] == '.') continue;
 
 						// Figure some stuff out about the file
 						$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 						$_filename    = pathinfo($originalFile);
 						$filename     = $_filename['filename'];
-						$fileExt      = $_filename['extension'];
 
 						// perform hOCR on the original uploaded file which gets stored in combined as an HTML file
 						$_exec = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
@@ -490,6 +529,7 @@ class files {
 						// If a new-line char is in the output, assume it's an error
 						// Tesseract failed, let's normalize the image and try again
 						if (strpos(trim($_exec), "\n") !== FALSE) {
+							$errors[] = "Unable to process OCR for ".basename($originalFile).". Continuing&hellip;";
 							errorHandle::warningMsg("Unable to process OCR for ".basename($originalFile).". Continuing&hellip;");
 
 							// Ensure HTML file exists
@@ -527,15 +567,24 @@ class files {
 						throw new Exception("GhostScript Error: ".$_exec);
 					}
 
+					$return['combine'][] = array(
+						'name'   => 'combined.pdf',
+						'path'   => self::getSaveDir($assetsID,'combine'),
+						'size'   => filesize(self::getSaveDir($assetsID,'combine').'combined.pdf'),
+						'type'   => 'application/pdf',
+						'errors' => $errors,
+						);
+
 					// Lastly, we delete our temp working dir (always nice to cleanup after yourself)
-					foreach(glob("$tmpDir/*.*") as $file){
+					foreach (glob("$tmpDir/*.*") as $file) {
 						unlink($file);
 					}
 					rmdir($tmpDir);
-				}catch(Exception $e){
+				}
+				catch (Exception $e) {
 					// We need to delete our working dir
-					if(isset($tmpDir) and is_dir($tmpDir)){
-						foreach(glob("$tmpDir/*.*") as $file){
+					if (isset($tmpDir) and is_dir($tmpDir)) {
+						foreach (glob("$tmpDir/*.*") as $file) {
 							unlink($file);
 						}
 						rmdir($tmpDir);
@@ -546,18 +595,17 @@ class files {
 
 			// Convert uploaded files into some ofhter size/format/etc
 			if (isset($options['convert']) && str2bool($options['convert'])) {
-				foreach($originalFiles as $filename){
-					if($filename[0] == '.') continue;
+				foreach ($originalFiles as $filename){
+					if ($filename[0] == '.') continue;
 
 					$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 					$_filename    = pathinfo($originalFile);
 					$filename     = $_filename['filename'];
-					$fileExt      = $_filename['extension'];
 					$image        = new Imagick();
 					$image->readImage($originalFile);
 
 					// Convert format?
-					if(!empty($options['convertFormat'])) $image->setImageFormat($options['convertFormat']);
+					if (!empty($options['convertFormat'])) $image->setImageFormat($options['convertFormat']);
 
 					// Add a border
 					if (isset($options['border']) && str2bool($options['border'])) {
@@ -582,10 +630,20 @@ class files {
 
 					// Create a thumbnail that includes converted options
 					if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
-						$savePath = self::getSaveDir($assetsID,'thumbs').$filename;
+						$thumbname = $filename.'.'.strtolower($options['thumbnailFormat']);
+						$savePath  = self::getSaveDir($assetsID,'thumbs').$thumbname;
+
 						if (self::createThumbnail($image, $options, $savePath) === FALSE) {
-							throw new Exception("Failed to create thumbnail: ".$filename);
+							throw new Exception("Failed to create thumbnail: ".$thumbname);
 						}
+
+						$return['thumbs'][] = array(
+							'name'   => $thumbname,
+							'path'   => self::getSaveDir($assetsID,'thumbs'),
+							'size'   => filesize(self::getSaveDir($assetsID,'thumbs').$thumbname),
+							'type'   => self::getMimeType(self::getSaveDir($assetsID,'thumbs').$thumbname),
+							'errors' => '',
+							);
 					}
 
 					// Add a watermark
@@ -597,6 +655,14 @@ class files {
 					if ($image->writeImage(self::getSaveDir($assetsID,'processed').$filename.'.'.strtolower($image->getImageFormat())) === FALSE) {
 						throw new Exception("Failed to create processed image: ".$filename);
 					}
+
+					$return['processed'][] = array(
+						'name'   => $filename,
+						'path'   => self::getSaveDir($assetsID,'processed'),
+						'size'   => filesize(self::getSaveDir($assetsID,'processed').$filename),
+						'type'   => self::getMimeType(self::getSaveDir($assetsID,'processed').$filename),
+						'errors' => '',
+						);
 				}
 			}
 			// Create a thumbnail without any conversions
@@ -606,14 +672,23 @@ class files {
 
 					$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 					$_filename    = pathinfo($originalFile);
-					$filename     = $_filename['filename'];
-					$savePath     = self::getSaveDir($assetsID,'thumbs').$filename;
+					$thumbname    = $_filename['filename'].'.'.strtolower($options['thumbnailFormat']);
+					$savePath     = self::getSaveDir($assetsID,'thumbs').$thumbname;
+
 					$image        = new Imagick();
 					$image->readImage($originalFile);
 
 					if (self::createThumbnail($image, $options, $savePath) === FALSE) {
-						throw new Exception("Failed to create thumbnail: ".$filename);
+						throw new Exception("Failed to create thumbnail: ".$thumbname);
 					}
+
+					$return['thumbs'][] = array(
+						'name'   => $thumbname,
+						'path'   => self::getSaveDir($assetsID,'thumbs'),
+						'size'   => filesize(self::getSaveDir($assetsID,'thumbs').$thumbname),
+						'type'   => self::getMimeType(self::getSaveDir($assetsID,'thumbs').$thumbname),
+						'errors' => '',
+						);
 				}
 			}
 
@@ -628,28 +703,33 @@ class files {
 					$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 					$_filename    = pathinfo($originalFile);
 					$filename     = $_filename['filename'];
-					$fileExt      = $_filename['extension'];
 
 					$text = TesseractOCR::recognize($originalFile);
 					if (file_put_contents(self::getSaveDir($assetsID,'ocr').DIRECTORY_SEPARATOR."$filename.txt", $text) === FALSE) {
 						errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
 						throw new Exception("Failed to create OCR file for $filename");
 					}
+
+					$return['ocr'][] = array(
+						'name'   => $filename.'.txt',
+						'path'   => self::getSaveDir($assetsID,'ocr'),
+						'size'   => filesize(self::getSaveDir($assetsID,'ocr').$filename.'.txt'),
+						'type'   => self::getMimeType(self::getSaveDir($assetsID,'ocr').$filename.'.txt'),
+						'errors' => '',
+						);
 				}
 			}
 
 			if (isset($options['mp3']) && str2bool($options['mp3'])) {
-				foreach($originalFiles as $filename){
-					if($filename[0] == '.') continue;
+				foreach ($originalFiles as $filename) {
+					if ($filename[0] == '.') continue;
 
 					$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 					$_filename    = pathinfo($originalFile);
 					$filename     = $_filename['filename'];
-					$fileExt      = $_filename['extension'];
+					$mimeType     = self::getMimeType($originalFile);
 
-					$fi = new finfo(FILEINFO_MIME);
-					$mimeType = $fi->file($originalFile, FILEINFO_MIME_TYPE);
-					if(strpos($mimeType, 'audio/') !== FALSE){
+					if (strpos($mimeType, 'audio/') !== FALSE) {
 						// @TODO: Perform audio processing here
 					}
 				}
@@ -660,5 +740,8 @@ class files {
 			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
 			return FALSE;
 		}
+
+		return $return;
 	}
+
 }

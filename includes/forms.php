@@ -1006,11 +1006,11 @@ class forms {
 				$thumbnail = str2bool($field['thumbnail']);
 				$mp3       = str2bool($field['mp3']);
 				if(!empty($assetsID) and ($combine || $convert || $ocr || $thumbnail || $mp3)){
-					$values[$field['name']] = files::processObjectFiles($assetsID, $field);
+					$values[$field['name']]['files'] = files::processObjectFiles($assetsID, $field);
 				}
 
 				// Lastly, save the assetsID to this field's value
-				$values[$field['name']] = $assetsID;
+				$values[$field['name']]['uuid'] = $assetsID;
 			}
 
 			if(!isset($values[$field['name']])) $values[$field['name']] = $engine->cleanPost['RAW'][$field['name']];
