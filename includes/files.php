@@ -426,7 +426,7 @@ class files {
 		// Start looping through the uploads and move them to their new home
 		$files = scandir($uploadBase);
 		foreach($files as $filename){
-			if($filename{0} == '.') continue;
+			if($filename[0] == '.') continue;
 
 			// Clean the filename
 			$cleanedFilename = preg_replace('/[^a-z0-9-_\.]/i','',$filename);
@@ -547,7 +547,7 @@ class files {
 			// Convert uploaded files into some ofhter size/format/etc
 			if (isset($options['convert']) && str2bool($options['convert'])) {
 				foreach($originalFiles as $filename){
-					if($filename{0} == '.') continue;
+					if($filename[0] == '.') continue;
 
 					$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 					$_filename    = pathinfo($originalFile);
