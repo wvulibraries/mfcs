@@ -65,6 +65,7 @@ try{
 			isset($downloadFilename) ? $downloadFilename : basename($filepath))
 		);
 		header("Content-Type: application/octet-stream");
+		ini_set('memory_limit',-1);
 		die(file_get_contents($filepath)); // die so nothing else will be displayed
 	}else{
 		if($mimeType == 'application/x-empty'){
