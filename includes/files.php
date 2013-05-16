@@ -358,37 +358,6 @@ class files {
 	}
 
 	/**
-	 * Create and store a thumbnail of a given Imagick image object
-	 *
-	 * @author Scott Blake
-	 * @param Imagick $image
-	 * @param array $options
-	 * @param string $filename
-	 * @return bool
-	 **/
-	public static function createThumbnail($image, $options, $filename) {
-		// Make a copy of the original
-		$thumb = $image->clone();
-
-		// Change the format
-		if (isset($options['thumbnailFormat'])) {
-			$thumb->setImageFormat($options['thumbnailFormat']);
-		}
-
-		// Scale to thumbnail size, constraining proportions
-		if ((isset($options['thumbnailWidth']) && $options['thumbnailWidth'] > 0) || (isset($options['thumbnailHeight']) && $options['thumbnailHeight'] > 0)) {
-			$thumb->thumbnailImage(
-				$options['thumbnailWidth'],
-				$options['thumbnailHeight'],
-				TRUE
-			);
-		}
-
-		// Store thumbnail, returns TRUE on success, FALSE on failure
-		return $thumb->writeImage(self::getSaveDir($assetsID,'thumbs').$filename.'.'.strtolower($thumb->getImageFormat()));
-	}
-
-	/**
 	 * Returns the binary blob for a given watermark, or FALSE on errer
 	 * @param int $id
 	 * @return bool|string
@@ -401,6 +370,43 @@ class files {
 		// If we're here, an error happened
 		errorHandle::newError(__METHOD__."() - Failed to get watermark! (MySQL Error: {$res['error']})", errorHandle::HIGH);
 		return FALSE;
+	}
+
+	/**
+	 * Create and store a thumbnail of a given Imagick image object
+	 *
+	 * @author Scott Blake
+	 * @param Imagick $image
+	 * @param array $options
+	 * @param string $savePath
+	 * @return bool
+	 **/
+	public static function createThumbnail($image, $options, $savePath) {
+		// Make a copy of the original
+		$thumb = $image->clone();
+
+		$width = 0;
+		if (isset($options['thumbnailWidth'])) {
+			$width = $options['thumbnailWidth'];
+		}
+
+		$height = 0;
+		if (isset($options['thumbnailHeight'])) {
+			$width = $options['thumbnailHeight'];
+		}
+
+		// Change the format
+		if (isset($options['thumbnailFormat'])) {
+			$thumb->setImageFormat($options['thumbnailFormat']);
+		}
+
+		// Scale to thumbnail size, constraining proportions
+		if ($width > 0 || $height > 0) {
+			$thumb->thumbnailImage($width, $height, TRUE);
+		}
+
+		// Store thumbnail, returns TRUE on success, FALSE on failure
+		return $thumb->writeImage($savePath);
 	}
 
 	public static function processObjectUploads($objectID,$uploadID){
@@ -576,7 +582,8 @@ class files {
 
 					// Create a thumbnail that includes converted options
 					if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
-						if (self::createThumbnail($image, $options, $filename) === FALSE) {
+						$savePath = self::getSaveDir($assetsID,'thumbs').$filename.'.'.strtolower($thumb->getImageFormat());
+						if (self::createThumbnail($image, $options, $savePath) === FALSE) {
 							throw new Exception("Failed to create thumbnail: ".$filename);
 						}
 					}
@@ -594,7 +601,8 @@ class files {
 			}
 			// Create a thumbnail without any conversions
 			else if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
-				if (self::createThumbnail($image, $options, $filename) === FALSE) {
+				$savePath = self::getSaveDir($assetsID,'thumbs').$filename.'.'.strtolower($thumb->getImageFormat());
+				if (self::createThumbnail($image, $options, $savePath) === FALSE) {
 					throw new Exception("Failed to create thumbnail: ".$filename);
 				}
 			}
