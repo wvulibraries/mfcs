@@ -582,7 +582,7 @@ class files {
 
 					// Create a thumbnail that includes converted options
 					if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
-						$savePath = self::getSaveDir($assetsID,'thumbs').$filename);
+						$savePath = self::getSaveDir($assetsID,'thumbs').$filename;
 						if (self::createThumbnail($image, $options, $savePath) === FALSE) {
 							throw new Exception("Failed to create thumbnail: ".$filename);
 						}
@@ -601,7 +601,7 @@ class files {
 			}
 			// Create a thumbnail without any conversions
 			else if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
-				$savePath = self::getSaveDir($assetsID,'thumbs').$filename);
+				$savePath = self::getSaveDir($assetsID,'thumbs').$filename;
 				if (self::createThumbnail($image, $options, $savePath) === FALSE) {
 					throw new Exception("Failed to create thumbnail: ".$filename);
 				}
