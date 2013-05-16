@@ -406,7 +406,7 @@ class files {
 		}
 
 		// Store thumbnail, returns TRUE on success, FALSE on failure
-		return $thumb->writeImage($savePath);
+		return $thumb->writeImage($savePath.'.'.strtolower($thumb->getImageFormat());
 	}
 
 	public static function processObjectUploads($objectID,$uploadID){
@@ -582,7 +582,7 @@ class files {
 
 					// Create a thumbnail that includes converted options
 					if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
-						$savePath = self::getSaveDir($assetsID,'thumbs').$filename.'.'.strtolower($thumb->getImageFormat());
+						$savePath = self::getSaveDir($assetsID,'thumbs').$filename);
 						if (self::createThumbnail($image, $options, $savePath) === FALSE) {
 							throw new Exception("Failed to create thumbnail: ".$filename);
 						}
@@ -601,7 +601,7 @@ class files {
 			}
 			// Create a thumbnail without any conversions
 			else if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
-				$savePath = self::getSaveDir($assetsID,'thumbs').$filename.'.'.strtolower($thumb->getImageFormat());
+				$savePath = self::getSaveDir($assetsID,'thumbs').$filename);
 				if (self::createThumbnail($image, $options, $savePath) === FALSE) {
 					throw new Exception("Failed to create thumbnail: ".$filename);
 				}
