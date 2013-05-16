@@ -107,53 +107,44 @@ class files {
 			if(empty($object['data'][ $field['name'] ])) continue;
 
 			// Figure out some needed vars for later
-			$assetsID      = $object['data'][$field['name']];
-			$assetsDir     = self::getSaveDir($assetsID);
-			$originalsDir  = self::getSaveDir($assetsID,'originals');
-			$originalFiles = scandir($originalsDir);
-			$fileLinks     = array();
-
-			// Needed to put the files in the right order for processing
-			natsort($originalFiles);
-
+			$fileDataArray = $object['data'][$field['name']];
+			$assetsID      = $fileDataArray['uuid'];
 			$fileLIs = array();
-			foreach($originalFiles as $originalFile){
-				if($originalFile[0] == '.') continue;
 
-				$originalFile = $originalsDir.$originalFile;
-				$_filename    = pathinfo($originalFile);
-				$filename     = $_filename['filename'];
-				$links        = array();
+			foreach($fileDataArray['files']['archive'] as $fileID => $file){
+				$_filename = pathinfo($file['name']);
+				$filename  = $_filename['filename'];
+				$links     = array();
 
-				$links['Original'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&file=%s&type=%s',
+				$links['Original'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
 					localvars::get('siteRoot'),
 					$objectID,
 					$field['name'],
-					basename($originalFile),
-					'originals');
+					$fileID,
+					'archive');
 
 				if(str2bool($field['convert'])){
-					$links['Converted'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&file=%s&type=%s',
+					$links['Converted'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
 						localvars::get('siteRoot'),
 						$objectID,
 						$field['name'],
-						$filename,
+						$fileID,
 						'processed');
 				}
 				if(str2bool($field['thumbnail'])){
-					$links['Thumbnail'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&file=%s&type=%s',
+					$links['Thumbnail'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
 						localvars::get('siteRoot'),
 						$objectID,
 						$field['name'],
-						$filename,
+						$fileID,
 						'thumbs');
 				}
 				if(str2bool($field['ocr'])){
-					$links['OCR'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&file=%s&type=%s',
+					$links['OCR'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
 						localvars::get('siteRoot'),
 						$objectID,
 						$field['name'],
-						$filename,
+						$fileID,
 						'ocr');
 				}
 				if(str2bool($field['combine'])){
@@ -164,7 +155,7 @@ class files {
 						'combine');
 				}
 
-				// Build preview and download links
+
 				$previewLinks  = array();
 				$downloadLinks = array();
 				foreach($links as $linkLabel => $linkURL){
@@ -189,7 +180,7 @@ class files {
 				$downloadDropdown .= '</div>';
 
 				$fileLIs[] = sprintf('<li><div class="filename">%s</div><!-- TODO <button class="btn">Field Details</button> -->%s%s</li>',
-					basename($originalFile),
+					$filename,
 					$previewDropdown,
 					$downloadDropdown);
 			}
