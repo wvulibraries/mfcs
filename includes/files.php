@@ -100,7 +100,7 @@ class files {
 
 			$fileLIs = array();
 			foreach($originalFiles as $originalFile){
-				if($originalFile{0} == '.') continue;
+				if($originalFile[0] == '.') continue;
 
 				$originalFile = $originalsDir.$originalFile;
 				$_filename    = pathinfo($originalFile);
@@ -471,8 +471,8 @@ class files {
 						}
 					}
 
-					foreach($originalFiles as $filename){
-						if($filename{0} == '.') continue;
+					foreach($originalFiles as $filename) {
+						if($filename[0] == '.') continue;
 
 						// Figure some stuff out about the file
 						$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
@@ -623,7 +623,7 @@ class files {
 				require_once 'class.tesseract_ocr.php';
 
 				foreach($originalFiles as $filename){
-					if($filename{0} == '.') continue;
+					if($filename[0] == '.') continue;
 
 					$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 					$_filename    = pathinfo($originalFile);
@@ -640,7 +640,7 @@ class files {
 
 			if (isset($options['mp3']) && str2bool($options['mp3'])) {
 				foreach($originalFiles as $filename){
-					if($filename{0} == '.') continue;
+					if($filename[0] == '.') continue;
 
 					$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 					$_filename    = pathinfo($originalFile);
