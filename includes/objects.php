@@ -31,7 +31,7 @@ class objects {
 
 	}
 
-	public static function get($objectID=NULL) {
+	public static function get($objectID=NULL,$ignoreCache=FALSE) {
   
 		if (isnull($objectID)) {
 			return self::getObjects();
@@ -39,7 +39,7 @@ class objects {
 
 		$mfcs      = mfcs::singleton();
 		$cachID    = "getObject:".$objectID;
-		$cache     = $mfcs->cache("get",$cachID);
+		$cache     = !$ignoreCache ? $mfcs->cache("get",$cachID) : NULL;
 
 		if (!isnull($cache)) {
 			return($cache);
