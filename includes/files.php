@@ -180,7 +180,7 @@ class files {
 				$downloadDropdown .= '</div>';
 
 				$fileLIs[] = sprintf('<li><div class="filename">%s</div><!-- TODO <button class="btn">Field Details</button> -->%s%s</li>',
-					$filename,
+					$file['name'],
 					$previewDropdown,
 					$downloadDropdown);
 			}
