@@ -92,7 +92,11 @@ try{
 	// Is this just a revision AJAX request?
 	if((isset($engine->cleanGet['MYSQL']['revisionID']))){
 		$revision = $revisions->getRevision($engine->cleanGet['MYSQL']['objectID'], $engine->cleanGet['MYSQL']['revisionID']);
-		die(generateFieldDisplay($revision, $fields));
+		if(!$revision){
+			die('Error reading revision');
+		}else{
+			die(generateFieldDisplay($revision, $fields));
+		}
 	}
 
 	###############################################################################################################
