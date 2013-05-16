@@ -652,7 +652,8 @@ class files {
 					}
 
 					// Store image
-					if ($image->writeImage(self::getSaveDir($assetsID,'processed').$filename.'.'.strtolower($image->getImageFormat())) === FALSE) {
+					$filename = $filename.'.'.strtolower($image->getImageFormat());
+					if ($image->writeImage(self::getSaveDir($assetsID,'processed').$filename) === FALSE) {
 						throw new Exception("Failed to create processed image: ".$filename);
 					}
 
@@ -705,7 +706,7 @@ class files {
 					$filename     = $_filename['filename'];
 
 					$text = TesseractOCR::recognize($originalFile);
-					if (file_put_contents(self::getSaveDir($assetsID,'ocr').DIRECTORY_SEPARATOR."$filename.txt", $text) === FALSE) {
+					if (file_put_contents(self::getSaveDir($assetsID,'ocr').DIRECTORY_SEPARATOR.$filename.'.txt', $text) === FALSE) {
 						errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
 						throw new Exception("Failed to create OCR file for $filename");
 					}
