@@ -1,80 +1,66 @@
 <?php
 include("../header.php");
 
-function generateFieldDisplay($field,$data,$side,$revisionID=NULL){
-	$engine = mfcs::$engine;
-	$output='';
-	switch($field['type']){
-		case 'idno':
-			/*
-			$output .= sprintf('<li><div>%s</div>%s</li>',
-				$field['label'],
-				$object['data'][ $field['name'] ]
-			);
-			*/
-			break;
+// Setup revision control
+$revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime');
 
-		case 'text':
-			$output .= sprintf('<li><div>%s</div>%s</li>',
-				$field['label'],
-				$data[ $field['name'] ]
-			);
-			break;
-
-		case 'file':
-			$output .= sprintf('<li><div>%s</div>', $field['label']);
-
-			$fileViewerBaseParams = array(
-				'objectID' => $engine->cleanGet['MYSQL']['objectID'],
-				'field' => $field['name']
-			);
-			if(!is_null($revisionID)) $fileViewerBaseParams['revisionID'] = $revisionID;
-
-			if(str2bool($field['multipleFiles'])){
-				$files = $data[ $field['name'] ];
-				for($i=1;$i<=sizeof($files); $i++){
-					$fileViewerBaseParams['fileNum'] = $i;
-					$output .= sprintf('<iframe class="%sFileViewer" src="fileViewer.php?%s#%sFileViewer" data-field_name="%s" onload="scrollSync(this)" seamless></iframe>',
-						trim(strtolower($side)),
-						http_build_query($fileViewerBaseParams),
-						trim(strtolower($side)),
-						$field['name']
-					);
-				}
-			}else{
-				$output .= '<div class="filePreview"><a href="#">Click to view current file</a>';
-				$output .= sprintf('<iframe class="%sFileViewer" src="fileViewer.php?%s#%sFileViewer" data-field_name="%s" onload="scrollSync(this)" seamless></iframe>',
-					trim(strtolower($side)),
-					http_build_query($fileViewerBaseParams),
-					trim(strtolower($side)),
-					$field['name']
+function generateFieldDisplay($object,$fields){
+	$output = '';
+	$data = is_array($object['data']) ? $object['data'] : decodeFields($object['data']);
+	foreach($fields as $field){
+		$type  = $field['type'];
+		$name  = $field['name'];
+		$label = $field['label'];
+		switch($type){
+			case 'idno':
+				$output .= sprintf('<section class="objectField"><header>%s</header>%s</section>',
+					$label,
+					$object[$name]
 				);
-			}
+				break;
 
-			$output .= '</li>';
-			break;
+
+			case 'file':
+				$fileLIs = array();
+				foreach($data[$name]['files']['archive'] as $file){
+					$fileLIs[] = sprintf('%s', $file['name']);
+				}
+
+				$output .= sprintf('<section class="objectField"><header>%s</header>%s file%s <a href="javascript:;" class="toggleFileList">click to list</a><ul style="display:none;">%s</ul></section>',
+					$label,
+					sizeof($fileLIs),
+					sizeof($fileLIs)>1 ? 's' : '',
+					implode('',$fileLIs)
+				);
+				break;
+
+			default:
+			case 'text':
+				$output .= sprintf('<section class="objectField"><header>%s</header>%s<!--<aside><button class="btn btn-mini" type="button">Show Diff</button></aside>--></section>',
+					$label,
+					$data[$name]
+				);
+				break;
+		}
 	}
 	return $output;
 }
 
-try {
-	// Make sure we have id, formID, and objectID provided
-	if(!isset($engine->cleanGet['MYSQL']['objectID']) || is_empty($engine->cleanGet['MYSQL']['objectID']) || !validate::integer($engine->cleanGet['MYSQL']['objectID'])) throw new Exception('No Object ID Provided.');
-	localvars::add("objectID", $engine->cleanGet['MYSQL']['objectID']);
+###############################################################################################################
 
-	$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
-	$form   = forms::get($object['formID']);
-	localvars::add("formName",$form['title']);
+$objectID = $engine->cleanGet['MYSQL']['objectID'];
+$object   = objects::get($objectID);
+$form     = forms::get($object['formID']);
+$fields   = $form['fields'];
+if(mfcsPerms::isEditor($form['ID']) === FALSE) throw new Exception("Permission Denied to view objects created with this form.");
 
-	if (mfcsPerms::isEditor($form['ID']) === FALSE) {
-		throw new Exception("Permission Denied to view objects created with this form.");
+try{
+	if(	!isset($engine->cleanGet['MYSQL']['objectID']) ||
+		!validate::integer($engine->cleanGet['MYSQL']['objectID'])){
+		throw new Exception('No Object ID Provided.');
 	}
 
-	// Setup revision control
-	$revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime');
-
-	// Get the current object
-	$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
+	###############################################################################################################
 
 	// Catch a form submition (which would be a revision being reverted to)
 	if(isset($engine->cleanPost['MYSQL']['revisionID'])){
@@ -96,37 +82,29 @@ try {
 				errorHandle::newError("SQL Error: ".$sqlResult['error'], errorHandle::HIGH);
 			}else{
 				// Reload the object - To refresh the data
-				$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
+				$object = objects::get($objectID,TRUE);
 			}
 		}
 	}
 
+	###############################################################################################################
+
 	// Is this just a revision AJAX request?
 	if((isset($engine->cleanGet['MYSQL']['revisionID']))){
 		$revision = $revisions->getRevision($engine->cleanGet['MYSQL']['objectID'], $engine->cleanGet['MYSQL']['revisionID']);
-		$revision['data'] = decodeFields($revision['data']);
-		echo '<ul class="objectFields">';
-		foreach($form['fields'] as $field){
-			echo generateFieldDisplay($field,$revision['data'],'right',$engine->cleanGet['MYSQL']['revisionID']);
-		}
-		echo '</ul>';
-		exit();
+		die(generateFieldDisplay($revision, $fields));
 	}
 
-	// Build current version
-	$output='';
-	foreach($form['fields'] as $field){
-		$output .= generateFieldDisplay($field,$object['data'],'left');
-	}
-	localvars::add("currentVersion", $output);
+	###############################################################################################################
 
-}
-catch(Exception $e) {
+	localvars::add("formName", $form['title']);
+	localvars::add("objectID", $objectID);
+	localvars::add("currentVersion", generateFieldDisplay($object, $fields));
+
+}catch(Exception $e){
 	errorHandle::newError($e->getMessage(), errorHandle::DEBUG);
 	errorHandle::errorMsg($e->getMessage());
 }
-
-localVars::add("results",displayMessages());
 
 $engine->eTemplate("include","header");
 ?>
@@ -194,6 +172,28 @@ $engine->eTemplate("include","header");
 		height: inherit;
 	}
 
+	.objectField{
+		margin: 5px 15px;
+	}
+	.objectField header{
+		font-weight: bold;
+		font-size: 14px;
+		padding: 0;
+		border-bottom: 1px solid #999;
+		width: 50%;
+	}
+	.objectField ul{
+		margin-left: 10px;
+	}
+	.objectField aside{
+		border-top: 1px solid #ccc;
+		width: 25%;
+		margin-top: 10px;
+		padding: 5px 0;
+	}
+	.toggleFileList{
+		font-style: italic;
+	}
 	.objectFields{
 		list-style: none;
 		margin: 0;
@@ -241,6 +241,17 @@ $engine->eTemplate("include","header");
 				$('#revisions :input').attr('disabled','disabled');
 			}else{
 				alert('Revert canceled');
+			}
+		});
+		$('#objectComparator').on('click','.toggleFileList',function(){
+			$link = $(this);
+			$ul   = $link.next('ul');
+			if($ul.is(':visible')){
+				$ul.slideUp('fast');
+				$link.html('click to show list');
+			}else{
+				$ul.slideDown('fast');
+				$link.html('click to hide list');
 			}
 		});
 	});
