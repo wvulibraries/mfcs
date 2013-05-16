@@ -392,7 +392,7 @@ class files {
 
 		$height = 0;
 		if (isset($options['thumbnailHeight'])) {
-			$width = $options['thumbnailHeight'];
+			$height = $options['thumbnailHeight'];
 		}
 
 		// Change the format
@@ -601,9 +601,19 @@ class files {
 			}
 			// Create a thumbnail without any conversions
 			else if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
-				$savePath = self::getSaveDir($assetsID,'thumbs').$filename;
-				if (self::createThumbnail($image, $options, $savePath) === FALSE) {
-					throw new Exception("Failed to create thumbnail: ".$filename);
+				foreach($originalFiles as $filename){
+					if($filename[0] == '.') continue;
+
+					$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
+					$_filename    = pathinfo($originalFile);
+					$filename     = $_filename['filename'];
+					$savePath     = self::getSaveDir($assetsID,'thumbs').$filename;
+					$image        = new Imagick();
+					$image->readImage($originalFile);
+
+					if (self::createThumbnail($image, $options, $savePath) === FALSE) {
+						throw new Exception("Failed to create thumbnail: ".$filename);
+					}
 				}
 			}
 
