@@ -43,6 +43,7 @@ try{
 
 		case 'combine':
 			$filepath = $savePath.'combined.pdf';
+			$downloadFilename = $object['idno'].'.pdf';
 			break;
 	}
 
@@ -60,7 +61,9 @@ try{
 
 	// Set the correct MIME-Type headers, and output the file's content
 	if(isset($engine->cleanGet['MYSQL']['download']) and str2bool($engine->cleanGet['MYSQL']['download'])){
-		header(sprintf("Content-Disposition: attachment; filename='%s'", basename($filepath)));
+		header(sprintf("Content-Disposition: attachment; filename='%s'",
+			isset($downloadFilename) ? $downloadFilename : basename($filepath))
+		);
 		header("Content-Type: application/octet-stream");
 		die(file_get_contents($filepath)); // die so nothing else will be displayed
 	}else{
