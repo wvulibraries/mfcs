@@ -126,7 +126,7 @@ $engine->eTemplate("include","header");
 <div id="objectComparator">
 	<section class="revisionSection" id="current"">
 	<header>Current Version:</header>
-	<ul class="objectFields">{local var="currentVersion"}</ul>
+	{local var="currentVersion"}
 	</section>
 	<section class="revisionSection" id="revisions">
 		<header>
@@ -190,25 +190,6 @@ $engine->eTemplate("include","header");
 		width: 25%;
 		margin-top: 10px;
 		padding: 5px 0;
-	}
-	.toggleFileList{
-		font-style: italic;
-	}
-	.objectFields{
-		list-style: none;
-		margin: 0;
-	}
-	.objectFields li{
-		margin-bottom: 5px;
-	}
-	.objectFields li div{
-		font-weight: bold;
-		font-size: 18px;
-	}
-
-	.leftFileViewer, .rightFileViewer{
-		width: 95%;
-		height: 500px;
 	}
 </style>
 <script>
