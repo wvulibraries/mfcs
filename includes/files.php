@@ -406,7 +406,7 @@ class files {
 		}
 
 		// Store thumbnail, returns TRUE on success, FALSE on failure
-		return $thumb->writeImage($savePath.'.'.strtolower($thumb->getImageFormat());
+		return $thumb->writeImage($savePath.'.'.strtolower($thumb->getImageFormat()));
 	}
 
 	public static function processObjectUploads($objectID,$uploadID){
