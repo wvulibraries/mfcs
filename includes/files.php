@@ -474,8 +474,11 @@ class files {
 		// Needed to put the files in the right order for processing
 		natsort($originalFiles);
 
-		foreach ($originalFiles as $filename) {
-			if ($filename[0] == '.') continue;
+		foreach ($originalFiles as $I => $filename) {
+			if ($filename[0] == '.') {
+				unset($originalFiles[$I]);
+				continue;
+			}
 
 			$return['archive'][] = array(
 				'name'   => $filename,
@@ -508,8 +511,6 @@ class files {
 					touch($gsTemp);
 
 					foreach ($originalFiles as $filename) {
-						if ($filename[0] == '.') continue;
-
 						// Figure some stuff out about the file
 						$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 						$_filename    = pathinfo($originalFile);
@@ -597,8 +598,6 @@ class files {
 			// Convert uploaded files into some ofhter size/format/etc
 			if (isset($options['convert']) && str2bool($options['convert'])) {
 				foreach ($originalFiles as $filename){
-					if ($filename[0] == '.') continue;
-
 					$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 					$_filename    = pathinfo($originalFile);
 					$filename     = $_filename['filename'];
@@ -670,8 +669,6 @@ class files {
 			// Create a thumbnail without any conversions
 			else if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
 				foreach($originalFiles as $filename){
-					if($filename[0] == '.') continue;
-
 					$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 					$_filename    = pathinfo($originalFile);
 					$thumbname    = $_filename['filename'].'.'.strtolower($options['thumbnailFormat']);
@@ -700,8 +697,6 @@ class files {
 				require_once 'class.tesseract_ocr.php';
 
 				foreach($originalFiles as $filename){
-					if($filename[0] == '.') continue;
-
 					$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 					$_filename    = pathinfo($originalFile);
 					$filename     = $_filename['filename'];
@@ -724,8 +719,6 @@ class files {
 
 			if (isset($options['mp3']) && str2bool($options['mp3'])) {
 				foreach ($originalFiles as $filename) {
-					if ($filename[0] == '.') continue;
-
 					$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 					$_filename    = pathinfo($originalFile);
 					$filename     = $_filename['filename'];
