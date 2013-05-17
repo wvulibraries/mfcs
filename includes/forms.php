@@ -708,7 +708,7 @@ class forms {
 						$field['type'],
 						$field['name'],
 						$objects[$I]['ID'],
-						htmlSanitize($objects[$I]['data'][$field['name']])
+						(isset($objects[$I]['data'][$field['name']]))?htmlSanitize($objects[$I]['data'][$field['name']]):""
 					);
 				}
 
