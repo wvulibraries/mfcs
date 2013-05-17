@@ -515,10 +515,12 @@ class files {
 						$_filename    = pathinfo($originalFile);
 						$filename     = $_filename['filename'];
 
+						$baseFilename = $tmpDir.DIRECTORY_SEPARATOR.$filename;
+
 						// perform hOCR on the original uploaded file which gets stored in combined as an HTML file
 						$_exec = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
 							escapeshellarg($originalFile), // input.ext
-							escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename), // output.html
+							escapeshellarg($baseFilename), // output.html
 							escapeshellarg("$saveBase/hocr.cfg") // hocr config file
 							));
 
@@ -529,14 +531,14 @@ class files {
 							errorHandle::warningMsg("Unable to process OCR for ".basename($originalFile).". Continuing&hellip;");
 
 							// Ensure HTML file exists
-							touch($tmpDir.DIRECTORY_SEPARATOR.$filename.".html");
+							touch($baseFilename.".html");
 						}
 
 						// Create an OCR'd pdf of the file
 						$_exec = shell_exec(sprintf('hocr2pdf -i %s -s -o %s < %s 2>&1',
 							escapeshellarg($originalFile), // input.ext
-							escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename.".pdf"), // output.pdf
-							escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename.".html") // input.html
+							escapeshellarg($baseFilename.".pdf"), // output.pdf
+							escapeshellarg($baseFilename.".html") // input.html
 							));
 
 						if (trim($_exec) !== 'Writing unmodified DCT buffer.') {
@@ -550,10 +552,10 @@ class files {
 						}
 
 						// Add this pdf to a temp file that will be read in by gs
-						file_put_contents($gsTemp, $tmpDir.DIRECTORY_SEPARATOR.$filename.".pdf".PHP_EOL, FILE_APPEND);
+						file_put_contents($gsTemp, $baseFilename.".pdf".PHP_EOL, FILE_APPEND);
 
 						// We're done with this file, delete it
-						unlink($tmpDir.DIRECTORY_SEPARATOR.$filename.".html");
+						unlink($baseFilename.".html");
 					}
 
 					// Combine all PDF files in directory
