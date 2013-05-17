@@ -1520,7 +1520,7 @@ function newFieldValues(id,type,vals) {
 			break;
 
 		case 'file':
-			output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'" value="'+((vals['allowedExtensions']!=undefined)?vals['allowedExtensions']:'jpg%,%png%,%gif')+'">';
+			output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'" value="'+((vals['allowedExtensions']!=undefined)?vals['allowedExtensions']:'tif%,%tiff')+'">';
 			output += '<input type="hidden" id="multipleFiles_'+id+'" name="multipleFiles_'+id+'" value="'+((vals['multipleFiles']!=undefined)?vals['multipleFiles']:'')+'">';
 			output += '<input type="hidden" id="combine_'+id+'" name="combine_'+id+'" value="'+((vals['combine']!=undefined)?vals['combine']:'')+'">';
 			output += '<input type="hidden" id="ocr_'+id+'" name="ocr_'+id+'" value="'+((vals['ocr']!=undefined)?vals['ocr']:'')+'">';
