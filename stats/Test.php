@@ -8,12 +8,12 @@ localvars::add("totalTestObjects",count($objects));
 $objects = objects::getAllObjectsForForm("23");
 localvars::add("totaltest2Objects",count($objects));
 
+$totalMediaItems = 0;
 foreach ($objects as $I=>$object) {
-	print "<pre>";
-	var_dump($object);
-	print "</pre>";
-	break;
+	$totalMediaItems += count($object['data']['untitled3']['files']['archive']);
 }
+localvars::add("totalMediaItems",$totalMediaItems);
+
 
 $engine->eTemplate("include","header");
 ?>
@@ -43,6 +43,14 @@ $engine->eTemplate("include","header");
 		</th>
 		<td>
 			{local var="totaltest2Objects"}
+		</td>
+	</tr>
+	<tr>
+		<th>
+			Total Media Items:
+		</th>
+		<td>
+			{local var="totalMediaItems"}
 		</td>
 	</tr>
 
