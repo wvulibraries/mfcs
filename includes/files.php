@@ -454,6 +454,8 @@ class files {
 	}
 
 	public static function processObjectFiles($assetsID, $options){
+		// Disable PHP's max execution time
+		set_time_limit(0);
 
 		$saveBase          = mfcs::config('convertedPath');
 		$assetsPath        = self::getSaveDir($assetsID);
