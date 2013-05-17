@@ -493,7 +493,8 @@ class files {
 			// If combine files is checked, read this image and add it to the combined object
 			if(isset($options['combine']) && str2bool($options['combine'])){
 				try{
-					$errors = array();
+					$errors      = array();
+					$createThumb = TRUE;
 
 					// Create us some temp working space
 					$tmpDir = mfcs::config('mfcstmp').DIRECTORY_SEPARATOR.uniqid();
@@ -517,6 +518,30 @@ class files {
 						$filename     = $_filename['filename'];
 
 						$baseFilename = $tmpDir.DIRECTORY_SEPARATOR.$filename;
+
+						// Create a thumbnail of the first image
+						if ($createThumb === TRUE) {
+							$image = new Imagick();
+							$image->readImage($originalFile);
+
+							$thumbname = 'thumb.'.strtolower($options['thumbnailFormat']);
+							$savePath  = self::getSaveDir($assetsID,'combine').$thumbname;
+
+							if (self::createThumbnail($image, $options, $savePath) === FALSE) {
+								throw new Exception("Failed to create thumbnail: ".$thumbname);
+							}
+
+							$return['combine'][] = array(
+								'name'   => $thumbname,
+								'path'   => self::getSaveDir($assetsID,'combine'),
+								'size'   => filesize($savePath),
+								'type'   => self::getMimeType($savePath),
+								'errors' => '',
+								);
+
+							// Prevent making multiple thumbnails
+							$createThumb = FALSE;
+						}
 
 						// perform hOCR on the original uploaded file which gets stored in combined as an HTML file
 						$_exec = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
@@ -640,8 +665,8 @@ class files {
 						$return['thumbs'][] = array(
 							'name'   => $thumbname,
 							'path'   => self::getSaveDir($assetsID,'thumbs'),
-							'size'   => filesize(self::getSaveDir($assetsID,'thumbs').$thumbname),
-							'type'   => self::getMimeType(self::getSaveDir($assetsID,'thumbs').$thumbname),
+							'size'   => filesize($savePath),
+							'type'   => self::getMimeType($savePath),
 							'errors' => '',
 							);
 					}
@@ -684,8 +709,8 @@ class files {
 					$return['thumbs'][] = array(
 						'name'   => $thumbname,
 						'path'   => self::getSaveDir($assetsID,'thumbs'),
-						'size'   => filesize(self::getSaveDir($assetsID,'thumbs').$thumbname),
-						'type'   => self::getMimeType(self::getSaveDir($assetsID,'thumbs').$thumbname),
+						'size'   => filesize($savePath),
+						'type'   => self::getMimeType($savePath),
 						'errors' => '',
 						);
 				}
