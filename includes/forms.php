@@ -421,9 +421,9 @@ class forms {
 				);
 		}
 
-//		$output .= sprintf('<header><h1>%s</h1><h2>%s</h2></header>',
-//			htmlSanitize($form['title']),
-//			htmlSanitize($form['description']));
+		// $output .= sprintf('<header><h1>%s</h1><h2>%s</h2></header>',
+		// 	htmlSanitize($form['title']),
+		// 	htmlSanitize($form['description']));
 
 		$currentFieldset = "";
 
@@ -995,7 +995,9 @@ class forms {
 			if (strtolower($field['type']) == "file") {
 				// Process uploaded files
 				$uploadID = $engine->cleanPost['MYSQL'][$field['name']];
-				if (($assetsID = files::processObjectUploads($objectID, $uploadID)) === FALSE) {
+
+				$tmpArray = files::processObjectUploads($objectID, $uploadID);
+				if (!isset($tmpArray['uuid'])) {
 					return FALSE;
 				}
 
@@ -1005,15 +1007,17 @@ class forms {
 				$ocr       = str2bool($field['ocr']);
 				$thumbnail = str2bool($field['thumbnail']);
 				$mp3       = str2bool($field['mp3']);
-				if(!empty($assetsID) and ($combine || $convert || $ocr || $thumbnail || $mp3)){
-					$values[$field['name']]['files'] = files::processObjectFiles($assetsID, $field);
+				if ($combine || $convert || $ocr || $thumbnail || $mp3) {
+					$tmpArray['files'] = array_merge($tmpArray['files'], files::processObjectFiles($tmpArray['uuid'], $field));
 				}
 
-				// Lastly, save the assetsID to this field's value
-				$values[$field['name']]['uuid'] = $assetsID;
-			}
+				// Save array
+				$values[$field['name']] = $tmpArray;
+				print "<pre>";
+				print_r($values[$field['name']]);
+				print "</pre>";
 
-			if(!isset($values[$field['name']])) $values[$field['name']] = $engine->cleanPost['RAW'][$field['name']];
+			}
 		}
 
 		if (isset($engine->errorStack['error'])) {

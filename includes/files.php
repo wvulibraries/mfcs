@@ -417,7 +417,7 @@ class files {
 		return $thumb->writeImage($savePath);
 	}
 
-	public static function processObjectUploads($objectID,$uploadID){
+	public static function processObjectUploads($objectID,$uploadID) {
 		$uploadBase = files::getBaseUploadPath().DIRECTORY_SEPARATOR.$uploadID;
 		$saveBase   = mfcs::config('convertedPath');
 
@@ -428,8 +428,10 @@ class files {
 		$assetsID          = self::newAssetsUUID();
 
 		if (($originalsFilepath = self::getSaveDir($assetsID,'originals')) === FALSE) {
-			return FALSE;
+			return array();
 		}
+
+		$return['uuid'] = $assetsID;
 
 		// Start looping through the uploads and move them to their new home
 		$files = scandir($uploadBase);
@@ -443,56 +445,54 @@ class files {
 			// Move the uploaded files into thier new home and make the new file read-only
 			rename("$uploadBase/$filename", $newFilename);
 			chmod($newFilename, 0444);
+
+			$return['files']['archive'][] = array(
+				'name'   => $cleanedFilename,
+				'path'   => $originalsFilepath,
+				'size'   => filesize($newFilename),
+				'type'   => self::getMimeType($newFilename),
+				'errors' => '',
+				);
 		}
 
 		// Remove the uploads directory (now that we're done with it) and lock-down the originals dir
 		rmdir($uploadBase);
 		chmod($originalsFilepath, 0555);
 
-		// Return the assetsID
-		return $assetsID;
+		// Return the array
+		return $return;
 	}
 
-	public static function processObjectFiles($assetsID, $options){
+	public static function processObjectFiles($assetsID, $options) {
 		// Disable PHP's max execution time
 		set_time_limit(0);
 
 		$saveBase          = mfcs::config('convertedPath');
-		$assetsPath        = self::getSaveDir($assetsID);
 		$originalsFilepath = self::getSaveDir($assetsID,'originals');
 		$originalFiles     = scandir($originalsFilepath);
 
 		// Setup return array
 		$return = array(
-			'archive'   => array(),
 			'processed' => array(),
 			'combine'   => array(),
 			'thumbs'    => array(),
 			'ocr'       => array(),
 			);
 
-		// Needed to put the files in the right order for processing
-		natsort($originalFiles);
-
+		// Remove dot files from array
 		foreach ($originalFiles as $I => $filename) {
 			if ($filename[0] == '.') {
 				unset($originalFiles[$I]);
-				continue;
 			}
-
-			$return['archive'][] = array(
-				'name'   => $filename,
-				'path'   => $originalsFilepath,
-				'size'   => filesize($originalsFilepath.DIRECTORY_SEPARATOR.$filename),
-				'type'   => self::getMimeType($originalsFilepath.DIRECTORY_SEPARATOR.$filename),
-				'errors' => '',
-				);
 		}
+
+		// Needed to put the files in the right order for processing
+		natsort($originalFiles);
 
 		try {
 			// If combine files is checked, read this image and add it to the combined object
-			if(isset($options['combine']) && str2bool($options['combine'])){
-				try{
+			if (isset($options['combine']) && str2bool($options['combine'])) {
+				try {
 					$errors      = array();
 					$createThumb = TRUE;
 
@@ -758,7 +758,6 @@ class files {
 		}
 		catch (Exception $e) {
 			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
-			return FALSE;
 		}
 
 		return $return;
