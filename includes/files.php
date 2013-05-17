@@ -504,6 +504,9 @@ class files {
 						}
 					}
 
+					$gsTemp = $tmpDir.DIRECTORY_SEPARATOR.uniqid();
+					touch($gsTemp);
+
 					foreach ($originalFiles as $filename) {
 						if ($filename[0] == '.') continue;
 
@@ -546,14 +549,17 @@ class files {
 							}
 						}
 
+						// Add this pdf to a temp file that will be read in by gs
+						file_put_contents($gsTemp, $tmpDir.DIRECTORY_SEPARATOR.$filename.".pdf".PHP_EOL, FILE_APPEND);
+
 						// We're done with this file, delete it
 						unlink($tmpDir.DIRECTORY_SEPARATOR.$filename.".html");
 					}
 
 					// Combine all PDF files in directory
-					$_exec = shell_exec(sprintf('gs -sDEVICE=pdfwrite -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=%s %s 2>&1',
+					$_exec = shell_exec(sprintf('gs -sDEVICE=pdfwrite -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=%s @%s 2>&1',
 						self::getSaveDir($assetsID,'combine')."combined.pdf",
-						$tmpDir.DIRECTORY_SEPARATOR."*.pdf"
+						$gsTemp
 					));
 					if (!is_empty($_exec)) {
 						errorHandle::errorMsg("Failed to combine PDFs into single PDF.");
@@ -569,7 +575,7 @@ class files {
 						);
 
 					// Lastly, we delete our temp working dir (always nice to cleanup after yourself)
-					foreach (glob("$tmpDir/*.*") as $file) {
+					foreach (glob("$tmpDir/*") as $file) {
 						unlink($file);
 					}
 					rmdir($tmpDir);
@@ -577,7 +583,7 @@ class files {
 				catch (Exception $e) {
 					// We need to delete our working dir
 					if (isset($tmpDir) and is_dir($tmpDir)) {
-						foreach (glob("$tmpDir/*.*") as $file) {
+						foreach (glob("$tmpDir/*") as $file) {
 							unlink($file);
 						}
 						rmdir($tmpDir);
