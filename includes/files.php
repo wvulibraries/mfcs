@@ -417,7 +417,7 @@ class files {
 		return $thumb->writeImage($savePath);
 	}
 
-	public static function processObjectUploads($objectID,$uploadID){
+	public static function processObjectUploads($objectID,$uploadID) {
 		$uploadBase = files::getBaseUploadPath().DIRECTORY_SEPARATOR.$uploadID;
 		$saveBase   = mfcs::config('convertedPath');
 
@@ -428,8 +428,10 @@ class files {
 		$assetsID          = self::newAssetsUUID();
 
 		if (($originalsFilepath = self::getSaveDir($assetsID,'originals')) === FALSE) {
-			return FALSE;
+			return array();
 		}
+
+		$return['uuid'] = $assetsID;
 
 		// Start looping through the uploads and move them to their new home
 		$files = scandir($uploadBase);
@@ -443,52 +445,56 @@ class files {
 			// Move the uploaded files into thier new home and make the new file read-only
 			rename("$uploadBase/$filename", $newFilename);
 			chmod($newFilename, 0444);
+
+			$return['files']['archive'][] = array(
+				'name'   => $cleanedFilename,
+				'path'   => $originalsFilepath,
+				'size'   => filesize($newFilename),
+				'type'   => self::getMimeType($newFilename),
+				'errors' => '',
+				);
 		}
 
 		// Remove the uploads directory (now that we're done with it) and lock-down the originals dir
 		rmdir($uploadBase);
 		chmod($originalsFilepath, 0555);
 
-		// Return the assetsID
-		return $assetsID;
+		// Return the array
+		return $return;
 	}
 
-	public static function processObjectFiles($assetsID, $options){
+	public static function processObjectFiles($assetsID, $options) {
+		// Disable PHP's max execution time
+		set_time_limit(0);
 
 		$saveBase          = mfcs::config('convertedPath');
-		$assetsPath        = self::getSaveDir($assetsID);
 		$originalsFilepath = self::getSaveDir($assetsID,'originals');
 		$originalFiles     = scandir($originalsFilepath);
 
 		// Setup return array
 		$return = array(
-			'archive'   => array(),
 			'processed' => array(),
 			'combine'   => array(),
 			'thumbs'    => array(),
 			'ocr'       => array(),
 			);
 
+		// Remove dot files from array
+		foreach ($originalFiles as $I => $filename) {
+			if ($filename[0] == '.') {
+				unset($originalFiles[$I]);
+			}
+		}
+
 		// Needed to put the files in the right order for processing
 		natsort($originalFiles);
 
-		foreach ($originalFiles as $filename) {
-			if ($filename[0] == '.') continue;
-
-			$return['archive'][] = array(
-				'name'   => $filename,
-				'path'   => $originalsFilepath,
-				'size'   => filesize($originalsFilepath.DIRECTORY_SEPARATOR.$filename),
-				'type'   => self::getMimeType($originalsFilepath.DIRECTORY_SEPARATOR.$filename),
-				'errors' => '',
-				);
-		}
-
 		try {
 			// If combine files is checked, read this image and add it to the combined object
-			if(isset($options['combine']) && str2bool($options['combine'])){
-				try{
-					$errors = array();
+			if (isset($options['combine']) && str2bool($options['combine'])) {
+				try {
+					$errors      = array();
+					$createThumb = TRUE;
 
 					// Create us some temp working space
 					$tmpDir = mfcs::config('mfcstmp').DIRECTORY_SEPARATOR.uniqid();
@@ -502,18 +508,45 @@ class files {
 						}
 					}
 
-					foreach ($originalFiles as $filename) {
-						if ($filename[0] == '.') continue;
+					$gsTemp = $tmpDir.DIRECTORY_SEPARATOR.uniqid();
+					touch($gsTemp);
 
+					foreach ($originalFiles as $filename) {
 						// Figure some stuff out about the file
 						$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 						$_filename    = pathinfo($originalFile);
 						$filename     = $_filename['filename'];
 
+						$baseFilename = $tmpDir.DIRECTORY_SEPARATOR.$filename;
+
+						// Create a thumbnail of the first image
+						if ($createThumb === TRUE) {
+							$image = new Imagick();
+							$image->readImage($originalFile);
+
+							$thumbname = 'thumb.'.strtolower($options['thumbnailFormat']);
+							$savePath  = self::getSaveDir($assetsID,'combine').$thumbname;
+
+							if (self::createThumbnail($image, $options, $savePath) === FALSE) {
+								throw new Exception("Failed to create thumbnail: ".$thumbname);
+							}
+
+							$return['combine'][] = array(
+								'name'   => $thumbname,
+								'path'   => self::getSaveDir($assetsID,'combine'),
+								'size'   => filesize($savePath),
+								'type'   => self::getMimeType($savePath),
+								'errors' => '',
+								);
+
+							// Prevent making multiple thumbnails
+							$createThumb = FALSE;
+						}
+
 						// perform hOCR on the original uploaded file which gets stored in combined as an HTML file
 						$_exec = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
 							escapeshellarg($originalFile), // input.ext
-							escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename), // output.html
+							escapeshellarg($baseFilename), // output.html
 							escapeshellarg("$saveBase/hocr.cfg") // hocr config file
 							));
 
@@ -524,14 +557,14 @@ class files {
 							errorHandle::warningMsg("Unable to process OCR for ".basename($originalFile).". Continuing&hellip;");
 
 							// Ensure HTML file exists
-							touch($tmpDir.DIRECTORY_SEPARATOR.$filename.".html");
+							touch($baseFilename.".html");
 						}
 
 						// Create an OCR'd pdf of the file
 						$_exec = shell_exec(sprintf('hocr2pdf -i %s -s -o %s < %s 2>&1',
 							escapeshellarg($originalFile), // input.ext
-							escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename.".pdf"), // output.pdf
-							escapeshellarg($tmpDir.DIRECTORY_SEPARATOR.$filename.".html") // input.html
+							escapeshellarg($baseFilename.".pdf"), // output.pdf
+							escapeshellarg($baseFilename.".html") // input.html
 							));
 
 						if (trim($_exec) !== 'Writing unmodified DCT buffer.') {
@@ -544,14 +577,17 @@ class files {
 							}
 						}
 
+						// Add this pdf to a temp file that will be read in by gs
+						file_put_contents($gsTemp, $baseFilename.".pdf".PHP_EOL, FILE_APPEND);
+
 						// We're done with this file, delete it
-						unlink($tmpDir.DIRECTORY_SEPARATOR.$filename.".html");
+						unlink($baseFilename.".html");
 					}
 
 					// Combine all PDF files in directory
-					$_exec = shell_exec(sprintf('gs -sDEVICE=pdfwrite -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=%s %s 2>&1',
+					$_exec = shell_exec(sprintf('gs -sDEVICE=pdfwrite -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=%s @%s 2>&1',
 						self::getSaveDir($assetsID,'combine')."combined.pdf",
-						$tmpDir.DIRECTORY_SEPARATOR."*.pdf"
+						$gsTemp
 					));
 					if (!is_empty($_exec)) {
 						errorHandle::errorMsg("Failed to combine PDFs into single PDF.");
@@ -567,7 +603,7 @@ class files {
 						);
 
 					// Lastly, we delete our temp working dir (always nice to cleanup after yourself)
-					foreach (glob("$tmpDir/*.*") as $file) {
+					foreach (glob("$tmpDir/*") as $file) {
 						unlink($file);
 					}
 					rmdir($tmpDir);
@@ -575,7 +611,7 @@ class files {
 				catch (Exception $e) {
 					// We need to delete our working dir
 					if (isset($tmpDir) and is_dir($tmpDir)) {
-						foreach (glob("$tmpDir/*.*") as $file) {
+						foreach (glob("$tmpDir/*") as $file) {
 							unlink($file);
 						}
 						rmdir($tmpDir);
@@ -587,8 +623,6 @@ class files {
 			// Convert uploaded files into some ofhter size/format/etc
 			if (isset($options['convert']) && str2bool($options['convert'])) {
 				foreach ($originalFiles as $filename){
-					if ($filename[0] == '.') continue;
-
 					$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 					$_filename    = pathinfo($originalFile);
 					$filename     = $_filename['filename'];
@@ -631,8 +665,8 @@ class files {
 						$return['thumbs'][] = array(
 							'name'   => $thumbname,
 							'path'   => self::getSaveDir($assetsID,'thumbs'),
-							'size'   => filesize(self::getSaveDir($assetsID,'thumbs').$thumbname),
-							'type'   => self::getMimeType(self::getSaveDir($assetsID,'thumbs').$thumbname),
+							'size'   => filesize($savePath),
+							'type'   => self::getMimeType($savePath),
 							'errors' => '',
 							);
 					}
@@ -660,8 +694,6 @@ class files {
 			// Create a thumbnail without any conversions
 			else if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
 				foreach($originalFiles as $filename){
-					if($filename[0] == '.') continue;
-
 					$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 					$_filename    = pathinfo($originalFile);
 					$thumbname    = $_filename['filename'].'.'.strtolower($options['thumbnailFormat']);
@@ -677,8 +709,8 @@ class files {
 					$return['thumbs'][] = array(
 						'name'   => $thumbname,
 						'path'   => self::getSaveDir($assetsID,'thumbs'),
-						'size'   => filesize(self::getSaveDir($assetsID,'thumbs').$thumbname),
-						'type'   => self::getMimeType(self::getSaveDir($assetsID,'thumbs').$thumbname),
+						'size'   => filesize($savePath),
+						'type'   => self::getMimeType($savePath),
 						'errors' => '',
 						);
 				}
@@ -690,8 +722,6 @@ class files {
 				require_once 'class.tesseract_ocr.php';
 
 				foreach($originalFiles as $filename){
-					if($filename[0] == '.') continue;
-
 					$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 					$_filename    = pathinfo($originalFile);
 					$filename     = $_filename['filename'];
@@ -714,8 +744,6 @@ class files {
 
 			if (isset($options['mp3']) && str2bool($options['mp3'])) {
 				foreach ($originalFiles as $filename) {
-					if ($filename[0] == '.') continue;
-
 					$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 					$_filename    = pathinfo($originalFile);
 					$filename     = $_filename['filename'];
@@ -730,7 +758,6 @@ class files {
 		}
 		catch (Exception $e) {
 			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
-			return FALSE;
 		}
 
 		return $return;
