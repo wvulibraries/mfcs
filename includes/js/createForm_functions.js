@@ -88,6 +88,9 @@ function showFieldSettings(fullID) {
 				fieldSettings_options_readonly.prop("disabled", true);
 				fieldSettings_options_disabled.removeAttr("checked").change().prop("disabled", true);
 			}
+			else if (type == 'file') {
+				fieldSettings_options_displayTable.removeAttr("checked").change().prop("disabled", true);
+			}
 			else {
 				fieldSettings_name.removeAttr("readonly");
 				fieldSettings_options_required.removeAttr("disabled");
@@ -207,10 +210,9 @@ function showFieldSettings(fullID) {
 				fieldSettings_choices_manual.append(tmp);
 				fieldSettings_choices_manual.find("input[name=fieldSettings_choices_text]").keyup();
 			}
-			else {
-				$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
-				$("#fieldSettings_choices_fieldSelect").val($("#choicesField_"+id).val()).change();
-			}
+
+			$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
+			$("#fieldSettings_choices_fieldSelect").val($("#choicesField_"+id).val()).change();
 
 			fieldSettings_options_required.prop("checked",($("#required_"+id).val()==='true'));
 			fieldSettings_options_duplicates.prop("checked",($("#duplicates_"+id).val()==='true'));
@@ -244,8 +246,15 @@ function showFieldSettings(fullID) {
 				fieldSettings_file_allowedExtensions.find(":input[name=fieldSettings_allowedExtension_text]:first").keyup();
 			}
 
-			$("#fieldSettings_file_options_multipleFiles").prop("checked",($("#multipleFiles_"+id).val()==='true'));
-			$("#fieldSettings_file_options_combine").prop("checked",($("#combine_"+id).val()==='true'));
+			var $fieldSettings_file_options_multipleFiles = $("#fieldSettings_file_options_multipleFiles");
+			$fieldSettings_file_options_multipleFiles.prop("checked",($("#multipleFiles_"+id).val()==='true'));
+			if($("#combine_"+id).val()==='true'){
+				$("#fieldSettings_file_options_combine").prop("checked",true);
+				$fieldSettings_file_options_multipleFiles.attr('disabled','disabled');
+			}else{
+				$("#fieldSettings_file_options_combine").prop("checked",false);
+				$fieldSettings_file_options_multipleFiles.removeAttr('disabled');
+			}
 			$("#fieldSettings_file_options_ocr").prop("checked",($("#ocr_"+id).val()==='true'));
 			$("#fieldSettings_file_options_convert").prop("checked",($("#convert_"+id).val()==='true')).change();
 			$("#fieldSettings_file_convert_height").val($("#convertHeight_"+id).val());
@@ -1520,7 +1529,7 @@ function newFieldValues(id,type,vals) {
 			break;
 
 		case 'file':
-			output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'" value="'+((vals['allowedExtensions']!=undefined)?vals['allowedExtensions']:'jpg%,%png%,%gif')+'">';
+			output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'" value="'+((vals['allowedExtensions']!=undefined)?vals['allowedExtensions']:'tif%,%tiff')+'">';
 			output += '<input type="hidden" id="multipleFiles_'+id+'" name="multipleFiles_'+id+'" value="'+((vals['multipleFiles']!=undefined)?vals['multipleFiles']:'')+'">';
 			output += '<input type="hidden" id="combine_'+id+'" name="combine_'+id+'" value="'+((vals['combine']!=undefined)?vals['combine']:'')+'">';
 			output += '<input type="hidden" id="ocr_'+id+'" name="ocr_'+id+'" value="'+((vals['ocr']!=undefined)?vals['ocr']:'')+'">';

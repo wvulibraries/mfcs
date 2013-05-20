@@ -21,7 +21,7 @@ try{
 	$filepath  = $file['path'].$file['name'];
 
 	// Make sure the file exists
-	if(!file_exists($filepath)) throw new Exception('File now found!');
+	if(!file_exists($filepath)) throw new Exception('File not found!');
 
 	// Get the MIME Type
 	if(isPHP('5.3')){
