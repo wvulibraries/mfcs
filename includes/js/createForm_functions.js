@@ -247,8 +247,15 @@ function showFieldSettings(fullID) {
 				fieldSettings_file_allowedExtensions.find(":input[name=fieldSettings_allowedExtension_text]:first").keyup();
 			}
 
-			$("#fieldSettings_file_options_multipleFiles").prop("checked",($("#multipleFiles_"+id).val()==='true'));
-			$("#fieldSettings_file_options_combine").prop("checked",($("#combine_"+id).val()==='true'));
+			var $fieldSettings_file_options_multipleFiles = $("#fieldSettings_file_options_multipleFiles");
+			$fieldSettings_file_options_multipleFiles.prop("checked",($("#multipleFiles_"+id).val()==='true'));
+			if($("#combine_"+id).val()==='true'){
+				$("#fieldSettings_file_options_combine").prop("checked",true);
+				$fieldSettings_file_options_multipleFiles.attr('disabled','disabled');
+			}else{
+				$("#fieldSettings_file_options_combine").prop("checked",false);
+				$fieldSettings_file_options_multipleFiles.removeAttr('disabled');
+			}
 			$("#fieldSettings_file_options_ocr").prop("checked",($("#ocr_"+id).val()==='true'));
 			$("#fieldSettings_file_options_convert").prop("checked",($("#convert_"+id).val()==='true')).change();
 			$("#fieldSettings_file_convert_height").val($("#convertHeight_"+id).val());
