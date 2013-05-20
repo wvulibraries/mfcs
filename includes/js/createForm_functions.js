@@ -210,10 +210,9 @@ function showFieldSettings(fullID) {
 				fieldSettings_choices_manual.append(tmp);
 				fieldSettings_choices_manual.find("input[name=fieldSettings_choices_text]").keyup();
 			}
-			else {
-				$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
-				$("#fieldSettings_choices_fieldSelect").val($("#choicesField_"+id).val()).change();
-			}
+
+			$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
+			$("#fieldSettings_choices_fieldSelect").val($("#choicesField_"+id).val()).change();
 
 			fieldSettings_options_required.prop("checked",($("#required_"+id).val()==='true'));
 			fieldSettings_options_duplicates.prop("checked",($("#duplicates_"+id).val()==='true'));
