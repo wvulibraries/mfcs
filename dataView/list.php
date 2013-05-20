@@ -14,6 +14,9 @@ include("../header.php");
 
 	// Figure out what kind of list we're building
 	switch($engine->cleanGet['MYSQL']['listType']) {
+		case 'metadataObjects':
+			$list = listGenerator::metadataObjects($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
+			break;
 		case 'selectForm':
 			$list = listGenerator::createFormSelectList();
 			localvars::add('subTitle',' - Select Form');
