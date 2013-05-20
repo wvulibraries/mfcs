@@ -760,10 +760,12 @@ class forms {
 		if (isempty($field['validation']) || $field['validation'] == "none") {
 			$valid = TRUE;
 		}
+		else if (!str2bool($field['required']) && is_empty($value)) {
+			$valid = TRUE;
+		}
 		else {
-			$return = validate::isValidMethod($field['validation']);
 			$valid  = FALSE;
-			if ($return === TRUE) {
+			if (validate::isValidMethod($field['validation']) === TRUE) {
 				if ($field['validation'] == "regexp") {
 					$valid = validate::$field['validation']($field['validationRegex'],$value);
 				}
@@ -842,8 +844,27 @@ class forms {
 						}
 					}
 
-					if (strtolower($field['type']) == "file") {
-						$values[$field['name']] = (array)files::processUploads($field,$engine->cleanPost['RAW'][$field['name']."_".$object['ID']]);
+					if (strtolower($field['type']) == "file" && isset($engine->cleanPost['MYSQL'][$field['name']])) {
+						// Process uploaded files
+						$uploadID = $engine->cleanPost['MYSQL'][$field['name']];
+
+						$tmpArray = files::processObjectUploads($object['ID'], $uploadID);
+						if (!isset($tmpArray['uuid'])) {
+							return FALSE;
+						}
+
+						// Process files (if needed)
+						$combine   = str2bool($field['combine']);
+						$convert   = str2bool($field['convert']);
+						$ocr       = str2bool($field['ocr']);
+						$thumbnail = str2bool($field['thumbnail']);
+						$mp3       = str2bool($field['mp3']);
+						if ($combine || $convert || $ocr || $thumbnail || $mp3) {
+							$tmpArray['files'] = array_merge($tmpArray['files'], files::processObjectFiles($tmpArray['uuid'], $field));
+						}
+
+						// Save array
+						$values[$field['name']] = $tmpArray;
 					}
 
 					if(!isset($values[$field['name']])) $values[$field['name']] = $engine->cleanPost['RAW'][$field['name']."_".$object['ID']];
@@ -1013,10 +1034,6 @@ class forms {
 
 				// Save array
 				$values[$field['name']] = $tmpArray;
-				print "<pre>";
-				print_r($values[$field['name']]);
-				print "</pre>";
-
 			}
 		}
 

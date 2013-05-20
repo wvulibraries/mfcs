@@ -65,20 +65,16 @@ class listGenerator {
 
 	public static function createFormObjectList($formID) {
 
-		$engine  = EngineAPI::singleton();
-		$objects = objects::getAllObjectsForForm($formID);
-		$form    = forms::get($formID);
+		$engine        = EngineAPI::singleton();
+		$objects       = objects::getAllObjectsForForm($formID);
+		$form          = forms::get($formID);
+		$excludeFields = array("idno","file");
 
-		$headers   = array();
-		$headers[] = "View";
-		$headers[] = "Edit";
-		$headers[] = "Revisions";
-		$headers[] = "System IDNO";
-		$headers[] = "Form IDNO";
+		$headers = array("View","Edit","Revisions","System IDNO","Form IDNO");
 		foreach($form['fields'] as $field) {
-			if (strtolower($field['type']) == "idno") continue;
+			if (in_array(strtolower($field['type']), $excludeFields)) continue;
 
-			if ($field['displayTable'] == "true") {
+			if (str2bool($field['displayTable'])) {
 				$headers[] = $field['label'];
 			}
 		}
@@ -90,9 +86,9 @@ class listGenerator {
 
 			$tmp = array(self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("revisions",$object['ID']),$object['ID'],$object['idno']);
 			foreach($form['fields'] as $field) {
-				if (strtolower($field['type']) == "idno") continue;
+				if (in_array(strtolower($field['type']), $excludeFields)) continue;
 
-				if ($field['displayTable'] == "true") {
+				if (str2bool($field['displayTable'])) {
 					$tmp[] = $object['data'][$field['name']];
 				}
 			}
@@ -345,7 +341,7 @@ class listGenerator {
 		foreach ($forms as $form) {
 
 			if (!mfcsPerms::isViewer($form['ID'])) continue;
-			
+
 			$formList .= sprintf('<li><a href="index.php?id=%s" class="btn">%s</a></li>',
 				htmlSanitize($form['ID']),
 				htmlSanitize($form['title'])

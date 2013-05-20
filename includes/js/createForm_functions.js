@@ -88,6 +88,9 @@ function showFieldSettings(fullID) {
 				fieldSettings_options_readonly.prop("disabled", true);
 				fieldSettings_options_disabled.removeAttr("checked").change().prop("disabled", true);
 			}
+			else if (type == 'file') {
+				fieldSettings_options_displayTable.removeAttr("checked").change().prop("disabled", true);
+			}
 			else {
 				fieldSettings_name.removeAttr("readonly");
 				fieldSettings_options_required.removeAttr("disabled");
