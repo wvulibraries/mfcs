@@ -183,7 +183,8 @@ class forms {
 		foreach ($forms as $form) {
 			foreach ($form['fields'] as $field) {
 				if (isset($field['choicesForm']) && validate::integer($field['choicesForm']) && $field['choicesForm'] == $formID) {
-					$linkedForms[$form['ID']] = $form;
+					$linkedForms[$form['ID']] = $field;
+					break;
 				}
 			}
 		}
