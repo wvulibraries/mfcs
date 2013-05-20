@@ -160,6 +160,38 @@ class forms {
 
 	}
 
+	/* 
+	 * Returns all of the object forms that link to this metadataform
+	 */
+	public static function getFormsLinkedTo($formID) {
+
+		// make sure the provided form exists
+		if (($form = self::get($formID)) === FALSE) {
+			return FALSE;
+		}
+
+		// make sure its a metadata form
+		if (self::isMetadataForm($formID) === FALSE) {
+			return FALSE;
+		}
+
+		if (($forms = self::getObjectForms()) === FALSE) {
+			return FALSE;
+		}
+
+		$linkedForms = array();
+		foreach ($forms as $form) {
+			foreach ($form['fields'] as $field) {
+				if (isset($field['choicesForm']) && validate::integer($field['choicesForm']) && $field['choicesForm'] == $formID) {
+					$linkedForms[$form['ID']] = $form;
+				}
+			}
+		}
+
+		return $linkedForms;
+
+	}
+
 	public static function isMetadataForm($formID) {
 		$form = self::get($formID);
 
@@ -696,6 +728,8 @@ class forms {
 				$headers[] = $field['label'];
 			}
 
+			if (forms::isMetadataForm($formID) === TRUE) $headers[] = "Search";
+
 			$tableRows = array();
 			for($I=0;$I<count($objects);$I++) {
 				$temp   = array();
@@ -712,8 +746,18 @@ class forms {
 					);
 				}
 
+				if (forms::isMetadataForm($formID) === TRUE) {
+					$temp[] = sprintf('<a href="%s/dataView/list.php?listType=metadataObjects&amp;formID=%s&amp;objectID=%s">Find Objects</a>',
+						localvars::get('siteRoot'),
+						htmlSanitize($formID),
+						$objects[$I]['ID'] 
+						);
+				}
+
 				$tableRows[] = $temp;
 			}
+
+
 
 			$table          = new tableObject("array");
 			$table->summary = "Object Listing";
