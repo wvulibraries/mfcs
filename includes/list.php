@@ -416,6 +416,37 @@ class listGenerator {
 		return $availableUsersList;
 	}
 
+	public static function metadataObjects($formID,$objectID) {
+
+		// get all the object forms that have this metadata form linked to it
+		$forms = forms::getFormsLinkedTo($formID);
+
+		$data = array();
+		foreach ($forms as $formID=>$field) {
+			$objects = objects::getAllObjectsForForm($formID);
+			$form    = forms::get($formID);
+
+			foreach ($objects as $object) {
+				if (strtolower($field['type']) == "select") {
+					if ($object['data'][$field['name']] == $objectID) {
+						$data[] = array($object['ID'],$object['idno'],$object['data'][$form['objectTitleField']],self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("revisions",$object['ID']));
+					}
+				}
+				else if (strtolower($field['type']) == "multiselect") {
+					if (in_array($objectID,$object['data'][$field['name']])) {
+						$data[] = array($object['ID'],$object['idno'],$object['data'][$form['objectTitleField']],self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("revisions",$object['ID']));
+					}
+				}
+			}
+
+		}
+
+		return self::createTable($data);
+
+		return;
+
+	}
+
 }
 
 ?>
