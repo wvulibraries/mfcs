@@ -18,7 +18,13 @@ class listGenerator {
 
 			$form = forms::get($object['formID']);
 
-			$data[] = array($object['ID'],$object['idno'],$object['data'][$form['objectTitleField']],self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("revisions",$object['ID']));
+			$data[] = array(
+				$object['ID'],
+				$object['idno'],
+				isset($object['data'][$form['objectTitleField']]) ? $object['data'][$form['objectTitleField']] : '',
+				self::genLinkURLs("view",$object['ID']),
+				self::genLinkURLs("edit",$object['ID']),
+				self::genLinkURLs("revisions",$object['ID']));
 
 		}
 
