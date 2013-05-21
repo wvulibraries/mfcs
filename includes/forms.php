@@ -1303,6 +1303,66 @@ class forms {
 		return TRUE;
 	}
 
+	public static function formsAreCompatible($form1,$form2) {
+
+		if (count($form1['fields']) != count($form2['fields'])) return FALSE;
+
+		//@TODO there has to be a better way of doing this
+		$compatibleFields = array();
+		foreach ($form1['fields'] as $field) {
+			foreach ($form2['fields'] as $field2) {
+				if (
+					$field['type']            == $field2['type']            &&
+					$field['name']            == $field2['name']            &&
+					$field['required']        == $field2['required']        &&
+					$field['duplicates']      == $field2['duplicates']      &&
+					$field['validation']      == $field2['validation']      &&
+					$field['validationRegex'] == $field2['validationRegex'] &&
+					$field['min']             == $field2['min']             &&
+					$field['max']             == $field2['max']             &&
+					$field['step']            == $field2['step']            &&
+					$field['format']          == $field2['format']
+
+					) {
+
+					array_push($compatibleFields,$field);
+
+				}
+
+			}
+		}
+
+		if (count($compatibleFields) == count($form1['fields'])) {
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
+
+	}
+
+	public static function compatibleForms($formID) {
+
+		if (($form = self::get($formID)) === FALSE) {
+			return FALSE;
+		}
+
+		$allForms = self::getMetadataForms(TRUE);
+		$forms    = array();
+
+		foreach ($allForms as $fid=>$f) {
+
+			if ($f       === FALSE)       continue;
+			if ($f['ID'] ==  $form['ID']) continue;
+
+			if (self::formsAreCompatible($form,$f)) $forms[] = $f;
+
+		}
+
+		return $forms;
+
+	}
+
 	public static function delete($formID){
 		$engine = mfcs::$engine;
 
