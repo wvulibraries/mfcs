@@ -180,7 +180,7 @@ class forms {
 
 	}
 
-	/* 
+	/*
 	 * Returns all of the object forms that link to this metadataform
 	 */
 	public static function getFormsLinkedTo($formID) {
@@ -381,7 +381,7 @@ class forms {
 		if (isnull($value) && isset($field['choicesDefault']) && !isempty($field['choicesDefault'])) {
 			$value = $field['choicesDefault'];
 		}
-		
+
 		$output = "";
 
 		if(isset($field['choicesNull']) && str2bool($field['choicesNull'])){
@@ -777,7 +777,7 @@ class forms {
 					$temp[] = sprintf('<a href="%s/dataView/list.php?listType=metadataObjects&amp;formID=%s&amp;objectID=%s">Find Objects</a>',
 						localvars::get('siteRoot'),
 						htmlSanitize($formID),
-						$objects[$I]['ID'] 
+						$objects[$I]['ID']
 						);
 				}
 
@@ -1207,7 +1207,7 @@ class forms {
 				errorHandle::newError(__METHOD__."() - updating the IDNO: ".$sqlResult['error'], errorHandle::DEBUG);
 				return FALSE;
 			}
- 
+
 			// increment the project counter
 			$sql       = sprintf("UPDATE `forms` SET `count`=`count`+'1' WHERE `ID`='%s'",
 				$engine->openDB->escape($form['ID'])
