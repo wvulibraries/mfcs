@@ -1065,7 +1065,7 @@ class forms {
 
 			if (strtolower($field['readonly']) == "true") {
 				// need to pull the data that loaded with the form
-				if ($newObject === TRUE) {
+				if ($newObject === FALSE) {
 					// grab it from the database
 					$oldObject              = object::get($objectID);
 					$values[$field['name']] = $oldObject['data'][$field['name']];
@@ -1075,8 +1075,7 @@ class forms {
 					$values[$field['name']] = $field['value'];
 				}
 			}
-
-			if (strtolower($field['type']) == "file") {
+			else if (strtolower($field['type']) == "file") {
 				// Process uploaded files
 				$uploadID = $engine->cleanPost['MYSQL'][$field['name']];
 
@@ -1097,6 +1096,9 @@ class forms {
 
 				// Save array
 				$values[$field['name']] = $tmpArray;
+			}
+			else {
+				$values[$field['name']] = $value;
 			}
 		}
 
