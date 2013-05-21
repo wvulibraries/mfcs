@@ -544,7 +544,9 @@ class forms {
 					(strtoupper($field['required']) == "TRUE")?"required":"",
 					(strtoupper($field['readonly']) == "TRUE")?"readonly":"",
 					(strtoupper($field['disabled']) == "TRUE")?"disabled":"",
-					(isset($object['data'][$field['name']]))?htmlSanitize($object['data'][$field['name']]):htmlSanitize($field['value'])
+					isset($object['data'][$field['name']])
+						? htmlSanitize($object['data'][$field['name']])
+						: htmlSanitize(self::applyFieldVariables($field['value']))
 				);
 
 				if ($field['type'] == "wysiwyg") {
