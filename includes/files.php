@@ -528,7 +528,10 @@ class files {
 							$image = new Imagick();
 							$image->readImage($originalFile);
 
-							$thumbname = 'thumb.'.strtolower($options['thumbnailFormat']);
+							$thumbnailFormat = (isset($options['thumbnailFormat']) and !empty($options['thumbnailFormat']))
+								? $options['thumbnailFormat']
+								: 'png';
+							$thumbname = 'thumb.'.strtolower($thumbnailFormat);
 							$savePath  = self::getSaveDir($assetsID,'combine').$thumbname;
 
 							if (self::createThumbnail($image, $options, $savePath) === FALSE) {
