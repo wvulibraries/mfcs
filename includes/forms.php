@@ -757,7 +757,10 @@ class forms {
 				$headers[] = $field['label'];
 			}
 
-			if (forms::isMetadataForm($formID) === TRUE) $headers[] = "Search";
+			if (forms::isMetadataForm($formID) === TRUE) {
+				$headers[] = "Search";
+				$headers[] = "Move";
+			}
 
 			$tableRows = array();
 			for($I=0;$I<count($objects);$I++) {
@@ -781,6 +784,10 @@ class forms {
 						htmlSanitize($formID),
 						$objects[$I]['ID']
 						);
+					$temp[] = sprintf('<a href="%s/dataEntry/move.php?objectID=%s">Move</a>',
+						localvars::get('siteRoot'),
+						$objects[$I]['ID']
+						);
 				}
 
 				$tableRows[] = $temp;
@@ -790,6 +797,7 @@ class forms {
 
 			$table          = new tableObject("array");
 			$table->summary = "Object Listing";
+			$table->class   = "tableObject table table-striped table-bordered";
 			$table->headers($headers);
 
 			$output = sprintf('<form action="%s?formID=%s" method="%s" name="updateForm" data-formid="%s">',
