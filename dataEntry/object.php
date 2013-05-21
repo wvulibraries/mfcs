@@ -39,6 +39,11 @@ try {
 		throw new Exception("Error retrieving form.");
 	}
 
+	if (forms::isProductionReady($engine->cleanGet['MYSQL']['formID']) === FALSE) {
+		$permissions = FALSE;
+		throw new Exception("Form is not production ready.");
+	}
+
 	if (forms::isMetadataForm($engine->cleanGet['MYSQL']['formID'])) {
 		throw new Exception("Metadata form provided (Object forms only).");
 	}
