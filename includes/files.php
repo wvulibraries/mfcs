@@ -148,11 +148,16 @@ class files {
 						'ocr');
 				}
 				if(str2bool($field['combine'])){
-					$links['Combined'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
+					$links['Combined PDF'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
 						localvars::get('siteRoot'),
 						$objectID,
 						$field['name'],
-						'combine');
+						'combinedPDF');
+					$links['Combined Thumbnail'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
+						localvars::get('siteRoot'),
+						$objectID,
+						$field['name'],
+						'combinedThumb');
 				}
 
 
