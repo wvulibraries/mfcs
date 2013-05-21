@@ -1056,7 +1056,7 @@ $engine->eTemplate("include","header");
 												</div>
 											</span>
 											<span class="span6">
-												<div class="control-group well well-small" id="fieldSettings_container_access">
+												<div class="control-group well well-small" id="fieldSettings_container_validation">
 													<label for="fieldSettings_validation">
 														Validation
 													</label>
