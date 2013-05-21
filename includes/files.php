@@ -228,11 +228,11 @@ class files {
 		$path = array();
 
 		if ($fullPath === TRUE) {
-			$path[] = ($type == 'originals') ? mfcs::config('archivalPathMFCS') : mfcs::config('convertedPath');
+			$path[] = ($type == 'archive') ? mfcs::config('archivalPathMFCS') : mfcs::config('convertedPath');
 		}
 		$path[] = self::assetsIDToPath($assetsID);
 		$path[] = $assetsID;
-		if ($type != 'originals' && !isnull($type)) {
+		if ($type != 'archive' && !isnull($type)) {
 			$path[] = trim($type).DIRECTORY_SEPARATOR;
 		}
 
@@ -431,7 +431,7 @@ class files {
 		// Generate new assets UUID and make the directory (this should be done quickly to prevent race-conditions
 		$assetsID          = self::newAssetsUUID();
 
-		if (($originalsFilepath = self::getSaveDir($assetsID,'originals')) === FALSE) {
+		if (($originalsFilepath = self::getSaveDir($assetsID,'archive')) === FALSE) {
 			return array();
 		}
 
@@ -452,7 +452,7 @@ class files {
 
 			$return['files']['archive'][] = array(
 				'name'   => $cleanedFilename,
-				'path'   => self::getSaveDir($assetsID,'originals',FALSE),
+				'path'   => self::getSaveDir($assetsID,'archive',FALSE),
 				'size'   => filesize($newFilename),
 				'type'   => self::getMimeType($newFilename),
 				'errors' => '',
@@ -472,7 +472,7 @@ class files {
 		set_time_limit(0);
 
 		$saveBase          = mfcs::config('convertedPath');
-		$originalsFilepath = self::getSaveDir($assetsID,'originals');
+		$originalsFilepath = self::getSaveDir($assetsID,'archive');
 		$originalFiles     = scandir($originalsFilepath);
 
 		// Setup return array
