@@ -155,7 +155,7 @@ class forms {
 		else {
 			return FALSE;
 		}
-		
+
 	}
 
 	/*
@@ -1030,9 +1030,7 @@ class forms {
 		}
 
 		// Get the current Form
-		$form   = self::get($formID);
-
-		if ($form === FALSE) {
+		if (($form = self::get($formID)) === FALSE) {
 			return FALSE;
 		}
 
@@ -1058,7 +1056,7 @@ class forms {
 		// go through all the fields, get their values
 		foreach ($fields as $field) {
 
-			$value = (isset($engine->cleanPost['RAW'][$field['name']]))?$engine->cleanPost['RAW'][$field['name']]:"";
+			$value           = (isset($engine->cleanPost['RAW'][$field['name']]))?$engine->cleanPost['RAW'][$field['name']]:"";
 			$validationTests = self::validateSubmission($formID,$field,$value,$objectID);
 
 			if (isnull($validationTests) || $validationTests === FALSE) {
