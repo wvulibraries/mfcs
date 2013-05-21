@@ -277,8 +277,6 @@ function showFieldSettings(fullID) {
 				var parentFieldset = fieldset.parents("li").parents("li");
 				if (parentFieldset.length > 0) {
 					var parentFieldsetID = parentFieldset.prop("id").split("_")[1];
-					console.log(parentFieldsetID);
-					console.log($("#fieldset_"+parentFieldsetID).val());
 					fieldset.val($("#fieldset_"+parentFieldsetID).val());
 				}
 			}
@@ -825,7 +823,7 @@ function fieldSettingsBindings() {
 		var id                      = formPreviewWell.prop("id").split("_")[1];
 
 		$("#min_"+id).val($(this).val());
-		if (fieldSettings_range_min.val() > fieldSettings_range_max.val()) {
+		if (parseInt(fieldSettings_range_min.val()) > parseInt(fieldSettings_range_max.val())) {
 			fieldSettings_range_max.val(fieldSettings_range_min.val()).change();
 		}
 	});
@@ -837,7 +835,7 @@ function fieldSettingsBindings() {
 		var id                      = formPreviewWell.prop("id").split("_")[1];
 
 		$("#max_"+id).val($(this).val());
-		if (fieldSettings_range_min.val() > fieldSettings_range_max.val()) {
+		if (parseInt(fieldSettings_range_min.val()) > parseInt(fieldSettings_range_max.val())) {
 			fieldSettings_range_min.val(fieldSettings_range_max.val()).change();
 		}
 	});
