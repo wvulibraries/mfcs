@@ -273,7 +273,9 @@ class forms {
 
 		$forms = array();
 		foreach ($projects as $project) {
-			$projectForms = projects::getForms($project['ID'],TRUE);
+			if (($projectForms = projects::getForms($project['ID'],TRUE)) === FALSE) {
+				return FALSE;
+			}
 
 			foreach ($projectForms as $formID=>$form) {
 				$forms[$formID] = $form;
