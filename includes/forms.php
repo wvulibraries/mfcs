@@ -1437,7 +1437,7 @@ class forms {
 		if(stripos($formatString, '%firstname%') !== FALSE) $formatString = str_ireplace('%firstname%', users::user('firstname'), $formatString);
 		if(stripos($formatString, '%lastname%') !== FALSE)  $formatString = str_ireplace('%lastname%', users::user('lastname'), $formatString);
 		// Process static (no custom format) date/time variables
-		if(stripos($formatString, '%date%') !== FALSE)      $formatString = str_ireplace('%date%', date('m/d/Y'), $formatString);
+		if(stripos($formatString, '%date%') !== FALSE)      $formatString = str_ireplace('%date%', date('Y-m-d'), $formatString);
 		if(stripos($formatString, '%time%') !== FALSE)      $formatString = str_ireplace('%time%', date('H:i:s'), $formatString);
 		if(stripos($formatString, '%time12%') !== FALSE)    $formatString = str_ireplace('%time12%', date('g:i:s A'), $formatString);
 		if(stripos($formatString, '%time24%') !== FALSE)    $formatString = str_ireplace('%time24%', date('H:i:s'), $formatString);
