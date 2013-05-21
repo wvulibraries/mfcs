@@ -28,7 +28,7 @@ class forms {
 
 	}
 
-	public static function get($formID=NULL) {
+	public static function get($formID=NULL,$productionOnly=FALSE) {
 
 		if (isnull($formID)) {
 			return self::getForms();
@@ -44,13 +44,19 @@ class forms {
 
 		$engine = EngineAPI::singleton();
 
-		$sql       = sprintf("SELECT * FROM `forms` WHERE `ID`='%s'",
-			$engine->openDB->escape($formID)
+		$sql       = sprintf("SELECT * FROM `forms` WHERE `ID`='%s'%s",
+			$engine->openDB->escape($formID),
+			($productionOnly === TRUE)?" AND `production`='1'":""
 		);
 		$sqlResult = $engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+
+		if ($sqlResult['numrows'] == 0) {
 			return FALSE;
 		}
 
@@ -81,7 +87,7 @@ class forms {
 		return $form;
 	}
 
-	public static function getForms($type = NULL) {
+	public static function getForms($type = NULL,$productionOnly=FALSE) {
 
 		$engine = EngineAPI::singleton();
 
@@ -109,7 +115,7 @@ class forms {
 		$forms = array();
 		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
-			$forms[$row['ID']] = self::get($row['ID']);
+			$forms[$row['ID']] = self::get($row['ID'],$productionOnly);
 
 		}
 
@@ -117,12 +123,12 @@ class forms {
 
 	}
 
-	public static function getObjectForms() {
-		return self::getForms(TRUE);
+	public static function getObjectForms($productionOnly=FALSE) {
+		return self::getForms(TRUE,$productionOnly);
 	}
 
-	public static function getMetadataForms() {
-		return self::getForms(FALSE);
+	public static function getMetadataForms($productionOnly=FALSE) {
+		return self::getForms(FALSE,$productionOnly);
 	}
 
 	public static function isContainer($formID) {
