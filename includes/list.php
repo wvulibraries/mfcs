@@ -45,10 +45,12 @@ class listGenerator {
 	public static function createFormSelectList() {
 
 		$engine  = EngineAPI::singleton();
-		$forms   = forms::getForms(TRUE);
+		$forms   = forms::getForms(TRUE,TRUE);
 
 		$output = '<ul class="pickList">';
 		foreach ($forms as $form) {
+
+			if ($form === FALSE) continue;
 
 			if (!mfcsPerms::isViewer($form['ID'])) continue;
 
@@ -182,7 +184,7 @@ class listGenerator {
 
 	public static function generateFormSelectList($objectID = NULL) {
 
-		if (isnull($objectID) && ($forms = forms::getObjectForms()) === FALSE) {
+		if (isnull($objectID) && ($forms = forms::getObjectForms(TRUE)) === FALSE) {
 			return FALSE;
 		}
 		else if (!isnull($objectID) && ($forms = forms::getObjectProjectForms($objectID)) === FALSE) {
@@ -253,12 +255,12 @@ class listGenerator {
 	// pages
 	public static function generateAccordionFormList($entry=FALSE) {
 
-		if (($forms = forms::getObjectForms()) === FALSE) {
+		if (($forms = forms::getObjectForms($entry)) === FALSE) {
 			errorHandle::errorMsg("Error getting Object Forms");
 			return FALSE;
 		}
 
-		if (($metaForms = forms::getMetadataForms()) === FALSE) {
+		if (($metaForms = forms::getMetadataForms($entry)) === FALSE) {
 			errorHandle::errorMsg("Errot getting Metadata Forms.");
 			return FALSE;
 		}
@@ -267,6 +269,9 @@ class listGenerator {
 
 		$count = 0;
 		foreach ($forms as $form) {
+
+			if ($form === FALSE) continue;
+
 			if (($metedataForms = forms::getObjectFormMetaForms($form['ID'])) === FALSE) {
 				errorHandle::errorMsg("Error getting Metadata Forms");
 				return FALSE;
@@ -310,6 +315,9 @@ class listGenerator {
 			$output .= '<h1>Unassigned Metadata Forms</h1>';
 			$output .= "<ul>";
 			foreach ($metaForms as $metadataForm) {
+
+				if ($metadataForm === FALSE) continue;
+
 				$output .= '<li>';
      			if (($output .= self::generateAccordionFormList_links($metadataForm,$entry,($entry===TRUE)?TRUE:FALSE)) === FALSE) {
      				return FALSE;
