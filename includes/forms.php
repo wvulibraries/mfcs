@@ -837,21 +837,46 @@ class forms {
 
 		}
 
-		// perform validations here
-		if (isempty($field['validation']) || $field['validation'] == "none") {
-			$valid = TRUE;
-		}
-		else if (!str2bool($field['required']) && is_empty($value)) {
-			$valid = TRUE;
-		}
-		else {
-			$valid  = FALSE;
-			if (validate::isValidMethod($field['validation']) === TRUE) {
-				if ($field['validation'] == "regexp") {
-					$valid = validate::$field['validation']($field['validationRegex'],$value);
+		// Perform validations here
+		$valid = TRUE;
+		if (isset($field['format'])) {
+			if (strtolower($field['format']) == 'characters' || strtolower($field['format']) == 'digits') {
+				if (isset($field['min']) && $field['min'] > strlen($value)) {
+					$valid = FALSE;
 				}
-				else {
-					$valid = validate::$field['validation']($value);
+				if (isset($field['max']) && $field['max'] < strlen($value)) {
+					$valid = FALSE;
+				}
+			}
+			else if (strtolower($field['format']) == 'words') {
+				if (isset($field['min']) && $field['min'] > str_word_count($value)) {
+					$valid = FALSE;
+				}
+				if (isset($field['max']) && $field['max'] < str_word_count($value)) {
+					$valid = FALSE;
+				}
+			}
+		}
+
+		// Skip if it's already invalid
+		if ($valid === TRUE) {
+			// No validation to test
+			if (isempty($field['validation']) || $field['validation'] == "none") {
+				$valid = TRUE;
+			}
+			// Empty fields that are not required are valid
+			else if (!str2bool($field['required']) && is_empty($value)) {
+				$valid = TRUE;
+			}
+			else {
+				$valid = FALSE;
+				if (validate::isValidMethod($field['validation']) === TRUE) {
+					if ($field['validation'] == "regexp") {
+						$valid = validate::$field['validation']($field['validationRegex'],$value);
+					}
+					else {
+						$valid = validate::$field['validation']($value);
+					}
 				}
 			}
 		}
