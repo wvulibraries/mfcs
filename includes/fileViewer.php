@@ -8,17 +8,42 @@ try{
 	// Check for simple (stupid developer errors)
 	if(!isset($engine->cleanGet['MYSQL']['objectID'])) throw new Exception('No Object ID provided!');
 	if(!isset($engine->cleanGet['MYSQL']['field']))    throw new Exception('No field provided!');
+	if(!isset($engine->cleanGet['MYSQL']['type']))     throw new Exception('No file type provided!');
 
 	// Get some vars
 	$object    = objects::get($engine->cleanGet['MYSQL']['objectID']);
 	$fieldName = $engine->cleanGet['MYSQL']['field'];
 	$field     = forms::getField($object['formID'], $engine->cleanGet['MYSQL']['field']);
+	$fileType  = trim($engine->cleanGet['MYSQL']['type']);
 	$fileArray = $object['data'][ $fieldName ];
 	$fileUUID  = $fileArray['uuid'];
-	$fileType  = $engine->cleanGet['MYSQL']['type'];
-	$fileID    = $engine->cleanGet['MYSQL']['fileID'];
-	$file      = $fileArray['files'][ $fileType ][ $fileID ];
-	$filepath  = $file['path'].$file['name'];
+	if(FALSE === strpos($fileType,'combined')){
+		// Non-combined file
+		$fileID    = $engine->cleanGet['MYSQL']['fileID'];
+		$file      = $fileArray['files'][ $fileType ][ $fileID ];
+		$filepath  = files::getSaveDir($fileUUID,$fileType).DIRECTORY_SEPARATOR.$file['name'];
+	}else{
+		// Combined file
+		if($fileType == 'combinedPDF'){
+			// Show the combined PDF
+			// Find the file that has an application mime type (like a PDF)
+			foreach($fileArray['files']['combine'] as $file){
+				if(FALSE !== strpos($file['type'], 'application/')){
+					$filepath = files::getSaveDir($fileUUID,'combine').$file['name'];
+					break;
+				}
+			}
+		}else{
+			// Show the combined PDF's thumbnail
+			// Find the file that has an image mime type
+			foreach($fileArray['files']['combine'] as $file){
+				if(FALSE !== strpos($file['type'], 'image/')){
+					$filepath = files::getSaveDir($fileUUID,'combine').$file['name'];
+					break;
+				}
+			}
+		}
+	}
 
 	// Make sure the file exists
 	if(!file_exists($filepath)) throw new Exception('File not found!');
