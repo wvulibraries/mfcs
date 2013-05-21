@@ -277,8 +277,6 @@ function showFieldSettings(fullID) {
 				var parentFieldset = fieldset.parents("li").parents("li");
 				if (parentFieldset.length > 0) {
 					var parentFieldsetID = parentFieldset.prop("id").split("_")[1];
-					console.log(parentFieldsetID);
-					console.log($("#fieldset_"+parentFieldsetID).val());
 					fieldset.val($("#fieldset_"+parentFieldsetID).val());
 				}
 			}
