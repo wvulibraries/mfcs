@@ -1143,15 +1143,11 @@ $engine->eTemplate("include","header");
 
 									<div class="row-fluid noHide">
 										<div class="control-group well well-small" id="formSettings_formContainer_container">
-											<label class="checkbox" for="formSettings_formContainer">
-												<input type="checkbox" id="formSettings_formContainer" name="formSettings_formContainer" {local var="formContainer"}> Act as Container
-											</label>
-											<label class="checkbox" for="formSettings_formProduction">
-												<input type="checkbox" id="formSettings_formProduction" name="formSettings_formProduction" {local var="formProduction"}> Production Ready
-											</label>
-											<label class="checkbox" for="formSettings_formMetadata">
-												<input type="checkbox" id="formSettings_formMetadata" name="formSettings_formMetadata" {local var="formMetadata"}> Metadata Form
-											</label>
+											<ul class="checkboxList">
+												<li><label class="checkbox" for="formSettings_formContainer"><input type="checkbox" id="formSettings_formContainer" name="formSettings_formContainer" {local var="formContainer"}> Act as Container</label></li>
+												<li><label class="checkbox" for="formSettings_formProduction"><input type="checkbox" id="formSettings_formProduction" name="formSettings_formProduction" {local var="formProduction"}> Production Ready</label></li>
+												<li><label class="checkbox" for="formSettings_formMetadata"><input type="checkbox" id="formSettings_formMetadata" name="formSettings_formMetadata" {local var="formMetadata"}> Metadata Form</label></li>
+											</ul>
 											<span class="help-block hidden"></span>
 										</div>
 									</div>
