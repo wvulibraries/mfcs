@@ -200,6 +200,8 @@ class listGenerator {
 
 		foreach ($forms as $form) {
 
+			if ($form === FALSE) continue;
+
 			if (!mfcsPerms::isViewer($form['ID'])) continue;
 
 			foreach ($currentProjects as $projectID => $projectName) {
