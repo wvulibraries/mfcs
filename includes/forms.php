@@ -144,6 +144,20 @@ class forms {
 		return FALSE;
 	}
 
+	public static function isProductionReady($formID) {
+		if (($form = self::get($formID)) === FALSE) {
+			return FALSE;
+		}
+
+		if ((int)$form['production'] == 1) {
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
+		
+	}
+
 	/*
 	 * Returns all of the linked metadata forms for an object form
 	 */
