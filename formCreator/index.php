@@ -893,6 +893,7 @@ $engine->eTemplate("include","header");
 										</div>
 
 										<div class="control-group well well-small" id="fieldSettings_container_file_allowedExtensions">
+											<div id="allowedExtensionsAlert" style="display:none;" class="alert alert-error">No allowed extensions included! Currently, no files will be uploadable!</div>
 											<label for="fieldSettings_file_allowedExtensions">
 												Allowed Extensions
 											</label>

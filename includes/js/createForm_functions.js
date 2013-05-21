@@ -897,6 +897,7 @@ function fieldSettingsBindings() {
 		.on("click","button[name=remove]",function() {
 			if ($(this).parent().siblings().length == 0) {
 				$(this).siblings("button[name=add]").click();
+				$('#allowedExtensionsAlert').show();
 			}
 			$(this).parent().remove();
 
@@ -916,10 +917,22 @@ function fieldSettingsBindings() {
 			var val             = $(this).val();
 			var vals            = [];
 
+			if(val != '') $('#allowedExtensionsAlert').hide();
 			$("#fieldSettings_file_allowedExtensions").find("input[name=fieldSettings_allowedExtension_text]").each(function() {
 				vals.push($(this).val());
 			});
 			$("#allowedExtensions_"+id).val(vals.join("%,%"));
+		})
+		.on("change",":input[name=fieldSettings_allowedExtension_text]",function() {
+			var noVal = true;
+			$("#fieldSettings_file_allowedExtensions").find("input[name=fieldSettings_allowedExtension_text]").each(function() {
+				if($(this).val()) noVal = false;
+			});
+			if(noVal){
+				$('#allowedExtensionsAlert').show();
+			}else{
+				$('#allowedExtensionsAlert').hide();
+			}
 		});
 
 	$("#fieldSettings_file_options_multipleFiles").change(function() {
