@@ -61,19 +61,6 @@ try {
 	// Project Tab Stuff
 	//////////
 
-	//////////
-	// Children Tab Stuff
-	if (($formList = listGenerator::generateFormSelectList($engine->cleanGet['MYSQL']['objectID'])) === FALSE) {
-		errorHandle::errorMsg("Error getting Forms Listing");
-		throw new Exception('Error');
-	}
-	else {
-		localvars::add("formList",$formList);
-	}
-	localVars::add("childrenList",listGenerator::generateChildList($engine->cleanGet['MYSQL']['objectID']));
-	// Children Tab Stuff
-	//////////
-
 	localvars::add("formName",$form['title']);
 	localvars::add("formID",$form['ID']);
 
@@ -133,6 +120,19 @@ try {
 			throw new Exception("Error building files preview.");
 		}
 		localvars::add("filesViewer",$filesViewer);
+
+			//////////
+	// Children Tab Stuff
+	if (($formList = listGenerator::generateFormSelectList($engine->cleanGet['MYSQL']['objectID'])) === FALSE) {
+		errorHandle::errorMsg("Error getting Forms Listing");
+		throw new Exception('Error');
+	}
+	else {
+		localvars::add("formList",$formList);
+	}
+	localVars::add("childrenList",listGenerator::generateChildList($engine->cleanGet['MYSQL']['objectID']));
+	// Children Tab Stuff
+	//////////
 	}
 
 }
