@@ -1265,10 +1265,12 @@ class forms {
 				return FALSE;
 			}
 			foreach ($currentProjects as $projectID => $projectName) {
-				if ((objects::addProject($objectID,$projectID)) === FALSE) {
-					$engine->openDB->transRollback();
-					$engine->openDB->transEnd();
-					return FALSE;
+				if (self::checkFormInProject($projectID,$formID) === TRUE) {
+					if ((objects::addProject($objectID,$projectID)) === FALSE) {
+						$engine->openDB->transRollback();
+						$engine->openDB->transEnd();
+						return FALSE;
+					}
 				}
 			}
 		}
