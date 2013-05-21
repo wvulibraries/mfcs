@@ -1067,13 +1067,13 @@ $engine->eTemplate("include","header");
 													<input type="text" class="input-block-level" id="fieldSettings_validationRegex" name="fieldSettings_validationRegex" placeholder="Enter a Regex" />
 												</div>
 
-												<div class="control-group well well-small" id="fieldSettings_container_access">
+												<!-- <div class="control-group well well-small" id="fieldSettings_container_access">
 													<label for="fieldSettings_access">
 														Allow Access
 													</label>
 													<select class="input-block-level" id="fieldSettings_access" name="fieldSettings_access" multiple>
 													</select>
-												</div>
+												</div> -->
 											</span>
 										</div>
 									</form>

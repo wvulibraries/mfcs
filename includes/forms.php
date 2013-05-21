@@ -757,7 +757,10 @@ class forms {
 				$headers[] = $field['label'];
 			}
 
-			if (forms::isMetadataForm($formID) === TRUE) $headers[] = "Search";
+			if (forms::isMetadataForm($formID) === TRUE) {
+				$headers[] = "Search";
+				$headers[] = "Move";
+			}
 
 			$tableRows = array();
 			for($I=0;$I<count($objects);$I++) {
@@ -781,6 +784,10 @@ class forms {
 						htmlSanitize($formID),
 						$objects[$I]['ID']
 						);
+					$temp[] = sprintf('<a href="%s/dataEntry/move.php?objectID=%s">Move</a>',
+						localvars::get('siteRoot'),
+						$objects[$I]['ID']
+						);
 				}
 
 				$tableRows[] = $temp;
@@ -790,6 +797,7 @@ class forms {
 
 			$table          = new tableObject("array");
 			$table->summary = "Object Listing";
+			$table->class   = "tableObject table table-striped table-bordered";
 			$table->headers($headers);
 
 			$output = sprintf('<form action="%s?formID=%s" method="%s" name="updateForm" data-formid="%s">',
@@ -829,21 +837,46 @@ class forms {
 
 		}
 
-		// perform validations here
-		if (isempty($field['validation']) || $field['validation'] == "none") {
-			$valid = TRUE;
-		}
-		else if (!str2bool($field['required']) && is_empty($value)) {
-			$valid = TRUE;
-		}
-		else {
-			$valid  = FALSE;
-			if (validate::isValidMethod($field['validation']) === TRUE) {
-				if ($field['validation'] == "regexp") {
-					$valid = validate::$field['validation']($field['validationRegex'],$value);
+		// Perform validations here
+		$valid = TRUE;
+		if (isset($field['format'])) {
+			if (strtolower($field['format']) == 'characters' || strtolower($field['format']) == 'digits') {
+				if (isset($field['min']) && $field['min'] > strlen($value)) {
+					$valid = FALSE;
 				}
-				else {
-					$valid = validate::$field['validation']($value);
+				if (isset($field['max']) && $field['max'] < strlen($value)) {
+					$valid = FALSE;
+				}
+			}
+			else if (strtolower($field['format']) == 'words') {
+				if (isset($field['min']) && $field['min'] > str_word_count($value)) {
+					$valid = FALSE;
+				}
+				if (isset($field['max']) && $field['max'] < str_word_count($value)) {
+					$valid = FALSE;
+				}
+			}
+		}
+
+		// Skip if it's already invalid
+		if ($valid === TRUE) {
+			// No validation to test
+			if (isempty($field['validation']) || $field['validation'] == "none") {
+				$valid = TRUE;
+			}
+			// Empty fields that are not required are valid
+			else if (!str2bool($field['required']) && is_empty($value)) {
+				$valid = TRUE;
+			}
+			else {
+				$valid = FALSE;
+				if (validate::isValidMethod($field['validation']) === TRUE) {
+					if ($field['validation'] == "regexp") {
+						$valid = validate::$field['validation']($field['validationRegex'],$value);
+					}
+					else {
+						$valid = validate::$field['validation']($value);
+					}
 				}
 			}
 		}
@@ -1293,6 +1326,66 @@ class forms {
 		}
 
 		return TRUE;
+	}
+
+	public static function formsAreCompatible($form1,$form2) {
+
+		if (count($form1['fields']) != count($form2['fields'])) return FALSE;
+
+		//@TODO there has to be a better way of doing this
+		$compatibleFields = array();
+		foreach ($form1['fields'] as $field) {
+			foreach ($form2['fields'] as $field2) {
+				if (
+					$field['type']            == $field2['type']            &&
+					$field['name']            == $field2['name']            &&
+					$field['required']        == $field2['required']        &&
+					$field['duplicates']      == $field2['duplicates']      &&
+					$field['validation']      == $field2['validation']      &&
+					$field['validationRegex'] == $field2['validationRegex'] &&
+					$field['min']             == $field2['min']             &&
+					$field['max']             == $field2['max']             &&
+					$field['step']            == $field2['step']            &&
+					$field['format']          == $field2['format']
+
+					) {
+
+					array_push($compatibleFields,$field);
+
+				}
+
+			}
+		}
+
+		if (count($compatibleFields) == count($form1['fields'])) {
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
+
+	}
+
+	public static function compatibleForms($formID) {
+
+		if (($form = self::get($formID)) === FALSE) {
+			return FALSE;
+		}
+
+		$allForms = self::getMetadataForms(TRUE);
+		$forms    = array();
+
+		foreach ($allForms as $fid=>$f) {
+
+			if ($f       === FALSE)       continue;
+			if ($f['ID'] ==  $form['ID']) continue;
+
+			if (self::formsAreCompatible($form,$f)) $forms[] = $f;
+
+		}
+
+		return $forms;
+
 	}
 
 	public static function delete($formID){

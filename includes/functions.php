@@ -26,10 +26,11 @@ function sortFieldsByPosition($a,$b) {
 function buildNumberAttributes($field) {
 
 	$output = "";
-	$output .= (!isempty($field["min"])) ?' min="'.$field['min'].'"'  :"";
-	$output .= (!isempty($field["max"])) ?' max="'.$field['max'].'"'  :"";
-	$output .= (!isempty($field["step"]))?' step="'.$field['step'].'"':"";
-
+	if (!isempty($field["format"]) && $field['format'] == 'value') {
+		$output .= (!isempty($field["min"])) ?' min="'.$field['min'].'"'  :"";
+		$output .= (!isempty($field["max"])) ?' max="'.$field['max'].'"'  :"";
+		$output .= (!isempty($field["step"]))?' step="'.$field['step'].'"':"";
+	}
 	return $output;
 }
 
