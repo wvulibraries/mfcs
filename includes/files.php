@@ -220,31 +220,35 @@ class files {
 	 * @author Scott Blake
 	 * @param string $type
 	 * @param string $fileUUID
-	 * @return string
+	 * @param bool $fullPath
+	 * @return bool|string
 	 */
-	public static function getSaveDir($assetsID, $type=NULL) {
+	public static function getSaveDir($assetsID, $type=NULL, $fullPath=TRUE) {
+		$type = strtolower($type);
+		$path = array();
 
-		// Build the path
-		$path = join(DIRECTORY_SEPARATOR,
-			array(
-				// If the type is "originals" use 'archivalPathMFCS' else use 'convertedPath' as the base path
-				((strtolower($type) == 'originals')?mfcs::config('archivalPathMFCS'):mfcs::config('convertedPath')),
-				(self::assetsIDToPath($assetsID)),
-				// The full UID up to this point
-				$assetsID,
-				// Add the type to the path for the exports
-				((strtolower($type) == 'originals' || isnull($type))?"":trim(strtolower($type)).DIRECTORY_SEPARATOR)
-				)
-			);
-
-		// check to make sure that if the $path exists that it is a directory.
-		if (file_exists($path) && !is_dir($path)) {
-			return FALSE;
+		if ($fullPath === TRUE) {
+			$path[] = ($type == 'originals') ? mfcs::config('archivalPathMFCS') : mfcs::config('convertedPath');
+		}
+		$path[] = self::assetsIDToPath($assetsID);
+		$path[] = $assetsID;
+		if ($type != 'originals' && !isnull($type)) {
+			$path[] = trim($type).DIRECTORY_SEPARATOR;
 		}
 
-		// Make sure the directory exists
-		if (!is_dir($path)) {
-			mkdir($path,0755,TRUE);
+		// Build the path as a string
+		$path = implode(DIRECTORY_SEPARATOR, $path);
+
+		if ($fullPath === TRUE) {
+			// check to make sure that if the $path exists that it is a directory.
+			if (file_exists($path) && !is_dir($path)) {
+				return FALSE;
+			}
+
+			// Make sure the directory exists
+			if (!is_dir($path)) {
+				mkdir($path,0755,TRUE);
+			}
 		}
 
 		return $path;
