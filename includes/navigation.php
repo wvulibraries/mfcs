@@ -72,10 +72,13 @@ class navigation {
 				);
 			}
 			else if ($item['type'] == "objectForm" || $item['type'] == "metadataForm") {
+
+				$form = forms::get($item['formID']);
+
 				$output .= sprintf('<a href="" data-formID="%s" data-header="%s" data-toggle="modal" class="metadataObjectEditor">%s</a>',
 					htmlSanitize($item['formID']),
 					htmlSanitize($item['label']),
-					htmlSanitize($item['label'])
+					htmlSanitize(!empty($form['displayTitle']) ? $form['displayTitle'] : (!empty($form['title']) ? $form['title'] : '[No form title]'))
 				);
 			}
 			else {
