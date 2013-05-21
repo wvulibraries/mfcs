@@ -220,31 +220,35 @@ class files {
 	 * @author Scott Blake
 	 * @param string $type
 	 * @param string $fileUUID
-	 * @return string
+	 * @param bool $fullPath
+	 * @return bool|string
 	 */
-	public static function getSaveDir($assetsID, $type=NULL) {
+	public static function getSaveDir($assetsID, $type=NULL, $fullPath=TRUE) {
+		$type = strtolower($type);
+		$path = array();
 
-		// Build the path
-		$path = join(DIRECTORY_SEPARATOR,
-			array(
-				// If the type is "originals" use 'archivalPathMFCS' else use 'convertedPath' as the base path
-				((strtolower($type) == 'originals')?mfcs::config('archivalPathMFCS'):mfcs::config('convertedPath')),
-				(self::assetsIDToPath($assetsID)),
-				// The full UID up to this point
-				$assetsID,
-				// Add the type to the path for the exports
-				((strtolower($type) == 'originals' || isnull($type))?"":trim(strtolower($type)).DIRECTORY_SEPARATOR)
-				)
-			);
-
-		// check to make sure that if the $path exists that it is a directory.
-		if (file_exists($path) && !is_dir($path)) {
-			return FALSE;
+		if ($fullPath === TRUE) {
+			$path[] = ($type == 'originals') ? mfcs::config('archivalPathMFCS') : mfcs::config('convertedPath');
+		}
+		$path[] = self::assetsIDToPath($assetsID);
+		$path[] = $assetsID;
+		if ($type != 'originals' && !isnull($type)) {
+			$path[] = trim($type).DIRECTORY_SEPARATOR;
 		}
 
-		// Make sure the directory exists
-		if (!is_dir($path)) {
-			mkdir($path,0755,TRUE);
+		// Build the path as a string
+		$path = implode(DIRECTORY_SEPARATOR, $path);
+
+		if ($fullPath === TRUE) {
+			// check to make sure that if the $path exists that it is a directory.
+			if (file_exists($path) && !is_dir($path)) {
+				return FALSE;
+			}
+
+			// Make sure the directory exists
+			if (!is_dir($path)) {
+				mkdir($path,0755,TRUE);
+			}
 		}
 
 		return $path;
@@ -448,7 +452,7 @@ class files {
 
 			$return['files']['archive'][] = array(
 				'name'   => $cleanedFilename,
-				'path'   => $originalsFilepath,
+				'path'   => self::getSaveDir($assetsID,'originals',FALSE),
 				'size'   => filesize($newFilename),
 				'type'   => self::getMimeType($newFilename),
 				'errors' => '',
@@ -533,7 +537,7 @@ class files {
 
 							$return['combine'][] = array(
 								'name'   => $thumbname,
-								'path'   => self::getSaveDir($assetsID,'combine'),
+								'path'   => self::getSaveDir($assetsID,'combine',FALSE),
 								'size'   => filesize($savePath),
 								'type'   => self::getMimeType($savePath),
 								'errors' => '',
@@ -596,7 +600,7 @@ class files {
 
 					$return['combine'][] = array(
 						'name'   => 'combined.pdf',
-						'path'   => self::getSaveDir($assetsID,'combine'),
+						'path'   => self::getSaveDir($assetsID,'combine',FALSE),
 						'size'   => filesize(self::getSaveDir($assetsID,'combine').'combined.pdf'),
 						'type'   => 'application/pdf',
 						'errors' => $errors,
@@ -664,7 +668,7 @@ class files {
 
 						$return['thumbs'][] = array(
 							'name'   => $thumbname,
-							'path'   => self::getSaveDir($assetsID,'thumbs'),
+							'path'   => self::getSaveDir($assetsID,'thumbs',FALSE),
 							'size'   => filesize($savePath),
 							'type'   => self::getMimeType($savePath),
 							'errors' => '',
@@ -684,7 +688,7 @@ class files {
 
 					$return['processed'][] = array(
 						'name'   => $filename,
-						'path'   => self::getSaveDir($assetsID,'processed'),
+						'path'   => self::getSaveDir($assetsID,'processed',FALSE),
 						'size'   => filesize(self::getSaveDir($assetsID,'processed').$filename),
 						'type'   => self::getMimeType(self::getSaveDir($assetsID,'processed').$filename),
 						'errors' => '',
@@ -708,7 +712,7 @@ class files {
 
 					$return['thumbs'][] = array(
 						'name'   => $thumbname,
-						'path'   => self::getSaveDir($assetsID,'thumbs'),
+						'path'   => self::getSaveDir($assetsID,'thumbs',FALSE),
 						'size'   => filesize($savePath),
 						'type'   => self::getMimeType($savePath),
 						'errors' => '',
@@ -734,7 +738,7 @@ class files {
 
 					$return['ocr'][] = array(
 						'name'   => $filename.'.txt',
-						'path'   => self::getSaveDir($assetsID,'ocr'),
+						'path'   => self::getSaveDir($assetsID,'ocr',FALSE),
 						'size'   => filesize(self::getSaveDir($assetsID,'ocr').$filename.'.txt'),
 						'type'   => self::getMimeType(self::getSaveDir($assetsID,'ocr').$filename.'.txt'),
 						'errors' => '',
