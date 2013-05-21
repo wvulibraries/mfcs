@@ -376,8 +376,12 @@ class forms {
 
 	}
 
-	private static function drawSelectDropdowns($field,$fieldChoices) {
+	private static function drawSelectDropdowns($field,$fieldChoices,$value=NULL) {
 
+		if (isnull($value) && isset($field['choicesDefault']) && !isempty($field['choicesDefault'])) {
+			$value = $field['choicesDefault'];
+		}
+		
 		$output = "";
 
 		if(isset($field['choicesNull']) && str2bool($field['choicesNull'])){
@@ -386,7 +390,7 @@ class forms {
 		foreach ($fieldChoices as $choice) {
 			$output .= sprintf('<option value="%s" %s>%s</option>',
 				htmlSanitize($choice['value']),
-				(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $choice['value'])?'selected="selected"':"",
+				(!isnull($value) && $value == $choice['value'])?'selected="selected"':"",
 				htmlSanitize($choice['display'])
 			);
 		}
@@ -405,7 +409,7 @@ class forms {
 		return $output;
 	}
 
-	public static function drawFieldChoices($field,$choices) {
+	public static function drawFieldChoices($field,$choices,$value=NULL) {
 
 		if (!isset($field['type'])) return FALSE;
 
@@ -415,7 +419,7 @@ class forms {
 				return self::drawCheckBoxes($field,$choices);
 				break;
 			case "select":
-				return self::drawSelectDropdowns($field,$choices);
+				return self::drawSelectDropdowns($field,$choices,$value);
 				break;
 			case "multiselect":
 				return self::drawMultiselectBoxes($field,$choices);
@@ -610,7 +614,7 @@ class forms {
 					(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':""
 				);
 
-				$output .= self::drawFieldChoices($field,$fieldChoices);
+				$output .= self::drawFieldChoices($field,$fieldChoices,(isset($object['data'][$field['name']]))?$object['data'][$field['name']]:NULL);
 
 				$output .= "</select>";
 
