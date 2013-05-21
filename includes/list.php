@@ -67,9 +67,11 @@ class listGenerator {
 
 	public static function createFormObjectList($formID) {
 
-		$engine        = EngineAPI::singleton();
+		$engine        = mfcs::$engine;
 		$objects       = objects::getAllObjectsForForm($formID);
-		$form          = forms::get($formID);
+		if (($form          = forms::get($formID)) === FALSE) {
+			return FALSE;
+		}
 		$excludeFields = array("idno","file");
 
 		$headers = array("View","Edit","Revisions","System IDNO","Form IDNO");
