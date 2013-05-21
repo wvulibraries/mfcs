@@ -1150,20 +1150,6 @@ class forms {
 		// do the IDNO stuff
 		if ($form['metadata'] == "0") {
 
-			// increment the project counter
-			$sql       = sprintf("UPDATE `forms` SET `count`=`count`+'1' WHERE `ID`='%s'",
-				$engine->openDB->escape($form['ID'])
-			);
-			$sqlResult = $engine->openDB->query($sql);
-
-			if (!$sqlResult['result']) {
-				$engine->openDB->transRollback();
-				$engine->openDB->transEnd();
-
-				errorHandle::newError(__METHOD__."() - Error incrementing form counter: ".$sqlResult['error'], errorHandle::DEBUG);
-				return FALSE;
-			}
-
 			// if the idno is managed by the system get a new idno
 			if ($idnoInfo['managedBy'] == "system") {
 				$idno = $engine->openDB->escape(mfcs::getIDNO($formID));
@@ -1193,6 +1179,20 @@ class forms {
 				$engine->openDB->transEnd();
 
 				errorHandle::newError(__METHOD__."() - updating the IDNO: ".$sqlResult['error'], errorHandle::DEBUG);
+				return FALSE;
+			}
+ 
+			// increment the project counter
+			$sql       = sprintf("UPDATE `forms` SET `count`=`count`+'1' WHERE `ID`='%s'",
+				$engine->openDB->escape($form['ID'])
+			);
+			$sqlResult = $engine->openDB->query($sql);
+
+			if (!$sqlResult['result']) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+
+				errorHandle::newError(__METHOD__."() - Error incrementing form counter: ".$sqlResult['error'], errorHandle::DEBUG);
 				return FALSE;
 			}
 
