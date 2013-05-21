@@ -452,7 +452,7 @@ class files {
 
 			$return['files']['archive'][] = array(
 				'name'   => $cleanedFilename,
-				'path'   => $originalsFilepath,
+				'path'   => self::getSaveDir($assetsID,'originals',FALSE),
 				'size'   => filesize($newFilename),
 				'type'   => self::getMimeType($newFilename),
 				'errors' => '',
@@ -537,7 +537,7 @@ class files {
 
 							$return['combine'][] = array(
 								'name'   => $thumbname,
-								'path'   => self::getSaveDir($assetsID,'combine'),
+								'path'   => self::getSaveDir($assetsID,'combine',FALSE),
 								'size'   => filesize($savePath),
 								'type'   => self::getMimeType($savePath),
 								'errors' => '',
@@ -600,7 +600,7 @@ class files {
 
 					$return['combine'][] = array(
 						'name'   => 'combined.pdf',
-						'path'   => self::getSaveDir($assetsID,'combine'),
+						'path'   => self::getSaveDir($assetsID,'combine',FALSE),
 						'size'   => filesize(self::getSaveDir($assetsID,'combine').'combined.pdf'),
 						'type'   => 'application/pdf',
 						'errors' => $errors,
@@ -668,7 +668,7 @@ class files {
 
 						$return['thumbs'][] = array(
 							'name'   => $thumbname,
-							'path'   => self::getSaveDir($assetsID,'thumbs'),
+							'path'   => self::getSaveDir($assetsID,'thumbs',FALSE),
 							'size'   => filesize($savePath),
 							'type'   => self::getMimeType($savePath),
 							'errors' => '',
@@ -688,7 +688,7 @@ class files {
 
 					$return['processed'][] = array(
 						'name'   => $filename,
-						'path'   => self::getSaveDir($assetsID,'processed'),
+						'path'   => self::getSaveDir($assetsID,'processed',FALSE),
 						'size'   => filesize(self::getSaveDir($assetsID,'processed').$filename),
 						'type'   => self::getMimeType(self::getSaveDir($assetsID,'processed').$filename),
 						'errors' => '',
@@ -712,7 +712,7 @@ class files {
 
 					$return['thumbs'][] = array(
 						'name'   => $thumbname,
-						'path'   => self::getSaveDir($assetsID,'thumbs'),
+						'path'   => self::getSaveDir($assetsID,'thumbs',FALSE),
 						'size'   => filesize($savePath),
 						'type'   => self::getMimeType($savePath),
 						'errors' => '',
@@ -738,7 +738,7 @@ class files {
 
 					$return['ocr'][] = array(
 						'name'   => $filename.'.txt',
-						'path'   => self::getSaveDir($assetsID,'ocr'),
+						'path'   => self::getSaveDir($assetsID,'ocr',FALSE),
 						'size'   => filesize(self::getSaveDir($assetsID,'ocr').$filename.'.txt'),
 						'type'   => self::getMimeType(self::getSaveDir($assetsID,'ocr').$filename.'.txt'),
 						'errors' => '',
