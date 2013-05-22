@@ -131,6 +131,15 @@ class forms {
 		return self::getForms(FALSE,$productionOnly);
 	}
 
+	public static function title($formID) {
+		if (($form = self::get($formID)) === FALSE) {
+			return FALSE;
+		}
+
+		return htmlSanitize(!empty($form['displayTitle']) ? $form['displayTitle'] : (!empty($form['title']) ? $form['title'] : '[No form title]'));
+
+	}
+
 	public static function isContainer($formID) {
 		$form = self::get($formID);
 
