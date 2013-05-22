@@ -428,17 +428,16 @@ if (!isnull($formID)) {
 		}
 
 		localvars::add("selectedMetadataForms",$selectedMetadataForms);
-		if(!empty($metadataFormsEven) and !empty($metadataFormsOdd)){
+		if (!empty($metadataFormsEven) || !empty($metadataFormsOdd)) {
 			localvars::add("metadataForms", sprintf('
 				<h3>Metadata Forms</h3>
 				<div class="row-fluid">
-				<ul class="unstyled draggable span6">%s</ul>
-				<ul class="unstyled draggable span6">%s</ul>
-				</div>
-				', $metadataFormsEven, $metadataFormsOdd));
-		}
-		else{
-			localvars::add("metadataForms",  '');
+					<ul class="unstyled draggable span6">%s</ul>
+					<ul class="unstyled draggable span6">%s</ul>
+				</div>',
+				$metadataFormsEven,
+				$metadataFormsOdd
+				));
 		}
 
 		// Get existing groupings
