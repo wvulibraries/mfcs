@@ -848,20 +848,20 @@ class forms {
 
 		// Perform validations here
 		$valid = TRUE;
-		if (isset($field['format'])) {
+		if (!empty($field['format'])) {
 			if (strtolower($field['format']) == 'characters' || strtolower($field['format']) == 'digits') {
-				if (isset($field['min']) && $field['min'] > strlen($value)) {
+				if (!empty($field['min']) && $field['min'] > strlen($value)) {
 					$valid = FALSE;
 				}
-				if (isset($field['max']) && $field['max'] < strlen($value)) {
+				if (!empty($field['max']) && $field['max'] < strlen($value)) {
 					$valid = FALSE;
 				}
 			}
 			else if (strtolower($field['format']) == 'words') {
-				if (isset($field['min']) && $field['min'] > str_word_count($value)) {
+				if (!empty($field['min']) && $field['min'] > str_word_count($value)) {
 					$valid = FALSE;
 				}
-				if (isset($field['max']) && $field['max'] < str_word_count($value)) {
+				if (!empty($field['max']) && $field['max'] < str_word_count($value)) {
 					$valid = FALSE;
 				}
 			}
