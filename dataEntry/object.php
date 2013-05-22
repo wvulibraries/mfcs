@@ -282,6 +282,15 @@ $engine->eTemplate("include","header");
 	$(function() {
 		// Show first tab on page load
 		$(".nav-tabs a:first").tab("show");
+
+		var $objectSubmitBtn = $('#objectSubmitBtn');
+		$objectSubmitBtn.closest('form').submit(function(){
+			var $objectSubmitProcessing = $('#objectSubmitProcessing');
+			if($objectSubmitProcessing.length){
+				$objectSubmitBtn.hide();
+				$objectSubmitProcessing.show();
+			}
+		});
 	});
 </script>
 

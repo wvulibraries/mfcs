@@ -668,6 +668,7 @@ class forms {
 				$output .= "</div>";
 			}
 			else if ($field['type'] == 'file') {
+				$formHasFiles = true;
 				$output .= '<div style="display: inline-block;">';
 				if(!isnull($objectID)){
 					$output .= empty($object['data'][ $field['name'] ])
@@ -740,10 +741,13 @@ class forms {
 			$output .= "</fieldset>";
 		}
 
-		$output .= sprintf('<input type="submit" value="%s" name="%s" class="btn" />',
+		$output .= sprintf('<input type="submit" value="%s" name="%s" id="objectSubmitBtn" class="btn" />',
 			(isnull($objectID))?htmlSanitize($form["submitButton"]):htmlSanitize($form["updateButton"]),
 			$objectID ? "updateForm" : "submitForm"
 		);
+		if(isset($formHasFiles) and $formHasFiles){
+			$output .= '<div class="alert alert-block" id="objectSubmitProcessing"><strong>Processing Files</strong><br>Please Wait...</div>';
+		}
 
 		$output .= "</form>";
 
@@ -820,7 +824,7 @@ class forms {
 
 			$output .= $table->display($tableRows);
 
-			$output .= '<input type="submit" name="updateEdit" value="Update" id="objectSubmitBtn" class="btn" />';
+			$output .= '<input type="submit" name="updateEdit" value="Update" class="btn" />';
 			$output .= "</form>";
 
 			return $output;
