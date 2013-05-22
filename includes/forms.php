@@ -1389,7 +1389,7 @@ class forms {
 			if ($f       === FALSE)       continue;
 			if ($f['ID'] ==  $form['ID']) continue;
 
-			if (self::formsAreCompatible($form,$f)) $forms[] = $f;
+			if (self::formsAreCompatible($form,$f)) $forms[$f['ID']] = $f;
 
 		}
 
