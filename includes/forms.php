@@ -740,7 +740,7 @@ class forms {
 			$output .= "</fieldset>";
 		}
 
-		$output .= sprintf('<input type="submit" value="%s" name="%s" />',
+		$output .= sprintf('<input type="submit" value="%s" name="%s" class="btn" />',
 			(isnull($objectID))?htmlSanitize($form["submitButton"]):htmlSanitize($form["updateButton"]),
 			$objectID ? "updateForm" : "submitForm"
 		);
@@ -820,7 +820,7 @@ class forms {
 
 			$output .= $table->display($tableRows);
 
-			$output .= '<input type="submit" name="updateEdit" value="Update" />';
+			$output .= '<input type="submit" name="updateEdit" value="Update" id="objectSubmitBtn" class="btn" />';
 			$output .= "</form>";
 
 			return $output;
