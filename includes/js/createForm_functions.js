@@ -283,6 +283,13 @@ function showFieldSettings(fullID) {
 			else {
 				$("#fieldSettings_fieldset").val(fieldset.val());
 			}
+
+			// Do I show the 'Variables' link?
+			if(-1 != $.inArray(type, ['idno','text','textarea','date','datetime','wysiwyg'])){
+				$('#fieldVariablesLink').show();
+			}else{
+				$('#fieldVariablesLink').hide();
+			}
 		}
 
 	}
