@@ -1136,31 +1136,29 @@ function formSettingsBindings() {
 		if ($(this).is(":checked")) {
 			if (idnoType.length == 0) {
 				$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
-				fieldAdd
-					.find("li:contains('ID Number')").hide()
-					.find("li:contains('Paragraph Text')").hide()
-					.find("li:contains('Radio')").hide()
-					.find("li:contains('Checkboxes')").hide()
-					.find("li:contains('Dropdown')").hide()
-					.find("li:contains('Multi-Select')").hide()
-					.find("li:contains('File Upload')").hide()
-					.find("li:contains('WYSIWYG')").hide()
-					.find("li:contains('Field Set')").parent().hide().prev().hide();
+				fieldAdd.find("li:contains('ID Number')").hide();
+				fieldAdd.find("li:contains('Paragraph Text')").hide();
+				fieldAdd.find("li:contains('Radio')").hide();
+				fieldAdd.find("li:contains('Checkboxes')").hide();
+				fieldAdd.find("li:contains('Dropdown')").hide();
+				fieldAdd.find("li:contains('Multi-Select')").hide();
+				fieldAdd.find("li:contains('File Upload')").hide();
+				fieldAdd.find("li:contains('WYSIWYG')").hide();
+				fieldAdd.find("li:contains('Field Set')").parent().hide().prev().hide();
 			}
 			else {
 				if (confirm("Enabling this will remove any existing ID Number fields. Do you want to continue?")) {
 					idnoType.parent().parent().remove();
 					$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
-					fieldAdd
-						.find("li:contains('ID Number')").hide()
-						.find("li:contains('Paragraph Text')").hide()
-						.find("li:contains('Radio')").hide()
-						.find("li:contains('Checkboxes')").hide()
-						.find("li:contains('Dropdown')").hide()
-						.find("li:contains('Multi-Select')").hide()
-						.find("li:contains('File Upload')").hide()
-						.find("li:contains('WYSIWYG')").hide()
-						.find("li:contains('Field Set')").parent().hide().prev().hide();
+					fieldAdd.find("li:contains('ID Number')").hide();
+					fieldAdd.find("li:contains('Paragraph Text')").hide();
+					fieldAdd.find("li:contains('Radio')").hide();
+					fieldAdd.find("li:contains('Checkboxes')").hide();
+					fieldAdd.find("li:contains('Dropdown')").hide();
+					fieldAdd.find("li:contains('Multi-Select')").hide();
+					fieldAdd.find("li:contains('File Upload')").hide();
+					fieldAdd.find("li:contains('WYSIWYG')").hide();
+					fieldAdd.find("li:contains('Field Set')").parent().hide().prev().hide();
 				}
 				else {
 					$(this).removeAttr('checked');
@@ -1168,16 +1166,15 @@ function formSettingsBindings() {
 			}
 		}
 		else {
-			fieldAdd
-				.find("li:contains('ID Number')").show()
-				.find("li:contains('Paragraph Text')").show()
-				.find("li:contains('Radio')").show()
-				.find("li:contains('Checkboxes')").show()
-				.find("li:contains('Dropdown')").show()
-				.find("li:contains('Multi-Select')").show()
-				.find("li:contains('File Upload')").show()
-				.find("li:contains('WYSIWYG')").show()
-				.find("li:contains('Field Set')").parent().show().prev().show();
+			fieldAdd.find("li:contains('ID Number')").show();
+			fieldAdd.find("li:contains('Paragraph Text')").show();
+			fieldAdd.find("li:contains('Radio')").show();
+			fieldAdd.find("li:contains('Checkboxes')").show();
+			fieldAdd.find("li:contains('Dropdown')").show();
+			fieldAdd.find("li:contains('Multi-Select')").show();
+			fieldAdd.find("li:contains('File Upload')").show();
+			fieldAdd.find("li:contains('WYSIWYG')").show();
+			fieldAdd.find("li:contains('Field Set')").parent().show().prev().show();
 
 			if (idnoType.length == 0) {
 				$("#formSettings_formProduction").prop({
