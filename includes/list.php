@@ -62,7 +62,7 @@ class listGenerator {
 
 			$output .= sprintf('<li><a href="list.php?listType=form&amp;formID=%s" class="btn">%s</a></li>',
 				$form['ID'],
-				$form['title']
+				forms::title($form['ID'])
 				);
 		}
 		$output .= '</ul>';
@@ -217,7 +217,7 @@ class listGenerator {
 					$currentProjectFormList .= sprintf('<li><a href="object.php?formID=%s%s" class="btn">%s</a></li>',
 						htmlSanitize($form['ID']),
 						(!isnull($objectID))?"&amp;parentID=".$objectID:"", // parent information
-						htmlSanitize($form['title'])
+						forms::title($form['ID'])
 						);
 
 					continue 2;
@@ -227,7 +227,7 @@ class listGenerator {
 			$formList .= sprintf('<li><a href="object.php?formID=%s%s" class="btn">%s</a></li>',
 				htmlSanitize($form['ID']),
 				(!isnull($objectID))?"&amp;parentID=".$objectID:"", // parent information
-				htmlSanitize($form['title'])
+				forms::title($form['ID'])
 				);
 
 		}
@@ -247,7 +247,7 @@ class listGenerator {
 		if ($entry === FALSE) {
 			return sprintf('<a href="index.php?id=%s">%s</a>',
 				htmlSanitize($form['ID']),
-				htmlSanitize(!empty($form['displayTitle']) ? $form['displayTitle'] : (!empty($form['title']) ? $form['title'] : '[No form title]'))
+				forms::title($form['ID'])
 				);
 		}
 		else {
@@ -255,7 +255,7 @@ class listGenerator {
 				localvars::get("siteRoot"),
 				($metadata === TRUE)?"metadata":"object",
 				htmlSanitize($form['ID']),
-				htmlSanitize(!empty($form['displayTitle']) ? $form['displayTitle'] : (!empty($form['title']) ? $form['title'] : '[No form title]'))
+				forms::title($form['ID'])
 				);
 		}
 
@@ -362,7 +362,7 @@ class listGenerator {
 
 			$formList .= sprintf('<li><a href="index.php?id=%s" class="btn">%s</a></li>',
 				htmlSanitize($form['ID']),
-				htmlSanitize($form['title'])
+				forms::title($form['ID'])
 				);
 
 		}
