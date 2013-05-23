@@ -669,22 +669,22 @@ function fieldSettingsBindings() {
 
 					case 'radio':
 						var controls = formPreviewWell.find(".controls");
-						var tmp      = '';
+						var tmp      = '<div class="checkboxList">';
 
 						for (var i = 0; i < vals.length; i++) {
 							tmp += '<label class="radio"><input type="radio" name="'+$("#name_"+id).val()+'">'+vals[i]+'</label>';
 						}
-						controls.html(tmp);
+						controls.html(tmp+'</div>');
 						break;
 
 					case 'checkbox':
 						var controls = formPreviewWell.find(".controls");
-						var tmp      = '';
+						var tmp      = '<div class="checkboxList">';
 
 						for (var i = 0; i < vals.length; i++) {
 							tmp += '<label class="checkbox"><input type="checkbox" name="'+$("#name_"+id).val()+'">'+vals[i]+'</label>';
 						}
-						controls.html(tmp);
+						controls.html(tmp+'</div>');
 						break;
 
 					case 'multiselect':
