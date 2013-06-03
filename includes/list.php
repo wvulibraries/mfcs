@@ -298,25 +298,25 @@ class listGenerator {
 			$output .= '</div>';
 			$output .= "</div>"; // heading
 			$output .= sprintf('<div id="collapse%s" class="accordion-body collapse">', $count);
-     		$output .= '<div class="accordion-inner">';
+			$output .= '<div class="accordion-inner">';
 
-     		$output .= '<ul>';
-     		foreach ($metedataForms as $I=>$metadataForm) {
+			$output .= '<ul>';
+			foreach ($metedataForms as $I=>$metadataForm) {
 
-     			if (isset($metaForms[$I])) {
-     				unset($metaForms[$I]);
-     			}
+				if (isset($metaForms[$I])) {
+					unset($metaForms[$I]);
+				}
 
-     			$output .= '<li>';
-     			if (($output .= self::generateAccordionFormList_links($metadataForm,$entry,($entry===TRUE)?TRUE:FALSE)) === FALSE) {
-     				return FALSE;
-     			}
-     			$output .= '</li>';
-     		}
-     		$output .= '</ul>';
+				$output .= '<li>';
+				if (($output .= self::generateAccordionFormList_links($metadataForm,$entry,($entry===TRUE)?TRUE:FALSE)) === FALSE) {
+					return FALSE;
+				}
+				$output .= '</li>';
+			}
+			$output .= '</ul>';
 
-	 		$output .= "</div>"; // inner
-	 		$output .= "</div>"; // body
+			$output .= "</div>"; // inner
+			$output .= "</div>"; // body
 			$output .= "</div>"; // group
 		}
 		$output .= "</div>";
@@ -329,9 +329,9 @@ class listGenerator {
 				if ($metadataForm === FALSE) continue;
 
 				$output .= '<li>';
-     			if (($output .= self::generateAccordionFormList_links($metadataForm,$entry,($entry===TRUE)?TRUE:FALSE)) === FALSE) {
-     				return FALSE;
-     			}
+				if (($output .= self::generateAccordionFormList_links($metadataForm,$entry,($entry===TRUE)?TRUE:FALSE)) === FALSE) {
+					return FALSE;
+				}
 				$output .= '</li>';
 			}
 			$output .= "</ul>";
@@ -372,7 +372,7 @@ class listGenerator {
 
 	}
 
-		/**
+	/**
 	 * Display a list, with optional links, of children for a given object
 	 *
 	 * @param string $objectID The ID of the object
