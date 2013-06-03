@@ -283,6 +283,13 @@ function showFieldSettings(fullID) {
 			else {
 				$("#fieldSettings_fieldset").val(fieldset.val());
 			}
+
+			// Do I show the 'Variables' link?
+			if(-1 != $.inArray(type, ['idno','text','textarea','date','datetime','wysiwyg'])){
+				$('#fieldVariablesLink').show();
+			}else{
+				$('#fieldVariablesLink').hide();
+			}
 		}
 
 	}
@@ -662,24 +669,22 @@ function fieldSettingsBindings() {
 
 					case 'radio':
 						var controls = formPreviewWell.find(".controls");
-						var tmp      = '';
+						var tmp      = '<div class="checkboxList">';
 
-						controls.html('');
 						for (var i = 0; i < vals.length; i++) {
 							tmp += '<label class="radio"><input type="radio" name="'+$("#name_"+id).val()+'">'+vals[i]+'</label>';
 						}
-						controls.append(tmp);
+						controls.html(tmp+'</div>');
 						break;
 
 					case 'checkbox':
 						var controls = formPreviewWell.find(".controls");
-						var tmp      = '';
+						var tmp      = '<div class="checkboxList">';
 
-						controls.html('');
 						for (var i = 0; i < vals.length; i++) {
 							tmp += '<label class="checkbox"><input type="checkbox" name="'+$("#name_"+id).val()+'">'+vals[i]+'</label>';
 						}
-						controls.append(tmp);
+						controls.html(tmp+'</div>');
 						break;
 
 					case 'multiselect':

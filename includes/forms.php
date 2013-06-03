@@ -668,6 +668,7 @@ class forms {
 				$output .= "</div>";
 			}
 			else if ($field['type'] == 'file') {
+				$formHasFiles = true;
 				$output .= '<div style="display: inline-block;">';
 				if(!isnull($objectID)){
 					$output .= empty($object['data'][ $field['name'] ])
@@ -740,10 +741,13 @@ class forms {
 			$output .= "</fieldset>";
 		}
 
-		$output .= sprintf('<input type="submit" value="%s" name="%s" />',
+		$output .= sprintf('<input type="submit" value="%s" name="%s" id="objectSubmitBtn" class="btn" />',
 			(isnull($objectID))?htmlSanitize($form["submitButton"]):htmlSanitize($form["updateButton"]),
 			$objectID ? "updateForm" : "submitForm"
 		);
+		if(isset($formHasFiles) and $formHasFiles){
+			$output .= '<div class="alert alert-block" id="objectSubmitProcessing"><strong>Processing Files</strong><br>Please Wait...</div>';
+		}
 
 		$output .= "</form>";
 
@@ -820,7 +824,7 @@ class forms {
 
 			$output .= $table->display($tableRows);
 
-			$output .= '<input type="submit" name="updateEdit" value="Update" />';
+			$output .= '<input type="submit" name="updateEdit" value="Update" class="btn" />';
 			$output .= "</form>";
 
 			return $output;
@@ -848,20 +852,20 @@ class forms {
 
 		// Perform validations here
 		$valid = TRUE;
-		if (isset($field['format'])) {
+		if (!empty($field['format'])) {
 			if (strtolower($field['format']) == 'characters' || strtolower($field['format']) == 'digits') {
-				if (isset($field['min']) && $field['min'] > strlen($value)) {
+				if (!empty($field['min']) && $field['min'] > strlen($value)) {
 					$valid = FALSE;
 				}
-				if (isset($field['max']) && $field['max'] < strlen($value)) {
+				if (!empty($field['max']) && $field['max'] < strlen($value)) {
 					$valid = FALSE;
 				}
 			}
 			else if (strtolower($field['format']) == 'words') {
-				if (isset($field['min']) && $field['min'] > str_word_count($value)) {
+				if (!empty($field['min']) && $field['min'] > str_word_count($value)) {
 					$valid = FALSE;
 				}
-				if (isset($field['max']) && $field['max'] < str_word_count($value)) {
+				if (!empty($field['max']) && $field['max'] < str_word_count($value)) {
 					$valid = FALSE;
 				}
 			}
@@ -1389,7 +1393,7 @@ class forms {
 			if ($f       === FALSE)       continue;
 			if ($f['ID'] ==  $form['ID']) continue;
 
-			if (self::formsAreCompatible($form,$f)) $forms[] = $f;
+			if (self::formsAreCompatible($form,$f)) $forms[$f['ID']] = $f;
 
 		}
 

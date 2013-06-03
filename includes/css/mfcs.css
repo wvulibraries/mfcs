@@ -182,3 +182,11 @@ ul.checkboxList{
 ul.checkboxList label{
 	width: initial;
 }
+div.checkboxList label{
+	display: block;
+}
+#objectSubmitProcessing{
+	display: none;
+	width: 120px;
+	background: url('processing.gif') no-repeat 135px 35px;
+}

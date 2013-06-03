@@ -691,7 +691,7 @@ $engine->eTemplate("include","header");
 														Value
 														<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="When the form is first displayed, this value will already be prepopulated."></i>
 													</label>
-													<a href="javascript:;" class="pull-right" onclick="$('#defaultValueVariables').modal('show')">Variables</a>
+													<a href="javascript:;" class="pull-right" onclick="$('#defaultValueVariables').modal('show')" id="fieldVariablesLink" style="display: none;">Variables</a>
 													<input type="text" class="input-block-level" id="fieldSettings_value" name="fieldSettings_value" />
 													<span class="help-block hidden"></span>
 													<div id="defaultValueVariables" class="modal hide fade" rel="modal" data-show="false">
