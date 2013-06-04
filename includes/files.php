@@ -636,10 +636,18 @@ class files {
 					$_filename    = pathinfo($originalFile);
 					$filename     = $_filename['filename'];
 					$image        = new Imagick();
+
 					$image->readImage($originalFile);
 
 					// Convert format?
 					if (!empty($options['convertFormat'])) $image->setImageFormat($options['convertFormat']);
+
+					// Change resolution
+					if (isset($options['convertResolution'])) {
+						$image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
+						$image->setImageResolution($options['convertResolution']);
+						$image->resampleImage($options['convertResolution'], $options['convertResolution'], Imagick::FILTER_UNDEFINED, 0);
+					}
 
 					// Add a border
 					if (isset($options['border']) && str2bool($options['border'])) {

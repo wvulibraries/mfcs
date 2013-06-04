@@ -259,6 +259,7 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_file_options_convert").prop("checked",($("#convert_"+id).val()==='true')).change();
 			$("#fieldSettings_file_convert_height").val($("#convertHeight_"+id).val());
 			$("#fieldSettings_file_convert_width").val($("#convertWidth_"+id).val());
+			$("#fieldSettings_file_convert_resolution").val($("#convertResolution_"+id).val());
 			$("#fieldSettings_file_convert_format").val($("#convertFormat_"+id).val());
 			$("#fieldSettings_file_convert_watermark").prop("checked",($("#watermark_"+id).val()==='true')).change();
 			$("#fieldSettings_file_watermark_image").val($("#watermarkImage_"+id).val());
@@ -996,6 +997,13 @@ function fieldSettingsBindings() {
 		$("#convertWidth_"+id).val($(this).val());
 	});
 
+	$("#fieldSettings_file_convert_resolution").change(function() {
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+
+		$("#convertResolution_"+id).val($(this).val());
+	});
+
 	$("#fieldSettings_file_convert_format").change(function() {
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
@@ -1555,6 +1563,7 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="convert_'+id+'" name="convert_'+id+'" value="'+((vals['convert']!=undefined)?vals['convert']:'')+'">';
 			output += '<input type="hidden" id="convertHeight_'+id+'" name="convertHeight_'+id+'" value="'+((vals['convertHeight']!=undefined)?vals['convertHeight']:'')+'">';
 			output += '<input type="hidden" id="convertWidth_'+id+'" name="convertWidth_'+id+'" value="'+((vals['convertWidth']!=undefined)?vals['convertWidth']:'')+'">';
+			output += '<input type="hidden" id="convertResolution_'+id+'" name="convertResolution_'+id+'" value="'+((vals['convertResolution']!=undefined)?vals['convertResolution']:'192')+'">';
 			output += '<input type="hidden" id="convertFormat_'+id+'" name="convertFormat_'+id+'" value="'+((vals['convertFormat']!=undefined)?vals['convertFormat']:'JPG')+'">';
 			output += '<input type="hidden" id="watermark_'+id+'" name="watermark_'+id+'" value="'+((vals['watermark']!=undefined)?vals['watermark']:'')+'">';
 			output += '<input type="hidden" id="watermarkImage_'+id+'" name="watermarkImage_'+id+'" value="'+((vals['watermarkImage']!=undefined)?vals['watermarkImage']:'')+'">';

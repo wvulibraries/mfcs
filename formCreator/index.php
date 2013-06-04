@@ -928,25 +928,32 @@ $engine->eTemplate("include","header");
 											</label>
 
 											<div class="row-fluid">
-												<div class="span4" id="fieldSettings_container_file_convert_height">
+												<div class="span3" id="fieldSettings_container_file_convert_height">
 													<label for="fieldSettings_file_convert_height">
 														Max Height (px)
 													</label>
 													<input type="number" class="input-block-level" id="fieldSettings_file_convert_height" name="fieldSettings_file_convert_height" min="1" />
 												</div>
 
-												<div class="span4" id="fieldSettings_container_file_convert_width">
+												<div class="span3" id="fieldSettings_container_file_convert_width">
 													<label for="fieldSettings_file_convert_width">
 														Max Width (px)
 													</label>
 													<input type="number" class="input-block-level" id="fieldSettings_file_convert_width" name="fieldSettings_file_convert_width" min="1" />
 												</div>
 
-												<div class="span4" id="fieldSettings_container_file_convert_extension">
+												<div class="span3" id="fieldSettings_container_file_convert_reolution">
+													<label for="fieldSettings_file_convert_resolution">
+														Resolution (DPI)
+													</label>
+													<input type="number" class="input-block-level" id="fieldSettings_file_convert_resolution" name="fieldSettings_file_convert_resolution" min="1" />
+												</div>
+
+												<div class="span3" id="fieldSettings_container_file_convert_extension">
 													<label for="fieldSettings_file_convert_format">
 														Format
 													</label>
-													<select class="input-block-level" id="fieldSettings_file_convert_format" name="fieldSettings_file_convert_format">
+												<select class="input-block-level" id="fieldSettings_file_convert_format" name="fieldSettings_file_convert_format">
 														<option value="">Select Format</option>
 														{local var="conversionFormats"}
 													</select>
