@@ -1555,7 +1555,7 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="convert_'+id+'" name="convert_'+id+'" value="'+((vals['convert']!=undefined)?vals['convert']:'')+'">';
 			output += '<input type="hidden" id="convertHeight_'+id+'" name="convertHeight_'+id+'" value="'+((vals['convertHeight']!=undefined)?vals['convertHeight']:'')+'">';
 			output += '<input type="hidden" id="convertWidth_'+id+'" name="convertWidth_'+id+'" value="'+((vals['convertWidth']!=undefined)?vals['convertWidth']:'')+'">';
-			output += '<input type="hidden" id="convertFormat_'+id+'" name="convertFormat_'+id+'" value="'+((vals['convertFormat']!=undefined)?vals['convertFormat']:'')+'">';
+			output += '<input type="hidden" id="convertFormat_'+id+'" name="convertFormat_'+id+'" value="'+((vals['convertFormat']!=undefined)?vals['convertFormat']:'JPG')+'">';
 			output += '<input type="hidden" id="watermark_'+id+'" name="watermark_'+id+'" value="'+((vals['watermark']!=undefined)?vals['watermark']:'')+'">';
 			output += '<input type="hidden" id="watermarkImage_'+id+'" name="watermarkImage_'+id+'" value="'+((vals['watermarkImage']!=undefined)?vals['watermarkImage']:'')+'">';
 			output += '<input type="hidden" id="watermarkLocation_'+id+'" name="watermarkLocation_'+id+'" value="'+((vals['watermarkLocation']!=undefined)?vals['watermarkLocation']:'')+'">';
@@ -1564,9 +1564,9 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="borderWidth_'+id+'" name="borderWidth_'+id+'" value="'+((vals['borderWidth']!=undefined)?vals['borderWidth']:'')+'">';
 			output += '<input type="hidden" id="borderColor_'+id+'" name="borderColor_'+id+'" value="'+((vals['borderColor']!=undefined)?vals['borderColor']:'')+'">';
 			output += '<input type="hidden" id="thumbnail_'+id+'" name="thumbnail_'+id+'" value="'+((vals['thumbnail']!=undefined)?vals['thumbnail']:'')+'">';
-			output += '<input type="hidden" id="thumbnailHeight_'+id+'" name="thumbnailHeight_'+id+'" value="'+((vals['thumbnailHeight']!=undefined)?vals['thumbnailHeight']:'')+'">';
-			output += '<input type="hidden" id="thumbnailWidth_'+id+'" name="thumbnailWidth_'+id+'" value="'+((vals['thumbnailWidth']!=undefined)?vals['thumbnailWidth']:'')+'">';
-			output += '<input type="hidden" id="thumbnailFormat_'+id+'" name="thumbnailFormat_'+id+'" value="'+((vals['thumbnailFormat']!=undefined)?vals['thumbnailFormat']:'')+'">';
+			output += '<input type="hidden" id="thumbnailHeight_'+id+'" name="thumbnailHeight_'+id+'" value="'+((vals['thumbnailHeight']!=undefined)?vals['thumbnailHeight']:'150')+'">';
+			output += '<input type="hidden" id="thumbnailWidth_'+id+'" name="thumbnailWidth_'+id+'" value="'+((vals['thumbnailWidth']!=undefined)?vals['thumbnailWidth']:'150')+'">';
+			output += '<input type="hidden" id="thumbnailFormat_'+id+'" name="thumbnailFormat_'+id+'" value="'+((vals['thumbnailFormat']!=undefined)?vals['thumbnailFormat']:'JPG')+'">';
 			output += '<input type="hidden" id="mp3_'+id+'" name="mp3_'+id+'" value="'+((vals['mp3']!=undefined)?vals['mp3']:'')+'">';
 			break;
 
