@@ -159,7 +159,7 @@ function showFieldSettings(fullID) {
 				case 'email':
 				case 'phone':
 				case 'date':
-				case 'datetime':
+				case 'time':
 				case 'website':
 				default:
 					$("#fieldSettings_container_value").show();
@@ -286,7 +286,7 @@ function showFieldSettings(fullID) {
 			}
 
 			// Do I show the 'Variables' link?
-			if(-1 != $.inArray(type, ['idno','text','textarea','date','datetime','wysiwyg'])){
+			if(-1 != $.inArray(type, ['idno','text','textarea','date','time','wysiwyg'])){
 				$('#fieldVariablesLink').show();
 			}else{
 				$('#fieldVariablesLink').hide();
@@ -1353,8 +1353,8 @@ function newFieldPreview(id,type) {
 				break;
 
 			case 'Time':
-			case 'datetime':
-				output += '<input type="datetime">';
+			case 'time':
+				output += '<input type="time">';
 				break;
 
 			case 'Website':
@@ -1471,8 +1471,8 @@ function newFieldValues(id,type,vals) {
 			break;
 
 		case 'Time':
-		case 'datetime':
-			type = vals['type'] = 'datetime';
+		case 'time':
+			type = vals['type'] = 'time';
 			break;
 
 		case 'Website':
