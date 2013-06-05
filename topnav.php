@@ -29,6 +29,7 @@ if(isset($currentProjects) and sizeof($currentProjects)){
 				<ul class="dropdown-menu">
 					<li><a href="{local var="siteRoot"}formCreator/">New Form</a></li>
 					<li><a href="{local var="siteRoot"}formCreator/list.php">List Forms</a></li>
+					<li><a href="{local var="siteRoot"}formCreator/copy.php">Copy Form</a></li>
 				</ul>
 			</li>
 			<li class="dropdown-submenu">
