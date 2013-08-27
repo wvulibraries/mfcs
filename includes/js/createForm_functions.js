@@ -194,9 +194,6 @@ function showFieldSettings(fullID) {
 				$("#fieldSettings_help_type").val('').change();
 			}
 
-			$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change();
-			$("#fieldSettings_choices_null").prop("checked",($("#choicesNull_"+id).val()==='true')).change();
-
 			var choicesOptions_val = $("#choicesOptions_"+id).val();
 			if (choicesOptions_val != undefined) {
 				var opts                         = choicesOptions_val.split("%,%");
@@ -212,6 +209,9 @@ function showFieldSettings(fullID) {
 
 			$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
 			$("#fieldSettings_choices_fieldSelect").val($("#choicesField_"+id).val()).change();
+
+			$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change(); // Must be after options stuff
+			$("#fieldSettings_choices_null").prop("checked",($("#choicesNull_"+id).val()==='true')).change();
 
 			fieldSettings_options_required.prop("checked",($("#required_"+id).val()==='true'));
 			fieldSettings_options_duplicates.prop("checked",($("#duplicates_"+id).val()==='true'));
