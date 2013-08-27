@@ -203,12 +203,11 @@ function showFieldSettings(fullID) {
 				var fieldSettings_choices_manual = $("#fieldSettings_choices_manual");
 				var tmp                          = '';
 
-				fieldSettings_choices_manual.html('');
+				// Update left panel
 				for (var i = 0; i < opts.length; i++) {
 					tmp += addChoice(opts[i],$("#choicesDefault_"+id).val());
 				}
-				fieldSettings_choices_manual.append(tmp);
-				fieldSettings_choices_manual.find("input[name=fieldSettings_choices_text]").keyup();
+				fieldSettings_choices_manual.html(tmp).find("input[name=fieldSettings_choices_text]").keyup();
 			}
 
 			$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
@@ -484,7 +483,7 @@ function fieldSettingsBindings() {
 		var clickState      = $(this).prop('checked');
 		$("#choicesNull_"+id).val(clickState);
 		if($("#fieldSettings_choices_type").val() == 'manual'){
-			$('#fieldSettings_choices_manual input[name=fieldSettings_choices_text]:first').keyup();
+			$('#fieldSettings_choices_manual').find('input[name=fieldSettings_choices_text]:first').keyup();
 		}else{
 			if(clickState){
 				formPreviewWell.find(".control-group > .controls > :input").append('<option value="">Make a selection</option>');
@@ -590,6 +589,7 @@ function fieldSettingsBindings() {
 			var val             = $(this).val();
 			var vals            = [];
 
+			// Change value in hidden field
 			$("#fieldSettings_choices_manual").find("input[name=fieldSettings_choices_text]").each(function() {
 				vals.push($(this).val());
 			});
@@ -600,11 +600,11 @@ function fieldSettingsBindings() {
 					var input = formPreviewWell.find(".control-group > .controls > :input");
 					var tmp   = '';
 
-					input.html('');
+					// Set options in preview pane
 					for (var i = 0; i < vals.length; i++) {
 						tmp += '<option value="'+vals[i]+'">'+vals[i]+'</option>';
 					}
-					input.append(tmp);
+					input.html(tmp);
 					break;
 
 				case 'radio':
@@ -647,6 +647,7 @@ function fieldSettingsBindings() {
 			var val             = $(this).val();
 			var vals            = [];
 
+			// Change value in hidden field
 			$("#fieldSettings_choices_manual").find("input[name=fieldSettings_choices_text]").each(function() {
 				vals.push($(this).val());
 			});
@@ -658,14 +659,14 @@ function fieldSettingsBindings() {
 						var input = formPreviewWell.find(".control-group > .controls > :input");
 						var tmp   = '';
 
-						input.html('');
+						// Set options in preview pane
 						if($('#fieldSettings_choices_null').prop('checked')){
 							tmp += '<option value="">Make a selection</option>';
 						}
 						for (var i = 0; i < vals.length; i++) {
 							tmp += '<option value="'+vals[i]+'">'+vals[i]+'</option>';
 						}
-						input.append(tmp);
+						input.html(tmp);
 						break;
 
 					case 'radio':
