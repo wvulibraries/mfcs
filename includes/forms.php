@@ -74,7 +74,7 @@ class forms {
 			return FALSE;
 		}
 
-		if (!isempty($form['navigation']) && ($form['navigation'] = decodeFields($form['navigation'])) === FALSE) {
+		if (!is_empty($form['navigation']) && ($form['navigation'] = decodeFields($form['navigation'])) === FALSE) {
 			errorHandle::newError(__METHOD__."() - navigation!", errorHandle::DEBUG);
 			errorHandle::errorMsg("Error retrieving form.");
 			return FALSE;

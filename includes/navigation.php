@@ -42,6 +42,8 @@ class navigation {
 		$output       = "";
 		$currentGroup = "";
 
+$output .= '<li>Navigation: <pre>'.print_r($form['navigation'], TRUE).'</pre></li>';
+
 		if(!is_array($form['navigation'])) return $output;
 		foreach ($form['navigation'] as $item) {
 
@@ -50,7 +52,7 @@ class navigation {
 				if ($currentGroup != "") {
 					$output .= "</ul></li>";
 				}
-				if (!isempty($item['grouping'])) {
+				if (!is_empty($item['grouping'])) {
 					$output .= sprintf('<li><strong>%s</strong><ul>',
 						$item['grouping']
 					);

@@ -7,7 +7,7 @@ function sortableForm() {
 		connectWith: "#formCreator ul.sortable",
 		revert: true,
 		placeholder: "highlight",
-		update: function(event, ui) {
+		receive: function(event, ui) {
 
 			// Only perform this if it's a brand new field
 			if ($(ui.item).hasClass("ui-draggable")) {
@@ -20,7 +20,7 @@ function sortableForm() {
 				addNewField(ui.item);
 			}
 
-			$(ui.item).closest("li").click();
+			$(ui.item).parents("li").click();
 			$(ui.item).click();
 
 			sortableForm();
@@ -278,6 +278,9 @@ function showFieldSettings(fullID) {
 				if (parentFieldset.length > 0) {
 					var parentFieldsetID = parentFieldset.prop("id").split("_")[1];
 					fieldset.val($("#fieldset_"+parentFieldsetID).val());
+				}
+				else {
+					fieldset.val('');
 				}
 			}
 			else {
@@ -1122,7 +1125,7 @@ function fieldSettingsBindings() {
 		var val             = $(this).val();
 
 		formPreviewWell.find(".fieldPreview legend").text(val);
-		$("#fieldset_"+id).val(val);
+		formPreviewWell.find('input[name^=fieldset_]').val(val);
 	});
 }
 
@@ -1635,7 +1638,7 @@ function sortableNav() {
 		connectWith: "#navigation ul.sortable",
 		revert: true,
 		placeholder: "highlight",
-		update: function(event, ui) {
+		receive: function(event, ui) {
 
 			// Only perform this if it's a brand new field
 			if ($(ui.item).hasClass("ui-draggable")) {
@@ -1648,7 +1651,7 @@ function sortableNav() {
 				addNew(ui.item);
 			}
 
-			$(ui.item).closest("li").click();
+			$(ui.item).parents("li").click();
 			$(ui.item).click();
 
 			sortableNav();
@@ -1673,9 +1676,10 @@ function settingsBindings() {
 		var groupingsPreviewWell = groupingsPreview.find(".well");
 		var id                   = groupingsPreviewWell.prop("id").split("_")[1];
 		var val                  = $(this).val();
-		var before               = groupingsPreviewWell.find(".groupingPreview i");
-		var after                = groupingsPreviewWell.find(".groupingPreview ul");
-		var contents             = groupingsPreviewWell.find(".groupingPreview").contents();
+		var groupingPreview      = groupingsPreviewWell.find(".groupingPreview");
+		var before               = groupingPreview.find("i");
+		var after                = groupingPreview.find("ul");
+		var contents             = groupingPreview.contents();
 
 		// remove old label
 		contents.slice(contents.index(before)+1, contents.index(after)).remove();
@@ -1683,7 +1687,7 @@ function settingsBindings() {
 		// add new label
 		after.before(val);
 
-		$("#nav_grouping_"+id).val(val);
+		groupingsPreviewWell.find('input[name^=nav_grouping_]').val(val);
 		$("#nav_label_"+id).val(val);
 	});
 
@@ -1718,13 +1722,14 @@ function showSettings(fullID) {
 		$("#noGroupingSelected").show();
 	}
 	else {
-		var id   = fullID.split("_")[1];
-		var type = $("#nav_type_"+id).val();
+		var id       = fullID.split("_")[1];
+		var type     = $("#nav_type_"+id).val();
+		var grouping = $("#nav_grouping_"+id);
 
 		// Show the form
 		if (type == "grouping") {
 			$("#groupingsSettings_container_grouping").show();
-			$("#groupingsSettings_grouping").val($("#nav_grouping_"+id).val()).keyup();
+			$("#groupingsSettings_grouping").val(grouping.val()).keyup();
 		}
 		else {
 			switch(type) {
@@ -1748,11 +1753,19 @@ function showSettings(fullID) {
 				$("#groupingsSettings_label").removeAttr("disabled");
 			}
 
-			if ($("#nav_type_"+id).val() != 'grouping') {
-				$("#nav_grouping_"+id).val($("#nav_grouping_"+id).closest("li").closest("li").find("input[name^=nav_grouping_]").val());
+			if (type != 'grouping') {
+				var parentGrouping = grouping.parents("li").parents("li");
+
+				if (parentGrouping.length > 0) {
+					var parentGroupingID = parentGrouping.prop("id").split("_")[1];
+					grouping.val($("#nav_grouping_"+parentGroupingID).val());
+				}
+				else {
+					grouping.val('');
+				}
 			}
 			else {
-				$("#groupingsSettings_grouping").val($("#nav_grouping_"+id).val());
+				$("#groupingsSettings_grouping").val(grouping.val());
 			}
 
 			$("#groupingsSettings_label").val($("#nav_label_"+id).val()).keyup();
