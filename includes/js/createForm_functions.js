@@ -7,7 +7,7 @@ function sortableForm() {
 		connectWith: "#formCreator ul.sortable",
 		revert: true,
 		placeholder: "highlight",
-		receive: function(event, ui) {
+		update: function(event, ui) {
 
 			// Only perform this if it's a brand new field
 			if ($(ui.item).hasClass("ui-draggable")) {
@@ -1638,7 +1638,7 @@ function sortableNav() {
 		connectWith: "#navigation ul.sortable",
 		revert: true,
 		placeholder: "highlight",
-		receive: function(event, ui) {
+		update: function(event, ui) {
 
 			// Only perform this if it's a brand new field
 			if ($(ui.item).hasClass("ui-draggable")) {
