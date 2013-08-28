@@ -42,8 +42,6 @@ class navigation {
 		$output       = "";
 		$currentGroup = "";
 
-$output .= '<li>Navigation: <pre>'.print_r($form['navigation'], TRUE).'</pre></li>';
-
 		if(!is_array($form['navigation'])) return $output;
 		foreach ($form['navigation'] as $item) {
 
