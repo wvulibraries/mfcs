@@ -182,6 +182,32 @@ class objects {
 
 	}
 
+	// objects is an array of objects
+	// sorts based on the title field defined for the form that created the objects
+	// objects are assumed to be from the same form
+	// 
+	//  if $sortField is blank, will sort on the title field. sortField overrides that. must be a valid 
+	//  field in the data index
+	
+	public static function sort($objects,$sortField=NULL) {
+
+		if (isnull($sortField)) {
+			$formID    = $objects[0]['formID'];
+			$sortField = forms::getObjectTitleField($formID);
+		}
+
+		$tmp = Array(); 
+
+		foreach($objects as &$object) {
+			$tmp[] = &$object['data'][$sortField]; 
+		}
+
+		array_multisort($tmp, $objects); 
+
+		return $objects;
+
+	}
+
 	public static function checkObjectInForm($formID,$objectID) {
 		$object = self::get($objectID);
 
