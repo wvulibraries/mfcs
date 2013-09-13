@@ -184,7 +184,7 @@ $engine->eTemplate("include","header");
 ?>
 
 {local var="projectWarning"}
-<h1>test</h1>
+
 <section>
 	<header class="page-header">
 		<h1>{local var="actionHeader"} Object - {local var="formName"}</h1>
