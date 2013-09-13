@@ -90,6 +90,7 @@ $(function(){
         .on('click',  '.metadataObjectEditor', handler_setupMetadataModal)
         .on('change', '#searchFormSelect',     handler_setupSearchFormFields)
         .on('click',  '.metadataListAccordionToggle', handler_metadataListAccordionToggle)
+        .on('submit', 'form[name=insertForm]', select_metadataMultiSelects)
 
     $('#metadataModal').bind('keypress keydown keyup', function(e){
        if(e.keyCode == 13) { e.preventDefault(); }
@@ -98,6 +99,10 @@ $(function(){
     $("#objectListingTable").tablesorter(); 
 
 });
+
+function select_metadataMultiSelects() {
+    $('.multiSelectContainer option').prop('selected', 'selected');
+}
 
 function handler_metadataListAccordionToggle() {
     event.preventDefault();
