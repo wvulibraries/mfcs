@@ -1,3 +1,4 @@
+
 <?php
 include("../header.php");
 recurseInsert("acl.php","php");
@@ -66,6 +67,12 @@ try {
 
 	// handle submission
 	if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
+		// Testing. Displays the submission array
+		// 
+		// print "1<pre>";
+		// var_dump($engine->cleanPost['MYSQL']);
+		// print "</pre>";
+		// exit;
 		if (forms::submit($engine->cleanGet['MYSQL']['formID']) === FALSE) {
 			throw new Exception("Error Submitting Form.");
 		}
@@ -177,7 +184,7 @@ $engine->eTemplate("include","header");
 ?>
 
 {local var="projectWarning"}
-
+<h1>test</h1>
 <section>
 	<header class="page-header">
 		<h1>{local var="actionHeader"} Object - {local var="formName"}</h1>
