@@ -205,10 +205,12 @@ class objects {
 	public static function add($formID,$metadata,$objectID = NULL) {
 
 		if (!is_array($metadata)) {
+			errorHandle::newError(__METHOD__."() - : metedata is not array", errorHandle::DEBUG);
 			return FALSE;
 		}
 
-		if (self::validID(FALSE,$objectID)) {
+		if (!self::validID(FALSE,$objectID)) {
+			errorHandle::newError(__METHOD__."() - : invalid objectID provided", errorHandle::DEBUG);
 			return FALSE;
 		}
 
@@ -216,15 +218,16 @@ class objects {
 		foreach ($metadata as $I=>$V) {
 			http::setPost($I,$V);
 		}
-		
+
 		// submit to forms::submit 
-		return forms::submit($formID,$objectID);
+		return forms::submit($formID,$objectID,TRUE);
 
 	}
 
 	public static function update($formID,$metadata,$objectID) {
 
 		if (!is_array($metadata)) {
+			errorHandle::newError(__METHOD__."() - : metedata is not array", errorHandle::DEBUG);
 			return FALSE;
 		}
 
