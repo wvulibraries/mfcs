@@ -175,6 +175,10 @@ label.formLabel{
 	display: inline-block;
 }
 
+.multiSelectContainer select {
+	width: 600px;
+}
+
 ul.checkboxList{
 	list-style: none;
 	margin: 5px;
