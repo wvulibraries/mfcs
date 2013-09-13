@@ -74,7 +74,7 @@ class forms {
 			return FALSE;
 		}
 
-		if (!is_empty($form['navigation']) && ($form['navigation'] = decodeFields($form['navigation'])) === FALSE) {
+		if (!isempty($form['navigation']) && ($form['navigation'] = decodeFields($form['navigation'])) === FALSE) {
 			errorHandle::newError(__METHOD__."() - navigation!", errorHandle::DEBUG);
 			errorHandle::errorMsg("Error retrieving form.");
 			return FALSE;
@@ -408,6 +408,11 @@ class forms {
 
 	private static function drawMultiselectBoxes($field,$fieldChoices) {
 		$output = "";
+
+		if(isset($field['choicesNull']) && str2bool($field['choicesNull'])){
+			$output .= '<option value="">Make a selection</option>';
+		}
+
 		foreach ($fieldChoices as $choice) {
 			$output .= sprintf('<option value="%s" %s>%s</option>',
 				htmlSanitize($choice['value']),
@@ -642,7 +647,7 @@ class forms {
 					htmlSanitize($field['name'])
 				);
 
-				if (isset($object['data'][$field['name']])) {
+				if (isset($object['data'][$field['name']]) && is_array($object['data'][$field['name']])) {
 					foreach ($object['data'][$field['name']] as $selectedItem) {
 						$tmpObj  = objects::get($selectedItem);
 						$output .= sprintf('<option value="%s">%s</option>',
@@ -650,6 +655,11 @@ class forms {
 							$engine->openDB->escape($tmpObj['data'][$field['choicesField']])
 						);
 					}
+				}
+				else if (isset($object['data'][$field['name']])) {
+					print "<pre>";
+					var_dump($object['data'][$field['name']]);
+					print "</pre>";
 				}
 				$output .= '</select><br />';
 				$output .= sprintf('<select name="%s_available" id="%s_available" data-type="%s" data-formid="%s" data-fieldname="%s" %s onchange="addItemToID(\'%s\', this.options[this.selectedIndex]);">',
@@ -1073,7 +1083,8 @@ class forms {
 	}
 
 	// NOTE: data is being saved as RAW from the array.
-	public static function submit($formID,$objectID=NULL) {
+	public static function submit($formID,$objectID=NULL,$importing=FALSE) {
+
 		$engine = EngineAPI::singleton();
 
 		if (isnull($objectID)) {
@@ -1085,6 +1096,7 @@ class forms {
 
 		// Get the current Form
 		if (($form = self::get($formID)) === FALSE) {
+			errorHandle::newError(__METHOD__."() - retrieving form by formID", errorHandle::DEBUG);
 			return FALSE;
 		}
 
@@ -1101,7 +1113,7 @@ class forms {
 
 		if (usort($fields, 'sortFieldsByPosition') !== TRUE) {
 			errorHandle::newError(__METHOD__."() - usort", errorHandle::DEBUG);
-			errorHandle::errorMsg("Error retrieving form.");
+			if (!$importing) errorHandle::errorMsg("Error retrieving form.");
 			return FALSE;
 		}
 
@@ -1135,6 +1147,7 @@ class forms {
 
 				$tmpArray = files::processObjectUploads($objectID, $uploadID);
 				if (!isset($tmpArray['uuid'])) {
+					errorHandle::newError(__METHOD__."() - file uuid", errorHandle::DEBUG);
 					return FALSE;
 				}
 
@@ -1156,14 +1169,18 @@ class forms {
 			}
 		}
 
-		if (isset($engine->errorStack['error'])) {
+		if (isset($engine->errorStack['error']) && count($engine->errorStack['error']) > 0) {
+			print "<pre>";
+			var_dump($engine->errorStack['error']);
+			print "</pre>";
+			errorHandle::newError(__METHOD__."() - Error stack not empty.", errorHandle::DEBUG);
 			return FALSE;
 		}
 
 		// start transactions
 		$result = $engine->openDB->transBegin("objects");
 		if ($result !== TRUE) {
-			errorHandle::errorMsg("Database transactions could not begin.");
+			if (!$importing) errorHandle::errorMsg("Database transactions could not begin.");
 			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
 			return FALSE;
 		}
@@ -1177,6 +1194,12 @@ class forms {
 				time(),
 				time()
 			);
+
+
+			// print "One <pre>";
+			// var_dump($sql);
+			// print "</pre>";
+
 		}
 		else {
 			// place old version into revision control
@@ -1188,7 +1211,7 @@ class forms {
 				$engine->openDB->transRollback();
 				$engine->openDB->transEnd();
 
-				errorHandle::errorMsg("Error inserting revision.");
+				if (!$importing) errorHandle::errorMsg("Error inserting revision.");
 				errorHandle::newError(__METHOD__."() - unable to insert revisions", errorHandle::DEBUG);
 				return FALSE;
 			}
@@ -1219,7 +1242,6 @@ class forms {
 			localvars::add("newObjectID",$objectID);
 		}
 
-
 		// if it is an object form (not a metadata form)
 		// do the IDNO stuff
 		if ($form['metadata'] == "0") {
@@ -1237,7 +1259,7 @@ class forms {
 				$engine->openDB->transRollback();
 				$engine->openDB->transEnd();
 
-				errorHandle::errorMsg("Error generating / getting IDNO.");
+				if (!$importing) errorHandle::errorMsg("Error generating / getting IDNO.");
 				return FALSE;
 			}
 
@@ -1309,6 +1331,7 @@ class forms {
 			}
 		}
 
+
 		// Add it to the users current projects
 		if ($newObject === TRUE) {
 			if (($currentProjects = users::loadProjects()) === FALSE) {
@@ -1332,10 +1355,10 @@ class forms {
 		$engine->openDB->transEnd();
 
 		if ($newObject === TRUE) {
-			errorHandle::successMsg("Object created successfully.");
+			if (!$importing) errorHandle::successMsg("Object created successfully.");
 		}
 		else {
-			errorHandle::successMsg("Object updated successfully.");
+			if (!$importing) errorHandle::successMsg("Object updated successfully.");
 		}
 
 		return TRUE;
