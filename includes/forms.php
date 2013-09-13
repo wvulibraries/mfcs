@@ -349,6 +349,8 @@ class forms {
 				return FALSE;
 			}
 
+			$objects = objects::sort($objects);
+
 			if ($field['required'] == "true" && count($objects) < 1) {
 				errorHandle::errorMsg("Required linked table doesn't have any options.");
 				return FALSE;
