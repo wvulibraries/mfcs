@@ -140,6 +140,12 @@ class forms {
 
 	}
 
+	public static function getObjectTitleField($formID) {
+		$form = self::get($formID);
+
+		return $form['objectTitleField'];
+	}
+
 	public static function isContainer($formID) {
 		$form = self::get($formID);
 
