@@ -1167,7 +1167,7 @@ $engine->eTemplate("include","header");
 									<input type="hidden" name="form">
 									<input type="hidden" name="fields">
 									<input type="submit" class="btn btn-large btn-block btn-primary" name="submitForm" value="{local var="thisSubmitButton"}" disabled>
-									<p class="noJavaScriptWarning" style="color:red; font-weight: bold; text-align: center;">JavaScript failed to load!</p>
+									<noscript><p style="color:red; text-align: center; font-weight: bold;">JavaScript failed to load!</p></noscript>
 									{engine name="csrf"}
 								</form>
 							</div>
@@ -1201,7 +1201,7 @@ $engine->eTemplate("include","header");
 			{local var="projectOptions"}
 			{engine name="csrf"}
 			<input type="submit" class="btn btn-primary" name="projectForm" disabled>
-			<p class="noJavaScriptWarning" style="color:red; font-weight: bold; text-align: center;">JavaScript failed to load!</p>
+			<noscript><p style="color:red; text-align: center; font-weight: bold;">JavaScript failed to load!</p></noscript>
 			</form>
 		</div>
 		<?php } ?>

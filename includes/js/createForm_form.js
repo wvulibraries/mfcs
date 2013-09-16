@@ -169,5 +169,4 @@ $(function() {
 
 	// Enable the submit button and hide thenoJavaScriptWarning
 	$(':submit').removeAttr('disabled');
-	$('.noJavaScriptWarning').hide();
 });
