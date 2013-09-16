@@ -77,9 +77,9 @@ class mfcsSearch {
 
 		if (!isempty($post['startDate']) && !isempty($post['endDate'])) {
 			$date = TRUE;
-			$dateWhere = sprintf("`createDate`>='%s' AND createDate <='%s",
-				$post['startDate'],
-				$post['endDate']);
+			$dateWhere = sprintf(" AND `createTime`>='%s' AND `createTime` <='%s'",
+				strtotime($post['startDate']),
+				strtotime($post['endDate']));
 		}
 		else {
 			$date = FALSE;
