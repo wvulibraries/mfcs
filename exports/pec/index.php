@@ -2,6 +2,13 @@
 
 include("../../header.php");
 
+// Output File:
+$outFileName = "pec-data_".(time()).".xml";
+$outFile     = "./dlxsXmlImageClass/".$outFileName;
+
+localvars::add("outFile",$outFile);
+localvars::add("outFileName",$outFileName);
+
 function getHeadingByID($id) {
 	$object = objects::get($id);
 	return($object['data']['name']);
@@ -29,6 +36,9 @@ foreach ($objects as $object) {
 
 	sort($creators);
 	sort($subjects);
+
+	// array_filter($creators);
+	// array_filter($subjects);
 
 	$creator = implode("|||", $creators);
 	$subject = implode("|||", $subjects);
@@ -69,7 +79,15 @@ foreach ($objects as $object) {
 
 $xml .= "</FMPDSORESULT>";
 
-print $xml;
+if (!$file = fopen($outFile,"w")) {
+	errorHandle::newError(__METHOD__."() - Error creating file", errorHandle::DEBUG);
+	print "error opening file.";
+	exit;
+}
+fwrite($file, $xml);
+fclose($file);
 
 ?>
 
+Download: 
+<a href="{local var="outFile"}">{local var="outFileName"}</a>
