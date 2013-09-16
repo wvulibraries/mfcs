@@ -80,7 +80,7 @@ class mfcsSearch {
 		}
 		else {
 			$date = FALSE;
-			$dataWhere = "";
+			$dateWhere = "";
 		}
 
 		$sql       = sprintf("SELECT `ID` FROM `objects` WHERE `formID`='%s' %s",
