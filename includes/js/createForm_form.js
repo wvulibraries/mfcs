@@ -166,4 +166,8 @@ $(function() {
 	});
 
 	$('#progressModal').modal('hide');
+
+	// Enable the submit button and hide thenoJavaScriptWarning
+	$(':submit').removeAttr('disabled');
+	$('.noJavaScriptWarning').hide();
 });
