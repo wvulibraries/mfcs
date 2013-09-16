@@ -12,14 +12,8 @@ $breadCrumbs = array(
 
 // Process search Submission
 if (isset($engine->cleanPost['MYSQL']['search'])) {
-	// print "<pre>";
-	// var_dump($engine->cleanPost['MYSQL']);
-	// print "</pre>";
-	// throw new Exception("");	
-	
 	try {
-
-		if (isnull($engine->cleanPost['MYSQL']['formList'])) {
+		if(isnull($engine->cleanPost['MYSQL']['formList'])){
 			throw new Exception("No form selected.");
 		}
 
@@ -27,14 +21,8 @@ if (isset($engine->cleanPost['MYSQL']['search'])) {
 			throw new Exception("No Query Provided.");
 		}
 
-		if (($results = mfcsSearch::search($engine->cleanPost['MYSQL'])) === FALSE) {
-			throw new Exception("Error retrieving results");
-		}
-
-		// print "<pre>";
-		// var_dump($results);
-		// print "</pre>";
-
+		$results = mfcsSearch::search($engine->cleanPost['MYSQL']);
+		if($results === FALSE) throw new Exception("Error retrieving results");
 	}
 	catch(Exception $e) {
 		errorHandle::errorMsg($e->getMessage());
