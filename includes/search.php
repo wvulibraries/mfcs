@@ -72,6 +72,9 @@ class mfcsSearch {
 			return FALSE;
 		}
 
+		// Save the post for later use (like pagination pages)
+		sessionSet('searchPOST', $post);
+
 		if (!isempty($post['startDate']) && !isempty($post['endDate'])) {
 			$date = TRUE;
 			$dateWhere = sprintf("`createDate`>='%s' AND createDate <='%s",

@@ -31,8 +31,6 @@ if (isset($engine->cleanPost['MYSQL']['search'])) {
 			throw new Exception("Error retrieving results");
 		}
 
-		localvars::add("objectTable",listGenerator::createAllObjectList(0,50,NULL,$results));
-
 		// print "<pre>";
 		// var_dump($results);
 		// print "</pre>";
@@ -41,7 +39,18 @@ if (isset($engine->cleanPost['MYSQL']['search'])) {
 	catch(Exception $e) {
 		errorHandle::errorMsg($e->getMessage());
 	}
+}elseif(isset($engine->cleanGet['MYSQL']['page'])){
+	$searchPOST = sessionGet('searchPOST');
+	if($searchPOST){
+		$results = mfcsSearch::search($searchPOST);
+		if($results === FALSE) throw new Exception("Error retrieving results");
+	}
+}else{
+	sessionDelete('searchPOST');
 }
+
+if(isset($results)) localvars::add("objectTable",listGenerator::createAllObjectList(0,50,NULL,$results));
+
 
 // build the search interface, we do this regardless of 
 try {
