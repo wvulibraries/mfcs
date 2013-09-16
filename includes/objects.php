@@ -89,8 +89,8 @@ class objects {
 		$engine = EngineAPI::singleton();
 
 		if (!isnull($length)) {
-			$start = $engine->openDB->escape($start);
-			$lengt = $engine->openDB->escape($length);
+			$start  = $engine->openDB->escape($start);
+			$length = $engine->openDB->escape($length);
 		}
 
 		$sql       = sprintf("SELECT `ID` FROM `objects` %s %s",
