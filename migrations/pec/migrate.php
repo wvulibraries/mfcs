@@ -2,6 +2,72 @@
 
 include("../../header.php");
 
+// Testing array escape in engineDB
+// 
+// $foo = array('this "and" that / and \ stuff \'',"'foo' bar' this \'that");
+// print "<pre>";
+// var_dump($foo);
+// print "</pre>";
+
+// $foo = $engine->openDB->escape($foo);
+
+// print "<pre>";
+// var_dump($foo);
+// print "</pre>";
+
+// exit;
+
+// This error handler dumps strings to find bad characters
+function errorHandler($errno, $errmsg, $filename, $linenum, $vars) {
+
+	$errorReporting = ini_get('error_reporting'); 
+        if($errorReporting === 0 || !($errorReporting & $errno)) return FALSE;
+
+	$errortype = array (
+                E_ERROR              => 'Error',
+                E_WARNING            => 'Warning',
+                E_PARSE              => 'Parsing Error',
+                E_NOTICE             => 'Notice',
+                E_CORE_ERROR         => 'Core Error',
+                E_CORE_WARNING       => 'Core Warning',
+                E_COMPILE_ERROR      => 'Compile Error',
+                E_COMPILE_WARNING    => 'Compile Warning',
+                E_USER_ERROR         => 'User Error',
+                E_USER_WARNING       => 'User Warning',
+                E_USER_NOTICE        => 'User Notice',
+                E_STRICT             => 'Runtime Notice',
+                E_RECOVERABLE_ERROR  => 'Catchable Fatal Error'
+                );
+
+		$err = sprintf("%s -- ",
+			$errortype[$errno],
+			wddx_serialize_value($vars,"Variables")
+			);
+
+		print "<pre>";
+		var_dump($vars);
+		print "</pre>";
+		error_log($err);
+}
+// set_error_handler("errorHandler");
+
+function convertString($string) {
+
+	// Formatting
+	$string = preg_replace('/%Oitalic%/',   '<em>',      $string);
+	$string = preg_replace('/%Citalic%/',   '</em>',     $string);
+	$string = preg_replace('/%Obold%/',     '<strong>',  $string);
+	$string = preg_replace('/%Cbold%/',     '</strong>', $string);
+	$string = preg_replace('/%underline%/', '<u>',       $string);
+	$string = preg_replace('/%underline%/', '</u>',      $string);
+	$string = preg_replace('/\|\|\|/',           '<br />',    $string);
+
+	// Links
+	$string = preg_replace('/%link url="(.+?)"%(.+?)%\/link%/', '<a href="$1"><u>$2</u></a>', $string);
+
+	return $string;
+}
+
 function parseHeadings($table,$record) {
 
 	switch ($table) {
@@ -52,10 +118,6 @@ function parseHeadings($table,$record) {
 			$return[] = (string)$metadata[$metaTable][$item]['objID'];
 		}
 	}
-
-	print "<pre>";
-	var_dump($return);
-	print "</pre>";
 
 	return $return;
 
@@ -181,15 +243,13 @@ foreach ($metadataSQL as $I=>$sql) {
 		$metadata[$I][$row['ID']]['title'] = $row['title'];
 		$metadata[$I][$row['ID']]['objID'] = localvars::get("newObjectID");
 
-		// print "objID<pre>";
-		// var_dump($metadata[$I][$row['ID']]['objID']);
-		// print "</pre>";
 	}
 }
 
 foreach ($records as $identifier=>$record) {
 	$submitArray = array();
 	
+	$submitArray['idno']                 = $record['identifier'];
 	$submitArray['identifier']           = $record['identifier'];
 	$submitArray['publicRelease']        = ($record['publicRelease'] == "1")?"Yes":"No"; // "No" | "Yes"
 	$submitArray['hasMedia']             = ($record['hasMedia']      == "1")?"Yes":"No"; // "No" | "Yes""
@@ -214,9 +274,9 @@ foreach ($records as $identifier=>$record) {
 	$submitArray['subjectGeoName']       = parseHeadings('subjectGeoName',$record); //
 
 
-	print "<pre>";
-	var_dump($submitArray);
-	print "</pre>";
+	// manipulate data
+	$submitArray['description']          = convertString($submitArray['description']);
+	$submitArray['scopeAndContentsNote'] = convertString($submitArray['scopeAndContentsNote']);
 
 	if (objects::add("2",$submitArray) !== TRUE) {
 		print "error submiting formID ".$formID;
@@ -229,9 +289,8 @@ foreach ($records as $identifier=>$record) {
 		exit;
 	}
 
-exit;
-
 }
+
 
 
 
