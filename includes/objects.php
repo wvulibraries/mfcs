@@ -174,7 +174,7 @@ class objects {
 
 		$engine = EngineAPI::singleton();
 
-		$sql       = sprintf("SELECT `objects`.`ID` as `ID` FROM `objects` LEFT JOIN `objectProjects` ON `objectProjects`.`objectID`=`objects`.`ID` WHERE `objectProjects`.`projectID`='%s'",
+		$sql       = sprintf("SELECT `objects`.`ID` as `ID` FROM `objects` LEFT JOIN `objectProjects` ON `objectProjects`.`objectID`=`objects`.`ID` WHERE `objectProjects`.`projectID`='%s' ORDER BY LENGTH(`idno`), `idno`",
 			$engine->openDB->escape($projectID)
 			);
 		$sqlResult = $engine->openDB->query($sql);
