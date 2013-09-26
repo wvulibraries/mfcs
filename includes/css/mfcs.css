@@ -173,6 +173,7 @@ label.formLabel{
 
 .multiSelectContainer {
 	display: inline-block;
+	padding-bottom: 15px;
 }
 
 .multiSelectContainer select {

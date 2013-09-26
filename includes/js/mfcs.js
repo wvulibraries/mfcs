@@ -275,3 +275,19 @@ function addItemToID(id, item) {
 
     theSelect.options[theSelect.length] = new Option(item.text, item.value);
 }
+
+function removeFromList(id) {
+    alert("here");
+    var theSelect = document.getElementById(id);
+
+       for (var selIndex = theSelect.length - 1; selIndex >= 0; selIndex--) 
+       { 
+            // Is this option selected? 
+            if (theSelect.options[selIndex].selected) 
+            { 
+                // Delete the option in the first select box. 
+                theSelect[selIndex] = null; 
+            } 
+        } 
+
+}

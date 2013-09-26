@@ -683,6 +683,11 @@ class forms {
 				$output .= self::drawFieldChoices($field,$fieldChoices);
 
 				$output .= '</select>';
+				$output .= "<br />";
+				$output .= sprintf('<button type="button" onclick="removeFromList(\'%s\')" class="btn">Remove Selected</button>',
+					htmlSanitize($field['name'])
+					);
+				
 				$output .= "</div>";
 			}
 			else if ($field['type'] == 'file') {
