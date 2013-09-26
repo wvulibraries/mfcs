@@ -708,13 +708,16 @@ class forms {
 				$output .= '</div>';
 			}
 			else {
+
 				if ($field['type'] == "idno") {
 					$field['type'] = "text";
+					if (!isset($object['data'][$field['name']])) $object['data'][$field['name']] = $object['idno'];
 				}
 
 				$fieldValue = isset($object['data'][$field['name']])
 					? htmlSanitize($object['data'][$field['name']])
 					: htmlSanitize(self::applyFieldVariables($field['value']));
+
 				$output .= sprintf('<input type="%s" name="%s" value="%s" placeholder="%s" %s id="%s" class="%s" %s %s %s %s />',
 					htmlSanitize($field['type']),
 					htmlSanitize($field['name']),
