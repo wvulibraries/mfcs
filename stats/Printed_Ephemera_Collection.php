@@ -24,6 +24,19 @@ localvars::add("totalPECObjectsPublic",$totalPECObjectsPublic);
 localvars::add("totalItemCount",$totalItemCount);
 localvars::add("totalItemCountPublic",$totalItemCountPublic);
 
+$metadataForms   = forms::getObjectFormMetaForms("2");
+$metaInformation = "<table>";
+foreach ($metadataForms as $form) {
+
+	$metaInformation .= sprintf("<tr><td><strong>%s</strong></td><td>%d</td></tr>",
+		$form['displayTitle'],
+		count(objects::getAllObjectsForForm($form['ID']))
+		);
+}
+$metaInformation .= "</table>";
+
+localvars::add("metaInformation",$metaInformation);
+
 $engine->eTemplate("include","header");
 ?>
 
@@ -77,6 +90,10 @@ $engine->eTemplate("include","header");
 	</tr>
 
 </table>
+
+<h1>Metadata Form Stats</h1>
+
+{local var="metaInformation"}
 
 
 <?php
