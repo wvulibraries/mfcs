@@ -138,11 +138,22 @@ class objects {
 		return($children);
 	}
 
-	public static function getAllObjectsForForm($formID) {
+	public static function getAllObjectsForForm($formID,$sortField=NULL) {
 		$engine = EngineAPI::singleton();
 
-		$sql       = sprintf("SELECT `ID` FROM `objects` WHERE `formID`='%s'",
-			$engine->openDB->escape($formID)
+		if (!isnull($sortField)) {
+			$sortField = sprintf(" ORDER BY LENGTH(%s), %s",
+				$sortField,
+				$sortField
+				);
+		}
+		else {
+			$sortField = "";
+		}
+
+		$sql       = sprintf("SELECT `ID` FROM `objects` WHERE `formID`='%s'%s",
+			$engine->openDB->escape($formID),
+			$sortField
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
