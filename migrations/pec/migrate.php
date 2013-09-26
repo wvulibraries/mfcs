@@ -17,7 +17,6 @@ include("../../header.php");
 
 // exit;
 
-// This error handler dumps strings to find bad characters
 function errorHandler($errno, $errmsg, $filename, $linenum, $vars) {
 
 	$errorReporting = ini_get('error_reporting'); 
@@ -115,7 +114,19 @@ function parseHeadings($table,$record) {
 		foreach ($items as $item) {
 			if (is_empty($item)) continue;
 
-			$return[] = (string)$metadata[$metaTable][$item]['objID'];
+			if (isset($metadata[$metaTable][$item]['objID'])) {
+
+				$return[] = (string)$metadata[$metaTable][$item]['objID'];
+			}
+			else {
+				print "<pre>";
+				var_dump($metaTable);
+				print "</pre>";
+
+				print "<pre>";
+				var_dump($item);
+				print "</pre>";
+			}
 		}
 	}
 
@@ -173,8 +184,10 @@ while ($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 	}
 }
 
-
+$types = array();
 foreach ($metadataSQL as $I=>$sql) {
+	// if ($I != "types") continue;
+
 	$sqlResult2 = $remoteDB->query($sql);
 	
 	if (!$sqlResult2['result']) {
@@ -244,6 +257,7 @@ foreach ($metadataSQL as $I=>$sql) {
 		$metadata[$I][$row['ID']]['objID'] = localvars::get("newObjectID");
 
 	}
+
 }
 
 foreach ($records as $identifier=>$record) {
@@ -258,7 +272,7 @@ foreach ($records as $identifier=>$record) {
 	$submitArray['extent']               = $record['extent']; //
 	$submitArray['description']          = $record['description']; //
 	$submitArray['scopeAndContentsNote'] = $record['scopeAndContentsNote']; //
-	$submitArray['type']                 = $record['type']; //
+	$submitArray['type']                 = $metadata[$I][$record['type']]['objID']; //
 	$submitArray['format']               = $record['format']; //
 	$submitArray['itemCount']            = $record['itemCount']; //
 	
@@ -277,6 +291,12 @@ foreach ($records as $identifier=>$record) {
 	// manipulate data
 	$submitArray['description']          = convertString($submitArray['description']);
 	$submitArray['scopeAndContentsNote'] = convertString($submitArray['scopeAndContentsNote']);
+
+	// print "<pre>";
+	// var_dump($submitArray);
+	// print "</pre>";
+
+	// exit;
 
 	if (objects::add("2",$submitArray) !== TRUE) {
 		print "error submiting formID ".$formID;
