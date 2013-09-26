@@ -779,6 +779,7 @@ class forms {
 
 		// Get all objects from this form
 		$objects = objects::getAllObjectsForForm($formID);
+		$objects = objects::sort($objects,$form['objectTitleField']);
 
 		if (count($objects) > 0) {
 
