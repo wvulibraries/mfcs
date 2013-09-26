@@ -76,7 +76,7 @@ class listGenerator {
 	public static function createFormObjectList($formID) {
 
 		$engine        = mfcs::$engine;
-		$objects       = objects::getAllObjectsForForm($formID);
+		$objects       = objects::getAllObjectsForForm($formID,"idno");
 		if (($form          = forms::get($formID)) === FALSE) {
 			return FALSE;
 		}
