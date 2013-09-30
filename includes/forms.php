@@ -810,8 +810,9 @@ class forms {
 				);
 
 				foreach ($form['fields'] as $field) {
-					$temp[] = sprintf('<input type="%s" name="%s_%s" value="%s" />',
+					$temp[] = sprintf('<input type="%s" style="%s" name="%s_%s" value="%s" />',
 						$field['type'],
+						$field['style'],
 						$field['name'],
 						$objects[$I]['ID'],
 						(isset($objects[$I]['data'][$field['name']]))?htmlSanitize($objects[$I]['data'][$field['name']]):""
