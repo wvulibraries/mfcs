@@ -234,6 +234,123 @@ class objects {
 		}
 	}
 
+	// creates a new object and puts it in the database
+	// we are assuming that all data is valid at this point
+	public static function create($formID,$data,$metedata,$parentID=0,$modifiedTime=NULL,$createTime=NULL) {
+
+		// Get the current Form
+		if (($form = forms::get($formID)) === FALSE) {
+			errorHandle::newError(__METHOD__."() - retrieving form by formID", errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		// begin transactions
+		$result = $engine->openDB->transBegin("objects");
+		if ($result !== TRUE) {
+			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+		// Insert into the database
+		$sql       = sprintf("INSERT INTO `objects` (parentID,formID,metadata,modifiedTime,createTime) VALUES('%s','%s','%s','%s','%s','%s')",
+			isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",
+			$engine->openDB->escape($formID),
+			$engine->openDB->escape($form['metadata']),
+			time(),
+			time()
+			);
+
+		$sqlResult = $engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
+
+			errorHandle::newError(__METHOD__."() - ".$sql." -- ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+		// Set the new object ID in a local variable
+		$objectID = $sqlResult['id'];
+		localvars::add("newObjectID",$objectID);
+
+		// Insert into the new data table
+		if (self::insertObjectData($objectID,$data) === FALSE) {
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
+
+			errorHandle::newError(__METHOD__."() - inserting objects", errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+	
+		// if it is an object form (not a metadata form)
+		// do the IDNO stuff
+		if ($form['metadata'] == "0") {
+
+			// if the idno is managed by the system get a new idno
+			if ($idnoInfo['managedBy'] == "system") {
+				$idno = $engine->openDB->escape(mfcs::getIDNO($formID));
+			}
+			// the idno is managed manually
+			else {
+				$idno = $engine->cleanPost['MYSQL']['idno'];
+			}
+
+			if (isempty($idno)) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+
+				if (!$importing) errorHandle::errorMsg("Error generating / getting IDNO.");
+				return FALSE;
+			}
+
+			// update the object with the new idno
+			$sql       = sprintf("UPDATE `objects` SET `idno`='%s' WHERE `ID`='%s'",
+				$idno, // Cleaned above when assigned
+				$engine->openDB->escape($objectID)
+			);
+			$sqlResult = $engine->openDB->query($sql);
+
+			if (!$sqlResult['result']) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+
+				errorHandle::newError(__METHOD__."() - updating the IDNO: ".$sqlResult['error'], errorHandle::DEBUG);
+				return FALSE;
+			}
+
+			// increment the project counter
+			$sql       = sprintf("UPDATE `forms` SET `count`=`count`+'1' WHERE `ID`='%s'",
+				$engine->openDB->escape($form['ID'])
+			);
+			$sqlResult = $engine->openDB->query($sql);
+
+			if (!$sqlResult['result']) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+
+				errorHandle::newError(__METHOD__."() - Error incrementing form counter: ".$sqlResult['error'], errorHandle::DEBUG);
+				return FALSE;
+			}
+
+		}
+
+		// Update duplicate matching table
+		if (duplicates::updateDupeTable($formID,$objectID,$data) === FALSE) {
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
+			errorHandle::newError(__METHOD__."() - updating dupe matching", errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		// end transactions
+		$engine->openDB->transCommit();
+		$engine->openDB->transEnd();
+
+		return TRUE;
+	}
+
 	// $metadata needs to be an associative array that contains key value pairs that 
 	// match what a cleanPost would give. Data is expected to be RAW, will be sanitized 
 	// when it gets put into place.
