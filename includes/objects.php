@@ -478,6 +478,65 @@ class objects {
 
 	}
 
+	public static function insertObjectData($objectID,$data) {
+
+		if (!is_array($data)) {
+			return FALSE;
+		}
+
+		if ($engine->openDB->transBegin("objectsData") !== TRUE) {
+			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		// remove old data
+
+		$sql       = sprintf("DELETE FROM `objectsData` WHERE `objectID`='%s'",
+			$objectID
+			);
+		$sqlResult = $engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
+
+			errorHandle::newError(__METHOD__."() - ".$sql." -- ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		// insert new data
+		foreach ($data as $I=>$V) {
+
+			$encoded = 0;
+			if (is_array($V)) {
+				// encode it
+				$V = encodeFields($V);
+				$encoded = 1;
+			}
+
+			$sql = sprintf("INSERT INTO `objectsData` (objectID,fieldName,value,encoded) VALUES('%s','%s','%s','%s')",
+				mfcs::$engine->openDB->escape($objectID),
+				mfcs::$engine->openDB->escape($I),
+				mfcs::$engine->openDB->escape($V),
+				mfcs::$engine->openDB->escape($encoded)
+				);
+
+			if (!$sqlResult['result']) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+
+				errorHandle::newError(__METHOD__."() - ".$sql." -- ".$sqlResult['error'], errorHandle::DEBUG);
+				return FALSE;
+			}
+
+		}
+
+		$engine->openDB->transCommit();
+		$engine->openDB->transEnd();
+
+		return TRUE;
+	}
+
 }
 
 ?>
