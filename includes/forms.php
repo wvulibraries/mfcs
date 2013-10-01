@@ -1201,163 +1201,29 @@ class forms {
 		}
 
 		if ($newObject === TRUE) {
-			$sql       = sprintf("INSERT INTO `objects` (parentID,formID,data,metadata,modifiedTime,createTime) VALUES('%s','%s','%s','%s','%s','%s')",
-				isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",
-				$engine->openDB->escape($formID),
-				encodeFields($values),
-				$engine->openDB->escape($form['metadata']),
-				time(),
-				time()
-			);
+
+			if (objects::create($formID,$values,$form['metadata'],isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0") === FALSE) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+
+				if (!$importing) errorHandle::errorMsg("Error inserting new object.");
+
+				return FALSE;
+			}
 
 		}
 		else {
-			// place old version into revision control
-			$rcs = new revisionControlSystem('objects','revisions','ID','modifiedTime');
-			$return = $rcs->insertRevision($objectID);
 
-			if ($return !== TRUE) {
-
+			if (objects::update($objectID,$formID,$values,$form['metadata'],isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0") === FALSE) {
 				$engine->openDB->transRollback();
 				$engine->openDB->transEnd();
 
-				if (!$importing) errorHandle::errorMsg("Error inserting revision.");
-				errorHandle::newError(__METHOD__."() - unable to insert revisions", errorHandle::DEBUG);
+
+				if (!$importing) errorHandle::errorMsg("Error updating.");
+
 				return FALSE;
 			}
 
-			// insert new version
-			$sql = sprintf("UPDATE `objects` SET `parentID`='%s', `formID`='%s', `data`='%s', `metadata`='%s', `modifiedTime`='%s' WHERE `ID`='%s'",
-				isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",
-				$engine->openDB->escape($formID),
-				encodeFields($values),
-				$engine->openDB->escape($form['metadata']),
-				time(),
-				$engine->openDB->escape($objectID)
-			);
-		}
-
-		$sqlResult = $engine->openDB->query($sql);
-
-		if (!$sqlResult['result']) {
-			$engine->openDB->transRollback();
-			$engine->openDB->transEnd();
-
-			errorHandle::newError(__METHOD__."() - ".$sql." -- ".$sqlResult['error'], errorHandle::DEBUG);
-			return FALSE;
-		}
-
-		if ($newObject === TRUE) {
-			$objectID = $sqlResult['id'];
-			localvars::add("newObjectID",$objectID);
-		}
-
-		// if it is an object form (not a metadata form)
-		// do the IDNO stuff
-		if ($form['metadata'] == "0") {
-
-			// if the idno is managed by the system get a new idno
-			if ($idnoInfo['managedBy'] == "system") {
-				$idno = $engine->openDB->escape(mfcs::getIDNO($formID));
-			}
-			// the idno is managed manually
-			else {
-				$idno = $engine->cleanPost['MYSQL']['idno'];
-			}
-
-			if (isempty($idno)) {
-				$engine->openDB->transRollback();
-				$engine->openDB->transEnd();
-
-				if (!$importing) errorHandle::errorMsg("Error generating / getting IDNO.");
-				return FALSE;
-			}
-
-			// update the object with the new idno
-			$sql       = sprintf("UPDATE `objects` SET `idno`='%s' WHERE `ID`='%s'",
-				$idno, // Cleaned above when assigned
-				$engine->openDB->escape($objectID)
-			);
-			$sqlResult = $engine->openDB->query($sql);
-
-			if (!$sqlResult['result']) {
-				$engine->openDB->transRollback();
-				$engine->openDB->transEnd();
-
-				errorHandle::newError(__METHOD__."() - updating the IDNO: ".$sqlResult['error'], errorHandle::DEBUG);
-				return FALSE;
-			}
-
-			// increment the project counter
-			$sql       = sprintf("UPDATE `forms` SET `count`=`count`+'1' WHERE `ID`='%s'",
-				$engine->openDB->escape($form['ID'])
-			);
-			$sqlResult = $engine->openDB->query($sql);
-
-			if (!$sqlResult['result']) {
-				$engine->openDB->transRollback();
-				$engine->openDB->transEnd();
-
-				errorHandle::newError(__METHOD__."() - Error incrementing form counter: ".$sqlResult['error'], errorHandle::DEBUG);
-				return FALSE;
-			}
-
-		}
-
-		if ($newObject === FALSE) {
-			// update all the fields in the dupeMatching Table
-
-			// delete all matching fields
-			$sql       = sprintf("DELETE FROM `dupeMatching` WHERE `formID`='%s' AND `objectID`='%s'",
-				$engine->openDB->escape($formID),
-				$engine->openDB->escape($objectID)
-			);
-			$sqlResult = $engine->openDB->query($sql);
-
-			if (!$sqlResult['result']) {
-				$engine->openDB->transRollback();
-				$engine->openDB->transEnd();
-				errorHandle::newError(__METHOD__."() - removing from duplicate table: ".$sqlResult['error'], errorHandle::DEBUG);
-				return FALSE;
-			}
-		}
-
-		// insert all the fields into the dupeMatching table
-		foreach ($values as $name=>$raw) {
-			$sql       = sprintf("INSERT INTO `dupeMatching` (`formID`,`objectID`,`field`,`value`) VALUES('%s','%s','%s','%s')",
-				$engine->openDB->escape($formID),
-				$engine->openDB->escape($objectID),
-				$engine->openDB->escape($name),
-				$engine->cleanPost['MYSQL'][$name]
-			);
-			$sqlResult = $engine->openDB->query($sql);
-
-			if (!$sqlResult['result']) {
-				$engine->openDB->transRollback();
-				$engine->openDB->transEnd();
-
-				errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
-				return FALSE;
-			}
-		}
-
-
-		// Add it to the users current projects
-		if ($newObject === TRUE) {
-			if (($currentProjects = users::loadProjects()) === FALSE) {
-				$engine->openDB->transRollback();
-				$engine->openDB->transEnd();
-				return FALSE;
-			}
-			foreach ($currentProjects as $projectID => $projectName) {
-				if (self::checkFormInProject($projectID,$formID) === TRUE) {
-					if ((objects::addProject($objectID,$projectID)) === FALSE) {
-						$engine->openDB->transRollback();
-						$engine->openDB->transEnd();
-						return FALSE;
-					}
-				}
-			}
 		}
 
 		// end transactions
