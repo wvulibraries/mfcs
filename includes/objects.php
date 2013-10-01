@@ -368,11 +368,65 @@ class objects {
 
 		return TRUE;
 	}
+
+	public static function update($objectID,$formID,$data,$metedata,$parentID=0,$modifiedTime=NULL) {
+
+		// place old version into revision control
+		$rcs = new revisionControlSystem('objects','revisions','ID','modifiedTime');
+		$return = $rcs->insertRevision($objectID);
+
+
+		if ($return !== TRUE) {
+
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
+
+			errorHandle::newError(__METHOD__."() - unable to insert revisions", errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		// insert new version
+		$sql = sprintf("UPDATE `objects` SET `parentID`='%s', `formID`='%s', `metadata`='%s', `modifiedTime`='%s' WHERE `ID`='%s'",
+			isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",
+			$engine->openDB->escape($formID),
+			$engine->openDB->escape($form['metadata']),
+			time(),
+			$engine->openDB->escape($objectID)
+			);
+
+		$sqlResult = $engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
+
+			errorHandle::newError(__METHOD__."() - ".$sql." -- ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}		
+
+		// Insert into the new data table
+		if (self::insertObjectData($objectID,$data) === FALSE) {
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
+
+			errorHandle::newError(__METHOD__."() - inserting objects", errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		// Update duplicate matching table
+		if (duplicates::updateDupeTable($formID,$objectID,$data) === FALSE) {
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
+			errorHandle::newError(__METHOD__."() - updating dupe matching", errorHandle::DEBUG);
+			return FALSE;
+		}
+
 		// end transactions
 		$engine->openDB->transCommit();
 		$engine->openDB->transEnd();
 
 		return TRUE;
+
 	}
 
 	// $metadata needs to be an associative array that contains key value pairs that 
