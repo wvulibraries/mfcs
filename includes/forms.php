@@ -1188,9 +1188,6 @@ class forms {
 		}
 
 		if (isset($engine->errorStack['error']) && count($engine->errorStack['error']) > 0) {
-			print "<pre>";
-			var_dump($engine->errorStack['error']);
-			print "</pre>";
 			errorHandle::newError(__METHOD__."() - Error stack not empty.", errorHandle::DEBUG);
 			return FALSE;
 		}
