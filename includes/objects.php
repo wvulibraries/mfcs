@@ -344,6 +344,30 @@ class objects {
 			return FALSE;
 		}
 
+		// Add it to the users current projects
+		if ($newObject === TRUE) {
+			if (($currentProjects = users::loadProjects()) === FALSE) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+				return FALSE;
+			}
+			foreach ($currentProjects as $projectID => $projectName) {
+				if (self::checkFormInProject($projectID,$formID) === TRUE) {
+					if ((objects::addProject($objectID,$projectID)) === FALSE) {
+						$engine->openDB->transRollback();
+						$engine->openDB->transEnd();
+						return FALSE;
+					}
+				}
+			}
+		}
+
+		// end transactions
+		$engine->openDB->transCommit();
+		$engine->openDB->transEnd();
+
+		return TRUE;
+	}
 		// end transactions
 		$engine->openDB->transCommit();
 		$engine->openDB->transEnd();
