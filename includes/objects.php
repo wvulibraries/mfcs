@@ -261,7 +261,7 @@ class objects {
 
 	}
 
-	public static function update($formID,$metadata,$objectID) {
+	public static function update_external($formID,$metadata,$objectID) {
 
 		if (!is_array($metadata)) {
 			errorHandle::newError(__METHOD__."() - : metedata is not array", errorHandle::DEBUG);
