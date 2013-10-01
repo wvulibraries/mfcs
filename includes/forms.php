@@ -1471,29 +1471,7 @@ class forms {
 
 	// $value must be RAW
 	public static function isDupe($formID,$field,$value,$objectID=NULL) {
-		$sql = sprintf("SELECT COUNT(*) FROM `dupeMatching` WHERE `formID`='%s' AND `field`='%s' AND `value`='%s' %s",
-			mfcs::$engine->openDB->escape($formID),
-			mfcs::$engine->openDB->escape($field),
-			mfcs::$engine->openDB->escape($value),
-			(!isnull($objectID))?"AND `objectID`!='".mfcs::$engine->openDB->escape($objectID)."'":""
-		);
-
-		$sqlResult = mfcs::$engine->openDB->query($sql);
-
-		if ($sqlResult['result'] === FALSE) {
-			return TRUE;
-		}
-
-		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
-
-		// we return TRUE on Error, because if a dupe is encountered we want it to fail out.
-
-		if ((INT)$row['COUNT(*)'] > 0) {
-			return TRUE;
-		}
-		else {
-			return FALSE;
-		}
+		return duplicates::isDupe($formID,$field,$value,$objectID);
 	}
 
 	public static function getProjects($formID) {
