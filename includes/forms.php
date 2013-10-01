@@ -1210,11 +1210,6 @@ class forms {
 				time()
 			);
 
-
-			// print "One <pre>";
-			// var_dump($sql);
-			// print "</pre>";
-
 		}
 		else {
 			// place old version into revision control
