@@ -18,6 +18,7 @@ require_once "includes/search.php";
 require_once "includes/stats.php"; 
 require_once "includes/users.php";
 require_once "includes/files.php";
+require_once "includes/duplicates.php";
 mfcs::singleton();
 
 $mfcsSearch = new mfcsSearch();
