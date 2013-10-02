@@ -64,28 +64,17 @@ try{
 
 	// Catch a form submition (which would be a revision being reverted to)
 	if(isset($engine->cleanPost['MYSQL']['revisionID'])){
-		$return = $revisions->insertRevision($engine->cleanGet['MYSQL']['objectID']);
-		if($return === TRUE){
-			$revision = $revisions->getRevision($engine->cleanGet['MYSQL']['objectID'], $engine->cleanPost['MYSQL']['revisionID']);
-			// insert new version
-			// @TODO this needs to be updated to call the update method in the objects class
-			// that should take care of the revision needs as well as the proper placement of the data
-			$sql = sprintf("UPDATE `objects` SET `parentID`='%s', `formID`='%s', `defaultProject`='%s', `data`='%s', `metadata`='%s', `modifiedTime`='%s' WHERE `ID`='%s'",
-				$engine->openDB->escape($revision['parentID']),
-				$engine->openDB->escape($revision['formID']),
-				$engine->openDB->escape($revision['defaultProject']),
-				$engine->openDB->escape($revision['data']),
-				$engine->openDB->escape($revision['metadata']),
-				time(),
-				$engine->openDB->escape($engine->cleanGet['MYSQL']['objectID'])
-			);
-			$sqlResult = $engine->openDB->query($sql);
-			if($sqlResult['result'] === FALSE){
-				errorHandle::newError("SQL Error: ".$sqlResult['error'], errorHandle::HIGH);
-			}else{
-				// Reload the object - To refresh the data
-				$object = objects::get($objectID,TRUE);
-			}
+		if ($revision = $revisions->getRevision($engine->cleanGet['MYSQL']['objectID'], $engine->cleanPost['MYSQL']['revisionID']) === FALSE) {
+			throw new Exception('Could not load revision.');
+		} 
+		
+		if (objects::update($engine->cleanGet['MYSQL']['objectID'],$revision['formID'],decodeFields($revision['data']),$revision['metadata'],$revision['parentID']) === FALSE) {
+			// Reload the object - To refresh the data
+			$object = objects::get($objectID,TRUE);
+		}
+		else {
+			errorHandle::newError("SQL Error: ".$sqlResult['error'], errorHandle::HIGH);
+			throw new Exception('Could not update object with revision.');
 		}
 	}
 
