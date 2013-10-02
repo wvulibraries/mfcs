@@ -1,0 +1,6 @@
+ALTER TABLE  `objects` CHANGE  `idno`  `idno` VARCHAR( 20 ) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL;
+ALTER TABLE  `objects` CHANGE  `data`  `data` TEXT CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL;
+ALTER TABLE  `dupeMatching` CHANGE  `field`  `field` VARCHAR( 50 ) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL;
+ALTER TABLE  `dupeMatching` CHANGE  `value`  `value` TEXT CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL;
+ALTER TABLE  `projects` CHANGE  `projectName`  `projectName` VARCHAR( 50 ) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL;
+
