@@ -252,6 +252,7 @@ class objects {
 		}
 		
 		// Insert into the database
+		// @TODO -- we still need to insert of the encoded data into the objects table for revision control
 		$sql       = sprintf("INSERT INTO `objects` (parentID,formID,metadata,modifiedTime,createTime) VALUES('%s','%s','%s','%s','%s','%s')",
 			isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",
 			$engine->openDB->escape($formID),
@@ -386,6 +387,7 @@ class objects {
 		}
 
 		// insert new version
+		// // @TODO -- we still need to insert of the encoded data into the objects table for revision control
 		$sql = sprintf("UPDATE `objects` SET `parentID`='%s', `formID`='%s', `metadata`='%s', `modifiedTime`='%s' WHERE `ID`='%s'",
 			isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",
 			$engine->openDB->escape($formID),
