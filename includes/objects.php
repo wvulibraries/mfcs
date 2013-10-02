@@ -568,6 +568,27 @@ class objects {
 
 	}
 
+	public static function retrieveObjectData($objectID) {
+
+		$sql       = sprintf("SELECT * FROM `objectsData` WHERE `objectID`='%s'",
+			mfcs::$engine->openDB->escape($objectID)
+			);
+		$sqlResult = $engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		$data = array();
+	
+		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+			$data[$row['fieldName']] = ($row['encoded'] == "1")?decodeFields($row['value']):$row['value'];
+		}
+
+		return($data);
+	}
+
 	public static function insertObjectData($objectID,$data) {
 
 		if (!is_array($data)) {
