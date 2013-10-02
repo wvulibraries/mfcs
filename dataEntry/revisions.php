@@ -68,6 +68,8 @@ try{
 		if($return === TRUE){
 			$revision = $revisions->getRevision($engine->cleanGet['MYSQL']['objectID'], $engine->cleanPost['MYSQL']['revisionID']);
 			// insert new version
+			// @TODO this needs to be updated to call the update method in the objects class
+			// that should take care of the revision needs as well as the proper placement of the data
 			$sql = sprintf("UPDATE `objects` SET `parentID`='%s', `formID`='%s', `defaultProject`='%s', `data`='%s', `metadata`='%s', `modifiedTime`='%s' WHERE `ID`='%s'",
 				$engine->openDB->escape($revision['parentID']),
 				$engine->openDB->escape($revision['formID']),
