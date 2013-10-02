@@ -238,6 +238,11 @@ class objects {
 	// we are assuming that all data is valid at this point
 	public static function create($formID,$data,$metedata,$parentID=0,$modifiedTime=NULL,$createTime=NULL) {
 
+		if (!is_array($data)) {
+			errorHandle::newError(__METHOD__."() - : data is not array", errorHandle::DEBUG);
+			return FALSE;
+		}
+
 		// Get the current Form
 		if (($form = forms::get($formID)) === FALSE) {
 			errorHandle::newError(__METHOD__."() - retrieving form by formID", errorHandle::DEBUG);
@@ -371,6 +376,11 @@ class objects {
 	}
 
 	public static function update($objectID,$formID,$data,$metedata,$parentID=0,$modifiedTime=NULL) {
+
+		if (!is_array($data)) {
+			errorHandle::newError(__METHOD__."() - : data is not array", errorHandle::DEBUG);
+			return FALSE;
+		}
 
 		// place old version into revision control
 		$rcs = new revisionControlSystem('objects','revisions','ID','modifiedTime');
