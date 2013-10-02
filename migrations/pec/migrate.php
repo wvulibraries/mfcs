@@ -309,6 +309,13 @@ foreach ($records as $identifier=>$record) {
 		exit;
 	}
 
+	// add the item to the pec project
+	if ((objects::addProject(localvars::get("newObjectID"),"1")) === FALSE) {
+		$engine->openDB->transRollback();
+		$engine->openDB->transEnd();
+		return FALSE;
+	}
+
 }
 
 
