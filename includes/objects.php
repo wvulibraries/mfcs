@@ -198,9 +198,17 @@ class objects {
 
 	}
 
-	public static function buildObject($row) {
+	public static function buildObject($row,$ignoreCache=FALSE) {
 		if (!is_array($row)) {
 			return FALSE;
+		}
+
+		$mfcs      = mfcs::singleton();
+		$cachID    = "getObject:".$row['ID'];
+		$cache     = !$ignoreCache ? $mfcs->cache("get",$cachID) : NULL;
+
+		if (!isnull($cache)) {
+			return($cache);
 		}
 
 		// @TODO sanity checking
