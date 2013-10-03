@@ -310,7 +310,7 @@ class objects {
 
 	// creates a new object and puts it in the database
 	// we are assuming that all data is valid at this point
-	public static function create($formID,$data,$metedata,$parentID=0,$modifiedTime=NULL,$createTime=NULL) {
+	public static function create($formID,$data,$metadata,$parentID=0,$modifiedTime=NULL,$createTime=NULL) {
 
 		if (!is_array($data)) {
 			errorHandle::newError(__METHOD__."() - : data is not array", errorHandle::DEBUG);
@@ -448,7 +448,7 @@ class objects {
 		return TRUE;
 	}
 
-	public static function update($objectID,$formID,$data,$metedata,$parentID=0,$modifiedTime=NULL) {
+	public static function update($objectID,$formID,$data,$metadata,$parentID=0,$modifiedTime=NULL) {
 
 		if (!is_array($data)) {
 			errorHandle::newError(__METHOD__."() - : data is not array", errorHandle::DEBUG);
@@ -474,10 +474,10 @@ class objects {
 			isset(mfcs::$engine->cleanPost['MYSQL']['parentID'])?mfcs::$engine->cleanPost['MYSQL']['parentID']:"0",
 			encodeFields($data),
 			mfcs::$engine->openDB->escape($formID),
-			mfcs::$engine->openDB->escape($form['metadata']),
+			mfcs::$engine->openDB->escape($metadata),
 			time(),
 			mfcs::$engine->openDB->escape($objectID)
-			);
+			); 
 
 		$sqlResult = mfcs::$engine->openDB->query($sql);
 
