@@ -37,9 +37,9 @@ class objects {
 			return self::getObjects();
 		}
 
-		if (!$ignoreCache) {
+		if (!$ignoreCache && !isnull($objectID)) {
 			$mfcs      = mfcs::singleton();
-			$cachID    = "getObject:".$row['ID'];
+			$cachID    = "getObject:".$objectID;
 			$cache     = $mfcs->cache("get",$cachID);
 
 			if (!isnull($cache)) {
