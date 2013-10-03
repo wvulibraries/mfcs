@@ -59,15 +59,7 @@ class objects {
 
 		$object = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
-		// if (($object['data'] = decodeFields($object['data'])) === FALSE) {
-		// 	errorHandle::errorMsg("Error retrieving object.");
-		// 	return FALSE;
-		// }
-
-		if (($object['data'] = self::retrieveObjectData($object['ID'])) === FALSE) {
-			errorHandle::errorMsg("Error retrieving object.");
-			return FALSE;
-		}
+		$object = self::buildObject($object);
 
 		$cache = $mfcs->cache("create",$cachID,$object);
 		if ($cache === FALSE) {
