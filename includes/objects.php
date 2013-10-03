@@ -255,7 +255,7 @@ class objects {
 		}
 
 		// begin transactions
-		$result = $engine->openDB->transBegin("objects");
+		$result = mfcs::$engine->openDB->transBegin("objects");
 		if ($result !== TRUE) {
 			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
 			return FALSE;
@@ -263,19 +263,19 @@ class objects {
 		
 		// Insert into the database
 		$sql       = sprintf("INSERT INTO `objects` (parentID,formID,data,metadata,modifiedTime,createTime) VALUES('%s','%s','%s',%s','%s','%s','%s')",
-			isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",
-			$engine->openDB->escape($formID),
+			isset(mfcs::$engine->cleanPost['MYSQL']['parentID'])?mfcs::$engine->cleanPost['MYSQL']['parentID']:"0",
+			mfcs::$engine->openDB->escape($formID),
 			encodeFields($data),
-			$engine->openDB->escape($form['metadata']),
+			mfcs::$engine->openDB->escape($form['metadata']),
 			time(),
 			time()
 			);
 
-		$sqlResult = $engine->openDB->query($sql);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
-			$engine->openDB->transRollback();
-			$engine->openDB->transEnd();
+			mfcs::$engine->openDB->transRollback();
+			mfcs::$engine->openDB->transEnd();
 
 			errorHandle::newError(__METHOD__."() - ".$sql." -- ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
@@ -287,8 +287,8 @@ class objects {
 
 		// Insert into the new data table
 		if (self::insertObjectData($objectID,$data) === FALSE) {
-			$engine->openDB->transRollback();
-			$engine->openDB->transEnd();
+			mfcs::$engine->openDB->transRollback();
+			mfcs::$engine->openDB->transEnd();
 
 			errorHandle::newError(__METHOD__."() - inserting objects", errorHandle::DEBUG);
 			return FALSE;
@@ -301,31 +301,30 @@ class objects {
 
 			// if the idno is managed by the system get a new idno
 			if ($idnoInfo['managedBy'] == "system") {
-				$idno = $engine->openDB->escape(mfcs::getIDNO($formID));
+				$idno = mfcs::$engine->openDB->escape(mfcs::getIDNO($formID));
 			}
 			// the idno is managed manually
 			else {
-				$idno = $engine->cleanPost['MYSQL']['idno'];
+				$idno = mfcs::$engine->cleanPost['MYSQL']['idno'];
 			}
 
 			if (isempty($idno)) {
-				$engine->openDB->transRollback();
-				$engine->openDB->transEnd();
+				mfcs::$engine->openDB->transRollback();
+				mfcs::$engine->openDB->transEnd();
 
-				if (!$importing) errorHandle::errorMsg("Error generating / getting IDNO.");
 				return FALSE;
 			}
 
 			// update the object with the new idno
 			$sql       = sprintf("UPDATE `objects` SET `idno`='%s' WHERE `ID`='%s'",
 				$idno, // Cleaned above when assigned
-				$engine->openDB->escape($objectID)
+				mfcs::$engine->openDB->escape($objectID)
 			);
-			$sqlResult = $engine->openDB->query($sql);
+			$sqlResult = mfcs::$engine->openDB->query($sql);
 
 			if (!$sqlResult['result']) {
-				$engine->openDB->transRollback();
-				$engine->openDB->transEnd();
+				mfcs::$engine->openDB->transRollback();
+				mfcs::$engine->openDB->transEnd();
 
 				errorHandle::newError(__METHOD__."() - updating the IDNO: ".$sqlResult['error'], errorHandle::DEBUG);
 				return FALSE;
@@ -333,13 +332,13 @@ class objects {
 
 			// increment the project counter
 			$sql       = sprintf("UPDATE `forms` SET `count`=`count`+'1' WHERE `ID`='%s'",
-				$engine->openDB->escape($form['ID'])
+				mfcs::$engine->openDB->escape($form['ID'])
 			);
-			$sqlResult = $engine->openDB->query($sql);
+			$sqlResult = mfcs::$engine->openDB->query($sql);
 
 			if (!$sqlResult['result']) {
-				$engine->openDB->transRollback();
-				$engine->openDB->transEnd();
+				mfcs::$engine->openDB->transRollback();
+				mfcs::$engine->openDB->transEnd();
 
 				errorHandle::newError(__METHOD__."() - Error incrementing form counter: ".$sqlResult['error'], errorHandle::DEBUG);
 				return FALSE;
@@ -349,8 +348,8 @@ class objects {
 
 		// Update duplicate matching table
 		if (duplicates::updateDupeTable($formID,$objectID,$data) === FALSE) {
-			$engine->openDB->transRollback();
-			$engine->openDB->transEnd();
+			mfcs::$engine->openDB->transRollback();
+			mfcs::$engine->openDB->transEnd();
 			errorHandle::newError(__METHOD__."() - updating dupe matching", errorHandle::DEBUG);
 			return FALSE;
 		}
@@ -358,15 +357,15 @@ class objects {
 		// Add it to the users current projects
 		if ($newObject === TRUE) {
 			if (($currentProjects = users::loadProjects()) === FALSE) {
-				$engine->openDB->transRollback();
-				$engine->openDB->transEnd();
+				mfcs::$engine->openDB->transRollback();
+				mfcs::$engine->openDB->transEnd();
 				return FALSE;
 			}
 			foreach ($currentProjects as $projectID => $projectName) {
 				if (self::checkFormInProject($projectID,$formID) === TRUE) {
 					if ((objects::addProject($objectID,$projectID)) === FALSE) {
-						$engine->openDB->transRollback();
-						$engine->openDB->transEnd();
+						mfcs::$engine->openDB->transRollback();
+						mfcs::$engine->openDB->transEnd();
 						return FALSE;
 					}
 				}
@@ -374,8 +373,8 @@ class objects {
 		}
 
 		// end transactions
-		$engine->openDB->transCommit();
-		$engine->openDB->transEnd();
+		mfcs::$engine->openDB->transCommit();
+		mfcs::$engine->openDB->transEnd();
 
 		return TRUE;
 	}
@@ -394,8 +393,8 @@ class objects {
 
 		if ($return !== TRUE) {
 
-			$engine->openDB->transRollback();
-			$engine->openDB->transEnd();
+			mfcs::$engine->openDB->transRollback();
+			mfcs::$engine->openDB->transEnd();
 
 			errorHandle::newError(__METHOD__."() - unable to insert revisions", errorHandle::DEBUG);
 			return FALSE;
@@ -403,19 +402,19 @@ class objects {
 
 		// insert new version
 		$sql = sprintf("UPDATE `objects` SET `parentID`='%s', `data`='%s', `formID`='%s', `metadata`='%s', `modifiedTime`='%s' WHERE `ID`='%s'",
-			isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",
+			isset(mfcs::$engine->cleanPost['MYSQL']['parentID'])?mfcs::$engine->cleanPost['MYSQL']['parentID']:"0",
 			encodeFields($data),
-			$engine->openDB->escape($formID),
-			$engine->openDB->escape($form['metadata']),
+			mfcs::$engine->openDB->escape($formID),
+			mfcs::$engine->openDB->escape($form['metadata']),
 			time(),
-			$engine->openDB->escape($objectID)
+			mfcs::$engine->openDB->escape($objectID)
 			);
 
-		$sqlResult = $engine->openDB->query($sql);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
-			$engine->openDB->transRollback();
-			$engine->openDB->transEnd();
+			mfcs::$engine->openDB->transRollback();
+			mfcs::$engine->openDB->transEnd();
 
 			errorHandle::newError(__METHOD__."() - ".$sql." -- ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
@@ -423,8 +422,8 @@ class objects {
 
 		// Insert into the new data table
 		if (self::insertObjectData($objectID,$data) === FALSE) {
-			$engine->openDB->transRollback();
-			$engine->openDB->transEnd();
+			mfcs::$engine->openDB->transRollback();
+			mfcs::$engine->openDB->transEnd();
 
 			errorHandle::newError(__METHOD__."() - inserting objects", errorHandle::DEBUG);
 			return FALSE;
@@ -432,15 +431,15 @@ class objects {
 
 		// Update duplicate matching table
 		if (duplicates::updateDupeTable($formID,$objectID,$data) === FALSE) {
-			$engine->openDB->transRollback();
-			$engine->openDB->transEnd();
+			mfcs::$engine->openDB->transRollback();
+			mfcs::$engine->openDB->transEnd();
 			errorHandle::newError(__METHOD__."() - updating dupe matching", errorHandle::DEBUG);
 			return FALSE;
 		}
 
 		// end transactions
-		$engine->openDB->transCommit();
-		$engine->openDB->transEnd();
+		mfcs::$engine->openDB->transCommit();
+		mfcs::$engine->openDB->transEnd();
 
 		return TRUE;
 
@@ -575,10 +574,12 @@ class objects {
 
 	public static function retrieveObjectData($objectID) {
 
+
+
 		$sql       = sprintf("SELECT * FROM `objectsData` WHERE `objectID`='%s'",
 			mfcs::$engine->openDB->escape($objectID)
 			);
-		$sqlResult = $engine->openDB->query($sql);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 		
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
@@ -600,7 +601,7 @@ class objects {
 			return FALSE;
 		}
 
-		if ($engine->openDB->transBegin("objectsData") !== TRUE) {
+		if (mfcs::$engine->openDB->transBegin("objectsData") !== TRUE) {
 			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
 			return FALSE;
 		}
@@ -610,11 +611,11 @@ class objects {
 		$sql       = sprintf("DELETE FROM `objectsData` WHERE `objectID`='%s'",
 			$objectID
 			);
-		$sqlResult = $engine->openDB->query($sql);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
-			$engine->openDB->transRollback();
-			$engine->openDB->transEnd();
+			mfcs::$engine->openDB->transRollback();
+			mfcs::$engine->openDB->transEnd();
 
 			errorHandle::newError(__METHOD__."() - ".$sql." -- ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
@@ -637,9 +638,11 @@ class objects {
 				mfcs::$engine->openDB->escape($encoded)
 				);
 
+			$sqlResult = mfcs::$engine->openDB->query($sql);
+
 			if (!$sqlResult['result']) {
-				$engine->openDB->transRollback();
-				$engine->openDB->transEnd();
+				mfcs::$engine->openDB->transRollback();
+				mfcs::$engine->openDB->transEnd();
 
 				errorHandle::newError(__METHOD__."() - ".$sql." -- ".$sqlResult['error'], errorHandle::DEBUG);
 				return FALSE;
@@ -647,8 +650,8 @@ class objects {
 
 		}
 
-		$engine->openDB->transCommit();
-		$engine->openDB->transEnd();
+		mfcs::$engine->openDB->transCommit();
+		mfcs::$engine->openDB->transEnd();
 
 		return TRUE;
 	}
