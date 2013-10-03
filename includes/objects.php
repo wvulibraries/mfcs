@@ -198,6 +198,33 @@ class objects {
 
 	}
 
+	public static function buildObject($row) {
+		if (!is_array($row)) {
+			return FALSE;
+		}
+
+		// @TODO sanity checking
+		// we might want to do a little more sanity cheecking here.
+		// does $data['data'] exist?
+		// does it have the proper structure?
+		// etc ...
+
+		// Original way of getting data
+		if (($row['data'] = decodeFields($row['data'])) === FALSE) {
+			errorHandle::errorMsg("Error retrieving object.");
+			return FALSE;
+		} 
+
+		// objectsData table method for getting data
+		// if (($row['data'] = self::retrieveObjectData($row['ID'])) === FALSE) {
+		// 	errorHandle::errorMsg("Error retrieving object.");
+		// 	return FALSE;
+		// }
+
+		return $row;
+
+	}
+
 	// objects is an array of objects
 	// sorts based on the title field defined for the form that created the objects
 	// objects are assumed to be from the same form
