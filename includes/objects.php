@@ -179,7 +179,7 @@ class objects {
 
 		$engine = EngineAPI::singleton();
 
-		$sql       = sprintf("SELECT `objects`.`ID` as `ID` FROM `objects` LEFT JOIN `objectProjects` ON `objectProjects`.`objectID`=`objects`.`ID` WHERE `objectProjects`.`projectID`='%s' ORDER BY LENGTH(`idno`), `idno`",
+		$sql       = sprintf("SELECT `objects`.* FROM `objects` LEFT JOIN `objectProjects` ON `objectProjects`.`objectID`=`objects`.`ID` WHERE `objectProjects`.`projectID`='%s' ORDER BY LENGTH(`idno`), `idno`",
 			$engine->openDB->escape($projectID)
 			);
 		$sqlResult = $engine->openDB->query($sql);
@@ -191,7 +191,7 @@ class objects {
 
 		$objects = array();
 		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-			$objects[] = self::get($row['ID']);
+			$objects[] = self::buildObject($row);
 		}
 
 		return $objects;
