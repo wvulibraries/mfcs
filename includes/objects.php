@@ -147,11 +147,17 @@ class objects {
 		else {
 			$sortField = "";
 		}
-
-		$sql       = sprintf("SELECT `ID` FROM `objects` WHERE `formID`='%s'%s",
+ 
+		// $sql       = sprintf("SELECT `ID` FROM `objects` WHERE `formID`='%s'%s",
+		// 	$engine->openDB->escape($formID),
+		// 	$sortField
+		// 	);
+		
+		$sql       = sprintf("SELECT * FROM `objects` WHERE `formID`='%s'%s",
 			$engine->openDB->escape($formID),
 			$sortField
 			);
+
 		$sqlResult = $engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
