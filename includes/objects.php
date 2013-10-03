@@ -143,24 +143,26 @@ class objects {
 		$engine = EngineAPI::singleton();
 
 		if (!isnull($sortField)) {
+			// $sortField = sprintf(" ORDER BY `objects`.`ID`, LENGTH(%s), %s",
 			$sortField = sprintf(" ORDER BY LENGTH(%s), %s",
 				$sortField,
 				$sortField
 				);
 		}
 		else {
-			$sortField = "";
-		}
+			// $sortField = " ORDER BY `objects`.`ID`";
+			$sortField = " ORDER BY `objects`.`ID`";
+		} 
  
-		// $sql       = sprintf("SELECT `ID` FROM `objects` WHERE `formID`='%s'%s",
-		// 	$engine->openDB->escape($formID),
-		// 	$sortField
-		// 	);
-		
 		$sql       = sprintf("SELECT * FROM `objects` WHERE `formID`='%s'%s",
 			$engine->openDB->escape($formID),
 			$sortField
 			);
+		
+		// $sql       = sprintf("SELECT * FROM `objects`, `objectsData` WHERE `objects`.`formID`='%s' AND `objects`.`ID`=`objectsData`.`objectID` %s",
+		// 	$engine->openDB->escape($formID), 
+		// 	$sortField
+		// 	);
 
 		$sqlResult = $engine->openDB->query($sql);
 
@@ -169,11 +171,24 @@ class objects {
 			return FALSE;
 		}
 
+		// $objects = array();
+		// $temp    = array();
+		// $prevID  = "";
+		// while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+
+		// 	if ($row['objectID'] != $prevID && $prevID != "") {
+		// 		$objects[] = self::buildObject($temp,TRUE);
+		// 		$temp = array();
+		// 	} 
+
+		// 	$temp[] = $row;
+		// 	$prevID = $row['objectID'];
+
+		// }
+		// 
 		$objects = array();
-		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-
+		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 			$objects[] = self::buildObject($row,TRUE);
-
 		}
 
 		return $objects;
@@ -195,7 +210,7 @@ class objects {
 
 		$objects = array();
 		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-			$objects[] = self::buildObject($row);
+			$objects[] = self::buildObject($row,TRUE);
 		}
 
 		return $objects;
@@ -203,6 +218,7 @@ class objects {
 	}
 
 	public static function buildObject($row,$ignoreCache=FALSE) {
+
 		if (!is_array($row)) {
 			return FALSE;
 		}
@@ -224,24 +240,36 @@ class objects {
 		// does it have the proper structure?
 		// etc ...
 
-		// Original way of getting data
+		// **** Original way of getting data
 		if (($row['data'] = decodeFields($row['data'])) === FALSE) {
 			errorHandle::errorMsg("Error retrieving object.");
 			return FALSE;
 		} 
 
-		// objectsData table method for getting data
+		// **** objectsData table method for getting data
 		// if (($row['data'] = self::retrieveObjectData($row['ID'])) === FALSE) {
 		// 	errorHandle::errorMsg("Error retrieving object.");
 		// 	return FALSE;
 		// }
 		
+		// **** objectsData, single query
+		// $object = $row[0]; 
+		// $data = array();
+		// foreach ($row as $fragment) {
+		// 	$data[$fragment['fieldName']] = ($fragment['encoded'] == "1")?decodeFields($fragment['value']):$fragment['value'];
+		// }
+		// $object['data'] = $data;
+		// unset($object['fieldName']);
+		// unset($object['value']);
+		// $row = $object;
+
 		if (!$ignoreCache) {
 			$cache = $mfcs->cache("create",$cachID,$row);
 			if ($cache === FALSE) {
 				errorHandle::newError(__METHOD__."() - unable to cache object", errorHandle::DEBUG);
 			}
 		}
+
 		return $row;
 
 	}
