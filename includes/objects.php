@@ -63,13 +63,6 @@ class objects {
 
 		$object = self::buildObject($object,$ignoreCache);
 
-		if (!$ignoreCache) {
-			$cache = $mfcs->cache("create",$cachID,$row);
-			if ($cache === FALSE) {
-				errorHandle::newError(__METHOD__."() - unable to cache object", errorHandle::DEBUG);
-			}
-		}
-
 		return $object;
 	}
 
