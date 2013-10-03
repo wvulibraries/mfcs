@@ -28,11 +28,19 @@ include("../header.php");
 			$breadCrumbs[] = sprintf('<a href="%s/dataView/list.php?listType=selectProject">Select Project</a>', $siteRoot);
 			break;
 		case 'form':
+			// $time_start = microtime(true);
+
 			$list = listGenerator::createFormObjectList($engine->cleanGet['MYSQL']['formID']);
 			$form = forms::get($engine->cleanGet['MYSQL']['formID']);
 			localvars::add('subTitle',' - '.$form['title']);
 			$breadCrumbs[] = sprintf('<a href="%s/dataView/list.php?listType=selectForm">Select Form</a>', $siteRoot);
 			$breadCrumbs[] = sprintf('<a href="%s/dataView/list.php?listType=form&formID=%s">%s</a>', $siteRoot, $form['ID'], $form['title']);
+				
+			// $time_end = microtime(true);
+			// $time = $time_end - $time_start;
+			// print "<pre>";
+			// var_dump($time);
+			// print "</pre>";
 			break;
 		case 'project':
 			$list    = listGenerator::createProjectObjectList($engine->cleanGet['MYSQL']['projectID']);
