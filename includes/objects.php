@@ -115,9 +115,9 @@ class objects {
 			return FALSE;
 		}
 
-		$engine = EngineAPI::singleton();
+		$engine = EngineAPI::singleton(); 
 
-		$sql       = sprintf("SELECT `ID` FROM `objects` WHERE `parentID`='%s'",
+		$sql       = sprintf("SELECT * FROM `objects` WHERE `parentID`='%s'",
 			$engine->openDB->escape($objectID)
 		);
 		$sqlResult = $engine->openDB->query($sql);
@@ -129,7 +129,7 @@ class objects {
 
 		$children = array();
 		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-			$children[] = self::get($row['ID']);
+			$children[] = self::buildObject($row);;
 		}
 
 		return($children);
