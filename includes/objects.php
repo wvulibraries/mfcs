@@ -161,7 +161,9 @@ class objects {
 
 		$objects = array();
 		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-			$objects[] = self::get($row['ID']);
+
+			$objects[] = self::buildObject($row);
+
 		}
 
 		return $objects;
