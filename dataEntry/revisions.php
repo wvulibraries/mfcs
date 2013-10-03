@@ -64,7 +64,7 @@ try{
 
 	// Catch a form submition (which would be a revision being reverted to)
 	if(isset($engine->cleanPost['MYSQL']['revisionID'])){
-		if ($revision = $revisions->getRevision($engine->cleanGet['MYSQL']['objectID'], $engine->cleanPost['MYSQL']['revisionID']) === FALSE) {
+		if (($revision = $revisions->getRevision($engine->cleanGet['MYSQL']['objectID'], $engine->cleanPost['MYSQL']['revisionID'])) === FALSE) {
 			throw new Exception('Could not load revision.');
 		} 
 		
