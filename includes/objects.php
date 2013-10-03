@@ -59,7 +59,7 @@ class objects {
 
 		$object = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
-		$object = self::buildObject($object);
+		$object = self::buildObject($object,$ignoreCache);
 
 		$cache = $mfcs->cache("create",$cachID,$object);
 		if ($cache === FALSE) {
@@ -168,7 +168,7 @@ class objects {
 		$objects = array();
 		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
-			$objects[] = self::buildObject($row);
+			$objects[] = self::buildObject($row,TRUE);
 
 		}
 
@@ -228,6 +228,11 @@ class objects {
 		// 	errorHandle::errorMsg("Error retrieving object.");
 		// 	return FALSE;
 		// }
+		
+		$cache = $mfcs->cache("create",$cachID,$row);
+		if ($cache === FALSE) {
+			errorHandle::newError(__METHOD__."() - unable to cache object", errorHandle::DEBUG);
+		}
 
 		return $row;
 
