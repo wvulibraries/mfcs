@@ -59,6 +59,11 @@ class objects {
 
 		$object = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
+		// if (($object['data'] = decodeFields($object['data'])) === FALSE) {
+		// 	errorHandle::errorMsg("Error retrieving object.");
+		// 	return FALSE;
+		// }
+
 		if (($object['data'] = self::retrieveObjectData($object['ID'])) === FALSE) {
 			errorHandle::errorMsg("Error retrieving object.");
 			return FALSE;
