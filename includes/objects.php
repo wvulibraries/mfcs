@@ -90,7 +90,7 @@ class objects {
 			$length = $engine->openDB->escape($length);
 		}
 
-		$sql       = sprintf("SELECT `ID` FROM `objects` %s %s",
+		$sql       = sprintf("SELECT * FROM `objects` %s %s",
 			($metadata === FALSE)?"WHERE `metadata`='0'":"",
 			(!isnull($length))?sprintf("LIMIT %s,%s",$start,$length):""
 			);
@@ -103,7 +103,7 @@ class objects {
 
 		$objects = array();
 		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-			$objects[] = self::get($row['ID']);
+			$objects[] = self::buildObject($row);
 		}
 
 		return $objects;
