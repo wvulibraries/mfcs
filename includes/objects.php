@@ -37,12 +37,14 @@ class objects {
 			return self::getObjects();
 		}
 
-		$mfcs      = mfcs::singleton();
-		$cachID    = "getObject:".$objectID;
-		$cache     = !$ignoreCache ? $mfcs->cache("get",$cachID) : NULL;
+		if (!$ignoreCache) {
+			$mfcs      = mfcs::singleton();
+			$cachID    = "getObject:".$row['ID'];
+			$cache     = $mfcs->cache("get",$cachID);
 
-		if (!isnull($cache)) {
-			return($cache);
+			if (!isnull($cache)) {
+				return($cache);
+			}
 		}
 
 		$engine = EngineAPI::singleton();
@@ -61,9 +63,11 @@ class objects {
 
 		$object = self::buildObject($object,$ignoreCache);
 
-		$cache = $mfcs->cache("create",$cachID,$object);
-		if ($cache === FALSE) {
-			errorHandle::newError(__METHOD__."() - unable to cache object", errorHandle::DEBUG);
+		if (!$ignoreCache) {
+			$cache = $mfcs->cache("create",$cachID,$row);
+			if ($cache === FALSE) {
+				errorHandle::newError(__METHOD__."() - unable to cache object", errorHandle::DEBUG);
+			}
 		}
 
 		return $object;
@@ -203,12 +207,15 @@ class objects {
 			return FALSE;
 		}
 
-		$mfcs      = mfcs::singleton();
-		$cachID    = "getObject:".$row['ID'];
-		$cache     = !$ignoreCache ? $mfcs->cache("get",$cachID) : NULL;
 
-		if (!isnull($cache)) {
-			return($cache);
+		if (!$ignoreCache) {
+			$mfcs      = mfcs::singleton();
+			$cachID    = "getObject:".$row['ID'];
+			$cache     = $mfcs->cache("get",$cachID);
+
+			if (!isnull($cache)) {
+				return($cache);
+			}
 		}
 
 		// @TODO sanity checking
@@ -229,11 +236,12 @@ class objects {
 		// 	return FALSE;
 		// }
 		
-		$cache = $mfcs->cache("create",$cachID,$row);
-		if ($cache === FALSE) {
-			errorHandle::newError(__METHOD__."() - unable to cache object", errorHandle::DEBUG);
+		if (!$ignoreCache) {
+			$cache = $mfcs->cache("create",$cachID,$row);
+			if ($cache === FALSE) {
+				errorHandle::newError(__METHOD__."() - unable to cache object", errorHandle::DEBUG);
+			}
 		}
-
 		return $row;
 
 	}
