@@ -59,6 +59,8 @@ try{
 	errorHandle::errorMsg($e->getMessage());
 }
 
+localVars::add("results",displayMessages());
+
 $engine->eTemplate("include","header");
 ?>
 
@@ -74,6 +76,10 @@ $engine->eTemplate("include","header");
 
 <div id="left">
 	{local var="leftnav"}
+</div>
+
+<div class="row-fluid" id="results">
+	{local var="results"}
 </div>
 
 <div id="objectComparator">
