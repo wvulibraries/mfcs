@@ -106,7 +106,7 @@ $engine->eTemplate("include","header");
 	</section>
 </div>
 
-
+<!-- @TODO : Style should be moved out of this file -->
 <style>
 	.revisionSection{
 		width: 45%;
@@ -151,6 +151,8 @@ $engine->eTemplate("include","header");
 		padding: 5px 0;
 	}
 </style>
+
+<!-- @TODO : scripts should be moved out of this file -->
 <script>
 	function scrollSync(iFrameObj){
 		$($(iFrameObj).contents()).scroll(function(){
