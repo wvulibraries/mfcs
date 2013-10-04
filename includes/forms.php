@@ -665,9 +665,9 @@ class forms {
 					}
 				}
 				else if (isset($object['data'][$field['name']])) {
-					print "<pre>";
-					var_dump($object['data'][$field['name']]);
-					print "</pre>";
+					// print "<pre>";
+					// var_dump($object['data'][$field['name']]);
+					// print "</pre>";
 				}
 				$output .= '</select><br />';
 				$output .= sprintf('<select name="%s_available" id="%s_available" data-type="%s" data-formid="%s" data-fieldname="%s" %s onchange="addItemToID(\'%s\', this.options[this.selectedIndex]);">',
