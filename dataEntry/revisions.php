@@ -118,7 +118,7 @@ $engine->eTemplate("include","header");
 </div>
 
 <div id="objectComparator">
-	<section class="revisionSection" id="current"">
+	<section class="revisionSection" id="current">
 	<header>Current Version:</header>
 	{local var="currentVersion"}
 	</section>
