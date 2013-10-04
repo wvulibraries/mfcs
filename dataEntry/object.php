@@ -285,6 +285,7 @@ $engine->eTemplate("include","header");
 	</div>
 </section>
 
+<!-- @TODO : scripts should be moved out of this file -->
 <script type="text/javascript">
 	$(function() {
 		// Show first tab on page load
