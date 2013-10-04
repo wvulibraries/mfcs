@@ -6,17 +6,18 @@ $revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime'
 
 ###############################################################################################################
 
-$objectID = $engine->cleanGet['MYSQL']['objectID'];
-$object   = objects::get($objectID);
-$form     = forms::get($object['formID']);
-$fields   = $form['fields'];
-if(mfcsPerms::isEditor($form['ID']) === FALSE) throw new Exception("Permission Denied to view objects created with this form.");
-
 try{
 	if(	!isset($engine->cleanGet['MYSQL']['objectID']) ||
 		!validate::integer($engine->cleanGet['MYSQL']['objectID'])){
 		throw new Exception('No Object ID Provided.');
 	}
+
+	$objectID = $engine->cleanGet['MYSQL']['objectID'];
+	$object   = objects::get($objectID);
+	$form     = forms::get($object['formID']);
+	$fields   = $form['fields'];
+	if(mfcsPerms::isEditor($form['ID']) === FALSE) throw new Exception("Permission Denied to view objects created with this form.");
+
 
 	###############################################################################################################
 
