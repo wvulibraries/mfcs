@@ -66,6 +66,9 @@ class navigation {
 				);
 			}
 			else if ($item['type'] == "link") {
+
+				$item['url'] = preg_replace("/{siteRoot}/", mfcs::config("siteRoot"), $item['url']);
+
 				$output .= sprintf('<a href="%s">%s</a>',
 					htmlSanitize($item['url']),
 					htmlSanitize($item['label'])
