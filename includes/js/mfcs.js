@@ -104,6 +104,16 @@ function select_metadataMultiSelects() {
     $('.multiSelectContainer option').prop('selected', 'selected');
 }
 
+function handler_jumpToPage() {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    var page = $(this).val();
+    var url  = window.location.pathname+"?listType="+queryObj()['listType']+"&formID="+queryObj()['formID']+"&page="+page;
+
+    window.location.href=url;
+}
+
 function handler_metadataListAccordionToggle() {
     event.preventDefault();
     event.stopImmediatePropagation();
