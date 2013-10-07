@@ -41,7 +41,7 @@ $engine->eTemplate("include","header");
 			<a href="dataEntry/selectMetadataForm.php" class="btn">Metadata Forms</a>
 		</li> -->
 		<li>
-			<a href="" class="btn">Export</a>
+			<a href="exports/" class="btn">Export</a>
 		</li>
         <li>
             <a href="stats/" class="btn">Statistics</a>
