@@ -331,7 +331,7 @@ class objects {
 		}
 		
 		// Insert into the database
-		$sql       = sprintf("INSERT INTO `objects` (parentID,formID,data,metadata,modifiedTime,createTime) VALUES('%s','%s','%s',%s','%s','%s','%s')",
+		$sql       = sprintf("INSERT INTO `objects` (parentID,formID,data,metadata,modifiedTime,createTime) VALUES('%s','%s','%s','%s','%s','%s')",
 			isset(mfcs::$engine->cleanPost['MYSQL']['parentID'])?mfcs::$engine->cleanPost['MYSQL']['parentID']:"0",
 			mfcs::$engine->openDB->escape($formID),
 			encodeFields($data),
