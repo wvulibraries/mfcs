@@ -165,6 +165,9 @@ class listGenerator {
 			$dataNodes  = array_slice($data, $startPos, $userPaginationCount);
 			$tableHTML  = $table->display($dataNodes);
 			$tableHTML .= $pagination->nav_bar();
+			$tableHTML .= sprintf("<p>Jump to Page: %s</p>",
+				$pagination->dropdown()
+				);
 			return $tableHTML;
 		}else{
 			return $table->display($data);
