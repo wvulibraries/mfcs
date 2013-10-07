@@ -91,6 +91,7 @@ $(function(){
         .on('change', '#searchFormSelect',     handler_setupSearchFormFields)
         .on('click',  '.metadataListAccordionToggle', handler_metadataListAccordionToggle)
         .on('submit', 'form[name=insertForm]', select_metadataMultiSelects)
+        .on('change', '#paginationPageDropdownID', handler_jumpToPage)
 
     $('#metadataModal').bind('keypress keydown keyup', function(e){
        if(e.keyCode == 13) { e.preventDefault(); }
@@ -99,6 +100,17 @@ $(function(){
     $("#objectListingTable").tablesorter(); 
 
 });
+
+function queryObj() {
+    var result = {}, queryString = location.search.slice(1),
+        re = /([^&=]+)=([^&]*)/g, m;
+
+    while (m = re.exec(queryString)) {
+        result[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+    }
+
+    return result;
+}
 
 function select_metadataMultiSelects() {
     $('.multiSelectContainer option').prop('selected', 'selected');
