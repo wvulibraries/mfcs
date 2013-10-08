@@ -86,27 +86,19 @@ class mfcsSearch {
 			$dateWhere = "";
 		}
 
-		$sql       = sprintf("SELECT `ID` FROM `objects` WHERE `formID`='%s' %s",
-			$post['formList'],
-			$dateWhere
-			); 
-		$sqlResult = mfcs::$engine->openDB->query($sql);
-
-		if (!$sqlResult['result']) {
-			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
-			return FALSE;
-		}
+		$objects = objects::getAllObjectsForForm($post['formList']);
 
 		$results = array();
-		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-			if (($object = objects::get($row['ID'])) === FALSE) {
-				return FALSE;
-			}
+		foreach ($objects as $object) {
 
 			$found = FALSE;
 			if (!isempty($post['query']) ) { 
-				if (stripos($object['data'][$post['fieldList']],$post['query']) !== FALSE) {
-					$results[$row['ID']] = $object;
+				if (isset($object['data'][$post['fieldList']]) && stripos($object['data'][$post['fieldList']],$post['query']) !== FALSE) {
+					$results[$object['ID']] = $object;
+					$found = TRUE;	
+				}
+				else if ($post['fieldList'] == "idno" && stripos($object[$post['fieldList']],$post['query']) !== FALSE) {
+					$results[$object['ID']] = $object;
 					$found = TRUE;	
 				}
 			}
@@ -115,7 +107,7 @@ class mfcsSearch {
 			}
 
 			if ($found === TRUE) {
-				$results[$row['ID']] = $object;
+				$results[$object['ID']] = $object;
 			}
 
 		}
