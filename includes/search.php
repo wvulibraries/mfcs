@@ -89,7 +89,7 @@ class mfcsSearch {
 			$dateWhere = "";
 		}
 
-		$objects = objects::getAllObjectsForForm($post['formList']);
+		$objects = objects::getAllObjectsForForm($post['formList'],"idno");
 
 		$results = array();
 		foreach ($objects as $object) {
