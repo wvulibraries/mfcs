@@ -461,6 +461,13 @@ class objects {
 			return FALSE;
 		}
 
+		// begin transactions
+		$result = mfcs::$engine->openDB->transBegin("objects");
+		if ($result !== TRUE) {
+			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
+			return FALSE;
+		}
+
 		// place old version into revision control
 		$rcs = new revisionControlSystem('objects','revisions','ID','modifiedTime');
 		$return = $rcs->insertRevision($objectID);
