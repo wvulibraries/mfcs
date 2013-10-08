@@ -171,6 +171,7 @@ class listGenerator {
 			$tableHTML .= sprintf("<p>Records per page: %s</p>",
 				$pagination->recordsPerPageDropdown()
 				);
+
 			return $tableHTML;
 		}else{
 			return $table->display($data);

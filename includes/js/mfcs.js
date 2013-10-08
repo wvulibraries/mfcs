@@ -92,6 +92,7 @@ $(function(){
         .on('click',  '.metadataListAccordionToggle', handler_metadataListAccordionToggle)
         .on('submit', 'form[name=insertForm]', select_metadataMultiSelects)
         .on('change', '#paginationPageDropdownID', handler_jumpToPage)
+        .on('change', '#paginationRecordsPerPageDropdownID', handler_setPaginationPerPage)
 
     $('#metadataModal').bind('keypress keydown keyup', function(e){
        if(e.keyCode == 13) { e.preventDefault(); }
@@ -124,6 +125,26 @@ function handler_jumpToPage() {
     var url  = window.location.pathname+"?listType="+queryObj()['listType']+"&formID="+queryObj()['formID']+"&page="+page;
 
     window.location.href=url;
+}
+
+function handler_setPaginationPerPage() {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    var perPage = $(this).val();
+    var url = siteRoot+'/index.php?action=paginationPerPage&perPage='+perPage+'&ajax=true';
+    
+    $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "html",
+        success: function(responseData) {
+            window.location.reload();
+        },
+        error: function(jqXHR,error,exception) {
+        }
+    }); 
+
 }
 
 function handler_metadataListAccordionToggle() {
