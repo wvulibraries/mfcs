@@ -475,7 +475,7 @@ class forms {
 		}
 
 		if (!isnull($objectID)) {
-			$object = objects::get($objectID);
+			$object = objects::get($objectID,TRUE);
 			if ($object === FALSE) {
 				errorHandle::errorMsg("Error retrieving object.");
 				return FALSE;
