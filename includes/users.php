@@ -18,6 +18,30 @@ class users {
             : $default;
     }
 
+    /**
+     * Set a user field
+     *
+     * @author Michael Bond
+     * @param string $name The name of the user field
+     * @param string $value The value of the user field
+     * @return bool TRUE on success
+     */
+    public static function setField($name,$value) {
+        $sql       = sprintf("UPDATE `users` SET `%s`='%s' WHERE `ID`='%s'",
+            mfcs::$engine->openDB->escape($name),
+            mfcs::$engine->openDB->escape($value),
+            mfcs::$engine->openDB->escape(users::user('ID'))
+            );
+        $sqlResult = mfcs::$engine->openDB->query($sql);
+        
+        if (!$sqlResult['result']) {
+            errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+            return FALSE;
+        }
+        
+        return TRUE;
+    }
+
 	public static function loadProjects() {
 
 		$engine = EngineAPI::singleton();
