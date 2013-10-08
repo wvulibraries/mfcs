@@ -469,7 +469,7 @@ class objects {
 		}
 
 		// place old version into revision control
-		$rcs = new revisionControlSystem('objects','revisions','ID','modifiedTime');
+		$rcs = revisions::new();
 		$return = $rcs->insertRevision($objectID);
 
 

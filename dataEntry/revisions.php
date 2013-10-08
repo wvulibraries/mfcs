@@ -2,7 +2,7 @@
 include("../header.php");
 
 // Setup revision control
-$revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime');
+$revisions = revisions::new();
 
 ###############################################################################################################
 
