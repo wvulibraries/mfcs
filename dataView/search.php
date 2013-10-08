@@ -27,13 +27,17 @@ if (isset($engine->cleanPost['MYSQL']['search'])) {
 	catch(Exception $e) {
 		errorHandle::errorMsg($e->getMessage());
 	}
-}elseif(isset($engine->cleanGet['MYSQL']['page'])){
+}
+elseif(isset($engine->cleanGet['MYSQL']['page'])) {
 	$searchPOST = sessionGet('searchPOST');
-	if($searchPOST){
+	if($searchPOST) {
+
 		$results = mfcsSearch::search($searchPOST);
 		if($results === FALSE) throw new Exception("Error retrieving results");
+
 	}
-}else{
+}
+else{
 	sessionDelete('searchPOST');
 }
 
