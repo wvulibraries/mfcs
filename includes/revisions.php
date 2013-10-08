@@ -2,6 +2,10 @@
 
 class revisions {
 	
+	public static function new() {
+		return new revisionControlSystem('objects','revisions','ID','modifiedTime');
+	}
+
 	public static function generateFieldDisplay($object,$fields) {
 		
 		$output = '';
