@@ -13,7 +13,7 @@ class listGenerator {
 		$engine  = EngineAPI::singleton();
 		$objects = isnull($objects)
 			? objects::getObjects(0,NULL,FALSE)
-			: array_slice($objects, $start, $length);
+			: $objects; //array_slice($objects, $start, $length);
 
 		$data = array();
 		foreach ($objects as $object) {
