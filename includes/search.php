@@ -55,6 +55,9 @@ class mfcsSearch {
 
 		$output = '<option value="idno">IDNO</option><optgroup label="Form Fields">';
 		foreach ($form['fields'] as $field) {
+
+			if (isset($field['choicesType'])) continue;
+
 			$output .= sprintf('<option value="%s">%s</option>',
 				$field['name'],
 				$field['label']
