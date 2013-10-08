@@ -284,7 +284,13 @@ class objects {
 		$tmp = Array(); 
 
 		foreach($objects as &$object) {
-			$tmp[] = &$object['data'][$sortField]; 
+
+			if ($sortField == "idno") {
+				$tmp[] = &$object['idno'];
+			}
+			else {
+				$tmp[] = &$object['data'][$sortField]; 
+			}
 		}
 
 		array_multisort($tmp, $objects); 
