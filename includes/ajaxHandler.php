@@ -22,6 +22,10 @@ if(isset($engine->cleanGet['MYSQL']['ajax'])){
             case 'searchFormFields':
                 die(mfcsSearch::formFieldOptions($engine->cleanGet["MYSQL"]['formID']));
                 break;
+            case 'paginationPerPage':
+                $result = users::setField('pagination',$engine->cleanGet["MYSQL"]['perPage']);
+                die(json_encode((($result)?"TRUE":"FALSE")));
+                break;
         }
     }
     header('Content-type: application/json');
