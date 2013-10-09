@@ -2,7 +2,7 @@
 include("../header.php");
 
 // Setup revision control
-$revisions = revisions::new();
+$revisions = revisions::create();
 
 ###############################################################################################################
 

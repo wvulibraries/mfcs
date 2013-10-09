@@ -469,7 +469,7 @@ class objects {
 		}
 
 		// place old version into revision control
-		$rcs = revisions::new();
+		$rcs    = revisions::create();
 		$return = $rcs->insertRevision($objectID);
 
 

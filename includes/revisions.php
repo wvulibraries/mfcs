@@ -2,7 +2,7 @@
 
 class revisions {
 	
-	public static function new() {
+	public static function create() {
 		return new revisionControlSystem('objects','revisions','ID','modifiedTime');
 	}
 
