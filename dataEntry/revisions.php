@@ -23,7 +23,12 @@ try{
 
 	// Catch a form submition (which would be a revision being reverted to)
 	if(isset($engine->cleanPost['MYSQL']['revisionID'])){
-		if (($revision = $revisions->getRevision($engine->cleanGet['MYSQL']['objectID'], $engine->cleanPost['MYSQL']['revisionID'])) === FALSE) {
+
+		// @TODO this should use revert2Revision() method instead of this ... 
+
+		$revisionID = $revisions->getRevisionID($engine->cleanGet['MYSQL']['objectID'], $engine->cleanPost['MYSQL']['revisionID']);
+	
+		if (($revision = $revisions->getMetadataForID($revisionID)) === FALSE) {
 			throw new Exception('Could not load revision.');
 		} 
 
