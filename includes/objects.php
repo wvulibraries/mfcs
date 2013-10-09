@@ -488,7 +488,7 @@ class objects {
 			encodeFields($data),
 			mfcs::$engine->openDB->escape($formID),
 			mfcs::$engine->openDB->escape($metadata),
-			time(),
+			(isnull($modifiedTime))?time():$modifiedTime,
 			mfcs::$engine->openDB->escape($objectID)
 			); 
 
