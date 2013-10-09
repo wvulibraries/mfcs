@@ -639,6 +639,12 @@ class objects {
 
 		$result = $engine->openDB->transBegin("objectProjects");
 
+		if (self::deleteAllProjects($objectID) === FALSE) {
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
+			throw new Exception("Error removing all projects from Object.");
+		}
+
 		foreach ($projects as $projectID) { 
 			if (self::addProject($objectID,$projectID) === FALSE) {
 				$engine->openDB->transRollback();
