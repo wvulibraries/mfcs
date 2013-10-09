@@ -26,7 +26,7 @@ try{
 		if (($revision = $revisions->getRevision($engine->cleanGet['MYSQL']['objectID'], $engine->cleanPost['MYSQL']['revisionID'])) === FALSE) {
 			throw new Exception('Could not load revision.');
 		} 
-		
+
 		if (objects::update($engine->cleanGet['MYSQL']['objectID'],$revision['formID'],(decodeFields($revision['data'])),$revision['metadata'],$revision['parentID']) !== FALSE) {
 			// Reload the object - To refresh the data
 			$object = objects::get($objectID,TRUE); 
@@ -39,8 +39,10 @@ try{
 	###############################################################################################################
 
 	// Is this just a revision AJAX request?
-	if((isset($engine->cleanGet['MYSQL']['revisionID']))){
-		$revision = $revisions->getRevision($engine->cleanGet['MYSQL']['objectID'], $engine->cleanGet['MYSQL']['revisionID']);
+	if((isset($engine->cleanGet['MYSQL']['revisionID']))) {
+		$revisionID = $revisions->getRevisionID($engine->cleanGet['MYSQL']['objectID'], $engine->cleanGet['MYSQL']['revisionID']);
+		$revision   = $revisions->getMetadataForID($revisionID);
+
 		if(!$revision){
 			die('Error reading revision');
 		}else{
