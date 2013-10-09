@@ -637,7 +637,10 @@ class objects {
 
 		$engine = EngineAPI::singleton();
 
-		$result = $engine->openDB->transBegin("objectProjects");
+		if ($engine->openDB->transBegin("objectProjects") !== TRUE) {
+			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
+			return FALSE;
+		}
 
 		if (self::deleteAllProjects($objectID) === FALSE) {
 			$engine->openDB->transRollback();
