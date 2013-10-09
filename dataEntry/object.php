@@ -98,13 +98,6 @@ try {
 		}
 
 		if (isset($engine->cleanPost['MYSQL']['projects'])) {
-			// There are changes.
-			// Delete all the old ones
-			if (objects::deleteAllProjects($engine->cleanGet['MYSQL']['objectID']) === FALSE) {
-				$engine->openDB->transRollback();
-				$engine->openDB->transEnd();
-				throw new Exception("Error removing all projects from Object.");
-			}
 
 			// Add All the new ones
 			if (objects::addProjects($engine->cleanGet['MYSQL']['objectID'],$engine->cleanPost['MYSQL']['projects']) === FALSE) {
