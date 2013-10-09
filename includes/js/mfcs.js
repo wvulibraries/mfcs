@@ -217,7 +217,7 @@ function handler_displayMetadataFormModal(formID) {
     var choicesForm = formID;//$(this).attr("data-formID");
 
     $("[data-choicesForm='"+choicesForm+"']").each(function() {
-        console.log("here"); 
+
         var dataFieldName = $(this).attr("data-fieldname");
         var url           = siteRoot+'?ajax&action=selectChoices&formID='+$(this).attr("data-formid")+"&fieldName="+dataFieldName;
 
@@ -320,7 +320,7 @@ function addItemToID(id, item) {
 }
 
 function removeFromList(id) {
-    alert("here");
+
     var theSelect = document.getElementById(id);
 
        for (var selIndex = theSelect.length - 1; selIndex >= 0; selIndex--) 
