@@ -89,8 +89,6 @@ try {
 
 		// Add All the new ones
 		if (objects::addProjects($engine->cleanGet['MYSQL']['objectID'],$engine->cleanPost['MYSQL']['projects']) === FALSE) {
-			$engine->openDB->transRollback();
-			$engine->openDB->transEnd();
 			throw new Exception("Error adding projects to Object.");
 		}
 
