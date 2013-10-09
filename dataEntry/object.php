@@ -91,15 +91,13 @@ try {
 			return FALSE;
 		}
 
-		if (!isset($engine->cleanPost['MYSQL']['projects'])) {
-			// If no projects are set, we are deleting all the projects
-			if (objects::deleteAllProjects($engine->cleanGet['MYSQL']['objectID']) === FALSE) {
-				$engine->openDB->transRollback();
-				$engine->openDB->transEnd();
-				throw new Exception("Error removing all projects from Object.");
-			}
+		if (objects::deleteAllProjects($engine->cleanGet['MYSQL']['objectID']) === FALSE) {
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
+			throw new Exception("Error removing all projects from Object.");
 		}
-		else {
+
+		if (isset($engine->cleanPost['MYSQL']['projects'])) {
 			// There are changes.
 			// Delete all the old ones
 			if (objects::deleteAllProjects($engine->cleanGet['MYSQL']['objectID']) === FALSE) {
