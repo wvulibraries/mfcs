@@ -104,6 +104,7 @@ if (!isnull($ID)) {
 
 }
 else {
+	localVars::add("submitBtn",'<button type="submit" name="insert" class="btn">Insert</button>');
 	localVars::add("headerText","Add Watermark");
 }
 
@@ -149,7 +150,6 @@ $engine->eTemplate("include","header");
 				</div>
 			</div>
 
-			<button type="submit" name="insert" class="btn">Insert</button>
 			{local var="submitBtn"}
 		</form>
 	</section>
