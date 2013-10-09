@@ -85,29 +85,13 @@ try {
 	}
 	else if (isset($engine->cleanPost['MYSQL']['projectForm'])) {
 
-		if ($engine->openDB->transBegin("objectProjects") !== TRUE) {
-			errorHandle::errorMsg("Database transactions could not begin.");
-			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
-			return FALSE;
-		}
+		$engine->cleanPost['MYSQL']['projects'] = (isset($engine->cleanPost['MYSQL']['projects']))?$engine->cleanPost['MYSQL']['projects']:array();
 
-		if (objects::deleteAllProjects($engine->cleanGet['MYSQL']['objectID']) === FALSE) {
+		// Add All the new ones
+		if (objects::addProjects($engine->cleanGet['MYSQL']['objectID'],$engine->cleanPost['MYSQL']['projects']) === FALSE) {
 			$engine->openDB->transRollback();
 			$engine->openDB->transEnd();
-			throw new Exception("Error removing all projects from Object.");
-		}
-
-		if (isset($engine->cleanPost['MYSQL']['projects'])) {
-
-			// Add All the new ones
-			if (objects::addProjects($engine->cleanGet['MYSQL']['objectID'],$engine->cleanPost['MYSQL']['projects']) === FALSE) {
-				$engine->openDB->transRollback();
-				$engine->openDB->transEnd();
-				throw new Exception("Error adding projects to Object.");
-			}
-
-			$engine->openDB->transCommit();
-			$engine->openDB->transEnd();
+			throw new Exception("Error adding projects to Object.");
 		}
 
 	}
