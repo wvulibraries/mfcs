@@ -28,7 +28,7 @@ $(function(){
 
 		$div.fineUploader({
 			request: {
-				endpoint: siteRoot+"/includes/uploader.php",
+				endpoint: siteRoot+"includes/uploader.php",
 				params: {
 					engineCSRFCheck: csrfToken,
 					uploadID: uploadID,
@@ -132,7 +132,7 @@ function handler_setPaginationPerPage() {
     event.stopImmediatePropagation();
 
     var perPage = $(this).val();
-    var url = siteRoot+'/index.php?action=paginationPerPage&perPage='+perPage+'&ajax=true';
+    var url = siteRoot+'index.php?action=paginationPerPage&perPage='+perPage+'&ajax=true';
     
     $.ajax({
         type: "GET",
@@ -166,7 +166,7 @@ function handler_setupSearchFormFields() {
     event.stopImmediatePropagation();
 
     var formID = $('#searchFormSelect').val();
-    var url    = siteRoot+'/index.php?action=searchFormFields&formID='+formID+'&ajax=true';
+    var url    = siteRoot+'index.php?action=searchFormFields&formID='+formID+'&ajax=true';
     $.ajax({
         type: "GET",
         url: url,
@@ -186,7 +186,7 @@ function handler_setupMetadataModal() {
 
     var dataFieldName = $(this).attr("data-fieldname");
     var formID        = $(this).attr('data-formid');
-    var url           = siteRoot+'/dataEntry/metadata.php?formID='+formID+'&ajax=true';
+    var url           = siteRoot+'dataEntry/metadata.php?formID='+formID+'&ajax=true';
 
     $.ajax({
         type: "GET",
