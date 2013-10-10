@@ -42,6 +42,13 @@ include("../header.php");
 			// var_dump($time);
 			// print "</pre>";
 			break;
+		case'formShelfList':
+			$list = listGenerator::createFormShelfList($engine->cleanGet['MYSQL']['formID']);
+			$form = forms::get($engine->cleanGet['MYSQL']['formID']);
+			localvars::add('subTitle',' - '.$form['title']);
+			$breadCrumbs[] = sprintf('<a href="%s/dataView/list.php?listType=selectForm">Select Form</a>', $siteRoot);
+			$breadCrumbs[] = sprintf('<a href="%s/dataView/list.php?listType=form&formID=%s">%s</a>', $siteRoot, $form['ID'], $form['title']);
+			break;
 		case 'project':
 			$list    = listGenerator::createProjectObjectList($engine->cleanGet['MYSQL']['projectID']);
 			$project = projects::get($engine->cleanGet['MYSQL']['projectID']);

@@ -62,9 +62,20 @@ class listGenerator {
 
 			if (!mfcsPerms::isViewer($form['ID'])) continue;
 
-			$output .= sprintf('<li><a href="list.php?listType=form&amp;formID=%s" class="btn">%s</a></li>',
+
+
+			$output .= sprintf('<div class="btn-group" style="display: block; margin: 5px;">
+				<a href="list.php?listType=form&amp;formID=%s" class="btn" style="width: 400px;">%s</a>
+				<button class="btn dropdown-toggle" data-toggle="dropdown">
+				<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" style="width: 450px;">
+				<li><a href="list.php?listType=formShelfList&amp;formID=%s" style="width: 400px; text-align: right;">Shelf List</a></li>
+				</ul>
+				</div>',
 				$form['ID'],
-				forms::title($form['ID'])
+				forms::title($form['ID']),
+				$form['ID']
 				);
 		}
 		$output .= '</ul>';
@@ -113,6 +124,29 @@ class listGenerator {
 
 	}
 
+	public static function createFormShelfList($formID) {
+
+		$engine        = mfcs::$engine;
+		$objects       = objects::getAllObjectsForForm($formID,"idno",FALSE);
+		if (($form          = forms::get($formID)) === FALSE) {
+			return FALSE;
+		}
+		$excludeFields = array("idno","file");
+
+		$headers = array("Form IDNO","Creation Date","Modified Date","View","Edit","Revisions");
+
+		$data = array();
+		foreach ($objects as $object) {
+			
+			$tmp    = array($object['idno'],date("Y-m-d h:ia",$object['createTime']),date("Y-m-d h:ia",$object['modifiedTime']),self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("revisions",$object['ID']));
+			$data[] = $tmp; 
+
+		}
+
+		return self::createTable($data,$headers,FALSE);
+
+	}
+
 	public static function createProjectObjectList($projectID) {
 
 		$engine  = EngineAPI::singleton();
@@ -131,7 +165,7 @@ class listGenerator {
 
 	}
 
-	private static function createTable($data,$headers = NULL) {
+	private static function createTable($data,$headers = NULL,$pagination=TRUE) {
 		$table = new tableObject("array");
 
 		$table->summary  = "Object Listing";
@@ -153,7 +187,7 @@ class listGenerator {
 		$table->headers($headers);
 
 		$userPaginationCount = users::user('pagination',25);
-		if(sizeof($data) > $userPaginationCount){
+		if($pagination && sizeof($data) > $userPaginationCount){
 			$engine                   = mfcs::$engine;
 			$pagination               = new pagination(sizeof($data));
 			$pagination->itemsPerPage = $userPaginationCount;
