@@ -174,7 +174,7 @@ $engine->eTemplate("include","header");
 			<?php
 			}
 			if (!isnull($engine->cleanGet['MYSQL']['objectID']) and $revisions->hasRevisions($engine->cleanGet['MYSQL']['objectID'])) { ?>
-				<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions.php?objectID={local var="objectID"}">Revisions</a></li>
+				<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions/index.php?objectID={local var="objectID"}">Revisions</a></li>
 			<?php } ?>
 		</ul>
 	</nav>

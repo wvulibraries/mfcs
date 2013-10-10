@@ -189,7 +189,7 @@ class listGenerator {
 			case 'revisions':
 				$revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime');
 				return $revisions->hasRevisions($objectID)
-					? sprintf('<a href="%sdataEntry/revisions.php?objectID=%s">View</a>', localvars::get("siteRoot"), $objectID)
+					? sprintf('<a href="%sdataEntry/revisions/index.php?objectID=%s">View</a>', localvars::get("siteRoot"), $objectID)
 					: '<span style="font-style:italic; color:#ccc;">View</span>';
 				break;
 			default:
