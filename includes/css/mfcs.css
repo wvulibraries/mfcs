@@ -200,3 +200,9 @@ div.checkboxList label{
 	min-width: 75%;
 	margin-left: -35%;
 }
+
+.paginationJumpLabel {
+	display: inline-block;
+	width: 150px; 
+
+}

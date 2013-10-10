@@ -201,10 +201,10 @@ class listGenerator {
 			$dataNodes  = array_slice($data, $startPos, $userPaginationCount);
 			$tableHTML  = $table->display($dataNodes);
 			$tableHTML .= $pagination->nav_bar();
-			$tableHTML .= sprintf("<p>Jump to Page: %s</p>",
+			$tableHTML .= sprintf('<p><span class="paginationJumpLabel">Jump to Page:</span> %s</p>',
 				$pagination->dropdown()
 				);
-			$tableHTML .= sprintf("<p>Records per page: %s</p>",
+			$tableHTML .= sprintf('<p><span class="paginationJumpLabel">Records per page:</span> %s</p>',
 				$pagination->recordsPerPageDropdown()
 				);
 
