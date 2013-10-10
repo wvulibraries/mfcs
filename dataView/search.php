@@ -68,7 +68,7 @@ $engine->eTemplate("include","header");
 
 <section>
 	<header class="page-header">
-		<h1>List Objects{local var="subTitle"}</h1>
+		<h1>Search Objects{local var="subTitle"}</h1>
 	</header>
 	<nav id="breadcrumbs">
 		<ul class="breadcrumb">
