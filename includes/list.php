@@ -93,7 +93,7 @@ class listGenerator {
 		}
 		$excludeFields = array("idno","file");
 
-		$headers = array("View","Edit","Revisions","Creation Date","Modified Date","System IDNO","Form IDNO");
+		$headers = array("View","Edit","Creation Date","Modified Date","System IDNO","Form IDNO"); //"Revisions",
 		foreach($form['fields'] as $field) {
 			if (in_array(strtolower($field['type']), $excludeFields)) continue;
 
@@ -107,7 +107,7 @@ class listGenerator {
 
 			$form = forms::get($object['formID']);
 
-			$tmp = array(self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("revisions",$object['ID']),date("Y-m-d h:ia",$object['createTime']),date("Y-m-d h:ia",$object['modifiedTime']),$object['ID'],$object['idno']);
+			$tmp = array(self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),date("Y-m-d h:ia",$object['createTime']),date("Y-m-d h:ia",$object['modifiedTime']),$object['ID'],$object['idno']); //,self::genLinkURLs("revisions",$object['ID'])
 			foreach($form['fields'] as $field) {
 				if (in_array(strtolower($field['type']), $excludeFields)) continue;
 
@@ -131,17 +131,19 @@ class listGenerator {
 		if (($form          = forms::get($formID)) === FALSE) {
 			return FALSE;
 		}
+
 		$excludeFields = array("idno","file");
 
-		$headers = array("Form IDNO","Creation Date","Modified Date","View","Edit","Revisions");
+		$headers = array("Form IDNO","Creation Date","Modified Date","View","Edit"); //,"Revisions"
 
 		$data = array();
 		foreach ($objects as $object) {
 			
-			$tmp    = array($object['idno'],date("Y-m-d h:ia",$object['createTime']),date("Y-m-d h:ia",$object['modifiedTime']),self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("revisions",$object['ID']));
+			$tmp    = array($object['idno'],date("Y-m-d h:ia",$object['createTime']),date("Y-m-d h:ia",$object['modifiedTime']),self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID'])); //,self::genLinkURLs("revisions",$object['ID'])
 			$data[] = $tmp; 
 
 		}
+
 
 		return self::createTable($data,$headers,FALSE);
 
@@ -213,6 +215,7 @@ class listGenerator {
 	}
 
 	private static function genLinkURLs($type,$objectID) {
+
 		switch(trim(strtolower($type))){
 			case 'view':
 				return sprintf('<a href="%sdataView/object.php?objectID=%s">View</a>', localvars::get("siteRoot"), $objectID);
