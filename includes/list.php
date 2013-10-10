@@ -82,7 +82,7 @@ class listGenerator {
 		}
 		$excludeFields = array("idno","file");
 
-		$headers = array("View","Edit","Revisions","System IDNO","Form IDNO");
+		$headers = array("View","Edit","Revisions","Creation Date","Modified Date","System IDNO","Form IDNO");
 		foreach($form['fields'] as $field) {
 			if (in_array(strtolower($field['type']), $excludeFields)) continue;
 
@@ -96,7 +96,7 @@ class listGenerator {
 
 			$form = forms::get($object['formID']);
 
-			$tmp = array(self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("revisions",$object['ID']),$object['ID'],$object['idno']);
+			$tmp = array(self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("revisions",$object['ID']),date("Y-m-d h:ia",$object['createTime']),date("Y-m-d h:ia",$object['modifiedTime']),$object['ID'],$object['idno']);
 			foreach($form['fields'] as $field) {
 				if (in_array(strtolower($field['type']), $excludeFields)) continue;
 
