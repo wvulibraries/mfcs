@@ -132,7 +132,7 @@ class objects {
 		return($children);
 	}
 
-	public static function getAllObjectsForForm($formID,$sortField=NULL) {
+	public static function getAllObjectsForForm($formID,$sortField=NULL,$metedata=TRUE) {
 		$engine = EngineAPI::singleton();
 
 		if (!isnull($sortField)) {
@@ -181,7 +181,7 @@ class objects {
 		// 
 		$objects = array();
 		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-			$objects[] = self::buildObject($row,TRUE);
+			$objects[] = self::buildObject($row,$metadata);
 		}
 
 		return $objects;
