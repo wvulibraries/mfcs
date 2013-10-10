@@ -578,10 +578,10 @@ class forms {
 				);
 
 				if ($field['type'] == "wysiwyg") {
-					$output .= sprintf('<script type="text/javascript">window.CKEDITOR_BASEPATH="%s/includes/js/CKEditor/"</script>',
+					$output .= sprintf('<script type="text/javascript">window.CKEDITOR_BASEPATH="%sincludes/js/CKEditor/"</script>',
 						localvars::get("siteRoot")
 					);
-					$output .= sprintf('<script type="text/javascript" src="%s/includes/js/CKEditor/ckeditor.js"></script>',
+					$output .= sprintf('<script type="text/javascript" src="%sincludes/js/CKEditor/ckeditor.js"></script>',
 						localvars::get("siteRoot")
 					);
 					$output .= '<script type="text/javascript">';
