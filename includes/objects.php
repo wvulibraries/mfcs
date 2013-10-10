@@ -132,7 +132,7 @@ class objects {
 		return($children);
 	}
 
-	public static function getAllObjectsForForm($formID,$sortField=NULL,$metedata=TRUE) {
+	public static function getAllObjectsForForm($formID,$sortField=NULL,$metadata=TRUE) {
 		$engine = EngineAPI::singleton();
 
 		if (!isnull($sortField)) {
@@ -181,7 +181,7 @@ class objects {
 		// 
 		$objects = array();
 		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-			$objects[] = self::buildObject($row,$metadata);
+			$objects[] = self::buildObject($row,TRUE,$metadata); 
 		}
 
 		return $objects;
@@ -210,7 +210,7 @@ class objects {
 
 	}
 
-	public static function buildObject($row,$ignoreCache=FALSE) {
+	public static function buildObject($row,$ignoreCache=FALSE,$metadata=TRUE) {
 
 		if (!is_array($row)) {
 			return FALSE;
@@ -233,29 +233,31 @@ class objects {
 		// does it have the proper structure?
 		// etc ...
 
-		// **** Original way of getting data
-		if (($row['data'] = decodeFields($row['data'])) === FALSE) {
-			errorHandle::errorMsg("Error retrieving object.");
-			return FALSE;
-		} 
+		if ($metadata !== FALSE) {
 
-		// **** objectsData table method for getting data
-		// if (($row['data'] = self::retrieveObjectData($row['ID'])) === FALSE) {
-		// 	errorHandle::errorMsg("Error retrieving object.");
-		// 	return FALSE;
-		// }
-		
-		// **** objectsData, single query
-		// $object = $row[0]; 
-		// $data = array();
-		// foreach ($row as $fragment) {
-		// 	$data[$fragment['fieldName']] = ($fragment['encoded'] == "1")?decodeFields($fragment['value']):$fragment['value'];
-		// }
-		// $object['data'] = $data;
-		// unset($object['fieldName']);
-		// unset($object['value']);
-		// $row = $object;
+			// **** Original way of getting data
+			if (($row['data'] = decodeFields($row['data'])) === FALSE) {
+				errorHandle::errorMsg("Error retrieving object.");
+				return FALSE;
+			} 
 
+			// **** objectsData table method for getting data
+			// if (($row['data'] = self::retrieveObjectData($row['ID'])) === FALSE) {
+			// 	errorHandle::errorMsg("Error retrieving object.");
+			// 	return FALSE;
+			// }
+
+			// **** objectsData, single query
+			// $object = $row[0]; 
+			// $data = array();
+			// foreach ($row as $fragment) {
+			// 	$data[$fragment['fieldName']] = ($fragment['encoded'] == "1")?decodeFields($fragment['value']):$fragment['value'];
+			// }
+			// $object['data'] = $data;
+			// unset($object['fieldName']);
+			// unset($object['value']);
+			// $row = $object;
+		}
 		if (!$ignoreCache) {
 			$cache = $mfcs->cache("create",$cachID,$row);
 			if ($cache === FALSE) {
