@@ -711,7 +711,7 @@ class forms {
 
 				if ($field['type'] == "idno") {
 					$field['type'] = "text";
-					if (!isset($object['data'][$field['name']])) $object['data'][$field['name']] = $object['idno'];
+					if (isset($object) && !isset($object['data'][$field['name']])) $object['data'][$field['name']] = $object['idno'];
 				}
 
 				$fieldValue = isset($object['data'][$field['name']])
