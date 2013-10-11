@@ -120,7 +120,7 @@ class listGenerator {
 
 		}
 
-		return self::createTable($data,$headers);
+		return self::createTable($data,$headers,TRUE,$formID);
 
 	}
 
@@ -167,7 +167,7 @@ class listGenerator {
 
 	}
 
-	private static function createTable($data,$headers = NULL,$pagination=TRUE) {
+	private static function createTable($data,$headers = NULL,$pagination=TRUE,$formID=NULL) {
 		$table = new tableObject("array");
 
 		$table->summary  = "Object Listing";
@@ -206,6 +206,9 @@ class listGenerator {
 				);
 			$tableHTML .= sprintf('<p><span class="paginationJumpLabel">Records per page:</span> %s</p>',
 				$pagination->recordsPerPageDropdown()
+				);
+			$tableHTML .= sprintf('<p><form id="jumpToIDNOForm"><span class="paginationJumpLabel">Jump to IDNO:</span> <input type="text" name="jumpToIDNO" id="jumpToIDNO" data-formid="%s" value="" /></form></p>', 
+				(isnull($formID))?"":htmlSanitize($formID)
 				);
 
 			return $tableHTML;

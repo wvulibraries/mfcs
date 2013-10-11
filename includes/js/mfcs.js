@@ -87,12 +87,13 @@ $(function(){
 	});
 
 	$(document)
-        .on('click',  '.metadataObjectEditor', handler_setupMetadataModal)
-        .on('change', '#searchFormSelect',     handler_setupSearchFormFields)
-        .on('click',  '.metadataListAccordionToggle', handler_metadataListAccordionToggle)
-        .on('submit', 'form[name=insertForm]', select_metadataMultiSelects)
-        .on('change', '#paginationPageDropdownID', handler_jumpToPage)
+        .on('click',  '.metadataObjectEditor',               handler_setupMetadataModal)
+        .on('change', '#searchFormSelect',                   handler_setupSearchFormFields)
+        .on('click',  '.metadataListAccordionToggle',        handler_metadataListAccordionToggle)
+        .on('submit', 'form[name=insertForm]',               select_metadataMultiSelects)
+        .on('change', '#paginationPageDropdownID',           handler_jumpToPage)
         .on('change', '#paginationRecordsPerPageDropdownID', handler_setPaginationPerPage)
+        .on('submit', '#jumpToIDNOForm',                     handler_jumpToIDNO) 
 
     $('#metadataModal').bind('keypress keydown keyup', function(e){
        if(e.keyCode == 13) { e.preventDefault(); }
@@ -101,6 +102,17 @@ $(function(){
     $("#objectListingTable").tablesorter(); 
 
 });
+
+function handler_jumpToIDNO() {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    var idno   = $('#jumpToIDNO').val();
+    var formID = $('#jumpToIDNO').data("formid"); 
+    var url    = siteRoot+"?ajax=TRUE&action=paginationJumpToIDNO&idno="+idno+"&formID="+formID;
+
+    window.location.href=url;
+}
 
 function queryObj() {
     var result = {}, queryString = location.search.slice(1),

@@ -26,6 +26,17 @@ if(isset($engine->cleanGet['MYSQL']['ajax'])){
                 $result = users::setField('pagination',$engine->cleanGet["MYSQL"]['perPage']);
                 die(json_encode((($result)?"TRUE":"FALSE")));
                 break;
+            case 'paginationJumpToIDNO':
+                $objects  = objects::getAllObjectsForForm($engine->cleanGet['MYSQL']['formID'],"idno");
+                for($I = 0;$I< count($objects);$I++) {
+                    if (strtolower($objects[$I]['idno']) == strtolower($engine->cleanGet['MYSQL']['idno'])) {
+                        header( 'Location: '.localvars::get("siteroot")."dataView/list.php?listType=form&formID=".$engine->cleanGet['MYSQL']['formID']."&page=".(ceil($I / 25)) );
+                    }
+                }
+
+                $result = "IDNO not found";
+
+                break;
         }
     }
     header('Content-type: application/json');
