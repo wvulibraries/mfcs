@@ -92,7 +92,14 @@ $engine->eTemplate("include","header");
 	<h1>{local var="formName"}</h1>
 </header>
 
-<a href="{local var="siteRoot"}dataEntry/object.php?objectID={local var="objectID"}">Return to Object Page</a>
+<nav id="breadcrumbs">
+	<ul class="breadcrumb">
+		<li><a href="{local var="siteRoot"}">Home</a></li>
+		<li><a href="{local var="siteRoot"}/dataEntry/selectForm.php">Select a Form</a></li>
+		<li><a href="{local var="siteRoot"}dataEntry/object.php?objectID={local var="objectID"}">Object Edit Page</a></li>
+	</ul>
+</nav>
+
 
 <div id="left">
 	{local var="leftnav"}
