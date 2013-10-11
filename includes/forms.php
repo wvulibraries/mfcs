@@ -990,7 +990,7 @@ class forms {
 							$values[$field['name']] = $field['value'];
 						}
 
-						// @TODO need continue here?
+						continue;
 					}
 
 					if (strtolower($field['type']) == "file" && isset($engine->cleanPost['MYSQL'][$field['name']])) {
