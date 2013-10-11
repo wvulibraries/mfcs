@@ -88,7 +88,7 @@ class listGenerator {
 
 		$engine        = mfcs::$engine;
 		$objects       = objects::getAllObjectsForForm($formID,"idno");
-		if (($form          = forms::get($formID)) === FALSE) {
+		if (($form     = forms::get($formID)) === FALSE) {
 			return FALSE;
 		}
 		$excludeFields = array("idno","file");
