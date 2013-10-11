@@ -471,17 +471,19 @@ class objects {
 		}
 
 		// place old version into revision control
-		$rcs    = revisions::create();
-		$return = $rcs->insertRevision($objectID);
+		// excluding metadata objects
+		if ($metadata == 0) {
+			$rcs    = revisions::create();
+			$return = $rcs->insertRevision($objectID);
 
+			if ($return !== TRUE) {
 
-		if ($return !== TRUE) {
+				mfcs::$engine->openDB->transRollback();
+				mfcs::$engine->openDB->transEnd();
 
-			mfcs::$engine->openDB->transRollback();
-			mfcs::$engine->openDB->transEnd();
-
-			errorHandle::newError(__METHOD__."() - unable to insert revisions", errorHandle::DEBUG);
-			return FALSE;
+				errorHandle::newError(__METHOD__."() - unable to insert revisions", errorHandle::DEBUG);
+				return FALSE;
+			}
 		}
 
 		// insert new version
