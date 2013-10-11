@@ -57,6 +57,17 @@ try{
 
 	###############################################################################################################
 
+	// Build the select list
+	$selectARevision = "";
+	foreach($revisions->getSecondaryIDs($engine->cleanGet['MYSQL']['objectID'], 'DESC') as $revisionID){
+		$selectARevision .= sprintf('<option value="%s">%s</option>', 
+			$revisionID, 
+			date('D, M d, Y - h:i a', $revisionID)
+			);
+	}
+
+	localVars::add("selectARevision",$selectARevision);
+
 	localvars::add("formName", $form['title']);
 	localvars::add("objectID", $objectID);
 	localvars::add("currentVersion", revisions::generateFieldDisplay($object, $fields));
@@ -81,7 +92,7 @@ $engine->eTemplate("include","header");
 	<h1>{local var="formName"}</h1>
 </header>
 
-<a href="{local var="siteRoot"}dataView/object.php?objectID={local var="objectID"}">Return to Object Page</a>
+<a href="{local var="siteRoot"}dataEntry/object.php?objectID={local var="objectID"}">Return to Object Page</a>
 
 <div id="left">
 	{local var="leftnav"}
@@ -102,11 +113,7 @@ $engine->eTemplate("include","header");
 			<div>
 				<select id="revisionSelector">
 					<option>Select a revision</option>
-					<?php
-					foreach($revisions->getSecondaryIDs($engine->cleanGet['MYSQL']['objectID'], 'DESC') as $revisionID){
-						printf('<option value="%s">%s</option>', $revisionID, date('D, M d, Y - h:i a', $revisionID));
-					}
-					?>
+					{local var="selectARevision"}
 				</select>
 				<input id="revertBtn" type="button" value="Revert">
 			</div>
