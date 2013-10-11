@@ -9,7 +9,7 @@ include("../header.php");
 	$siteRoot = localvars::get('siteRoot');
 	$breadCrumbs = array(
 		sprintf('<a href="%s">Home</a>', $siteRoot),
-		sprintf('<a href="%s/dataView/list.php">List Objects</a>', $siteRoot)
+		sprintf('<a href="%sdataView/list.php">List Objects</a>', $siteRoot)
 	);
 
 	// Figure out what kind of list we're building
@@ -20,12 +20,12 @@ include("../header.php");
 		case 'selectForm':
 			$list = listGenerator::createFormSelectList();
 			localvars::add('subTitle',' - Select Form');
-			$breadCrumbs[] = sprintf('<a href="%s/dataView/list.php?listType=selectForm">Select Form</a>', $siteRoot);
+			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=selectForm">Select Form</a>', $siteRoot);
 			break;
 		case 'selectProject':
 			$list = listGenerator::createProjectSelectList();
 			localvars::add('subTitle',' - Select Project');
-			$breadCrumbs[] = sprintf('<a href="%s/dataView/list.php?listType=selectProject">Select Project</a>', $siteRoot);
+			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=selectProject">Select Project</a>', $siteRoot);
 			break;
 		case 'form':
 			// $time_start = microtime(true);
@@ -33,8 +33,8 @@ include("../header.php");
 			$list = listGenerator::createFormObjectList($engine->cleanGet['MYSQL']['formID']);
 			$form = forms::get($engine->cleanGet['MYSQL']['formID']);
 			localvars::add('subTitle',' - '.$form['title']);
-			$breadCrumbs[] = sprintf('<a href="%s/dataView/list.php?listType=selectForm">Select Form</a>', $siteRoot);
-			$breadCrumbs[] = sprintf('<a href="%s/dataView/list.php?listType=form&formID=%s">%s</a>', $siteRoot, $form['ID'], $form['title']);
+			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=selectForm">Select Form</a>', $siteRoot);
+			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=form&formID=%s">%s</a>', $siteRoot, $form['ID'], $form['title']);
 				
 			// $time_end = microtime(true);
 			// $time = $time_end - $time_start;
@@ -46,20 +46,20 @@ include("../header.php");
 			$list = listGenerator::createFormShelfList($engine->cleanGet['MYSQL']['formID']);
 			$form = forms::get($engine->cleanGet['MYSQL']['formID']);
 			localvars::add('subTitle',' - '.$form['title']);
-			$breadCrumbs[] = sprintf('<a href="%s/dataView/list.php?listType=selectForm">Select Form</a>', $siteRoot);
-			$breadCrumbs[] = sprintf('<a href="%s/dataView/list.php?listType=form&formID=%s">%s</a>', $siteRoot, $form['ID'], $form['title']);
+			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=selectForm">Select Form</a>', $siteRoot);
+			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=form&formID=%s">%s</a>', $siteRoot, $form['ID'], $form['title']);
 			break;
 		case 'project':
 			$list    = listGenerator::createProjectObjectList($engine->cleanGet['MYSQL']['projectID']);
 			$project = projects::get($engine->cleanGet['MYSQL']['projectID']);
 			localvars::add('subTitle',' - '.$project['projectName']);
-			$breadCrumbs[] = sprintf('<a href="%s/dataView/list.php?listType=selectProject">Select Project</a>', $siteRoot);
-			$breadCrumbs[] = sprintf('<a href="%s/dataView/list.php?listType=project&projectID=%s">%s</a>', $siteRoot, $project['ID'], $project['projectName']);
+			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=selectProject">Select Project</a>', $siteRoot);
+			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=project&projectID=%s">%s</a>', $siteRoot, $project['ID'], $project['projectName']);
 			break;
 		case 'all':
 			$list = listGenerator::createAllObjectList();
 			localvars::add('subTitle',' - All Objects');
-			$breadCrumbs[] = sprintf('<a href="%s/dataView/list.php?listType=all">All Objects</a>', $siteRoot);
+			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=all">All Objects</a>', $siteRoot);
 			break;
 		default:
 			$list = listGenerator::createInitialSelectList();
