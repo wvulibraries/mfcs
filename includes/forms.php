@@ -963,7 +963,7 @@ class forms {
 		}
 
 		// Do the Updates
-		$objects = objects::getAllObjectsForForm($formID);
+		$objects = objects::getAllObjectsForForm($formID,NULL,FALSE);
 		if (count($objects) > 0) {
 			foreach ($objects as $object) {
 
@@ -973,7 +973,7 @@ class forms {
 
 					$value = (isset($engine->cleanPost['RAW'][$field['name']."_".$object['ID']]))?$engine->cleanPost['RAW'][$field['name']."_".$object['ID']]:"";
 					$validationTests = self::validateSubmission($formID,$field,$value,$object['ID']);
-
+					
 					if (isnull($validationTests) || $validationTests === FALSE) {
 						continue;
 					}
@@ -989,6 +989,8 @@ class forms {
 							// grab the default value from the form.
 							$values[$field['name']] = $field['value'];
 						}
+
+						// @TODO need continue here?
 					}
 
 					if (strtolower($field['type']) == "file" && isset($engine->cleanPost['MYSQL'][$field['name']])) {
@@ -1021,42 +1023,27 @@ class forms {
 						return FALSE;
 					}
 
-					// place old version into revision control
-					$rcs = new revisionControlSystem('objects','revisions','ID','modifiedTime');
-					$return = $rcs->insertRevision($object['ID']);
+				}
 
-					if ($return !== TRUE) {
-
+				// Check to see if the objects data has changed. if it has, update it. 
+				if (encodeFields($values) != $object['data']) {
+					
+					if (objects::update($object['ID'],$formID,$values,$form['metadata']) === FALSE) {
 						$engine->openDB->transRollback();
 						$engine->openDB->transEnd();
 
-						errorHandle::errorMsg("Error inserting revision.");
-						errorHandle::newError(__METHOD__."() - unable to insert revisions", errorHandle::DEBUG);
+
+						errorHandle::newError(__METHOD__."() - error updating edit table", errorHandle::DEBUG);
+						errorHandle::errorMsg("Error updating.");
+
 						return FALSE;
 					}
 
-					// insert new version
-					$sql = sprintf("UPDATE `objects` SET `data`='%s', `modifiedTime`='%s' WHERE `ID`='%s'",
-						encodeFields($values),
-						time(),
-						$engine->openDB->escape($object['ID'])
-						);
 
-					$sqlResult = $engine->openDB->query($sql);
-				}
-
-				if (!$sqlResult['result']) {
-					$engine->openDB->transRollback();
-					$engine->openDB->transEnd();
-
-					errorHandle::newError(__METHOD__."() - ".$sql." -- ".$sqlResult['error'], errorHandle::DEBUG);
-					return FALSE;
 				}
 
 			}
 		}
-
-
 
 		// do the deletes
 
