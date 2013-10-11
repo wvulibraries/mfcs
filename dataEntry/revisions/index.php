@@ -81,6 +81,8 @@ $engine->eTemplate("include","header");
 	<h1>{local var="formName"}</h1>
 </header>
 
+<a href="{local var="siteRoot"}dataView/object.php?objectID={local var="objectID"}">Return to Object Page</a>
+
 <div id="left">
 	{local var="leftnav"}
 </div>
