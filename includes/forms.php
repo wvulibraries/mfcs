@@ -971,7 +971,11 @@ class forms {
 
 				foreach ($form['fields'] as $field) {
 
-					$value = (isset($engine->cleanPost['RAW'][$field['name']."_".$object['ID']]))?$engine->cleanPost['RAW'][$field['name']."_".$object['ID']]:"";
+					// @TODO keep an eye on this with edit tables ... this was added to help the modal inserts
+					// from being deleted because the edit table didn't have them listed.
+					if (!isset($engine->cleanPost['RAW'][$field['name']."_".$object['ID']])) continue 2;
+
+					$value = (isset($engine->cleanPost['RAW'][$field['name']."_".$object['ID']]))?$engine->cleanPost['RAW'][$field['name']."_".$object['ID']]:$object['data'][$field['name']];
 					$validationTests = self::validateSubmission($formID,$field,$value,$object['ID']);
 					
 					if (isnull($validationTests) || $validationTests === FALSE) {
@@ -1016,7 +1020,7 @@ class forms {
 						$values[$field['name']] = $tmpArray;
 					}
 
-					if(!isset($values[$field['name']])) $values[$field['name']] = $engine->cleanPost['RAW'][$field['name']."_".$object['ID']];
+					if(!isset($values[$field['name']])) $values[$field['name']] = $value;
 
 
 					if (!is_empty($engine->errorStack)) {
