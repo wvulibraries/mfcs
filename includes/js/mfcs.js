@@ -258,7 +258,7 @@ function submitMetadataModal() {
         metadataFormID = $(this).data("choicesform");
 
         if ($(this).attr("name") == "insertForm") {
-            data = data + "&submitForm=TRUE"
+            data = data + "&submitForm=Submit"
         }
         else if ($(this).attr("name") == "updateForm") {
             data = data + "&updateEdit=Update";
@@ -274,6 +274,7 @@ function submitMetadataModal() {
                 console.log(responseData);
             },
             error: function(jqXHR,error,exception) {
+                console.log("An Error has occurred: "+error);
                 $("#metadataModalBody").html("An Error has occurred: "+error);
             }
         });
