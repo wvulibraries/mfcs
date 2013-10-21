@@ -36,7 +36,7 @@ try {
 	}
 
 	if (forms::isMetadataForm($engine->cleanGet['MYSQL']['formID']) === FALSE) {
-		throw new Exception("Obejct form provided (Metadata forms only).");
+		throw new Exception("Object form provided (Metadata forms only).");
 	}
 
 	// if an object ID is provided make sure the object is from this form
