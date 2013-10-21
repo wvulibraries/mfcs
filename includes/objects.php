@@ -432,19 +432,17 @@ class objects {
 		}
 
 		// Add it to the users current projects
-		if ($newObject === TRUE) {
-			if (($currentProjects = users::loadProjects()) === FALSE) {
-				mfcs::$engine->openDB->transRollback();
-				mfcs::$engine->openDB->transEnd();
-				return FALSE;
-			}
-			foreach ($currentProjects as $projectID => $projectName) {
-				if (self::checkFormInProject($projectID,$formID) === TRUE) {
-					if ((objects::addProject($objectID,$projectID)) === FALSE) {
-						mfcs::$engine->openDB->transRollback();
-						mfcs::$engine->openDB->transEnd();
-						return FALSE;
-					}
+		if (($currentProjects = users::loadProjects()) === FALSE) {
+			mfcs::$engine->openDB->transRollback();
+			mfcs::$engine->openDB->transEnd();
+			return FALSE;
+		}
+		foreach ($currentProjects as $projectID => $projectName) {
+			if (self::checkFormInProject($projectID,$formID) === TRUE) {
+				if ((objects::addProject($objectID,$projectID)) === FALSE) {
+					mfcs::$engine->openDB->transRollback();
+					mfcs::$engine->openDB->transEnd();
+					return FALSE;
 				}
 			}
 		}
