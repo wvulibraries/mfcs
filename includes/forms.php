@@ -659,8 +659,8 @@ class forms {
 					foreach ($object['data'][$field['name']] as $selectedItem) {
 						$tmpObj  = objects::get($selectedItem);
 						$output .= sprintf('<option value="%s">%s</option>',
-							$engine->openDB->escape($selectedItem),
-							$engine->openDB->escape($tmpObj['data'][$field['choicesField']])
+							htmlSanitize($selectedItem),
+							htmlSanitize($tmpObj['data'][$field['choicesField']])
 						);
 					}
 				}
