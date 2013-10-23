@@ -820,12 +820,12 @@ class forms {
 				}
 
 				if (forms::isMetadataForm($formID) === TRUE) {
-					$temp[] = sprintf('<a href="%s/dataView/list.php?listType=metadataObjects&amp;formID=%s&amp;objectID=%s">Find Objects</a>',
+					$temp[] = sprintf('<a href="%sdataView/list.php?listType=metadataObjects&amp;formID=%s&amp;objectID=%s">Find Objects</a>',
 						localvars::get('siteRoot'),
 						htmlSanitize($formID),
 						$objects[$I]['ID']
 						);
-					$temp[] = sprintf('<a href="%s/dataEntry/move.php?objectID=%s">Move</a>',
+					$temp[] = sprintf('<a href="%sdataEntry/move.php?objectID=%s">Move</a>',
 						localvars::get('siteRoot'),
 						$objects[$I]['ID']
 						);
