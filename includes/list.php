@@ -134,12 +134,12 @@ class listGenerator {
 
 		$excludeFields = array("idno","file");
 
-		$headers = array("Form IDNO","Creation Date","Modified Date","View","Edit"); //,"Revisions"
+		$headers = array("Form IDNO","Edit","View","Creation Date","Modified Date");  //,"Revisions"
 
 		$data = array();
 		foreach ($objects as $object) {
 			
-			$tmp    = array($object['idno'],date("Y-m-d h:ia",$object['createTime']),date("Y-m-d h:ia",$object['modifiedTime']),self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID'])); //,self::genLinkURLs("revisions",$object['ID'])
+			$tmp    = array($object['idno'],self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("view",$object['ID']),date("Y-m-d h:ia",$object['createTime']),date("Y-m-d h:ia",$object['modifiedTime'])); //,self::genLinkURLs("revisions",$object['ID'])
 			$data[] = $tmp; 
 
 		}
