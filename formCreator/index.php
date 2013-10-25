@@ -8,7 +8,7 @@ if (is_empty($formID)) {
 
 if(isset($engine->cleanPost['MYSQL']['deleteForm'])){
 	forms::delete($engine->cleanGet['HTML']['id']);
-	http::redirect(localvars::get('siteRoot').'/formCreator/list.php',301);
+	http::redirect(localvars::get('siteRoot').'formCreator/list.php',301);
 }
 
 if (isset($engine->cleanPost['MYSQL']['submitNavigation'])) {
