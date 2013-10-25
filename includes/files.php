@@ -431,7 +431,7 @@ class files {
 		$saveBase   = mfcs::config('convertedPath');
 
 		// If the uploadPath dosen't exist, then no files were uploaded
-		if(!is_dir($uploadBase)) return 'foo';
+		if(!is_dir($uploadBase)) return '';
 
 		// Generate new assets UUID and make the directory (this should be done quickly to prevent race-conditions
 		$assetsID          = self::newAssetsUUID();
