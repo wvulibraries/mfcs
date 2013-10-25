@@ -1153,8 +1153,12 @@ class forms {
 			else if (strtolower($field['type']) == "file") {
 				// Process uploaded files
 				$uploadID = $engine->cleanPost['MYSQL'][$field['name']];
-
 				$tmpArray = files::processObjectUploads($objectID, $uploadID);
+
+				// Continue if no file uploaded and the field is optional
+				if($tmpArray === '' and !str2bool($field['required'])) continue;
+				
+				// Was the file successfuly uploaded?
 				if (!isset($tmpArray['uuid'])) {
 					errorHandle::newError(__METHOD__."() - file uuid", errorHandle::DEBUG);
 					return FALSE;
