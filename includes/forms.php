@@ -1110,6 +1110,7 @@ class forms {
 		}
 
 		// the form is an object form, make sure that it has an ID field defined.
+		// @TODO this check can probably be removed, its being checked in object class
 		if ($form['metadata'] == "0") {
 			$idnoInfo = self::getFormIDInfo($formID);
 			if ($idnoInfo === FALSE) {

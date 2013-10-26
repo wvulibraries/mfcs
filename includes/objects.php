@@ -376,6 +376,12 @@ class objects {
 		// do the IDNO stuff
 		if ($form['metadata'] == "0") {
 
+			// the form is an object form, make sure that it has an ID field defined.
+			if (($idnoInfo = forms::getFormIDInfo($formID)) === FALSE) {
+				errorHandle::newError(__METHOD__."() - no IDNO field for object form.", errorHandle::DEBUG);
+				return FALSE;
+			}
+		
 			// if the idno is managed by the system get a new idno
 			if ($idnoInfo['managedBy'] == "system") {
 				$idno = mfcs::$engine->openDB->escape(mfcs::getIDNO($formID));
