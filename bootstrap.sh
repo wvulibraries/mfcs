@@ -5,9 +5,11 @@
 GITDIR="/tmp/git"
 ENGINEAPIGIT="https://github.com/wvulibraries/engineAPI.git"
 ENGINEBRANCH="engineAPI-3.x"
+ENGINEAPIHOME="/home/engineAPI"
 
 SERVERURL="/home/mfcs.lib.wvu.edu"
 DOCUMENTROOT="public_html"
+SQLFILES="/vagrant/SQLFiles/migrations/*.sql"
 
 yum -y install httpd httpd-devel httpd-manual httpd-tools
 yum -y install mysql-connector-java mysql-connector-odbc mysql-devel mysql-lib mysql-server
@@ -37,8 +39,37 @@ rm -f /etc/httpd/conf/httpd.conf
 ln -s /vagrant/serverConfiguration/php.ini /etc/php.ini
 ln -s /vagrant/serverConfiguration/vagrant_httpd.conf /etc/httpd/conf/httpd.conf
 
+mkdir -p /home/mfcs.lib.wvu.edu/data/archives/mfcs
+mkdir -p /home/mfcs.lib.wvu.edu/data/archives/other
+mkdir -p /home/mfcs.lib.wvu.edu/data/exports
+mkdir -p /home/mfcs.lib.wvu.edu/data/mfcsStaging
+mkdir -p /home/mfcs.lib.wvu.edu/data/tmp
+mkdir -p /home/mfcs.lib.wvu.edu/data/uploads
+
+chown apache /home/mfcs.lib.wvu.edu/data/ -R
+
+ln -s /tmp/git/engineAPI/engine/template/distribution/public_html/js /home/mfcs.lib.wvu.edu/public_html/javascript/distribution
+
 /etc/init.d/httpd restart
 
 # Base Post Setup
 
+ln -s $SERVERURL $ENGINEAPIHOME
 ln -s /tmp/git/engineAPI/public_html/engineIncludes $SERVERURL/$DOCUMENTROOT/engineIncludes
+
+## Setup the EngineAPI Database
+
+/etc/init.d/mysqld start
+mysql -u root < /tmp/git/engineAPI/sql/vagrantSetup.sql
+mysql -u root EngineAPI < /tmp/git/engineAPI/sql/EngineAPI.sql
+
+# application Post Setup
+
+mysql -u root < /vagrant/SQLFiles/setup.sql
+mysql -u root mfcs < /vagrant/SQLFiles/baseSnapshot.sql
+
+for f in $SQLFILES
+do
+  echo "Processing $f ..."
+  mysql -u root mfcs < $f
+done
