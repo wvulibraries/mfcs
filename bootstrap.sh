@@ -50,6 +50,8 @@ chown apache /home/mfcs.lib.wvu.edu/data/ -R
 
 ln -s /tmp/git/engineAPI/engine/template/distribution/public_html/js /home/mfcs.lib.wvu.edu/public_html/javascript/distribution
 
+mkdir -p /vagrant/serverConfiguration/serverlogs
+touch /vagrant/serverConfiguration/serverlogs/error_log
 /etc/init.d/httpd restart
 
 # Base Post Setup
