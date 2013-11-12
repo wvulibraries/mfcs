@@ -1,3 +1,10 @@
+
+# MFCS -- Metadata Form Creation System
+
+Designed to provide a drag and drop way for creating metadata collection forms for Digital projects. Adminsitrations can create any number of nested forms with any number of metadata fields, and upload fields (with server side processing). 
+
+Students, Librarians, etc can then use the forms to drag and drop digital objects (retains original upload as well as converts to other formats for exporting). 
+
 # Installing 3rd Party Plugins
 
 ## Enable EPEL on CentOS 5 and 6: 
