@@ -1,9 +1,27 @@
 
 # MFCS -- Metadata Form Creation System
 
-Designed to provide a drag and drop way for creating metadata collection forms for Digital projects. Adminsitrations can create any number of nested forms with any number of metadata fields, and upload fields (with server side processing). 
+MFCS is distributed under the WVU Open Source License. 
 
-Students, Librarians, etc can then use the forms to drag and drop digital objects (retains original upload as well as converts to other formats for exporting). 
+The Metadata Form Creation System (MFCS) is WVUs answer for providing an easy to use way for librarians, staff, and students to enter metadata for items in our digital collections. 
+
+MFCS is a delivery agnostic system. That is, it should be able to export data in any format to any digital project system (Hydra, DLXS, etc ... ). Some programming is required to write the export scripts. 
+
+MFCS provides examples on generating statistics for forms or collections of forms. 
+
+MFCS provides 2 interfaces. 
+
+## Form Builder
+
+Allows metadata librarians and adminsitrators to create forms by dragging and dropping fields and defining the behaver of those form fields. Forms can be nested, so that pages can be part of books, or folders in boxes. Forms can also be linked, so that a centralized vocabulary is possible (either for a specific form or across forms and projects). 
+
+Form fields can be any type valid HTML 5 form field. Additionally custom validation is possible using built in checks or regular expressions for more advanced pattern matching (e.g. Custom date formats)
+
+Upload fields can be configured with a large set of options to that the original upload file can be retained as well as exporting options (resize/convert image formats. create thumb nails, combine tiffs into a single OCR pdf, etc ... )
+
+## Metadata Entry
+
+Students, Librarians, etc can then use the forms created in the form builder to enter metadata for digital collections. 
 
 # Installing 3rd Party Plugins
 
