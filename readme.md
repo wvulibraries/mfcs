@@ -25,6 +25,9 @@ Students, Librarians, etc can then use the forms created in the form builder to 
 
 # Installing 3rd Party Plugins
 
+Requires EngineAPI 3.2
+https://github.com/wvulibraries/engineAPI/tree/engineAPI-3.x
+
 ## Enable EPEL on CentOS 5 and 6: 
 
 http://www.rackspace.com/knowledge_center/article/installing-rhel-epel-repo-on-centos-5x-or-6x
