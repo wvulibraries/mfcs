@@ -472,6 +472,23 @@ class files {
 		return $return;
 	}
 
+	private static function createHOCR($path=NULL) {
+
+		if (isnull($path)) {
+			$path = mfcs::config('convertedPath').DIRECTORY_SEPARATOR."hocr.cfg";
+		}
+
+		// Create the hocr file (if needed)
+		if(!file_exists($path)){
+			if(!file_put_contents($path, 'tessedit_create_hocr 1')) {
+				errorHandle::newError("Failed to create hocr file.",errorHandle::HIGH);
+				return FALSE;
+			}
+		}
+
+		return TRUE;
+	}
+
 	public static function processObjectFiles($assetsID, $options) {
 		// Disable PHP's max execution time
 		set_time_limit(0);
@@ -509,13 +526,9 @@ class files {
 					$tmpDir = mfcs::config('mfcstmp').DIRECTORY_SEPARATOR.uniqid();
 					mkdir($tmpDir,0777,TRUE);
 
-					// Create the hocr file (if needed)
-					if(!file_exists("$saveBase/hocr.cfg")){
-						if(!file_put_contents("$saveBase/hocr.cfg", 'tessedit_create_hocr 1')){
-							errorHandle::newError("Failed to create hocr file.",errorHandle::HIGH);
-							return FALSE;
-						}
-					}
+					// Ensure that the HOCR file is created
+					if (!self::createHOCR("$saveBase/hocr.cfg")) return FALSE;
+
 
 					$gsTemp = $tmpDir.DIRECTORY_SEPARATOR.uniqid();
 					touch($gsTemp);
