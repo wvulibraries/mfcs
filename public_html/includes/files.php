@@ -670,39 +670,16 @@ class files {
 				// Convert uploaded files into some ofhter size/format/etc
 				if (isset($options['convert']) && str2bool($options['convert'])) {
 
+					// we create the Imagick object here so that we can pass it to thumbnail creation
 					$image = new Imagick();
 					$image->readImage($originalFile);
 
-					// Convert format?
-					if (!empty($options['convertFormat'])) $image->setImageFormat($options['convertFormat']);
-
-					// Change resolution
-					if (isset($options['convertResolution'])) {
-						$image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
-						$image->setImageResolution($options['convertResolution'],$options['convertResolution']);
-						$image->resampleImage($options['convertResolution'], $options['convertResolution'], Imagick::FILTER_UNDEFINED, 0);
+					// Convert it
+					if (($image = self::convertImage($image,$options,$assetsID,$filename)) === FALSE) {
+						throw new Exception("Failed to create processed image: ".$originalFile);
 					}
-
-					// Add a border
-					if (isset($options['border']) && str2bool($options['border'])) {
-						if ($options['convertWidth'] > 0 || $options['convertHeight'] > 0) {
-							// Resize the image first, taking into account the border width
-							$image->scaleImage(
-								($options['convertWidth']  - $options['borderWidth']  * 2),
-								($options['convertHeight'] - $options['borderHeight'] * 2),
-								TRUE);
-						}
-
-						// Add the border
-						$image->borderImage(
-							$options['borderColor'],
-							$options['borderWidth'],
-							$options['borderHeight']);
-					}
-					else if ($options['convertWidth'] > 0 || $options['convertHeight'] > 0) {
-						// Resize without worrying about the border
-						$image->scaleImage($options['convertWidth'], $options['convertHeight'], TRUE);
-					}
+					
+					$filename = $filename.'.'.strtolower($image->getImageFormat());
 
 					// Create a thumbnail that includes converted options
 					if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
@@ -711,17 +688,7 @@ class files {
 						}
 					}
 
-					// Add a watermark
-					if (isset($options['watermark']) && str2bool($options['watermark'])) {
-						$image = self::addWatermark($image, $options);
-					}
-
-					// Store image
-					$filename = $filename.'.'.strtolower($image->getImageFormat());
-					if ($image->writeImage(self::getSaveDir($assetsID,'processed').$filename) === FALSE) {
-						throw new Exception("Failed to create processed image: ".$filename);
-					}
-
+					// Set the return array
 					$return['processed'][] = array(
 						'name'   => $filename,
 						'path'   => self::getSaveDir($assetsID,'processed',FALSE),
@@ -788,6 +755,52 @@ class files {
 			'type'   => self::getMimeType(self::getSaveDir($assetsID,'ocr').$filename.'.txt'),
 			'errors' => '',
 			);
+	}
+
+	public static function convertImage($image,$options,$assetsID,$filename) {
+
+		// Convert format?
+		if (!empty($options['convertFormat'])) $image->setImageFormat($options['convertFormat']);
+
+		// Change resolution
+		if (isset($options['convertResolution'])) {
+			$image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
+			$image->setImageResolution($options['convertResolution'],$options['convertResolution']);
+			$image->resampleImage($options['convertResolution'], $options['convertResolution'], Imagick::FILTER_UNDEFINED, 0);
+		}
+
+		// Add a border
+		if (isset($options['border']) && str2bool($options['border'])) {
+			if ($options['convertWidth'] > 0 || $options['convertHeight'] > 0) {
+				// Resize the image first, taking into account the border width
+				$image->scaleImage(
+					($options['convertWidth']  - $options['borderWidth']  * 2),
+					($options['convertHeight'] - $options['borderHeight'] * 2),
+					TRUE);
+			}
+
+			// Add the border
+			$image->borderImage(
+				$options['borderColor'],
+				$options['borderWidth'],
+				$options['borderHeight']);
+		}
+		else if ($options['convertWidth'] > 0 || $options['convertHeight'] > 0) {
+			// Resize without worrying about the border
+			$image->scaleImage($options['convertWidth'], $options['convertHeight'], TRUE);
+		}
+
+		// Add a watermark
+		if (isset($options['watermark']) && str2bool($options['watermark'])) {
+			$image = self::addWatermark($image, $options);
+		}
+
+		// Store image
+		if ($image->writeImage(self::getSaveDir($assetsID,'processed').$filename.'.'.strtolower($image->getImageFormat())) === FALSE) {
+			return FALSE;
+		}
+
+		return $image;
 	}
 
 	private static function cleanupTempDirectory($tmpDir) {
