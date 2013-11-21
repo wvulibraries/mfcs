@@ -752,11 +752,7 @@ class files {
 
 				// Create MP3
 				if (isset($options['mp3']) && str2bool($options['mp3'])) {
-					$mimeType     = self::getMimeType($originalFile);
-
-					if (strpos($mimeType, 'audio/') !== FALSE) {
-						// @TODO: Perform audio processing here
-					}
+					$return['mp3'][] = self::createMP3($originalFile);
 				}
 			} // Foreach File
 
@@ -766,6 +762,14 @@ class files {
 		}
 
 		return $return;
+	}
+
+	public static function createMP3($originalFile) {
+		$mimeType     = self::getMimeType($originalFile);
+
+		if (strpos($mimeType, 'audio/') !== FALSE) {
+			// @TODO: Perform audio processing here
+		}
 	}
 
 	public static function createOCRTextFile($originalFile,$assetsID,$filename) {
