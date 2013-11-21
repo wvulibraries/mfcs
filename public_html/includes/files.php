@@ -641,14 +641,16 @@ class files {
 					}
 					throw new Exception($e->getMessage(), $e->getCode(), $e);
 				}
-			}
+			} // If Combine
 
-			// Convert uploaded files into some ofhter size/format/etc
-			if (isset($options['convert']) && str2bool($options['convert'])) {
-				foreach ($originalFiles as $filename){
-					$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
-					$_filename    = pathinfo($originalFile);
-					$filename     = $_filename['filename'];
+			foreach ($originalFiles as $filename) {
+				$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
+				$_filename    = pathinfo($originalFile);
+				$filename     = $_filename['filename'];
+				
+				// Convert uploaded files into some ofhter size/format/etc
+				if (isset($options['convert']) && str2bool($options['convert'])) {
+
 					$image        = new Imagick();
 
 					$image->readImage($originalFile);
@@ -720,13 +722,10 @@ class files {
 						'type'   => self::getMimeType(self::getSaveDir($assetsID,'processed').$filename),
 						'errors' => '',
 						);
+
 				}
-			}
-			// Create a thumbnail without any conversions
-			else if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
-				foreach($originalFiles as $filename){
-					$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
-					$_filename    = pathinfo($originalFile);
+				// Create a thumbnail without any conversions
+				else if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
 					$thumbname    = $_filename['filename'].'.'.strtolower($options['thumbnailFormat']);
 					$savePath     = self::getSaveDir($assetsID,'thumbs').$thumbname;
 
@@ -745,19 +744,14 @@ class files {
 						'errors' => '',
 						);
 				}
-			}
 
-			// Create an OCR text file
-			if (isset($options['ocr']) && str2bool($options['ocr'])) {
-				// Include TesseractOCR class
-				require_once 'class.tesseract_ocr.php';
+				// Create an OCR text file
+				if (isset($options['ocr']) && str2bool($options['ocr'])) {
 
-				foreach($originalFiles as $filename){
-					$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
-					$_filename    = pathinfo($originalFile);
-					$filename     = $_filename['filename'];
+					require_once 'class.tesseract_ocr.php';
 
 					$text = TesseractOCR::recognize($originalFile);
+					
 					if (file_put_contents(self::getSaveDir($assetsID,'ocr').DIRECTORY_SEPARATOR.$filename.'.txt', $text) === FALSE) {
 						errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
 						throw new Exception("Failed to create OCR file for $filename");
@@ -771,22 +765,18 @@ class files {
 						'errors' => '',
 						);
 				}
-			}
 
-			if (isset($options['mp3']) && str2bool($options['mp3'])) {
-				foreach ($originalFiles as $filename) {
-					$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
-					$_filename    = pathinfo($originalFile);
-					$filename     = $_filename['filename'];
+				// Create MP3
+				if (isset($options['mp3']) && str2bool($options['mp3'])) {
 					$mimeType     = self::getMimeType($originalFile);
 
 					if (strpos($mimeType, 'audio/') !== FALSE) {
 						// @TODO: Perform audio processing here
 					}
 				}
-			}
+			} // Foreach File
 
-		}
+		} // Catch All Try
 		catch (Exception $e) {
 			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
 		}
