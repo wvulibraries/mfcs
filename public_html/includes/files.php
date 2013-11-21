@@ -667,7 +667,7 @@ class files {
 					// Change resolution
 					if (isset($options['convertResolution'])) {
 						$image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
-						$image->setImageResolution($options['convertResolution']);
+						$image->setImageResolution($options['convertResolution'],$options['convertResolution']);
 						$image->resampleImage($options['convertResolution'], $options['convertResolution'], Imagick::FILTER_UNDEFINED, 0);
 					}
 
