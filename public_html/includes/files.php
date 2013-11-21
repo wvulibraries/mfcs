@@ -643,6 +643,12 @@ class files {
 				}
 			} // If Combine
 
+			// This conditional needs updated when different conversion options are added or removed. 
+			// If the file has no processing to do, don't do any ... 
+			if (!isset($options['convert']) && !isset($options['thumbnail']) && !isset($options['ocr']) && !isset($options['mp3'])) {
+				return $return;
+			}
+
 			foreach ($originalFiles as $filename) {
 				$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 				$_filename    = pathinfo($originalFile);
@@ -751,7 +757,7 @@ class files {
 					require_once 'class.tesseract_ocr.php';
 
 					$text = TesseractOCR::recognize($originalFile);
-					
+
 					if (file_put_contents(self::getSaveDir($assetsID,'ocr').DIRECTORY_SEPARATOR.$filename.'.txt', $text) === FALSE) {
 						errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
 						throw new Exception("Failed to create OCR file for $filename");
