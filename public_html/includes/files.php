@@ -400,8 +400,13 @@ class files {
 	 **/
 	private static function createThumbnail($originalFile,$filename,$options,$assetsID) {
 
-		$image        = new Imagick();
-		$image->readImage($originalFile);
+		if ($originalFile instanceof Imagick) {
+			$image = $originalFile;
+		}
+		else {
+			$image        = new Imagick();
+			$image->readImage($originalFile);
+		}
 
 		$thumbname = $filename.'.'.strtolower($options['thumbnailFormat']);
 		$savePath  = self::getSaveDir($assetsID,'thumbs').$thumbname;
@@ -665,8 +670,7 @@ class files {
 				// Convert uploaded files into some ofhter size/format/etc
 				if (isset($options['convert']) && str2bool($options['convert'])) {
 
-					$image        = new Imagick();
-
+					$image = new Imagick();
 					$image->readImage($originalFile);
 
 					// Convert format?
@@ -702,7 +706,7 @@ class files {
 
 					// Create a thumbnail that includes converted options
 					if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
-						if (($return['thumbs'][] = self::createThumbnail($originalFile,$filename,$options,$assetsID)) === FALSE) {
+						if (($return['thumbs'][] = self::createThumbnail($image,$filename,$options,$assetsID)) === FALSE) {
 							throw new Exception("Failed to create thumbnail: ".$filename);
 						}
 					}
