@@ -743,22 +743,11 @@ class files {
 				// Create an OCR text file
 				if (isset($options['ocr']) && str2bool($options['ocr'])) {
 
-					require_once 'class.tesseract_ocr.php';
-
-					$text = TesseractOCR::recognize($originalFile);
-
-					if (file_put_contents(self::getSaveDir($assetsID,'ocr').DIRECTORY_SEPARATOR.$filename.'.txt', $text) === FALSE) {
+					if (($return['ocr'][] = self::createOCRTextFile($originalFile,$assetsID,$filename)) === FALSE) {
 						errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
 						throw new Exception("Failed to create OCR file for $filename");
 					}
 
-					$return['ocr'][] = array(
-						'name'   => $filename.'.txt',
-						'path'   => self::getSaveDir($assetsID,'ocr',FALSE),
-						'size'   => filesize(self::getSaveDir($assetsID,'ocr').$filename.'.txt'),
-						'type'   => self::getMimeType(self::getSaveDir($assetsID,'ocr').$filename.'.txt'),
-						'errors' => '',
-						);
 				}
 
 				// Create MP3
@@ -777,6 +766,24 @@ class files {
 		}
 
 		return $return;
+	}
+
+	public static function createOCRTextFile($originalFile,$assetsID,$filename) {
+		require_once 'class.tesseract_ocr.php';
+
+		$text = TesseractOCR::recognize($originalFile);
+
+		if (file_put_contents(self::getSaveDir($assetsID,'ocr').DIRECTORY_SEPARATOR.$filename.'.txt', $text) === FALSE) {
+			return FALSE;
+		}
+
+		$return['ocr'][] = array(
+			'name'   => $filename.'.txt',
+			'path'   => self::getSaveDir($assetsID,'ocr',FALSE),
+			'size'   => filesize(self::getSaveDir($assetsID,'ocr').$filename.'.txt'),
+			'type'   => self::getMimeType(self::getSaveDir($assetsID,'ocr').$filename.'.txt'),
+			'errors' => '',
+			);
 	}
 
 	private static function cleanupTempDirectory($tmpDir) {
