@@ -398,18 +398,27 @@ class files {
 	 * @param string $savePath
 	 * @return bool
 	 **/
-	public static function createThumbnail($image, $options, $savePath) {
+	private static function createThumbnail($image,$filename,$options,$assetsID) {
+		$thumbname = $filename.'.'.strtolower($options['thumbnailFormat']);
+		$savePath  = self::getSaveDir($assetsID,'thumbs').$thumbname;
+
 		// Make a copy of the original
 		$thumb = $image->clone();
 
-		$width = 0;
+		// Set the Width
 		if (isset($options['thumbnailWidth'])) {
 			$width = $options['thumbnailWidth'];
 		}
+		else {
+			$width = 0;
+		}
 
-		$height = 0;
+		// Set the Height
 		if (isset($options['thumbnailHeight'])) {
 			$height = $options['thumbnailHeight'];
+		}
+		else {
+			$height = 0;
 		}
 
 		// Change the format
@@ -423,7 +432,15 @@ class files {
 		}
 
 		// Store thumbnail, returns TRUE on success, FALSE on failure
-		return $thumb->writeImage($savePath);
+		if ($thumb->writeImage($savePath) === FALSE) return FALSE;
+
+		return array(
+			'name'   => $thumbname,
+			'path'   => self::getSaveDir($assetsID,'thumbs',FALSE),
+			'size'   => filesize($savePath),
+			'type'   => self::getMimeType($savePath),
+			'errors' => '',
+			);
 	}
 
 	public static function processObjectUploads($objectID,$uploadID) {
@@ -546,20 +563,9 @@ class files {
 							$image = new Imagick();
 							$image->readImage($originalFile);
 
-							$thumbname = 'thumb.jpg';
-							$savePath  = self::getSaveDir($assetsID,'combine').$thumbname;
-
-							if (self::createThumbnail($image, $options, $savePath) === FALSE) {
-								throw new Exception("Failed to create thumbnail: ".$thumbname);
+							if (($return['combine'][] = self::createThumbnail($image,$filename,$options,$assetsID)) === FALSE) {
+								throw new Exception("Failed to create thumbnail: ".$filename);
 							}
-
-							$return['combine'][] = array(
-								'name'   => $thumbname,
-								'path'   => self::getSaveDir($assetsID,'combine',FALSE),
-								'size'   => filesize($savePath),
-								'type'   => self::getMimeType($savePath),
-								'errors' => '',
-								);
 
 							// Prevent making multiple thumbnails
 							$createThumb = FALSE;
@@ -694,20 +700,9 @@ class files {
 
 					// Create a thumbnail that includes converted options
 					if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
-						$thumbname = $filename.'.'.strtolower($options['thumbnailFormat']);
-						$savePath  = self::getSaveDir($assetsID,'thumbs').$thumbname;
-
-						if (self::createThumbnail($image, $options, $savePath) === FALSE) {
-							throw new Exception("Failed to create thumbnail: ".$thumbname);
+						if (($return['thumbs'][] = self::createThumbnail($image,$filename,$options,$assetsID)) === FALSE) {
+							throw new Exception("Failed to create thumbnail: ".$filename);
 						}
-
-						$return['thumbs'][] = array(
-							'name'   => $thumbname,
-							'path'   => self::getSaveDir($assetsID,'thumbs',FALSE),
-							'size'   => filesize($savePath),
-							'type'   => self::getMimeType($savePath),
-							'errors' => '',
-							);
 					}
 
 					// Add a watermark
@@ -732,23 +727,14 @@ class files {
 				}
 				// Create a thumbnail without any conversions
 				else if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
-					$thumbname    = $_filename['filename'].'.'.strtolower($options['thumbnailFormat']);
-					$savePath     = self::getSaveDir($assetsID,'thumbs').$thumbname;
 
 					$image        = new Imagick();
 					$image->readImage($originalFile);
 
-					if (self::createThumbnail($image, $options, $savePath) === FALSE) {
-						throw new Exception("Failed to create thumbnail: ".$thumbname);
+					if (($return['thumbs'][] = self::createThumbnail($image,$filename,$options,$assetsID)) === FALSE) {
+						throw new Exception("Failed to create thumbnail: ".$filename);
 					}
 
-					$return['thumbs'][] = array(
-						'name'   => $thumbname,
-						'path'   => self::getSaveDir($assetsID,'thumbs',FALSE),
-						'size'   => filesize($savePath),
-						'type'   => self::getMimeType($savePath),
-						'errors' => '',
-						);
 				}
 
 				// Create an OCR text file
@@ -809,5 +795,6 @@ class files {
 		// delete the directory, return the bool of rmdir
 		return rmdir($tmpDir);
 	}
+
 
 }
