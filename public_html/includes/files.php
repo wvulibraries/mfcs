@@ -398,7 +398,11 @@ class files {
 	 * @param string $savePath
 	 * @return bool
 	 **/
-	private static function createThumbnail($image,$filename,$options,$assetsID) {
+	private static function createThumbnail($originalFile,$filename,$options,$assetsID) {
+
+		$image        = new Imagick();
+		$image->readImage($originalFile);
+
 		$thumbname = $filename.'.'.strtolower($options['thumbnailFormat']);
 		$savePath  = self::getSaveDir($assetsID,'thumbs').$thumbname;
 
@@ -560,10 +564,8 @@ class files {
 
 						// Create a thumbnail of the first image
 						if ($createThumb === TRUE) {
-							$image = new Imagick();
-							$image->readImage($originalFile);
 
-							if (($return['combine'][] = self::createThumbnail($image,$filename,$options,$assetsID)) === FALSE) {
+							if (($return['combine'][] = self::createThumbnail($originalFile,$filename,$options,$assetsID)) === FALSE) {
 								throw new Exception("Failed to create thumbnail: ".$filename);
 							}
 
@@ -700,7 +702,7 @@ class files {
 
 					// Create a thumbnail that includes converted options
 					if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
-						if (($return['thumbs'][] = self::createThumbnail($image,$filename,$options,$assetsID)) === FALSE) {
+						if (($return['thumbs'][] = self::createThumbnail($originalFile,$filename,$options,$assetsID)) === FALSE) {
 							throw new Exception("Failed to create thumbnail: ".$filename);
 						}
 					}
@@ -728,10 +730,7 @@ class files {
 				// Create a thumbnail without any conversions
 				else if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
 
-					$image        = new Imagick();
-					$image->readImage($originalFile);
-
-					if (($return['thumbs'][] = self::createThumbnail($image,$filename,$options,$assetsID)) === FALSE) {
+					if (($return['thumbs'][] = self::createThumbnail($originalFile,$filename,$options,$assetsID)) === FALSE) {
 						throw new Exception("Failed to create thumbnail: ".$filename);
 					}
 
