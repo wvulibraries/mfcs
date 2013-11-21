@@ -3,3 +3,4 @@
 /.vagrant/
 
 /public_html/engineIncludes
+sessionLogin.php
