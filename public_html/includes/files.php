@@ -612,18 +612,19 @@ class files {
 						);
 
 					// Lastly, we delete our temp working dir (always nice to cleanup after yourself)
-					foreach (glob("$tmpDir/*") as $file) {
-						unlink($file);
+					if (self::cleanupTempDirectory($tmpDir) === FALSE) {
+						errorHandle::errorMsg("Unable to clean up temporary directory: ".$tmpDir);
+						throw new Exception("Unable to clean up temporary directory: ".$tmpDir);
 					}
-					rmdir($tmpDir);
+
+
 				}
 				catch (Exception $e) {
 					// We need to delete our working dir
-					if (isset($tmpDir) and is_dir($tmpDir)) {
-						foreach (glob("$tmpDir/*") as $file) {
-							unlink($file);
+					if (isset($tmpDir) && is_dir($tmpDir)) {
+						if (self::cleanupTempDirectory($tmpDir) === FALSE) {
+							errorHandle::errorMsg("Unable to clean up temporary directory (in Exception): ".$tmpDir);
 						}
-						rmdir($tmpDir);
 					}
 					throw new Exception($e->getMessage(), $e->getCode(), $e);
 				}
@@ -778,6 +779,26 @@ class files {
 		}
 
 		return $return;
+	}
+
+	private static function cleanupTempDirectory($tmpDir) {
+
+		// If the given path is not a directory, just return
+		if (!is_dir($tmpDir)) return TRUE;
+
+		// If the given path is not writable, return FALSE
+		if (!is_writable($tmpDir)) return FALSE;
+
+		$return = TRUE;
+		foreach (glob("$tmpDir/*") as $file) {
+
+			// if the unlink is unsuccessful, return FALSE
+			if (unlink($file) === FALSE) return FALSE;
+
+		}
+
+		// delete the directory, return the bool of rmdir
+		return rmdir($tmpDir);
 	}
 
 }
