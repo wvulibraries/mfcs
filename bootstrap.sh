@@ -48,6 +48,7 @@ mkdir -p /home/mfcs.lib.wvu.edu/data/uploads
 
 chown apache /home/mfcs.lib.wvu.edu/data/ -R
 
+mkdir -p /home/mfcs.lib.wvu.edu/public_html/javascript/
 ln -s /tmp/git/engineAPI/engine/template/distribution/public_html/js /home/mfcs.lib.wvu.edu/public_html/javascript/distribution
 
 mkdir -p /vagrant/serverConfiguration/serverlogs
