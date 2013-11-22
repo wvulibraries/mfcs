@@ -903,6 +903,9 @@ $engine->eTemplate("include","header");
 										<div class="control-group well well-small" id="fieldSettings_container_file_options">
 											File Upload Options
 											<div>
+												<ul class="checkboxList">
+													<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_bgProcessing" name="fieldSettings_file_options_bgProcessing"> Process files in the background</label></li>
+												</ul>
 												<div style="float: left; margin-top: 5px;">
 													Images
 													<ul class="checkboxList">

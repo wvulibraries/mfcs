@@ -245,6 +245,8 @@ function showFieldSettings(fullID) {
 				fieldSettings_file_allowedExtensions.find(":input[name=fieldSettings_allowedExtension_text]:first").keyup();
 			}
 
+			$("#fieldSettings_file_options_bgProcessing").prop("checked",($("#bgProcessing_"+id).val()==='true')).change();
+
 			var $fieldSettings_file_options_multipleFiles = $("#fieldSettings_file_options_multipleFiles");
 			$fieldSettings_file_options_multipleFiles.prop("checked",($("#multipleFiles_"+id).val()==='true'));
 			if($("#combine_"+id).val()==='true'){
@@ -945,6 +947,13 @@ function fieldSettingsBindings() {
 			}
 		});
 
+	$("#fieldSettings_file_options_bgProcessing").change(function() {
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+
+		$("#bgProcessing_"+id).val($(this).is(":checked"));
+	});
+
 	$("#fieldSettings_file_options_multipleFiles").change(function() {
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
@@ -1561,6 +1570,7 @@ function newFieldValues(id,type,vals) {
 
 		case 'file':
 			output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'" value="'+((vals['allowedExtensions']!=undefined)?vals['allowedExtensions']:'tif%,%tiff')+'">';
+			output += '<input type="hidden" id="bgProcessing_'+id+'" name="bgProcessing_'+id+'" value="'+((vals['bgProcessing']!=undefined)?vals['bgProcessing']:'')+'">';
 			output += '<input type="hidden" id="multipleFiles_'+id+'" name="multipleFiles_'+id+'" value="'+((vals['multipleFiles']!=undefined)?vals['multipleFiles']:'')+'">';
 			output += '<input type="hidden" id="combine_'+id+'" name="combine_'+id+'" value="'+((vals['combine']!=undefined)?vals['combine']:'')+'">';
 			output += '<input type="hidden" id="ocr_'+id+'" name="ocr_'+id+'" value="'+((vals['ocr']!=undefined)?vals['ocr']:'')+'">';
