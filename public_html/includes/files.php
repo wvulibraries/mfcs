@@ -6,6 +6,8 @@
  */
 class files {
 
+	private static $insertFieldNames = array();
+
 	private static function printImage($filename,$mimeType) {
 		$tmpName = tempnam(mfcs::config('mfcstmp'), 'mfcs').".jpeg";
 		shell_exec(sprintf('convert %s -quality 50 %s 2>&1',
@@ -16,6 +18,200 @@ class files {
 		unlink($tmpName);
 
 		return TRUE;
+	}
+
+	public static function addProcessingField($fieldname) {
+
+		self::$insertFieldNames[] = $fieldname;
+
+		return TRUE;
+	}
+
+	/**
+	 * Remove a processing field
+	 * @param  string $fieldname the fieldnaem to remove
+	 * @return bool            TRUE on success, FALSE if not found
+	 */
+	public static function removeProcessingField($fieldname) {
+		for($I=0;$I<count(self::$insertFieldNames); $I++) {
+			if (self::$insertFieldNames[$I] == $fieldname) {
+				unset(self::$insertFieldNames[$I]);
+				return TRUE;
+			}
+		}
+
+		return NULL;
+	}
+
+	public static function resetProcessingFields() {
+		self::$insertFieldNames = array();
+		return TRUE;
+	}
+
+	public static function insertIntoProcessingTable($objID, $state=1) {
+
+		if (!validate::integer($state)) {
+			return FALSE;
+		}
+
+		if (is_empty(self::$insertFieldNames)) {
+			errorHandle::newError(__METHOD__."() - no fields set.", errorHandle::DEBUG);
+		}
+
+		// start transactions
+		if (mfcs::$engine->openDB->transBegin("objects") !== TRUE) {
+			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		foreach (self::$insertFieldNames as $fieldname) {
+			$sql       = sprintf("INSERT INTO `objectProcessing` (`objectID`,`fieldName`,`state`, `timestamp`) VALUES('%s','%s','%s','%s')",
+				mfcs::$engine->openDB->escape($objID),
+				mfcs::$engine->openDB->escape($fieldname),
+				mfcs::$engine->openDB->escape($state),
+				time()
+				);
+			$sqlResult = mfcs::$engine->openDB->query($sql);
+
+			if (!$sqlResult['result']) {
+
+				mfcs::$engine->openDB->transRollback();
+				mfcs::$engine->openDB->transEnd();
+
+				errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+				return FALSE;
+			}
+		}
+
+		// end transactions
+		mfcs::$engine->openDB->transCommit();
+		mfcs::$engine->openDB->transEnd();
+
+		// reset the processing fields
+		self::resetProcessingFields();
+		
+		return TRUE;
+
+	}
+
+	private static function setProcessingState($rowID,$state) {
+
+		$sql       = sprintf("UPDATE `objectProcessing` SET `state`='%s' WHERE `ID`='%s'",
+			mfcs::$engine->openDB->escape($state),
+			mfcs::$engine->openDB->escape($rowID)
+			);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		return TRUE;
+
+	}
+
+	// if ObjectID is null, processes everything with a $state of 1
+	// if ObjectID is an integer, processes that objectID
+	// 
+	// if $state is modified, processes everything with that state. valid states are 1 and 3 (2 are currently being processed. 0's are done and ready for deleting)
+	// 
+	// if $returnArray is TRUE, only 1 fieldName will be processed. Returns a complete 'files' array
+	public static function process($objectID=NULL,$fieldname=NULL,$state=1,$returnArray=FALSE) {
+
+		if ((string)$state != "1" && (string)$state != "3") {
+			errorHandle::newError(__METHOD__."() - Invalid state provided: ".$state, errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		// was a valid objectID provided
+		if (!isnull($objectID) && validate::integer($objectID)) {
+			$objectWhere = sprintf(" AND `objectID`='%s'",
+				mfcs::$engine->openDB->escape($objectID)
+				);
+		}
+		else if (!isnull($objectID) && !validate::integer($objectID)) {
+			errorHandle::newError(__METHOD__."() - Invalid Object ID: ".$objectID, errorHandle::DEBUG);
+			return FALSE;
+		}
+		else {
+			$objectWhere = "";
+		}
+
+		// was a valid fieldname provided
+		if (!isnull($fieldname) && is_string($fieldname)) {
+			$fieldnameWhere = sprintf(" AND `fieldName`='%s'",
+				mfcs::$engine->openDB->escape($fieldname)
+				);
+		}
+		else {
+			$fieldnameWhere = "";
+		}
+
+		$sql       = sprintf("SELECT * FROM `objectProcessing` WHERE `objectProcessing`.`state`='%s'%s%s",
+			mfcs::$engine->openDB->escape($state),
+			$objectWhere,
+			$fieldnameWhere
+			);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		// I'm not sure about database transactions here
+		// We are modifying the file system (exports). transaction rollbacks would 
+		// have to be done on the file system as well. 
+
+		while ($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+
+			// set the state of the row to 2
+			self::setProcessingState($row['ID'],2);
+
+			// get the object, and ignore the cache since we are updating in a loop
+			$object   = objects::get($row['objectID'],TRUE);
+
+			$files    = $object['data'][$row['fieldName']];
+			$assetsID = $files['uuid'];
+
+			$fieldOptions = forms::getField($object['formID'],$row['fieldName']);
+
+			// do we need to do any processing? 
+			// @TODO, i don't like how these are hard coded
+			$combine   = str2bool($fieldOptions['combine']);
+			$convert   = str2bool($fieldOptions['convert']);
+			$ocr       = str2bool($fieldOptions['ocr']);
+			$thumbnail = str2bool($fieldOptions['thumbnail']);
+			$mp3       = str2bool($fieldOptions['mp3']);
+			if (!$combine && !$convert && !$ocr && !$thumbnail && !$mp3) {
+				continue;
+			}
+
+			$processedFiles = self::processObjectFiles($assetsID,$fieldOptions);
+			$files['files'] = array_merge($files['files'],$processedFiles);
+
+			$object['data'][$row['fieldName']] = $files;
+
+			$return = objects::update($objectID,$object['formID'],$object['data'],$object['metadata'],$object['parentID']);
+
+			// @TODO this return value isn't descriptive enough. It can fail and still
+			// return a valid array. we likely need to return an array with an error
+			// code as well as the array to save to the data
+
+			if (!$return) {
+				$setRowValue = 3;
+			}
+			else {
+				$setRowValue = 0;
+			}
+
+			// Processing is done, set state to 0
+			self::setProcessingState($row['ID'],0);
+
+			if ($returnArray === TRUE) {
+				return $object['data'][$row['fieldName']];
+			}
+
+		}
+
+		return TRUE;
+
 	}
 
 	public static function generateFilePreview($filename,$mimeType=NULL){

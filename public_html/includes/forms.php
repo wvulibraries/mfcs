@@ -781,6 +781,10 @@ class forms {
 
 	}
 
+	// @TODO it doesnt look like the edit table is honoring form creator choices on 
+	// which fields are displayed
+	// 
+	// @TODO File uploads should never be displayed on the edit table. 
 	public static function buildEditTable($formID) {
 
 		$form = self::get($formID);
@@ -1071,7 +1075,8 @@ class forms {
 	// NOTE: data is being saved as RAW from the array.
 	public static function submit($formID,$objectID=NULL,$importing=FALSE) {
 
-		$engine = EngineAPI::singleton();
+		$engine               = mfcs::$engine;
+		$backgroundProcessing = array();
 
 		if (isnull($objectID)) {
 			$newObject = TRUE;
@@ -1129,31 +1134,35 @@ class forms {
 				}
 			}
 			else if (strtolower($field['type']) == "file") {
+
 				// Process uploaded files
 				$uploadID = $engine->cleanPost['MYSQL'][$field['name']];
+
+				// Process the uploads and put them into their archival locations
 				$tmpArray = files::processObjectUploads($objectID, $uploadID);
 
-				// Continue if no file uploaded and the field is optional
-				if($tmpArray === '' and !str2bool($field['required'])) continue;
-				
-				// Was the file successfuly uploaded?
+				// didn't generate a proper uuid for the items, rollback 
 				if (!isset($tmpArray['uuid'])) {
-					errorHandle::newError(__METHOD__."() - file uuid", errorHandle::DEBUG);
+					$engine->openDB->transRollback();
+					$engine->openDB->transEnd();
 					return FALSE;
 				}
 
-				// Process files (if needed)
-				$combine   = str2bool($field['combine']);
-				$convert   = str2bool($field['convert']);
-				$ocr       = str2bool($field['ocr']);
-				$thumbnail = str2bool($field['thumbnail']);
-				$mp3       = str2bool($field['mp3']);
-				if ($combine || $convert || $ocr || $thumbnail || $mp3) {
-					$tmpArray['files'] = array_merge($tmpArray['files'], files::processObjectFiles($tmpArray['uuid'], $field));
+				// ads this field to the files object
+				// we can't do inserts yet because we don't have the objectID on 
+				// new objects
+				files::addProcessingField($field['name']);
+
+				// Should the files be processed now or later?
+				if (str2bool($field['bgProcessing']) === FALSE) {
+					$backgroundProcessing[$field['name']] = FALSE;
+				}
+				else {
+					$backgroundProcessing[$field['name']] = TRUE;
 				}
 
-				// Save array
 				$values[$field['name']] = $tmpArray;
+
 			}
 			else {
 				$values[$field['name']] = $value;
@@ -1184,6 +1193,9 @@ class forms {
 				return FALSE;
 			}
 
+			// Grab the objectID of the new object
+			$objectID = localvars::get("newObjectID");
+
 		}
 		else {
 
@@ -1199,9 +1211,26 @@ class forms {
 
 		}
 
+		// Now that we have a valid objectID, we insert into the processing table
+		if (files::insertIntoProcessingTable($objectID) === FALSE) {
+				$engine->openDB->transRollback();
+				$engine->openDB->transEnd();
+
+				return FALSE;
+		}
+
 		// end transactions
 		$engine->openDB->transCommit();
 		$engine->openDB->transEnd();
+
+		if (!is_empty($backgroundProcessing)) {
+			foreach ($backgroundProcessing as $fieldName=>$V) {
+				if ($V === FALSE) {					
+					// No background processing. do it now.
+					files::process($objectID,$fieldName);
+				}
+			}
+		}
 
 		if ($newObject === TRUE) {
 			if (!$importing) errorHandle::successMsg("Object created successfully.");
