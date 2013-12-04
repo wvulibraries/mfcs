@@ -54,6 +54,7 @@ ln -s /tmp/git/engineAPI/engine/template/distribution/public_html/js /home/mfcs.
 mkdir -p /vagrant/serverConfiguration/serverlogs
 touch /vagrant/serverConfiguration/serverlogs/error_log
 /etc/init.d/httpd restart
+chkconfig httpd on
 
 # Base Post Setup
 
@@ -63,6 +64,7 @@ ln -s /tmp/git/engineAPI/public_html/engineIncludes $SERVERURL/$DOCUMENTROOT/eng
 ## Setup the EngineAPI Database
 
 /etc/init.d/mysqld start
+chkconfig mysqld on
 mysql -u root < /tmp/git/engineAPI/sql/vagrantSetup.sql
 mysql -u root EngineAPI < /tmp/git/engineAPI/sql/EngineAPI.sql
 
