@@ -20,6 +20,18 @@ class files {
 		return TRUE;
 	}
 
+	public static function deleteOldProcessingJobs() {
+		$sql       = sprintf("DELETE FROM `objectProcessing` WHERE `state`='0'");
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+		return TRUE;
+	}
+
 	public static function addProcessingField($fieldname) {
 
 		self::$insertFieldNames[] = $fieldname;
