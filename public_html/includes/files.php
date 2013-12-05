@@ -178,7 +178,6 @@ class files {
 
 			// get the object, and ignore the cache since we are updating in a loop
 			$object   = objects::get($row['objectID'],TRUE);
-
 			$files    = $object['data'][$row['fieldName']];
 			$assetsID = $files['uuid'];
 
