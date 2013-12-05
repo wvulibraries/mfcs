@@ -215,7 +215,7 @@ class files {
 			}
 
 			// Processing is done, set state to 0
-			self::setProcessingState($row['ID'],0);
+			self::setProcessingState($row['ID'],$setRowValue);
 
 			if ($returnArray === TRUE) {
 				return $object['data'][$row['fieldName']];
