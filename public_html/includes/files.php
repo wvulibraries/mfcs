@@ -192,6 +192,7 @@ class files {
 			$thumbnail = str2bool($fieldOptions['thumbnail']);
 			$mp3       = str2bool($fieldOptions['mp3']);
 			if (!$combine && !$convert && !$ocr && !$thumbnail && !$mp3) {
+				self::setProcessingState($row['ID'],0);
 				continue;
 			}
 
