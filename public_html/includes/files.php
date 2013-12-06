@@ -20,6 +20,24 @@ class files {
 		return TRUE;
 	}
 
+	public static function errorOldProcessingJobs() {
+
+		$oldDate = time() - 604800;
+
+		$sql       = sprintf("UPDATE `objectProcessing` SET `state`='3' WHERE `timestamp`<'%s'",
+			$oldDate
+			);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+	
+		return TRUE;
+
+	}
+
 	public static function deleteOldProcessingJobs() {
 		$sql       = sprintf("DELETE FROM `objectProcessing` WHERE `state`='0'");
 		$sqlResult = mfcs::$engine->openDB->query($sql);
