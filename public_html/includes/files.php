@@ -84,7 +84,10 @@ class files {
 			return FALSE;
 		}
 
+		// @TODO returns true if no insert fields are set. should imply that there are 
+		// no files to process. could need a debug though ... ??? 
 		if (is_empty(self::$insertFieldNames)) {
+			return TRUE;
 			errorHandle::newError(__METHOD__."() - no fields set.", errorHandle::DEBUG);
 		}
 
