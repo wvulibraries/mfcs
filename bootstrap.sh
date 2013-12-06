@@ -42,9 +42,9 @@ ln -s /vagrant/serverConfiguration/vagrant_httpd.conf /etc/httpd/conf/httpd.conf
 mkdir -p /home/mfcs.lib.wvu.edu/data/archives/mfcs
 mkdir -p /home/mfcs.lib.wvu.edu/data/archives/other
 mkdir -p /home/mfcs.lib.wvu.edu/data/exports
-mkdir -p /home/mfcs.lib.wvu.edu/data/mfcsStaging
-mkdir -p /home/mfcs.lib.wvu.edu/data/tmp
-mkdir -p /home/mfcs.lib.wvu.edu/data/uploads
+mkdir -p /home/mfcs.lib.wvu.edu/data/working/mfcsStaging
+mkdir -p /home/mfcs.lib.wvu.edu/data/working/tmp
+mkdir -p /home/mfcs.lib.wvu.edu/data/working/uploads
 
 chown apache /home/mfcs.lib.wvu.edu/data/ -R
 
