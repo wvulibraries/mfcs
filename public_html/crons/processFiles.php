@@ -5,7 +5,7 @@ session_save_path('/tmp');
 require("../header.php");
 
 $count = 0;
-while (TRUE) {
+while (FALSE) {
 
 	$sql       = sprintf("SELECT * FROM `objectProcessing` WHERE `state`='1' LIMIT 1");
 	$sqlResult = mfcs::$engine->openDB->query($sql);
@@ -28,6 +28,7 @@ while (TRUE) {
 
 }
 
+files::errorOldProcessingJobs();
 files::deleteOldProcessingJobs();
 
 ?>
