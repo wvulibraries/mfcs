@@ -1133,7 +1133,7 @@ class forms {
 					$values[$field['name']] = $field['value'];
 				}
 			}
-			else if (strtolower($field['type']) == "file") {
+			else if (strtolower($field['type']) == "file" && isset($engine->cleanPost['MYSQL'][$field['name']])) {
 
 				// Process uploaded files
 				$uploadID = $engine->cleanPost['MYSQL'][$field['name']];
