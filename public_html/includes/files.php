@@ -773,7 +773,9 @@ class files {
 		}
 
 		// Needed to put the files in the right order for processing
-		natsort($originalFiles);
+		if (natcasesort($originalFiles) === FALSE) {
+			return FALSE;
+		}
 
 		try {
 			// If combine files is checked, read this image and add it to the combined object
