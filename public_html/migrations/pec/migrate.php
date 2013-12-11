@@ -136,13 +136,13 @@ function parseHeadings($table,$record) {
 				$return[] = (string)$metadata[$metaTable][$item]['objID'];
 			}
 			else {
-				print "<pre>";
-				var_dump($metaTable);
-				print "</pre>";
+				// print "Deleted: <pre>";
+				// var_dump($metaTable);
+				// print "</pre>";
 
-				print "<pre>";
-				var_dump($item);
-				print "</pre>";
+				// print "<pre>";
+				// var_dump($item);
+				// print "</pre>";
 			}
 		}
 	}
@@ -181,6 +181,7 @@ $metadataSQL['types']                = sprintf("SELECT * FROM `types`");
 
 
 $sql       = sprintf("SELECT * FROM `records`");
+// $sql = sprintf("SELECT * FROM `records` WHERE `identifier`='P31'");
 $sqlResult = $remoteDB->query($sql);
 
 if (!$sqlResult['result']) {
@@ -278,6 +279,7 @@ foreach ($metadataSQL as $I=>$sql) {
 }
 
 foreach ($records as $identifier=>$record) {
+
 	$submitArray = array();
 	
 	$submitArray['idno']                 = $record['identifier'];
@@ -289,7 +291,7 @@ foreach ($records as $identifier=>$record) {
 	$submitArray['extent']               = $record['extent']; //
 	$submitArray['description']          = $record['description']; //
 	$submitArray['scopeAndContentsNote'] = $record['scopeAndContentsNote']; //
-	$submitArray['type']                 = $metadata[$I][$record['type']]['objID']; //
+	$submitArray['type']                 = $metadata["types"][$record['type']]['objID']; //
 	$submitArray['format']               = $record['format']; //
 	$submitArray['itemCount']            = $record['itemCount']; //
 	
@@ -317,8 +319,17 @@ foreach ($records as $identifier=>$record) {
 
 	// exit;
 
+	// check to see if we have a digital item for object
+	if (file_exists("/home/mfcs.lib.wvu.edu/data/working/uploads/".$submitArray['idno'])) {
+
+		$submitArray['digitalFiles'] = $submitArray['idno'];
+
+		print "Processing files for: ".$submitArray['idno']."<br />";
+
+	}
+
 	if (objects::add("2",$submitArray) !== TRUE) {
-		print "error submiting formID ".$formID;
+		print "error adding object ".$submitArray['idno'];
 		print "<pre>";
 		var_dump($submitArray);
 		print "</pre>";
@@ -330,10 +341,23 @@ foreach ($records as $identifier=>$record) {
 
 	// add the item to the pec project
 	if ((objects::addProject(localvars::get("newObjectID"),"1")) === FALSE) {
-		$engine->openDB->transRollback();
-		$engine->openDB->transEnd();
-		return FALSE;
+		print "error -- add Project: \n";
+		print "<pre>";
+		var_dump($submitArray);
+		print "</pre>";
+
+		errorHandle::prettyPrint();
+
+		exit;
 	}
+
+
+	mfcs::$engine->cleanPost['MYSQL'] = array();
+	mfcs::$engine->cleanPost['HTML']  = array();
+	mfcs::$engine->cleanPost['RAW']   = array();
+
+	// make certain we don't have any data cache
+	unset($submitArray);
 
 }
 
