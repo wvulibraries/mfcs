@@ -1139,12 +1139,16 @@ class forms {
 				$uploadID = $engine->cleanPost['MYSQL'][$field['name']];
 
 				// Process the uploads and put them into their archival locations
-				$tmpArray = files::processObjectUploads($objectID, $uploadID);
+				if (($tmpArray = files::processObjectUploads($objectID, $uploadID)) === FALSE) {
+					errorHandle::newError(__METHOD__."() - Archival Location", errorHandle::DEBUG);
+					return FALSE;
+				}
 
 				// didn't generate a proper uuid for the items, rollback 
 				if (!isset($tmpArray['uuid'])) {
 					$engine->openDB->transRollback();
 					$engine->openDB->transEnd();
+					errorHandle::newError(__METHOD__."() - No UUID", errorHandle::DEBUG);
 					return FALSE;
 				}
 
@@ -1154,11 +1158,11 @@ class forms {
 				files::addProcessingField($field['name']);
 
 				// Should the files be processed now or later?
-				if (str2bool($field['bgProcessing']) === FALSE) {
-					$backgroundProcessing[$field['name']] = FALSE;
+				if (isset($field['bgProcessing']) && str2bool($field['bgProcessing']) === TRUE) {
+					$backgroundProcessing[$field['name']] = TRUE;
 				}
 				else {
-					$backgroundProcessing[$field['name']] = TRUE;
+					$backgroundProcessing[$field['name']] = FALSE;
 				}
 
 				$values[$field['name']] = $tmpArray;
@@ -1189,6 +1193,7 @@ class forms {
 				$engine->openDB->transEnd();
 
 				if (!$importing) errorHandle::errorMsg("Error inserting new object.");
+				errorHandle::newError(__METHOD__."() - Error inserting new object.", errorHandle::DEBUG);
 
 				return FALSE;
 			}
@@ -1205,6 +1210,7 @@ class forms {
 
 
 				if (!$importing) errorHandle::errorMsg("Error updating.");
+				errorHandle::newError(__METHOD__."() - Error updating.", errorHandle::DEBUG);
 
 				return FALSE;
 			}
@@ -1215,6 +1221,8 @@ class forms {
 		if (files::insertIntoProcessingTable($objectID) === FALSE) {
 				$engine->openDB->transRollback();
 				$engine->openDB->transEnd();
+
+				errorHandle::newError(__METHOD__."() - Processing Table", errorHandle::DEBUG);
 
 				return FALSE;
 		}
