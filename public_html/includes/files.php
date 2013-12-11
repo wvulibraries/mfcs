@@ -682,6 +682,9 @@ class files {
 	}
 
 	public static function processObjectUploads($objectID,$uploadID) {
+
+		if (is_empty($uploadID)) return array();
+
 		$uploadBase = files::getBaseUploadPath().DIRECTORY_SEPARATOR.$uploadID;
 		$saveBase   = mfcs::config('convertedPath');
 
@@ -706,8 +709,10 @@ class files {
 			$cleanedFilename = preg_replace('/[^a-z0-9-_\.]/i','',$filename);
 			$newFilename = $originalsFilepath.DIRECTORY_SEPARATOR.$cleanedFilename;
 
-			// Move the uploaded files into thier new home and make the new file read-only
-			rename("$uploadBase/$filename", $newFilename);
+			// Move the uploaded files into their new home and make the new file read-only
+			if (rename("$uploadBase/$filename", $newFilename) === FALSE) {
+				return FALSE;
+			}
 			chmod($newFilename, 0444);
 
 			$return['files']['archive'][] = array(
