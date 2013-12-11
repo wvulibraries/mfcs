@@ -340,6 +340,9 @@ class files {
 			$assetsID      = $fileDataArray['uuid'];
 			$fileLIs = array();
 
+			// Sorts the file listing by file name, naturally and case insensitively
+			uasort($fileDataArray['files']['archive'],function($a,$b) { return strnatcasecmp($a['name'],$b['name']); });
+
 			foreach($fileDataArray['files']['archive'] as $fileID => $file){
 				$_filename = pathinfo($file['name']);
 				$filename  = $_filename['filename'];
