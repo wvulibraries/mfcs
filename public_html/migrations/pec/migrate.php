@@ -1,21 +1,8 @@
 <?php
 
+session_save_path('/tmp');
+
 include("../../header.php");
-
-// Testing array escape in engineDB
-// 
-// $foo = array('this "and" that / and \ stuff \'',"'foo' bar' this \'that");
-// print "<pre>";
-// var_dump($foo);
-// print "</pre>";
-
-// $foo = $engine->openDB->escape($foo);
-
-// print "<pre>";
-// var_dump($foo);
-// print "</pre>";
-
-// exit;
 
 function errorHandler($errno, $errmsg, $filename, $linenum, $vars) {
 
@@ -323,8 +310,6 @@ foreach ($records as $identifier=>$record) {
 	if (file_exists("/home/mfcs.lib.wvu.edu/data/working/uploads/".$submitArray['idno'])) {
 
 		$submitArray['digitalFiles'] = $submitArray['idno'];
-
-		print "Processing files for: ".$submitArray['idno']."<br />";
 
 	}
 
