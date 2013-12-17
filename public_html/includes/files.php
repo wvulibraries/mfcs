@@ -715,7 +715,8 @@ class files {
 			$newFilename = $originalsFilepath.DIRECTORY_SEPARATOR.$cleanedFilename;
 
 			// Move the uploaded files into their new home and make the new file read-only
-			if (rename("$uploadBase/$filename", $newFilename) === FALSE) {
+			if (@rename("$uploadBase/$filename", $newFilename) === FALSE) {
+				errorHandle::newError(__METHOD__."() - renaming files: $uploadBase/$filename", errorHandle::DEBUG);
 				return FALSE;
 			}
 			chmod($newFilename, 0444);
