@@ -340,7 +340,7 @@ class files {
 			$assetsID      = $fileDataArray['uuid'];
 			$fileLIs = array();
 
-			// Sorts the file listing by file name, naturally and case insensitively
+
 			uasort($fileDataArray['files']['archive'],function($a,$b) { return strnatcasecmp($a['name'],$b['name']); });
 
 			foreach($fileDataArray['files']['archive'] as $fileID => $file){
@@ -630,7 +630,7 @@ class files {
 	 * @param string $savePath
 	 * @return bool
 	 **/
-	private static function createThumbnail($originalFile,$filename,$options,$assetsID) {
+	private static function createThumbnail($originalFile,$filename,$options,$assetsID,$combined=FALSE) {
 
 		if ($originalFile instanceof Imagick) {
 			$image = $originalFile;
@@ -640,8 +640,10 @@ class files {
 			$image->readImage($originalFile);
 		}
 
-		$thumbname = $filename.'.'.strtolower($options['thumbnailFormat']);
-		$savePath  = self::getSaveDir($assetsID,'thumbs').$thumbname;
+		$assetsDirectory = ($combined != FALSE)? "combine" : 'thumbs';
+
+		$thumbname = (($combined != FALSE)? "thumb" : $filename).'.'.strtolower($options['thumbnailFormat']);
+		$savePath  = self::getSaveDir($assetsID,$assetsDirectory).$thumbname;
 
 		// Make a copy of the original
 		$thumb = $image->clone();
@@ -677,7 +679,7 @@ class files {
 
 		return array(
 			'name'   => $thumbname,
-			'path'   => self::getSaveDir($assetsID,'thumbs',FALSE),
+			'path'   => self::getSaveDir($assetsID,$assetsDirectory,FALSE),
 			'size'   => filesize($savePath),
 			'type'   => self::getMimeType($savePath),
 			'errors' => '',
@@ -809,7 +811,7 @@ class files {
 						// Create a thumbnail of the first image
 						if ($createThumb === TRUE) {
 
-							if (($return['combine'][] = self::createThumbnail($originalFile,$filename,$options,$assetsID)) === FALSE) {
+							if (($return['combine'][] = self::createThumbnail($originalFile,$filename,$options,$assetsID,TRUE)) === FALSE) {
 								throw new Exception("Failed to create thumbnail: ".$filename);
 							}
 
