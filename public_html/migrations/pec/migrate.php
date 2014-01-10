@@ -272,6 +272,7 @@ foreach ($records as $identifier=>$record) {
 	$submitArray['idno']                 = $record['identifier'];
 	$submitArray['identifier']           = $record['identifier'];
 	$submitArray['publicRelease']        = ($record['publicRelease'] == "1")?"Yes":"No"; // "No" | "Yes"
+	$submitArray['mediaRelease']         = "Yes";
 	$submitArray['hasMedia']             = ($record['hasMedia']      == "1")?"Yes":"No"; // "No" | "Yes""
 	$submitArray['title']                = $record['title']; //
 	$submitArray['date']                 = $record['date']; //
@@ -310,7 +311,7 @@ foreach ($records as $identifier=>$record) {
 	if (file_exists("/home/mfcs.lib.wvu.edu/data/working/uploads/".$submitArray['idno'])) {
 
 		$submitArray['digitalFiles'] = $submitArray['idno'];
-
+		$submitArray['mediaRelease'] = "Yes";
 	}
 
 	if (objects::add("2",$submitArray) !== TRUE) {
