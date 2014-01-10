@@ -3,7 +3,7 @@ include("../header.php");
 
 // Turn off EngineAPI template engine
 $engine->obCallback = FALSE;
-
+	
 try{
 	// Check for simple (stupid developer errors)
 	if(!isset($engine->cleanGet['MYSQL']['objectID'])) throw new Exception('No Object ID provided!');
@@ -17,6 +17,7 @@ try{
 	$fileType  = trim($engine->cleanGet['MYSQL']['type']);
 	$fileArray = $object['data'][ $fieldName ];
 	$fileUUID  = $fileArray['uuid'];
+
 	if (FALSE === strpos($fileType,'combined')) {
 		// Non-combined file
 		$fileID    = $engine->cleanGet['MYSQL']['fileID'];
