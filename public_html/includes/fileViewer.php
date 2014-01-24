@@ -18,6 +18,10 @@ try{
 	$fileArray = $object['data'][ $fieldName ];
 	$fileUUID  = $fileArray['uuid'];
 
+	// print "<pre>";
+	// var_dump($fileArray);
+	// print "</pre>";
+
 	if (FALSE === strpos($fileType,'combined')) {
 		// Non-combined file
 		$fileID    = $engine->cleanGet['MYSQL']['fileID'];
@@ -49,7 +53,7 @@ try{
 	}
 
 	// Make sure the file exists
-	if (!file_exists($filepath)) throw new Exception('File not found!');
+	if (!file_exists($filepath)) throw new Exception('File not found! "'.$filepath.'"');
 
 	// Get the MIME Type
 	if (isPHP('5.3')) {
