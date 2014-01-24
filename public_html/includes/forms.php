@@ -1144,28 +1144,31 @@ class forms {
 					return FALSE;
 				}
 
-				// didn't generate a proper uuid for the items, rollback 
-				if (!isset($tmpArray['uuid'])) {
-					$engine->openDB->transRollback();
-					$engine->openDB->transEnd();
-					errorHandle::newError(__METHOD__."() - No UUID", errorHandle::DEBUG);
-					return FALSE;
-				}
+				if ($tmpArray !== TRUE) {
 
-				// ads this field to the files object
-				// we can't do inserts yet because we don't have the objectID on 
-				// new objects
-				files::addProcessingField($field['name']);
+					// didn't generate a proper uuid for the items, rollback 
+					if (!isset($tmpArray['uuid'])) {
+						$engine->openDB->transRollback();
+						$engine->openDB->transEnd();
+						errorHandle::newError(__METHOD__."() - No UUID", errorHandle::DEBUG);
+						return FALSE;
+					}
 
-				// Should the files be processed now or later?
-				if (isset($field['bgProcessing']) && str2bool($field['bgProcessing']) === TRUE) {
-					$backgroundProcessing[$field['name']] = TRUE;
-				}
-				else {
-					$backgroundProcessing[$field['name']] = FALSE;
-				}
+					// ads this field to the files object
+					// we can't do inserts yet because we don't have the objectID on 
+					// new objects
+					files::addProcessingField($field['name']);
 
-				$values[$field['name']] = $tmpArray;
+					// Should the files be processed now or later?
+					if (isset($field['bgProcessing']) && str2bool($field['bgProcessing']) === TRUE) {
+						$backgroundProcessing[$field['name']] = TRUE;
+					}
+					else {
+						$backgroundProcessing[$field['name']] = FALSE;
+					}
+
+					$values[$field['name']] = $tmpArray;
+				}
 
 			}
 			else {

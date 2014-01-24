@@ -217,6 +217,7 @@ class files {
 			}
 
 			$processedFiles = self::processObjectFiles($assetsID,$fieldOptions);
+
 			$files['files'] = array_merge($files['files'],$processedFiles);
 
 			$object['data'][$row['fieldName']] = $files;
@@ -694,7 +695,7 @@ class files {
 		$saveBase   = mfcs::config('convertedPath');
 
 		// If the uploadPath dosen't exist, then no files were uploaded
-		if(!is_dir($uploadBase)) return '';
+		if(!is_dir($uploadBase)) return TRUE;
 
 		// Generate new assets UUID and make the directory (this should be done quickly to prevent race-conditions
 		$assetsID          = self::newAssetsUUID();
@@ -784,8 +785,10 @@ class files {
 		}
 
 		try {
+			
 			// If combine files is checked, read this image and add it to the combined object
 			if (isset($options['combine']) && str2bool($options['combine'])) {
+			
 				try {
 					$errors      = array();
 					$createThumb = TRUE;
@@ -802,6 +805,7 @@ class files {
 					touch($gsTemp);
 
 					foreach ($originalFiles as $filename) {
+			
 						// Figure some stuff out about the file
 						$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 						$_filename    = pathinfo($originalFile);
@@ -861,6 +865,8 @@ class files {
 						unlink($baseFilename.".html");
 					}
 
+					
+
 					// Combine all PDF files in directory
 					$_exec = shell_exec(sprintf('gs -sDEVICE=pdfwrite -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=%s @%s 2>&1',
 						self::getSaveDir($assetsID,'combine')."combined.pdf",
@@ -870,6 +876,8 @@ class files {
 						errorHandle::errorMsg("Failed to combine PDFs into single PDF.");
 						throw new Exception("GhostScript Error: ".$_exec);
 					}
+
+					
 
 					$return['combine'][] = array(
 						'name'   => 'combined.pdf',
