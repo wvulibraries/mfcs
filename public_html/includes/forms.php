@@ -873,7 +873,10 @@ class forms {
 	private static function validateSubmission($formID,$field,$value=NULL,$objectID) {
 
 
-		if ($field['type'] == "fieldset" || $field['type'] == "idno" || $field['disabled'] == "true") return NULL;
+		if ($field['type'] == "fieldset" || $field['disabled'] == "true") return NULL;
+
+		// If the IDNO is managed by the system, skip it:
+		if ($field['type'] == "idno" && $field['managedBy'] != "user") return NULL;
 
 		if (strtolower($field['required']) == "true" && (isnull($value) || !isset($value) || isempty($value))) {
 
