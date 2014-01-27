@@ -467,6 +467,18 @@ class objects {
 			return FALSE;
 		}
 
+		// Get the current Form
+		if (($form = forms::get($formID)) === FALSE) {
+			errorHandle::newError(__METHOD__."() - retrieving form by formID", errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		// the form is an object form, make sure that it has an ID field defined.
+		if (($idnoInfo = forms::getFormIDInfo($formID)) === FALSE) {
+			errorHandle::newError(__METHOD__."() - no IDNO field for object form.", errorHandle::DEBUG);
+			return FALSE;
+		}
+
 		// begin transactions
 		$result = mfcs::$engine->openDB->transBegin("objects");
 		if ($result !== TRUE) {
@@ -525,6 +537,44 @@ class objects {
 			mfcs::$engine->openDB->transEnd();
 			errorHandle::newError(__METHOD__."() - updating dupe matching", errorHandle::DEBUG);
 			return FALSE;
+		}
+
+		// if it is an object form (not a metadata form)
+		// do the IDNO stuff
+		// We only have to do this if the IDNO is managed by the user
+		if ($form['metadata'] == "0" && $idnoInfo['managedBy'] != "system") {
+
+			// the form is an object form, make sure that it has an ID field defined.
+			if (($idnoInfo = forms::getFormIDInfo($formID)) === FALSE) {
+				errorHandle::newError(__METHOD__."() - no IDNO field for object form.", errorHandle::DEBUG);
+				return FALSE;
+			}
+		
+			
+			$idno = mfcs::$engine->cleanPost['MYSQL']['idno'];
+
+			if (isempty($idno)) {
+				mfcs::$engine->openDB->transRollback();
+				mfcs::$engine->openDB->transEnd();
+
+				return FALSE;
+			}
+
+			// update the object with the new idno
+			$sql       = sprintf("UPDATE `objects` SET `idno`='%s' WHERE `ID`='%s'",
+				$idno, // Cleaned above when assigned
+				mfcs::$engine->openDB->escape($objectID)
+			);
+			$sqlResult = mfcs::$engine->openDB->query($sql);
+
+			if (!$sqlResult['result']) {
+				mfcs::$engine->openDB->transRollback();
+				mfcs::$engine->openDB->transEnd();
+
+				errorHandle::newError(__METHOD__."() - updating the IDNO: ".$sqlResult['error'], errorHandle::DEBUG);
+				return FALSE;
+			}
+
 		}
 
 		// end transactions
