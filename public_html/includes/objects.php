@@ -504,7 +504,7 @@ class objects {
 
 		// insert new version
 		$sql = sprintf("UPDATE `objects` SET `parentID`='%s', `data`='%s', `formID`='%s', `metadata`='%s', `modifiedTime`='%s' WHERE `ID`='%s'",
-			isset(mfcs::$engine->cleanPost['MYSQL']['parentID'])?mfcs::$engine->cleanPost['MYSQL']['parentID']:"0",
+			isset(mfcs::$engine->cleanPost['MYSQL']['parentID'])?mfcs::$engine->cleanPost['MYSQL']['parentID']:mfcs::$engine->openDB->escape($parentID),
 			encodeFields($data),
 			mfcs::$engine->openDB->escape($formID),
 			mfcs::$engine->openDB->escape($metadata),
