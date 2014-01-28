@@ -34,7 +34,7 @@ class duplicates {
 				mfcs::$engine->openDB->escape($formID),
 				mfcs::$engine->openDB->escape($objectID),
 				mfcs::$engine->openDB->escape($name),
-				mfcs::$engine->cleanPost['MYSQL'][$name]
+				mfcs::$engine->cleanPost['MYSQL'][$name] //@TODO this should use data
 			);
 			$sqlResult = mfcs::$engine->openDB->query($sql);
 
