@@ -2,6 +2,9 @@
 
 include("../../header.php");
 
+
+$filesExportBaseDir = "/home/mfcs.lib.wvu.edu/public_html/exports/Printed_Ephemera_Collection/dlxsXmlImageClass/files";
+
 function convertCharacters($string) {
 	$string = preg_replace('/…/', '&#x2026;', $string);
 	$string = preg_replace('/\*\*\!\*\*/', ';', $string);
@@ -17,17 +20,22 @@ function convertCharacters($string) {
 	return $string;
 }
 
-// Output File:
-$outFileName = "pec-data_".(time()).".xml";
-$outFile     = "./dlxsXmlImageClass/".$outFileName;
-
-localvars::add("outFile",$outFile);
-localvars::add("outFileName",$outFileName);
-
 function getHeadingByID($id) {
 	$object = objects::get($id);
 	return($object['data']['name']);
 }
+
+// Output File:
+$outFileName        = "pec-data_".(time()).".xml";
+$outFile            = "./dlxsXmlImageClass/".$outFileName;
+
+$outDigitalFileName = "pec-files_".(time()).".tar.gz";
+$outDigitalFile     = "./dlxsXmlImageClass/".$outDigitalFileName;
+
+localvars::add("outFile",$outFile);
+localvars::add("outFileName",$outFileName);
+localvars::add("outDigitalFile",$outDigitalFile);
+localvars::add("outDigitalFileName",$outDigitalFileName);
 
 $objects = objects::getAllObjectsForForm("2");
 
@@ -36,13 +44,6 @@ $xml = '<?xml version="1.0" encoding="UTF-8" ?><!-- This grammar has been deprec
 $count = 0;
 foreach ($objects as $object) {
 
-// 	if (!is_array($object['data']['creatorCorpName'])) {
-
-// 	print "<pre>";
-// 	var_dump($object);
-// 	print "</pre>";
-// exit;
-// }
 	$mergedCreators = array_merge((array)$object['data']['creatorPersName'], (array)$object['data']['creatorCorpName'], (array)$object['data']['creatorMeetName'], (array)$object['data']['creatorUniformTitle']);
 	$mergedSubjects = array_merge((array)$object['data']['subjectPersName'], (array)$object['data']['subjectCorpName'], (array)$object['data']['subjectMeetingName'], (array)$object['data']['subjectUniformTitle'], (array)$object['data']['subjectTopical'], (array)$object['data']['subjectGeoName']);
 	$creators       = array();
@@ -117,6 +118,31 @@ foreach ($objects as $object) {
 		);
 	$xml .= '</ROW>';
 
+
+	// deal with the files
+	if (is_array($object['data']['digitalFiles'])) {
+
+		foreach ($object['data']['digitalFiles']['files']['combine'] as $file) {
+
+			switch ($file['name']) {
+				case "thumb.jpg":
+					$destinationPath = $filesExportBaseDir."/thumbs/".$object['idno'].".jpg";
+					break;
+				case "combined.pdf":
+					$destinationPath = $filesExportBaseDir."/jpg/".$object['idno'].".pdf";
+					break;
+				default:
+					$destinationPath = NULL;
+			}
+
+			if (!isnull($destinationPath)) exec(sprintf("ln -sf %s/%s%s %s",mfcs::config('convertedPath'),$file['path'],$file['name'],$destinationPath));
+		}
+
+		// print "<pre>";
+		// var_dump($object['data']['digitalFiles']['files']['combine']);
+		// print "</pre>";
+	}
+
 }
 
 $xml .= "</FMPDSORESULT>";
@@ -129,7 +155,10 @@ if (!$file = fopen($outFile,"w")) {
 fwrite($file, $xml);
 fclose($file);
 
+exec(sprintf('tar -hzcf %s %s',$outDigitalFile,$filesExportBaseDir));
+
 ?>
 
-Download: 
-<a href="{local var="outFile"}">{local var="outFileName"}</a>
+Download: <br />
+<a href="{local var="outFile"}">{local var="outFileName"}</a> <br />
+<a href="{local var="outDigitalFile"}">{local var="outDigitalFileName"}</a>
