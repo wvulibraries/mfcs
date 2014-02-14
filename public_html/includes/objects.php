@@ -190,6 +190,25 @@ class objects {
 
 	}
 
+	// $sql is a complete sql statement, already sanitized. 
+	public static function getObjectsForSQL($sql,$metadata=TRUE) {
+
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+		$objects = array();
+		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+			$objects[] = self::buildObject($row,TRUE,$metadata);
+		}
+
+		return $objects;
+		
+	}
+
 	public static function buildObject($row,$ignoreCache=FALSE,$metadata=TRUE) {
 
 		if (!is_array($row)) {
