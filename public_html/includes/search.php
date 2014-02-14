@@ -80,32 +80,89 @@ class mfcsSearch {
 
 		if (!isempty($post['startDate']) && !isempty($post['endDate'])) {
 			$date = TRUE;
-			$dateWhere = sprintf(" AND `createTime`>='%s' AND `createTime` <='%s'",
-				strtotime($post['startDate']),
-				strtotime($post['endDate']));
+
+			// @tODO build where clause for date here
 		}
 		else {
 			$date = FALSE;
-			$dateWhere = "";
 		}
 
-		$objects = objects::getAllObjectsForForm($post['formList'],"idno");
+		// build query for idno searches
+		if ($post['fieldList'] == "idno" && preg_match('/^\\\\"(.+?)\\\\"/',trim($post['query']),$matches)) {
+			$queryString = sprintf("LOWER(`idno`)='%s'",
+				strtolower($matches[1])
+				);
+		}
+		else if ($post['fieldList'] == "idno" && preg_match('/^(.+?)\*$/',trim($post['query']),$matches)) {
+			$queryString = sprintf("LOWER(`idno`) LIKE '%s%%'",
+				strtolower($matches[1])
+				);
+		}
+		else if ($post['fieldList'] == "idno" && preg_match('/^\*(.+?)$/',trim($post['query']),$matches)) {
+			$queryString = sprintf("LOWER(`idno`) LIKE '%%%s'",
+				strtolower($matches[1])
+				);
+		}
+		else {
+			$queryString = sprintf("LOWER(`idno`) LIKE '%%%s%%'",
+				strtolower($post['query'])
+				);
+		}
+
+		// if idno search, build mysql here and search
+		if ($post['fieldList'] == "idno") {
+			$sql = sprintf("SELECT * FROM `objects` WHERE %s",
+				$queryString
+				);
+			$objects = objects::getObjectsForSQL($sql);
+
+		}
+		else if ($post['fieldList'] == "idno" && $date === TRUE) {
+			$sql = sprintf("SELECT * FROM `objects` WHERE `idno` LIKE '%%%s%%' AND `formID`='%s' AND `createTime` >= '%s' AND `createTime` <= '%s'",
+					$post['query'],
+					$post['formList'],
+					strtotime($post['startDate']),
+					strtotime($post['endDate'])
+					);
+
+			$objects = objects::getObjectsForSQL($sql);
+		}
+		// else if there is a date range, build a date range search to get 
+		else if ($date === TRUE) {
+
+			$sql = sprintf("SELECT * FROM `objects` WHERE AND `formID`='%s' AND `createTime` >= '%s' AND `createTime` <= '%s'",
+				$post['formList'],
+				strtotime($post['startDate']),
+				strtotime($post['endDate'])
+				);
+			
+			$objects = objects::getObjectsForSQL($sql);
+		}
+		// else, get everything to perform search. 
+		else {
+			$objects = objects::getAllObjectsForForm($post['formList'],"idno",FALSE);
+		}
 
 		$results = array();
 		foreach ($objects as $object) {
 
+			// check that the item is in the date range, if a date range is specified.
+			// if ($date === TRUE && ($object['createTime'] < strtotime($post['startDate']) || $object['createTime'] > strtotime($post['endDate']))) {
+			// 	continue;
+			// }
+
 			$found = FALSE;
 			if (!isempty($post['query']) ) { 
-				if (isset($object['data'][$post['fieldList']]) && stripos($object['data'][$post['fieldList']],$post['query']) !== FALSE) {
-					$results[$object['ID']] = $object;
+				if ($post['fieldList'] == "idno") {
 					$found = TRUE;	
 				}
-				else if ($post['fieldList'] == "idno" && stripos($object[$post['fieldList']],$post['query']) !== FALSE) {
-					$results[$object['ID']] = $object;
+				else if (isset($object['data'][$post['fieldList']]) && stripos($object['data'][$post['fieldList']],$post['query']) !== FALSE) {
 					$found = TRUE;	
 				}
 			}
-			else if (isempty($post['query']) && $date === TRUE) {
+			// If the query is empty we assume that everything should be returned. 
+			// it has already been filtered by date at this point.
+			else if (is_empty($post['query'])) {
 				$found = TRUE;
 			}
 
