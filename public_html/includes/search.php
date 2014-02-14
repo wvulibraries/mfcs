@@ -112,14 +112,7 @@ class mfcsSearch {
 		}
 
 		// if idno search, build mysql here and search
-		if ($post['fieldList'] == "idno") {
-			$sql = sprintf("SELECT * FROM `objects` WHERE %s",
-				$queryString
-				);
-			$objects = objects::getObjectsForSQL($sql);
-
-		}
-		else if ($post['fieldList'] == "idno" && $date === TRUE) {
+		if ($post['fieldList'] == "idno" && $date === TRUE) {
 			$sql = sprintf("SELECT * FROM `objects` WHERE `idno` LIKE '%%%s%%' AND `formID`='%s' AND `createTime` >= '%s' AND `createTime` <= '%s'",
 					$post['query'],
 					$post['formList'],
@@ -128,6 +121,13 @@ class mfcsSearch {
 					);
 
 			$objects = objects::getObjectsForSQL($sql);
+		}
+		else if ($post['fieldList'] == "idno") {
+			$sql = sprintf("SELECT * FROM `objects` WHERE %s",
+				$queryString
+				);
+			$objects = objects::getObjectsForSQL($sql);
+
 		}
 		// else if there is a date range, build a date range search to get 
 		else if ($date === TRUE) {
