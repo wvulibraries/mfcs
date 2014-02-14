@@ -151,11 +151,6 @@ class objects {
 			$engine->openDB->escape($formID),
 			$sortField
 			);
-		
-		// $sql       = sprintf("SELECT * FROM `objects`, `objectsData` WHERE `objects`.`formID`='%s' AND `objects`.`ID`=`objectsData`.`objectID` %s",
-		// 	$engine->openDB->escape($formID), 
-		// 	$sortField
-		// 	);
 
 		$sqlResult = $engine->openDB->query($sql);
 
@@ -164,21 +159,6 @@ class objects {
 			return FALSE;
 		}
 
-		// $objects = array();
-		// $temp    = array();
-		// $prevID  = "";
-		// while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-
-		// 	if ($row['objectID'] != $prevID && $prevID != "") {
-		// 		$objects[] = self::buildObject($temp,TRUE);
-		// 		$temp = array();
-		// 	} 
-
-		// 	$temp[] = $row;
-		// 	$prevID = $row['objectID'];
-
-		// }
-		// 
 		$objects = array();
 		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 			$objects[] = self::buildObject($row,TRUE,$metadata);  
