@@ -69,6 +69,8 @@ class mfcsSearch {
 	}
 
 	// post is expected to be mysql sanitized
+	// 
+	// @TODO ... this search function needs a lot of work. Its awful. 
 	public static function search($post) {
 
 		if (isempty($post['formList'])) {
