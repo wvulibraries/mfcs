@@ -210,6 +210,9 @@ $engine->eTemplate("include","header");
 
 					<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
 						<div class="tab-pane" id="files">
+							<a href="/dataView/allfiles.php?objectID={local var="objectID"}">Download All Files (Zip)</a><br />
+							<!-- <a href="/dataView/allfiles.php?id=$engine->cleanGet['MYSQL']['objectID']&amp;type=tar">Download All Files (tar)</a> -->
+							<br /><br />
 							{local var="filesViewer"}
 						</div>
 						<div class="tab-pane" id="project">
