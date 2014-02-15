@@ -22,7 +22,7 @@ if (isset($engine->cleanPost['MYSQL']['search'])) {
 
 		sessionSet("searchResults","");
 		sessionSet("searchQuery", $engine->cleanPost['MYSQL']);
-		http::redirect($_SERVER['PHP_SELF']);
+		header('Location: '.$_SERVER['PHP_SELF']);
 		exit;
 		// $results = mfcsSearch::search($engine->cleanPost['MYSQL']);
 		// if($results === FALSE) throw new Exception("Error retrieving results");
