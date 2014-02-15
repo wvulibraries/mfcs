@@ -142,7 +142,7 @@ class mfcsSearch {
 		}
 		// else, get everything to perform search. 
 		else {
-			$objects = objects::getAllObjectsForForm($post['formList'],"idno",FALSE);
+			$objects = objects::getAllObjectsForForm($post['formList'],"idno",TRUE);
 		}
 
 		$results = array();
@@ -154,7 +154,9 @@ class mfcsSearch {
 			// }
 
 			$found = FALSE;
+
 			if (!isempty($post['query']) ) { 
+
 				if ($post['fieldList'] == "idno") {
 					$found = TRUE;	
 				}
