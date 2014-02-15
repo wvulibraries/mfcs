@@ -113,7 +113,7 @@ class mfcsSearch {
 
 		// if idno search, build mysql here and search
 		if ($post['fieldList'] == "idno" && $date === TRUE) {
-			$sql = sprintf("SELECT * FROM `objects` WHERE `idno` LIKE '%%%s%%' AND `formID`='%s' AND `createTime` >= '%s' AND `createTime` <= '%s'",
+			$sql = sprintf("SELECT * FROM `objects` WHERE `idno` LIKE '%%%s%%' AND `formID`='%s' AND `createTime` >= '%s' AND `createTime` <= '%s' ORDER BY LENGTH(idno), `idno`",
 					$post['query'],
 					$post['formList'],
 					strtotime($post['startDate']),
@@ -123,7 +123,7 @@ class mfcsSearch {
 			$objects = objects::getObjectsForSQL($sql);
 		}
 		else if ($post['fieldList'] == "idno") {
-			$sql = sprintf("SELECT * FROM `objects` WHERE %s",
+			$sql = sprintf("SELECT * FROM `objects` WHERE %s ORDER BY LENGTH(idno), `idno`",
 				$queryString
 				);
 			$objects = objects::getObjectsForSQL($sql);
@@ -132,7 +132,7 @@ class mfcsSearch {
 		// else if there is a date range, build a date range search to get 
 		else if ($date === TRUE) {
 
-			$sql = sprintf("SELECT * FROM `objects` WHERE AND `formID`='%s' AND `createTime` >= '%s' AND `createTime` <= '%s'",
+			$sql = sprintf("SELECT * FROM `objects` WHERE AND `formID`='%s' AND `createTime` >= '%s' AND `createTime` <= '%s' ORDER BY LENGTH(idno), `idno`",
 				$post['formList'],
 				strtotime($post['startDate']),
 				strtotime($post['endDate'])
