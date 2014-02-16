@@ -123,8 +123,9 @@ class mfcsSearch {
 			$objects = objects::getObjectsForSQL($sql);
 		}
 		else if ($post['fieldList'] == "idno") {
-			$sql = sprintf("SELECT * FROM `objects` WHERE %s ORDER BY LENGTH(idno), `idno`",
-				$queryString
+			$sql = sprintf("SELECT * FROM `objects` WHERE %s AND `formID`='%s' ORDER BY LENGTH(idno), `idno`",
+				$queryString,
+				$post['formList']
 				);
 			$objects = objects::getObjectsForSQL($sql);
 
