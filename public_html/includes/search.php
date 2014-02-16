@@ -41,8 +41,9 @@ class mfcsSearch {
 
 		$output = '<option value="NULL">-- Select a Form --</option>';
 		foreach ($forms as $form) {
-			$output .= sprintf('<option value="%s">%s</option>',
+			$output .= sprintf('<option value="%s" %s>%s</option>',
 				$form['ID'],
+				($form['ID'] == sessionGet("lastSearchForm"))?"selected":"",
 				$form['title']
 				);
 		}

@@ -20,6 +20,7 @@ if (isset($engine->cleanPost['MYSQL']['search'])) {
 			throw new Exception("No Query Provided.");
 		}
 
+		sessionSet("lastSearchForm",$engine->cleanPost['HTML']['formList']);
 		sessionSet("searchResults","");
 		sessionSet("searchQuery", $engine->cleanPost['MYSQL']);
 		header('Location: '.$_SERVER['PHP_SELF']);
