@@ -315,7 +315,7 @@ class files {
 			return FALSE;
 		}
 
-		if (($object = objects::get($objectID)) === FALSE) {
+		if (($object = objects::get($objectID,TRUE)) === FALSE) {
 			return FALSE;
 		}
 
@@ -331,6 +331,7 @@ class files {
 
 		$fileLIs = array();
 		foreach($fields as $field){
+
 			if($field['type'] != 'file') continue;
 
 			// If there's nothing uploaded for the field, no need to continue
@@ -430,6 +431,7 @@ class files {
 		$output .= '<div id="filePreviewModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3></h3></div><div class="modal-body"><iframe class="filePreview"></iframe></div><div class="modal-footer"><a class="btn previewDownloadLink">Download File</a><a class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</a></div></div>';
 		$output .= sprintf('<link href="%sincludes/css/filePreview.css" rel="stylesheet">', localvars::get('siteRoot'));
 		$output .= sprintf('<script src="%sincludes/js/filePreview.js"></script>', localvars::get('siteRoot'));
+
 		return $output;
 	}
 
