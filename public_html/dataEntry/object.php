@@ -96,23 +96,24 @@ try {
 
 	// build the files list for displaying
 	if(isset($engine->cleanGet['MYSQL']['objectID'])){
+
 		if (($filesViewer = files::buildFilesPreview($engine->cleanGet['MYSQL']['objectID'])) === FALSE) {
 			throw new Exception("Error building files preview.");
 		}
 		localvars::add("filesViewer",$filesViewer);
 
-			//////////
-	// Children Tab Stuff
-	if (($formList = listGenerator::generateFormSelectList($engine->cleanGet['MYSQL']['objectID'])) === FALSE) {
-		errorHandle::errorMsg("Error getting Forms Listing");
-		throw new Exception('Error');
-	}
-	else {
-		localvars::add("formList",$formList);
-	}
-	localVars::add("childrenList",listGenerator::generateChildList($engine->cleanGet['MYSQL']['objectID']));
-	// Children Tab Stuff
-	//////////
+		//////////
+		// Children Tab Stuff
+		if (($formList = listGenerator::generateFormSelectList($engine->cleanGet['MYSQL']['objectID'])) === FALSE) {
+			errorHandle::errorMsg("Error getting Forms Listing");
+			throw new Exception('Error');
+		}
+		else {
+			localvars::add("formList",$formList);
+		}
+		localVars::add("childrenList",listGenerator::generateChildList($engine->cleanGet['MYSQL']['objectID']));
+		// Children Tab Stuff
+		//////////
 	}
 
 }
