@@ -9,7 +9,6 @@ $breadCrumbs = array(
 	sprintf('<a href="%s/dataView/Search.php">Search Objects</a>', $siteRoot)
 	);
 
-
 // Process search Submission
 if (isset($engine->cleanPost['MYSQL']['search'])) {
 	try {
@@ -21,14 +20,34 @@ if (isset($engine->cleanPost['MYSQL']['search'])) {
 			throw new Exception("No Query Provided.");
 		}
 
-		$results = mfcsSearch::search($engine->cleanPost['MYSQL']);
-		if($results === FALSE) throw new Exception("Error retrieving results");
+		sessionSet("lastSearchForm",$engine->cleanPost['HTML']['formList']);
+		sessionSet("searchResults","");
+		sessionSet("searchQuery", $engine->cleanPost['MYSQL']);
+		header('Location: '.$_SERVER['PHP_SELF']);
+		exit;
+		// $results = mfcsSearch::search($engine->cleanPost['MYSQL']);
+		// if($results === FALSE) throw new Exception("Error retrieving results");
 	}
 	catch(Exception $e) {
 		errorHandle::errorMsg($e->getMessage());
 	}
 }
-elseif(isset($engine->cleanGet['MYSQL']['page'])) {
+else if (!is_empty(sessionGet('searchResults'))) {
+	$results = sessionGet('searchResults');
+}
+else if (!is_empty(sessionGet('searchQuery'))) {
+	$searchQuery = sessionGET('searchQuery');
+
+	try {
+		$results = mfcsSearch::search($searchQuery);
+		if($results === FALSE) throw new Exception("Error retrieving results");
+		sessionSet("searchResults",$results);
+	}
+	catch(Exception $e) {
+		errorHandle::errorMsg($e->getMessage());
+	}
+}
+else if(isset($engine->cleanGet['MYSQL']['page'])) {
 	$searchPOST = sessionGet('searchPOST');
 	if($searchPOST) {
 

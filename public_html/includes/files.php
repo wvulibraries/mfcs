@@ -20,6 +20,36 @@ class files {
 		return TRUE;
 	}
 
+	public static function errorOldProcessingJobs() {
+
+		$oldDate = time() - 604800;
+
+		$sql       = sprintf("UPDATE `objectProcessing` SET `state`='3' WHERE `timestamp`<'%s'",
+			$oldDate
+			);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+	
+		return TRUE;
+
+	}
+
+	public static function deleteOldProcessingJobs() {
+		$sql       = sprintf("DELETE FROM `objectProcessing` WHERE `state`='0'");
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+		return TRUE;
+	}
+
 	public static function addProcessingField($fieldname) {
 
 		self::$insertFieldNames[] = $fieldname;
@@ -54,7 +84,10 @@ class files {
 			return FALSE;
 		}
 
+		// @TODO returns true if no insert fields are set. should imply that there are 
+		// no files to process. could need a debug though ... ??? 
 		if (is_empty(self::$insertFieldNames)) {
+			return TRUE;
 			errorHandle::newError(__METHOD__."() - no fields set.", errorHandle::DEBUG);
 		}
 
@@ -166,7 +199,6 @@ class files {
 
 			// get the object, and ignore the cache since we are updating in a loop
 			$object   = objects::get($row['objectID'],TRUE);
-
 			$files    = $object['data'][$row['fieldName']];
 			$assetsID = $files['uuid'];
 
@@ -180,10 +212,12 @@ class files {
 			$thumbnail = str2bool($fieldOptions['thumbnail']);
 			$mp3       = str2bool($fieldOptions['mp3']);
 			if (!$combine && !$convert && !$ocr && !$thumbnail && !$mp3) {
+				self::setProcessingState($row['ID'],0);
 				continue;
 			}
 
 			$processedFiles = self::processObjectFiles($assetsID,$fieldOptions);
+
 			$files['files'] = array_merge($files['files'],$processedFiles);
 
 			$object['data'][$row['fieldName']] = $files;
@@ -202,7 +236,7 @@ class files {
 			}
 
 			// Processing is done, set state to 0
-			self::setProcessingState($row['ID'],0);
+			self::setProcessingState($row['ID'],$setRowValue);
 
 			if ($returnArray === TRUE) {
 				return $object['data'][$row['fieldName']];
@@ -281,7 +315,7 @@ class files {
 			return FALSE;
 		}
 
-		if (($object = objects::get($objectID)) === FALSE) {
+		if (($object = objects::get($objectID,TRUE)) === FALSE) {
 			return FALSE;
 		}
 
@@ -297,6 +331,7 @@ class files {
 
 		$fileLIs = array();
 		foreach($fields as $field){
+
 			if($field['type'] != 'file') continue;
 
 			// If there's nothing uploaded for the field, no need to continue
@@ -306,6 +341,9 @@ class files {
 			$fileDataArray = $object['data'][$field['name']];
 			$assetsID      = $fileDataArray['uuid'];
 			$fileLIs = array();
+
+
+			uasort($fileDataArray['files']['archive'],function($a,$b) { return strnatcasecmp($a['name'],$b['name']); });
 
 			foreach($fileDataArray['files']['archive'] as $fileID => $file){
 				$_filename = pathinfo($file['name']);
@@ -393,6 +431,7 @@ class files {
 		$output .= '<div id="filePreviewModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3></h3></div><div class="modal-body"><iframe class="filePreview"></iframe></div><div class="modal-footer"><a class="btn previewDownloadLink">Download File</a><a class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</a></div></div>';
 		$output .= sprintf('<link href="%sincludes/css/filePreview.css" rel="stylesheet">', localvars::get('siteRoot'));
 		$output .= sprintf('<script src="%sincludes/js/filePreview.js"></script>', localvars::get('siteRoot'));
+
 		return $output;
 	}
 
@@ -594,7 +633,7 @@ class files {
 	 * @param string $savePath
 	 * @return bool
 	 **/
-	private static function createThumbnail($originalFile,$filename,$options,$assetsID) {
+	private static function createThumbnail($originalFile,$filename,$options,$assetsID,$combined=FALSE) {
 
 		if ($originalFile instanceof Imagick) {
 			$image = $originalFile;
@@ -604,8 +643,10 @@ class files {
 			$image->readImage($originalFile);
 		}
 
-		$thumbname = $filename.'.'.strtolower($options['thumbnailFormat']);
-		$savePath  = self::getSaveDir($assetsID,'thumbs').$thumbname;
+		$assetsDirectory = ($combined != FALSE)? "combine" : 'thumbs';
+
+		$thumbname = (($combined != FALSE)? "thumb" : $filename).'.'.strtolower($options['thumbnailFormat']);
+		$savePath  = self::getSaveDir($assetsID,$assetsDirectory).$thumbname;
 
 		// Make a copy of the original
 		$thumb = $image->clone();
@@ -641,7 +682,7 @@ class files {
 
 		return array(
 			'name'   => $thumbname,
-			'path'   => self::getSaveDir($assetsID,'thumbs',FALSE),
+			'path'   => self::getSaveDir($assetsID,$assetsDirectory,FALSE),
 			'size'   => filesize($savePath),
 			'type'   => self::getMimeType($savePath),
 			'errors' => '',
@@ -649,11 +690,14 @@ class files {
 	}
 
 	public static function processObjectUploads($objectID,$uploadID) {
+
+		if (is_empty($uploadID)) return array();
+
 		$uploadBase = files::getBaseUploadPath().DIRECTORY_SEPARATOR.$uploadID;
 		$saveBase   = mfcs::config('convertedPath');
 
 		// If the uploadPath dosen't exist, then no files were uploaded
-		if(!is_dir($uploadBase)) return '';
+		if(!is_dir($uploadBase)) return TRUE;
 
 		// Generate new assets UUID and make the directory (this should be done quickly to prevent race-conditions
 		$assetsID          = self::newAssetsUUID();
@@ -673,8 +717,11 @@ class files {
 			$cleanedFilename = preg_replace('/[^a-z0-9-_\.]/i','',$filename);
 			$newFilename = $originalsFilepath.DIRECTORY_SEPARATOR.$cleanedFilename;
 
-			// Move the uploaded files into thier new home and make the new file read-only
-			rename("$uploadBase/$filename", $newFilename);
+			// Move the uploaded files into their new home and make the new file read-only
+			if (@rename("$uploadBase/$filename", $newFilename) === FALSE) {
+				errorHandle::newError(__METHOD__."() - renaming files: $uploadBase/$filename", errorHandle::DEBUG);
+				return FALSE;
+			}
 			chmod($newFilename, 0444);
 
 			$return['files']['archive'][] = array(
@@ -735,11 +782,15 @@ class files {
 		}
 
 		// Needed to put the files in the right order for processing
-		natsort($originalFiles);
+		if (natcasesort($originalFiles) === FALSE) {
+			return FALSE;
+		}
 
 		try {
+			
 			// If combine files is checked, read this image and add it to the combined object
 			if (isset($options['combine']) && str2bool($options['combine'])) {
+			
 				try {
 					$errors      = array();
 					$createThumb = TRUE;
@@ -756,6 +807,7 @@ class files {
 					touch($gsTemp);
 
 					foreach ($originalFiles as $filename) {
+			
 						// Figure some stuff out about the file
 						$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 						$_filename    = pathinfo($originalFile);
@@ -766,7 +818,7 @@ class files {
 						// Create a thumbnail of the first image
 						if ($createThumb === TRUE) {
 
-							if (($return['combine'][] = self::createThumbnail($originalFile,$filename,$options,$assetsID)) === FALSE) {
+							if (($return['combine'][] = self::createThumbnail($originalFile,$filename,$options,$assetsID,TRUE)) === FALSE) {
 								throw new Exception("Failed to create thumbnail: ".$filename);
 							}
 
@@ -815,6 +867,8 @@ class files {
 						unlink($baseFilename.".html");
 					}
 
+					
+
 					// Combine all PDF files in directory
 					$_exec = shell_exec(sprintf('gs -sDEVICE=pdfwrite -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=%s @%s 2>&1',
 						self::getSaveDir($assetsID,'combine')."combined.pdf",
@@ -824,6 +878,8 @@ class files {
 						errorHandle::errorMsg("Failed to combine PDFs into single PDF.");
 						throw new Exception("GhostScript Error: ".$_exec);
 					}
+
+					
 
 					$return['combine'][] = array(
 						'name'   => 'combined.pdf',

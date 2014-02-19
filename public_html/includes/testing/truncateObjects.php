@@ -8,6 +8,7 @@ $sql[] = "TRUNCATE TABLE `dupeMatching`";
 $sql[] = "TRUNCATE TABLE `objectMetadataLinks`";
 $sql[] = "TRUNCATE TABLE `objectProjects`";
 $sql[] = "TRUNCATE TABLE `objects`";
+$sql[] = "TRUNCATE TABLE `objectProcessing";
 
 foreach ($sql as $I=>$K) {
 	$sqlResult = $engine->openDB->query($K);

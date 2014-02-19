@@ -1,7 +1,7 @@
 <?php
 require("engineInclude.php");
 
-recurseInsert("acl.php","php");
+if(!isCLI()) recurseInsert("acl.php","php");
 
 recurseInsert("dbTableList.php","php");
 $engine->dbConnect("database","mfcs",TRUE);

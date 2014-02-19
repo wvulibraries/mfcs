@@ -32,6 +32,12 @@ if(isset($currentProjects) and sizeof($currentProjects)){
 					<li><a href="{local var="siteRoot"}formCreator/copy.php">Copy Form</a></li>
 				</ul>
 			</li>
+<!-- 			<li class="dropdown-submenu">
+				<a tabindex="-1" href="#">User Preferences</a>
+				<ul class="dropdown-menu">
+					<li><a href="{local var="siteRoot"}user/setDefaultForm/">Default Form</a></li>
+				</ul>
+			</li> -->
 			<li class="dropdown-submenu">
 				<a tabindex="-1" href="#">Administrative Panel</a>
 				<ul class="dropdown-menu">

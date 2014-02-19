@@ -873,7 +873,10 @@ class forms {
 	private static function validateSubmission($formID,$field,$value=NULL,$objectID) {
 
 
-		if ($field['type'] == "fieldset" || $field['type'] == "idno" || $field['disabled'] == "true") return NULL;
+		if ($field['type'] == "fieldset" || $field['disabled'] == "true") return NULL;
+
+		// If the IDNO is managed by the system, skip it:
+		if ($field['type'] == "idno" && $field['managedBy'] != "user") return NULL;
 
 		if (strtolower($field['required']) == "true" && (isnull($value) || !isset($value) || isempty($value))) {
 
@@ -1133,35 +1136,42 @@ class forms {
 					$values[$field['name']] = $field['value'];
 				}
 			}
-			else if (strtolower($field['type']) == "file") {
+			else if (strtolower($field['type']) == "file" && isset($engine->cleanPost['MYSQL'][$field['name']])) {
 
 				// Process uploaded files
 				$uploadID = $engine->cleanPost['MYSQL'][$field['name']];
 
 				// Process the uploads and put them into their archival locations
-				$tmpArray = files::processObjectUploads($objectID, $uploadID);
-
-				// didn't generate a proper uuid for the items, rollback 
-				if (!isset($tmpArray['uuid'])) {
-					$engine->openDB->transRollback();
-					$engine->openDB->transEnd();
+				if (($tmpArray = files::processObjectUploads($objectID, $uploadID)) === FALSE) {
+					errorHandle::newError(__METHOD__."() - Archival Location", errorHandle::DEBUG);
 					return FALSE;
 				}
 
-				// ads this field to the files object
-				// we can't do inserts yet because we don't have the objectID on 
-				// new objects
-				files::addProcessingField($field['name']);
+				if ($tmpArray !== TRUE) {
 
-				// Should the files be processed now or later?
-				if (str2bool($field['bgProcessing']) === FALSE) {
-					$backgroundProcessing[$field['name']] = FALSE;
-				}
-				else {
-					$backgroundProcessing[$field['name']] = TRUE;
-				}
+					// didn't generate a proper uuid for the items, rollback 
+					if (!isset($tmpArray['uuid'])) {
+						$engine->openDB->transRollback();
+						$engine->openDB->transEnd();
+						errorHandle::newError(__METHOD__."() - No UUID", errorHandle::DEBUG);
+						return FALSE;
+					}
 
-				$values[$field['name']] = $tmpArray;
+					// ads this field to the files object
+					// we can't do inserts yet because we don't have the objectID on 
+					// new objects
+					files::addProcessingField($field['name']);
+
+					// Should the files be processed now or later?
+					if (isset($field['bgProcessing']) && str2bool($field['bgProcessing']) === TRUE) {
+						$backgroundProcessing[$field['name']] = TRUE;
+					}
+					else {
+						$backgroundProcessing[$field['name']] = FALSE;
+					}
+
+					$values[$field['name']] = $tmpArray;
+				}
 
 			}
 			else {
@@ -1170,7 +1180,7 @@ class forms {
 		}
 
 		if (isset($engine->errorStack['error']) && count($engine->errorStack['error']) > 0) {
-			errorHandle::newError(__METHOD__."() - Error stack not empty.", errorHandle::DEBUG);
+			// errorHandle::newError(__METHOD__."() - Error stack not empty.", errorHandle::DEBUG);
 			return FALSE;
 		}
 
@@ -1189,6 +1199,7 @@ class forms {
 				$engine->openDB->transEnd();
 
 				if (!$importing) errorHandle::errorMsg("Error inserting new object.");
+				errorHandle::newError(__METHOD__."() - Error inserting new object.", errorHandle::DEBUG);
 
 				return FALSE;
 			}
@@ -1205,6 +1216,7 @@ class forms {
 
 
 				if (!$importing) errorHandle::errorMsg("Error updating.");
+				errorHandle::newError(__METHOD__."() - Error updating.", errorHandle::DEBUG);
 
 				return FALSE;
 			}
@@ -1215,6 +1227,8 @@ class forms {
 		if (files::insertIntoProcessingTable($objectID) === FALSE) {
 				$engine->openDB->transRollback();
 				$engine->openDB->transEnd();
+
+				errorHandle::newError(__METHOD__."() - Processing Table", errorHandle::DEBUG);
 
 				return FALSE;
 		}

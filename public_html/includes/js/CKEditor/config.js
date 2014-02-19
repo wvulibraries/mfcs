@@ -9,4 +9,9 @@ CKEDITOR.editorConfig = function( config )
 	// config.language = 'fr';
 	// config.uiColor = '#AADC6E';
 	config.protectedSource.push(/<\?[\s\S]*?\?>/g); // PHP Code
+
+// config.basicEntities        = false;
+// config.entities             = false,
+// config.forceSimpleAmpersand = true,
+
 };

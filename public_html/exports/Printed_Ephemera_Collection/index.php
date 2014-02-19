@@ -2,17 +2,40 @@
 
 include("../../header.php");
 
-// Output File:
-$outFileName = "pec-data_".(time()).".xml";
-$outFile     = "./dlxsXmlImageClass/".$outFileName;
 
-localvars::add("outFile",$outFile);
-localvars::add("outFileName",$outFileName);
+$filesExportBaseDir = "/home/mfcs.lib.wvu.edu/public_html/exports/Printed_Ephemera_Collection/dlxsXmlImageClass/files";
+
+function convertCharacters($string) {
+	$string = preg_replace('/…/', '&#x2026;', $string);
+	$string = preg_replace('/\*\*\!\*\*/', ';', $string);
+
+	$string = preg_replace('/<em>/', '%Oitalic%', $string);
+	$string = preg_replace('/<\/em>/', '%Citalic%', $string);
+	$string = preg_replace('/<strong>/', '%Obold%', $string);
+	$string = preg_replace('/<\/strong>/', '%Cbold%', $string);
+	$string = preg_replace('/<a href="(.+?)">(<u>)?(.+?)(<\/u>)?<\/a>/','%link url="$1"%$3%/link%',$string);
+
+	$string = preg_replace('/&auml;/', "ä", $string);
+
+	return $string;
+}
 
 function getHeadingByID($id) {
 	$object = objects::get($id);
 	return($object['data']['name']);
 }
+
+// Output File:
+$outFileName        = "pec-data_".(time()).".xml";
+$outFile            = "./dlxsXmlImageClass/".$outFileName;
+
+$outDigitalFileName = "pec-files_".(time()).".tar.gz";
+$outDigitalFile     = "./dlxsXmlImageClass/".$outDigitalFileName;
+
+localvars::add("outFile",$outFile);
+localvars::add("outFileName",$outFileName);
+localvars::add("outDigitalFile",$outDigitalFile);
+localvars::add("outDigitalFileName",$outDigitalFileName);
 
 $objects = objects::getAllObjectsForForm("2");
 
@@ -21,8 +44,8 @@ $xml = '<?xml version="1.0" encoding="UTF-8" ?><!-- This grammar has been deprec
 $count = 0;
 foreach ($objects as $object) {
 
-	$mergedCreators = array_merge($object['data']['creatorPersName'], $object['data']['creatorCorpName'], $object['data']['creatorMeetName'], $object['data']['creatorUniformTitle']);
-	$mergedSubjects = array_merge($object['data']['subjectPersName'], $object['data']['subjectCorpName'], $object['data']['subjectMeetingName'], $object['data']['subjectUniformTitle'], $object['data']['subjectTopical'], $object['data']['subjectGeoName']);
+	$mergedCreators = array_merge((array)$object['data']['creatorPersName'], (array)$object['data']['creatorCorpName'], (array)$object['data']['creatorMeetName'], (array)$object['data']['creatorUniformTitle']);
+	$mergedSubjects = array_merge((array)$object['data']['subjectPersName'], (array)$object['data']['subjectCorpName'], (array)$object['data']['subjectMeetingName'], (array)$object['data']['subjectUniformTitle'], (array)$object['data']['subjectTopical'], (array)$object['data']['subjectGeoName']);
 	$creators       = array();
 	$subjects       = array();
 
@@ -42,6 +65,26 @@ foreach ($objects as $object) {
 
 	$creator = implode("|||", $creators);
 	$subject = implode("|||", $subjects);
+
+	$object['data']['title'] = convertCharacters($object['data']['title']);
+
+	$object['data']['description'] = preg_replace('/<p>/', '', $object['data']['description']);
+	$object['data']['description'] = preg_replace('/<\/p>/', '', $object['data']['description']);
+	$object['data']['description'] = preg_replace('/&nbsp;/', '', $object['data']['description']);
+
+	$object['data']['description'] = convertCharacters($object['data']['description']);
+
+	$object['data']['description'] = preg_replace('/</', '&lt;', $object['data']['description']);
+	$object['data']['description'] = preg_replace('/>/', '&gt;', $object['data']['description']);
+	$object['data']['description'] = preg_replace('/&lt;br \/&gt;/', '||||||', $object['data']['description']);
+
+
+	if (preg_match('/^\|+$/',$creator)) {
+		$creator = "";
+	}
+	if (preg_match('/^\|+$/',$subject)) {
+		$subject = "";
+	}
 
 	$xml .= sprintf('<ROW MODID="0" RECORDID="%s">',
 		++$count
@@ -75,6 +118,31 @@ foreach ($objects as $object) {
 		);
 	$xml .= '</ROW>';
 
+
+	// deal with the files
+	if (is_array($object['data']['digitalFiles'])) {
+
+		foreach ($object['data']['digitalFiles']['files']['combine'] as $file) {
+
+			switch ($file['name']) {
+				case "thumb.jpg":
+					$destinationPath = $filesExportBaseDir."/thumbs/".$object['idno'].".jpg";
+					break;
+				case "combined.pdf":
+					$destinationPath = $filesExportBaseDir."/jpg/".$object['idno'].".pdf";
+					break;
+				default:
+					$destinationPath = NULL;
+			}
+
+			if (!isnull($destinationPath)) exec(sprintf("ln -sf %s/%s%s %s",mfcs::config('convertedPath'),$file['path'],$file['name'],$destinationPath));
+		}
+
+		// print "<pre>";
+		// var_dump($object['data']['digitalFiles']['files']['combine']);
+		// print "</pre>";
+	}
+
 }
 
 $xml .= "</FMPDSORESULT>";
@@ -87,7 +155,10 @@ if (!$file = fopen($outFile,"w")) {
 fwrite($file, $xml);
 fclose($file);
 
+exec(sprintf('tar -hzcf %s %s',$outDigitalFile,$filesExportBaseDir));
+
 ?>
 
-Download: 
-<a href="{local var="outFile"}">{local var="outFileName"}</a>
+Download: <br />
+<a href="{local var="outFile"}">{local var="outFileName"}</a> <br />
+<a href="{local var="outDigitalFile"}">{local var="outDigitalFileName"}</a>

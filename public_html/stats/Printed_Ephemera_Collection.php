@@ -12,8 +12,8 @@ $totalItemCount        = 0;
 $totalItemCountPublic  = 0;
 
 foreach ($objects as $I=>$object) {
-	$totalMediaItems       += ($object['data']['hasMedia'] == "Yes")? 1 : 0;
-	$totalMediaItemsPublic += ($object['data']['hasMedia'] == "Yes" && $object['data']['publicRelease'] == "Yes")? 1 : 0;
+	$totalMediaItems       += (isset($object['data']['digitalFiles']['uuid']))? 1 : 0;
+	$totalMediaItemsPublic += (isset($object['data']['digitalFiles']['uuid']) && $object['data']['publicRelease'] == "Yes")? 1 : 0;
 	$totalPECObjectsPublic += ($object['data']['publicRelease'] == "Yes")? 1 : 0;
 	$totalItemCount        += ((int)$object['data']['itemCount'] > 0)? (int)$object['data']['itemCount'] : 0;
 	$totalItemCountPublic  += ((int)$object['data']['itemCount'] > 0 && $object['data']['publicRelease'] == "Yes")? (int)$object['data']['itemCount'] : 0;
