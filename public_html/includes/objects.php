@@ -443,7 +443,7 @@ class objects {
 			return FALSE;
 		}
 		foreach ($currentProjects as $projectID => $projectName) {
-			if (self::checkFormInProject($projectID,$formID) === TRUE) {
+			if (forms::checkFormInProject($projectID,$formID) === TRUE) {
 				if ((objects::addProject($objectID,$projectID)) === FALSE) {
 					mfcs::$engine->openDB->transRollback();
 					mfcs::$engine->openDB->transEnd();
