@@ -181,10 +181,20 @@ function showFieldSettings(fullID) {
 				$("#fieldSettings_help_type").val(fieldHelp[0]).change();
 				switch(fieldHelp[0]){
 					case 'text':
-						$("#fieldSettings_help_text").val(fieldHelp[1]).keyup();
+						// de-escape HTML-breaking characters
+						var val = fieldHelp[1];
+						val = val.replace(/&#34;/g, '"');
+						val = val.replace(/&#39;/g, "'");
+						val = val.replace(/&#62;/g, '>');
+						val = val.replace(/&#60;/g, '<');
+						$("#fieldSettings_help_text").val(val).keyup();
 						break;
 					case 'html':
-						$("#fieldSettings_help_html").val(fieldHelp[1]).keyup();
+						// de-escape HTML-breaking characters
+						var val = fieldHelp[1];
+						val = val.replace(/&#34;/g, '"');
+						val = val.replace(/&#39;/g, "'");
+						$("#fieldSettings_help_html").val(val).keyup();
 						break;
 					case 'web':
 						$("#fieldSettings_help_url").val(fieldHelp[1]).keyup();
@@ -456,6 +466,13 @@ function fieldSettingsBindings() {
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
 		var val             = $(this).val();
+
+		// Escape HTML-breaking characters
+		val = val.replace(/"/g, '&#34;');
+		val = val.replace(/'/g, '&#39;');
+		val = val.replace(/>/g, '&#62;');
+		val = val.replace(/</g, '&#60;');
+
 		$("#help_"+id).val($('#fieldSettings_help_type').val()+','+val);
 		formPreviewWell.find('.helpPreview').tooltip('destroy').tooltip({
 			placement: 'right',
@@ -466,6 +483,11 @@ function fieldSettingsBindings() {
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
 		var val             = $(this).val();
+
+		// Escape HTML-breaking characters
+		val = val.replace(/"/g, '&#34;');
+		val = val.replace(/'/g, '&#39;');
+
 		$("#help_"+id).val($('#fieldSettings_help_type').val()+','+val);
 		formPreviewWell.find('.helpPreview').popover('destroy').popover({
 			placement: 'right',

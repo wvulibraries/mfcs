@@ -782,7 +782,7 @@ $engine->eTemplate("include","header");
 											<div class="control-group well well-small" id="fieldSettings_container_style">
 												<label for="fieldSettings_style">
 													Field Help
-													<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="You can set any help text you want displayed with this field."></i>
+													<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="You can set any help text you want displayed with this field. Any angle brackets in HTML text will be treated as HTML"></i>
 												</label>
 												<select class="input-block-level" id="fieldSettings_help_type" name="fieldSettings_help_type">
 													<option value="">None</option>
