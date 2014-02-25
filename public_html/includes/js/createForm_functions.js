@@ -176,28 +176,29 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_class").val($("#class_"+id).val()).keyup();
 			$("#fieldSettings_style").val($("#style_"+id).val()).keyup();
 
-			var fieldHelp = $("#help_"+id).val().split(",");
-			if(fieldHelp.length == 2){
-				$("#fieldSettings_help_type").val(fieldHelp[0]).change();
-				switch(fieldHelp[0]){
+			var fieldHelp = $("#help_"+id).val();
+			if(fieldHelp != ''){
+				var n = fieldHelp.indexOf('|');
+				var fieldHelpType  = fieldHelp.slice(0,n);
+				var fieldHelpValue = fieldHelp.slice(n+1);
+				$("#fieldSettings_help_type").val(fieldHelpType).change();
+				switch(fieldHelpType){
 					case 'text':
 						// de-escape HTML-breaking characters
-						var val = fieldHelp[1];
-						val = val.replace(/&#34;/g, '"');
-						val = val.replace(/&#39;/g, "'");
-						val = val.replace(/&#62;/g, '>');
-						val = val.replace(/&#60;/g, '<');
-						$("#fieldSettings_help_text").val(val).keyup();
+						fieldHelpValue = fieldHelpValue.replace(/&#34;/g, '"');
+						fieldHelpValue = fieldHelpValue.replace(/&#39;/g, "'");
+						fieldHelpValue = fieldHelpValue.replace(/&#62;/g, '>');
+						fieldHelpValue = fieldHelpValue.replace(/&#60;/g, '<');
+						$("#fieldSettings_help_text").val(fieldHelpValue).keyup();
 						break;
 					case 'html':
 						// de-escape HTML-breaking characters
-						var val = fieldHelp[1];
-						val = val.replace(/&#34;/g, '"');
-						val = val.replace(/&#39;/g, "'");
-						$("#fieldSettings_help_html").val(val).keyup();
+						fieldHelpValue = fieldHelpValue.replace(/&#34;/g, '"');
+						fieldHelpValue = fieldHelpValue.replace(/&#39;/g, "'");
+						$("#fieldSettings_help_html").val(fieldHelpValue).keyup();
 						break;
 					case 'web':
-						$("#fieldSettings_help_url").val(fieldHelp[1]).keyup();
+						$("#fieldSettings_help_url").val(fieldHelpValue).keyup();
 						break;
 				}
 			}else{
@@ -473,7 +474,7 @@ function fieldSettingsBindings() {
 		val = val.replace(/>/g, '&#62;');
 		val = val.replace(/</g, '&#60;');
 
-		$("#help_"+id).val($('#fieldSettings_help_type').val()+','+val);
+		$("#help_"+id).val($('#fieldSettings_help_type').val()+'|'+val);
 		formPreviewWell.find('.helpPreview').tooltip('destroy').tooltip({
 			placement: 'right',
 			title: $(this).val()
@@ -488,7 +489,7 @@ function fieldSettingsBindings() {
 		val = val.replace(/"/g, '&#34;');
 		val = val.replace(/'/g, '&#39;');
 
-		$("#help_"+id).val($('#fieldSettings_help_type').val()+','+val);
+		$("#help_"+id).val($('#fieldSettings_help_type').val()+'|'+val);
 		formPreviewWell.find('.helpPreview').popover('destroy').popover({
 			placement: 'right',
 			trigger: 'hover',
@@ -500,7 +501,7 @@ function fieldSettingsBindings() {
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
 		var val             = $(this).val();
-		$("#help_"+id).val($('#fieldSettings_help_type').val()+','+val);
+		$("#help_"+id).val($('#fieldSettings_help_type').val()+'|'+val);
 		$("#fieldHelpModalURL").attr('src', val);
 	});
 
