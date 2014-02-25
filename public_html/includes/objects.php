@@ -459,6 +459,14 @@ class objects {
 		return TRUE;
 	}
 
+	public static function getIDNOForObjectID($objectID) {
+
+		$object = self::get($objectID);
+
+		return ($object)?$object['idno']:FALSE;
+
+	}
+
 	public static function update($objectID,$formID,$data,$metadata,$parentID=0,$modifiedTime=NULL) {
 
 		if (!is_array($data)) {
