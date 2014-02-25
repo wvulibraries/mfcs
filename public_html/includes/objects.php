@@ -459,6 +459,14 @@ class objects {
 		return TRUE;
 	}
 
+	public static function getIDNOForObjectID($objectID) {
+
+		$object = self::get($objectID);
+
+		return ($object)?$object['idno']:FALSE;
+
+	}
+
 	public static function update($objectID,$formID,$data,$metadata,$parentID=0,$modifiedTime=NULL) {
 
 		if (!is_array($data)) {
@@ -548,11 +556,10 @@ class objects {
 				errorHandle::newError(__METHOD__."() - no IDNO field for object form.", errorHandle::DEBUG);
 				return FALSE;
 			}
-		
-			
-			$idno = mfcs::$engine->cleanPost['MYSQL']['idno'];
 
-			if (isempty($idno)) {
+			$idno = (isset(mfcs::$engine->cleanPost['MYSQL']['idno']) && !isempty(mfcs::$engine->cleanPost['MYSQL']['idno']))?mfcs::$engine->cleanPost['MYSQL']['idno']:self::getIDNOForObjectID($objectID);
+
+			if ($idno === FALSE || isempty($idno)) {
 				mfcs::$engine->openDB->transRollback();
 				mfcs::$engine->openDB->transEnd();
 
