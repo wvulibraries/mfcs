@@ -556,11 +556,10 @@ class objects {
 				errorHandle::newError(__METHOD__."() - no IDNO field for object form.", errorHandle::DEBUG);
 				return FALSE;
 			}
-		
-			
-			$idno = mfcs::$engine->cleanPost['MYSQL']['idno'];
 
-			if (isempty($idno)) {
+			$idno = (isset(mfcs::$engine->cleanPost['MYSQL']['idno']) && !isempty(mfcs::$engine->cleanPost['MYSQL']['idno']))?mfcs::$engine->cleanPost['MYSQL']['idno']:self::getIDNOForObjectID($objectID);
+
+			if ($idno === FALSE || isempty($idno)) {
 				mfcs::$engine->openDB->transRollback();
 				mfcs::$engine->openDB->transEnd();
 
