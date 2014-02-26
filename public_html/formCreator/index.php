@@ -36,6 +36,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 
 	// Ensure all fields have an ID for the label. Assign it the value of name if needed.
 	if (!is_empty($fields)) {
+		$count = NULL;
 		foreach ($fields as $I => $field) {
 			$positions[$I] = $field['position'];
 
@@ -43,10 +44,10 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 				$fields[$I]['id'] = $field['name'];
 			}
 
-			$count = NULL;
 			if ($field['type'] == 'idno') {
-				$idno = $field;
-				$count = $field['startIncrement'];
+				$idno        = $field;
+				$count       = (isnull($count)) ? $field['startIncrement'] : $count;
+				$idnoConfirm = $field['idnoConfirm'];
 			}
 			else if (isset($field['choicesType']) && $field['choicesType'] == 'manual') {
 				unset($fields[$I]['choicesForm']);
@@ -62,6 +63,13 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	}
 
 	if (!isnull($formID)) {
+		// Only add count if confirmation is checked
+		if (str2bool($idnoConfirm)) {
+			$countSql = sprintf("`count`='%s',",
+				$engine->openDB->escape($count)
+				);
+		}
+
 		// Update forms table
 		$sql = sprintf("UPDATE `forms`
 						SET `title`='%s',
@@ -73,7 +81,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 							`container`='%s',
 							`production`='%s',
 							`metadata`='%s',
-							`count`='%s',
+							%s
 							`displayTitle`='%s',
 							`objectTitleField`='%s'
 						WHERE ID='%s' LIMIT 1",
@@ -86,7 +94,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			$engine->openDB->escape($form['formContainer']),      // container=
 			$engine->openDB->escape($form['formProduction']),     // production=
 			$engine->openDB->escape($form['formMetadata']),       // metadata=
-			$engine->openDB->escape($count),                      // count=
+			$countSql,                                            // count=
 			$engine->openDB->escape($form['objectDisplayTitle']), // displayTitle=
 			$engine->openDB->escape($form['objectTitleField']),   // objectTitleField=
 			$engine->openDB->escape($formID)                      // ID=
@@ -887,6 +895,13 @@ $engine->eTemplate("include","header");
 														</label>
 														<input type="number" class="input-block-level" id="fieldSettings_idno_startIncrement" name="fieldSettings_idno_startIncrement" min="1" />
 													</div>
+												</div>
+
+												<div class="row-fluid hidden" id="fieldSettings_container_idno_confirm">
+													<label class="checkbox">
+														<input type="checkbox" id="fieldSettings_idno_confirm" name="fieldSettings_idno_confirm">
+														Are you sure? <span class="text-warning">This change could cause potential conflicts.</span>
+													</label>
 												</div>
 											</p>
 										</div>

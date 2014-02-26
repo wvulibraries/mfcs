@@ -241,6 +241,7 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_idno_managedBy").val($("#managedBy_"+id).val()).change();
 			$("#fieldSettings_idno_format").val($("#idnoFormat_"+id).val());
 			$("#fieldSettings_idno_startIncrement").val($("#startIncrement_"+id).val());
+			$("#fieldSettings_idno_confirm").prop("checked",($("#idnoConfirm_"+id).val()==='true'));
 
 			var allowedExtensions_val = $("#allowedExtensions_"+id).val();
 			if (allowedExtensions_val != undefined) {
@@ -919,6 +920,10 @@ function fieldSettingsBindings() {
 		var id              = formPreviewWell.prop("id").split("_")[1];
 
 		$("#idnoFormat_"+id).val($(this).val());
+
+		if ($('#submitForm').find('input[name=id]').val() != '') {
+			$("#fieldSettings_container_idno_confirm").removeClass('hidden');
+		}
 	});
 
 	$("#fieldSettings_idno_startIncrement").change(function() {
@@ -926,6 +931,17 @@ function fieldSettingsBindings() {
 		var id              = formPreviewWell.prop("id").split("_")[1];
 
 		$("#startIncrement_"+id).val($(this).val());
+
+		if ($('#submitForm').find('input[name=id]').val() != '') {
+			$("#fieldSettings_container_idno_confirm").removeClass('hidden');
+		}
+	});
+
+	$("#fieldSettings_idno_confirm").change(function() {
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+
+		$("#idnoConfirm_"+id).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_file_allowedExtensions")
@@ -1573,6 +1589,7 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="managedBy_'+id+'" name="managedBy_'+id+'" value="'+((vals['managedBy']!=undefined)?vals['managedBy']:'')+'">';
 			output += '<input type="hidden" id="idnoFormat_'+id+'" name="idnoFormat_'+id+'" value="'+((vals['idnoFormat']!=undefined)?vals['idnoFormat']:'')+'">';
 			output += '<input type="hidden" id="startIncrement_'+id+'" name="startIncrement_'+id+'" value="'+((vals['startIncrement']!=undefined)?vals['startIncrement']:'1')+'">';
+			output += '<input type="hidden" id="idnoConfirm_'+id+'" name="idnoConfirm_'+id+'" value="false">';
 			break;
 
 		case 'text':
