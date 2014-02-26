@@ -38,7 +38,7 @@ while (TRUE) {
 
 }
 
-files::errorOldProcessingJobs();
 files::deleteOldProcessingJobs();
+files::errorOldProcessingJobs();
 
 ?>
