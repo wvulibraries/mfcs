@@ -434,6 +434,7 @@ function fieldSettingsBindings() {
 
 		var id                       = formPreviewWell.prop("id").split("_")[1];
 		var val                      = $(this).val();
+		var $fieldSettings_help_type = $("#fieldSettings_help_type");
 		var $fieldSettings_help_text = $("#fieldSettings_help_text");
 		var $fieldSettings_help_html = $("#fieldSettings_help_html");
 		var $fieldSettings_help_url  = $("#fieldSettings_help_url");
@@ -448,18 +449,22 @@ function fieldSettingsBindings() {
 		switch(val){
 			case '':
 				$helpPreview.hide();
+				$("#help_"+id).val('');
 				break;
 			case 'text':
 				$fieldSettings_help_text.show().focus();
 				$helpPreview.show();
+				$("#help_"+id).val($fieldSettings_help_type.val()+'|');
 				break;
 			case 'html':
 				$fieldSettings_help_html.show().focus();
 				$helpPreview.show();
+				$("#help_"+id).val($fieldSettings_help_type.val()+'|');
 				break;
 			case 'web':
 				$fieldSettings_help_url.show().focus();
 				$helpPreviewModal.show();
+				$("#help_"+id).val($fieldSettings_help_type.val()+'|');
 				break;
 		}
 	}).change();
