@@ -1,4 +1,7 @@
 <?php
+
+// @TODO there is way too much logic in this file. It needs to be refactored out. 
+
 include("../header.php");
 
 $formID = isset($engine->cleanPost['HTML']['id']) ? $engine->cleanPost['HTML']['id'] : (isset($engine->cleanGet['HTML']['id']) ? $engine->cleanGet['HTML']['id'] : NULL);
