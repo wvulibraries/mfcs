@@ -1,6 +1,6 @@
 <?php
 
-// @TODO there is way too much logic in this file. It needs to be refactored out. 
+// @TODO there is way too much logic in this file. It needs to be refactored out.
 
 include("../header.php");
 
@@ -1082,6 +1082,7 @@ $engine->eTemplate("include","header");
 														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_sortable" name="fieldSettings_options_sortable"> Sortable</label></li>
 														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_searchable" name="fieldSettings_options_searchable"> Searchable</label></li>
 														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_displayTable" name="fieldSettings_options_displayTable"> Display in list table</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_hidden" name="fieldSettings_options_hidden"> Hidden</label></li>
 													</ul>
 												</div>
 											</span>
