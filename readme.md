@@ -3,15 +3,21 @@
 
 MFCS is distributed under the WVU Open Source License. 
 
-The Metadata Form Creation System (MFCS) is WVUs answer for providing an easy to use way for librarians, staff, and students to enter metadata for items in our digital collections. MFCS is also our archival and preservation system. 
+The Metadata Form Creation System (MFCS) is WVU Libraries answer for providing an easy to use interface for librarians, staff, and students for entering metadata and uploading digital items for our digital collections. MFCS is also our archival and preservation system. 
 
-MFCS is a delivery and repository agnostic system. That is, it should be able to export data in any format for, or connect to, any digital project system (Hydra, DLXS, Islandora, etc ... ). Custom programming is required to export or connect to your public facing repository systems. 
+MFCS is a delivery and repository agnostic system. 
 
-The ultimate design goal for MFCS is to provide libraries with a robust system to store and archive digital projects, finding aids, and other material that will ultimately live in a system such as Hydra, Islandora, or DLXS (or any other) without having to worry about Lock-in or complex upgrade paths between digital repository systems. As systems change, become obsolete, or are updated the only change that should be needed to migrate data to a new system are new or updated export scripts. No more exporting and importing data between your old authoritative system and your new one, which reduces the risk of cross walking errors and data corruption. 
+MFCS should be able to export data in any format for, or connect to, any digital project system (Hydra, DLXS, Islandora, etc ... ). Custom programming is required to export or connect to your public facing repository systems. 
 
-A vagrant setup is provided as part of the repository. The easiest way to test the system is to remove the two acl.php files before logging in. Without a proper logged in user not all features will function properly. 
+The ultimate design goal for MFCS is to provide institutions with a robust system to store and archive digital projects, finding aids, and other material that will ultimately live in a system such as Hydra, Islandora, or DLXS (or any other) without having to worry about Lock-in or complex upgrade paths between digital repository systems. As systems change, become obsolete, or are updated the only change that should be needed to migrate data to a new system are new or updated MFCS export scripts. No more exporting and importing data between your old authoritative system and your new one, which reduces the risk of cross walking errors and data corruption. 
 
-(Screen casts of features coming soon)
+A vagrant setup is provided as part of the repository. The easiest way to test the system is to remove the two acl.php files before logging in. Please note, Without a properly logged in user not all features in MFCS will function properly. Authentication is handled by EngineAPI. 
+
+Video 1, Metadata Entry Demo:
+http://www.youtube.com/watch?v=8RVqZNPsf8A
+
+Video 2, Form Building Demo:
+http://www.youtube.com/watch?v=9JB00pXZWWw
 
 ### Features
 
