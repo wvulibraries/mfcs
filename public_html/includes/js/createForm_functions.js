@@ -228,6 +228,8 @@ function showFieldSettings(fullID) {
 			fieldSettings_options_duplicates.prop("checked",($("#duplicates_"+id).val()==='true'));
 			fieldSettings_options_readonly.prop("checked",($("#readonly_"+id).val()==='true')).change();
 			fieldSettings_options_disabled.prop("checked",($("#disabled_"+id).val()==='true')).change();
+			$("#fieldSettings_options_disabled_insert").prop("checked",($("#disableInsert_"+id).val()==='true')).change();
+			$("#fieldSettings_options_disabled_update").prop("checked",($("#disableUpdate_"+id).val()==='true')).change();
 			$("#fieldSettings_options_publicRelease").prop("checked",($("#publicRelease_"+id).val()==='true')).change();
 			$("#fieldSettings_options_sortable").prop("checked",($("#sortable_"+id).val()==='true'));
 			$("#fieldSettings_options_searchable").prop("checked",($("#searchable_"+id).val()==='true'));
@@ -807,6 +809,20 @@ function fieldSettingsBindings() {
 			formPreviewWell.find(".control-group > .controls > :input").prop('disabled', checked);
 		}
 		$("#disabled_"+id).val(checked);
+	});
+
+	$("#fieldSettings_options_disabled_insert").change(function() {
+		var checked         = $(this).is(":checked");
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+		$("#disabledInsert_"+id).val(checked);
+	});
+
+	$("#fieldSettings_options_disabled_update").change(function() {
+		var checked         = $(this).is(":checked");
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+		$("#disabledUpdate_"+id).val(checked);
 	});
 
 	$("#fieldSettings_options_publicRelease").change(function() {
@@ -1575,6 +1591,8 @@ function newFieldValues(id,type,vals) {
 	output += '<input type="hidden" id="duplicates_'+id+'" name="duplicates_'+id+'" value="'+((vals['duplicates']!=undefined)?vals['duplicates']:'false')+'">';
 	output += '<input type="hidden" id="readonly_'+id+'" name="readonly_'+id+'" value="'+((vals['readonly']!=undefined)?vals['readonly']:'false')+'">';
 	output += '<input type="hidden" id="disabled_'+id+'" name="disabled_'+id+'" value="'+((vals['disabled']!=undefined)?vals['disabled']:'false')+'">';
+	output += '<input type="hidden" id="disabledInsert_'+id+'" name="disabledInsert_'+id+'" value="'+((vals['disabledInsert']!=undefined)?vals['disabledInsert']:'false')+'">';
+	output += '<input type="hidden" id="disabledUpdate_'+id+'" name="disabldisabledUpdate_ed_'+id+'" value="'+((vals['disabledUpdate']!=undefined)?vals['disabledUpdate']:'false')+'">';
 	output += '<input type="hidden" id="publicRelease_'+id+'" name="publicRelease_'+id+'" value="'+((vals['publicRelease']!=undefined)?vals['publicRelease']:'true')+'">';
 	output += '<input type="hidden" id="sortable_'+id+'" name="sortable_'+id+'" value="'+((vals['sortable']!=undefined)?vals['sortable']:'')+'">';
 	output += '<input type="hidden" id="searchable_'+id+'" name="searchable_'+id+'" value="'+((vals['searchable']!=undefined)?vals['searchable']:'')+'">';
