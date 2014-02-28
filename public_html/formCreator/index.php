@@ -49,8 +49,12 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 
 			if ($field['type'] == 'idno') {
 				$idno        = $field;
-				$count       = (isnull($count)) ? $field['startIncrement'] : $count;
 				$idnoConfirm = $field['idnoConfirm'];
+
+				$count = (isnull($count)) ? $field['startIncrement']-1 : $count;
+				if ($count < 0) {
+					$count = 0;
+				}
 			}
 			else if (isset($field['choicesType']) && $field['choicesType'] == 'manual') {
 				unset($fields[$I]['choicesForm']);
@@ -896,7 +900,7 @@ $engine->eTemplate("include","header");
 														<label for="fieldSettings_idno_startIncrement">
 															Auto Increment Start
 														</label>
-														<input type="number" class="input-block-level" id="fieldSettings_idno_startIncrement" name="fieldSettings_idno_startIncrement" min="1" />
+														<input type="number" class="input-block-level" id="fieldSettings_idno_startIncrement" name="fieldSettings_idno_startIncrement" min="0" />
 													</div>
 												</div>
 
