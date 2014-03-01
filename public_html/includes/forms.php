@@ -781,6 +781,29 @@ class forms {
 
 	}
 
+	private static function hasFieldVariables($value) {
+		foreach (self::$fieldVariables as $variable) {
+			if(stripos($variable, $value) !== FALSE) {
+				return TRUE;
+			}
+		}
+
+		return FALSE;
+
+	}
+
+	private static function getFieldValue($field,$object) {
+
+		if (self::hasFieldVariables($field['value'])) {
+			return htmlSanitize(self::applyFieldVariables($field['value']));
+		}
+
+		return isset($object['data'][$field['name']])
+			? htmlSanitize($object['data'][$field['name']])
+			: htmlSanitize(self::applyFieldVariables($field['value']));
+
+	}
+
 	// @TODO it doesnt look like the edit table is honoring form creator choices on 
 	// which fields are displayed
 	// 
