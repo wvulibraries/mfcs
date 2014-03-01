@@ -1600,7 +1600,7 @@ function newFieldValues(id,type,vals) {
 	output += '<input type="hidden" id="readonly_'+id+'" name="readonly_'+id+'" value="'+((vals['readonly']!=undefined)?vals['readonly']:'false')+'">';
 	output += '<input type="hidden" id="disabled_'+id+'" name="disabled_'+id+'" value="'+((vals['disabled']!=undefined)?vals['disabled']:'false')+'">';
 	output += '<input type="hidden" id="disabledInsert_'+id+'" name="disabledInsert_'+id+'" value="'+((vals['disabledInsert']!=undefined)?vals['disabledInsert']:'false')+'">';
-	output += '<input type="hidden" id="disabledUpdate_'+id+'" name="disabldisabledUpdate_ed_'+id+'" value="'+((vals['disabledUpdate']!=undefined)?vals['disabledUpdate']:'false')+'">';
+	output += '<input type="hidden" id="disabledUpdate_'+id+'" name="disabledUpdate_'+id+'" value="'+((vals['disabledUpdate']!=undefined)?vals['disabledUpdate']:'false')+'">';
 	output += '<input type="hidden" id="publicRelease_'+id+'" name="publicRelease_'+id+'" value="'+((vals['publicRelease']!=undefined)?vals['publicRelease']:'true')+'">';
 	output += '<input type="hidden" id="sortable_'+id+'" name="sortable_'+id+'" value="'+((vals['sortable']!=undefined)?vals['sortable']:'')+'">';
 	output += '<input type="hidden" id="searchable_'+id+'" name="searchable_'+id+'" value="'+((vals['searchable']!=undefined)?vals['searchable']:'')+'">';
