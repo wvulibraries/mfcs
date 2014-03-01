@@ -1076,17 +1076,17 @@ $engine->eTemplate("include","header");
 												<div class="control-group well well-small" id="fieldSettings_container_options">
 													Options
 													<ul class="checkboxList">
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_required" name="fieldSettings_options_required"> Required</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates"> No duplicates</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_readonly" name="fieldSettings_options_readonly"> Read only</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_disabled" name="fieldSettings_options_disabled"> Disabled</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_disabled_insert" name="fieldSettings_options_disabled_insert"> Disabled on Insert</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_disafieldSettings_options_disabled_updatebled" name="fieldSettings_options_disabled_update"> Read only on Update</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_publicRelease" name="fieldSettings_options_publicRelease"> Public release</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_sortable" name="fieldSettings_options_sortable"> Sortable</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_searchable" name="fieldSettings_options_searchable"> Searchable</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_displayTable" name="fieldSettings_options_displayTable"> Display in list table</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_hidden" name="fieldSettings_options_hidden"> Hidden</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_required" name="fieldSettings_options_required"> Required</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is required to be filled out."></i></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates"> No duplicates</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Duplicate entries for this form are not allowed."></i></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_readonly" name="fieldSettings_options_readonly"> Read only</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is read-only, data is pulled from form definition on insert, previous revision on update. not from POST"></i></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_disabled" name="fieldSettings_options_disabled"> Disabled</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is disabled and not submitted to POST"></i></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_disabled_insert" name="fieldSettings_options_disabled_insert"> Disabled on Insert</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is hideen and disabled on insert forms."></i></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_disafieldSettings_options_disabled_updatebled" name="fieldSettings_options_disabled_update"> Read only on Update</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is set to read only on update forms. Only read and inserted into the database on insert forms."></i></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_publicRelease" name="fieldSettings_options_publicRelease"> Public release</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Dependant on Export Script: Metadata check to determine if field should be exported to XML"></i></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_sortable" name="fieldSettings_options_sortable"> Sortable</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is Sortable in list table in MFCS."></i></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_searchable" name="fieldSettings_options_searchable"> Searchable</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Dependant on Export: Can search on this field in public facing repository."></i></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_displayTable" name="fieldSettings_options_displayTable"> Display in list table</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is displayed in the listing table in MFCS"></i></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_hidden" name="fieldSettings_options_hidden"> Hidden</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Input type is set to Hidden."></i></li>
 													</ul>
 												</div>
 											</span>
