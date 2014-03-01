@@ -1080,8 +1080,8 @@ $engine->eTemplate("include","header");
 														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates"> No duplicates</label></li>
 														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_readonly" name="fieldSettings_options_readonly"> Read only</label></li>
 														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_disabled" name="fieldSettings_options_disabled"> Disabled</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_disabled_insert" name="fieldSettings_options_disabled_insert"> Disabled on Input Forms</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_disafieldSettings_options_disabled_updatebled" name="fieldSettings_options_disabled_update"> Disabled on Update Forms</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_disabled_insert" name="fieldSettings_options_disabled_insert"> Disabled on Insert</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_disafieldSettings_options_disabled_updatebled" name="fieldSettings_options_disabled_update"> Read only on Update</label></li>
 														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_publicRelease" name="fieldSettings_options_publicRelease"> Public release</label></li>
 														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_sortable" name="fieldSettings_options_sortable"> Sortable</label></li>
 														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_searchable" name="fieldSettings_options_searchable"> Searchable</label></li>
