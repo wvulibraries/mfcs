@@ -585,9 +585,7 @@ class forms {
 					(strtoupper($field['required']) == "TRUE")?"required":"",
 					(strtoupper($field['readonly']) == "TRUE")?"readonly":"",
 					(strtoupper($field['disabled']) == "TRUE")?"disabled":"",
-					isset($object['data'][$field['name']])
-						? htmlSanitize($object['data'][$field['name']])
-						: htmlSanitize(self::applyFieldVariables($field['value']))
+					self::getFieldValue($field,$object);
 				);
 
 				if ($field['type'] == "wysiwyg") {
@@ -727,9 +725,7 @@ class forms {
 					if (isset($object) && !isset($object['data'][$field['name']])) $object['data'][$field['name']] = $object['idno'];
 				}
 
-				$fieldValue = isset($object['data'][$field['name']])
-					? htmlSanitize($object['data'][$field['name']])
-					: htmlSanitize(self::applyFieldVariables($field['value']));
+				$fieldValue = self::getFieldValue($field,$object);
 
 				$output .= sprintf('<input type="%s" name="%s" value="%s" placeholder="%s" %s id="%s" class="%s" %s %s %s %s />',
 					htmlSanitize($field['type']),
