@@ -228,8 +228,8 @@ function showFieldSettings(fullID) {
 			fieldSettings_options_duplicates.prop("checked",($("#duplicates_"+id).val()==='true'));
 			fieldSettings_options_readonly.prop("checked",($("#readonly_"+id).val()==='true')).change();
 			fieldSettings_options_disabled.prop("checked",($("#disabled_"+id).val()==='true')).change();
-			$("#fieldSettings_options_disabled_insert").prop("checked",($("#disableInsert_"+id).val()==='true')).change();
-			$("#fieldSettings_options_disabled_update").prop("checked",($("#disableUpdate_"+id).val()==='true')).change();
+			$("#fieldSettings_options_disabled_insert").prop("checked",($("#disabledInsert_"+id).val()==='true')).change();
+			$("#fieldSettings_options_disabled_update").prop("checked",($("#disabledUpdate_"+id).val()==='true')).change();
 			$("#fieldSettings_options_publicRelease").prop("checked",($("#publicRelease_"+id).val()==='true')).change();
 			$("#fieldSettings_options_sortable").prop("checked",($("#sortable_"+id).val()==='true'));
 			$("#fieldSettings_options_searchable").prop("checked",($("#searchable_"+id).val()==='true'));
