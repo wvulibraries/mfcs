@@ -556,6 +556,16 @@ class forms {
 			$output .= '<div class="">';
 
 
+			// Handle disabled on insert form
+			if ($field['disabledInsert'] == "true" && isnull($objectID)) {
+				$field['disabled'] = "true";
+			}
+
+			// Handle Read Only on Update form
+			if ($field['disabledUpdate'] == "true" && !isnull($objectID)) {
+				$field['readonly'] = "true";
+			}
+
 			if ($field['type'] != "idno" || ($field['type'] == "idno" && isset($field['managedBy']) && strtolower($field['managedBy']) != "system")) {
 				$output .= sprintf('<label for="%s" class="formLabel %s">%s:</label>',
 					htmlSanitize($field['id']),
