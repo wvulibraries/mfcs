@@ -2,6 +2,9 @@
 
 class forms {
 
+	// @TODO this needs to be expanded to include callbacks for the replacement text as well. 
+	private static $fieldVariables = array('%userid%', '%username%', '%firstname%', '%lastname%', '%date%', '%time%', '%time12%', '%time24%', '%timestamp%');
+
 	function validID() {
 		$engine = EngineAPI::singleton();
 
