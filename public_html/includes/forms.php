@@ -840,6 +840,7 @@ class forms {
 
 			$tableRows = array();
 			for($I=0;$I<count($objects);$I++) {
+
 				$temp   = array();
 				$temp[] = sprintf('<input type="checkbox" name="delete[]" value="%s"',
 					$objects[$I]['ID']
@@ -1164,8 +1165,13 @@ class forms {
 					$values[$field['name']] = $oldObject['data'][$field['name']];
 				}
 				else {
+					// If the form has a variable in the value we apply the variable, otherwise, field value. 
+					// we need to check for disabled on insert form
+					if ($field['disabledInsert'] == "false") {				
+						$values[$field['name']] = (self::hasFieldVariables($field['value']))?self::applyFieldVariables($value):$field['value'];
+					}
 					// grab the default value from the form.
-					$values[$field['name']] = $field['value'];
+					// $values[$field['name']] = $field['value'];
 				}
 			}
 			else if (strtolower($field['type']) == "file" && isset($engine->cleanPost['MYSQL'][$field['name']])) {
