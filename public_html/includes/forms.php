@@ -585,7 +585,7 @@ class forms {
 					(strtoupper($field['required']) == "TRUE")?"required":"",
 					(strtoupper($field['readonly']) == "TRUE")?"readonly":"",
 					(strtoupper($field['disabled']) == "TRUE")?"disabled":"",
-					self::getFieldValue($field,$object);
+					self::getFieldValue($field,$object)
 				);
 
 				if ($field['type'] == "wysiwyg") {
