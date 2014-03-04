@@ -492,7 +492,7 @@ function fieldSettingsBindings() {
 		$("#help_"+id).val($('#fieldSettings_help_type').val()+'|'+val);
 		formPreviewWell.find('.helpPreview').popover('destroy').popover({
 			placement: 'right',
-			trigger: 'hover',
+			trigger: 'click',
 			html: true,
 			content: $(this).val()
 		});
