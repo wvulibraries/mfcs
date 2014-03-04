@@ -220,6 +220,7 @@ function showFieldSettings(fullID) {
 
 			$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
 			$("#fieldSettings_choices_fieldSelect").val($("#choicesField_"+id).val()).change();
+			$("#fieldSettings_choices_fieldDefault").val($("#choicesFieldDefault_"+id).val()).change();
 
 			$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change(); // Must be after options stuff
 			$("#fieldSettings_choices_null").prop("checked",($("#choicesNull_"+id).val()==='true')).change();
@@ -775,6 +776,13 @@ function fieldSettingsBindings() {
 
 			$("#choicesField_"+id).val($(this).val());
 		});
+
+	$("#fieldSettings_choices_fieldDefault").keyup(function() {
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+
+		$("#choicesFieldDefault_"+id).val($(this).val());
+	});
 
 	$("#fieldSettings_options_required").change(function() {
 		var checked         = $(this).is(":checked");
@@ -1638,6 +1646,7 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="choicesOptions_'+id+'" name="choicesOptions_'+id+'" value="'+((vals['choicesOptions']!=undefined)?vals['choicesOptions']:'First Choice%,%Second Choice')+'">';
 			output += '<input type="hidden" id="choicesForm_'+id+'" name="choicesForm_'+id+'" value="'+((vals['choicesForm']!=undefined)?vals['choicesForm']:'')+'">';
 			output += '<input type="hidden" id="choicesField_'+id+'" name="choicesField_'+id+'" value="'+((vals['choicesField']!=undefined)?vals['choicesField']:'')+'">';
+			output += '<input type="hidden" id="choicesFieldDefault_'+id+'" name="choicesFieldDefault_'+id+'" value="'+((vals['choicesFieldDefault']!=undefined)?vals['choicesFieldDefault']:'')+'">';
 			break;
 
 		case 'file':

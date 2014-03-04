@@ -844,6 +844,11 @@ $engine->eTemplate("include","header");
 													</label>
 													<select class="input-block-level" id="fieldSettings_choices_fieldSelect" name="fieldSettings_choices_fieldSelect">
 													</select>
+
+													<label for="fieldSettings_choices_fieldDefault">
+														Default Value
+													</label>
+													<input type="test" id="fieldSettings_choices_fieldDefault" name="fieldSettings_choices_fieldDefault">
 												</div>
 											</p>
 											<span class="help-block hidden"></span>
