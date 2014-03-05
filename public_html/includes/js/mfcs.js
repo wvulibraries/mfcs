@@ -1,7 +1,9 @@
 $(function(){
 	// Instantiate the bootstrap tooltip, popover, and modal plugins
 	$("[rel='tooltip']").tooltip();
-	$("[rel='popover']").popover();
+	$("[rel='popover']").popover({
+		trigger:'click'
+	});
 	$("[rel='modal']").modal();
 
 	$('div.filePreview a.previewLink').click(function(){
