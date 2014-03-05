@@ -746,7 +746,7 @@ class forms {
 
 			// Output field's help (if needed)
 			if(isset($field['help']) && $field['help']){
-				list($helpType,$helpValue) = explode(',', $field['help'], 2);
+				list($helpType,$helpValue) = explode('|', $field['help'], 2);
 				switch($helpType){
 					case 'text':
 						$output .= sprintf(' <a href="javascript:;" rel="tooltip" class="icon-question-sign" data-placement="right" data-title="%s"></a>', $helpValue);
