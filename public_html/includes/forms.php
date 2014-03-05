@@ -2,6 +2,9 @@
 
 class forms {
 
+	// @TODO this needs to be expanded to include callbacks for the replacement text as well. 
+	private static $fieldVariables = array('%userid%', '%username%', '%firstname%', '%lastname%', '%date%', '%time%', '%time12%', '%time24%', '%timestamp%');
+
 	function validID() {
 		$engine = EngineAPI::singleton();
 
@@ -553,6 +556,16 @@ class forms {
 			$output .= '<div class="">';
 
 
+			// Handle disabled on insert form
+			if ($field['disabledInsert'] == "true" && isnull($objectID)) {
+				$field['disabled'] = "true";
+			}
+
+			// Handle Read Only on Update form
+			if ($field['disabledUpdate'] == "true" && !isnull($objectID)) {
+				$field['readonly'] = "true";
+			}
+
 			if ($field['type'] != "idno" || ($field['type'] == "idno" && isset($field['managedBy']) && strtolower($field['managedBy']) != "system")) {
 				$output .= sprintf('<label for="%s" class="formLabel %s">%s:</label>',
 					htmlSanitize($field['id']),
@@ -572,9 +585,7 @@ class forms {
 					(strtoupper($field['required']) == "TRUE")?"required":"",
 					(strtoupper($field['readonly']) == "TRUE")?"readonly":"",
 					(strtoupper($field['disabled']) == "TRUE")?"disabled":"",
-					isset($object['data'][$field['name']])
-						? htmlSanitize($object['data'][$field['name']])
-						: htmlSanitize(self::applyFieldVariables($field['value']))
+					self::getFieldValue($field,$object)
 				);
 
 				if ($field['type'] == "wysiwyg") {
@@ -714,9 +725,7 @@ class forms {
 					if (isset($object) && !isset($object['data'][$field['name']])) $object['data'][$field['name']] = $object['idno'];
 				}
 
-				$fieldValue = isset($object['data'][$field['name']])
-					? htmlSanitize($object['data'][$field['name']])
-					: htmlSanitize(self::applyFieldVariables($field['value']));
+				$fieldValue = self::getFieldValue($field,$object);
 
 				$output .= sprintf('<input type="%s" name="%s" value="%s" placeholder="%s" %s id="%s" class="%s" %s %s %s %s />',
 					htmlSanitize($field['type']),
@@ -781,6 +790,29 @@ class forms {
 
 	}
 
+	private static function hasFieldVariables($value) {
+		foreach (self::$fieldVariables as $variable) {
+			if(stripos($variable, $value) !== FALSE) {
+				return TRUE;
+			}
+		}
+
+		return FALSE;
+
+	}
+
+	private static function getFieldValue($field,$object) {
+
+		if (self::hasFieldVariables($field['value'])) {
+			return htmlSanitize(self::applyFieldVariables($field['value']));
+		}
+
+		return isset($object['data'][$field['name']])
+			? htmlSanitize($object['data'][$field['name']])
+			: htmlSanitize(self::applyFieldVariables($field['value']));
+
+	}
+
 	// @TODO it doesnt look like the edit table is honoring form creator choices on 
 	// which fields are displayed
 	// 
@@ -808,6 +840,7 @@ class forms {
 
 			$tableRows = array();
 			for($I=0;$I<count($objects);$I++) {
+
 				$temp   = array();
 				$temp[] = sprintf('<input type="checkbox" name="delete[]" value="%s"',
 					$objects[$I]['ID']
@@ -1132,8 +1165,13 @@ class forms {
 					$values[$field['name']] = $oldObject['data'][$field['name']];
 				}
 				else {
+					// If the form has a variable in the value we apply the variable, otherwise, field value. 
+					// we need to check for disabled on insert form
+					if ($field['disabledInsert'] == "false") {				
+						$values[$field['name']] = (self::hasFieldVariables($field['value']))?self::applyFieldVariables($value):$field['value'];
+					}
 					// grab the default value from the form.
-					$values[$field['name']] = $field['value'];
+					// $values[$field['name']] = $field['value'];
 				}
 			}
 			else if (strtolower($field['type']) == "file" && isset($engine->cleanPost['MYSQL'][$field['name']])) {

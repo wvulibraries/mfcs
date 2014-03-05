@@ -1,4 +1,7 @@
 <?php
+
+// @TODO there is way too much logic in this file. It needs to be refactored out.
+
 include("../header.php");
 
 $formID = isset($engine->cleanPost['HTML']['id']) ? $engine->cleanPost['HTML']['id'] : (isset($engine->cleanGet['HTML']['id']) ? $engine->cleanGet['HTML']['id'] : NULL);
@@ -36,6 +39,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 
 	// Ensure all fields have an ID for the label. Assign it the value of name if needed.
 	if (!is_empty($fields)) {
+		$count = NULL;
 		foreach ($fields as $I => $field) {
 			$positions[$I] = $field['position'];
 
@@ -43,10 +47,14 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 				$fields[$I]['id'] = $field['name'];
 			}
 
-			$count = NULL;
 			if ($field['type'] == 'idno') {
-				$idno = $field;
-				$count = $field['startIncrement'];
+				$idno        = $field;
+				$idnoConfirm = $field['idnoConfirm'];
+
+				$count = (isnull($count)) ? $field['startIncrement']-1 : $count;
+				if ($count < 0) {
+					$count = 0;
+				}
 			}
 			else if (isset($field['choicesType']) && $field['choicesType'] == 'manual') {
 				unset($fields[$I]['choicesForm']);
@@ -62,6 +70,13 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	}
 
 	if (!isnull($formID)) {
+		// Only add count if confirmation is checked
+		if (str2bool($idnoConfirm)) {
+			$countSql = sprintf("`count`='%s',",
+				$engine->openDB->escape($count)
+				);
+		}
+
 		// Update forms table
 		$sql = sprintf("UPDATE `forms`
 						SET `title`='%s',
@@ -73,7 +88,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 							`container`='%s',
 							`production`='%s',
 							`metadata`='%s',
-							`count`='%s',
+							%s
 							`displayTitle`='%s',
 							`objectTitleField`='%s'
 						WHERE ID='%s' LIMIT 1",
@@ -86,7 +101,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			$engine->openDB->escape($form['formContainer']),      // container=
 			$engine->openDB->escape($form['formProduction']),     // production=
 			$engine->openDB->escape($form['formMetadata']),       // metadata=
-			$engine->openDB->escape($count),                      // count=
+			$countSql,                                            // count=
 			$engine->openDB->escape($form['objectDisplayTitle']), // displayTitle=
 			$engine->openDB->escape($form['objectTitleField']),   // objectTitleField=
 			$engine->openDB->escape($formID)                      // ID=
@@ -829,6 +844,11 @@ $engine->eTemplate("include","header");
 													</label>
 													<select class="input-block-level" id="fieldSettings_choices_fieldSelect" name="fieldSettings_choices_fieldSelect">
 													</select>
+
+													<label for="fieldSettings_choices_fieldDefault">
+														Default Value
+													</label>
+													<input type="test" id="fieldSettings_choices_fieldDefault" name="fieldSettings_choices_fieldDefault">
 												</div>
 											</p>
 											<span class="help-block hidden"></span>
@@ -885,8 +905,15 @@ $engine->eTemplate("include","header");
 														<label for="fieldSettings_idno_startIncrement">
 															Auto Increment Start
 														</label>
-														<input type="number" class="input-block-level" id="fieldSettings_idno_startIncrement" name="fieldSettings_idno_startIncrement" min="1" />
+														<input type="number" class="input-block-level" id="fieldSettings_idno_startIncrement" name="fieldSettings_idno_startIncrement" min="0" />
 													</div>
+												</div>
+
+												<div class="row-fluid hidden" id="fieldSettings_container_idno_confirm">
+													<label class="checkbox">
+														<input type="checkbox" id="fieldSettings_idno_confirm" name="fieldSettings_idno_confirm">
+														Are you sure? <span class="text-warning">This change could cause potential conflicts.</span>
+													</label>
 												</div>
 											</p>
 										</div>
@@ -1054,14 +1081,17 @@ $engine->eTemplate("include","header");
 												<div class="control-group well well-small" id="fieldSettings_container_options">
 													Options
 													<ul class="checkboxList">
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_required" name="fieldSettings_options_required"> Required</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates"> No duplicates</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_readonly" name="fieldSettings_options_readonly"> Read only</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_disabled" name="fieldSettings_options_disabled"> Disabled</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_publicRelease" name="fieldSettings_options_publicRelease"> Public release</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_sortable" name="fieldSettings_options_sortable"> Sortable</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_searchable" name="fieldSettings_options_searchable"> Searchable</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_displayTable" name="fieldSettings_options_displayTable"> Display in list table</label></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_required" name="fieldSettings_options_required"> Required</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is required to be filled out."></i></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates"> No duplicates</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Duplicate entries for this form are not allowed."></i></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_readonly" name="fieldSettings_options_readonly"> Read only</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is read-only, data is pulled from form definition on insert, previous revision on update. not from POST"></i></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_disabled" name="fieldSettings_options_disabled"> Disabled</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is disabled and not submitted to POST"></i></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_disabled_insert" name="fieldSettings_options_disabled_insert"> Disabled on Insert</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is hideen and disabled on insert forms."></i></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_disabled_update" name="fieldSettings_options_disabled_update"> Read only on Update</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is set to read only on update forms. Only read and inserted into the database on insert forms."></i></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_publicRelease" name="fieldSettings_options_publicRelease"> Public release</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Dependant on Export Script: Metadata check to determine if field should be exported to XML"></i></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_sortable" name="fieldSettings_options_sortable"> Sortable</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is Sortable in list table in MFCS."></i></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_searchable" name="fieldSettings_options_searchable"> Searchable</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Dependant on Export: Can search on this field in public facing repository."></i></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_displayTable" name="fieldSettings_options_displayTable"> Display in list table</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is displayed in the listing table in MFCS"></i></li>
+														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_options_hidden" name="fieldSettings_options_hidden"> Hidden</label><i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Input type is set to Hidden."></i></li>
 													</ul>
 												</div>
 											</span>

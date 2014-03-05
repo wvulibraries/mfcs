@@ -106,7 +106,8 @@ class listGenerator {
 		$data = array();
 		foreach ($objects as $object) {
 
-			$form = forms::get($object['formID']);
+			// Is this needed? Redundant?
+			// $form = forms::get($object['formID']);
 
 			$tmp = array(self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),date("Y-m-d h:ia",$object['createTime']),date("Y-m-d h:ia",$object['modifiedTime']),$object['ID'],$object['idno']); //,self::genLinkURLs("revisions",$object['ID'])
 			foreach($form['fields'] as $field) {

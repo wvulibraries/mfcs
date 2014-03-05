@@ -220,6 +220,7 @@ function showFieldSettings(fullID) {
 
 			$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
 			$("#fieldSettings_choices_fieldSelect").val($("#choicesField_"+id).val()).change();
+			$("#fieldSettings_choices_fieldDefault").val($("#choicesFieldDefault_"+id).val()).change();
 
 			$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change(); // Must be after options stuff
 			$("#fieldSettings_choices_null").prop("checked",($("#choicesNull_"+id).val()==='true')).change();
@@ -228,10 +229,13 @@ function showFieldSettings(fullID) {
 			fieldSettings_options_duplicates.prop("checked",($("#duplicates_"+id).val()==='true'));
 			fieldSettings_options_readonly.prop("checked",($("#readonly_"+id).val()==='true')).change();
 			fieldSettings_options_disabled.prop("checked",($("#disabled_"+id).val()==='true')).change();
+			$("#fieldSettings_options_disabled_insert").prop("checked",($("#disabledInsert_"+id).val()==='true')).change();
+			$("#fieldSettings_options_disabled_update").prop("checked",($("#disabledUpdate_"+id).val()==='true')).change();
 			$("#fieldSettings_options_publicRelease").prop("checked",($("#publicRelease_"+id).val()==='true')).change();
 			$("#fieldSettings_options_sortable").prop("checked",($("#sortable_"+id).val()==='true'));
 			$("#fieldSettings_options_searchable").prop("checked",($("#searchable_"+id).val()==='true'));
 			fieldSettings_options_displayTable.prop("checked",($("#displayTable_"+id).val()==='true'));
+			$("#fieldSettings_options_hidden").prop("checked",($("#hidden_"+id).val()==='true'));
 			$("#fieldSettings_validation").val($("#validation_"+id).val()).change();
 			$("#fieldSettings_validationRegex").val($("#validationRegex_"+id).val());
 			$("#fieldSettings_range_min").val($("#min_"+id).val()).change();
@@ -241,6 +245,7 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_idno_managedBy").val($("#managedBy_"+id).val()).change();
 			$("#fieldSettings_idno_format").val($("#idnoFormat_"+id).val());
 			$("#fieldSettings_idno_startIncrement").val($("#startIncrement_"+id).val());
+			$("#fieldSettings_idno_confirm").prop("checked",($("#idnoConfirm_"+id).val()==='true'));
 
 			var allowedExtensions_val = $("#allowedExtensions_"+id).val();
 			if (allowedExtensions_val != undefined) {
@@ -434,6 +439,7 @@ function fieldSettingsBindings() {
 
 		var id                       = formPreviewWell.prop("id").split("_")[1];
 		var val                      = $(this).val();
+		var $fieldSettings_help_type = $("#fieldSettings_help_type");
 		var $fieldSettings_help_text = $("#fieldSettings_help_text");
 		var $fieldSettings_help_html = $("#fieldSettings_help_html");
 		var $fieldSettings_help_url  = $("#fieldSettings_help_url");
@@ -448,18 +454,22 @@ function fieldSettingsBindings() {
 		switch(val){
 			case '':
 				$helpPreview.hide();
+				$("#help_"+id).val('');
 				break;
 			case 'text':
 				$fieldSettings_help_text.show().focus();
 				$helpPreview.show();
+				$("#help_"+id).val($fieldSettings_help_type.val()+'|');
 				break;
 			case 'html':
 				$fieldSettings_help_html.show().focus();
 				$helpPreview.show();
+				$("#help_"+id).val($fieldSettings_help_type.val()+'|');
 				break;
 			case 'web':
 				$fieldSettings_help_url.show().focus();
 				$helpPreviewModal.show();
+				$("#help_"+id).val($fieldSettings_help_type.val()+'|');
 				break;
 		}
 	}).change();
@@ -767,6 +777,13 @@ function fieldSettingsBindings() {
 			$("#choicesField_"+id).val($(this).val());
 		});
 
+	$("#fieldSettings_choices_fieldDefault").keyup(function() {
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+
+		$("#choicesFieldDefault_"+id).val($(this).val());
+	});
+
 	$("#fieldSettings_options_required").change(function() {
 		var checked         = $(this).is(":checked");
 		var formPreviewWell = formPreview.find(".well");
@@ -803,6 +820,20 @@ function fieldSettingsBindings() {
 		$("#disabled_"+id).val(checked);
 	});
 
+	$("#fieldSettings_options_disabled_insert").change(function() {
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+
+		$("#disabledInsert_"+id).val($(this).is(":checked"));
+	});
+
+	$("#fieldSettings_options_disabled_update").change(function() {
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+
+		$("#disabledUpdate_"+id).val($(this).is(":checked"));
+	});
+
 	$("#fieldSettings_options_publicRelease").change(function() {
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
@@ -829,6 +860,13 @@ function fieldSettingsBindings() {
 		var id              = formPreviewWell.prop("id").split("_")[1];
 
 		$("#displayTable_"+id).val($(this).is(":checked"));
+	});
+
+	$("#fieldSettings_options_hidden").change(function() {
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+
+		$("#hidden_"+id).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_validation").change(function() {
@@ -914,6 +952,10 @@ function fieldSettingsBindings() {
 		var id              = formPreviewWell.prop("id").split("_")[1];
 
 		$("#idnoFormat_"+id).val($(this).val());
+
+		if ($('#submitForm').find('input[name=id]').val() != '') {
+			$("#fieldSettings_container_idno_confirm").removeClass('hidden');
+		}
 	});
 
 	$("#fieldSettings_idno_startIncrement").change(function() {
@@ -921,6 +963,17 @@ function fieldSettingsBindings() {
 		var id              = formPreviewWell.prop("id").split("_")[1];
 
 		$("#startIncrement_"+id).val($(this).val());
+
+		if ($('#submitForm').find('input[name=id]').val() != '') {
+			$("#fieldSettings_container_idno_confirm").removeClass('hidden');
+		}
+	});
+
+	$("#fieldSettings_idno_confirm").change(function() {
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+
+		$("#idnoConfirm_"+id).val($(this).is(":checked"));
 	});
 
 	$("#fieldSettings_file_allowedExtensions")
@@ -1554,10 +1607,13 @@ function newFieldValues(id,type,vals) {
 	output += '<input type="hidden" id="duplicates_'+id+'" name="duplicates_'+id+'" value="'+((vals['duplicates']!=undefined)?vals['duplicates']:'false')+'">';
 	output += '<input type="hidden" id="readonly_'+id+'" name="readonly_'+id+'" value="'+((vals['readonly']!=undefined)?vals['readonly']:'false')+'">';
 	output += '<input type="hidden" id="disabled_'+id+'" name="disabled_'+id+'" value="'+((vals['disabled']!=undefined)?vals['disabled']:'false')+'">';
+	output += '<input type="hidden" id="disabledInsert_'+id+'" name="disabledInsert_'+id+'" value="'+((vals['disabledInsert']!=undefined)?vals['disabledInsert']:'false')+'">';
+	output += '<input type="hidden" id="disabledUpdate_'+id+'" name="disabledUpdate_'+id+'" value="'+((vals['disabledUpdate']!=undefined)?vals['disabledUpdate']:'false')+'">';
 	output += '<input type="hidden" id="publicRelease_'+id+'" name="publicRelease_'+id+'" value="'+((vals['publicRelease']!=undefined)?vals['publicRelease']:'true')+'">';
 	output += '<input type="hidden" id="sortable_'+id+'" name="sortable_'+id+'" value="'+((vals['sortable']!=undefined)?vals['sortable']:'')+'">';
 	output += '<input type="hidden" id="searchable_'+id+'" name="searchable_'+id+'" value="'+((vals['searchable']!=undefined)?vals['searchable']:'')+'">';
 	output += '<input type="hidden" id="displayTable_'+id+'" name="displayTable_'+id+'" value="'+((vals['displayTable']!=undefined)?vals['displayTable']:'')+'">';
+	output += '<input type="hidden" id="hidden_'+id+'" name="hidden_'+id+'" value="'+((vals['hidden']!=undefined)?vals['hidden']:'')+'">';
 	output += '<input type="hidden" id="validation_'+id+'" name="validation_'+id+'" value="'+((vals['validation']!=undefined)?vals['validation']:'')+'">';
 	output += '<input type="hidden" id="validationRegex_'+id+'" name="validationRegex_'+id+'" value="'+((vals['validationRegex']!=undefined)?vals['validationRegex']:'')+'">';
 	output += '<input type="hidden" id="access_'+id+'" name="access_'+id+'" value="'+((vals['access']!=undefined)?vals['access']:'')+'">';
@@ -1568,6 +1624,7 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="managedBy_'+id+'" name="managedBy_'+id+'" value="'+((vals['managedBy']!=undefined)?vals['managedBy']:'')+'">';
 			output += '<input type="hidden" id="idnoFormat_'+id+'" name="idnoFormat_'+id+'" value="'+((vals['idnoFormat']!=undefined)?vals['idnoFormat']:'')+'">';
 			output += '<input type="hidden" id="startIncrement_'+id+'" name="startIncrement_'+id+'" value="'+((vals['startIncrement']!=undefined)?vals['startIncrement']:'1')+'">';
+			output += '<input type="hidden" id="idnoConfirm_'+id+'" name="idnoConfirm_'+id+'" value="false">';
 			break;
 
 		case 'text':
@@ -1589,6 +1646,7 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="choicesOptions_'+id+'" name="choicesOptions_'+id+'" value="'+((vals['choicesOptions']!=undefined)?vals['choicesOptions']:'First Choice%,%Second Choice')+'">';
 			output += '<input type="hidden" id="choicesForm_'+id+'" name="choicesForm_'+id+'" value="'+((vals['choicesForm']!=undefined)?vals['choicesForm']:'')+'">';
 			output += '<input type="hidden" id="choicesField_'+id+'" name="choicesField_'+id+'" value="'+((vals['choicesField']!=undefined)?vals['choicesField']:'')+'">';
+			output += '<input type="hidden" id="choicesFieldDefault_'+id+'" name="choicesFieldDefault_'+id+'" value="'+((vals['choicesFieldDefault']!=undefined)?vals['choicesFieldDefault']:'')+'">';
 			break;
 
 		case 'file':

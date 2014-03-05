@@ -88,6 +88,9 @@ class mfcs {
 	}
 
 	// if $increment is true it returns the NEXT number. if it is false it returns the current
+	// @TODO the IDNO logic needs to be in its own class. 
+	// likely it needs a new table to handle keeping track of an index for a specific format
+	// as well as a way to get current number, format new numbers, and handle updates. 
 	public static function getIDNO($formID,$increment=TRUE) {
 
 		$engine         = self::$engine;
