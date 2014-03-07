@@ -114,8 +114,8 @@ if (!$ajax) {
 	<nav id="breadcrumbs">
 		<ul class="breadcrumb">
 			<li><a href="{local var="siteRoot"}">Home</a></li>
-			<li><a href="{local var="siteRoot"}/dataEntry/selectForm.php">Select a Form</a></li>
-			<li class="pull-right"><a href="{local var="siteRoot"}/formCreator/index.php?id={local var="formID"}">Edit Form</a></li>
+			<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
+			<li class="pull-right"><a href="{local var="siteRoot"}formCreator/index.php?id={local var="formID"}">Edit Form</a></li>
 		</ul>
 	</nav>
 	<?php } ?>
