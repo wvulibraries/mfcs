@@ -1039,8 +1039,10 @@ class forms {
 
 					if(!isset($values[$field['name']])) $values[$field['name']] = $value;
 
-
 					if (!is_empty($engine->errorStack)) {
+						$engine->openDB->transRollback();
+						$engine->openDB->transEnd();
+
 						return FALSE;
 					}
 
