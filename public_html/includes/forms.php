@@ -557,12 +557,12 @@ class forms {
 
 
 			// Handle disabled on insert form
-			if ($field['disabledInsert'] == "true" && isnull($objectID)) {
+			if (isset($field['disabledInsert']) && $field['disabledInsert'] == "true" && isnull($objectID)) {
 				$field['disabled'] = "true";
 			}
 
 			// Handle Read Only on Update form
-			if ($field['disabledUpdate'] == "true" && !isnull($objectID)) {
+			if (isset($field['disabledUpdate']) &&  $field['disabledUpdate'] == "true" && !isnull($objectID)) {
 				$field['readonly'] = "true";
 			}
 
