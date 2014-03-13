@@ -1019,7 +1019,7 @@ class forms {
 					$validationTests = self::validateSubmission($formID,$field,$value,$object['ID']);
 					
 					if (isnull($validationTests) || $validationTests === FALSE) {
-						continue;
+						continue 2;
 					}
 
 					if (strtolower($field['readonly']) == "true") {
@@ -1050,11 +1050,10 @@ class forms {
 
 				// Check to see if the objects data has changed. if it has, update it. 
 				if (encodeFields($values) != $object['data']) {
-					
+
 					if (objects::update($object['ID'],$formID,$values,$form['metadata']) === FALSE) {
 						$engine->openDB->transRollback();
 						$engine->openDB->transEnd();
-
 
 						errorHandle::newError(__METHOD__."() - error updating edit table", errorHandle::DEBUG);
 						errorHandle::errorMsg("Error updating.");
