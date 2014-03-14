@@ -27,7 +27,13 @@ class revisions {
 
 
 				case 'file':
+
+					// if the archive isn't set, we assume no files and break out.
+					// otherwise the revisions page won't load properly. 
+					if (!isset($data[$name]['files']['archive'])) break;
+
 					$fileLIs = array();
+
 					foreach($data[$name]['files']['archive'] as $file){
 						$fileLIs[] = sprintf('%s', $file['name']);
 					}
