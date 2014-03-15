@@ -1162,7 +1162,7 @@ class forms {
 				// need to pull the data that loaded with the form
 				if ($newObject === FALSE) {
 					// grab it from the database
-					$oldObject              = object::get($objectID);
+					$oldObject              = objects::get($objectID);
 					$values[$field['name']] = $oldObject['data'][$field['name']];
 				}
 				else {
