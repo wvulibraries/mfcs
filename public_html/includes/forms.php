@@ -1187,7 +1187,7 @@ class forms {
 				}
 
 				if ($tmpArray !== TRUE) {
-
+					
 					// didn't generate a proper uuid for the items, rollback 
 					if (!isset($tmpArray['uuid'])) {
 						$engine->openDB->transRollback();
@@ -1210,6 +1210,16 @@ class forms {
 					}
 
 					$values[$field['name']] = $tmpArray;
+				}
+				else {
+					// if we don't have files, and this is an update, we need to pull the files information from the 
+					// version that is already in the system.
+					
+					$oldObject = objects::get($objectID);
+
+					if ($newObject === FALSE && objects::hasFiles($objectID,$field['name']) === TRUE) {
+						$values[$field['name']] = $oldObject['data'][$field['name']];
+					}
 				}
 
 			}
