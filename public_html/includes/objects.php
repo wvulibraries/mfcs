@@ -467,6 +467,37 @@ class objects {
 
 	}
 
+	public static function hasFiles($objectID,$fieldName = NULL) {
+
+		$object = self::get($objectID);
+
+		if (isnull($fieldName)) {
+			$form   = forms::get($object['formID']);
+
+			foreach ($form['fields'] as $field) {
+				if ($field['type'] == "file") {
+					$fieldName = $field['name'];
+				}
+			}
+
+		}
+
+		// if the field name is null at this point, the form has no File objects,
+		// therefore the object doesn't (as far as we care about. It may still have them
+		// if the field was removed from the object after files had been uploaded.)
+		if (isnull($fieldName)) {
+			return FALSE;
+		}
+
+		if (isset($object['data'][$fieldName]['files']['archive']) && is_array($object['data'][$fieldName]['files']['archive']) && count($object['data'][$fieldName]['files']['archive']) > 0) {
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
+
+	}
+
 	public static function update($objectID,$formID,$data,$metadata,$parentID=0,$modifiedTime=NULL) {
 
 		if (!is_array($data)) {
