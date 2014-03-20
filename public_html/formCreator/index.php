@@ -1129,6 +1129,14 @@ $engine->eTemplate("include","header");
 											<span class="help-block hidden"></span>
 										</div>
 
+										<div class="control-group well well-small" id="formSettings_objectDisplayTitle_container">
+											<label for="formSettings_objectDisplayTitle">
+												Display Title
+											</label>
+											<input type="text" class="input-block-level" id="formSettings_objectDisplayTitle" name="formSettings_objectDisplayTitle" value="{local var="displayTitle"}">
+											<span class="help-block hidden"></span>
+										</div>
+
 										<div class="control-group well well-small" id="formSettings_formDescription_container">
 											<label for="formSettings_formDescription">
 												Form Description
@@ -1161,14 +1169,6 @@ $engine->eTemplate("include","header");
 												<span class="help-block hidden"></span>
 											</div>
 										</div>
-									</div>
-
-									<div class="control-group well well-small" id="formSettings_objectDisplayTitle_container">
-										<label for="formSettings_objectDisplayTitle">
-											Display Title
-										</label>
-										<input type="text" class="input-block-level" id="formSettings_objectDisplayTitle" name="formSettings_objectDisplayTitle" value="{local var="displayTitle"}">
-										<span class="help-block hidden"></span>
 									</div>
 
 									<div class="control-group well well-small" id="formSettings_objectTitleField_container">
