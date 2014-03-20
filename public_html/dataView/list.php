@@ -2,6 +2,7 @@
 
 include("../header.php");
 
+ini_set('memory_limit','-1');
 
 	if (!isset($engine->cleanGet['MYSQL'])) $engine->cleanGet['MYSQL'] = array("listType" => "");
 
