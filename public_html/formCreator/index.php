@@ -77,6 +77,30 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 				);
 		}
 
+		if ($form['formMetadata'] == '1' && !is_empty($form['linkTitle'])) {
+			// Test linkTable uniqueness
+			$sql = sprintf("SELECT `linkTitle` FROM `forms` WHERE `linkTitle`='%s' AND `ID`!='%s'",
+				$engine->openDB->escape($form['linkTitle']),
+				$engine->openDB->escape($formID)
+				);
+			$sqlResult = $engine->openDB->query($sql);
+
+			if (!$sqlResult['result']) {
+				// SQL error
+				errorHandle::newError(__METHOD__."() - detecting linkTitle uniqueness: ".$sqlResult['error'], errorHandle::DEBUG);
+			}
+			else if ($sqlResult['numRows'] > 0) {
+				// Not unique
+				errorHandle::errorMsg("Link Title must be unique.");
+				$form['linkTitle'] = '';
+			}
+
+		}
+		else {
+			// Blank linkTable on object forms
+			$form['linkTitle'] = '';
+		}
+
 		// Update forms table
 		$sql = sprintf("UPDATE `forms`
 						SET `title`='%s',
@@ -90,7 +114,8 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 							`metadata`='%s',
 							%s
 							`displayTitle`='%s',
-							`objectTitleField`='%s'
+							`objectTitleField`='%s',
+							`linkTitle`=%s
 						WHERE ID='%s' LIMIT 1",
 			$engine->openDB->escape($form['formTitle']),          // title=
 			!is_empty($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL", // description=
@@ -104,6 +129,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			$countSql,                                            // count=
 			$engine->openDB->escape($form['objectDisplayTitle']), // displayTitle=
 			$engine->openDB->escape($form['objectTitleField']),   // objectTitleField=
+			!is_empty($form['linkTitle']) ? "'".$engine->openDB->escape($form['linkTitle'])."'" : "NULL", // linkTitle=
 			$engine->openDB->escape($formID)                      // ID=
 			);
 		$sqlResult = $engine->openDB->query($sql);
@@ -115,7 +141,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	}
 	else {
 		// Insert into forms table
-		$sql = sprintf("INSERT INTO `forms` (title, description, fields, idno, submitButton, updateButton, container, production, metadata, count, displayTitle, objectTitleField) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')",
+		$sql = sprintf("INSERT INTO `forms` (title, description, fields, idno, submitButton, updateButton, container, production, metadata, count, displayTitle, objectTitleField, linkTitle) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',%s)",
 			$engine->openDB->escape($form['formTitle']),
 			isset($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
 			encodeFields($fields),
@@ -127,7 +153,8 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			$engine->openDB->escape($form['formMetadata']),
 			$engine->openDB->escape($count),
 			$engine->openDB->escape($form['objectDisplayTitle']),
-			$engine->openDB->escape($form['objectTitleField'])
+			$engine->openDB->escape($form['objectTitleField']),
+			!is_empty($form['linkTitle']) ? "'".$engine->openDB->escape($form['linkTitle'])."'" : "NULL" // linkTitle=
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
@@ -297,10 +324,11 @@ if (!isnull($formID)) {
 
 		localVars::add("formID",          htmlSanitize($form['ID']));
 		localVars::add("formTitle",       htmlSanitize($form['title']));
+		localVars::add("displayTitle",    htmlSanitize($form['displayTitle']));
+		localVars::add("linkTitle",       htmlSanitize($form['linkTitle']));
 		localVars::add("formDescription", htmlSanitize($form['description']));
 		localVars::add("submitButton",    htmlSanitize($form['submitButton']));
 		localVars::add("updateButton",    htmlSanitize($form['updateButton']));
-		localVars::add("displayTitle",    htmlSanitize($form['displayTitle']));
 		localVars::add("formContainer",   ($form['container'] == '1')  ? "checked" : "");
 		localVars::add("formProduction",  ($form['production'] == '1') ? "checked" : "");
 		localVars::add("formMetadata",    ($form['metadata'] == '1')   ? "checked" : "");
@@ -1129,6 +1157,22 @@ $engine->eTemplate("include","header");
 											<span class="help-block hidden"></span>
 										</div>
 
+										<div class="control-group well well-small" id="formSettings_objectDisplayTitle_container">
+											<label for="formSettings_objectDisplayTitle">
+												Display Title
+											</label>
+											<input type="text" class="input-block-level" id="formSettings_objectDisplayTitle" name="formSettings_objectDisplayTitle" value="{local var="displayTitle"}">
+											<span class="help-block hidden"></span>
+										</div>
+
+										<div class="control-group well well-small" id="formSettings_linkTitle_container">
+											<label for="formSettings_linkTitle">
+												Link Title
+											</label>
+											<input type="text" class="input-block-level" id="formSettings_linkTitle" name="formSettings_linkTitle" value="{local var="linkTitle"}">
+											<span class="help-block hidden"></span>
+										</div>
+
 										<div class="control-group well well-small" id="formSettings_formDescription_container">
 											<label for="formSettings_formDescription">
 												Form Description
@@ -1161,14 +1205,6 @@ $engine->eTemplate("include","header");
 												<span class="help-block hidden"></span>
 											</div>
 										</div>
-									</div>
-
-									<div class="control-group well well-small" id="formSettings_objectDisplayTitle_container">
-										<label for="formSettings_objectDisplayTitle">
-											Display Title
-										</label>
-										<input type="text" class="input-block-level" id="formSettings_objectDisplayTitle" name="formSettings_objectDisplayTitle" value="{local var="displayTitle"}">
-										<span class="help-block hidden"></span>
 									</div>
 
 									<div class="control-group well well-small" id="formSettings_objectTitleField_container">

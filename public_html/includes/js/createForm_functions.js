@@ -1236,6 +1236,8 @@ function formSettingsBindings() {
 		var idnoType = $("#formPreview").find("input[name^=type_][value=idno]");
 
 		if ($(this).is(":checked")) {
+			$("#formSettings_linkTitle_container").show();
+
 			if (idnoType.length == 0) {
 				$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
 				fieldAdd.find("li:contains('ID Number')").hide();
@@ -1268,6 +1270,8 @@ function formSettingsBindings() {
 			}
 		}
 		else {
+			$("#formSettings_linkTitle_container").hide();
+
 			fieldAdd.find("li:contains('ID Number')").show();
 			fieldAdd.find("li:contains('Paragraph Text')").show();
 			fieldAdd.find("li:contains('Radio')").show();
