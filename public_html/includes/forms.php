@@ -566,6 +566,8 @@ class forms {
 				$field['readonly'] = "true";
 			}
 
+			// @TODO There is excessive logic here. We have already continued/skipped passed IDNOs that we aren't displaying at this point. 
+			// version 2.0 cleanup. 
 			if ($field['type'] != "idno" || ($field['type'] == "idno" && isset($field['managedBy']) && strtolower($field['managedBy']) != "system")) {
 				$output .= sprintf('<label for="%s" class="formLabel %s">%s:</label>',
 					htmlSanitize($field['id']),
