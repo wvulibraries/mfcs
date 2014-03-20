@@ -516,7 +516,7 @@ class forms {
 			if ($field['type'] == "fieldset") {
 				continue;
 			}
-			if ($field['type'] == "idno" && strtolower($field['managedBy']) == "system") {
+			if ($field['type'] == "idno" && (strtolower($field['managedBy']) == "system" && isnull($objectID))) {
 				continue;
 			}
 
@@ -568,7 +568,10 @@ class forms {
 
 			// @TODO There is excessive logic here. We have already continued/skipped passed IDNOs that we aren't displaying at this point. 
 			// version 2.0 cleanup. 
-			if ($field['type'] != "idno" || ($field['type'] == "idno" && isset($field['managedBy']) && strtolower($field['managedBy']) != "system")) {
+			if ($field['type'] != "idno" 
+				|| ($field['type'] == "idno" && isset($field['managedBy']) && strtolower($field['managedBy']) != "system") 
+				|| ($field['type'] == "idno" && isset($field['managedBy']) && strtolower($field['managedBy']) == "system" && !isnull($objectID)) 
+				) {
 				$output .= sprintf('<label for="%s" class="formLabel %s">%s:</label>',
 					htmlSanitize($field['id']),
 					(strtolower($field['required']) == "true")?"requiredField":"",
