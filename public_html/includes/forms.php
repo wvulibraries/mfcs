@@ -1168,7 +1168,7 @@ class forms {
 				else {
 					// If the form has a variable in the value we apply the variable, otherwise, field value. 
 					// we need to check for disabled on insert form
-					if ($field['disabledInsert'] == "false") {				
+					if (!isset($field['disabledInsert']) || (isset($field['disabledInsert']) && $field['disabledInsert'] == "false")) {				
 						$values[$field['name']] = (self::hasFieldVariables($field['value']))?self::applyFieldVariables($value):$field['value'];
 					}
 					// grab the default value from the form.
