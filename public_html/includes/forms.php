@@ -279,6 +279,29 @@ class forms {
 		return FALSE;
 	}
 
+	/**
+	 * Returns the number of items in the given formID
+	 * @param  int $formID ID of the form we are counting objects in
+	 * @return int         number of objects in the form
+	 */
+	public static function countInForm($formID) {
+		
+		$sql       = sprintf("SELECT COUNT(*) FROM `objects` WHERE `formID`='%s'",
+			mfcs::$engine->openDB->escape($formID)
+			);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+		return $row['COUNT(*)'];
+
+	}
+
 	// Gets all the forms that are in all the projects that that $objectID is in
 	public static function getObjectProjectForms($objectID) {
 		if (($object = objects::get($objectID)) === FALSE) {
