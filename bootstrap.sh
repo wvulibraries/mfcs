@@ -75,8 +75,8 @@ mysql -u root mfcs < /vagrant/SQLFiles/baseSnapshot.sql
 
 for f in $SQLFILES
 do
-  echo "Processing $f ..."
-  mysql -u root mfcs < $f
+	echo "Processing $f ..."
+	mysql -u root mfcs < $f
 done
 
 #install 3rd Party dependencies
