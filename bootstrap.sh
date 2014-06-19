@@ -11,12 +11,12 @@ SERVERURL="/home/mfcs.lib.wvu.edu"
 DOCUMENTROOT="public_html"
 SQLFILES="/vagrant/SQLFiles/migrations/*.sql"
 
-yum -y install httpd httpd-devel httpd-manual httpd-tools
-yum -y install mysql-connector-java mysql-connector-odbc mysql-devel mysql-lib mysql-server
-yum -y install mod_auth_kerb mod_auth_mysql mod_authz_ldap mod_evasive mod_perl mod_security mod_ssl mod_wsgi 
-yum -y install php php-bcmath php-cli php-common php-gd php-ldap php-mbstring php-mcrypt php-mysql php-odbc php-pdo php-pear php-pear-Benchmark php-pecl-apc php-pecl-imagick php-pecl-memcache php-soap php-xml php-xmlrpc 
-yum -y install emacs emacs-common emacs-nox
-yum -y install git
+yum -y install \
+	httpd httpd-devel httpd-manual httpd-tools \
+	mysql-connector-java mysql-connector-odbc mysql-devel mysql-lib mysql-server \
+	mod_auth_kerb mod_auth_mysql mod_authz_ldap mod_evasive mod_perl mod_security mod_ssl mod_wsgi \
+	php php-bcmath php-cli php-common php-gd php-ldap php-mbstring php-mcrypt php-mysql php-odbc php-pdo php-pear php-pear-Benchmark php-pecl-apc php-pecl-imagick php-pecl-memcache php-soap php-xml php-xmlrpc \
+	emacs emacs-common emacs-nox git
 
 mv /etc/httpd/conf.d/mod_security.conf /etc/httpd/conf.d/mod_security.conf.bak
 /etc/init.d/httpd start
@@ -75,17 +75,17 @@ mysql -u root mfcs < /vagrant/SQLFiles/baseSnapshot.sql
 
 for f in $SQLFILES
 do
-  echo "Processing $f ..."
-  mysql -u root mfcs < $f
+	echo "Processing $f ..."
+	mysql -u root mfcs < "$f"
 done
 
 #install 3rd Party dependencies
 cd /vagrant/serverConfiguration/3rdParty
 rpm -Uvh --force --quiet remi-release-6*.rpm epel-release-6*.rpm
 
-yum -y install ImageMagick php-pecl-imagick 
-yum -y install perl-ExtUtils-CBuilder.x86_64 perl-ExtUtils-Embed.x86_64 perl-ExtUtils-MakeMaker.x86_64 perl-ExtUtils-ParseXS.x86_64 
-yum -y install python-devel
+yum -y install \
+	ImageMagick php-pecl-imagick python-devel \
+	perl-ExtUtils-CBuilder.x86_64 perl-ExtUtils-Embed.x86_64 perl-ExtUtils-MakeMaker.x86_64 perl-ExtUtils-ParseXS.x86_64
 
 rm -f /etc/yum.repos.d/remi.repo
 ln -s /vagrant/serverConfiguration/remi.repo /etc/yum.repos.d/remi.repo
