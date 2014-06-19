@@ -421,16 +421,17 @@ class forms {
 
 	private static function drawSelectDropdowns($field,$fieldChoices,$value=NULL) {
 
-		if (isnull($value) && isset($field['choicesDefault']) && !isempty($field['choicesDefault'])) {
-			$value = $field['choicesDefault'];
-		}
-
 		$output = "";
 
 		if(isset($field['choicesNull']) && str2bool($field['choicesNull'])){
 			$output .= '<option value="">Make a selection</option>';
 		}
 		foreach ($fieldChoices as $choice) {
+
+			if (isnull($value) && isset($field['choicesFieldDefault']) && !isempty($field['choicesFieldDefault']) && $choice['display'] == $field['choicesFieldDefault']) {
+				$value = $choice['value'];
+			}
+
 			$output .= sprintf('<option value="%s" %s>%s</option>',
 				htmlSanitize($choice['value']),
 				(!isnull($value) && $value == $choice['value'])?'selected="selected"':"",
