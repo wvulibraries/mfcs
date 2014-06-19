@@ -3,7 +3,16 @@
 include("../../header.php");
 
 
-$filesExportBaseDir = "/home/mfcs.lib.wvu.edu/public_html/exports/Printed_Ephemera_Collection/dlxsXmlImageClass/files";
+$filesExportBaseDir = "/home/mfcs.lib.wvu.edu/public_html/exports/Printed_Ephemera_Collection/dlxsXmlImageClass/files/".time();
+if (!mkdir($filesExportBaseDir)) {
+	die("Couldn't Make Directory");
+}
+if (!mkdir($filesExportBaseDir."/jpg")) {
+	die("Couldn't Make Directory");
+}
+if (!mkdir($filesExportBaseDir."/thumbs")) {
+	die("Couldn't Make Directory");
+}
 
 function convertCharacters($string) {
 	$string = preg_replace('/…/', '&#x2026;', $string);
@@ -36,6 +45,18 @@ localvars::add("outFile",$outFile);
 localvars::add("outFileName",$outFileName);
 localvars::add("outDigitalFile",$outDigitalFile);
 localvars::add("outDigitalFileName",$outDigitalFileName);
+
+$sql       = sprintf("SELECT MAX(`date`) FROM exports WHERE `formID`='2'");
+$sqlResult = $engine->openDB->query($sql);
+
+if (!$sqlResult['result']) {
+	errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+	die ("error getting max.");
+}
+
+$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+$lastExportDate = (isnull($row['MAX(`date`)']))?0:$row['MAX(`date`)'];
 
 $objects = objects::getAllObjectsForForm("2");
 
@@ -120,7 +141,7 @@ foreach ($objects as $object) {
 
 
 	// deal with the files
-	if (is_array($object['data']['digitalFiles'])) {
+	if ($object['modifiedTime'] > $lastExportDate && is_array($object['data']['digitalFiles'])) {
 
 		foreach ($object['data']['digitalFiles']['files']['combine'] as $file) {
 
@@ -156,6 +177,17 @@ fwrite($file, $xml);
 fclose($file);
 
 exec(sprintf('tar -hzcf %s %s',$outDigitalFile,$filesExportBaseDir));
+
+$sql       = sprintf("INSERT INTO `exports` (`formID`,`date`) VALUES('%s','%s')",
+	'2',
+	time()
+	);
+$sqlResult = $engine->openDB->query($sql);
+
+if (!$sqlResult['result']) {
+	errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+	print "<p>Error inserting into export table.</p>";
+}
 
 ?>
 
