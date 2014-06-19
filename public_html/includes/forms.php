@@ -431,6 +431,9 @@ class forms {
 			if (isnull($value) && isset($field['choicesFieldDefault']) && !isempty($field['choicesFieldDefault']) && $choice['display'] == $field['choicesFieldDefault']) {
 				$value = $choice['value'];
 			}
+			else if (isnull($value) && isset($field['choicesDefault']) && !isempty($field['choicesDefault'])) {
+				$value = $field['choicesDefault'];
+			}
 
 			$output .= sprintf('<option value="%s" %s>%s</option>',
 				htmlSanitize($choice['value']),
