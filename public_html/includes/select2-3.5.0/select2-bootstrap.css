@@ -37,6 +37,7 @@
   height: 28px;
   line-height: 29px;
   margin-bottom:10px;
+  width: 210px;
   border: 1px solid #cccccc;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
@@ -64,6 +65,10 @@
 .select2-container-multi .select2-choices .select2-search-field {
   height: 28px;
   line-height: 27px;
+}
+
+.select2-drop {
+  margin-top: -10px;
 }
 
 .select2-drop.select2-drop-active,
