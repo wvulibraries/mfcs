@@ -848,10 +848,10 @@ $engine->eTemplate("include","header");
 												</div>
 											</div>
 										</div>
+
 										<div class="control-group well well-small" id="fieldSettings_container_choices">
 											<label for="fieldSettings_choices">
 												Choices
-												<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title=""></i>
 											</label>
 											<select class="input-block-level" id="fieldSettings_choices_type" name="fieldSettings_choices_type">
 												<option value="manual">Manual</option>
@@ -909,6 +909,29 @@ $engine->eTemplate("include","header");
 													<select class="input-block-level" id="fieldSettings_range_format" name="fieldSettings_range_format"></select>
 												</span>
 											</div>
+										</div>
+
+										<div class="control-group well well-small" id="fieldSettings_container_externalUpdate">
+											<label for="fieldSettings_externalUpdate">
+												Update External Form
+												<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="When the value of this field changes, update the selected form and field."></i>
+											</label>
+											<div id="fieldSettings_externalUpdate_form">
+												<label for="fieldSettings_externalUpdate_formSelect">
+													Select a Form
+												</label>
+												<select class="input-block-level" id="fieldSettings_externalUpdate_formSelect" name="fieldSettings_externalUpdate_formSelect">
+													<option value="">None</option>
+													{local var="formsOptions"}
+												</select>
+
+												<label for="fieldSettings_externalUpdate_fieldSelect">
+													Select a Field
+												</label>
+												<select class="input-block-level" id="fieldSettings_externalUpdate_fieldSelect" name="fieldSettings_externalUpdate_fieldSelect">
+												</select>
+											</div>
+											<span class="help-block hidden"></span>
 										</div>
 
 										<div class="control-group well well-small" id="fieldSettings_container_idno">

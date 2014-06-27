@@ -112,6 +112,19 @@ function showFieldSettings(fullID) {
 					break;
 
 				case 'text':
+					$("#fieldSettings_container_externalUpdate").show();
+					$("#fieldSettings_container_value").show();
+					$("#fieldSettings_container_placeholder").show();
+
+					$("#fieldSettings_container_range").show();
+					$("#fieldSettings_range_step").parent().hide();
+					$("#fieldSettings_range_min").parent().addClass("span4").removeClass("span3");
+					$("#fieldSettings_range_max").parent().addClass("span4").removeClass("span3");
+
+					$("#fieldSettings_range_format option").remove();
+					$("#fieldSettings_range_format").append('<option value="characters">Characters</option><option value="words">Words</option>');
+					break;
+
 				case 'textarea':
 					$("#fieldSettings_container_value").show();
 					$("#fieldSettings_container_placeholder").show();
@@ -216,12 +229,15 @@ function showFieldSettings(fullID) {
 				fieldSettings_choices_manual.html(tmp).find("input[name=fieldSettings_choices_text]").keyup();
 			}
 
-			$("#fieldSettings_choices_formSelect, #fieldSettings_externalUpdate_formSelect").val($("#choicesForm_"+id).val()).change();
+			$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
 			$("#fieldSettings_choices_fieldSelect").val($("#choicesField_"+id).val()).change();
 			$("#fieldSettings_choices_fieldDefault").val($("#choicesFieldDefault_"+id).val()).change();
 
 			$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change(); // Must be after options stuff
 			$("#fieldSettings_choices_null").prop("checked",($("#choicesNull_"+id).val()==='true')).change();
+
+			$("#fieldSettings_externalUpdate_formSelect").val($("#externalUpdateForm_"+id).val()).change();
+			$("#fieldSettings_externalUpdate_fieldSelect").val($("#externalUpdateField_"+id).val()).change();
 
 			fieldSettings_options_required.prop("checked",($("#required_"+id).val()==='true'));
 			fieldSettings_options_duplicates.prop("checked",($("#duplicates_"+id).val()==='true'));
@@ -789,6 +805,41 @@ function fieldSettingsBindings() {
 		var id              = formPreviewWell.prop("id").split("_")[1];
 
 		$("#choicesFieldDefault_"+id).val($(this).val());
+	});
+
+	$("#fieldSettings_externalUpdate_formSelect").change(function() {
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+		var val             = $(this).val();
+
+		if (choicesFields[val] === undefined) {
+			choicesFields[val] = '';
+
+			$.ajax({
+				url: "../includes/getFormFields.php",
+				async: false
+			}).always(function(data) {
+				var obj = JSON.parse(data);
+
+				$.each(obj, function(I, field) {
+					var options = '';
+					$.each(field, function(i, f) {
+						options += '<option value="'+f.name+'">'+f.label+'</option>';
+					});
+					choicesFields[I] = options;
+				});
+			});
+		}
+
+		$("#externalUpdateForm_"+id).val(val).change();
+		$("#fieldSettings_externalUpdate_fieldSelect").html(choicesFields[val]).change();
+	});
+
+	$("#fieldSettings_externalUpdate_fieldSelect").change(function() {
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+
+		$("#externalUpdateField_"+id).val($(this).val());
 	});
 
 	$("#fieldSettings_options_required").change(function() {
@@ -1639,6 +1690,14 @@ function newFieldValues(id,type,vals) {
 			break;
 
 		case 'text':
+			output += '<input type="hidden" id="externalUpdateForm_'+id+'" name="externalUpdateForm_'+id+'" value="'+((vals.externalUpdateForm !== undefined)?vals.externalUpdateForm:'')+'">';
+			output += '<input type="hidden" id="externalUpdateField_'+id+'" name="externalUpdateField_'+id+'" value="'+((vals.externalUpdateField !== undefined)?vals.externalUpdateField:'')+'">';
+			output += '<input type="hidden" id="min_'+id+'" name="min_'+id+'" value="'+((vals.min !== undefined)?vals.min:'')+'">';
+			output += '<input type="hidden" id="max_'+id+'" name="max_'+id+'" value="'+((vals.max !== undefined)?vals.max:'')+'">';
+			output += '<input type="hidden" id="step_'+id+'" name="step_'+id+'" value="'+((vals.step !== undefined)?vals.step:'')+'">';
+			output += '<input type="hidden" id="format_'+id+'" name="format_'+id+'" value="'+((vals.format !== undefined)?vals.format:'')+'">';
+			break;
+
 		case 'textarea':
 		case 'number':
 			output += '<input type="hidden" id="min_'+id+'" name="min_'+id+'" value="'+((vals.min !== undefined)?vals.min:'')+'">';
