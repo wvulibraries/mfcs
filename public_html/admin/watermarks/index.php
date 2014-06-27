@@ -21,7 +21,7 @@ try {
 		}
 
 		throw new Exception("Failed to add watermark.");
-		
+
 	}
 	else if (isset($engine->cleanPost['MYSQL']["update"])) {
 		if (!isset($engine->cleanPost['MYSQL']['name']) || is_empty($engine->cleanPost['MYSQL']['name'])) {
@@ -41,7 +41,7 @@ try {
 		else {
 			throw new Exception("Failed to update watermark.");
 		}
-		
+
 	}
 	else if (isset($engine->cleanPost['MYSQL']["delete"])) {
 		$sql = sprintf("DELETE FROM `watermarks` WHERE ID='%s' LIMIT 1",
@@ -66,20 +66,20 @@ $sqlResult = $engine->openDB->query($sql);
 if ($sqlResult['result']) {
 	$tmp = NULL;
 	while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
-        try{
-            $i = new Imagick();
-            $i->readImageBlob($row['data']);
+		try{
+			$i = new Imagick();
+			$i->readImageBlob($row['data']);
 
-            $tmp .= sprintf('<li><a href="?id=%s">%s<br><img src="data:image/%s;base64,%s"></a></li>',
-                htmlSanitize($row['ID']),
-                htmlSanitize($row['name']),
-                strtolower($i->getImageFormat()),
-                base64_encode($row['data'])
-            );
-        }catch (Exception $e){
-            errorHandle::newError("readImageBlob failed - {$e->getMessage()}", errorHandle::HIGH);
-            errorHandle::errorMsg("Failed to load watermark.");
-        }
+			$tmp .= sprintf('<li><a href="?id=%s">%s<br><img src="data:image/%s;base64,%s"></a></li>',
+				htmlSanitize($row['ID']),
+				htmlSanitize($row['name']),
+				strtolower($i->getImageFormat()),
+				base64_encode($row['data'])
+			);
+		}catch (Exception $e){
+			errorHandle::newError("readImageBlob failed - {$e->getMessage()}", errorHandle::HIGH);
+			errorHandle::errorMsg("Failed to load watermark.");
+		}
 	}
 	localVars::add("existingWatermarks",$tmp);
 	unset($tmp);
@@ -118,12 +118,12 @@ $engine->eTemplate("include","header");
 		<h1>Manage Watermarks</h1>
 	</header>
 
-    <nav id="breadcrumbs">
-        <ul class="breadcrumb">
-            <li><a href="{local var="siteRoot"}">Home</a></li>
-            <li><a href="{local var="siteRoot"}/admin/">Admin</a></li>
-        </ul>
-    </nav>  
+	<nav id="breadcrumbs">
+		<ul class="breadcrumb">
+			<li><a href="{local var="siteRoot"}">Home</a></li>
+			<li><a href="{local var="siteRoot"}/admin/">Admin</a></li>
+		</ul>
+	</nav>
 
 	{local var="results"}
 

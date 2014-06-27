@@ -1,8 +1,6 @@
 <?php
 require("header.php");
 
-
-
 $engine->eTemplate("include","header");
 ?>
 
@@ -11,11 +9,11 @@ $engine->eTemplate("include","header");
 		<h1>Administrator Actions</h1>
 	</header>
 
-    <nav id="breadcrumbs">
-        <ul class="breadcrumb">
-            <li><a href="{local var="siteRoot"}">Home</a></li>
-        </ul>
-    </nav>  
+	<nav id="breadcrumbs">
+		<ul class="breadcrumb">
+			<li><a href="{local var="siteRoot"}">Home</a></li>
+		</ul>
+	</nav>
 
 	<ul class="pickList">
 		<li>
@@ -24,11 +22,10 @@ $engine->eTemplate("include","header");
 		<li>
 			<a href="users/" class="btn">Users</a>
 		</li>
-        <li>
-            <a href="watermarks/" class="btn">Watermarks</a>
-        </li>
+		<li>
+			<a href="watermarks/" class="btn">Watermarks</a>
+		</li>
 	</ul>
-
 </section>
 
 <?php

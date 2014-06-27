@@ -1,11 +1,11 @@
 <?php
 $currentProjects = sessionGet('currentProject');
 if(isset($currentProjects) and sizeof($currentProjects)){
-    localvars::add('currentProjectNames', implode(', ',array_values($currentProjects)));
-    localvars::add('currentProjectIDs',   implode(',',array_keys($currentProjects)));
+	localvars::add('currentProjectNames', implode(', ',array_values($currentProjects)));
+	localvars::add('currentProjectIDs',   implode(',',array_keys($currentProjects)));
 }else{
-    localvars::add('currentProjectNames', '<span style="color: #999; font-style: italic;">None Selected</span>');
-    localvars::add('currentProjectIDs',   '');
+	localvars::add('currentProjectNames', '<span style="color: #999; font-style: italic;">None Selected</span>');
+	localvars::add('currentProjectIDs',   '');
 }
 ?>
 <ul class="nav">
@@ -32,12 +32,6 @@ if(isset($currentProjects) and sizeof($currentProjects)){
 					<li><a href="{local var="siteRoot"}formCreator/copy.php">Copy Form</a></li>
 				</ul>
 			</li>
-<!-- 			<li class="dropdown-submenu">
-				<a tabindex="-1" href="#">User Preferences</a>
-				<ul class="dropdown-menu">
-					<li><a href="{local var="siteRoot"}user/setDefaultForm/">Default Form</a></li>
-				</ul>
-			</li> -->
 			<li class="dropdown-submenu">
 				<a tabindex="-1" href="#">Administrative Panel</a>
 				<ul class="dropdown-menu">
@@ -53,6 +47,6 @@ if(isset($currentProjects) and sizeof($currentProjects)){
 	</li>
 </ul>
 <div class="pull-right" style="padding: 8px; font-size: 18px; color: #ccc;">
-    <strong>Current projects:</strong>
-    <a href="#selectProjectsModal" id="currentProjectsLink" title="Click to change" data-toggle="modal" data-selected_projects='{local var="currentProjectIDs"}'>{local var="currentProjectNames"}</a>
+	<strong>Current projects:</strong>
+	<a href="#selectProjectsModal" id="currentProjectsLink" title="Click to change" data-toggle="modal" data-selected_projects='{local var="currentProjectIDs"}'>{local var="currentProjectNames"}</a>
 </div>

@@ -1,34 +1,29 @@
 <?php
-
 include("../../header.php");
 
 $tableName = "projects";
 
 function defineList($tableName) {
 	// $engine = EngineAPI::singleton();
-	$l      = new listManagement($tableName);
+	$l = new listManagement($tableName);
 
 	$l->addField(array(
 		"field"    => "projectName",
 		"label"    => "Project Name",
-		));
+	));
 
 	$l->addField(array(
 		"field"    => "projectID",
 		"label"    => "Project ID (Short Name)",
 		"validate" => "alphaNoSpaces"
-		));
+	));
 
-	$l->addField (
-
-		array(
-			'field'    => "ID",
-			'label'    => "ID",
-			'type'     => "hidden",
-			'disabled' => TRUE
-			)
-
-		);
+	$l->addField (array(
+		'field'    => "ID",
+		'label'    => "ID",
+		'type'     => "hidden",
+		'disabled' => TRUE
+	));
 
 	return $l;
 }
@@ -54,12 +49,12 @@ $engine->eTemplate("include","header");
 		<h1>Manage Projects</h1>
 	</header>
 
-    <nav id="breadcrumbs">
-        <ul class="breadcrumb">
-            <li><a href="{local var="siteRoot"}">Home</a></li>
-            <li><a href="{local var="siteRoot"}/admin/">Admin</a></li>
-        </ul>
-    </nav>  
+	<nav id="breadcrumbs">
+		<ul class="breadcrumb">
+			<li><a href="{local var="siteRoot"}">Home</a></li>
+			<li><a href="{local var="siteRoot"}/admin/">Admin</a></li>
+		</ul>
+	</nav>
 
 	{local var="results"}
 
