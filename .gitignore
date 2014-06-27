@@ -1,8 +1,6 @@
 /serverConfiguration/serverLogs/
-
 /.vagrant/
-
 /public_html/engineIncludes
+/public_html/javascript/distribution
 sessionLogin.php
-/public_html/javascript/distribution
-/public_html/javascript/distribution
+/SQLFiles/mfcs.sql
