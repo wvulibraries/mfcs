@@ -270,6 +270,10 @@ $engine->eTemplate("include","header");
 				$objectSubmitProcessing.show();
 			}
 		});
+
+		$("select").select2({
+			minimumResultsForSearch: 10,
+		});
 	});
 </script>
 
