@@ -271,7 +271,7 @@ $engine->eTemplate("include","header");
 			}
 		});
 
-		$("select").select2({
+		$("select:not([multiple])").select2({
 			minimumResultsForSearch: 10,
 		});
 	});
