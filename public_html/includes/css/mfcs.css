@@ -45,7 +45,7 @@
 	margin-left: auto;
 	margin-right: auto;
 }
- 
+
 .pickList li {
 	margin-bottom: 10px;
 }
@@ -180,6 +180,11 @@ label.formLabel{
 	width: 600px;
 }
 
+.multiSelectContainer .select2-container .select2-choice,
+.multiSelectContainer .select2-container-multi .select2-choices {
+	width: 590px;
+}
+
 ul.checkboxList{
 	list-style: none;
 	margin: 5px;
@@ -203,6 +208,6 @@ div.checkboxList label{
 
 .paginationJumpLabel {
 	display: inline-block;
-	width: 150px; 
+	width: 150px;
 
 }
