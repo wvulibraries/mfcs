@@ -270,10 +270,6 @@ $engine->eTemplate("include","header");
 				$objectSubmitProcessing.show();
 			}
 		});
-
-		$("select:not([multiple])").select2({
-			minimumResultsForSearch: 10,
-		});
 	});
 </script>
 
