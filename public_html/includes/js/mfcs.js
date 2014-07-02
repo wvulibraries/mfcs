@@ -327,6 +327,18 @@ function addItemToID(id, item) {
 	theSelect.options[theSelect.length] = new Option(item.text, item.value);
 }
 
+function addToID(id, value, text) {
+	var theSelect = document.getElementById(id);
+
+	for (i = theSelect.length - 1; i >= 0; i--) {
+		if (theSelect.options[i].value == value) {
+			return;
+		}
+	}
+
+	theSelect.options[theSelect.length] = new Option(text, value);
+}
+
 function removeFromList(id) {
 	var theSelect = document.getElementById(id);
 
