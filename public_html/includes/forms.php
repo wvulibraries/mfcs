@@ -1561,6 +1561,39 @@ class forms {
 		// And, return the result
 		return $formatString;
 	}
+
+	public static function retrieveData($formID, $fieldName=NULL) {
+		$sql = sprintf("SELECT * FROM `objectsData` WHERE `formID`='%s'",
+			mfcs::$engine->openDB->escape($formID)
+			);
+
+		if (!isnull($fieldName)) {
+			$sql .= "AND `fieldName`='".mfcs::$engine->openDB->escape($fieldName)."'";
+		}
+
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		$data = array();
+
+		while($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+			if (!isnull($fieldName) && $row['fieldName'] != $fieldName) {
+				continue;
+			}
+
+			if ($row['encoded'] == "1") {
+				$row['value'] = decodeFields($row['value']);
+			}
+			$data[] = $row;
+		}
+
+		return $data;
+	}
+
 }
 
 ?>
