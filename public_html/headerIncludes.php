@@ -5,6 +5,10 @@
 <script type="text/javascript" src="{local var="siteRoot"}includes/js/jquery.ui.touch-punch.min.js"></script>
 <script type="text/javascript" src="{local var="siteRoot"}includes/js/jquery.tablesorter.min.js"></script>
 
+<link rel="stylesheet" type="text/css" href="{local var="siteRoot"}includes/select2-3.5.0/select2.css">
+<link rel="stylesheet" type="text/css" href="{local var="siteRoot"}includes/select2-3.5.0/select2-bootstrap.css">
+<script type="text/javascript" src="{local var="siteRoot"}includes/select2-3.5.0/select2.min.js"></script>
+
 <?php
 // Pages that need fine uploader
 $path = parse_url(localVars::get("siteRoot"),PHP_URL_PATH);
@@ -41,6 +45,6 @@ if (in_array($_SERVER['SCRIPT_NAME'], $fineuploader)) {
 ?>
 
 <script>
-    var siteRoot  = '{local var="siteRoot"}';
-    var csrfToken = '{engine name="csrf" insert="false"}';
+	var siteRoot  = '{local var="siteRoot"}';
+	var csrfToken = '{engine name="csrf" insert="false"}';
 </script>

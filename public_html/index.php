@@ -14,18 +14,17 @@ $engine->eTemplate("include","header");
 		<h1>Select a Task</h1>
 	</header>
 
-    <nav id="breadcrumbs">
-        <ul class="breadcrumb">
-            <li><a href="{local var="siteRoot"}">Home</a></li>
-        </ul>
-    </nav>  
+	<nav id="breadcrumbs">
+		<ul class="breadcrumb">
+			<li><a href="{local var="siteRoot"}">Home</a></li>
+		</ul>
+	</nav>
 
 	{local var="results"}
 
 	<ul>
 		{local var="projectList"}
 	</ul>
-
 
 	<ul class="pickList">
 		<li>
@@ -34,22 +33,17 @@ $engine->eTemplate("include","header");
 		<li>
 			<a href="dataView/list.php" class="btn">List Objects</a>
 		</li>
-        <li>
-            <a href="dataView/search.php" class="btn">Search Objects</a>
-        </li>
-<!-- 		<li>
-			<a href="dataEntry/selectMetadataForm.php" class="btn">Metadata Forms</a>
-		</li> -->
+		<li>
+			<a href="dataView/search.php" class="btn">Search Objects</a>
+		</li>
 		<li>
 			<a href="exports/" class="btn">Export</a>
 		</li>
-        <li>
-            <a href="stats/" class="btn">Statistics</a>
-        </li>
+		<li>
+			<a href="stats/" class="btn">Statistics</a>
+		</li>
 	</ul>
-
 </section>
-
 
 <?php
 $engine->eTemplate("include","footer");

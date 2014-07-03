@@ -67,16 +67,10 @@ try {
 
 	// handle submission
 	if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
-		// Testing. Displays the submission array
-		// 
-		// print "1<pre>";
-		// var_dump($engine->cleanPost['MYSQL']);
-		// print "</pre>";
-		// exit;
 		if (forms::submit($engine->cleanGet['MYSQL']['formID']) === FALSE) {
 			throw new Exception("Error Submitting Form.");
 		}
-		http::setGet("objectID",localvars::get("newObjectID")); 
+		http::setGet("objectID",localvars::get("newObjectID"));
 	}
 	else if (isset($engine->cleanPost['MYSQL']['updateForm'])) {
 		if (forms::submit($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']) === FALSE) {

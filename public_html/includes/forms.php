@@ -2,7 +2,7 @@
 
 class forms {
 
-	// @TODO this needs to be expanded to include callbacks for the replacement text as well. 
+	// @TODO this needs to be expanded to include callbacks for the replacement text as well.
 	private static $fieldVariables = array('%userid%', '%username%', '%firstname%', '%lastname%', '%date%', '%time%', '%time12%', '%time24%', '%timestamp%');
 
 	function validID() {
@@ -285,17 +285,17 @@ class forms {
 	 * @return int         number of objects in the form
 	 */
 	public static function countInForm($formID) {
-		
+
 		$sql       = sprintf("SELECT COUNT(*) FROM `objects` WHERE `formID`='%s'",
 			mfcs::$engine->openDB->escape($formID)
 			);
 		$sqlResult = mfcs::$engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-		
+
 		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
 		return $row['COUNT(*)'];
@@ -593,11 +593,11 @@ class forms {
 				$field['readonly'] = "true";
 			}
 
-			// @TODO There is excessive logic here. We have already continued/skipped passed IDNOs that we aren't displaying at this point. 
-			// version 2.0 cleanup. 
-			if ($field['type'] != "idno" 
-				|| ($field['type'] == "idno" && isset($field['managedBy']) && strtolower($field['managedBy']) != "system") 
-				|| ($field['type'] == "idno" && isset($field['managedBy']) && strtolower($field['managedBy']) == "system" && !isnull($objectID)) 
+			// @TODO There is excessive logic here. We have already continued/skipped passed IDNOs that we aren't displaying at this point.
+			// version 2.0 cleanup.
+			if ($field['type'] != "idno"
+				|| ($field['type'] == "idno" && isset($field['managedBy']) && strtolower($field['managedBy']) != "system")
+				|| ($field['type'] == "idno" && isset($field['managedBy']) && strtolower($field['managedBy']) == "system" && !isnull($objectID))
 				) {
 				$output .= sprintf('<label for="%s" class="formLabel %s">%s:</label>',
 					htmlSanitize($field['id']),
@@ -668,29 +668,71 @@ class forms {
 			}
 			else if ($field['type'] == "select") {
 
-				if (($fieldChoices = forms::getFieldChoices($field)) === FALSE) {
-					return FALSE;
+				if (isset($field['choicesType']) && !isempty($field['choicesType']) && $field['choicesType'] == "manual") {
+					if (($fieldChoices = forms::getFieldChoices($field)) === FALSE) {
+						return FALSE;
+					}
+
+					$output .= sprintf('<select name="%s" id="%s" data-type="%s" data-formid="%s" data-fieldname="%s" %s>%s</select>',
+						htmlSanitize($field['name']),
+						htmlSanitize($field['name']),
+						$field['type'],
+						$formID,
+						htmlSanitize($field['name']),
+						(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
+						self::drawFieldChoices($field,$fieldChoices,(isset($object['data'][$field['name']]))?$object['data'][$field['name']]:NULL)
+					);
 				}
+				else {
+					$output .= sprintf('<input type="hidden" name="%s_available" id="%s_available" data-type="%s" data-formid="%s" data-fieldname="%s" %s>',
+						htmlSanitize($field['name']),
+						htmlSanitize($field['name']),
+						$field['type'],
+						$formID,
+						htmlSanitize($field['name']),
+						(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
+						htmlSanitize($field['name'])
+					);
 
-				$output .= sprintf('<select name="%s" id="%s" data-type="%s" data-formid="%s" data-fieldname="%s" %s>',
-					htmlSanitize($field['name']),
-					htmlSanitize($field['name']),
-					$field['type'],
-					$formID,
-					htmlSanitize($field['name']),
-					(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':""
-				);
+					$output .= sprintf("<script charset=\"utf-8\">
+							$(function() {
+								$('#%s_available')
+									.select2({
+										minimumResultsForSearch: 10,
+										placeholder: 'Make a Selection',
+										ajax: {
+											url: 'retrieveOptions.php',
+											dataType: 'json',
+											quietMillis: 300,
+											data: function(term, page) {
+												return {
+													q: term,
+													page: page,
+													pageSize: 1000,
+													formID: '%s',
+													fieldName: '%s'
+												};
+											},
+											results: function(data, page) {
+												var more = (page * data.pageSize) < data.total;
 
-				$output .= self::drawFieldChoices($field,$fieldChoices,(isset($object['data'][$field['name']]))?$object['data'][$field['name']]:NULL);
-
-				$output .= "</select>";
+												return {
+													results: data.options,
+													more: more
+												};
+											},
+										},
+									});
+							});
+						</script>",
+						htmlSanitize($field['name']),
+						htmlSanitize($field['choicesForm']),
+						htmlSanitize($field['choicesField'])
+					);
+				}
 
 			}
 			else if ($field['type'] == 'multiselect') {
-
-				if (($fieldChoices = forms::getFieldChoices($field)) === FALSE) {
-					return FALSE;
-				}
 
 				$output .= '<div class="multiSelectContainer">';
 				$output .= sprintf('<select name="%s[]" id="%s" size="5" multiple="multiple">',
@@ -707,30 +749,82 @@ class forms {
 						);
 					}
 				}
-				else if (isset($object['data'][$field['name']])) {
-					// print "<pre>";
-					// var_dump($object['data'][$field['name']]);
-					// print "</pre>";
-				}
+
 				$output .= '</select><br />';
-				$output .= sprintf('<select name="%s_available" id="%s_available" data-type="%s" data-formid="%s" data-fieldname="%s" %s onchange="addItemToID(\'%s\', this.options[this.selectedIndex]);">',
-					htmlSanitize($field['name']),
-					htmlSanitize($field['name']),
-					$field['type'],
-					$formID,
-					htmlSanitize($field['name']),
-					(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
-					htmlSanitize($field['name'])
-				);
 
-				$output .= self::drawFieldChoices($field,$fieldChoices);
+				if (isset($field['choicesType']) && !isempty($field['choicesType']) && $field['choicesType'] == "manual") {
+					if (($fieldChoices = forms::getFieldChoices($field)) === FALSE) {
+						return FALSE;
+					}
 
-				$output .= '</select>';
+					$output .= sprintf('<select name="%s_available" id="%s_available" data-type="%s" data-formid="%s" data-fieldname="%s" %s onchange="addItemToID(\'%s\', this.options[this.selectedIndex]);">%s</select>',
+						htmlSanitize($field['name']),
+						htmlSanitize($field['name']),
+						$field['type'],
+						$formID,
+						htmlSanitize($field['name']),
+						(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
+						htmlSanitize($field['name']),
+						self::drawFieldChoices($field,$fieldChoices)
+					);
+				}
+				else {
+					$output .= sprintf('<input type="hidden" name="%s_available" id="%s_available" data-type="%s" data-formid="%s" data-fieldname="%s" %s>',
+						htmlSanitize($field['name']),
+						htmlSanitize($field['name']),
+						$field['type'],
+						$formID,
+						htmlSanitize($field['name']),
+						(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
+						htmlSanitize($field['name'])
+					);
+
+					$output .= sprintf("<script charset=\"utf-8\">
+							$(function() {
+								$('#%s_available')
+									.select2({
+										minimumResultsForSearch: 10,
+										placeholder: 'Make a Selection',
+										ajax: {
+											url: 'retrieveOptions.php',
+											dataType: 'json',
+											quietMillis: 300,
+											data: function(term, page) {
+												return {
+													q: term,
+													page: page,
+													pageSize: 1000,
+													formID: '%s',
+													fieldName: '%s'
+												};
+											},
+											results: function(data, page) {
+												var more = (page * data.pageSize) < data.total;
+
+												return {
+													results: data.options,
+													more: more
+												};
+											},
+										},
+									})
+									.on('select2-selecting', function(e) {
+										addToID('%s', e.val, e.choice.text);
+									});
+							});
+						</script>",
+						htmlSanitize($field['name']),
+						htmlSanitize($field['choicesForm']),
+						htmlSanitize($field['choicesField']),
+						htmlSanitize($field['name'])
+					);
+				}
+
 				$output .= "<br />";
 				$output .= sprintf('<button type="button" onclick="removeFromList(\'%s\')" class="btn">Remove Selected</button>',
 					htmlSanitize($field['name'])
 					);
-				
+
 				$output .= "</div>";
 			}
 			else if ($field['type'] == 'file') {
@@ -847,10 +941,10 @@ class forms {
 
 	}
 
-	// @TODO it doesnt look like the edit table is honoring form creator choices on 
+	// @TODO it doesnt look like the edit table is honoring form creator choices on
 	// which fields are displayed
-	// 
-	// @TODO File uploads should never be displayed on the edit table. 
+	//
+	// @TODO File uploads should never be displayed on the edit table.
 	public static function buildEditTable($formID) {
 
 		$form = self::get($formID);
@@ -869,7 +963,7 @@ class forms {
 
 			$startPos = $pagination->itemsPerPage*($pagination->currentPage-1);
 			$objects  = array_slice($objects, $startPos, $pagination->itemsPerPage);
-		} 
+		}
 
 		if (count($objects) > 0) {
 
@@ -1075,7 +1169,7 @@ class forms {
 
 					$value = (isset($engine->cleanPost['RAW'][$field['name']."_".$object['ID']]))?$engine->cleanPost['RAW'][$field['name']."_".$object['ID']]:$object['data'][$field['name']];
 					$validationTests = self::validateSubmission($formID,$field,$value,$object['ID']);
-					
+
 					if (isnull($validationTests) || $validationTests === FALSE) {
 						continue 2;
 					}
@@ -1106,7 +1200,7 @@ class forms {
 
 				}
 
-				// Check to see if the objects data has changed. if it has, update it. 
+				// Check to see if the objects data has changed. if it has, update it.
 				if (encodeFields($values) != $object['data']) {
 
 					if (objects::update($object['ID'],$formID,$values,$form['metadata']) === FALSE) {
@@ -1224,9 +1318,9 @@ class forms {
 					$values[$field['name']] = $oldObject['data'][$field['name']];
 				}
 				else {
-					// If the form has a variable in the value we apply the variable, otherwise, field value. 
+					// If the form has a variable in the value we apply the variable, otherwise, field value.
 					// we need to check for disabled on insert form
-					if (!isset($field['disabledInsert']) || (isset($field['disabledInsert']) && $field['disabledInsert'] == "false")) {				
+					if (!isset($field['disabledInsert']) || (isset($field['disabledInsert']) && $field['disabledInsert'] == "false")) {
 						$values[$field['name']] = (self::hasFieldVariables($field['value']))?self::applyFieldVariables($value):$field['value'];
 					}
 					// grab the default value from the form.
@@ -1245,8 +1339,8 @@ class forms {
 				}
 
 				if ($tmpArray !== TRUE) {
-					
-					// didn't generate a proper uuid for the items, rollback 
+
+					// didn't generate a proper uuid for the items, rollback
 					if (!isset($tmpArray['uuid'])) {
 						$engine->openDB->transRollback();
 						$engine->openDB->transEnd();
@@ -1255,7 +1349,7 @@ class forms {
 					}
 
 					// ads this field to the files object
-					// we can't do inserts yet because we don't have the objectID on 
+					// we can't do inserts yet because we don't have the objectID on
 					// new objects
 					files::addProcessingField($field['name']);
 
@@ -1270,9 +1364,9 @@ class forms {
 					$values[$field['name']] = $tmpArray;
 				}
 				else {
-					// if we don't have files, and this is an update, we need to pull the files information from the 
+					// if we don't have files, and this is an update, we need to pull the files information from the
 					// version that is already in the system.
-					
+
 					$oldObject = objects::get($objectID);
 
 					if ($newObject === FALSE && objects::hasFiles($objectID,$field['name']) === TRUE) {
@@ -1346,7 +1440,7 @@ class forms {
 
 		if (!is_empty($backgroundProcessing)) {
 			foreach ($backgroundProcessing as $fieldName=>$V) {
-				if ($V === FALSE) {					
+				if ($V === FALSE) {
 					// No background processing. do it now.
 					files::process($objectID,$fieldName);
 				}
@@ -1566,6 +1660,39 @@ class forms {
 		// And, return the result
 		return $formatString;
 	}
+
+	public static function retrieveData($formID, $fieldName=NULL) {
+		$sql = sprintf("SELECT * FROM `objectsData` WHERE `formID`='%s'",
+			mfcs::$engine->openDB->escape($formID)
+			);
+
+		if (!isnull($fieldName)) {
+			$sql .= "AND `fieldName`='".mfcs::$engine->openDB->escape($fieldName)."'";
+		}
+
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		$data = array();
+
+		while($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+			if (!isnull($fieldName) && $row['fieldName'] != $fieldName) {
+				continue;
+			}
+
+			if ($row['encoded'] == "1") {
+				$row['value'] = decodeFields($row['value']);
+			}
+			$data[] = $row;
+		}
+
+		return $data;
+	}
+
 }
 
 ?>

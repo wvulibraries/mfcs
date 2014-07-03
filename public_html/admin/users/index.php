@@ -15,20 +15,20 @@ function defineList($tableName) {
 	$l->addField(array(
 		"field"    => "firstname",
 		"label"    => "First Name",
-        "dupes"    => TRUE
+		"dupes"    => TRUE
 		));
 
 	$l->addField(array(
 		"field"    => "lastname",
 		"label"    => "Last Name",
-        "dupes"    => TRUE
+		"dupes"    => TRUE
 		));
 
 	$l->addField(array(
 		"field"    => "status",
 		"label"    => "Status",
 		"type"     => "select",
-        "dupes"    => TRUE,
+		"dupes"    => TRUE,
 		"options"  => array(
 			array("value"=>"Librarian","label"=>"Librarian"),
 			array("value"=>"Staff","label"=>"Staff"),
@@ -61,12 +61,12 @@ $engine->eTemplate("include","header");
 		<h1>Manage Users</h1>
 	</header>
 
-    <nav id="breadcrumbs">
-        <ul class="breadcrumb">
-            <li><a href="{local var="siteRoot"}">Home</a></li>
-            <li><a href="{local var="siteRoot"}/admin/">Admin</a></li>
-        </ul>
-    </nav>  
+	<nav id="breadcrumbs">
+		<ul class="breadcrumb">
+		<li><a href="{local var="siteRoot"}">Home</a></li>
+		<li><a href="{local var="siteRoot"}/admin/">Admin</a></li>
+		</ul>
+	</nav>
 
 	{local var="results"}
 

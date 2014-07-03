@@ -44,6 +44,9 @@ function showFieldSettings(fullID) {
 		var id       = fullID.split("_")[1];
 		var type     = $("#type_"+id).val();
 		var fieldset = $("#fieldset_"+id);
+		var opts;
+		var tmp;
+		var i;
 
 		// Select the Field Settings tab
 		$("#fieldTab a[href='#fieldSettings']").tab("show");
@@ -109,6 +112,19 @@ function showFieldSettings(fullID) {
 					break;
 
 				case 'text':
+					$("#fieldSettings_container_externalUpdate").show();
+					$("#fieldSettings_container_value").show();
+					$("#fieldSettings_container_placeholder").show();
+
+					$("#fieldSettings_container_range").show();
+					$("#fieldSettings_range_step").parent().hide();
+					$("#fieldSettings_range_min").parent().addClass("span4").removeClass("span3");
+					$("#fieldSettings_range_max").parent().addClass("span4").removeClass("span3");
+
+					$("#fieldSettings_range_format option").remove();
+					$("#fieldSettings_range_format").append('<option value="characters">Characters</option><option value="words">Words</option>');
+					break;
+
 				case 'textarea':
 					$("#fieldSettings_container_value").show();
 					$("#fieldSettings_container_placeholder").show();
@@ -119,7 +135,7 @@ function showFieldSettings(fullID) {
 					$("#fieldSettings_range_max").parent().addClass("span4").removeClass("span3");
 
 					$("#fieldSettings_range_format option").remove();
-					$("#fieldSettings_range_format").append('<option value="characters">Characters</option><option value="words">Words</option>')
+					$("#fieldSettings_range_format").append('<option value="characters">Characters</option><option value="words">Words</option>');
 					break;
 
 				case 'radio':
@@ -141,7 +157,7 @@ function showFieldSettings(fullID) {
 					$("#fieldSettings_range_max").parent().addClass("span3").removeClass("span4");
 
 					$("#fieldSettings_range_format option").remove();
-					$("#fieldSettings_range_format").append('<option value="value">Value</option><option value="digits">Digits</option>')
+					$("#fieldSettings_range_format").append('<option value="value">Value</option><option value="digits">Digits</option>');
 					break;
 
 				case 'wysiwyg':
@@ -156,11 +172,6 @@ function showFieldSettings(fullID) {
 					$("#fieldSettings_container_placeholder").hide();
 					break;
 
-				case 'email':
-				case 'phone':
-				case 'date':
-				case 'time':
-				case 'website':
 				default:
 					$("#fieldSettings_container_value").show();
 					$("#fieldSettings_container_placeholder").show();
@@ -177,7 +188,7 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_style").val($("#style_"+id).val()).keyup();
 
 			var fieldHelp = $("#help_"+id).val();
-			if(fieldHelp != ''){
+			if(fieldHelp !== ''){
 				var n = fieldHelp.indexOf('|');
 				var fieldHelpType  = fieldHelp.slice(0,n);
 				var fieldHelpValue = fieldHelp.slice(n+1);
@@ -206,13 +217,13 @@ function showFieldSettings(fullID) {
 			}
 
 			var choicesOptions_val = $("#choicesOptions_"+id).val();
-			if (choicesOptions_val != undefined) {
-				var opts                         = choicesOptions_val.split("%,%");
+			if (choicesOptions_val !== undefined) {
 				var fieldSettings_choices_manual = $("#fieldSettings_choices_manual");
-				var tmp                          = '';
+				opts                             = choicesOptions_val.split("%,%");
+				tmp                              = '';
 
 				// Update left panel
-				for (var i = 0; i < opts.length; i++) {
+				for (i = 0; i < opts.length; i++) {
 					tmp += addChoice(opts[i],$("#choicesDefault_"+id).val());
 				}
 				fieldSettings_choices_manual.html(tmp).find("input[name=fieldSettings_choices_text]").keyup();
@@ -224,6 +235,9 @@ function showFieldSettings(fullID) {
 
 			$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change(); // Must be after options stuff
 			$("#fieldSettings_choices_null").prop("checked",($("#choicesNull_"+id).val()==='true')).change();
+
+			$("#fieldSettings_externalUpdate_formSelect").val($("#externalUpdateForm_"+id).val()).change();
+			$("#fieldSettings_externalUpdate_fieldSelect").val($("#externalUpdateField_"+id).val()).change();
 
 			fieldSettings_options_required.prop("checked",($("#required_"+id).val()==='true'));
 			fieldSettings_options_duplicates.prop("checked",($("#duplicates_"+id).val()==='true'));
@@ -248,13 +262,13 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_idno_confirm").prop("checked",($("#idnoConfirm_"+id).val()==='true'));
 
 			var allowedExtensions_val = $("#allowedExtensions_"+id).val();
-			if (allowedExtensions_val != undefined) {
-				var opts                                 = allowedExtensions_val.split("%,%");
+			if (allowedExtensions_val !== undefined) {
 				var fieldSettings_file_allowedExtensions = $("#fieldSettings_file_allowedExtensions");
-				var tmp                                  = '';
+				opts                                     = allowedExtensions_val.split("%,%");
+				tmp                                      = '';
 
 				fieldSettings_file_allowedExtensions.html('');
-				for (var i = 0; i < opts.length; i++) {
+				for (i = 0; i < opts.length; i++) {
 					tmp += addAllowedExtension(opts[i]);
 				}
 				fieldSettings_file_allowedExtensions.append(tmp);
@@ -450,7 +464,7 @@ function fieldSettingsBindings() {
 		$fieldSettings_help_html.hide().val('');
 		$fieldSettings_help_url.hide().val('');
 		$helpPreview.hide().tooltip('destroy').popover('destroy');
-		$helpPreviewModal.hide()
+		$helpPreviewModal.hide();
 		switch(val){
 			case '':
 				$helpPreview.hide();
@@ -535,6 +549,9 @@ function fieldSettingsBindings() {
 		.on("click","button[name=default]",function() {
 			var formPreviewWell = formPreview.find(".well");
 			var id              = formPreviewWell.prop("id").split("_")[1];
+			var val;
+			var vals = [];
+			var text;
 
 			switch ($("#type_"+id).val()) {
 				case 'select':
@@ -543,7 +560,7 @@ function fieldSettingsBindings() {
 						$("#choicesDefault_"+id).val('');
 					}
 					else {
-						var val = $(this).siblings(":input").val();
+						val = $(this).siblings(":input").val();
 
 						formPreviewWell.find(".control-group > .controls > :input").val(val);
 						$("#choicesDefault_"+id).val(val);
@@ -557,8 +574,8 @@ function fieldSettingsBindings() {
 						$("#choicesDefault_"+id).val('');
 					}
 					else {
-						var val  = $(this).siblings(":input").val();
-						var text = $(this).text();
+						val  = $(this).siblings(":input").val();
+						text = $(this).text();
 
 						formPreviewWell.find(".controls label").each(function() {
 							if (text == val) {
@@ -571,9 +588,9 @@ function fieldSettingsBindings() {
 					break;
 
 				case 'checkbox':
-					var text = $(this).text();
-					var val  = $(this).siblings(":input").val();
-					var vals = [];
+					text = $(this).text();
+					val  = $(this).siblings(":input").val();
+					vals = [];
 
 					if ($(this).hasClass("active")) {
 						formPreviewWell.find(".controls label").each(function() {
@@ -603,7 +620,7 @@ function fieldSettingsBindings() {
 						$("#choicesDefault_"+id).val('');
 					}
 					else {
-						var val = $(this).siblings(":input").val();
+						val = $(this).siblings(":input").val();
 
 						formPreviewWell.find(".control-group > .controls > :input:last").val(val);
 						$("#choicesDefault_"+id).val(val);
@@ -617,7 +634,7 @@ function fieldSettingsBindings() {
 			$(this).parent().after(addChoice());
 		})
 		.on("click","button[name=remove]",function() {
-			if ($(this).parent().siblings().length == 0) {
+			if ($(this).parent().siblings().length === 0) {
 				$(this).siblings("button[name=add]").click();
 			}
 			$(this).parent().remove();
@@ -626,6 +643,9 @@ function fieldSettingsBindings() {
 			var id              = formPreviewWell.prop("id").split("_")[1];
 			var val             = $(this).val();
 			var vals            = [];
+			var tmp;
+			var controls;
+			var i;
 
 			// Change value in hidden field
 			$("#fieldSettings_choices_manual").find("input[name=fieldSettings_choices_text]").each(function() {
@@ -636,32 +656,32 @@ function fieldSettingsBindings() {
 			switch ($("#type_"+id).val()) {
 				case 'select':
 					var input = formPreviewWell.find(".control-group > .controls > :input");
-					var tmp   = '';
+					tmp   = '';
 
 					// Set options in preview pane
-					for (var i = 0; i < vals.length; i++) {
+					for (i = 0; i < vals.length; i++) {
 						tmp += '<option value="'+vals[i]+'">'+vals[i]+'</option>';
 					}
 					input.html(tmp);
 					break;
 
 				case 'radio':
-					var controls = formPreviewWell.find(".controls");
-					var tmp      = '';
+					controls = formPreviewWell.find(".controls");
+					tmp      = '';
 
 					controls.html('');
-					for (var i = 0; i < vals.length; i++) {
+					for (i = 0; i < vals.length; i++) {
 						tmp += '<label class="radio"><input type="radio" name="'+$("#name_"+id).val()+'">'+vals[i]+'</label>';
 					}
 					controls.append(tmp);
 					break;
 
 				case 'checkbox':
-					var controls = formPreviewWell.find(".controls");
-					var tmp      = '';
+					controls = formPreviewWell.find(".controls");
+					tmp      = '';
 
 					controls.html('');
-					for (var i = 0; i < vals.length; i++) {
+					for (i = 0; i < vals.length; i++) {
 						tmp += '<label class="checkbox"><input type="checkbox" name="'+$("#name_"+id).val()+'">'+vals[i]+'</label>';
 					}
 					controls.append(tmp);
@@ -669,10 +689,10 @@ function fieldSettingsBindings() {
 
 				case 'multiselect':
 					var lastInput = formPreviewWell.find(".control-group > .controls > :input:last");
-					var tmp       = '';
+					tmp       = '';
 
 					lastInput.html('');
-					for (var i = 0; i < vals.length; i++) {
+					for (i = 0; i < vals.length; i++) {
 						tmp += '<option value="'+vals[i]+'">'+vals[i]+'</option>';
 					}
 					lastInput.append(tmp);
@@ -684,6 +704,9 @@ function fieldSettingsBindings() {
 			var id              = formPreviewWell.prop("id").split("_")[1];
 			var val             = $(this).val();
 			var vals            = [];
+			var tmp;
+			var controls;
+			var i;
 
 			// Change value in hidden field
 			$("#fieldSettings_choices_manual").find("input[name=fieldSettings_choices_text]").each(function() {
@@ -695,33 +718,33 @@ function fieldSettingsBindings() {
 				switch ($("#type_"+id).val()) {
 					case 'select':
 						var input = formPreviewWell.find(".control-group > .controls > :input");
-						var tmp   = '';
+						tmp   = '';
 
 						// Set options in preview pane
 						if($('#fieldSettings_choices_null').prop('checked')){
 							tmp += '<option value="">Make a selection</option>';
 						}
-						for (var i = 0; i < vals.length; i++) {
+						for (i = 0; i < vals.length; i++) {
 							tmp += '<option value="'+vals[i]+'">'+vals[i]+'</option>';
 						}
 						input.html(tmp);
 						break;
 
 					case 'radio':
-						var controls = formPreviewWell.find(".controls");
-						var tmp      = '<div class="checkboxList">';
+						controls = formPreviewWell.find(".controls");
+						tmp      = '<div class="checkboxList">';
 
-						for (var i = 0; i < vals.length; i++) {
+						for (i = 0; i < vals.length; i++) {
 							tmp += '<label class="radio"><input type="radio" name="'+$("#name_"+id).val()+'">'+vals[i]+'</label>';
 						}
 						controls.html(tmp+'</div>');
 						break;
 
 					case 'checkbox':
-						var controls = formPreviewWell.find(".controls");
-						var tmp      = '<div class="checkboxList">';
+						controls = formPreviewWell.find(".controls");
+						tmp      = '<div class="checkboxList">';
 
-						for (var i = 0; i < vals.length; i++) {
+						for (i = 0; i < vals.length; i++) {
 							tmp += '<label class="checkbox"><input type="checkbox" name="'+$("#name_"+id).val()+'">'+vals[i]+'</label>';
 						}
 						controls.html(tmp+'</div>');
@@ -729,10 +752,10 @@ function fieldSettingsBindings() {
 
 					case 'multiselect':
 						var lastInput = formPreviewWell.find(".control-group > .controls > :input:last");
-						var tmp       = '';
+						tmp       = '';
 
 						lastInput.html('');
-						for (var i = 0; i < vals.length; i++) {
+						for (i = 0; i < vals.length; i++) {
 							tmp += '<option value="'+vals[i]+'">'+vals[i]+'</option>';
 						}
 						lastInput.append(tmp);
@@ -747,7 +770,7 @@ function fieldSettingsBindings() {
 			var id              = formPreviewWell.prop("id").split("_")[1];
 			var val             = $(this).val();
 
-			if (choicesFields[val] == undefined) {
+			if (choicesFields[val] === undefined) {
 				var options;
 				choicesFields[null] = options;
 
@@ -782,6 +805,41 @@ function fieldSettingsBindings() {
 		var id              = formPreviewWell.prop("id").split("_")[1];
 
 		$("#choicesFieldDefault_"+id).val($(this).val());
+	});
+
+	$("#fieldSettings_externalUpdate_formSelect").change(function() {
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+		var val             = $(this).val();
+
+		if (choicesFields[val] === undefined) {
+			choicesFields[val] = '';
+
+			$.ajax({
+				url: "../includes/getFormFields.php",
+				async: false
+			}).always(function(data) {
+				var obj = JSON.parse(data);
+
+				$.each(obj, function(I, field) {
+					var options = '';
+					$.each(field, function(i, f) {
+						options += '<option value="'+f.name+'">'+f.label+'</option>';
+					});
+					choicesFields[I] = options;
+				});
+			});
+		}
+
+		$("#externalUpdateForm_"+id).val(val).change();
+		$("#fieldSettings_externalUpdate_fieldSelect").html(choicesFields[val]).change();
+	});
+
+	$("#fieldSettings_externalUpdate_fieldSelect").change(function() {
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+
+		$("#externalUpdateField_"+id).val($(this).val());
 	});
 
 	$("#fieldSettings_options_required").change(function() {
@@ -953,7 +1011,7 @@ function fieldSettingsBindings() {
 
 		$("#idnoFormat_"+id).val($(this).val());
 
-		if ($('#submitForm').find('input[name=id]').val() != '') {
+		if ($('#submitForm').find('input[name=id]').val() !== '') {
 			$("#fieldSettings_container_idno_confirm").removeClass('hidden');
 		}
 	});
@@ -964,7 +1022,7 @@ function fieldSettingsBindings() {
 
 		$("#startIncrement_"+id).val($(this).val());
 
-		if ($('#submitForm').find('input[name=id]').val() != '') {
+		if ($('#submitForm').find('input[name=id]').val() !== '') {
 			$("#fieldSettings_container_idno_confirm").removeClass('hidden');
 		}
 	});
@@ -983,7 +1041,7 @@ function fieldSettingsBindings() {
 			$parent.next().find('input').focus();
 		})
 		.on("click","button[name=remove]",function() {
-			if ($(this).parent().siblings().length == 0) {
+			if ($(this).parent().siblings().length === 0) {
 				$(this).siblings("button[name=add]").click();
 				$('#allowedExtensionsAlert').show();
 			}
@@ -1005,7 +1063,7 @@ function fieldSettingsBindings() {
 			var val             = $(this).val();
 			var vals            = [];
 
-			if(val != '') $('#allowedExtensionsAlert').hide();
+			if(val !== '') $('#allowedExtensionsAlert').hide();
 			$("#fieldSettings_file_allowedExtensions").find("input[name=fieldSettings_allowedExtension_text]").each(function() {
 				vals.push($(this).val());
 			});
@@ -1238,7 +1296,7 @@ function formSettingsBindings() {
 		if ($(this).is(":checked")) {
 			$("#formSettings_linkTitle_container").show();
 
-			if (idnoType.length == 0) {
+			if (idnoType.length === 0) {
 				$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
 				fieldAdd.find("li:contains('ID Number')").hide();
 				fieldAdd.find("li:contains('Paragraph Text')").hide();
@@ -1282,7 +1340,7 @@ function formSettingsBindings() {
 			fieldAdd.find("li:contains('WYSIWYG')").show();
 			fieldAdd.find("li:contains('Field Set')").parent().show().prev().show();
 
-			if (idnoType.length == 0) {
+			if (idnoType.length === 0) {
 				$("#formSettings_formProduction").prop({
 					checked:  false,
 					disabled: true,
@@ -1372,7 +1430,7 @@ function addNewField(item) {
 
 	if ($("#formSettings_formMetadata").not(":checked")) {
 		// Enable/disable Production Form setting based on whether an idno field exists
-		if ($("#formPreview").find("input[name^=type_][value=idno]").length == 0) {
+		if ($("#formPreview").find("input[name^=type_][value=idno]").length === 0) {
 			$("#formSettings_formProduction").prop({
 				checked:  false,
 				disabled: true,
@@ -1485,29 +1543,29 @@ function newFieldValues(id,type,vals) {
 
 	var output;
 
-	if (vals == undefined) {
+	if (vals === undefined) {
 		vals = {};
 
 		switch (type) {
 			case 'Number':
 			case 'number':
-				vals['validation'] = "integer";
+				vals.validation = "integer";
 				break;
 			case 'Email':
 			case 'email':
-				vals['validation'] = "emailAddr";
+				valsvalidation = "emailAddr";
 				break;
 			case 'Phone':
 			case 'tel':
-				vals['validation'] = "phoneNumber";
+				valsvalidation = "phoneNumber";
 				break;
 			case 'Date':
 			case 'date':
-				vals['validation'] = "date";
+				valsvalidation = "date";
 				break;
 			case 'Website':
 			case 'url':
-				vals['validation'] = "url";
+				valsvalidation = "url";
 				break;
 		}
 	}
@@ -1515,167 +1573,175 @@ function newFieldValues(id,type,vals) {
 	switch(type) {
 		case 'ID Number':
 		case 'idno':
-			type = vals['type'] = 'idno';
+			type = vals.type = 'idno';
 			break;
 
 		case 'Single Line Text':
 		case 'text':
-			type = vals['type'] = 'text';
+			type = vals.type = 'text';
 			break;
 
 		case 'Paragraph Text':
 		case 'textarea':
-			type = vals['type'] = 'textarea';
+			type = vals.type = 'textarea';
 			break;
 
 		case 'Radio':
 		case 'radio':
-			type = vals['type'] = 'radio';
+			type = vals.type = 'radio';
 			break;
 
 		case 'Checkboxes':
 		case 'checkbox':
-			type = vals['type'] = 'checkbox';
+			type = vals.type = 'checkbox';
 			break;
 
 		case 'Dropdown':
 		case 'select':
-			type = vals['type'] = 'select';
+			type = vals.type = 'select';
 			break;
 
 		case 'Number':
 		case 'number':
-			type = vals['type'] = 'number';
+			type = vals.type = 'number';
 			break;
 
 		case 'Email':
 		case 'email':
-			type = vals['type'] = 'email';
+			type = vals.type = 'email';
 			break;
 
 		case 'Phone':
 		case 'tel':
-			type = vals['type'] = 'tel';
+			type = vals.type = 'tel';
 			break;
 
 		case 'Date':
 		case 'date':
-			type = vals['type'] = 'date';
+			type = vals.type = 'date';
 			break;
 
 		case 'Time':
 		case 'time':
-			type = vals['type'] = 'time';
+			type = vals.type = 'time';
 			break;
 
 		case 'Website':
 		case 'url':
-			type = vals['type'] = 'url';
+			type = vals.type = 'url';
 			break;
 
 		case 'Multi-Select':
 		case 'multiselect':
-			type = vals['type'] = 'multiselect';
+			type = vals.type = 'multiselect';
 			break;
 
 		case 'WYSIWYG':
 		case 'wysiwyg':
-			type = vals['type'] = 'wysiwyg';
+			type = vals.type = 'wysiwyg';
 			break;
 
 		case 'File Upload':
 		case 'file':
-			type = vals['type'] = 'file';
+			type = vals.type = 'file';
 			break;
 
 		case 'Field Set':
 		case 'fieldset':
-			type = vals['type'] = 'fieldset';
+			type = vals.type = 'fieldset';
 			break;
 
 		default:
 			break;
 	}
 
-	output  = '<input type="hidden" id="position_'+id+'" name="position_'+id+'" value="'+((vals['position']!=undefined)?vals['position']:'')+'">';
-	output += '<input type="hidden" id="type_'+id+'" name="type_'+id+'" value="'+((vals['type']!=undefined)?vals['type']:type)+'">';
-	output += '<input type="hidden" id="name_'+id+'" name="name_'+id+'" value="'+((vals['name']!=undefined)?vals['name']:'untitled'+(id+1))+'">';
-	output += '<input type="hidden" id="label_'+id+'" name="label_'+id+'" value="'+((vals['label']!=undefined)?vals['label']:'Untitled')+'">';
-	output += '<input type="hidden" id="value_'+id+'" name="value_'+id+'" value="'+((vals['value']!=undefined)?vals['value']:'')+'">';
-	output += '<input type="hidden" id="placeholder_'+id+'" name="placeholder_'+id+'" value="'+((vals['placeholder']!=undefined)?vals['placeholder']:'')+'">';
-	output += '<input type="hidden" id="id_'+id+'" name="id_'+id+'" value="'+((vals['id']!=undefined)?vals['id']:'')+'">';
-	output += '<input type="hidden" id="class_'+id+'" name="class_'+id+'" value="'+((vals['class']!=undefined)?vals['class']:'')+'">';
-	output += '<input type="hidden" id="style_'+id+'" name="style_'+id+'" value="'+((vals['style']!=undefined)?vals['style']:'')+'">';
-	output += '<input type="hidden" id="help_'+id+'" name="help_'+id+'" value="'+((vals['help']!=undefined)?vals['help']:'')+'">';
-	output += '<input type="hidden" id="required_'+id+'" name="required_'+id+'" value="'+((vals['required']!=undefined)?vals['required']:'false')+'">';
-	output += '<input type="hidden" id="duplicates_'+id+'" name="duplicates_'+id+'" value="'+((vals['duplicates']!=undefined)?vals['duplicates']:'false')+'">';
-	output += '<input type="hidden" id="readonly_'+id+'" name="readonly_'+id+'" value="'+((vals['readonly']!=undefined)?vals['readonly']:'false')+'">';
-	output += '<input type="hidden" id="disabled_'+id+'" name="disabled_'+id+'" value="'+((vals['disabled']!=undefined)?vals['disabled']:'false')+'">';
-	output += '<input type="hidden" id="disabledInsert_'+id+'" name="disabledInsert_'+id+'" value="'+((vals['disabledInsert']!=undefined)?vals['disabledInsert']:'false')+'">';
-	output += '<input type="hidden" id="disabledUpdate_'+id+'" name="disabledUpdate_'+id+'" value="'+((vals['disabledUpdate']!=undefined)?vals['disabledUpdate']:'false')+'">';
-	output += '<input type="hidden" id="publicRelease_'+id+'" name="publicRelease_'+id+'" value="'+((vals['publicRelease']!=undefined)?vals['publicRelease']:'true')+'">';
-	output += '<input type="hidden" id="sortable_'+id+'" name="sortable_'+id+'" value="'+((vals['sortable']!=undefined)?vals['sortable']:'')+'">';
-	output += '<input type="hidden" id="searchable_'+id+'" name="searchable_'+id+'" value="'+((vals['searchable']!=undefined)?vals['searchable']:'')+'">';
-	output += '<input type="hidden" id="displayTable_'+id+'" name="displayTable_'+id+'" value="'+((vals['displayTable']!=undefined)?vals['displayTable']:'')+'">';
-	output += '<input type="hidden" id="hidden_'+id+'" name="hidden_'+id+'" value="'+((vals['hidden']!=undefined)?vals['hidden']:'')+'">';
-	output += '<input type="hidden" id="validation_'+id+'" name="validation_'+id+'" value="'+((vals['validation']!=undefined)?vals['validation']:'')+'">';
-	output += '<input type="hidden" id="validationRegex_'+id+'" name="validationRegex_'+id+'" value="'+((vals['validationRegex']!=undefined)?vals['validationRegex']:'')+'">';
-	output += '<input type="hidden" id="access_'+id+'" name="access_'+id+'" value="'+((vals['access']!=undefined)?vals['access']:'')+'">';
-	output += '<input type="hidden" id="fieldset_'+id+'" name="fieldset_'+id+'" value="'+((vals['fieldset']!=undefined)?vals['fieldset']:'')+'">';
+	output  = '<input type="hidden" id="position_'+id+'" name="position_'+id+'" value="'+((vals.position !== undefined)?vals.position:'')+'">';
+	output += '<input type="hidden" id="type_'+id+'" name="type_'+id+'" value="'+((vals.type !== undefined)?vals.type:type)+'">';
+	output += '<input type="hidden" id="name_'+id+'" name="name_'+id+'" value="'+((vals.name !== undefined)?vals.name:'untitled'+(id+1))+'">';
+	output += '<input type="hidden" id="label_'+id+'" name="label_'+id+'" value="'+((vals.label !== undefined)?vals.label:'Untitled')+'">';
+	output += '<input type="hidden" id="value_'+id+'" name="value_'+id+'" value="'+((vals.value !== undefined)?vals.value:'')+'">';
+	output += '<input type="hidden" id="placeholder_'+id+'" name="placeholder_'+id+'" value="'+((vals.placeholder !== undefined)?vals.placeholder:'')+'">';
+	output += '<input type="hidden" id="id_'+id+'" name="id_'+id+'" value="'+((vals.id !== undefined)?vals.id:'')+'">';
+	output += '<input type="hidden" id="class_'+id+'" name="class_'+id+'" value="'+((vals.class !== undefined)?vals.class:'')+'">';
+	output += '<input type="hidden" id="style_'+id+'" name="style_'+id+'" value="'+((vals.style !== undefined)?vals.style:'')+'">';
+	output += '<input type="hidden" id="help_'+id+'" name="help_'+id+'" value="'+((vals.help !== undefined)?vals.help:'')+'">';
+	output += '<input type="hidden" id="required_'+id+'" name="required_'+id+'" value="'+((vals.required !== undefined)?vals.required:'false')+'">';
+	output += '<input type="hidden" id="duplicates_'+id+'" name="duplicates_'+id+'" value="'+((vals.duplicates !== undefined)?vals.duplicates:'false')+'">';
+	output += '<input type="hidden" id="readonly_'+id+'" name="readonly_'+id+'" value="'+((vals.readonly !== undefined)?vals.readonly:'false')+'">';
+	output += '<input type="hidden" id="disabled_'+id+'" name="disabled_'+id+'" value="'+((vals.disabled !== undefined)?vals.disabled:'false')+'">';
+	output += '<input type="hidden" id="disabledInsert_'+id+'" name="disabledInsert_'+id+'" value="'+((vals.disabledInsert !== undefined)?vals.disabledInsert:'false')+'">';
+	output += '<input type="hidden" id="disabledUpdate_'+id+'" name="disabledUpdate_'+id+'" value="'+((vals.disabledUpdate !== undefined)?vals.disabledUpdate:'false')+'">';
+	output += '<input type="hidden" id="publicRelease_'+id+'" name="publicRelease_'+id+'" value="'+((vals.publicRelease !== undefined)?vals.publicRelease:'true')+'">';
+	output += '<input type="hidden" id="sortable_'+id+'" name="sortable_'+id+'" value="'+((vals.sortable !== undefined)?vals.sortable:'')+'">';
+	output += '<input type="hidden" id="searchable_'+id+'" name="searchable_'+id+'" value="'+((vals.searchable !== undefined)?vals.searchable:'')+'">';
+	output += '<input type="hidden" id="displayTable_'+id+'" name="displayTable_'+id+'" value="'+((vals.displayTable !== undefined)?vals.displayTable:'')+'">';
+	output += '<input type="hidden" id="hidden_'+id+'" name="hidden_'+id+'" value="'+((vals.hidden !== undefined)?vals.hidden:'')+'">';
+	output += '<input type="hidden" id="validation_'+id+'" name="validation_'+id+'" value="'+((vals.validation !== undefined)?vals.validation:'')+'">';
+	output += '<input type="hidden" id="validationRegex_'+id+'" name="validationRegex_'+id+'" value="'+((vals.validationRegex !== undefined)?vals.validationRegex:'')+'">';
+	output += '<input type="hidden" id="access_'+id+'" name="access_'+id+'" value="'+((vals.access !== undefined)?vals.access:'')+'">';
+	output += '<input type="hidden" id="fieldset_'+id+'" name="fieldset_'+id+'" value="'+((vals.fieldset !== undefined)?vals.fieldset:'')+'">';
 
 	switch(type) {
 		case 'idno':
-			output += '<input type="hidden" id="managedBy_'+id+'" name="managedBy_'+id+'" value="'+((vals['managedBy']!=undefined)?vals['managedBy']:'')+'">';
-			output += '<input type="hidden" id="idnoFormat_'+id+'" name="idnoFormat_'+id+'" value="'+((vals['idnoFormat']!=undefined)?vals['idnoFormat']:'')+'">';
-			output += '<input type="hidden" id="startIncrement_'+id+'" name="startIncrement_'+id+'" value="'+((vals['startIncrement']!=undefined)?vals['startIncrement']:'1')+'">';
+			output += '<input type="hidden" id="managedBy_'+id+'" name="managedBy_'+id+'" value="'+((vals.managedBy !== undefined)?vals.managedBy:'')+'">';
+			output += '<input type="hidden" id="idnoFormat_'+id+'" name="idnoFormat_'+id+'" value="'+((vals.idnoFormat !== undefined)?vals.idnoFormat:'')+'">';
+			output += '<input type="hidden" id="startIncrement_'+id+'" name="startIncrement_'+id+'" value="'+((vals.startIncrement !== undefined)?vals.startIncrement:'1')+'">';
 			output += '<input type="hidden" id="idnoConfirm_'+id+'" name="idnoConfirm_'+id+'" value="false">';
 			break;
 
 		case 'text':
+			output += '<input type="hidden" id="externalUpdateForm_'+id+'" name="externalUpdateForm_'+id+'" value="'+((vals.externalUpdateForm !== undefined)?vals.externalUpdateForm:'')+'">';
+			output += '<input type="hidden" id="externalUpdateField_'+id+'" name="externalUpdateField_'+id+'" value="'+((vals.externalUpdateField !== undefined)?vals.externalUpdateField:'')+'">';
+			output += '<input type="hidden" id="min_'+id+'" name="min_'+id+'" value="'+((vals.min !== undefined)?vals.min:'')+'">';
+			output += '<input type="hidden" id="max_'+id+'" name="max_'+id+'" value="'+((vals.max !== undefined)?vals.max:'')+'">';
+			output += '<input type="hidden" id="step_'+id+'" name="step_'+id+'" value="'+((vals.step !== undefined)?vals.step:'')+'">';
+			output += '<input type="hidden" id="format_'+id+'" name="format_'+id+'" value="'+((vals.format !== undefined)?vals.format:'')+'">';
+			break;
+
 		case 'textarea':
 		case 'number':
-			output += '<input type="hidden" id="min_'+id+'" name="min_'+id+'" value="'+((vals['min']!=undefined)?vals['min']:'')+'">';
-			output += '<input type="hidden" id="max_'+id+'" name="max_'+id+'" value="'+((vals['max']!=undefined)?vals['max']:'')+'">';
-			output += '<input type="hidden" id="step_'+id+'" name="step_'+id+'" value="'+((vals['step']!=undefined)?vals['step']:'')+'">';
-			output += '<input type="hidden" id="format_'+id+'" name="format_'+id+'" value="'+((vals['format']!=undefined)?vals['format']:'')+'">';
+			output += '<input type="hidden" id="min_'+id+'" name="min_'+id+'" value="'+((vals.min !== undefined)?vals.min:'')+'">';
+			output += '<input type="hidden" id="max_'+id+'" name="max_'+id+'" value="'+((vals.max !== undefined)?vals.max:'')+'">';
+			output += '<input type="hidden" id="step_'+id+'" name="step_'+id+'" value="'+((vals.step !== undefined)?vals.step:'')+'">';
+			output += '<input type="hidden" id="format_'+id+'" name="format_'+id+'" value="'+((vals.format !== undefined)?vals.format:'')+'">';
 			break;
 
 		case 'radio':
 		case 'checkbox':
 		case 'select':
 		case 'multiselect':
-			output += '<input type="hidden" id="choicesType_'+id+'" name="choicesType_'+id+'" value="'+((vals['choicesType']!=undefined)?vals['choicesType']:'')+'">';
-			output += '<input type="hidden" id="choicesNull_'+id+'" name="choicesNull_'+id+'" value="'+((vals['choicesNull']!=undefined)?vals['choicesNull']:'')+'">';
-			output += '<input type="hidden" id="choicesDefault_'+id+'" name="choicesDefault_'+id+'" value="'+((vals['choicesDefault']!=undefined)?vals['choicesDefault']:'')+'">';
-			output += '<input type="hidden" id="choicesOptions_'+id+'" name="choicesOptions_'+id+'" value="'+((vals['choicesOptions']!=undefined)?vals['choicesOptions']:'First Choice%,%Second Choice')+'">';
-			output += '<input type="hidden" id="choicesForm_'+id+'" name="choicesForm_'+id+'" value="'+((vals['choicesForm']!=undefined)?vals['choicesForm']:'')+'">';
-			output += '<input type="hidden" id="choicesField_'+id+'" name="choicesField_'+id+'" value="'+((vals['choicesField']!=undefined)?vals['choicesField']:'')+'">';
-			output += '<input type="hidden" id="choicesFieldDefault_'+id+'" name="choicesFieldDefault_'+id+'" value="'+((vals['choicesFieldDefault']!=undefined)?vals['choicesFieldDefault']:'')+'">';
+			output += '<input type="hidden" id="choicesType_'+id+'" name="choicesType_'+id+'" value="'+((vals.choicesType !== undefined)?vals.choicesType:'')+'">';
+			output += '<input type="hidden" id="choicesNull_'+id+'" name="choicesNull_'+id+'" value="'+((vals.choicesNull !== undefined)?vals.choicesNull:'')+'">';
+			output += '<input type="hidden" id="choicesDefault_'+id+'" name="choicesDefault_'+id+'" value="'+((vals.choicesDefault !== undefined)?vals.choicesDefault:'')+'">';
+			output += '<input type="hidden" id="choicesOptions_'+id+'" name="choicesOptions_'+id+'" value="'+((vals.choicesOptions !== undefined)?vals.choicesOptions:'First Choice%,%Second Choice')+'">';
+			output += '<input type="hidden" id="choicesForm_'+id+'" name="choicesForm_'+id+'" value="'+((vals.choicesForm !== undefined)?vals.choicesForm:'')+'">';
+			output += '<input type="hidden" id="choicesField_'+id+'" name="choicesField_'+id+'" value="'+((vals.choicesField !== undefined)?vals.choicesField:'')+'">';
+			output += '<input type="hidden" id="choicesFieldDefault_'+id+'" name="choicesFieldDefault_'+id+'" value="'+((vals.choicesFieldDefault !== undefined)?vals.choicesFieldDefault:'')+'">';
 			break;
 
 		case 'file':
-			output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'" value="'+((vals['allowedExtensions']!=undefined)?vals['allowedExtensions']:'tif%,%tiff')+'">';
-			output += '<input type="hidden" id="bgProcessing_'+id+'" name="bgProcessing_'+id+'" value="'+((vals['bgProcessing']!=undefined)?vals['bgProcessing']:'')+'">';
-			output += '<input type="hidden" id="multipleFiles_'+id+'" name="multipleFiles_'+id+'" value="'+((vals['multipleFiles']!=undefined)?vals['multipleFiles']:'')+'">';
-			output += '<input type="hidden" id="combine_'+id+'" name="combine_'+id+'" value="'+((vals['combine']!=undefined)?vals['combine']:'')+'">';
-			output += '<input type="hidden" id="ocr_'+id+'" name="ocr_'+id+'" value="'+((vals['ocr']!=undefined)?vals['ocr']:'')+'">';
-			output += '<input type="hidden" id="convert_'+id+'" name="convert_'+id+'" value="'+((vals['convert']!=undefined)?vals['convert']:'')+'">';
-			output += '<input type="hidden" id="convertHeight_'+id+'" name="convertHeight_'+id+'" value="'+((vals['convertHeight']!=undefined)?vals['convertHeight']:'')+'">';
-			output += '<input type="hidden" id="convertWidth_'+id+'" name="convertWidth_'+id+'" value="'+((vals['convertWidth']!=undefined)?vals['convertWidth']:'')+'">';
-			output += '<input type="hidden" id="convertResolution_'+id+'" name="convertResolution_'+id+'" value="'+((vals['convertResolution']!=undefined)?vals['convertResolution']:'192')+'">';
-			output += '<input type="hidden" id="convertFormat_'+id+'" name="convertFormat_'+id+'" value="'+((vals['convertFormat']!=undefined)?vals['convertFormat']:'JPG')+'">';
-			output += '<input type="hidden" id="watermark_'+id+'" name="watermark_'+id+'" value="'+((vals['watermark']!=undefined)?vals['watermark']:'')+'">';
-			output += '<input type="hidden" id="watermarkImage_'+id+'" name="watermarkImage_'+id+'" value="'+((vals['watermarkImage']!=undefined)?vals['watermarkImage']:'')+'">';
-			output += '<input type="hidden" id="watermarkLocation_'+id+'" name="watermarkLocation_'+id+'" value="'+((vals['watermarkLocation']!=undefined)?vals['watermarkLocation']:'')+'">';
-			output += '<input type="hidden" id="border_'+id+'" name="border_'+id+'" value="'+((vals['border']!=undefined)?vals['border']:'')+'">';
-			output += '<input type="hidden" id="borderHeight_'+id+'" name="borderHeight_'+id+'" value="'+((vals['borderHeight']!=undefined)?vals['borderHeight']:'')+'">';
-			output += '<input type="hidden" id="borderWidth_'+id+'" name="borderWidth_'+id+'" value="'+((vals['borderWidth']!=undefined)?vals['borderWidth']:'')+'">';
-			output += '<input type="hidden" id="borderColor_'+id+'" name="borderColor_'+id+'" value="'+((vals['borderColor']!=undefined)?vals['borderColor']:'')+'">';
-			output += '<input type="hidden" id="thumbnail_'+id+'" name="thumbnail_'+id+'" value="'+((vals['thumbnail']!=undefined)?vals['thumbnail']:'')+'">';
-			output += '<input type="hidden" id="thumbnailHeight_'+id+'" name="thumbnailHeight_'+id+'" value="'+((vals['thumbnailHeight']!=undefined)?vals['thumbnailHeight']:'150')+'">';
-			output += '<input type="hidden" id="thumbnailWidth_'+id+'" name="thumbnailWidth_'+id+'" value="'+((vals['thumbnailWidth']!=undefined)?vals['thumbnailWidth']:'150')+'">';
-			output += '<input type="hidden" id="thumbnailFormat_'+id+'" name="thumbnailFormat_'+id+'" value="'+((vals['thumbnailFormat']!=undefined)?vals['thumbnailFormat']:'JPG')+'">';
-			output += '<input type="hidden" id="mp3_'+id+'" name="mp3_'+id+'" value="'+((vals['mp3']!=undefined)?vals['mp3']:'')+'">';
+			output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'" value="'+((vals.allowedExtensions !== undefined)?vals.allowedExtensions:'tif%,%tiff')+'">';
+			output += '<input type="hidden" id="bgProcessing_'+id+'" name="bgProcessing_'+id+'" value="'+((vals.bgProcessing !== undefined)?vals.bgProcessing:'')+'">';
+			output += '<input type="hidden" id="multipleFiles_'+id+'" name="multipleFiles_'+id+'" value="'+((vals.multipleFiles !== undefined)?vals.multipleFiles:'')+'">';
+			output += '<input type="hidden" id="combine_'+id+'" name="combine_'+id+'" value="'+((vals.combine !== undefined)?vals.combine:'')+'">';
+			output += '<input type="hidden" id="ocr_'+id+'" name="ocr_'+id+'" value="'+((vals.ocr !== undefined)?vals.ocr:'')+'">';
+			output += '<input type="hidden" id="convert_'+id+'" name="convert_'+id+'" value="'+((vals.convert !== undefined)?vals.convert:'')+'">';
+			output += '<input type="hidden" id="convertHeight_'+id+'" name="convertHeight_'+id+'" value="'+((vals.convertHeight !== undefined)?vals.convertHeight:'')+'">';
+			output += '<input type="hidden" id="convertWidth_'+id+'" name="convertWidth_'+id+'" value="'+((vals.convertWidth !== undefined)?vals.convertWidth:'')+'">';
+			output += '<input type="hidden" id="convertResolution_'+id+'" name="convertResolution_'+id+'" value="'+((vals.convertResolution !== undefined)?vals.convertResolution:'192')+'">';
+			output += '<input type="hidden" id="convertFormat_'+id+'" name="convertFormat_'+id+'" value="'+((vals.convertFormat !== undefined)?vals.convertFormat:'JPG')+'">';
+			output += '<input type="hidden" id="watermark_'+id+'" name="watermark_'+id+'" value="'+((vals.watermark !== undefined)?vals.watermark:'')+'">';
+			output += '<input type="hidden" id="watermarkImage_'+id+'" name="watermarkImage_'+id+'" value="'+((vals.watermarkImage !== undefined)?vals.watermarkImage:'')+'">';
+			output += '<input type="hidden" id="watermarkLocation_'+id+'" name="watermarkLocation_'+id+'" value="'+((vals.watermarkLocation !== undefined)?vals.watermarkLocation:'')+'">';
+			output += '<input type="hidden" id="border_'+id+'" name="border_'+id+'" value="'+((vals.border !== undefined)?vals.border:'')+'">';
+			output += '<input type="hidden" id="borderHeight_'+id+'" name="borderHeight_'+id+'" value="'+((vals.borderHeight !== undefined)?vals.borderHeight:'')+'">';
+			output += '<input type="hidden" id="borderWidth_'+id+'" name="borderWidth_'+id+'" value="'+((vals.borderWidth !== undefined)?vals.borderWidth:'')+'">';
+			output += '<input type="hidden" id="borderColor_'+id+'" name="borderColor_'+id+'" value="'+((vals.borderColor !== undefined)?vals.borderColor:'')+'">';
+			output += '<input type="hidden" id="thumbnail_'+id+'" name="thumbnail_'+id+'" value="'+((vals.thumbnail !== undefined)?vals.thumbnail:'')+'">';
+			output += '<input type="hidden" id="thumbnailHeight_'+id+'" name="thumbnailHeight_'+id+'" value="'+((vals.thumbnailHeight !== undefined)?vals.thumbnailHeight:'150')+'">';
+			output += '<input type="hidden" id="thumbnailWidth_'+id+'" name="thumbnailWidth_'+id+'" value="'+((vals.thumbnailWidth !== undefined)?vals.thumbnailWidth:'150')+'">';
+			output += '<input type="hidden" id="thumbnailFormat_'+id+'" name="thumbnailFormat_'+id+'" value="'+((vals.thumbnailFormat !== undefined)?vals.thumbnailFormat:'JPG')+'">';
+			output += '<input type="hidden" id="mp3_'+id+'" name="mp3_'+id+'" value="'+((vals.mp3 !== undefined)?vals.mp3:'')+'">';
 			break;
 
 		default:
@@ -1686,7 +1752,7 @@ function newFieldValues(id,type,vals) {
 }
 
 function addChoice(val,def) {
-	if (val == undefined) {
+	if (val === undefined) {
 		return '<div class="row-fluid input-prepend input-append">'+
 					'<button name="default" class="btn" type="button" data-toggle="buttons-radio" title="Set this choice as the default."><i class="icon-ok"></i></button>'+
 					'<input name="fieldSettings_choices_text" type="text">'+
@@ -1694,7 +1760,7 @@ function addChoice(val,def) {
 					'<button name="remove" class="btn" type="button" title="Remove this choice."><i class="icon-remove"></i></button>'+
 				'</div>';
 	}
-	else if (def == undefined) {
+	else if (def === undefined) {
 		return '<div class="row-fluid input-prepend input-append">'+
 					'<button name="default" class="btn" type="button" data-toggle="buttons-radio" title="Set this choice as the default."><i class="icon-ok"></i></button>'+
 					'<input name="fieldSettings_choices_text" type="text" value="'+val+'">'+
@@ -1713,7 +1779,7 @@ function addChoice(val,def) {
 
 function addAllowedExtension(val) {
 
-	if (val == undefined) {
+	if (val === undefined) {
 		val = '';
 	}
 
@@ -1880,12 +1946,12 @@ function addNew(item) {
 
 	// If data-type attribute exists, use that for type
 	if ($(item).data("type")) {
-		vals['type']   = type = $(item).data("type");
-		vals['label']  = $("a", item).text();
+		vals.type   = type = $(item).data("type");
+		vals.label  = $("a", item).text();
 	}
 
 	if ($(item).data("formid")) {
-		vals['formID'] = $(item).data("formid");
+		vals.formID = $(item).data("formid");
 	}
 
 	// Assign an id to new li
@@ -1925,45 +1991,45 @@ function newGroupingPreview(type) {
 function newGroupingValues(id,type,vals) {
 	var output;
 
-	if (vals == undefined) {
+	if (vals === undefined) {
 		vals = {};
 	}
 
 	switch(type) {
 		case 'New Grouping':
 		case 'grouping':
-			type = vals['type'] = 'grouping';
+			type = vals.type = 'grouping';
 			break;
 
 		case 'Log Out':
 		case 'logout':
-			type = vals['type'] = 'logout';
+			type = vals.type = 'logout';
 			break;
 
 		case 'Export Link':
 		case 'export':
-			type = vals['type'] = 'export';
+			type = vals.type = 'export';
 			break;
 
 		case 'Link':
 		case 'link':
-			type = vals['type'] = 'link';
+			type = vals.type = 'link';
 			break;
 
 		default:
 			break;
 	}
 
-	output  = '<input type="hidden" id="nav_position_'+id+'" name="nav_position_'+id+'" value="'+((vals['position']!=undefined)?vals['position']:'')+'">';
-	output += '<input type="hidden" id="nav_type_'+id+'" name="nav_type_'+id+'" value="'+((vals['type']!=undefined)?vals['type']:type)+'">';
-	output += '<input type="hidden" id="nav_label_'+id+'" name="nav_label_'+id+'" value="'+((vals['label']!=undefined)?vals['label']:'Untitled')+'">';
-	output += '<input type="hidden" id="nav_url_'+id+'" name="nav_url_'+id+'" value="'+((vals['url']!=undefined)?vals['url']:'')+'">';
-	output += '<input type="hidden" id="nav_grouping_'+id+'" name="nav_grouping_'+id+'" value="'+((vals['grouping']!=undefined)?vals['grouping']:'')+'">';
+	output  = '<input type="hidden" id="nav_position_'+id+'" name="nav_position_'+id+'" value="'+((vals.position !== undefined)?vals.position:'')+'">';
+	output += '<input type="hidden" id="nav_type_'+id+'" name="nav_type_'+id+'" value="'+((vals.type !== undefined)?vals.type:type)+'">';
+	output += '<input type="hidden" id="nav_label_'+id+'" name="nav_label_'+id+'" value="'+((vals.label !== undefined)?vals.label:'Untitled')+'">';
+	output += '<input type="hidden" id="nav_url_'+id+'" name="nav_url_'+id+'" value="'+((vals.url !== undefined)?vals.url:'')+'">';
+	output += '<input type="hidden" id="nav_grouping_'+id+'" name="nav_grouping_'+id+'" value="'+((vals.grouping !== undefined)?vals.grouping:'')+'">';
 
 	switch(type) {
 		case 'objectForm':
 		case 'metadataForm':
-			output += '<input type="hidden" id="nav_formID_'+id+'" name="nav_formID_'+id+'" value="'+((vals['formID']!=undefined)?vals['formID']:'')+'">';
+			output += '<input type="hidden" id="nav_formID_'+id+'" name="nav_formID_'+id+'" value="'+((vals.formID !== undefined)?vals.formID:'')+'">';
 			break;
 
 		default:
