@@ -5,23 +5,33 @@ try {
 
 	$formID    = isset($engine->cleanGet['MYSQL']['formID'])    ? $engine->cleanGet['MYSQL']['formID']    : NULL;
 	$fieldName = isset($engine->cleanGet['MYSQL']['fieldName']) ? $engine->cleanGet['MYSQL']['fieldName'] : NULL;
+	$value     = isset($engine->cleanGet['MYSQL']['value'])     ? $engine->cleanGet['MYSQL']['value']     : NULL;
 	$output    = array(
 		'options'  => array(),
 		'pageSize' => $pageSize,
 		'total'    => 0,
 	);
 
-	if (isnull($formID) || isnull($fieldName)) {
-		throw new Exception();
+	if (isnull($formID)) {
+		throw new Exception("Missing Form ID.");
+	}
+
+	if (isnull($fieldName)) {
+		throw new Exception("Missing Field Name.");
 	}
 
 	$search   = isset($engine->cleanGet['MYSQL']['q'])        ? $engine->cleanGet['MYSQL']['q']        : NULL;
-	$page     = isset($engine->cleanGet['MYSQL']['page'])     ? $engine->cleanGet['MYSQL']['page']     : NULL;
-	$pageSize = isset($engine->cleanGet['MYSQL']['pageSize']) ? $engine->cleanGet['MYSQL']['pageSize'] : NULL;
+	$page     = isset($engine->cleanGet['MYSQL']['page'])     ? $engine->cleanGet['MYSQL']['page']     : 1;
+	$pageSize = isset($engine->cleanGet['MYSQL']['pageSize']) ? $engine->cleanGet['MYSQL']['pageSize'] : 1000;
 	$options  = array();
 
 	// limit by search and re-order by value
 	foreach (forms::retrieveData($formID, $fieldName) as $option) {
+		// If value exists and doesn't match, skip it
+		if (!is_empty($value) && $value != $option['objectID']) {
+			continue;
+		}
+
 		// If a search term was entered
 		if (!is_empty($search)) {
 			$search = strtolower($search);
@@ -59,6 +69,7 @@ try {
 
 }
 catch(Exception $e) {
+	$output['error'] = $e->getMessage();
 }
 
 die(json_encode($output));
