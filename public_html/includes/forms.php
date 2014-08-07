@@ -684,14 +684,14 @@ class forms {
 					);
 				}
 				else {
-					$output .= sprintf('<input type="hidden" name="%s_available" id="%s_available" data-type="%s" data-formid="%s" data-fieldname="%s" %s>',
+					$output .= sprintf('<input type="hidden" name="%s_available" id="%s_available" data-type="%s" data-formid="%s" data-fieldname="%s" value="%s" %s>',
 						htmlSanitize($field['name']),
 						htmlSanitize($field['name']),
 						$field['type'],
 						$formID,
 						htmlSanitize($field['name']),
-						(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
-						htmlSanitize($field['name'])
+						htmlSanitize($object['data'][$field['name']]),
+						(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':""
 					);
 
 					$output .= sprintf("<script charset=\"utf-8\">
@@ -722,10 +722,29 @@ class forms {
 												};
 											},
 										},
+										initSelection: function(e, callback) {
+											var id=$(e).val();
+											if (id!=='') {
+												$.ajax({
+													url: 'retrieveOptions.php',
+													data: {
+														formID: '%s',
+														fieldName: '%s',
+														value: id
+													},
+													dataType: 'json'
+												})
+												.done(function(data) {
+													callback(data.options[0]);
+												});
+											}
+										},
 									});
 							});
 						</script>",
 						htmlSanitize($field['name']),
+						htmlSanitize($field['choicesForm']),
+						htmlSanitize($field['choicesField']),
 						htmlSanitize($field['choicesForm']),
 						htmlSanitize($field['choicesField'])
 					);
@@ -775,8 +794,7 @@ class forms {
 						$field['type'],
 						$formID,
 						htmlSanitize($field['name']),
-						(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
-						htmlSanitize($field['name'])
+						(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':""
 					);
 
 					$output .= sprintf("<script charset=\"utf-8\">
