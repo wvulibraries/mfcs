@@ -431,6 +431,9 @@ class forms {
 			if (isnull($value) && isset($field['choicesFieldDefault']) && !isempty($field['choicesFieldDefault']) && $choice['display'] == $field['choicesFieldDefault']) {
 				$value = $choice['value'];
 			}
+			else if (isnull($value) && isset($field['choicesDefault']) && !isempty($field['choicesDefault'])) {
+				$value = $field['choicesDefault'];
+			}
 
 			$output .= sprintf('<option value="%s" %s>%s</option>',
 				htmlSanitize($choice['value']),
@@ -614,7 +617,7 @@ class forms {
 					(strtoupper($field['required']) == "TRUE")?"required":"",
 					(strtoupper($field['readonly']) == "TRUE")?"readonly":"",
 					(strtoupper($field['disabled']) == "TRUE")?"disabled":"",
-					self::getFieldValue($field,$object)
+					self::getFieldValue($field,(isset($object))?$object:NULL)
 				);
 
 				if ($field['type'] == "wysiwyg") {
@@ -843,12 +846,14 @@ class forms {
 			}
 			else {
 
+				// populate the idno field
 				if ($field['type'] == "idno") {
 					$field['type'] = "text";
 					if (isset($object) && !isset($object['data'][$field['name']])) $object['data'][$field['name']] = $object['idno'];
 				}
 
-				$fieldValue = self::getFieldValue($field,$object);
+				// get the field value, if the object exists
+				$fieldValue = self::getFieldValue($field,(isset($object))?$object:NULL);
 
 				$output .= sprintf('<input type="%s" name="%s" value="%s" placeholder="%s" %s id="%s" class="%s" %s %s %s %s />',
 					htmlSanitize($field['type']),
