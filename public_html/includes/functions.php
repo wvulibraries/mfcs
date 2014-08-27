@@ -39,4 +39,40 @@ function getIDNO($formID,$projectID,$increment=TRUE) {
 	return mfcs::getIDNO($formID,$increment);
 }
 
+// This function handles some translation errors that commonly occure during cutting and pasting.
+function convertString($string) {
+
+	// Formatting
+	$string = preg_replace('/%Oitalic%/',   '<em>',      $string);
+	$string = preg_replace('/%Citalic%/',   '</em>',     $string);
+	$string = preg_replace('/%Obold%/',     '<strong>',  $string);
+	$string = preg_replace('/%Cbold%/',     '</strong>', $string);
+	$string = preg_replace('/%underline%/', '<u>',       $string);
+	$string = preg_replace('/%underline%/', '</u>',      $string);
+	$string = preg_replace('/\|\|\|/',      '<br />',    $string);
+
+	// Links
+	$string = preg_replace('/%link url="(.+?)"%(.+?)%\/link%/', '<a href="$1"><u>$2</u></a>', $string);
+
+	// Fonts
+	$string = preg_replace('/&#x2026;/', "…", $string);
+	$string = preg_replace('/&iexcl;/', "¡", $string);
+	$string = preg_replace('/&pound;/', "£", $string);
+	$string = preg_replace('/&yen;/', "¥", $string);
+	$string = preg_replace('/&iquest;/', "¿", $string);
+	$string = preg_replace('/&frac34;/', "¾", $string);
+	$string = preg_replace('/&frac12;/', "½", $string);
+	$string = preg_replace('/&frac14;/', "¼", $string);
+	$string = preg_replace('/&#x2018;/', "‘", $string);
+	$string = preg_replace('/&#x2019;/', "’", $string);
+
+	// Punctuation
+	$string = preg_replace('/&amp;/',"&",$string);
+	$string = preg_replace('/&gt;/',">",$string);
+	$string = preg_replace('/&lt;/',"<",$string);
+	$string = preg_replace('/&quot;/','"',$string);
+
+	return $string;
+}
+
 ?>

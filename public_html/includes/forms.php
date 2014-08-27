@@ -931,12 +931,14 @@ class forms {
 
 	private static function getFieldValue($field,$object) {
 
+		$field['value'] = convertString($field['value']);
+
 		if (self::hasFieldVariables($field['value'])) {
 			return htmlSanitize(self::applyFieldVariables($field['value']));
 		}
 
 		return isset($object['data'][$field['name']])
-			? htmlSanitize($object['data'][$field['name']])
+			? htmlSanitize(convertString($object['data'][$field['name']]))
 			: htmlSanitize(self::applyFieldVariables($field['value']));
 
 	}
