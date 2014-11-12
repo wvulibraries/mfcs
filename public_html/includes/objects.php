@@ -362,7 +362,7 @@ class objects {
 		localvars::add("newObjectID",$objectID);
 
 		// Insert into the new data table
-		if (self::insertObjectData($objectID,$data) === FALSE) {
+		if (self::insertObjectData($objectID,$data,$formID) === FALSE) {
 			mfcs::$engine->openDB->transRollback();
 			mfcs::$engine->openDB->transEnd();
 
@@ -561,7 +561,7 @@ class objects {
 		}		
 
 		// Insert into the new data table
-		if (self::insertObjectData($objectID,$data) === FALSE) {
+		if (self::insertObjectData($objectID,$data,$formID) === FALSE) {
 			mfcs::$engine->openDB->transRollback();
 			mfcs::$engine->openDB->transEnd();
 
@@ -781,7 +781,7 @@ class objects {
 		return($data);
 	}
 
-	public static function insertObjectData($objectID,$data) {
+	public static function insertObjectData($objectID,$data,$formID) {
 
 		if (!is_array($data)) {
 			return FALSE;
@@ -817,7 +817,8 @@ class objects {
 				$encoded = 1;
 			}
 
-			$sql = sprintf("INSERT INTO `objectsData` (objectID,fieldName,value,encoded) VALUES('%s','%s','%s','%s')",
+			$sql = sprintf("INSERT INTO `objectsData` (formID,objectID,fieldName,value,encoded) VALUES('%s','%s','%s','%s','%s')",
+				mfcs::$engine->openDB->escape($formID),
 				mfcs::$engine->openDB->escape($objectID),
 				mfcs::$engine->openDB->escape($I),
 				mfcs::$engine->openDB->escape($V),
