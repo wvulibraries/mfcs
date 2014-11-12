@@ -684,7 +684,7 @@ class forms {
 					);
 				}
 				else {
-					$output .= sprintf('<input type="hidden" name="%s_available" id="%s_available" data-type="%s" data-formid="%s" data-fieldname="%s" %s>',
+					$output .= sprintf('<input type="hidden" name="%s" id="%s" data-type="%s" data-formid="%s" data-fieldname="%s" %s>',
 						htmlSanitize($field['name']),
 						htmlSanitize($field['name']),
 						$field['type'],
@@ -696,7 +696,7 @@ class forms {
 
 					$output .= sprintf("<script charset=\"utf-8\">
 							$(function() {
-								$('#%s_available')
+								$('#%s')
 									.select2({
 										minimumResultsForSearch: 10,
 										placeholder: 'Make a Selection',
