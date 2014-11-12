@@ -1066,7 +1066,7 @@ class forms {
 		if ($field['type'] == "idno" && $field['managedBy'] != "user") return NULL;
 
 		if (strtolower($field['required']) == "true" && (isnull($value) || !isset($value) || isempty($value))) {
-
+			errorHandle::newError(__METHOD__."() - missing", errorHandle::DEBUG);
 			errorHandle::errorMsg("Missing data for required field '".$field['label']."'.");
 			return FALSE;
 
@@ -1117,6 +1117,7 @@ class forms {
 		}
 
 		if ($valid === FALSE) {
+			errorHandle::newError(__METHOD__."() - data", errorHandle::DEBUG);
 			errorHandle::errorMsg("Invalid data provided in field '".$field['label']."'.");
 			return FALSE;
 		}
@@ -1124,6 +1125,7 @@ class forms {
 		// Duplicate Checking (Form)
 		if (strtolower($field['duplicates']) == "true") {
 			if (self::isDupe($formID,$field['name'],$value,$objectID)) {
+				errorHandle::newError(__METHOD__."() - Dupe -- ".$field['name'], errorHandle::DEBUG);
 				errorHandle::errorMsg("Duplicate data (in form) provided in field '".$field['label']."'.");
 				return FALSE;
 			}
