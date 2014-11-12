@@ -1254,6 +1254,20 @@ class forms {
 					return FALSE;
 				}
 
+				$sql       = sprintf("DELETE FROM `objectsData` WHERE `objectID`='%s'",
+					$objectID
+					);
+				$sqlResult = $engine->openDB->query($sql);
+
+				if (!$sqlResult['result']) {
+					$engine->openDB->transRollback();
+					$engine->openDB->transEnd();
+
+					errorHandle::errorMsg("Error deleting objects. Objects Data table.");
+					errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+					return FALSE;
+				}
+
 			}
 		}
 
