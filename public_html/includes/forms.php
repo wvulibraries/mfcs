@@ -668,70 +668,110 @@ class forms {
 			}
 			else if ($field['type'] == "select") {
 
-				if (isset($field['choicesType']) && !isempty($field['choicesType']) && $field['choicesType'] == "manual") {
-					if (($fieldChoices = forms::getFieldChoices($field)) === FALSE) {
-						return FALSE;
-					}
-
-					$output .= sprintf('<select name="%s" id="%s" data-type="%s" data-formid="%s" data-fieldname="%s" %s>%s</select>',
-						htmlSanitize($field['name']),
-						htmlSanitize($field['name']),
-						$field['type'],
-						$formID,
-						htmlSanitize($field['name']),
-						(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
-						self::drawFieldChoices($field,$fieldChoices,(isset($object['data'][$field['name']]))?$object['data'][$field['name']]:NULL)
-					);
+				if (($fieldChoices = forms::getFieldChoices($field)) === FALSE) {
+					return FALSE;
 				}
-				else {
-					$output .= sprintf('<input type="hidden" name="%s" id="%s" data-type="%s" data-formid="%s" data-fieldname="%s" %s>',
-						htmlSanitize($field['name']),
-						htmlSanitize($field['name']),
-						$field['type'],
-						$formID,
-						htmlSanitize($field['name']),
-						(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
-						htmlSanitize($field['name'])
-					);
 
-					$output .= sprintf("<script charset=\"utf-8\">
-							$(function() {
-								$('#%s')
-									.select2({
-										minimumResultsForSearch: 10,
-										placeholder: 'Make a Selection',
-										ajax: {
-											url: 'retrieveOptions.php',
-											dataType: 'json',
-											quietMillis: 300,
-											data: function(term, page) {
-												return {
-													q: term,
-													page: page,
-													pageSize: 1000,
-													formID: '%s',
-													fieldName: '%s'
-												};
-											},
-											results: function(data, page) {
-												var more = (page * data.pageSize) < data.total;
+				$output .= sprintf('<select name="%s" id="%s" data-type="%s" data-formid="%s" data-fieldname="%s" %s>',
+					htmlSanitize($field['name']),
+					htmlSanitize($field['name']),
+					$field['type'],
+					$formID,
+					htmlSanitize($field['name']),
+					(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':""
+				);
 
-												return {
-													results: data.options,
-													more: more
-												};
-											},
-										},
-									});
-							});
-						</script>",
-						htmlSanitize($field['name']),
-						htmlSanitize($field['choicesForm']),
-						htmlSanitize($field['choicesField'])
-					);
-				}
+				$output .= self::drawFieldChoices($field,$fieldChoices,(isset($object['data'][$field['name']]))?$object['data'][$field['name']]:NULL);
+
+				$output .= "</select>";
 
 			}
+			// else if ($field['type'] == "select") {
+
+			// 	if (isset($field['choicesType']) && !isempty($field['choicesType']) && $field['choicesType'] == "manual") {
+			// 		if (($fieldChoices = forms::getFieldChoices($field)) === FALSE) {
+			// 			return FALSE;
+			// 		}
+
+			// 		$output .= sprintf('<select name="%s" id="%s" data-type="%s" data-formid="%s" data-fieldname="%s" %s>%s</select>',
+			// 			htmlSanitize($field['name']),
+			// 			htmlSanitize($field['name']),
+			// 			$field['type'],
+			// 			$formID,
+			// 			htmlSanitize($field['name']),
+			// 			(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
+			// 			self::drawFieldChoices($field,$fieldChoices,(isset($object['data'][$field['name']]))?$object['data'][$field['name']]:NULL)
+			// 		);
+			// 	}
+			// 	else {
+			// 		$output .= sprintf('<input type="hidden" name="%s" id="%s" data-type="%s" data-formid="%s" data-fieldname="%s" %s>',
+			// 			htmlSanitize($field['name']),
+			// 			htmlSanitize($field['name']),
+			// 			$field['type'],
+			// 			$formID,
+			// 			htmlSanitize($field['name']),
+			// 			(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
+			// 			htmlSanitize($field['name'])
+			// 		);
+					
+			// 		$output .= sprintf("<script charset=\"utf-8\">
+			// 				$(function() {
+			// 					$('#%s')
+			// 						.select2({
+			// 							minimumResultsForSearch: 10,
+			// 							placeholder: 'Make a Selection',
+			// 							ajax: {
+			// 								url: 'retrieveOptions.php',
+			// 								dataType: 'json',
+			// 								quietMillis: 300,
+			// 								data: function(term, page) {
+			// 									return {
+			// 										q: term,
+			// 										page: page,
+			// 										pageSize: 1000,
+			// 										formID: '%s',
+			// 										fieldName: '%s'
+			// 									};
+			// 								},
+			// 								results: function(data, page) {
+			// 									var more = (page * data.pageSize) < data.total;
+
+			// 									return {
+			// 										results: data.options,
+			// 										more: more
+			// 									};
+			// 								},
+			// 							},
+			// 							// initSelection: function(element, callback) {
+
+			// 					  //           var id = $(element).val();
+			// 					  //           if(id !== '') {
+			// 					  //           	$.ajax('retrieveSingleOption.php', {
+			// 					  //           		data: function() {
+			// 					  //           			return {
+			// 					  //           				formID: '%s',
+			// 					  //           				id: id
+			// 					  //           			};
+			// 					  //           		},
+			// 					  //                   dataType: 'json'
+			// 					  //               }).done(function(data) {
+			// 					  //                   callback(data.results[0]);
+			// 					  //               });
+			// 					  //           }
+			// 					  //       }
+			// 						});
+			// 					// $('#%s').select2( 'val', '%s' );
+			// 				});
+							
+			// 			</script>",
+			// 			htmlSanitize($field['name']),
+			// 			htmlSanitize($field['choicesForm']),
+			// 			htmlSanitize($field['choicesField']),
+			// 			$object['data'][$field['name']]
+			// 		);
+			// 	}
+
+			// }
 			else if ($field['type'] == 'multiselect') {
 
 				$output .= '<div class="multiSelectContainer">';
