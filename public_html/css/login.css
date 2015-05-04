@@ -1,0 +1,41 @@
+#loginBox {
+
+	width: 500px;
+	/*height: 375px;*/
+	margin-left: auto;
+	margin-right: auto;
+
+/*	border-style: solid;
+	border-width: 1px;*/
+}
+
+.styledInput {
+	/*height: 3em;*/
+	width: 500px;
+
+	font-size: 2em;
+}
+
+h1 {
+	margin-left: auto;
+	margin-right:auto;
+	width: 95%;
+}
+
+#submitButton {
+	font-size: 1.25em;
+	margin-top: 20px;
+}
+
+#loginTypeSelector {
+	text-align: right;
+	position: relative;
+	bottom: 0;
+	right: 0;
+}
+img{
+	width:300px; 
+	display:block;
+	margin-left: auto;
+	margin-right:auto;
+}
