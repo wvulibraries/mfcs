@@ -1,3 +1,7 @@
+1. Repository agnostic
+	* Data and object can be easily exported in any format for import into any other repository for public searching and display. 
+1. LAMP stack
+	* Uses proven, robust, and common technologies that are easy to understand.
 1. Drag and Drop metadata form creator
 	* Type of fields:
 		1. IDNO 
