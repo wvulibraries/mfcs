@@ -11,7 +11,8 @@ MFCS should be able to export data in any format for, or connect to, any digital
 
 The ultimate design goal for MFCS is to provide institutions with a robust system to store and archive digital projects, finding aids, and other material that will ultimately live in a system such as Hydra, Islandora, or DLXS (or any other) without having to worry about Lock-in or complex upgrade paths between digital repository systems. As systems change, become obsolete, or are updated the only change that should be needed to migrate data to a new system are new or updated MFCS export scripts. No more exporting and importing data between your old authoritative system and your new one, which reduces the risk of cross walking errors and data corruption. 
 
-A vagrant setup is provided as part of the repository. The easiest way to test the system is to remove the two acl.php files before logging in. Please note, Without a properly logged in user not all features in MFCS will function properly. Authentication is handled by EngineAPI. 
+A vagrant setup is provided as part of the repository. For authentication into the vagrant box a simple script is located here:
+[http://localhost:8080/vagrantLogin.php](http://localhost:8080/vagrantLogin.php)
 
 Video 1, Metadata Entry Demo:
 http://www.youtube.com/watch?v=8RVqZNPsf8A
