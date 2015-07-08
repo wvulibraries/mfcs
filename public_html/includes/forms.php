@@ -94,18 +94,17 @@ class forms {
 
 		$engine = EngineAPI::singleton();
 
-		switch ($type) {
-			case TRUE:
-				$sql = sprintf("SELECT `ID` FROM `forms` WHERE `metadata`='0' ORDER BY `title`");
-				break;
-			case FALSE:
-				$sql = sprintf("SELECT `ID` FROM `forms` WHERE `metadata`='1' ORDER BY `title`");
-				break;
-			case NULL:
-				$sql = sprintf("SELECT `ID` FROM `forms` ORDER BY `title`");
-				break;
-			default:
-				return(FALSE);
+		if ($type === TRUE) {
+			$sql = sprintf("SELECT `ID` FROM `forms` WHERE `metadata`='0' ORDER BY `title`");
+		}
+		else if ($type === FALSE) {
+			$sql = sprintf("SELECT `ID` FROM `forms` WHERE `metadata`='1' ORDER BY `title`");
+		}
+		else if (isnull($type)) {
+			$sql = sprintf("SELECT `ID` FROM `forms` ORDER BY `title`");
+		}
+		else {
+			return(FALSE);
 		}
 
 		$sqlResult = $engine->openDB->query($sql);
