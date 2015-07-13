@@ -28,7 +28,14 @@ class duplicates {
 		//insert data
 		foreach ($data as $name=>$raw) {
 
-			if (!isset(mfcs::$engine->cleanPost['MYSQL'][$name]) || isempty(mfcs::$engine->cleanPost['MYSQL'][$name])) continue;
+			if (!isset(mfcs::$engine->cleanPost['MYSQL'][$name]) || isempty(mfcs::$engine->cleanPost['MYSQL'][$name])) {
+				if (!isempty($raw)) {
+					http::setPost($name,$raw);
+				}
+				else {
+					continue;
+				}
+			}
 
 			$sql       = sprintf("INSERT INTO `dupeMatching` (`formID`,`objectID`,`field`,`value`) VALUES('%s','%s','%s','%s')",
 				mfcs::$engine->openDB->escape($formID),
