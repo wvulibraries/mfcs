@@ -31,6 +31,7 @@ class duplicates {
 			if (!isset(mfcs::$engine->cleanPost['MYSQL'][$name]) || isempty(mfcs::$engine->cleanPost['MYSQL'][$name])) {
 				if (!isempty($raw)) {
 					http::setPost($name,$raw);
+					$postSet = TRUE;
 				}
 				else {
 					continue;
@@ -44,6 +45,10 @@ class duplicates {
 				mfcs::$engine->cleanPost['MYSQL'][$name] //@TODO this should use data
 			);
 			$sqlResult = mfcs::$engine->openDB->query($sql);
+
+			if ($postSet === TRUE) {
+				http::setPost($name,"");
+			}
 
 			if (!$sqlResult['result']) {
 				mfcs::$engine->openDB->transRollback();

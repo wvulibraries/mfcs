@@ -22,18 +22,17 @@ foreach ($forms as $form) {
 	
 	print "Form: ".$form['title']."\n";
 
-	$objects = objects::getAllObjectsForForm(1);
+	$objects = objects::getAllObjectsForForm($form['ID']);
 
 	foreach ($objects as $object) {
 
 		unset(mfcs::$engine->cleanPost['MYSQL']);
 
-		$return  = duplicates::updateDupeTable("1",$object['ID'],$object['data']);
+		$return  = duplicates::updateDupeTable($form['ID'],$object['ID'],$object['data']);
 		$dupeConfirm[$return]++;
 
 	}
 
-	break;
 }
 
 print "\n\n";
