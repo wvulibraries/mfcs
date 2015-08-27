@@ -9,14 +9,9 @@ $(function(){
 	$('div.filePreview a.previewLink').click(function(){
 		var filePreview = $(this).closest('div')
 		if(filePreview.hasClass('open')){
-		// Closing
-		filePreview.find('div').slideUp(function(){
-			filePreview.removeClass('open');
-		});
+			filePreview.removeClass('open').find('div').slideUp();
 		}else{
-		// Opening
-		filePreview.addClass('open');
-		filePreview.find('div').slideDown();
+			filePreview.addClass('open').find('div').slideDown();
 		}
 	});
 
