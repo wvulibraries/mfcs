@@ -25,15 +25,21 @@ function defineList($tableName) {
 		));
 
 	$l->addField(array(
+		"field"    => "isStudent",
+		"label"    => "Student?",
+		"dupes"    => TRUE,
+		"type"     => "yesNo"
+		));
+
+	$l->addField(array(
 		"field"    => "status",
 		"label"    => "Status",
 		"type"     => "select",
 		"dupes"    => TRUE,
 		"options"  => array(
-			array("value"=>"Librarian","label"=>"Librarian"),
-			array("value"=>"Staff","label"=>"Staff"),
-			array("value"=>"Student","label"=>"Student","selected"=>TRUE),
-			array("value"=>"Systems","label"=>"Systems")
+			array("value"=>"Editor","label"=>"Editor"),
+			array("value"=>"User","label"=>"User","selected"=>TRUE),
+			array("value"=>"Admin","label"=>"Admin")
 			)
 		));
 
