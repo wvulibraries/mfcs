@@ -5,3 +5,5 @@
 sessionLogin.php
 *mfcs.sql*
 SQLFiles/dump
+public_html/includes/.sass-cache
+public_html/includes/css/base.css.map
