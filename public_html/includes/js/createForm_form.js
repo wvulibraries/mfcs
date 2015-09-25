@@ -1,5 +1,4 @@
-
-$(function() {
+$(function(){
 	// Grab commonly used IDs
 	var formPreview  = $('#formPreview');
 	var fieldAdd     = $('#fieldAdd');
@@ -13,22 +12,20 @@ $(function() {
 		showFieldSettings(); // blank the Field Settings pane
 	});
 
+	// Click and Draggable form fields.
 	$(".draggable li", fieldAdd)
-		// Make field types draggable, linked to preview pane
 		.draggable({
 			connectToSortable: "#formCreator ul.sortable",
 			helper: "clone",
 			revert: "invalid"})
-		// Add new field on click as well as drag
 		.click(function() {
 			event.preventDefault();
-
 			$(this).clone().appendTo(formPreview);
 			addNewField($("li:last",formPreview));
 			sortableForm();
-		});
+	});
 
-	// Delete icon binding
+	// Deleted The field
 	formPreview.on("click", ".fieldPreview i.icon-remove", function() {
 		if (confirm("Are you sure you want to remove this field?")) {
 			var thisLI = $(this).parent().parent();
@@ -56,6 +53,7 @@ $(function() {
 		}
 	});
 
+
 	// Re-order nesting on load
 	// This loops through <li> and finds all the fieldsets, then loops through matching all <li> that have
 	// the same fieldset name and moves them inside it
@@ -69,17 +67,17 @@ $(function() {
 	});
 
 	// Make the preview pane sortable -- sort order determines position
-	sortableForm();
+	sortableForm(); // makes the form fields draggable and droppable
 
 	// Set all the black magic bindings
+	// All of the core functionality of the form and field views are stored in these functions
+	// Modifying the field info, modals, and screen changes all happen here.
 	fieldSettingsBindings();
 	formSettingsBindings();
 	modalBindings();
 
 	// Form submit handler
 	$("form[name=submitForm]").submit(function(e) {
-		// e.preventDefault();
-
 		// Calculate position of all fields
 		$(".fieldValues :input[name^=position_]").each(function(index) {
 			$(this).val(index);
@@ -129,7 +127,12 @@ $(function() {
 		$(":input[name=fields]", this).val(JSON.stringify(obj));
 	});
 
+
+
+    // Front End View Information Only
+	// ===========================================================
 	// Click through each field and then back to add field tab on page load to update form preview
+
 	$("li",formPreview).click();
 	$("li:last a",fieldTab).click();
 

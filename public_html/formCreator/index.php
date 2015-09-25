@@ -984,22 +984,53 @@ $engine->eTemplate("include","header");
 												<ul class="checkboxList">
 													<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_bgProcessing" name="fieldSettings_file_options_bgProcessing"> Process files in the background</label></li>
 												</ul>
-												<div style="float: left; margin-top: 5px;">
-													Images
-													<ul class="checkboxList">
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_multipleFiles" name="fieldSettings_file_options_multipleFiles"> Allow multiple files in single upload</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_combine" name="fieldSettings_file_options_combine"> Combine into single PDF</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_ocr" name="fieldSettings_file_options_ocr"> Optical character recognition (OCR)</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_convert" name="fieldSettings_file_options_convert"> Convert uploaded file</label></li>
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_thumbnail" name="fieldSettings_file_options_thumbnail"> Create thumbnail</label></li>
-													</ul>
+
+												<div class="fileTypeAdjustments">
+													<div class="title"> Select A File Type To Reveal Options </div>
+													<label class="checkbox type"><input type="checkbox" class="fieldSettings_file_options_fieldType" name="fieldSettings_file_options_fieldType"> Image </label>
+													<div>
+														Image Options
+														<ul class="checkboxList">
+															<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_multipleFiles" name="fieldSettings_file_options_multipleFiles"> Allow multiple files in single upload</label></li>
+															<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_combine" name="fieldSettings_file_options_combine"> Combine into single PDF</label></li>
+															<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_ocr" name="fieldSettings_file_options_ocr"> Optical character recognition (OCR)</label></li>
+															<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_convert" name="fieldSettings_file_options_convert"> Convert uploaded file</label></li>
+															<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_thumbnail" name="fieldSettings_file_options_thumbnail"> Create thumbnail</label></li>
+														</ul>
+													</div>
+
+													<label class="checkbox type"><input type="checkbox" class="fieldSettings_file_options_fieldType" name="fieldSettings_file_options_fieldType"> Audio </label>
+													<div>
+														Audio Options
+														<ul class="checkboxList">
+															<ul class="checkboxList">
+																<li>
+																	<label>
+																		Change BitRate:
+																		<select class="bitRate">
+      																		<option value="">    Select a BitRate  </option>
+      																		<option value="32">  32kbs 			 </option>
+      																		<option value="64">  64kbs 			 </option>
+      																		<option value="128"> 128kbs 		 </option>
+      																		<option value="256"> 256kbs 		 </option>
+																		</select>
+																		<span class="text-warning">Modifying BitRate can affect audio quality.</span>
+																	</label>
+																</li>
+															</ul>
+														</ul>
+													</div>
+
+
+													<label class="checkbox type"><input type="checkbox" class="fieldSettings_file_options_fieldType" name="fieldSettings_file_options_fieldType"> Video </label>
+													<div>
+														Video Options
+														<ul class="checkboxList">
+															<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_mp3" name="fieldSettings_file_options_mp3"> Create MP3</label></li>
+														</ul>
+													</div>
 												</div>
-												<div style="float: left; margin-top: 5px;">
-													Audio
-													<ul class="checkboxList">
-														<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_mp3" name="fieldSettings_file_options_mp3"> Create MP3</label></li>
-													</ul>
-												</div>
+
 											</div>
 										</div>
 

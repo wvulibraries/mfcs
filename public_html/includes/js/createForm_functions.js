@@ -1158,6 +1158,25 @@ function fieldSettingsBindings() {
 		$("#convertFormat_"+id).val($(this).val());
 	});
 
+
+	// Add types adjustments
+	// Reveals only options that are available for that type of file
+	$('.fieldSettings_file_options_fieldType').change(function(){
+		var checked = $(this).is(":checked");
+		// hide divs
+		$('.fieldSettings_file_options_fieldType').parent().next('div').hide();
+
+		if(checked){
+			$(this).parent().next().show();
+		} else{
+			$(this).parent().next().hide();
+		}
+
+		// clear all checks
+		$('.fieldSettings_file_options_fieldType').prop('checked', false);
+		$(this).prop('checked', checked); // put the check back on or off this property
+	}).change();
+
 	$("#fieldSettings_file_convert_watermark").change(function() {
 		var formPreviewWell = formPreview.find(".well");
 		var checked         = $(this).is(":checked");
@@ -1190,7 +1209,7 @@ function fieldSettingsBindings() {
 
 		formPreviewWell.find(".fieldValues > :input[name^=border_]").val(checked);
 
-		if (checked) {
+		if(checked) {
 			$(this).parent().next().show();
 		}
 		else {
