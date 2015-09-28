@@ -605,6 +605,11 @@ if (isset($engine->cleanGet['MYSQL']['id']) && !isempty($engine->cleanGet['MYSQL
 	}
 }
 
+// Audio Video Specific Information
+// =============================================================
+$audioFileTypes = array();
+
+
 localvars::add("selectedEntryUsers",$selectedEntryUsers);
 localvars::add("selectedViewUsers",$selectedViewUsers);
 localvars::add("selectedUsersAdmins",$selectedUsersAdmins);
@@ -986,8 +991,6 @@ $engine->eTemplate("include","header");
 												</ul>
 
 												<div class="fileTypeAdjustments">
-													<div class="title"> Select A File Type To Reveal Options </div>
-													<label class="checkbox type"><input type="checkbox" class="fieldSettings_file_options_fieldType" name="fieldSettings_file_options_fieldType"> Image </label>
 													<div>
 														Image Options
 														<ul class="checkboxList">
@@ -998,39 +1001,108 @@ $engine->eTemplate("include","header");
 															<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_thumbnail" name="fieldSettings_file_options_thumbnail"> Create thumbnail</label></li>
 														</ul>
 													</div>
-
-													<label class="checkbox type"><input type="checkbox" class="fieldSettings_file_options_fieldType" name="fieldSettings_file_options_fieldType"> Audio </label>
 													<div>
 														Audio Options
 														<ul class="checkboxList">
 															<ul class="checkboxList">
 																<li>
-																	<label>
-																		Change BitRate:
-																		<select class="bitRate">
-      																		<option value="">    Select a BitRate  </option>
-      																		<option value="32">  32kbs 			 </option>
-      																		<option value="64">  64kbs 			 </option>
-      																		<option value="128"> 128kbs 		 </option>
-      																		<option value="256"> 256kbs 		 </option>
-																		</select>
-																		<span class="text-warning">Modifying BitRate can affect audio quality.</span>
+																	<label class="checkbox">
+																		<input type="checkbox" id="fieldSettings_file_options_convert" name="fieldSettings_file_options_convert">
+																		Convert or Modify Audio
 																	</label>
 																</li>
 															</ul>
 														</ul>
 													</div>
-
-
-													<label class="checkbox type"><input type="checkbox" class="fieldSettings_file_options_fieldType" name="fieldSettings_file_options_fieldType"> Video </label>
 													<div>
 														Video Options
 														<ul class="checkboxList">
-															<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_mp3" name="fieldSettings_file_options_mp3"> Create MP3</label></li>
+															<li>
+																<label class="checkbox">
+																	<input type="checkbox" id="fieldSettings_file_options_convertVideo" name="fieldSettings_file_options_convertVideo">
+																	Convert or Modify Video
+																</label>
+															</li>
+															<li>
+																<label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_videothumbnail" name="fieldSettings_file_options_videothumbnail">
+																	Create thumbnail
+																</label>
+															</li>
 														</ul>
 													</div>
 												</div>
 
+											</div>
+										</div>
+
+										<div class="control-group well well-small" id="fieldSettings_container_file_audioconvert">
+											<label for="fieldSettings_file_convert">
+												Audio Conversions
+											</label>
+
+											<div class="row-fluid audio">
+												<div class="span3" id="fieldSettings_container_file_convert_bitrate">
+													<label>
+														Change BitRate:
+														<select class="bitRate">
+																<option value="">    Select a BitRate  </option>
+																<option value="32">  32kbs 			 </option>
+																<option value="64">  64kbs 			 </option>
+																<option value="128"> 128kbs 		 </option>
+																<option value="256"> 256kbs 		 </option>
+														</select>
+													</label>
+												</div>
+
+												<div class="span3" id="fieldSettings_container_file_convert_audioFormat">
+													<label>
+														Change Format:
+														<select class="bitRate">
+																<option value="">    Select a Format  </option>
+																<option value="aac">  AAC 			  </option>
+																<option value="mp2">  MP2 		      </option>
+																<option value="mp3">  MP3 		      </option>
+																<option value="wma">  WMA			  </option>
+																<option value="wav">  WAV 		 	  </option>
+														</select>
+													</label>
+												</div>
+											</div>
+										</div>
+
+
+										<div class="control-group well well-small" id="fieldSettings_container_file_audioconvert">
+											<label for="fieldSettings_file_convert">
+												Video Conversions
+											</label>
+
+											<div class="row-fluid audio">
+												<div class="span3" id="fieldSettings_container_file_convert_bitrate">
+													<label>
+														Change BitRate:
+														<select class="bitRate">
+																<option value="">    Select a BitRate  </option>
+																<option value="32">  32kbs 			 </option>
+																<option value="64">  64kbs 			 </option>
+																<option value="128"> 128kbs 		 </option>
+																<option value="256"> 256kbs 		 </option>
+														</select>
+													</label>
+												</div>
+
+												<div class="span3" id="fieldSettings_container_file_convert_audioFormat">
+													<label>
+														Change Format:
+														<select class="bitRate">
+																<option value="">    Select a Format  </option>
+																<option value="aac">  AAC 			  </option>
+																<option value="mp2">  MP2 		      </option>
+																<option value="mp3">  MP3 		      </option>
+																<option value="wma">  WMA			  </option>
+																<option value="wav">  WAV 		 	  </option>
+														</select>
+													</label>
+												</div>
 											</div>
 										</div>
 
@@ -1157,8 +1229,7 @@ $engine->eTemplate("include","header");
 											</div>
 										</div>
 
-
-										<div class="row-fluid noHide">
+									<div class="row-fluid noHide">
 											<span class="span6">
 												<div class="control-group well well-small" id="fieldSettings_container_options">
 													Options

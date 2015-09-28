@@ -28,6 +28,12 @@ function sortableForm() {
 	});
 }
 
+
+// This function creates the form view
+// It allows you to see the fields, drag and drop
+// It also selects what field options show when a field
+// Is selected from the list.
+
 function showFieldSettings(fullID) {
 	// Create jQuery shortcuts (code optimization)
 	var fieldSettings_form          = $("#fieldSettings_form");
@@ -347,6 +353,9 @@ function fieldSettingsBindings() {
 			showFieldSettings(li.attr("id"));
 		}
 	});
+
+	// Add class to field Settings
+	$("#fieldSettings :input").addClass('fieldSettings');
 
 	$("#fieldSettings_name").keyup(function() {
 		var formPreviewWell               = formPreview.find(".well");
