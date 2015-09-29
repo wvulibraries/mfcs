@@ -67,12 +67,21 @@ class duplicates {
 	}
 
 	public static function isDupe($formID,$field,$value,$objectID=NULL) {
-		$sql = sprintf("SELECT COUNT(*) FROM `dupeMatching` WHERE `formID`='%s' AND `field`='%s' AND `value`='%s' %s",
-			mfcs::$engine->openDB->escape($formID),
-			mfcs::$engine->openDB->escape($field),
-			mfcs::$engine->openDB->escape($value),
-			(!isnull($objectID))?"AND `objectID`!='".mfcs::$engine->openDB->escape($objectID)."'":""
-		);
+
+		if ($field == "idno") {
+			$sql = sprintf("SELECT COUNT(*) FROM `dupeMatching` WHERE `field`='idno' AND `value`='%s' %s",
+				mfcs::$engine->openDB->escape($value),
+				(!isnull($objectID))?"AND `objectID`!='".mfcs::$engine->openDB->escape($objectID)."'":""
+				);
+		}
+		else {
+			$sql = sprintf("SELECT COUNT(*) FROM `dupeMatching` WHERE `formID`='%s' AND `field`='%s' AND `value`='%s' %s",
+				mfcs::$engine->openDB->escape($formID),
+				mfcs::$engine->openDB->escape($field),
+				mfcs::$engine->openDB->escape($value),
+				(!isnull($objectID))?"AND `objectID`!='".mfcs::$engine->openDB->escape($objectID)."'":""
+				);
+		}
 
 		$sqlResult = mfcs::$engine->openDB->query($sql);
 
