@@ -622,6 +622,22 @@ class objects {
 
 	}
 
+	private static function updateIDNO($objectID,$idno) {
+	// update the object with the new idno
+		$sql       = sprintf("UPDATE `objects` SET `idno`='%s' WHERE `ID`='%s'",
+			mfcs::$engine->openDB->escape($idno),
+			mfcs::$engine->openDB->escape($objectID)
+			);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - updating the IDNO: ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		return TRUE;
+	}
+
 	// $metadata needs to be an associative array that contains key value pairs that 
 	// match what a cleanPost would give. Data is expected to be RAW, will be sanitized 
 	// when it gets put into place.
