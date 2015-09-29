@@ -69,7 +69,6 @@ $(function(){
 	// Make the preview pane sortable -- sort order determines position
 	sortableForm(); // makes the form fields draggable and droppable
 
-	// Set all the black magic bindings
 	// All of the core functionality of the form and field views are stored in these functions
 	// Modifying the field info, modals, and screen changes all happen here.
 	fieldSettingsBindings();
