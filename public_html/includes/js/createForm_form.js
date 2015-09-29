@@ -135,39 +135,6 @@ $(function(){
 
 	$("li",formPreview).click();
 	$("li:last a",fieldTab).click();
-
-	// Make the left panel fixed if the viewport is big enough to hold the content
-	$(window).scroll(function() {
-		var left          = $('#leftPanel');
-		var leftParent    = left.closest('.row-fluid');
-		var leftParentTop = leftParent.offset().top - 55;
-		var leftHeight    = $('.tab-content',leftPanel).outerHeight() + $('#fieldTab').outerHeight() + 170;
-
-		// Is the window big enough?
-		if ($(window).height() > leftHeight) {
-			// Yes - should we fix it?
-			if($(window).scrollTop() >= leftParentTop){
-				left.addClass('fix');
-				left.css("width",left.parent().width());
-			}else{
-				left.removeClass('fix');
-			}
-		}
-		else {
-			// No - make sure it's not currently fixed
-			left.removeClass('fix');
-		}
-	}).scroll();
-
-	$(window).resize(function() {
-		if (leftPanel.hasClass("fix")) {
-			leftPanel.css("width",leftPanel.parent().width());
-		}
-		else {
-			leftPanel.css("width",'auto');
-		}
-	});
-
 	$('#progressModal').modal('hide');
 
 	// Enable the submit button and hide thenoJavaScriptWarning
