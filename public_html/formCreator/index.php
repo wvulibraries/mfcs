@@ -4,6 +4,7 @@
 
 include("../header.php");
 
+
 $formID = isset($engine->cleanPost['HTML']['id']) ? $engine->cleanPost['HTML']['id'] : (isset($engine->cleanGet['HTML']['id']) ? $engine->cleanGet['HTML']['id'] : NULL);
 if (is_empty($formID)) {
 	$formID = NULL;
@@ -33,8 +34,15 @@ if (isset($engine->cleanPost['MYSQL']['submitNavigation'])) {
 if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	$engine->openDB->transBegin();
 
+
+	print "<pre>";
+	var_dump($engine->cleanPost);
+	print "</pre>";
+
+
 	$form   = json_decode($engine->cleanPost['RAW']['form'], TRUE);
 	$fields = json_decode($engine->cleanPost['RAW']['fields'], TRUE);
+
 	$idno   = NULL;
 
 	// Ensure all fields have an ID for the label. Assign it the value of name if needed.
@@ -1004,14 +1012,12 @@ $engine->eTemplate("include","header");
 													<div>
 														Audio Options
 														<ul class="checkboxList">
-															<ul class="checkboxList">
-																<li>
-																	<label class="checkbox">
-																		<input type="checkbox" id="fieldSettings_file_options_convert" name="fieldSettings_file_options_convert">
-																		Convert or Modify Audio
-																	</label>
-																</li>
-															</ul>
+															<li>
+																<label class="checkbox">
+																	<input type="checkbox" id="fieldSettings_file_options_convertAudio" name="fieldSettings_file_options_convert">
+																	Convert or Modify Audio
+																</label>
+															</li>
 														</ul>
 													</div>
 													<div>
@@ -1035,73 +1041,73 @@ $engine->eTemplate("include","header");
 											</div>
 										</div>
 
-										<div class="control-group well well-small" id="fieldSettings_container_file_audioconvert">
-											<label for="fieldSettings_file_convert">
+										<div class="control-group well well-small" id="fieldSettings_container_file_convertAudio">
+											<label for="fieldSettings_file_convertAudio">
 												Audio Conversions
 											</label>
 
 											<div class="row-fluid audio">
-												<div class="span3" id="fieldSettings_container_file_convert_bitrate">
-													<label>
+												<div id="fieldSettings_container_file_convert_bitrate" class="row-fluid">
+													<label class="span4">
 														Change BitRate:
-														<select class="bitRate">
-																<option value="">    Select a BitRate  </option>
-																<option value="32">  32kbs 			 </option>
-																<option value="64">  64kbs 			 </option>
-																<option value="128"> 128kbs 		 </option>
-																<option value="256"> 256kbs 		 </option>
-														</select>
 													</label>
+													<select class="bitRate span8 last">
+															<option value="">    Select a BitRate  </option>
+															<option value="32">  32kbs 			 </option>
+															<option value="64">  64kbs 			 </option>
+															<option value="128"> 128kbs 		 </option>
+															<option value="256"> 256kbs 		 </option>
+													</select>
 												</div>
 
-												<div class="span3" id="fieldSettings_container_file_convert_audioFormat">
-													<label>
+												<div id="fieldSettings_container_file_convert_audioFormat" class="row-fluid">
+													<label class="span4 left">
 														Change Format:
-														<select class="bitRate">
-																<option value="">    Select a Format  </option>
-																<option value="aac">  AAC 			  </option>
-																<option value="mp2">  MP2 		      </option>
-																<option value="mp3">  MP3 		      </option>
-																<option value="wma">  WMA			  </option>
-																<option value="wav">  WAV 		 	  </option>
-														</select>
 													</label>
+													<select class="audioFormat span8 last">
+															<option value="">    Select a Format  </option>
+															<option value="aac">  AAC 			  </option>
+															<option value="mp2">  MP2 		      </option>
+															<option value="mp3">  MP3 		      </option>
+															<option value="wma">  WMA			  </option>
+															<option value="wav">  WAV 		 	  </option>
+													</select>
 												</div>
 											</div>
 										</div>
 
 
-										<div class="control-group well well-small" id="fieldSettings_container_file_audioconvert">
+										<div class="control-group well well-small" id="fieldSettings_container_file_convertVideo">
 											<label for="fieldSettings_file_convert">
-												Video Conversions
+												Video Options
 											</label>
 
 											<div class="row-fluid audio">
-												<div class="span3" id="fieldSettings_container_file_convert_bitrate">
-													<label>
+												<div id="fieldSettings_container_file_convert_bitrate" class="row-fluid">
+													<label class="span4">
 														Change BitRate:
-														<select class="bitRate">
-																<option value="">    Select a BitRate  </option>
-																<option value="32">  32kbs 			 </option>
-																<option value="64">  64kbs 			 </option>
-																<option value="128"> 128kbs 		 </option>
-																<option value="256"> 256kbs 		 </option>
-														</select>
 													</label>
+													<select class="bitRate span8 last">
+															<option value="">    Select a BitRate  </option>
+															<option value="32">  32kbs 			 </option>
+															<option value="64">  64kbs 			 </option>
+															<option value="128"> 128kbs 		 </option>
+															<option value="256"> 256kbs 		 </option>
+													</select>
 												</div>
 
-												<div class="span3" id="fieldSettings_container_file_convert_audioFormat">
-													<label>
+												<div id="fieldSettings_container_file_convert_audioFormat" class="row-fluid">
+													<label class="span4 left">
 														Change Format:
-														<select class="bitRate">
-																<option value="">    Select a Format  </option>
-																<option value="aac">  AAC 			  </option>
-																<option value="mp2">  MP2 		      </option>
-																<option value="mp3">  MP3 		      </option>
-																<option value="wma">  WMA			  </option>
-																<option value="wav">  WAV 		 	  </option>
-														</select>
 													</label>
+													<select class="audioFormat span8 last">
+															<option value="">    Select a Format  </option>
+															<option value="aac">  AAC 			  </option>
+															<option value="mp2">  MP2 		      </option>
+															<option value="mp3">  MP3 		      </option>
+															<option value="wma">  WMA			  </option>
+															<option value="wav">  WAV 		 	  </option>
+													</select>
 												</div>
 											</div>
 										</div>
