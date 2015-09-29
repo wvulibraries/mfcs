@@ -1167,25 +1167,6 @@ function fieldSettingsBindings() {
 		$("#convertFormat_"+id).val($(this).val());
 	});
 
-
-	// Add types adjustments
-	// Reveals only options that are available for that type of file
-	$('.fieldSettings_file_options_fieldType').change(function(){
-		var checked = $(this).is(":checked");
-		// hide divs
-		$('.fieldSettings_file_options_fieldType').parent().next('div').hide();
-
-		if(checked){
-			$(this).parent().next().show();
-		} else{
-			$(this).parent().next().hide();
-		}
-
-		// clear all checks
-		$('.fieldSettings_file_options_fieldType').prop('checked', false);
-		$(this).prop('checked', checked); // put the check back on or off this property
-	}).change();
-
 	$("#fieldSettings_file_convert_watermark").change(function() {
 		var formPreviewWell = formPreview.find(".well");
 		var checked         = $(this).is(":checked");
@@ -1279,15 +1260,38 @@ function fieldSettingsBindings() {
 	$("#fieldSettings_file_thumbnail_format").change(function() {
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
-
 		$("#thumbnailFormat_"+id).val($(this).val());
 	});
 
-	$("#fieldSettings_file_options_mp3").change(function() {
+	// $("#fieldSettings_file_options_mp3").change(function() {
+	// 	var formPreviewWell = formPreview.find(".well");
+	// 	var id              = formPreviewWell.prop("id").split("_")[1];
+
+	// 	$("#mp3_"+id).val($(this).val());
+	// });
+
+	// // Add types adjustments
+	// // Reveals only options that are available for that type of file
+	// $('.fieldSettings_file_options_fieldType').change(function(){
+	// 	var checked = $(this).is(":checked");
+	// 	// hide divs
+	// 	$('.fieldSettings_file_options_fieldType').parent().next('div').hide();
+
+	// 	if(checked){
+	// 		$(this).parent().next().show();
+	// 	} else{
+	// 		$(this).parent().next().hide();
+	// 	}
+
+	// 	// clear all checks
+	// 	$('.fieldSettings_file_options_fieldType').prop('checked', false);
+	// 	$(this).prop('checked', checked); // put the check back on or off this property
+	// }).change();
+
+	$("#fieldSettings_file_thumbnail_format").change(function() {
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
-
-		$("#mp3_"+id).val($(this).val());
+		$("#thumbnailFormat_"+id).val($(this).val());
 	});
 
 	$("#fieldSettings_fieldset").keyup(function() {
@@ -1297,6 +1301,47 @@ function fieldSettingsBindings() {
 
 		formPreviewWell.find(".fieldPreview legend").text(val);
 		formPreviewWell.find('input[name^=fieldset_]').val(val);
+	});
+
+	// ADDING AUDIO
+	// =================================================================
+
+	// Field settings are added toa  hidden form  in the form Preview Sections
+	// class fieldPreview holds all the information that is getting added to the
+	// stringified objects
+	// This is where the input fields need to be put and they need to change the input values to the
+	// of input information in this field values area.
+	$('#fieldSettings_file_options_convertAudio').change(function(){
+		var checked = $(this).is(':checked'); // true or false
+		if(checked){
+			$('#fieldSettings_container_file_convertAudio').show();
+		} else {
+			$('#fieldSettings_container_file_convertAudio').hide();
+		}
+	});
+
+	$('.bitRate').change(function(){
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+		$("#bitRate_"+id).val($(this).val());
+	});
+
+	$('.audioFormat').change(function(){
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+		$("#audioFormat_"+id).val($(this).val());
+	});
+
+	// ADDING Video
+	// =================================================================
+
+	$('#fieldSettings_file_options_convertAudio').change(function(){
+		var checked = $(this).is(':checked'); // true or false
+		if(checked){
+			$('#fieldSettings_container_file_convertAudio').show();
+		} else {
+			$('#fieldSettings_container_file_convertAudio').hide();
+		}
 	});
 }
 
