@@ -79,6 +79,8 @@ $(function(){
 	});
 
 	// Lock form submit button on form submittion
+	// This doesn't actually lock a submit button
+	// Modified by adding the disabled property
 	$('form').submit(function(){
 		$(this).find(':submit').addClass('disabled').attr('readonly','readonly');
 	});
