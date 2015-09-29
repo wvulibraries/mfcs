@@ -1,78 +1,78 @@
 <?php
 include("../../header.php");
 
-if (isset($engine->cleanPost['MYSQL']['submit'])) {
-	try {
-		$engine->openDB->transBegin();
+// if (isset($engine->cleanPost['MYSQL']['submit'])) {
+// 	try {
+// 		$engine->openDB->transBegin();
 
-		$selectedForms = isset($engine->cleanPost['MYSQL']['forms']) ? $engine->cleanPost['MYSQL']['forms'] : array();
+// 		$selectedForms = isset($engine->cleanPost['MYSQL']['forms']) ? $engine->cleanPost['MYSQL']['forms'] : array();
 
-		// Get all object forms
-		foreach (forms::getObjectForms() as $form) {
-			if (!mfcsPerms::isAdmin($form['ID'])) continue;
+// 		// Get all object forms
+// 		foreach (forms::getObjectForms() as $form) {
+// 			if (!mfcsPerms::isAdmin($form['ID'])) continue;
 
-			// Get the projects associated with this form
-			$formProjects = forms::getProjects($form['ID']);
+// 			// Get the projects associated with this form
+// 			$formProjects = forms::getProjects($form['ID']);
 
-			// Loop through each selected project
-			if (isset($engine->cleanPost['MYSQL']['projects'])) {
-				foreach ($engine->cleanPost['MYSQL']['projects'] as $project) {
-					// Form must be associated with this project, and not already selected
-					if (in_array($project, $formProjects) && !in_array($form['ID'], $selectedForms)) {
-						// Only add forms that have file fields
-						foreach ($form['fields'] as $field) {
-							if ($field['type'] == 'file') {
-								// Add this form to the list that needs added to the database
-								$selectedForms[] = $form['ID'];
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
+// 			// Loop through each selected project
+// 			if (isset($engine->cleanPost['MYSQL']['projects'])) {
+// 				foreach ($engine->cleanPost['MYSQL']['projects'] as $project) {
+// 					// Form must be associated with this project, and not already selected
+// 					if (in_array($project, $formProjects) && !in_array($form['ID'], $selectedForms)) {
+// 						// Only add forms that have file fields
+// 						foreach ($form['fields'] as $field) {
+// 							if ($field['type'] == 'file') {
+// 								// Add this form to the list that needs added to the database
+// 								$selectedForms[] = $form['ID'];
+// 								break;
+// 							}
+// 						}
+// 					}
+// 				}
+// 			}
+// 		}
 
-		// Get a list of all forms already queued
-		$sql = sprintf("SELECT `formID` FROM `fileProcessQueue`");
-		$sqlResult = $engine->openDB->query($sql);
+// 		// Get a list of all forms already queued
+// 		$sql = sprintf("SELECT `formID` FROM `fileProcessQueue`");
+// 		$sqlResult = $engine->openDB->query($sql);
 
-		if (!$sqlResult['result']) {
-			errorHandle::newError("Failed to retrieve queued forms: ".$sqlResult['error'],errorHandle::DEBUG);
-			throw new Exception("Failed to retrieve queued forms.");
-		}
+// 		if (!$sqlResult['result']) {
+// 			errorHandle::newError("Failed to retrieve queued forms: ".$sqlResult['error'],errorHandle::DEBUG);
+// 			throw new Exception("Failed to retrieve queued forms.");
+// 		}
 
-		// Remove forms that are already queued
-		while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
-			foreach ($selectedForms as $I => $form) {
-				if ($form == $row['formID']) {
-					unset($selectedForms[$I]);
-				}
-			}
-		}
+// 		// Remove forms that are already queued
+// 		while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+// 			foreach ($selectedForms as $I => $form) {
+// 				if ($form == $row['formID']) {
+// 					unset($selectedForms[$I]);
+// 				}
+// 			}
+// 		}
 
-		// If something is still checked, add it to the database
-		if (count($selectedForms) > 0) {
-			$sql = sprintf("INSERT INTO `fileProcessQueue` (`formID`) VALUES ('%s')",
-				implode("'),('", $selectedForms)
-				);
-			$sqlResult = $engine->openDB->query($sql);
+// 		// If something is still checked, add it to the database
+// 		if (count($selectedForms) > 0) {
+// 			$sql = sprintf("INSERT INTO `fileProcessQueue` (`formID`) VALUES ('%s')",
+// 				implode("'),('", $selectedForms)
+// 				);
+// 			$sqlResult = $engine->openDB->query($sql);
 
-			if (!$sqlResult['result']) {
-				errorHandle::newError("Failed to queue files for re-processing: ".$sqlResult['error'],errorHandle::DEBUG);
-				throw new Exception("Failed to queue files for re-processing.");
-			}
-		}
+// 			if (!$sqlResult['result']) {
+// 				errorHandle::newError("Failed to queue files for re-processing: ".$sqlResult['error'],errorHandle::DEBUG);
+// 				throw new Exception("Failed to queue files for re-processing.");
+// 			}
+// 		}
 
-		$engine->openDB->transCommit();
-		$engine->openDB->transEnd();
-		errorHandle::successMsg("Successfully queued files for re-processing.");
-	}
-	catch (Exception $e) {
-		$engine->openDB->transRollback();
-		$engine->openDB->transEnd();
-		errorHandle::errorMsg($e->getMessage());
-	}
-}
+// 		$engine->openDB->transCommit();
+// 		$engine->openDB->transEnd();
+// 		errorHandle::successMsg("Successfully queued files for re-processing.");
+// 	}
+// 	catch (Exception $e) {
+// 		$engine->openDB->transRollback();
+// 		$engine->openDB->transEnd();
+// 		errorHandle::errorMsg($e->getMessage());
+// 	}
+// }
 
 
 localVars::add("projectList",projects::generateProjectCheckList());
