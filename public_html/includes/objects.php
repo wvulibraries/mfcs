@@ -397,19 +397,14 @@ class objects {
 				return FALSE;
 			}
 
-			// update the object with the new idno
-			$sql       = sprintf("UPDATE `objects` SET `idno`='%s' WHERE `ID`='%s'",
-				$idno, // Cleaned above when assigned
-				mfcs::$engine->openDB->escape($objectID)
-			);
-			$sqlResult = mfcs::$engine->openDB->query($sql);
+			if (!self::updateIDNO($objectID,$idno)) {
 
-			if (!$sqlResult['result']) {
 				mfcs::$engine->openDB->transRollback();
 				mfcs::$engine->openDB->transEnd();
 
 				errorHandle::newError(__METHOD__."() - updating the IDNO: ".$sqlResult['error'], errorHandle::DEBUG);
 				return FALSE;
+
 			}
 
 			// increment the project counter
@@ -597,19 +592,14 @@ class objects {
 				return FALSE;
 			}
 
-			// update the object with the new idno
-			$sql       = sprintf("UPDATE `objects` SET `idno`='%s' WHERE `ID`='%s'",
-				$idno, // Cleaned above when assigned
-				mfcs::$engine->openDB->escape($objectID)
-			);
-			$sqlResult = mfcs::$engine->openDB->query($sql);
+			if (!self::updateIDNO($objectID,$idno)) {
 
-			if (!$sqlResult['result']) {
 				mfcs::$engine->openDB->transRollback();
 				mfcs::$engine->openDB->transEnd();
 
 				errorHandle::newError(__METHOD__."() - updating the IDNO: ".$sqlResult['error'], errorHandle::DEBUG);
 				return FALSE;
+
 			}
 
 		}
