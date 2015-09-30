@@ -1004,6 +1004,7 @@ $engine->eTemplate("include","header");
 													</div>
 													<div>
 														Audio Options
+														<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="More options will be added for more processing information."></i>
 														<ul class="checkboxList">
 															<li>
 																<label class="checkbox">
@@ -1015,6 +1016,7 @@ $engine->eTemplate("include","header");
 													</div>
 													<div>
 														Video Options
+														<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="More options will be added for more processing information."></i>
 														<ul class="checkboxList">
 															<li>
 																<label class="checkbox">
@@ -1080,7 +1082,7 @@ $engine->eTemplate("include","header");
 													<label class="span4">
 														Change BitRate:
 													</label>
-													<select class="bitRate span8 last">
+													<select class="videobitRate span8 last">
 															<option value="">    Select a BitRate  </option>
 															<option value="32">  32kbs 			 </option>
 															<option value="64">  64kbs 			 </option>
@@ -1089,11 +1091,11 @@ $engine->eTemplate("include","header");
 													</select>
 												</div>
 
-												<div id="fieldSettings_container_file_convert_audioFormat" class="row-fluid">
+												<div id="fieldSettings_container_file_convert_videoFormat" class="row-fluid">
 													<label class="span4 left">
 														Change Format:
 													</label>
-													<select class="audioFormat span8 last">
+													<select class="videoFormat span8 last">
 															<option value="">    Select a Format  </option>
 															<option value="aac">  AAC 			  </option>
 															<option value="mp2">  MP2 		      </option>
@@ -1102,8 +1104,55 @@ $engine->eTemplate("include","header");
 															<option value="wav">  WAV 		 	  </option>
 													</select>
 												</div>
+
 											</div>
 										</div>
+
+
+										<div class="control-group well well-small" id="fieldSettings_container_file_videoThumbnail">
+											<label for="fieldSettings_file_thumbnail">
+												Video Thumbnail Options
+												<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Video thumbnails will automatically be generated, please select
+												the number of thumbnails to generate and specify the details of the thumbnails themselves.  If you need to upload your own thumbnail image
+												of the video please create an extra file upload field named thumbnail and use the image settings."></i>
+											</label>
+											<p>  </p>
+											<div class="row-fluid" id="fieldSettings_file_videoThumbnail">
+												<span class="span4">
+													<label for="fieldSettings_file_video_frames">
+														Number
+														<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="The number of frames that a thumbnail will be grabbed.  Max 10."></i>
+													</label>
+													<input type="number" class="input-block-level" id="fieldSettings_file_video_frames" name="fieldSettings_file_video_frames" min="0" />
+												</span>
+												<span class="span4">
+													<label for="fieldSettings_file_video_height">
+														Height (px)
+														<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
+													</label>
+													<input type="number" class="input-block-level" id="fieldSettings_file_video_height" name="fieldSettings_file_video_height" min="0" />
+												</span>
+												<span class="span4">
+													<label for="fieldSettings_file_video_width">
+														Width (px)
+														<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
+													</label>
+													<input type="number" class="input-block-level" id="fieldSettings_file_video_width" name="fieldSettings_file_video_width" min="0" />
+												</span>
+											</div>
+											<div class="row-fluid" id="fieldSettings_video_thumbnail">
+												<span class="span12">
+													<label for="fieldSettings_file_video_formatThumb">
+														Format
+													</label>
+													<select class="input-block-level" id="fieldSettings_file_thumbnail_formatThumb" name="fieldSettings_file_video_formatThumb">
+														<option value="">Select Format</option>
+														{local var="conversionFormats"}
+													</select>
+												</span>
+											</div>
+										</div>
+
 
 										<div class="control-group well well-small" id="fieldSettings_container_file_convert">
 											<label for="fieldSettings_file_convert">
@@ -1197,6 +1246,7 @@ $engine->eTemplate("include","header");
 											</ul>
 										</div>
 
+
 										<div class="control-group well well-small" id="fieldSettings_container_file_thumbnail">
 											<label for="fieldSettings_file_thumbnail">
 												Thumbnail Options
@@ -1227,6 +1277,8 @@ $engine->eTemplate("include","header");
 												</span>
 											</div>
 										</div>
+
+
 
 									<div class="row-fluid noHide">
 											<span class="span6">

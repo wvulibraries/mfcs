@@ -315,6 +315,19 @@ function showFieldSettings(fullID) {
 			$(".bitRate option[value="+$('#bitRate_'+id).val()+"]").prop("selected", true);
 			$(".audioFormat option[value="+$('#audioFormat_'+id).val()+"]").prop("selected", true);
 
+			// Video Bindings
+			$("#fieldSettings_file_options_convertVideo").prop("checked",($("#convertVideo_"+id).val()==='true')).change();
+			$("#fieldSettings_file_options_videothumbnail").prop("checked",($("#videothumbnail_"+id).val()==='true')).change();
+			$(".videobitRate option[value="+$('#videobitRate_'+id).val()+"]").prop("selected", true);
+
+			$('#fieldSettings_file_video_frames').val($('#videoThumbFrames_'+id).val());
+			$('#fieldSettings_file_video_height').val($('#videoThumbHeight_'+id).val());
+			$('#fieldSettings_file_video_width').val($('#videoThumbWidth_'+id).val());
+			$('#fieldSettings_file_video_formatThumb').val($('#videoFormatThumb_'+id).val());
+
+			$(".videoFormat option[value="+$('#videoFormat_'+id).val()+"]").prop("selected", true);
+
+
 
 			if (type != 'fieldset') {
 				var parentFieldset = fieldset.parents("li").parents("li");
@@ -1268,32 +1281,6 @@ function fieldSettingsBindings() {
 		$("#thumbnailFormat_"+id).val($(this).val());
 	});
 
-	// $("#fieldSettings_file_options_mp3").change(function() {
-	// 	var formPreviewWell = formPreview.find(".well");
-	// 	var id              = formPreviewWell.prop("id").split("_")[1];
-
-	// 	$("#mp3_"+id).val($(this).val());
-	// });
-
-	// // Add types adjustments
-	// // Reveals only options that are available for that type of file
-	// $('.fieldSettings_file_options_fieldType').change(function(){
-	// 	var checked = $(this).is(":checked");
-	// 	// hide divs
-	// 	$('.fieldSettings_file_options_fieldType').parent().next('div').hide();
-
-	// 	if(checked){
-	// 		$(this).parent().next().show();
-	// 	} else{
-	// 		$(this).parent().next().hide();
-	// 	}
-
-	// 	// clear all checks
-	// 	$('.fieldSettings_file_options_fieldType').prop('checked', false);
-	// 	$(this).prop('checked', checked); // put the check back on or off this property
-	// }).change();
-
-
 	$("#fieldSettings_file_thumbnail_format").change(function() {
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
@@ -1318,11 +1305,12 @@ function fieldSettingsBindings() {
 	// This is where the input fields need to be put and they need to change the input values to the
 	// of input information in this field values area.
 
-
 	// NOTES: Just found the form that all theses elements are going to be added to
-	// On line 1796 There is a switch statement that has elements defined by what the elements are
+	// On line 1796ish (maybe more after code comments etc)
+	// There is a switch statement that has elements defined by what the elements are
 	// This line is used to add the hidden form, to which these change functions actually take
 	// take place.
+	// You will also have to adjust the ShowFieldSettings() function on lines 376ish
 
 	$('#fieldSettings_file_options_convertAudio').change(function(){
 		var checked         = $(this).is(':checked'); // true or false
@@ -1351,18 +1339,84 @@ function fieldSettingsBindings() {
 		$("#audioFormat_"+id).val($(this).val());
 	});
 
-	// ADDING Video
+	// ADDING VIDEO
 	// =================================================================
 
-	$('#fieldSettings_file_options_convertAudio').change(function(){
-		var checked = $(this).is(':checked'); // true or false
+	$('#fieldSettings_file_options_convertVideo').change(function(){
+		var checked         = $(this).is(':checked'); // true or false
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+
 		if(checked){
-			$('#fieldSettings_container_file_convertAudio').show();
+			$('#fieldSettings_container_file_convertVideo').show();
 		} else {
-			$('#fieldSettings_container_file_convertAudio').hide();
+			$('#fieldSettings_container_file_convertVideo').hide();
 		}
+
+		// form value
+		$('#convertVideo_'+id).val(checked);
 	});
-}
+
+	$('#fieldSettings_file_options_videothumbnail').change(function(){
+		var checked         = $(this).is(':checked'); // true or false
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+
+		if(checked){
+			$('#fieldSettings_container_file_videoThumbnail').show();
+		} else {
+			$('#fieldSettings_container_file_videoThumbnail').hide();
+		}
+
+		// form value
+		$('#videothumbnail_'+id).val(checked);
+	});
+
+
+	$('.videobitRate').change(function(){
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+		$("#videobitRate_"+id).val($(this).val());
+	});
+
+	$('.videoFormat').change(function(){
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+		$("#videoFormat_"+id).val($(this).val());
+	});
+
+	$('#fieldSettings_file_video_frames').change(function(){
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+		$("#videoThumbFrames_"+id).val($(this).val());
+		console.log('frames change');
+	});
+
+	$('#fieldSettings_file_video_height').change(function(){
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+		$("#videoThumbHeight_"+id).val($(this).val());
+		console.log('height change');
+	});
+
+	$('#fieldSettings_file_video_width').change(function(){
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+		$("#videoThumbWidth_"+id).val($(this).val());
+	});
+
+	$('#fieldSettings_file_video_formatThumb').change(function(){
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+		$("#videoFormatThumb_"+id).val($(this).val());
+	});
+
+}  // end function
+
+
+
+
+
 
 function formSettingsBindings() {
 	$("#formTitle").on("click", function() {
@@ -1833,10 +1887,21 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="thumbnailHeight_'+id+'" name="thumbnailHeight_'+id+'" value="'+((vals.thumbnailHeight !== undefined)?vals.thumbnailHeight:'150')+'">';
 			output += '<input type="hidden" id="thumbnailWidth_'+id+'" name="thumbnailWidth_'+id+'" value="'+((vals.thumbnailWidth !== undefined)?vals.thumbnailWidth:'150')+'">';
 			output += '<input type="hidden" id="thumbnailFormat_'+id+'" name="thumbnailFormat_'+id+'" value="'+((vals.thumbnailFormat !== undefined)?vals.thumbnailFormat:'JPG')+'">';
+
 			// audio forms
 			output += '<input type="hidden" id="convertAudio_'+id+'" name="convertAudio_'+id+'" value="'+((vals.convertAudio !== undefined)?vals.convertAudio:'')+'">';
 			output += '<input type="hidden" id="bitRate_'+id+'" name="bitRate_'+id+'" value="'+((vals.bitRate !== undefined)?vals.bitRate:'')+'">';
 			output += '<input type="hidden" id="audioFormat_'+id+'" name="audioFormat_'+id+'" value="'+((vals.audioFormat !== undefined)?vals.audioFormat:'')+'">';
+
+			// video forms
+			output += '<input type="hidden" id="convertVideo_'+id+'" name="convertVideo_'+id+'" value="'+((vals.convertVideo !== undefined)?vals.convertVideo:'')+'">';
+			output += '<input type="hidden" id="videothumbnail_'+id+'" name="videothumbnail_'+id+'" value="'+((vals.videothumbnail !== undefined)?vals.videothumbnail:'')+'">';
+			output += '<input type="hidden" id="videobitRate_'+id+'" name="videobitRate_'+id+'" value="'+((vals.videobitRate !== undefined)?vals.videobitRate:'')+'">';
+			output += '<input type="hidden" id="videoFormat_'+id+'" name="videoFormat_'+id+'" value="'+((vals.videoFormat !== undefined)?vals.videoFormat:'')+'">';
+			output += '<input type="hidden" id="videoThumbFrames_'+id+'" name="videoThumbFrames_'+id+'" value="'+((vals.videoThumbFrames !== undefined)?vals.videoThumbFrames:'')+'">';
+			output += '<input type="hidden" id="videoThumbHeight_'+id+'" name="videoThumbHeight_'+id+'" value="'+((vals.videoThumbHeight !== undefined)?vals.videoThumbHeight:'')+'">';
+			output += '<input type="hidden" id="videoThumbWidth_'+id+'" name="videoThumbWidth_'+id+'" value="'+((vals.videoThumbWidth !== undefined)?vals.videoThumbWidth:'')+'">';
+			output += '<input type="hidden" id="videoFormatThumb_'+id+'" name="videoFormatThumb_'+id+'" value="'+((vals.videoFormatThumb !== undefined)?vals.videoFormatThumb:'')+'">';
 			break;
 
 		default:
