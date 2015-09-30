@@ -8,7 +8,7 @@ try {
 	$value     = isset($engine->cleanGet['MYSQL']['value'])     ? $engine->cleanGet['MYSQL']['value']     : NULL;
 	$output    = array(
 		'options'  => array(),
-		'pageSize' => $pageSize,
+		'pageSize' => 0,
 		'total'    => 0,
 	);
 

@@ -362,7 +362,7 @@ class objects {
 		localvars::add("newObjectID",$objectID);
 
 		// Insert into the new data table
-		if (self::insertObjectData($objectID,$data) === FALSE) {
+		if (self::insertObjectData($objectID,$data,$formID) === FALSE) {
 			mfcs::$engine->openDB->transRollback();
 			mfcs::$engine->openDB->transEnd();
 
@@ -397,19 +397,14 @@ class objects {
 				return FALSE;
 			}
 
-			// update the object with the new idno
-			$sql       = sprintf("UPDATE `objects` SET `idno`='%s' WHERE `ID`='%s'",
-				$idno, // Cleaned above when assigned
-				mfcs::$engine->openDB->escape($objectID)
-			);
-			$sqlResult = mfcs::$engine->openDB->query($sql);
+			if (!self::updateIDNO($objectID,$idno)) {
 
-			if (!$sqlResult['result']) {
 				mfcs::$engine->openDB->transRollback();
 				mfcs::$engine->openDB->transEnd();
 
 				errorHandle::newError(__METHOD__."() - updating the IDNO: ".$sqlResult['error'], errorHandle::DEBUG);
 				return FALSE;
+
 			}
 
 			// increment the project counter
@@ -561,7 +556,7 @@ class objects {
 		}		
 
 		// Insert into the new data table
-		if (self::insertObjectData($objectID,$data) === FALSE) {
+		if (self::insertObjectData($objectID,$data,$formID) === FALSE) {
 			mfcs::$engine->openDB->transRollback();
 			mfcs::$engine->openDB->transEnd();
 
@@ -597,19 +592,14 @@ class objects {
 				return FALSE;
 			}
 
-			// update the object with the new idno
-			$sql       = sprintf("UPDATE `objects` SET `idno`='%s' WHERE `ID`='%s'",
-				$idno, // Cleaned above when assigned
-				mfcs::$engine->openDB->escape($objectID)
-			);
-			$sqlResult = mfcs::$engine->openDB->query($sql);
+			if (!self::updateIDNO($objectID,$idno)) {
 
-			if (!$sqlResult['result']) {
 				mfcs::$engine->openDB->transRollback();
 				mfcs::$engine->openDB->transEnd();
 
 				errorHandle::newError(__METHOD__."() - updating the IDNO: ".$sqlResult['error'], errorHandle::DEBUG);
 				return FALSE;
+
 			}
 
 		}
@@ -620,6 +610,22 @@ class objects {
 
 		return TRUE;
 
+	}
+
+	private static function updateIDNO($objectID,$idno) {
+	// update the object with the new idno
+		$sql       = sprintf("UPDATE `objects` SET `idno`='%s' WHERE `ID`='%s'",
+			mfcs::$engine->openDB->escape($idno),
+			mfcs::$engine->openDB->escape($objectID)
+			);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - updating the IDNO: ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		return TRUE;
 	}
 
 	// $metadata needs to be an associative array that contains key value pairs that 
@@ -781,7 +787,7 @@ class objects {
 		return($data);
 	}
 
-	public static function insertObjectData($objectID,$data) {
+	public static function insertObjectData($objectID,$data,$formID) {
 
 		if (!is_array($data)) {
 			return FALSE;
@@ -817,7 +823,8 @@ class objects {
 				$encoded = 1;
 			}
 
-			$sql = sprintf("INSERT INTO `objectsData` (objectID,fieldName,value,encoded) VALUES('%s','%s','%s','%s')",
+			$sql = sprintf("INSERT INTO `objectsData` (formID,objectID,fieldName,value,encoded) VALUES('%s','%s','%s','%s','%s')",
+				mfcs::$engine->openDB->escape($formID),
 				mfcs::$engine->openDB->escape($objectID),
 				mfcs::$engine->openDB->escape($I),
 				mfcs::$engine->openDB->escape($V),

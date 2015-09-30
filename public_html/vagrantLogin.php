@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 require 'engineInclude.php';
 
@@ -9,5 +9,5 @@ $_SESSION = unserialize(base64_decode('YTo2OntzOjQ6IkNTUkYiO3M6MzI6Ijc0MmQ5MDkzN
 <p>You are now logged in. Use the links below to navigate:</p>
 
 <ul>
-    <li><a href="/">MFCS</a></li>
+	<li><a href="/">MFCS</a></li>
 </ul>

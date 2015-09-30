@@ -28,7 +28,15 @@ class duplicates {
 		//insert data
 		foreach ($data as $name=>$raw) {
 
-			if (!isset(mfcs::$engine->cleanPost['MYSQL'][$name]) || isempty(mfcs::$engine->cleanPost['MYSQL'][$name])) continue;
+			if (!isset(mfcs::$engine->cleanPost['MYSQL'][$name]) || isempty(mfcs::$engine->cleanPost['MYSQL'][$name])) {
+				if (!isempty($raw)) {
+					http::setPost($name,$raw);
+					$postSet = TRUE;
+				}
+				else {
+					continue;
+				}
+			}
 
 			$sql       = sprintf("INSERT INTO `dupeMatching` (`formID`,`objectID`,`field`,`value`) VALUES('%s','%s','%s','%s')",
 				mfcs::$engine->openDB->escape($formID),
@@ -37,6 +45,10 @@ class duplicates {
 				mfcs::$engine->cleanPost['MYSQL'][$name] //@TODO this should use data
 			);
 			$sqlResult = mfcs::$engine->openDB->query($sql);
+
+			if ($postSet === TRUE) {
+				http::setPost($name,"");
+			}
 
 			if (!$sqlResult['result']) {
 				mfcs::$engine->openDB->transRollback();
@@ -55,12 +67,21 @@ class duplicates {
 	}
 
 	public static function isDupe($formID,$field,$value,$objectID=NULL) {
-		$sql = sprintf("SELECT COUNT(*) FROM `dupeMatching` WHERE `formID`='%s' AND `field`='%s' AND `value`='%s' %s",
-			mfcs::$engine->openDB->escape($formID),
-			mfcs::$engine->openDB->escape($field),
-			mfcs::$engine->openDB->escape($value),
-			(!isnull($objectID))?"AND `objectID`!='".mfcs::$engine->openDB->escape($objectID)."'":""
-		);
+
+		if ($field == "idno") {
+			$sql = sprintf("SELECT COUNT(*) FROM `dupeMatching` WHERE `field`='idno' AND `value`='%s' %s",
+				mfcs::$engine->openDB->escape($value),
+				(!isnull($objectID))?"AND `objectID`!='".mfcs::$engine->openDB->escape($objectID)."'":""
+				);
+		}
+		else {
+			$sql = sprintf("SELECT COUNT(*) FROM `dupeMatching` WHERE `formID`='%s' AND `field`='%s' AND `value`='%s' %s",
+				mfcs::$engine->openDB->escape($formID),
+				mfcs::$engine->openDB->escape($field),
+				mfcs::$engine->openDB->escape($value),
+				(!isnull($objectID))?"AND `objectID`!='".mfcs::$engine->openDB->escape($objectID)."'":""
+				);
+		}
 
 		$sqlResult = mfcs::$engine->openDB->query($sql);
 

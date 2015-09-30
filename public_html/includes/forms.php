@@ -94,18 +94,17 @@ class forms {
 
 		$engine = EngineAPI::singleton();
 
-		switch ($type) {
-			case TRUE:
-				$sql = sprintf("SELECT `ID` FROM `forms` WHERE `metadata`='0' ORDER BY `title`");
-				break;
-			case FALSE:
-				$sql = sprintf("SELECT `ID` FROM `forms` WHERE `metadata`='1' ORDER BY `title`");
-				break;
-			case NULL:
-				$sql = sprintf("SELECT `ID` FROM `forms` ORDER BY `title`");
-				break;
-			default:
-				return(FALSE);
+		if ($type === TRUE) {
+			$sql = sprintf("SELECT `ID` FROM `forms` WHERE `metadata`='0' ORDER BY `title`");
+		}
+		else if ($type === FALSE) {
+			$sql = sprintf("SELECT `ID` FROM `forms` WHERE `metadata`='1' ORDER BY `title`");
+		}
+		else if (isnull($type)) {
+			$sql = sprintf("SELECT `ID` FROM `forms` ORDER BY `title`");
+		}
+		else {
+			return(FALSE);
 		}
 
 		$sqlResult = $engine->openDB->query($sql);
@@ -668,89 +667,110 @@ class forms {
 			}
 			else if ($field['type'] == "select") {
 
-				if (isset($field['choicesType']) && !isempty($field['choicesType']) && $field['choicesType'] == "manual") {
-					if (($fieldChoices = forms::getFieldChoices($field)) === FALSE) {
-						return FALSE;
-					}
-
-					$output .= sprintf('<select name="%s" id="%s" data-type="%s" data-formid="%s" data-fieldname="%s" %s>%s</select>',
-						htmlSanitize($field['name']),
-						htmlSanitize($field['name']),
-						$field['type'],
-						$formID,
-						htmlSanitize($field['name']),
-						(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
-						self::drawFieldChoices($field,$fieldChoices,(isset($object['data'][$field['name']]))?$object['data'][$field['name']]:NULL)
-					);
+				if (($fieldChoices = forms::getFieldChoices($field)) === FALSE) {
+					return FALSE;
 				}
-				else {
-					$output .= sprintf('<input type="hidden" name="%s_available" id="%s_available" data-type="%s" data-formid="%s" data-fieldname="%s" value="%s" %s>',
-						htmlSanitize($field['name']),
-						htmlSanitize($field['name']),
-						$field['type'],
-						$formID,
-						htmlSanitize($field['name']),
-						htmlSanitize($object['data'][$field['name']]),
-						(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':""
-					);
 
-					$output .= sprintf("<script charset=\"utf-8\">
-							$(function() {
-								$('#%s_available')
-									.select2({
-										minimumResultsForSearch: 10,
-										placeholder: 'Make a Selection',
-										ajax: {
-											url: 'retrieveOptions.php',
-											dataType: 'json',
-											quietMillis: 300,
-											data: function(term, page) {
-												return {
-													q: term,
-													page: page,
-													pageSize: 1000,
-													formID: '%s',
-													fieldName: '%s'
-												};
-											},
-											results: function(data, page) {
-												var more = (page * data.pageSize) < data.total;
+				$output .= sprintf('<select name="%s" id="%s" data-type="%s" data-formid="%s" data-fieldname="%s" %s>',
+					htmlSanitize($field['name']),
+					htmlSanitize($field['name']),
+					$field['type'],
+					$formID,
+					htmlSanitize($field['name']),
+					(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':""
+				);
 
-												return {
-													results: data.options,
-													more: more
-												};
-											},
-										},
-										initSelection: function(e, callback) {
-											var id=$(e).val();
-											if (id!=='') {
-												$.ajax({
-													url: 'retrieveOptions.php',
-													data: {
-														formID: '%s',
-														fieldName: '%s',
-														value: id
-													},
-													dataType: 'json'
-												})
-												.done(function(data) {
-													callback(data.options[0]);
-												});
-											}
-										},
-									});
-							});
-						</script>",
-						htmlSanitize($field['name']),
-						htmlSanitize($field['choicesForm']),
-						htmlSanitize($field['choicesField']),
-						htmlSanitize($field['choicesForm']),
-						htmlSanitize($field['choicesField'])
-					);
-				}
+				$output .= self::drawFieldChoices($field,$fieldChoices,(isset($object['data'][$field['name']]))?$object['data'][$field['name']]:NULL);
+
+				$output .= "</select>";
 
 			}
+			// else if ($field['type'] == "select") {
+
+			// 	if (isset($field['choicesType']) && !isempty($field['choicesType']) && $field['choicesType'] == "manual") {
+			// 		if (($fieldChoices = forms::getFieldChoices($field)) === FALSE) {
+			// 			return FALSE;
+			// 		}
+
+			// 		$output .= sprintf('<select name="%s" id="%s" data-type="%s" data-formid="%s" data-fieldname="%s" %s>%s</select>',
+			// 			htmlSanitize($field['name']),
+			// 			htmlSanitize($field['name']),
+			// 			$field['type'],
+			// 			$formID,
+			// 			htmlSanitize($field['name']),
+			// 			(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
+			// 			self::drawFieldChoices($field,$fieldChoices,(isset($object['data'][$field['name']]))?$object['data'][$field['name']]:NULL)
+			// 		);
+			// 	}
+			// 	else {
+			// 		$output .= sprintf('<input type="hidden" name="%s" id="%s" data-type="%s" data-formid="%s" data-fieldname="%s" %s>',
+			// 			htmlSanitize($field['name']),
+			// 			htmlSanitize($field['name']),
+			// 			$field['type'],
+			// 			$formID,
+			// 			htmlSanitize($field['name']),
+			// 			(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
+			// 			htmlSanitize($field['name'])
+			// 		);
+					
+			// 		$output .= sprintf("<script charset=\"utf-8\">
+			// 				$(function() {
+			// 					$('#%s')
+			// 						.select2({
+			// 							minimumResultsForSearch: 10,
+			// 							placeholder: 'Make a Selection',
+			// 							ajax: {
+			// 								url: 'retrieveOptions.php',
+			// 								dataType: 'json',
+			// 								quietMillis: 300,
+			// 								data: function(term, page) {
+			// 									return {
+			// 										q: term,
+			// 										page: page,
+			// 										pageSize: 1000,
+			// 										formID: '%s',
+			// 										fieldName: '%s'
+			// 									};
+			// 								},
+			// 								results: function(data, page) {
+			// 									var more = (page * data.pageSize) < data.total;
+
+			// 									return {
+			// 										results: data.options,
+			// 										more: more
+			// 									};
+			// 								},
+			// 							},
+			// 							// initSelection: function(element, callback) {
+
+			// 					  //           var id = $(element).val();
+			// 					  //           if(id !== '') {
+			// 					  //           	$.ajax('retrieveSingleOption.php', {
+			// 					  //           		data: function() {
+			// 					  //           			return {
+			// 					  //           				formID: '%s',
+			// 					  //           				id: id
+			// 					  //           			};
+			// 					  //           		},
+			// 					  //                   dataType: 'json'
+			// 					  //               }).done(function(data) {
+			// 					  //                   callback(data.results[0]);
+			// 					  //               });
+			// 					  //           }
+			// 					  //       }
+			// 						});
+			// 					// $('#%s').select2( 'val', '%s' );
+			// 				});
+							
+			// 			</script>",
+			// 			htmlSanitize($field['name']),
+			// 			htmlSanitize($field['choicesForm']),
+			// 			htmlSanitize($field['choicesField']),
+			// 			$object['data'][$field['name']]
+			// 		);
+			// 	}
+
+			// }
 			else if ($field['type'] == 'multiselect') {
 
 				$output .= '<div class="multiSelectContainer">';
@@ -794,7 +814,8 @@ class forms {
 						$field['type'],
 						$formID,
 						htmlSanitize($field['name']),
-						(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':""
+						(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
+						htmlSanitize($field['name'])
 					);
 
 					$output .= sprintf("<script charset=\"utf-8\">
@@ -949,12 +970,14 @@ class forms {
 
 	private static function getFieldValue($field,$object) {
 
+		$field['value'] = convertString($field['value']);
+
 		if (self::hasFieldVariables($field['value'])) {
 			return htmlSanitize(self::applyFieldVariables($field['value']));
 		}
 
 		return isset($object['data'][$field['name']])
-			? htmlSanitize($object['data'][$field['name']])
+			? htmlSanitize(convertString($object['data'][$field['name']]))
 			: htmlSanitize(self::applyFieldVariables($field['value']));
 
 	}
@@ -1082,7 +1105,7 @@ class forms {
 		if ($field['type'] == "idno" && $field['managedBy'] != "user") return NULL;
 
 		if (strtolower($field['required']) == "true" && (isnull($value) || !isset($value) || isempty($value))) {
-
+			errorHandle::newError(__METHOD__."() - missing", errorHandle::DEBUG);
 			errorHandle::errorMsg("Missing data for required field '".$field['label']."'.");
 			return FALSE;
 
@@ -1133,6 +1156,7 @@ class forms {
 		}
 
 		if ($valid === FALSE) {
+			errorHandle::newError(__METHOD__."() - data", errorHandle::DEBUG);
 			errorHandle::errorMsg("Invalid data provided in field '".$field['label']."'.");
 			return FALSE;
 		}
@@ -1140,6 +1164,7 @@ class forms {
 		// Duplicate Checking (Form)
 		if (strtolower($field['duplicates']) == "true") {
 			if (self::isDupe($formID,$field['name'],$value,$objectID)) {
+				errorHandle::newError(__METHOD__."() - Dupe -- ".$field['name'], errorHandle::DEBUG);
 				errorHandle::errorMsg("Duplicate data (in form) provided in field '".$field['label']."'.");
 				return FALSE;
 			}
@@ -1264,6 +1289,20 @@ class forms {
 					$engine->openDB->transEnd();
 
 					errorHandle::errorMsg("Error deleting objects.");
+					errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+					return FALSE;
+				}
+
+				$sql       = sprintf("DELETE FROM `objectsData` WHERE `objectID`='%s'",
+					$objectID
+					);
+				$sqlResult = $engine->openDB->query($sql);
+
+				if (!$sqlResult['result']) {
+					$engine->openDB->transRollback();
+					$engine->openDB->transEnd();
+
+					errorHandle::errorMsg("Error deleting objects. Objects Data table.");
 					errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 					return FALSE;
 				}
