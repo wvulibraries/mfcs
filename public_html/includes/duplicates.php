@@ -46,7 +46,7 @@ class duplicates {
 			);
 			$sqlResult = mfcs::$engine->openDB->query($sql);
 
-			if ($postSet === TRUE) {
+			if (isset($postSet) && $postSet === TRUE) {
 				http::setPost($name,"");
 			}
 
