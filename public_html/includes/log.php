@@ -4,7 +4,7 @@ class log {
 
 	public static function insert($action,$objectID=0,$formID=0) {
 
-		$sql       = sprintf("INSERT INTO `logs` (`username`,`IP`,`action`,`objectID`,`formID`) VALUES('%s','%s',%s','%s','%s')",
+		$sql       = sprintf("INSERT INTO `logs` (`username`,`IP`,`action`,`objectID`,`formID`) VALUES('%s','%s','%s','%s','%s')",
 			mfcs::$engine->openDB->escape(sessionGet('username')),
 			mfcs::$engine->openDB->escape($_SERVER['REMOTE_ADDR']),
 			mfcs::$engine->openDB->escape($action),
