@@ -34,15 +34,8 @@ if (isset($engine->cleanPost['MYSQL']['submitNavigation'])) {
 if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	$engine->openDB->transBegin();
 
-
-	print "<pre>";
-	var_dump($engine->cleanPost);
-	print "</pre>";
-
-
 	$form   = json_decode($engine->cleanPost['RAW']['form'], TRUE);
 	$fields = json_decode($engine->cleanPost['RAW']['fields'], TRUE);
-
 	$idno   = NULL;
 
 	// Ensure all fields have an ID for the label. Assign it the value of name if needed.

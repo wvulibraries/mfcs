@@ -309,7 +309,12 @@ function showFieldSettings(fullID) {
 			$("#fieldSettings_file_thumbnail_height").val($("#thumbnailHeight_"+id).val());
 			$("#fieldSettings_file_thumbnail_width").val($("#thumbnailWidth_"+id).val());
 			$("#fieldSettings_file_thumbnail_format").val($("#thumbnailFormat_"+id).val());
-			$("#fieldSettings_file_options_mp3").prop("checked",($("#mp3_"+id).val()==='true')).change();
+
+			// Audio Bindings
+			$("#fieldSettings_file_options_convertAudio").prop("checked",($("#convertAudio_"+id).val()==='true')).change();
+			$(".bitRate option[value="+$('#bitRate_'+id).val()+"]").prop("selected", true);
+			$(".audioFormat option[value="+$('#audioFormat_'+id).val()+"]").prop("selected", true);
+
 
 			if (type != 'fieldset') {
 				var parentFieldset = fieldset.parents("li").parents("li");
@@ -1288,6 +1293,7 @@ function fieldSettingsBindings() {
 	// 	$(this).prop('checked', checked); // put the check back on or off this property
 	// }).change();
 
+
 	$("#fieldSettings_file_thumbnail_format").change(function() {
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
@@ -1311,13 +1317,26 @@ function fieldSettingsBindings() {
 	// stringified objects
 	// This is where the input fields need to be put and they need to change the input values to the
 	// of input information in this field values area.
+
+
+	// NOTES: Just found the form that all theses elements are going to be added to
+	// On line 1796 There is a switch statement that has elements defined by what the elements are
+	// This line is used to add the hidden form, to which these change functions actually take
+	// take place.
+
 	$('#fieldSettings_file_options_convertAudio').change(function(){
-		var checked = $(this).is(':checked'); // true or false
+		var checked         = $(this).is(':checked'); // true or false
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+
 		if(checked){
 			$('#fieldSettings_container_file_convertAudio').show();
 		} else {
 			$('#fieldSettings_container_file_convertAudio').hide();
 		}
+
+		// form value
+		$('#convertAudio_'+id).val(checked);
 	});
 
 	$('.bitRate').change(function(){
@@ -1814,7 +1833,10 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="thumbnailHeight_'+id+'" name="thumbnailHeight_'+id+'" value="'+((vals.thumbnailHeight !== undefined)?vals.thumbnailHeight:'150')+'">';
 			output += '<input type="hidden" id="thumbnailWidth_'+id+'" name="thumbnailWidth_'+id+'" value="'+((vals.thumbnailWidth !== undefined)?vals.thumbnailWidth:'150')+'">';
 			output += '<input type="hidden" id="thumbnailFormat_'+id+'" name="thumbnailFormat_'+id+'" value="'+((vals.thumbnailFormat !== undefined)?vals.thumbnailFormat:'JPG')+'">';
-			output += '<input type="hidden" id="mp3_'+id+'" name="mp3_'+id+'" value="'+((vals.mp3 !== undefined)?vals.mp3:'')+'">';
+			// audio forms
+			output += '<input type="hidden" id="convertAudio_'+id+'" name="convertAudio_'+id+'" value="'+((vals.convertAudio !== undefined)?vals.convertAudio:'')+'">';
+			output += '<input type="hidden" id="bitRate_'+id+'" name="bitRate_'+id+'" value="'+((vals.bitRate !== undefined)?vals.bitRate:'')+'">';
+			output += '<input type="hidden" id="audioFormat_'+id+'" name="audioFormat_'+id+'" value="'+((vals.audioFormat !== undefined)?vals.audioFormat:'')+'">';
 			break;
 
 		default:
