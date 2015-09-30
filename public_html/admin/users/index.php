@@ -41,10 +41,16 @@ function defineList($tableName) {
 }
 
 if (isset($engine->cleanPost['MYSQL'][$tableName."_submit"])) {
+
+	log::insert("Admin: Insert New User");
+
 	$list = defineList($tableName);
 	$list->insert();
 }
 if (isset($engine->cleanPost['MYSQL'][$tableName."_update"])) {
+
+	log::insert("Admin: Update User");
+
 	$list = defineList($tableName);
 	$list->update();
 }
@@ -52,6 +58,8 @@ if (isset($engine->cleanPost['MYSQL'][$tableName."_update"])) {
 $list = defineList($tableName);
 
 localVars::add("results",displayMessages());
+
+log::insert("Admin: View Users Page");
 
 $engine->eTemplate("include","header");
 ?>

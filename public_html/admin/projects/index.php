@@ -29,10 +29,16 @@ function defineList($tableName) {
 }
 
 if (isset($engine->cleanPost['MYSQL'][$tableName."_submit"])) {
+
+	log::insert("Admin: Add Project");
+
 	$list = defineList($tableName);
 	$list->insert();
 }
 if (isset($engine->cleanPost['MYSQL'][$tableName."_update"])) {
+
+	log::insert("Admin: Update Projects");
+
 	$list = defineList($tableName);
 	$list->update();
 }
@@ -40,6 +46,8 @@ if (isset($engine->cleanPost['MYSQL'][$tableName."_update"])) {
 $list = defineList($tableName);
 
 localVars::add("results",displayMessages());
+
+log::insert("Admin: View Projects Page");
 
 $engine->eTemplate("include","header");
 ?>
