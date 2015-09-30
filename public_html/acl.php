@@ -1,6 +1,6 @@
 <?php
 
-	EngineAPI::$engineVars['loginPage']    = "login.php";
+	EngineAPI::$engineVars['loginPage']    = "/login/";
 
 	$engine->accessControl("ADgroup","libraryGroup_staff",TRUE,FALSE);
 	$engine->accessControl("ADgroup","libraryGroup_students",TRUE,FALSE);
