@@ -15,6 +15,8 @@ catch(Exception $e) {
 
 localVars::add("results",displayMessages());
 
+log::insert("Form Creator: View Forms");
+
 $engine->eTemplate("include","header");
 ?>
 
