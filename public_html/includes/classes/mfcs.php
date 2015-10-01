@@ -48,7 +48,7 @@ class mfcs {
 	 */
 	private function __construct($configFile){
 		self::$engine   = EngineAPI::singleton();
-		self::$mfcsRoot = realpath(__DIR__.'/..');
+		self::$mfcsRoot = realpath(__DIR__.'/../..');
 
 		// Load config file
 		if(is_null($configFile)) $configFile = self::$mfcsRoot.'/config.ini';
