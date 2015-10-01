@@ -50,18 +50,27 @@ try {
 	// handle submission
 	$return = NULL;
 	if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
+
+		log::insert("Data Entry: Metadata: Submit",0,$engine->cleanGet['MYSQL']['formID']);
+
 		$return = forms::submit($engine->cleanGet['MYSQL']['formID']);
 		if ($return === FALSE) {
 			throw new Exception("Error Submitting Form.");
 		}
 	}
 	else if (isset($engine->cleanPost['MYSQL']['updateForm'])) {
+
+		log::insert("Data Entry: Metadata: Update",0,$engine->cleanGet['MYSQL']['formID']);
+
 		$return = forms::submit($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
 		if ($return === FALSE) {
 			throw new Exception("Error Updating Form.");
 		}
 	}
 	else if (isset($engine->cleanPost['MYSQL']['updateEdit'])) {
+
+		log::insert("Data Entry: Metadata: Update Edit",0,$engine->cleanGet['MYSQL']['formID']);
+
 		$return = forms::submitEditTable($engine->cleanGet['MYSQL']['formID']);
 		if ($return === FALSE) {
 			throw new Exception("Error Updating Form.");
@@ -91,8 +100,11 @@ try {
 
 }
 catch(Exception $e) {
+	log::insert("Data Entry: Metadata: Error",0,0,$e->getMessage());
 	errorHandle::errorMsg($e->getMessage());
 }
+
+log::insert("Data Entry: Metadata: View Page");
 
 localVars::add("results",displayMessages());
 

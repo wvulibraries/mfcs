@@ -17,6 +17,8 @@ catch(Exception $e) {
 
 localVars::add("results",displayMessages());
 
+log::insert("Data Entry: Form Select: View Page");
+
 $engine->eTemplate("include","header");
 ?>
 
