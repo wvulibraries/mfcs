@@ -38,6 +38,12 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	$fields = json_decode($engine->cleanPost['RAW']['fields'], TRUE);
 	$idno   = NULL;
 
+
+	print "<pre>";
+	var_dump($fields);
+	print "</pre>";
+
+
 	// Ensure all fields have an ID for the label. Assign it the value of name if needed.
 	if (!is_empty($fields)) {
 		$count = NULL;
@@ -610,17 +616,54 @@ if (isset($engine->cleanGet['MYSQL']['id']) && !isempty($engine->cleanGet['MYSQL
 // =============================================================
 $audioFileTypes = array();
 
+// more options can be added later, its not a great idea to go above or below 128 though
+$bitrates    = array(
+'32'         => '32kbs',
+'64'         => '64kbs',
+'128'        => '128kbs',
+'256'        => '256kbs'
+);
+
+$audioTypes  = array(
+'aac'        => 'Advanced Audio Coding',
+'mp3'        => 'MP3 - Audio Layer 3',
+'oga'        => 'Open Container Audio',
+'wav'        => 'Wav Sound File'
+);
+
+$videoTypes  = array(
+'3gp'        => 'Mobile Video Format',
+'h264'       => 'H264 Raw Format',
+'mp4'        => 'MP4 Video Format',
+'oog'        => 'Open Container Format',
+'wmv'        => 'Windows Media Video',
+);
+
+$videoThumbs = array(
+'bmp'        => 'Bitmap',
+'gif'        => 'Gif',
+'jpeg'       => 'Jpeg',
+'png'        => 'Png'
+);
+
+
+// Render Stuff
+localvars::add('bitRates', renderToOptions($bitrates));
+localvars::add('audioOptions', renderToOptions($audioTypes));
+localvars::add('videoTypes', renderToOptions($videoTypes));
+localvars::add('videoThumbs', renderToOptions($videoThumbs));
 
 localvars::add("selectedEntryUsers",$selectedEntryUsers);
 localvars::add("selectedViewUsers",$selectedViewUsers);
 localvars::add("selectedUsersAdmins",$selectedUsersAdmins);
-
 localVars::add("results",displayMessages());
 
 $selectedProjects = forms::getProjects(isset($engine->cleanGet['MYSQL']['id']) ? $engine->cleanGet['MYSQL']['id'] : 0);
 localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects));
 
 $engine->eTemplate("include","header");
+
+
 ?>
 
 <script type="text/javascript" src='{local var="siteRoot"}includes/js/createForm_functions.js'></script>
@@ -1047,11 +1090,8 @@ $engine->eTemplate("include","header");
 														Change BitRate:
 													</label>
 													<select class="bitRate span8 last">
-															<option value="">    Select a BitRate  </option>
-															<option value="32">  32kbs 			 </option>
-															<option value="64">  64kbs 			 </option>
-															<option value="128"> 128kbs 		 </option>
-															<option value="256"> 256kbs 		 </option>
+															<option value="">  Select a BitRate  </option>
+															{local var="bitRates"}
 													</select>
 												</div>
 
@@ -1061,11 +1101,7 @@ $engine->eTemplate("include","header");
 													</label>
 													<select class="audioFormat span8 last">
 															<option value="">    Select a Format  </option>
-															<option value="aac">  AAC 			  </option>
-															<option value="mp2">  MP2 		      </option>
-															<option value="mp3">  MP3 		      </option>
-															<option value="wma">  WMA			  </option>
-															<option value="wav">  WAV 		 	  </option>
+															{local var="audioOptions"}
 													</select>
 												</div>
 											</div>
@@ -1083,11 +1119,8 @@ $engine->eTemplate("include","header");
 														Change BitRate:
 													</label>
 													<select class="videobitRate span8 last">
-															<option value="">    Select a BitRate  </option>
-															<option value="32">  32kbs 			 </option>
-															<option value="64">  64kbs 			 </option>
-															<option value="128"> 128kbs 		 </option>
-															<option value="256"> 256kbs 		 </option>
+															<option value="">  Select a BitRate  </option>
+															{local var="bitRates"}
 													</select>
 												</div>
 
@@ -1097,11 +1130,7 @@ $engine->eTemplate("include","header");
 													</label>
 													<select class="videoFormat span8 last">
 															<option value="">    Select a Format  </option>
-															<option value="aac">  AAC 			  </option>
-															<option value="mp2">  MP2 		      </option>
-															<option value="mp3">  MP3 		      </option>
-															<option value="wma">  WMA			  </option>
-															<option value="wav">  WAV 		 	  </option>
+															{local var="videoFormat"}
 													</select>
 												</div>
 
@@ -1147,7 +1176,7 @@ $engine->eTemplate("include","header");
 													</label>
 													<select class="input-block-level" id="fieldSettings_file_thumbnail_formatThumb" name="fieldSettings_file_video_formatThumb">
 														<option value="">Select Format</option>
-														{local var="conversionFormats"}
+														{local var="videoThumbs"}
 													</select>
 												</span>
 											</div>
