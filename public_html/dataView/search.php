@@ -23,19 +23,27 @@ if (isset($engine->cleanPost['MYSQL']['search'])) {
 		sessionSet("lastSearchForm",$engine->cleanPost['HTML']['formList']);
 		sessionSet("searchResults","");
 		sessionSet("searchQuery", $engine->cleanPost['MYSQL']);
+
+		log::insert("Data View: Search: Search",0,0,$engine->cleanPost['MYSQL']['query']);
+
 		header('Location: '.$_SERVER['PHP_SELF']);
 		exit;
 		// $results = mfcsSearch::search($engine->cleanPost['MYSQL']);
 		// if($results === FALSE) throw new Exception("Error retrieving results");
 	}
 	catch(Exception $e) {
+		log::insert("Data View: Search: Error",0,0,$e->getMessage());
 		errorHandle::errorMsg($e->getMessage());
 	}
 }
 else if (!is_empty(sessionGet('searchResults'))) {
+	log::insert("Data View: Search: get results");
 	$results = sessionGet('searchResults');
 }
 else if (!is_empty(sessionGet('searchQuery'))) {
+
+	log::insert("Data View: Search: get saved search");
+
 	$searchQuery = sessionGET('searchQuery');
 
 	try {
@@ -44,10 +52,14 @@ else if (!is_empty(sessionGet('searchQuery'))) {
 		sessionSet("searchResults",$results);
 	}
 	catch(Exception $e) {
+		log::insert("Data View: Search: Error",0,0,$e->getMessage());
 		errorHandle::errorMsg($e->getMessage());
 	}
 }
 else if(isset($engine->cleanGet['MYSQL']['page'])) {
+
+	log::insert("Data View: Search: page");
+
 	$searchPOST = sessionGet('searchPOST');
 	if($searchPOST) {
 
@@ -57,6 +69,7 @@ else if(isset($engine->cleanGet['MYSQL']['page'])) {
 	}
 }
 else{
+	log::insert("Data View: Search: Delete post");
 	sessionDelete('searchPOST');
 }
 
@@ -70,6 +83,7 @@ try {
 	localvars::add("searchInterface",$interface);
 }
 catch(Exception $e) {
+	log::insert("Data View: Search: Error",0,0,$e->getMessage());
 	errorHandle::errorMsg($e->getMessage());
 }
 
@@ -81,6 +95,8 @@ foreach($breadCrumbs as $breadCrumb){
 localvars::add("breadcrumbs", $crumbs);
 
 localVars::add("results",displayMessages());
+
+log::insert("Data View: Search: View Page");
 
 $engine->eTemplate("include","header");
 ?>

@@ -13,6 +13,8 @@ ini_set('memory_limit','-1');
 		sprintf('<a href="%sdataView/list.php">List Objects</a>', $siteRoot)
 	);
 
+	log::insert("Data View: List",0,(isset($engine->cleanGet['MYSQL']['formID']))?$engine->cleanGet['MYSQL']['formID']:0,$engine->cleanGet['MYSQL']['listType']);
+
 	// Figure out what kind of list we're building
 	switch($engine->cleanGet['MYSQL']['listType']) {
 		case 'metadataObjects':

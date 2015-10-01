@@ -30,6 +30,8 @@ try {
 		throw new Exception("Object not from this form");
 	}
 
+	log::insert("Data View: Object",$engine->cleanGet['MYSQL']['objectID'],$engine->cleanGet['MYSQL']['formID']);
+
 	//////////
 	// Metadata Tab Stuff
 	$form = forms::get($engine->cleanGet['MYSQL']['formID']);
@@ -80,6 +82,7 @@ try {
 
 }
 catch (Exception $e) {
+	log::insert("Data View: Object: Error",0,0,$e->getMessage());
 	errorHandle::errorMsg($e->getMessage());
 }
 
