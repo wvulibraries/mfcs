@@ -1,5 +1,16 @@
 <?php
 
+function renderToOptions($option){
+	$returnValue = "";
+	foreach($option as $key => $value){
+		$returnValue .= sprintf('<option value="%s">%s</option>',
+			$key,
+			$value
+		);
+	}
+	return $returnValue;
+}
+
 function displayMessages() {
 	$engine = EngineAPI::singleton();
 	if (is_empty($engine->errorStack)) {
