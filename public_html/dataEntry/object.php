@@ -144,7 +144,7 @@ if (forms::validID()) {
 		//////////
 	}
 	catch (Exception $e) {
-		log::insert("Data Entry: Object: View Page",$engine->cleanGet['MYSQL']['objectID'],$engine->cleanGet['MYSQL']['formID'],$e->getMessage());
+		log::insert("Data Entry: Object: Error",$engine->cleanGet['MYSQL']['objectID'],$engine->cleanGet['MYSQL']['formID'],$e->getMessage());
 		errorHandle::errorMsg($e->getMessage());
 	}
 }
