@@ -28,12 +28,12 @@ class files {
 			$oldDate
 			);
 		$sqlResult = mfcs::$engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-	
+
 		return TRUE;
 
 	}
@@ -41,12 +41,12 @@ class files {
 	public static function deleteOldProcessingJobs() {
 		$sql       = sprintf("DELETE FROM `objectProcessing` WHERE `state`='0'");
 		$sqlResult = mfcs::$engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-		
+
 		return TRUE;
 	}
 
@@ -84,8 +84,8 @@ class files {
 			return FALSE;
 		}
 
-		// @TODO returns true if no insert fields are set. should imply that there are 
-		// no files to process. could need a debug though ... ??? 
+		// @TODO returns true if no insert fields are set. should imply that there are
+		// no files to process. could need a debug though ... ???
 		if (is_empty(self::$insertFieldNames)) {
 			return TRUE;
 			errorHandle::newError(__METHOD__."() - no fields set.", errorHandle::DEBUG);
@@ -122,7 +122,7 @@ class files {
 
 		// reset the processing fields
 		self::resetProcessingFields();
-		
+
 		return TRUE;
 
 	}
@@ -146,9 +146,9 @@ class files {
 
 	// if ObjectID is null, processes everything with a $state of 1
 	// if ObjectID is an integer, processes that objectID
-	// 
+	//
 	// if $state is modified, processes everything with that state. valid states are 1 and 3 (2 are currently being processed. 0's are done and ready for deleting)
-	// 
+	//
 	// if $returnArray is TRUE, only 1 fieldName will be processed. Returns a complete 'files' array
 	public static function process($objectID=NULL,$fieldname=NULL,$state=1,$returnArray=FALSE) {
 
@@ -189,8 +189,8 @@ class files {
 		$sqlResult = mfcs::$engine->openDB->query($sql);
 
 		// I'm not sure about database transactions here
-		// We are modifying the file system (exports). transaction rollbacks would 
-		// have to be done on the file system as well. 
+		// We are modifying the file system (exports). transaction rollbacks would
+		// have to be done on the file system as well.
 
 		while ($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
@@ -204,22 +204,29 @@ class files {
 
 			$fieldOptions = forms::getField($object['formID'],$row['fieldName']);
 
-			// do we need to do any processing? 
+			// do we need to do any processing?
 			// @TODO, i don't like how these are hard coded
-			$combine   = str2bool($fieldOptions['combine']);
-			$convert   = str2bool($fieldOptions['convert']);
-			$ocr       = str2bool($fieldOptions['ocr']);
-			$thumbnail = str2bool($fieldOptions['thumbnail']);
-			$mp3       = str2bool($fieldOptions['mp3']);
-			if (!$combine && !$convert && !$ocr && !$thumbnail && !$mp3) {
+
+			// base options
+			$convert      = str2bool($fieldOptions['convert']);
+			$convertVideo = str2bool($fieldOptions['convertVideo']);
+			$convertAudio = str2bool($fieldOptions['convertAudio']);
+
+			// other options
+			$combine      = str2bool($fieldOptions['combine']);
+			$ocr          = str2bool($fieldOptions['ocr']);
+			$thumbnail    = str2bool($fieldOptions['thumbnail']);
+
+
+			// if no processing break the while loop
+			// if any of them are true then we
+			if (!$combine && !$convert && !$ocr && !$thumbnail && !$convertVideo && !$convertAudio) {
 				self::setProcessingState($row['ID'],0);
 				continue;
 			}
 
-			$processedFiles = self::processObjectFiles($assetsID,$fieldOptions);
-
-			$files['files'] = array_merge($files['files'],$processedFiles);
-
+			$processedFiles                    = self::processObjectFiles($assetsID,$fieldOptions);
+			$files['files']                    = array_merge($files['files'],$processedFiles);
 			$object['data'][$row['fieldName']] = $files;
 
 			$return = objects::update($objectID,$object['formID'],$object['data'],$object['metadata'],$object['parentID']);
@@ -772,7 +779,7 @@ class files {
 			'combine'   => array(),
 			'thumbs'    => array(),
 			'ocr'       => array(),
-			);
+		);
 
 		// Remove dot files from array
 		foreach ($originalFiles as $I => $filename) {
@@ -787,10 +794,10 @@ class files {
 		}
 
 		try {
-			
+
 			// If combine files is checked, read this image and add it to the combined object
 			if (isset($options['combine']) && str2bool($options['combine'])) {
-			
+
 				try {
 					$errors      = array();
 					$createThumb = TRUE;
@@ -807,7 +814,7 @@ class files {
 					touch($gsTemp);
 
 					foreach ($originalFiles as $filename) {
-			
+
 						// Figure some stuff out about the file
 						$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 						$_filename    = pathinfo($originalFile);
@@ -867,7 +874,7 @@ class files {
 						unlink($baseFilename.".html");
 					}
 
-					
+
 
 					// Combine all PDF files in directory
 					$_exec = shell_exec(sprintf('gs -sDEVICE=pdfwrite -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=%s @%s 2>&1',
@@ -879,7 +886,7 @@ class files {
 						throw new Exception("GhostScript Error: ".$_exec);
 					}
 
-					
+
 
 					$return['combine'][] = array(
 						'name'   => 'combined.pdf',
@@ -887,7 +894,7 @@ class files {
 						'size'   => filesize(self::getSaveDir($assetsID,'combine').'combined.pdf'),
 						'type'   => 'application/pdf',
 						'errors' => $errors,
-						);
+					);
 
 					// Lastly, we delete our temp working dir (always nice to cleanup after yourself)
 					if (self::cleanupTempDirectory($tmpDir) === FALSE) {
@@ -908,8 +915,8 @@ class files {
 				}
 			} // If Combine
 
-			// This conditional needs updated when different conversion options are added or removed. 
-			// If the file has no processing to do, don't do any ... 
+			// This conditional needs updated when different conversion options are added or removed.
+			// If the file has no processing to do, don't do any ...
 			if (!isset($options['convert']) && !isset($options['thumbnail']) && !isset($options['ocr']) && !isset($options['mp3'])) {
 				return $return;
 			}
@@ -918,7 +925,7 @@ class files {
 				$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 				$_filename    = pathinfo($originalFile);
 				$filename     = $_filename['filename'];
-				
+
 				// Convert uploaded files into some ofhter size/format/etc
 				if (isset($options['convert']) && str2bool($options['convert'])) {
 
@@ -930,7 +937,7 @@ class files {
 					if (($image = self::convertImage($image,$options,$assetsID,$filename)) === FALSE) {
 						throw new Exception("Failed to create processed image: ".$originalFile);
 					}
-					
+
 					$filename = $filename.'.'.strtolower($image->getImageFormat());
 
 					// Create a thumbnail that includes converted options
@@ -947,7 +954,7 @@ class files {
 						'size'   => filesize(self::getSaveDir($assetsID,'processed').$filename),
 						'type'   => self::getMimeType(self::getSaveDir($assetsID,'processed').$filename),
 						'errors' => '',
-						);
+					);
 
 				}
 				// Create a thumbnail without any conversions
@@ -969,9 +976,9 @@ class files {
 
 				}
 
-				// Create MP3
-				if (isset($options['mp3']) && str2bool($options['mp3'])) {
-					$return['mp3'][] = self::createMP3($originalFile);
+				// Convert Audio
+				if (isset($options['convertAudio']) && str2bool($options['convertAudio'])) {
+					$return['audio'][] = self::convertAudio($originalFile,$options);
 				}
 			} // Foreach File
 
@@ -983,13 +990,33 @@ class files {
 		return $return;
 	}
 
-	public static function createMP3($originalFile) {
-		$mimeType     = self::getMimeType($originalFile);
 
-		if (strpos($mimeType, 'audio/') !== FALSE) {
-			// @TODO: Perform audio processing here
+	public static function convertAudio($originalFile,$options){
+		try {
+			$ffmpeg     = new FFMPEG($originalFile);
+
+			// Valid File?
+			if(!$ffmpeg->isValid() && !$ffmpeg->isAudio()){
+				errorHandle::errorMsg("File is not valid, or the audio is not long enough.");
+				throw new Exception("File is not valid, or the audio is not long enough.");
+			}
+
+			// Options In and Out
+			// command line options from ffmpeg documentation
+			$optionsIn  = array();
+			$optionsOut = array(
+				['ab']      => $bitRate,
+			);
+
+			// convert the audio
+			$ffmpeg->convert()
+
+		} catch (Exception $e) {
+			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
 		}
 	}
+
+
 
 	public static function createOCRTextFile($originalFile,$assetsID,$filename) {
 		require_once 'class.tesseract_ocr.php';
