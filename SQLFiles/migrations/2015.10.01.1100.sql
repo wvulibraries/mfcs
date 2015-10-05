@@ -1,0 +1,1 @@
+ALTER TABLE `logs` ADD COLUMN `date` int(10) unsigned;
