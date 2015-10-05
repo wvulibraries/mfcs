@@ -18,11 +18,14 @@ try{
 	$fields   = $form['fields'];
 	if(mfcsPerms::isEditor($form['ID']) === FALSE) throw new Exception("Permission Denied to view objects created with this form.");
 
+	log::insert("Data Entry: Revision: View Page",$objectID);
 
 	###############################################################################################################
 
 	// Catch a form submition (which would be a revision being reverted to)
 	if(isset($engine->cleanPost['MYSQL']['revisionID'])){
+
+		log::insert("Data Entry: Revision: Revert",$objectID);
 
 		// @TODO this should use revert2Revision() method instead of this ... 
 
@@ -73,6 +76,9 @@ try{
 	localvars::add("currentVersion", revisions::generateFieldDisplay($object, $fields));
 
 }catch(Exception $e){
+
+	log::insert("Data Entry: Revision: Caught Exception",0,0,$e->getMessage());
+
 	errorHandle::newError($e->getMessage(), errorHandle::DEBUG);
 	errorHandle::errorMsg($e->getMessage());
 }

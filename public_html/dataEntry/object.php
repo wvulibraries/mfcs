@@ -1,7 +1,5 @@
-
 <?php
 include("../header.php");
-recurseInsert("acl.php","php");
 
 // Setup revision control
 $revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime');
@@ -65,17 +63,24 @@ try {
 	localvars::add("formName",$form['title']);
 	localvars::add("formID",$form['ID']);
 
+	log::insert("Data Entry: Object: View Page",0,$form['ID']);
+
 	// handle submission
 	if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 		if (forms::submit($engine->cleanGet['MYSQL']['formID']) === FALSE) {
 			throw new Exception("Error Submitting Form.");
 		}
 		http::setGet("objectID",localvars::get("newObjectID"));
+
+		log::insert("Data Entry: Object: Successful Submission",localvars::get("newObjectID"),$form['ID']);
+
 	}
 	else if (isset($engine->cleanPost['MYSQL']['updateForm'])) {
 		if (forms::submit($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']) === FALSE) {
 			throw new Exception("Error Updating Form.");
 		}
+
+		log::insert("Data Entry: Object: Successful update",$engine->cleanGet['MYSQL']['objectID'],$form['ID']);
 	}
 	else if (isset($engine->cleanPost['MYSQL']['projectForm'])) {
 
@@ -85,6 +90,8 @@ try {
 		if (objects::addProjects($engine->cleanGet['MYSQL']['objectID'],$engine->cleanPost['MYSQL']['projects']) === FALSE) {
 			throw new Exception("Error adding projects to Object.");
 		}
+
+		log::insert("Data Entry: Object: Successful Project Update",$engine->cleanGet['MYSQL']['objectID'],$form['ID']);
 
 	}
 
@@ -112,6 +119,7 @@ try {
 
 }
 catch(Exception $e) {
+	log::insert("Data Entry: Object: Error",0,0,$e->getMessage());
 	errorHandle::errorMsg($e->getMessage());
 	$error = TRUE;
 }
@@ -136,6 +144,7 @@ if (forms::validID()) {
 		//////////
 	}
 	catch (Exception $e) {
+		log::insert("Data Entry: Object: Error",$engine->cleanGet['MYSQL']['objectID'],$engine->cleanGet['MYSQL']['formID'],$e->getMessage());
 		errorHandle::errorMsg($e->getMessage());
 	}
 }

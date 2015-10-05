@@ -5,6 +5,9 @@ $ID = isset($engine->cleanGet['MYSQL']['id']) ? $engine->cleanGet['MYSQL']['id']
 
 try {
 	if (isset($engine->cleanPost['MYSQL']["insert"])) {
+
+		log::insert("Admin: Insert Watermark");
+
 		if (!isset($engine->cleanPost['MYSQL']['name']) || is_empty($engine->cleanPost['MYSQL']['name'])) {
 			throw new Exception("Name field is required.");
 		}
@@ -24,6 +27,9 @@ try {
 
 	}
 	else if (isset($engine->cleanPost['MYSQL']["update"])) {
+
+		log::insert("Admin: Update Watermark");
+
 		if (!isset($engine->cleanPost['MYSQL']['name']) || is_empty($engine->cleanPost['MYSQL']['name'])) {
 			throw new Exception("Name field is required.");
 		}
@@ -44,6 +50,9 @@ try {
 
 	}
 	else if (isset($engine->cleanPost['MYSQL']["delete"])) {
+
+		log::insert("Admin: Delete Watermark");
+
 		$sql = sprintf("DELETE FROM `watermarks` WHERE ID='%s' LIMIT 1",
 			$engine->openDB->escape($ID)
 			);
@@ -109,6 +118,8 @@ else {
 }
 
 localVars::add("results",displayMessages());
+
+log::insert("Admin: View Watermark Page");
 
 $engine->eTemplate("include","header");
 ?>

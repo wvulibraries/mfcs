@@ -3,6 +3,9 @@ include("../header.php");
 $engine->eTemplate("include","header");
 
 $stats = new exporting(".");
+
+log::insert("Exporting: View Index");
+
 localvars::add("exportsList",$stats->showExportListing());
 ?>
 <section>

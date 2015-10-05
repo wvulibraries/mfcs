@@ -2,6 +2,8 @@
 include("../header.php");
 $engine->eTemplate("include","header");
 
+log::insert("Stats: View Index Page");
+
 $stats = new mfcsStats(".");
 localvars::add("statsList",$stats->showStatFiles());
 ?>

@@ -1,6 +1,8 @@
 <?php
 include("../header.php");
 
+log::insert("Form Creator: Copy: View");
+
 try {
 	// Get list of forms for choices dropdown
 	if (($objectForms = forms::getObjectForms()) === FALSE) {
@@ -35,6 +37,8 @@ try {
 		}
 
 		mfcs::$engine->openDB->transBegin();
+
+		log::insert("Form Creator: Copy: ",0,mfcs::$engine->cleanPost['MYSQL']['formSelect'],mfcs::$engine->cleanPost['MYSQL']['newTitle']);
 
 		$sql = sprintf("INSERT INTO `forms` (`title`,`%s`) (SELECT '%s',`%s` FROM `forms` WHERE `ID`='%s' LIMIT 1)",
 			implode('`,`', $fields),

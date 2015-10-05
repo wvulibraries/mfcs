@@ -4,6 +4,11 @@ $engine = EngineAPI::singleton();
 
 errorHandle::errorReporting(errorHandle::E_ALL);
 
+$engine->dbConnect("database","mfcs",TRUE);
+
+require_once "../includes/index.php";
+mfcs::singleton();
+
 // Login Type
 $loginType = "ldap";
 // Domain for ldap login
@@ -34,6 +39,7 @@ if (isset($engine->cleanPost['HTML']['loginSubmit'])) {
 		
 		global $engineVars;
 		if ($engine->login($loginType)) {
+			log::insert("Login");
             if(isset($engine->cleanGet['HTML']['url'])) {
 				header("Location: ".$engine->cleanGet['HTML']['URL'] ) ;
 			}
@@ -48,6 +54,7 @@ if (isset($engine->cleanPost['HTML']['loginSubmit'])) {
 			}
 		}
 		else {
+			log::insert("Login Failure");
 			$loginFail = TRUE;
 		}
 
@@ -61,7 +68,7 @@ if (isset($engine->cleanPost['HTML']['loginSubmit'])) {
 <head>
 	<title>MFCS Login</title>
 
-	<link rel="stylesheet" type="text/css" href="css/login.css"/>
+	<link rel="stylesheet" type="text/css" href="/css/login.css"/>
 
 </head>
 
@@ -70,7 +77,7 @@ if (isset($engine->cleanPost['HTML']['loginSubmit'])) {
 <div id="loginBox">
 
 	<div>
-		<img src="images/mfcs.png" alt="Metadata Form Creation System" />
+		<img src="/images/mfcs.png" alt="Metadata Form Creation System" />
 		<h1>Metadata Form Creation System</h1>
 		
 	</div>

@@ -57,6 +57,7 @@ try {
 			throw new Exception("Selected form is not compatible with original form.");
 		}
 
+		// @TODO this logic shouldn't be here
 		$sql       = sprintf("UPDATE `objects` SET `formID`='%s' WHERE `ID`='%s' AND `formID`='%s' LIMIT 1",
 			$engine->cleanPost['MYSQL']['form'],
 			$engine->openDB->escape($engine->cleanPost['MYSQL']['objectID']),
@@ -73,6 +74,8 @@ try {
 			throw new Exception("Error retrieving form.");
 		}
 
+		log::insert("Data Entry: Move: Successful Move",$engine->cleanPost['MYSQL']['objectID'],$form['ID'],$engine->cleanPost['MYSQL']['form']);
+
 		errorHandle::successMsg("Object Moved.");
 
 		localvars::add("originalFormTitle",forms::title($form['ID']));
@@ -80,8 +83,11 @@ try {
 
 }
 catch(Exception $e) {
+	log::insert("Data Entry: Move: Error",0,0,$e->getMessage());
 	errorHandle::errorMsg($e->getMessage());
 }
+
+log::insert("Data Entry: Move: Page View");
 
 localVars::add("results",displayMessages());
 $engine->eTemplate("include","header");

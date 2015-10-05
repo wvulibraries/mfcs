@@ -1,6 +1,5 @@
 <?php
 include("../header.php");
-recurseInsert("acl.php","php");
 
 $permissions      = TRUE;
 
@@ -30,6 +29,8 @@ try {
 		errorHandle::newError("Object not from this form.", errorHandle::DEBUG);
 		throw new Exception("Object not from this form");
 	}
+
+	log::insert("Data View: Object",$engine->cleanGet['MYSQL']['objectID'],$engine->cleanGet['MYSQL']['formID']);
 
 	//////////
 	// Metadata Tab Stuff
@@ -81,6 +82,7 @@ try {
 
 }
 catch (Exception $e) {
+	log::insert("Data View: Object: Error",0,0,$e->getMessage());
 	errorHandle::errorMsg($e->getMessage());
 }
 

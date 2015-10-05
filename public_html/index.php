@@ -6,6 +6,8 @@ require_once "includes/ajaxHandler.php";
 
 localVars::add("results",displayMessages());
 
+log::insert("Index: View Page");
+
 $engine->eTemplate("include","header");
 ?>
 

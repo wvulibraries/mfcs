@@ -10,6 +10,8 @@ if (is_empty($formID)) {
 	$formID = NULL;
 }
 
+log::insert("Form Creator: Edit Forms",0,$formID);
+
 if(isset($engine->cleanPost['MYSQL']['deleteForm'])){
 	forms::delete($engine->cleanGet['HTML']['id']);
 	http::redirect(localvars::get('siteRoot').'formCreator/list.php',301);

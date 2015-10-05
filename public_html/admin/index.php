@@ -1,6 +1,8 @@
 <?php
 require("header.php");
 
+log::insert("Admin: View index Page");
+
 $engine->eTemplate("include","header");
 ?>
 

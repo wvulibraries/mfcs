@@ -7,20 +7,7 @@ recurseInsert("dbTableList.php","php");
 $engine->dbConnect("database","mfcs",TRUE);
 
 // Load the mfcs class
-require_once "includes/mfcs.php";
-require_once "includes/forms.php";
-require_once "includes/list.php";
-require_once "includes/navigation.php";
-require_once "includes/objects.php";
-require_once "includes/permissions.php";
-require_once "includes/projects.php";
-require_once "includes/search.php";
-require_once "includes/stats.php"; 
-require_once "includes/users.php";
-require_once "includes/files.php";
-require_once "includes/duplicates.php";
-require_once "includes/revisions.php";
-require_once "includes/exporting.php";
+require_once "includes/index.php";
 mfcs::singleton();
 
 // Quick and dirty Checks check
