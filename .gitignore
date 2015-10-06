@@ -14,3 +14,4 @@ SQLFiles/dump
 .sass-cache
 >>>>>>> origin/master
 public_html/includes/css/base.css.map
+SQLFiles/runMigrations.sh
