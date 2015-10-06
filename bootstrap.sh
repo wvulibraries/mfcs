@@ -118,3 +118,8 @@ make install
 
 ln -s /usr/local/bin/tesseract /usr/bin/
 ln -s /usr/local/bin/hocr2pdf /usr/bin/
+
+# ffmpeg binaries
+rpm -Uhv http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
+yum -y update
+yum install ffmpeg ffmpeg-devel ffmpeg-libpostproc
