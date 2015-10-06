@@ -164,6 +164,16 @@ class FFMPEG {
         return isset($this->_options[$category]) && sizeof($this->_options[$category]) ? true:false;
     }
 
+    public function returnInformation(){
+        return array (
+            'lastExecution' => $this->_lastOutput,
+            'lastReturn'    => $this->_lastReturn,
+            'lastCommand'   => $this->_lastCommand,
+            'options'       => $this->_options,
+            'metadata'      => self::getMetadata()
+        );
+    }
+
     protected function _prepareOptions($category = 'main') {
         $options   = array("" => "") + $this->getOptions($category);
         $commands = array();
