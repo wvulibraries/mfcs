@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 require_once "classes/mfcs.php";
 
@@ -14,7 +14,8 @@ require_once "classes/permissions.php";
 require_once "classes/projects.php";
 require_once "classes/revisions.php";
 require_once "classes/search.php";
-require_once "classes/stats.php"; 
+require_once "classes/stats.php";
 require_once "classes/users.php";
+require_once "classes/FFMPEG.php";
 
 ?>

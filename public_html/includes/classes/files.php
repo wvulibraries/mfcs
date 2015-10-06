@@ -978,6 +978,7 @@ class files {
 
 				// Convert Audio
 				if (isset($options['convertAudio']) && str2bool($options['convertAudio'])) {
+					errorHandle::newError(__METHOD__."() - : Audio Conversion Should be happening", errorHandle::DEBUG);
 					$return['audio'][] = self::convertAudio($assetsID, $filename, $originalFile, $options);
 				}
 			} // Foreach File
@@ -1010,11 +1011,24 @@ class files {
 
 			$savePath = self::getSaveDir($assetsID,'audio');
 			$format   = $options['audioFormat'];
-			$ffmpeg->convert($savePath.DIRECTORY_SEPARATOR.$name.$format, array(), $conversionOptions); // convert to flash
+
+			$ffmpeg->convert($savePath.DIRECTORY_SEPARATOR.$name.".".$format, array(), $conversionOptions); // convert to flash
 
 		} catch (Exception $e) {
 			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
 		}
+
+		$returnArray = array(
+			'format' => $format,
+			'options' => $conversionOptions,
+			'info' => $ffmpeg->returnInformation()
+		);
+
+		print "<pre>";
+		var_dump($returnArray);
+		print "</pre>";
+
+		return $returnArray;
 	}
 
 
