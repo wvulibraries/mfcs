@@ -40,12 +40,6 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	$fields = json_decode($engine->cleanPost['RAW']['fields'], TRUE);
 	$idno   = NULL;
 
-
-	print "<pre>";
-	var_dump($fields);
-	print "</pre>";
-
-
 	// Ensure all fields have an ID for the label. Assign it the value of name if needed.
 	if (!is_empty($fields)) {
 		$count = NULL;
