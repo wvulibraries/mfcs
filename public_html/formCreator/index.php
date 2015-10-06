@@ -253,7 +253,7 @@ if (isset($engine->cleanPost['MYSQL']['projectForm']) && forms::isMetadataForm($
 
 try {
 	$tmp = NULL;
-	$imagick = \Imagick::queryformats();
+	$imagick = @Imagick::queryformats();
 	foreach ($imagick as $format) {
 		$tmp .= '<option value="'.$format.'">'.$format.'</option>';
 	}
