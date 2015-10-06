@@ -104,11 +104,8 @@ class FFMPEG {
     }
 
     public function getDuration() {
-
         $metadata = $this->getMetadata();
-
         return isset($metadata['duration']) ? $metadata['duration']:0;
-
     }
 
     public function convert($output, $optionsIn = array() , $optionsOut = array()) {
