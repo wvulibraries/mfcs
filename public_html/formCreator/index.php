@@ -77,7 +77,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 		if (str2bool($idnoConfirm)) {
 			$countSql = sprintf("`count`='%s',",
 				$engine->openDB->escape($count)
-				);
+			);
 		}
 
 		if ($form['formMetadata'] == '1' && !is_empty($form['linkTitle'])) {
@@ -97,7 +97,6 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 				errorHandle::errorMsg("Link Title must be unique.");
 				$form['linkTitle'] = '';
 			}
-
 		}
 		else {
 			// Blank linkTable on object forms
@@ -254,7 +253,8 @@ if (isset($engine->cleanPost['MYSQL']['projectForm']) && forms::isMetadataForm($
 
 try {
 	$tmp = NULL;
-	foreach (Imagick::queryFormats() as $format) {
+	$imagick = \Imagick::queryformats();
+	foreach ($imagick as $format) {
 		$tmp .= '<option value="'.$format.'">'.$format.'</option>';
 	}
 	localVars::add("conversionFormats",$tmp);
