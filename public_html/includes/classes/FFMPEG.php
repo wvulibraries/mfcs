@@ -5,14 +5,7 @@
 class FFMPEG {
 
     protected static $_config = array(
-            'bin'         => 'ffmpeg',
-            'optionsWord' => array(
-            'bitrate'     => 'b',
-            'duration'    => 't',
-            'start'       => 'ss',
-            'size'        => 's',
-            'overwrite'   => 'y'
-        )
+            'bin' => 'ffmpeg',
     );
 
     protected $_inputFile;
@@ -175,27 +168,14 @@ class FFMPEG {
     }
 
     protected function _prepareOptions($category = 'main') {
-
-        $words = self::getConfig('optionsWord');
-        $options = $this->getOptions($category);
-        $str = array();
-        $index = 0;
-        foreach($options as $option => $value) {
-
-            print "<pre>";
-            var_dump($option." - ".$value);
-            print "</pre>";
-
-            if(is_numeric($option) && $option === $index) {
-                $option = $value;
-                $value = null;
-                $index++;
-            }
-            $option = isset($words[$option]) ? '-'.$words[$option]:$option;
-            $str[] = $option.(isset($value) ? ' '.escapeshellcmd($value):'');
+        $options   = array("" => "") + $this->getOptions($category);
+        $commands = array();
+        foreach($options as $parameter => $value){
+            $stringCommand = $parameter." ".$value;
+            array_push($commands, $stringCommand);
         }
 
-        return implode(' ',$str);
+        return implode(" -", $commands);
     }
 
     /**
@@ -291,7 +271,6 @@ class FFMPEG {
         }
 
     }
-
     /**
      *
      * Handle command return code
