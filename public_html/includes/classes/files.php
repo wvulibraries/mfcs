@@ -978,7 +978,7 @@ class files {
 
 				// Convert Audio
 				if (isset($options['convertAudio']) && str2bool($options['convertAudio'])) {
-					$return['audio'][] = self::convertAudio($assetsID, $originalFile,$options);
+					$return['audio'][] = self::convertAudio($assetsID, $filename, $originalFile, $options);
 				}
 			} // Foreach File
 
@@ -991,35 +991,29 @@ class files {
 	}
 
 
-	public static function convertAudio($assetsID, $originalFile, $options){
-
-	 //    # Audio options: Command Line Suff for FFMPEG
-	 //    ----
-	 //    -aframes number     set the number of audio frames to record
-	 //    -ab bitrate         set audio bitrate (in kbit/s)
-	 //    -ar rate            set audio sampling rate (in Hz)
-	 //    -ac channels        set number of audio channels
-	 //    -an                 disable audio
-	 //    -acodec codec       force audio codec ('copy' to copy stream)
-	 //    -vol volume         change audio volume (256=normal)
-	 //    -newaudio           add a new audio stream to the current output stream
-	 //    -alang code         set the ISO 639 language code (3 letters) of the current audio stream
-
+	public static function convertAudio($assetsID, $name, $originalFile, $options){
 		try{
 			$ffmpeg            = new FFMPEG($originalFile);
-			$conversionOptions = array(
-				"ab"  => $options['bitRate'],
-				"vol" => "256",
-			);
-			$savePath = "";
-			$format   = $options['audioFormat'];
 
 			// Valid File?
 			if(!$ffmpeg->isValid() && !$ffmpeg->isAudio()){
 				throw new Exception("File is not valid, or the audio is not long enough.");
 			}
 
+			// Conversion Options
+			$bitrate = (isset($options['bitRate']) ? $options['bitRate']."k" : '256k');
+
+			$conversionOptions = array(
+				"ab"  => $options['bitRate'],
+				"vol" => "256",
+			);
+
+			$savePath = self::getSaveDir($assetsID,'audio');
+			$format   = $options['audioFormat'];
+			$ffmpeg->convert($savePath.DIRECTORY_SEPARATOR.$name.$format, array(), $conversionOptions); // convert to flash
+
 		} catch (Exception $e) {
+			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
 		}
 	}
 
