@@ -18,6 +18,7 @@ class exporting {
         }
         closedir($dir);
 
+        sort($this->exportDirs);
   
 	}
 
