@@ -1127,8 +1127,59 @@ $engine->eTemplate("include","header");
 													</label>
 													<select class="videoFormat span8 last">
 															<option value="">    Select a Format  </option>
-															{local var="videoFormat"}
+															{local var="videoTypes"}
 													</select>
+												</div>
+
+												<p> Video Size <i class="icon-question-sign formatSettings"> </i>
+
+													<div class="row-fluid formatSettingsHelp alert alert-block">
+														<span class="span6">
+														<strong> Wide Screen </strong>
+															<ul>
+																<li> 240p: 426x240 (16:9) </li>
+																<li> 360p: 640x360 (16:9) </li>
+																<li> 480p: 854x480 (16:9) </li>
+																<li> 720p: 1280x720 (16:9) </li>
+																<li> 1080p: 1920x1080 (16:9) </li>
+															</ul>
+														</span>
+														<span class="span6">
+														<strong> Standard Definition </strong>
+															<ul>
+																<li> 426x320 (4:3) </li>
+																<li> 640x480 (4:3) </li>
+																<li> 854x640 (4:3) </li>
+																<li> 1280x960 (4:3) </li>
+															</ul>
+														</span>
+													</div>
+
+												<div class="row-fluid" id="fieldSettings_file_videoThumbnail">
+												<span class="span6">
+													<label for="fieldSettings_file_video_height">
+														Height (px)
+														<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
+													</label>
+													<input type="number" class="input-block-level" id="fieldSettings_file_video_height" name="fieldSettings_file_video_height" min="0" />
+												</span>
+												<span class="span6">
+													<label for="fieldSettings_file_video_width">
+														Width (px)
+														<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
+													</label>
+													<input type="number" class="input-block-level" id="fieldSettings_file_video_width" name="fieldSettings_file_video_width" min="0" />
+												</span>
+												</div>
+												<div class="row-fluid" id="fieldSettings_file_videoThumbnail">
+												<span class="span12">
+													<label for="fieldSettings_file_video_frames"> Aspect Ratio </label>
+														<select class="videoFormat span12 last">
+															<option value="">     Select an Aspect Ratio    </option>
+															<option value="4:3">  Standard Definition - 4:3 </option>
+															<option value="16:9"> Wide Screen - 16:9        </option>
+														</select>
+												</span>
 												</div>
 
 											</div>
