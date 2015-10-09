@@ -978,8 +978,14 @@ class files {
 
 				// Convert Audio
 				if (isset($options['convertAudio']) && str2bool($options['convertAudio'])) {
-					errorHandle::newError(__METHOD__."() - : Audio Conversion Should be happening", errorHandle::DEBUG);
-					$return['audio'][] = self::convertAudio($assetsID, $filename, $originalFile, $options);
+
+					$convertAudio =  self::convertAudio($assetsID, $filename, $originalFile, $options);
+					if(!$convertAudio){
+						throw new Exception('Failed to convert audio');
+						return FALSE;
+					} else {
+						$return['audio'][] = $convertAudio;
+					}
 				}
 			} // Foreach File
 
@@ -1002,35 +1008,39 @@ class files {
 			}
 
 			// Conversion Options
-			$bitrate = (isset($options['bitRate']) ? $options['bitRate']."k" : '256k');
+			// Also changes the Kbs to Bytes
+			$bitrate = (isset($options['bitRate']) ? floor(($options['bitRate'] * 1024)) : number_format(256 * 1024, 2));
 
 			$conversionOptions = array(
-				"ab"  => $options['bitRate'],
+				"ab"  => $bitrate,
 				"vol" => "256",
 			);
 
 			$savePath = self::getSaveDir($assetsID,'audio');
 			$format   = $options['audioFormat'];
 
-			$ffmpeg->convert($savePath.DIRECTORY_SEPARATOR.$name.".".$format, array(), $conversionOptions); // convert to flash
+			if(!is_dir($savePath)){
+				throw new Exception("Directory is not setup");
+				return FALSE;
+			}
+
+			$ffmpeg->convert($savePath.$name.".".$format, array(), $conversionOptions); // convert to flash
 
 		} catch (Exception $e) {
 			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
 		}
 
 		$returnArray = array(
-			'format' => $format,
+			'name'    => $name.".".$format,
+			'path'    => $savePath,
+			'format'  => $format,
 			'options' => $conversionOptions,
-			'info' => $ffmpeg->returnInformation()
+			'info'    => $ffmpeg->returnInformation(),
+			'errors'  => '',
 		);
-
-		print "<pre>";
-		var_dump($returnArray);
-		print "</pre>";
 
 		return $returnArray;
 	}
-
 
 
 	public static function createOCRTextFile($originalFile,$assetsID,$filename) {
