@@ -1146,7 +1146,6 @@ function fieldSettingsBindings() {
 	$("#fieldSettings_file_options_convert").change(function() {
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
-
 		$("#convert_"+id).val($(this).is(":checked"));
 
 		if ($(this).is(":checked")) {
@@ -1316,9 +1315,14 @@ function fieldSettingsBindings() {
 		var checked         = $(this).is(':checked'); // true or false
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
+		var fileAdjustments = $('.fileTypeAdjustments');
+		var parentElms = $(this).closest('div');
+
 
 		if(checked){
 			$('#fieldSettings_container_file_convertAudio').show();
+			parentElms.prev().find('input:checkbox').prop('checked', false);
+			parentElms.next().find('input:checkbox').prop('checked', false);
 		} else {
 			$('#fieldSettings_container_file_convertAudio').hide();
 		}
@@ -1346,9 +1350,12 @@ function fieldSettingsBindings() {
 		var checked         = $(this).is(':checked'); // true or false
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
+		var parentElms      = $(this).closest('div');
 
 		if(checked){
 			$('#fieldSettings_container_file_convertVideo').show();
+			parentElms.prev().find('input:checkbox').prop('checked', false);
+			parentElms.prev().prev().find('input:checkbox').prop('checked', false);
 		} else {
 			$('#fieldSettings_container_file_convertVideo').hide();
 		}
@@ -1410,6 +1417,19 @@ function fieldSettingsBindings() {
 		var id              = formPreviewWell.prop("id").split("_")[1];
 		$("#videoFormatThumb_"+id).val($(this).val());
 	});
+
+
+	// Add a check that checks all the image input boxes
+	// If any of these are checked then the audio and video options become unchecked
+	$('.fileTypeAdjustments div:first-child').find('input:checkbox').change(function(){
+		var checked    = $(this).is(':checked'); // true or false
+		var parentElms = $(this).closest('div');
+
+		parentElms.next().find('input:checkbox').prop('checked', false);
+		parentElms.next().next().find('input:checkbox').prop('checked', false);
+
+	});
+
 
 }  // end function
 
