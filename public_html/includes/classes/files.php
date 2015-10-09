@@ -220,7 +220,7 @@ class files {
 
 			// if no processing break the while loop
 			// if any of them are true then we
-			if (!$combine && !$convert && !$ocr && !$thumbnail && !$convertVideo && !$convertAudio) {
+			if (!$combine && !$convert && !$ocr && !$thumbnail && !$convertVideo && !$convertAudio && !$convertVideo) {
 				self::setProcessingState($row['ID'],0);
 				continue;
 			}
@@ -978,7 +978,18 @@ class files {
 
 				// Convert Audio
 				if (isset($options['convertAudio']) && str2bool($options['convertAudio'])) {
+					$convertAudio =  self::convertAudio($assetsID, $filename, $originalFile, $options);
+					if(!$convertAudio){
+						throw new Exception('Failed to convert audio');
+						return FALSE;
+					} else {
+						$return['audio'][] = $convertAudio;
+					}
+				}
 
+
+				// Convert Video
+				if (isset($options['convertVideo']) && str2bool($options['convertVideo'])) {
 					$convertAudio =  self::convertAudio($assetsID, $filename, $originalFile, $options);
 					if(!$convertAudio){
 						throw new Exception('Failed to convert audio');
@@ -998,6 +1009,59 @@ class files {
 	}
 
 
+	public static function convertVideo($assetsID, $name, $originalFile, $options){
+		try{
+			$ffmpeg = new FFMPEG($originalFile);
+
+			// Valid File?
+			if(!$ffmpeg->isValid() && !$ffmpeg->isVideo()){
+				throw new Exception("File is not valid, or the video file was not a video.");
+				return FALSE;
+			}
+
+			// video options
+			$savePath = self::getSaveDir($assetsID,'video');
+			$format   = ".".$options['videoFormat'];
+
+			// path exsists
+			if(!is_dir($savePath)){
+				throw new Exception("Directory is not setup");
+				return FALSE;
+			}
+
+			// Setup the variables for video size based on aspect ratio and such
+			if(isset($options['videoHeight']) && isset($options['videoWidth'])){
+				if(isset($options['aspectRatio']) && !isnull($options['aspectRatio'])){
+					$videoSize = sprintf("scale=%sx%s,setdar=%s",
+						$options['videoWidth'],
+						$options['videoHeight'],
+						$options['aspectRatio']
+					);
+				} else {
+					$videoSize = sprintf("scale=%sx%s",
+						$options['videoWidth'],
+						$options['videoHeight']
+					);
+				}
+			}
+
+			// conversions
+			$conversionOptions = array(
+				'ab'	 => $options['videobitRate'],
+				'vf'     => $videoSize,
+			);
+
+			// create thumbnails
+
+			// conversion options
+			$ffmpeg->convert($savePath.$name.$format, array(), $conversionOptions); // convert to flash
+
+		} catch (Exception $e) {
+			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
+		}
+
+	}
+
 	public static function convertAudio($assetsID, $name, $originalFile, $options){
 		try{
 			$ffmpeg            = new FFMPEG($originalFile);
@@ -1005,6 +1069,7 @@ class files {
 			// Valid File?
 			if(!$ffmpeg->isValid() && !$ffmpeg->isAudio()){
 				throw new Exception("File is not valid, or the audio is not long enough.");
+				return FALSE;
 			}
 
 			// Conversion Options
