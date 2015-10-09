@@ -614,10 +614,11 @@ $audioFileTypes = array();
 
 // more options can be added later, its not a great idea to go above or below 128 though
 $bitrates    = array(
-'32'         => '32kbs',
-'64'         => '64kbs',
-'128'        => '128kbs',
-'256'        => '256kbs'
+'128'        => '128kbs - Low',
+'160'		 => '160kbs - Average ',
+'192'		 => '192kbs - Above Average',
+'256'        => '256kbs - Recommended',
+'320'		 => '320kbs - High',
 );
 
 $audioTypes  = array(
@@ -1037,7 +1038,7 @@ $engine->eTemplate("include","header");
 															<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_multipleFiles" name="fieldSettings_file_options_multipleFiles"> Allow multiple files in single upload</label></li>
 															<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_combine" name="fieldSettings_file_options_combine"> Combine into single PDF</label></li>
 															<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_ocr" name="fieldSettings_file_options_ocr"> Optical character recognition (OCR)</label></li>
-															<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_convert" name="fieldSettings_file_options_convert"> Convert uploaded file</label></li>
+															<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_convert" name="fieldSettings_file_options_convert"> Convert Image file</label></li>
 															<li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_thumbnail" name="fieldSettings_file_options_thumbnail"> Create thumbnail</label></li>
 														</ul>
 													</div>
