@@ -117,7 +117,7 @@ class FFMPEG {
 
     }
 
-    public function getImages($path, $name = 'image%d.jpg', $optionsIn = array() , $optionsOut = array()) {
+    public function getImages($path, $name , $optionsIn = array() , $optionsOut = array()) {
 
         if(sizeof($optionsIn)) $this->setOptions($optionsIn,'in');
         if(sizeof($optionsOut)) $this->setOptions($optionsOut,'out');
@@ -126,19 +126,48 @@ class FFMPEG {
 
     }
 
-    public function getThumbnail($path, $start = 'half') {
+    public function getThumbnails($numThumbs, $path, $name, $height, $width, $format){
 
-        if($start == 'half') {
-            $metadata = $this->getMetadata();
-            $duration = $metadata['duration'];
-            $start = floor($duration/2);
+        // Limit to 5
+        // min 1
+        if($numThumbs > 5){
+            $numThumbs = 5;
         }
-        else if(!is_numeric($start)) $start = 30;
+        elseif ($numThumbs == 0) {
+            $numThumbs = 1;
+        }
 
-        $file = basename($path);
-        $path = dirname($path);
+        // set options
+        $options = array();
+        $options['deinterlace'] = "";
+        $options['an']          = ""; //disable audio
+        $options['r']           = 1;  // only grab 1 frame
+        $options['t']           = 1;  // stop writing after this num of frames
+        $options['s']           = $width."x".$height;
 
-        $this->getImages($path.'/', $file, array(), array('start'=>$start));
+
+        // generate the thumbnails
+        for($i=0; $i < $numThumbs; $i++){
+
+            // time stamp stuff
+            $startingTimeStamp = "00:00:01.000";
+            $metadata          = $this->getMetadata();
+            $duration          = $metadata['duration'];
+            $timeOfScreenGrab  = floor($duration/$numThumbs);
+
+            // modify the time stamp for each thumbnail
+            // each thumbnail should be different
+            if($i == 0){
+                $options['ss'] = $startingTimeStamp;
+                $file          = $name.$format;
+            }
+            else {
+                $options['ss'] = $timeOfScreenGrab * $i; // change the time stamp through the video
+                $file          = $name."_".$i.$format;
+            }
+
+            $this->getImages($path, $file, array(), $options);
+        }
 
     }
 
