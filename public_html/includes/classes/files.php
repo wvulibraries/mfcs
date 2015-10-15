@@ -990,14 +990,27 @@ class files {
 
 				// Convert Video
 				if (isset($options['convertVideo']) && str2bool($options['convertVideo'])) {
-					$convertAudio =  self::convertAudio($assetsID, $filename, $originalFile, $options);
-					if(!$convertAudio){
+					$convertVideo =  self::convertVideo($assetsID, $filename, $originalFile, $options);
+					if(!$convertVideo){
 						throw new Exception('Failed to convert audio');
 						return FALSE;
 					} else {
-						$return['audio'][] = $convertAudio;
+						$return['video'][] = $convertVideo;
 					}
 				}
+
+				// Video Thumbnails
+				if (isset($options['videothumbnail']) && str2bool($options['videothumbnail'])) {
+					$createThumbs =  self::createVideoThumbs($assetsID, $filename, $originalFile, $options);
+					if(!$createThumbs){
+						throw new Exception('Failed to convert audio');
+						return FALSE;
+					}
+					else {
+						$return['videoThumbs'][] = $createThumbs;
+					}
+				}
+
 			} // Foreach File
 
 		} // Catch All Try
@@ -1011,11 +1024,12 @@ class files {
 
 	public static function convertVideo($assetsID, $name, $originalFile, $options){
 		try{
-			$ffmpeg = new FFMPEG($originalFile);
+			$ffmpeg           = new FFMPEG($originalFile);
+			$originalFileData = $ffmpeg->getMetadata();
 
 			// Valid File?
 			if(!$ffmpeg->isValid() && !$ffmpeg->isVideo()){
-				throw new Exception("File is not valid, or the video file was not a video.");
+				throw new Exception("File is not valid, or the video file was not a video. Can't Convert Video.");
 				return FALSE;
 			}
 
@@ -1029,6 +1043,11 @@ class files {
 				return FALSE;
 			}
 
+			// conversions
+			$conversionOptions = array(
+				'ab'	 => $options['videobitRate'],
+			);
+
 			// Setup the variables for video size based on aspect ratio and such
 			if(isset($options['videoHeight']) && isset($options['videoWidth'])){
 				if(isset($options['aspectRatio']) && !isnull($options['aspectRatio'])){
@@ -1037,21 +1056,26 @@ class files {
 						$options['videoHeight'],
 						$options['aspectRatio']
 					);
-				} else {
-					$videoSize = sprintf("scale=%sx%s",
-						$options['videoWidth'],
-						$options['videoHeight']
-					);
 				}
+				else {
+					// height width set for original file.
+					if(isset($originalFileData['width']) && isset($originalFileData['height'])){
+						$ratio     = $originalFileData['width'] / $originalFileData['height'];
+						$videoSize = sprintf("scale=%sx%s",
+							$options['videoWidth'],
+							($options['videoWidth'] / $ratio)
+						);
+					}
+					else {
+						$videoSize = sprintf("scale=%sx%s",
+							$options['videoWidth'],
+							$options['videoHeight']
+						);
+					}
+				}
+				// add to conversion options
+				$conversionOptions['vf'] = $videoSize;
 			}
-
-			// conversions
-			$conversionOptions = array(
-				'ab'	 => $options['videobitRate'],
-				'vf'     => $videoSize,
-			);
-
-			// create thumbnails
 
 			// conversion options
 			$ffmpeg->convert($savePath.$name.$format, array(), $conversionOptions); // convert to flash
@@ -1059,7 +1083,38 @@ class files {
 		} catch (Exception $e) {
 			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
 		}
+	}
 
+	public static function createVideoThumbs($assetsID, $name, $originialFile, $options){
+		try{
+			$ffmpeg           = new FFMPEG($originalFile);
+			$originalFileData = $ffmpeg->getMetadata();
+
+			// Valid File?
+			if(!$ffmpeg->isValid() && !$ffmpeg->isVideo()){
+				throw new Exception("File is not valid, or the video file was not a video. Can not create thumbnails.");
+				return FALSE;
+			}
+
+			// create thumbnails
+			$numberOfThumbnails = $options['videoThumbFrames'];
+			$thumbHeight        = $options['videoThumbHeight'];
+			$thumbWidth         = $options['videoThumbWidth'];
+			$thumbFormat        = $options['videoFormatThumb'];
+			$path               = self::getSaveDir($assetsID,'thumbnails');
+
+			// path exsists
+			if(!is_dir($path)){
+				throw new Exception("Thumbnail directory is not setup.");
+				return FALSE;
+			}
+
+			// get thumbnails
+			$ffmpeg->getThumbnails($numberOfThumbnails, $path, $name, $thumbHeight, $thumbWidth, $thumbFormat);
+
+		} catch (Exception $e) {
+			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
+		}
 	}
 
 	public static function convertAudio($assetsID, $name, $originalFile, $options){
