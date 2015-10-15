@@ -225,7 +225,15 @@ class files {
 				continue;
 			}
 
-			$processedFiles                    = self::processObjectFiles($assetsID,$fieldOptions);
+
+			$processedFiles = self::processObjectFiles($assetsID,$fieldOptions);
+
+			if(!$processedFiles){
+				$setRowValue = 3;
+				self::setProcessingState($row['ID'],$setRowValue);
+				return FALSE;
+			}
+
 			$files['files']                    = array_merge($files['files'],$processedFiles);
 			$object['data'][$row['fieldName']] = $files;
 
@@ -234,6 +242,7 @@ class files {
 			// @TODO this return value isn't descriptive enough. It can fail and still
 			// return a valid array. we likely need to return an array with an error
 			// code as well as the array to save to the data
+
 
 			if (!$return) {
 				$setRowValue = 3;
@@ -794,7 +803,6 @@ class files {
 		}
 
 		try {
-
 			// If combine files is checked, read this image and add it to the combined object
 			if (isset($options['combine']) && str2bool($options['combine'])) {
 
@@ -912,12 +920,14 @@ class files {
 						}
 					}
 					throw new Exception($e->getMessage(), $e->getCode(), $e);
+					return FALSE;
 				}
 			} // If Combine
 
 			// This conditional needs updated when different conversion options are added or removed.
 			// If the file has no processing to do, don't do any ...
-			if (!isset($options['convert']) && !isset($options['thumbnail']) && !isset($options['ocr']) && !isset($options['mp3'])) {
+			if (!isset($options['convert']) && !isset($options['thumbnail']) && !isset($options['ocr'])
+				 && !isset($options['convertAudio']) && !isset($options['convertAudio']) && !isset($options['videothumbnail']) ) {
 				return $return;
 			}
 
@@ -928,11 +938,9 @@ class files {
 
 				// Convert uploaded files into some ofhter size/format/etc
 				if (isset($options['convert']) && str2bool($options['convert'])) {
-
 					// we create the Imagick object here so that we can pass it to thumbnail creation
 					$image = new Imagick();
 					$image->readImage($originalFile);
-
 					// Convert it
 					if (($image = self::convertImage($image,$options,$assetsID,$filename)) === FALSE) {
 						throw new Exception("Failed to create processed image: ".$originalFile);
@@ -955,25 +963,21 @@ class files {
 						'type'   => self::getMimeType(self::getSaveDir($assetsID,'processed').$filename),
 						'errors' => '',
 					);
-
 				}
-				// Create a thumbnail without any conversions
-				else if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
 
+				// Create a thumbnail without any conversions
+				if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
 					if (($return['thumbs'][] = self::createThumbnail($originalFile,$filename,$options,$assetsID)) === FALSE) {
 						throw new Exception("Failed to create thumbnail: ".$filename);
 					}
-
 				}
 
 				// Create an OCR text file
 				if (isset($options['ocr']) && str2bool($options['ocr'])) {
-
 					if (($return['ocr'][] = self::createOCRTextFile($originalFile,$assetsID,$filename)) === FALSE) {
 						errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
 						throw new Exception("Failed to create OCR file for $filename");
 					}
-
 				}
 
 				// Convert Audio
@@ -981,7 +985,6 @@ class files {
 					$convertAudio =  self::convertAudio($assetsID, $filename, $originalFile, $options);
 					if(!$convertAudio){
 						throw new Exception('Failed to convert audio');
-						return FALSE;
 					} else {
 						$return['audio'][] = $convertAudio;
 					}
@@ -992,8 +995,7 @@ class files {
 				if (isset($options['convertVideo']) && str2bool($options['convertVideo'])) {
 					$convertVideo =  self::convertVideo($assetsID, $filename, $originalFile, $options);
 					if(!$convertVideo){
-						throw new Exception('Failed to convert audio');
-						return FALSE;
+						throw new Exception('Failed to convert video  --- '.$convertVideo);
 					} else {
 						$return['video'][] = $convertVideo;
 					}
@@ -1003,8 +1005,7 @@ class files {
 				if (isset($options['videothumbnail']) && str2bool($options['videothumbnail'])) {
 					$createThumbs =  self::createVideoThumbs($assetsID, $filename, $originalFile, $options);
 					if(!$createThumbs){
-						throw new Exception('Failed to convert audio');
-						return FALSE;
+						throw new Exception('Failed to create video thumbnails');
 					}
 					else {
 						$return['videoThumbs'][] = $createThumbs;
@@ -1016,6 +1017,8 @@ class files {
 		} // Catch All Try
 		catch (Exception $e) {
 			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
+			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::DEBUG);
+			return FALSE;
 		}
 
 		return $return;
@@ -1030,7 +1033,6 @@ class files {
 			// Valid File?
 			if(!$ffmpeg->isValid() && !$ffmpeg->isVideo()){
 				throw new Exception("File is not valid, or the video file was not a video. Can't Convert Video.");
-				return FALSE;
 			}
 
 			// video options
@@ -1040,7 +1042,6 @@ class files {
 			// path exsists
 			if(!is_dir($savePath)){
 				throw new Exception("Directory is not setup");
-				return FALSE;
 			}
 
 			// conversions
@@ -1078,10 +1079,12 @@ class files {
 			}
 
 			// conversion options
-			$ffmpeg->convert($savePath.$name.$format, array(), $conversionOptions); // convert to flash
+			$ffmpeg->convert($savePath.$name.$format, array(), $conversionOptions);
 
 		} catch (Exception $e) {
 			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
+			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::DEBUG);
+			return FALSE;
 		}
 	}
 
@@ -1093,7 +1096,6 @@ class files {
 			// Valid File?
 			if(!$ffmpeg->isValid() && !$ffmpeg->isVideo()){
 				throw new Exception("File is not valid, or the video file was not a video. Can not create thumbnails.");
-				return FALSE;
 			}
 
 			// create thumbnails
@@ -1106,7 +1108,6 @@ class files {
 			// path exsists
 			if(!is_dir($path)){
 				throw new Exception("Thumbnail directory is not setup.");
-				return FALSE;
 			}
 
 			// get thumbnails
@@ -1114,6 +1115,8 @@ class files {
 
 		} catch (Exception $e) {
 			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
+			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::DEBUG);
+			return FALSE;
 		}
 	}
 
