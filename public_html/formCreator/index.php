@@ -1173,8 +1173,8 @@ $engine->eTemplate("include","header");
 												</div>
 												<div class="row-fluid" id="fieldSettings_file_videoThumbnail">
 												<span class="span12">
-													<label for="fieldSettings_file_video_frames"> Aspect Ratio </label>
-														<select class="videoFormat span12 last">
+													<label for="fieldSettings_file_video_aspectRatio"> Aspect Ratio </label>
+														<select class="videoAspectRatio span12 last">
 															<option value="">     Select an Aspect Ratio    </option>
 															<option value="4:3">  Standard Definition - 4:3 </option>
 															<option value="16:9"> Wide Screen - 16:9        </option>
@@ -1203,18 +1203,18 @@ $engine->eTemplate("include","header");
 													<input type="number" class="input-block-level" id="fieldSettings_file_video_frames" name="fieldSettings_file_video_frames" min="0" />
 												</span>
 												<span class="span4">
-													<label for="fieldSettings_file_video_height">
+													<label for="fieldSettings_file_video_thumbheight">
 														Height (px)
 														<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
 													</label>
-													<input type="number" class="input-block-level" id="fieldSettings_file_video_height" name="fieldSettings_file_video_height" min="0" />
+													<input type="number" class="input-block-level" id="fieldSettings_file_video_thumbheight" name="fieldSettings_file_video_thumbheight" min="0" />
 												</span>
 												<span class="span4">
-													<label for="fieldSettings_file_video_width">
+													<label for="fieldSettings_file_video_thumbwidth">
 														Width (px)
 														<i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
 													</label>
-													<input type="number" class="input-block-level" id="fieldSettings_file_video_width" name="fieldSettings_file_video_width" min="0" />
+													<input type="number" class="input-block-level" id="fieldSettings_file_video_thumbwidth" name="fieldSettings_file_video_thumbwidth" min="0" />
 												</span>
 											</div>
 											<div class="row-fluid" id="fieldSettings_video_thumbnail">
@@ -1222,7 +1222,7 @@ $engine->eTemplate("include","header");
 													<label for="fieldSettings_file_video_formatThumb">
 														Format
 													</label>
-													<select class="input-block-level" id="fieldSettings_file_thumbnail_formatThumb" name="fieldSettings_file_video_formatThumb">
+													<select class="input-block-level" id="fieldSettings_file_video_formatThumb" name="fieldSettings_file_video_formatThumb">
 														<option value="">Select Format</option>
 														{local var="videoThumbs"}
 													</select>
