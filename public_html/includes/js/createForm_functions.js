@@ -312,23 +312,31 @@ function showFieldSettings(fullID) {
 
 			// Audio Bindings
 			$("#fieldSettings_file_options_convertAudio").prop("checked",($("#convertAudio_"+id).val()==='true')).change();
-			$(".bitRate option[value="+$('#bitRate_'+id).val()+"]").prop("selected", true);
-			$(".audioFormat option[value="+$('#audioFormat_'+id).val()+"]").prop("selected", true);
+			$(".bitRate option[value='"+$('#bitRate_'+id).val()+"']").prop("selected", true);
+			$(".audioFormat option[value='"+$('#audioFormat_'+id).val()+"']").prop("selected", true);
 
 			// Video Bindings
 			$("#fieldSettings_file_options_convertVideo").prop("checked",($("#convertVideo_"+id).val()==='true')).change();
 			$("#fieldSettings_file_options_videothumbnail").prop("checked",($("#videothumbnail_"+id).val()==='true')).change();
-			$(".videobitRate option[value="+$('#videobitRate_'+id).val()+"]").prop("selected", true);
+
+			$(".videobitRate").find("option[value=" + $('#videobitRate_'+id).val()+"]").prop("selected", true);
+
+
+			$('#fieldSettings_file_video_height').val($('#videoHeight_'+id).val());
+			$('#fieldSettings_file_video_width').val($('#videoWidth_'+id).val());
+			$(".videoAspectRatio").find("option[value='"+$('#aspectRatio_'+id).val()+"']").prop("selected", true);
+
 
 			$('#fieldSettings_file_video_frames').val($('#videoThumbFrames_'+id).val());
-			$('#fieldSettings_file_video_height').val($('#videoThumbHeight_'+id).val());
-			$('#fieldSettings_file_video_width').val($('#videoThumbWidth_'+id).val());
+			$('#fieldSettings_file_video_thumbheight').val($('#videoThumbHeight_'+id).val());
+			$('#fieldSettings_file_video_thumbwidth').val($('#videoThumbWidth_'+id).val());
 			$('#fieldSettings_file_video_formatThumb').val($('#videoFormatThumb_'+id).val());
+			$('#fieldSettings_file_video_aspectRatio').val($('#aspectRatio_'+id).val());
 
-			$(".videoFormat option[value="+$('#videoFormat_'+id).val()+"]").prop("selected", true);
+			$(".videoFormat option[value='" + $('#videoFormat_' + id).val() + "']").prop("selected", true);
 
 
-
+			// Fieldset types
 			if (type != 'fieldset') {
 				var parentFieldset = fieldset.parents("li").parents("li");
 				if (parentFieldset.length > 0) {
@@ -1379,6 +1387,11 @@ function fieldSettingsBindings() {
 		$('#videothumbnail_'+id).val(checked);
 	});
 
+	$('.videoAspectRatio').change(function(){
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+		$("#aspectRatio_"+id).val($(this).val());
+	});
 
 	$('.videobitRate').change(function(){
 		var formPreviewWell = formPreview.find(".well");
@@ -1392,24 +1405,24 @@ function fieldSettingsBindings() {
 		$("#videoFormat_"+id).val($(this).val());
 	});
 
-	$('#fieldSettings_file_video_frames').change(function(){
-		var formPreviewWell = formPreview.find(".well");
-		var id              = formPreviewWell.prop("id").split("_")[1];
-		$("#videoThumbFrames_"+id).val($(this).val());
-		console.log('frames change');
-	});
-
 	$('#fieldSettings_file_video_height').change(function(){
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
-		$("#videoThumbHeight_"+id).val($(this).val());
+		$("#videoHeight_"+id).val($(this).val());
 		console.log('height change');
 	});
 
 	$('#fieldSettings_file_video_width').change(function(){
 		var formPreviewWell = formPreview.find(".well");
 		var id              = formPreviewWell.prop("id").split("_")[1];
-		$("#videoThumbWidth_"+id).val($(this).val());
+		$("#videoWidth_"+id).val($(this).val());
+	});
+
+	$('#fieldSettings_file_video_frames').change(function(){
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+		$("#videoThumbFrames_"+id).val($(this).val());
+		console.log('frames change');
 	});
 
 	$('#fieldSettings_file_video_formatThumb').change(function(){
@@ -1418,6 +1431,18 @@ function fieldSettingsBindings() {
 		$("#videoFormatThumb_"+id).val($(this).val());
 	});
 
+	$('#fieldSettings_file_video_thumbheight').change(function(){
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+		$("#videoThumbHeight_"+id).val($(this).val());
+		console.log('height change');
+	});
+
+	$('#fieldSettings_file_video_thumbwidth').change(function(){
+		var formPreviewWell = formPreview.find(".well");
+		var id              = formPreviewWell.prop("id").split("_")[1];
+		$("#videoThumbWidth_"+id).val($(this).val());
+	});
 
 	// Add a check that checks all the image input boxes
 	// If any of these are checked then the audio and video options become unchecked
@@ -1915,13 +1940,21 @@ function newFieldValues(id,type,vals) {
 
 			// video forms
 			output += '<input type="hidden" id="convertVideo_'+id+'" name="convertVideo_'+id+'" value="'+((vals.convertVideo !== undefined)?vals.convertVideo:'')+'">';
-			output += '<input type="hidden" id="videothumbnail_'+id+'" name="videothumbnail_'+id+'" value="'+((vals.videothumbnail !== undefined)?vals.videothumbnail:'')+'">';
+			output += '<input type="hidden" id="videoHeight_'+id+'" name="videoHeight_'+id+'" value="'+((vals.videoHeight !== undefined)?vals.videoHeight:'')+'">';
+			output += '<input type="hidden" id="videoWidth_'+id+'" name="videoWidth_'+id+'" value="'+((vals.videoWidth !== undefined)?vals.videoWidth:'')+'">';
+			output += '<input type="hidden" id="aspectRatio_'+id+'" name="aspectRatio_'+id+'" value="'+((vals.aspectRatio !== undefined)?vals.aspectRatio:'')+'">';
+
 			output += '<input type="hidden" id="videobitRate_'+id+'" name="videobitRate_'+id+'" value="'+((vals.videobitRate !== undefined)?vals.videobitRate:'')+'">';
 			output += '<input type="hidden" id="videoFormat_'+id+'" name="videoFormat_'+id+'" value="'+((vals.videoFormat !== undefined)?vals.videoFormat:'')+'">';
+
+
+			output += '<input type="hidden" id="videothumbnail_'+id+'" name="videothumbnail_'+id+'" value="'+((vals.videothumbnail !== undefined)?vals.videothumbnail:'')+'">';
+
 			output += '<input type="hidden" id="videoThumbFrames_'+id+'" name="videoThumbFrames_'+id+'" value="'+((vals.videoThumbFrames !== undefined)?vals.videoThumbFrames:'')+'">';
 			output += '<input type="hidden" id="videoThumbHeight_'+id+'" name="videoThumbHeight_'+id+'" value="'+((vals.videoThumbHeight !== undefined)?vals.videoThumbHeight:'')+'">';
 			output += '<input type="hidden" id="videoThumbWidth_'+id+'" name="videoThumbWidth_'+id+'" value="'+((vals.videoThumbWidth !== undefined)?vals.videoThumbWidth:'')+'">';
 			output += '<input type="hidden" id="videoFormatThumb_'+id+'" name="videoFormatThumb_'+id+'" value="'+((vals.videoFormatThumb !== undefined)?vals.videoFormatThumb:'')+'">';
+
 			break;
 
 		default:
