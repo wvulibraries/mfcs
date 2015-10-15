@@ -4,6 +4,8 @@ class exporting {
 
 	private $exportDirs = array();
 
+	private $skipDirs   = array(".","..","index.php","lost+found");
+
 	public function __construct($dir) {
 
 		if (!is_readable($dir)) {
@@ -12,12 +14,13 @@ class exporting {
 
 		$dir = opendir($dir); // open the cwd..also do an err check.
 		while(false != ($file = readdir($dir))) {
-			if(($file != ".") && ($file != "..") && ($file != "index.php")) {
+			if(!in_array($file,$this->skipDirs)) {
                 $this->exportDirs[] = array('file' => $file, 'name' => str_replace("_"," ",basename($file,".php")));
             }   
         }
         closedir($dir);
 
+        sort($this->exportDirs);
   
 	}
 
