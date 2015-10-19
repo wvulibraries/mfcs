@@ -11,13 +11,31 @@ SERVERURL="/home/mfcs.lib.wvu.edu"
 DOCUMENTROOT="public_html"
 SQLFILES="/vagrant/SQLFiles/migrations/*.sql"
 
+
 yum -y install \
 	httpd httpd-devel httpd-manual httpd-tools \
 	mysql-connector-java mysql-connector-odbc mysql-devel mysql-lib mysql-server \
 	mod_auth_kerb mod_auth_mysql mod_authz_ldap mod_evasive mod_perl mod_security mod_ssl mod_wsgi \
-	php php-bcmath php-cli php-common php-gd php-ldap php-mbstring php-mcrypt php-mysql php-odbc php-pdo php-pear php-pear-Benchmark php-pecl-apc php-pecl-imagick php-pecl-memcache php-soap php-xml php-xmlrpc \
+	php php-bcmath php-cli php-common php-gd php-ldap php-mbstring php-mcrypt php-mysql
+	php-odbc php-pdo php-pear php-pear-Benchmark php-pecl-apc php-pecl-imagick php-pecl-memcache php-soap php-xml php-xmlrpc \
 	emacs emacs-common emacs-nox git \
 	http://www.webmin.com/download/rpm/webmin-current.rpm
+
+# FFMPEG Dependencies
+yum -y install glibc gcc gcc-c++ autoconf automake libtool git make nasm pkgconfig \
+		SDL-devel a52dec a52dec-devel alsa-lib-devel faac faac-devel faad2 faad2-devel \
+		freetype-devel giflib gsm gsm-devel imlib2 imlib2-devel lame lame-devel libICE-devel libSM-devel libX11-devel \
+		libXau-devel libXdmcp-devel libXext-devel libXrandr-devel libXrender-devel libXt-devel \
+		libogg libvorbis vorbis-tools mesa-libGL-devel mesa-libGLU-devel xorg-x11-proto-devel zlib-devel \
+		libtheora theora-tools \
+		ncurses-devel \
+		libdc1394 libdc1394-devel \
+		amrnb-devel amrwb-devel opencore-amr-devel \
+
+yum install autoconf automake cmake freetype-devel gcc gcc-c++ git libtool make mercurial nasm pkgconfig zlib-devel
+
+rpm -Uhv http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
+
 
 mv /etc/httpd/conf.d/mod_security.conf /etc/httpd/conf.d/mod_security.conf.bak
 /etc/init.d/httpd start
@@ -119,7 +137,9 @@ make install
 ln -s /usr/local/bin/tesseract /usr/bin/
 ln -s /usr/local/bin/hocr2pdf /usr/bin/
 
-# ffmpeg binaries
-rpm -Uhv http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
-# yum -y update
-yum install ffmpeg ffmpeg-devel ffmpeg-libpostproc
+## Video Dependencies
+yum -y install mplayer
+yum -y install ffmpeg-devel php-devel re2c php-xml ffmpeg
+
+/sbin/service httpd restart
+
