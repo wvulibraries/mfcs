@@ -1049,33 +1049,32 @@ class files {
 				'ab'	 => $options['videobitRate'],
 			);
 
+			// Catch all for not allowing bad aspect ratios
 			// Setup the variables for video size based on aspect ratio and such
 			if(isset($options['videoHeight']) && isset($options['videoWidth'])){
 				if(isset($options['aspectRatio']) && !isnull($options['aspectRatio'])){
-					$videoSize = sprintf("scale=%sx%s,setdar=%s",
-						$options['videoWidth'],
-						$options['videoHeight'],
-						$options['aspectRatio']
+					// force the aspect ratio in the height by using the width
+					$aspectRatio = explode(":", $options['aspectRatio']);
+					$width = $options['videoWidth'];
+					$height = floor(($width/$aspectRatio[0]) * $aspectRatio[1]);
+					$videoSize = sprintf("%sx%s",
+						$width,
+						$height
 					);
+					$conversionOptions['aspect'] = $aspectRatio;
 				}
 				else {
-					// height width set for original file.
+					// height width set for original files aspect ratio
 					if(isset($originalFileData['width']) && isset($originalFileData['height'])){
 						$ratio     = $originalFileData['width'] / $originalFileData['height'];
 						$videoSize = sprintf("scale=%sx%s",
 							$options['videoWidth'],
-							($options['videoWidth'] / $ratio)
-						);
-					}
-					else {
-						$videoSize = sprintf("scale=%sx%s",
-							$options['videoWidth'],
-							$options['videoHeight']
+							floor($options['videoWidth'] / $ratio)
 						);
 					}
 				}
 				// add to conversion options
-				$conversionOptions['vf'] = $videoSize;
+				$conversionOptions['s'] = $videoSize;
 			}
 
 			// conversion options
