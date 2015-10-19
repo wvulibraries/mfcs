@@ -78,6 +78,8 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			$countSql = sprintf("`count`='%s',",
 				$engine->openDB->escape($count)
 			);
+		} else {
+			$countSql = "";
 		}
 
 		if ($form['formMetadata'] == '1' && !is_empty($form['linkTitle'])) {
