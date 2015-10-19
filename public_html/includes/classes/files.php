@@ -994,8 +994,8 @@ class files {
 				// Convert Video
 				if (isset($options['convertVideo']) && str2bool($options['convertVideo'])) {
 					$convertVideo =  self::convertVideo($assetsID, $filename, $originalFile, $options);
-					if(!$convertVideo){
-						throw new Exception('Failed to convert video  --- '.$convertVideo);
+					if($convertVideo['errors']){
+						throw new Exception("VideoFail:  ".$convertVideo['errorMessage']);
 					} else {
 						$return['video'][] = $convertVideo;
 					}
@@ -1004,7 +1004,7 @@ class files {
 				// Video Thumbnails
 				if (isset($options['videothumbnail']) && str2bool($options['videothumbnail'])) {
 					$createThumbs =  self::createVideoThumbs($assetsID, $filename, $originalFile, $options);
-					if(!$createThumbs){
+					if($createThumbs['errors']){
 						throw new Exception('Failed to create video thumbnails');
 					}
 					else {
@@ -1030,24 +1030,32 @@ class files {
 			$ffmpeg           = new FFMPEG($originalFile);
 			$originalFileData = $ffmpeg->getMetadata();
 
+			// video options
+			$savePath = self::getSaveDir($assetsID,'video');
+			$format   = ".".$options['videoFormat'];
+
+			// conversions
+			$conversionOptions['ab'] = $options['videobitRate'];
+
+			// return stuff
+			$returnArray = array(
+				'name'    => $name.$format,
+				'path'    => $savePath,
+				'format'  => $format,
+				'options' => $conversionOptions,
+				'info'    => $ffmpeg->returnInformation()
+			);
+
 			// Valid File?
 			if(!$ffmpeg->isValid() && !$ffmpeg->isVideo()){
 				throw new Exception("File is not valid, or the video file was not a video. Can't Convert Video.");
 			}
-
-			// video options
-			$savePath = self::getSaveDir($assetsID,'video');
-			$format   = ".".$options['videoFormat'];
 
 			// path exsists
 			if(!is_dir($savePath)){
 				throw new Exception("Directory is not setup");
 			}
 
-			// conversions
-			$conversionOptions = array(
-				'ab'	 => $options['videobitRate'],
-			);
 
 			// Catch all for not allowing bad aspect ratios
 			// Setup the variables for video size based on aspect ratio and such
@@ -1067,7 +1075,7 @@ class files {
 					// height width set for original files aspect ratio
 					if(isset($originalFileData['width']) && isset($originalFileData['height'])){
 						$ratio     = $originalFileData['width'] / $originalFileData['height'];
-						$videoSize = sprintf("scale=%sx%s",
+						$videoSize = sprintf("%sx%s",
 							$options['videoWidth'],
 							floor($options['videoWidth'] / $ratio)
 						);
@@ -1076,26 +1084,29 @@ class files {
 				// add to conversion options
 				$conversionOptions['s'] = $videoSize;
 			}
-
 			// conversion options
-			$ffmpeg->convert($savePath.$name.$format, array(), $conversionOptions);
+			$conversion = $ffmpeg->convert($savePath.$name.$format, array(), $conversionOptions);
 
 		} catch (Exception $e) {
 			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
 			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::DEBUG);
-			return FALSE;
+
+			//setup return errors
+			$returnArray['options']      = $conversionOptions;
+			$returnArray['errors']       = TRUE;
+			$returnArray['errorMessage'] = $e->getMessage();
+			return $returnArray;
 		}
+
+		// return errors for no expections
+		$returnArray['errors'] = FALSE;
+		return $returnArray;
 	}
 
-	public static function createVideoThumbs($assetsID, $name, $originialFile, $options){
+	public static function createVideoThumbs($assetsID, $name, $originalFile, $options){
 		try{
-			$ffmpeg           = new FFMPEG($originalFile);
-			$originalFileData = $ffmpeg->getMetadata();
-
-			// Valid File?
-			if(!$ffmpeg->isValid() && !$ffmpeg->isVideo()){
-				throw new Exception("File is not valid, or the video file was not a video. Can not create thumbnails.");
-			}
+			$ffmpeg             = new FFMPEG($originalFile);
+			$originalFileData   = $ffmpeg->getMetadata();
 
 			// create thumbnails
 			$numberOfThumbnails = $options['videoThumbFrames'];
@@ -1104,9 +1115,25 @@ class files {
 			$thumbFormat        = $options['videoFormatThumb'];
 			$path               = self::getSaveDir($assetsID,'thumbnails');
 
+			$returnArray = array(
+				'name'    => $name,
+				'path'    => $path,
+				'format'  => $thumbFormat,
+				'options' => array(
+							'height' => $thumbHeight,
+							'width'  => $thumbWidth,
+						 ),
+				'info'    => $ffmpeg->returnInformation(),
+			);
+
 			// path exsists
 			if(!is_dir($path)){
 				throw new Exception("Thumbnail directory is not setup.");
+			}
+
+			// valid
+			if(!$ffmpeg->isValid() && !$ffmpeg->isVideo()){
+				throw new Exception("File is not valid, or the video file was not a video. Can't create thumbs");
 			}
 
 			// get thumbnails
@@ -1115,8 +1142,12 @@ class files {
 		} catch (Exception $e) {
 			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
 			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::DEBUG);
-			return FALSE;
+			$returnArray['errors'] = TRUE;
+			return $returnArray;
 		}
+
+		$returnArray['errors'] = FALSE;
+		return $returnArray;
 	}
 
 	public static function convertAudio($assetsID, $name, $originalFile, $options){

@@ -126,6 +126,23 @@ class FFMPEG {
 
     }
 
+    public function generateLog(){
+        $logs    = "/tmp/ffmpegLog";
+        $logFile = $logs.DIRECTORY_SEPARATOR.'ffmpeg-log.txt';
+
+        if(!file_exists($logs)){
+            mkdir("/tmp/ffmpegLog");
+        }
+
+        $getLogInfo = self::returnInformation();
+        $debug      = var_export($getLogInfo, true);
+        $date       = date('Y-m-d G:i');
+        $dataHead   = "========================== " .$date. " ==========================";
+        $text       = $dataHead + $debug;
+
+        file_put_contents($logFile, $text);
+    }
+
     public function getThumbnails($numThumbs, $path, $name, $height, $width, $format){
 
         // Limit to 5
@@ -199,7 +216,7 @@ class FFMPEG {
             'lastReturn'    => $this->_lastReturn,
             'lastCommand'   => $this->_lastCommand,
             'options'       => $this->_options,
-            'metadata'      => self::getMetadata()
+            'metadata'      => $this->getMetadata()
         );
     }
 
@@ -274,7 +291,9 @@ class FFMPEG {
         $command = implode(' ',$parts);
         $this->_lastOutput = $this->_exec($command);
 
+        $this->generateLog();
         return $this->_lastOutput;
+
 
     }
 
