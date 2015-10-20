@@ -1,0 +1,204 @@
+// sass --watch main.scss:main.css
+
+// MIXINS
+// ===========================================================================================
+
+@mixin breakpoint($break) {
+  @if $break == tablet {
+        @media (min-width: 48em) { @content; }
+    }
+    @if $break == laptop {
+        @media (min-width: 60em) { @content; }
+    }
+    @if $break == desktop {
+        @media (min-width: 80em) { @content; }
+    }
+    @if $break == print {
+         @media print { @content; }
+    }
+    @else {
+      @media (min-width: $break) { @content; }
+    }
+}
+
+// COLORS
+// ===========================================================================================
+$blue : #005EB8;
+$darkblue : #002855;
+$gold : #EAAA00;
+$gold-darken : darken($gold,10%);
+$lightgrey : #eee;
+
+
+// MAIN STYINGS
+// ===========================================================================================
+
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+* {
+  -webkit-backface-vibisility: hidden;
+     -moz-backface-vibisility: hidden;
+      -ms-backface-vibisility: hidden;
+          backface-vibisility: hidden;
+}
+
+h1 { font-size:150%; }
+h2 { font-size:135%; }
+h3,h4,h5 { font-size:125%; }
+
+section {
+    float:left;
+    width:100%;
+    margin:0;
+    padding:0 20px;
+}
+
+.button {
+  display: inline-block;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: inherit;
+  text-transform:uppercase;
+  padding: 13px 85px;
+  margin: 20px 10px;
+  background:$blue;
+  color:#fff;
+  &:hover,&:active,&:visited {
+    background:$gold;
+  }
+}
+
+// HELPERS
+// ===========================================================================================
+
+.mobile {
+    display:inline-block;
+    @include breakpoint(tablet){
+        display:none;
+    }
+}
+
+.desktop{
+    display:none;
+    @include breakpoint(tablet){
+        display:inline-block;
+    }
+}
+
+
+//  APP HEADER
+// ===========================================================================================
+
+.applicationHeader {
+    position:relative;
+    background:$lightgrey;
+    padding:10px;
+    h1 {
+        margin:0;
+        font-size:150%;
+        padding-left:50px;
+    }
+}
+
+.mfcs-logo{
+    position:absolute;
+    height:20px;
+    width:50px;
+    top:7px;
+    left:5px;
+    img {width:100%;}
+}
+
+//  PAGE HEADER
+// ===========================================================================================
+.page-header {
+    margin:0;
+    text-align:center;
+    float:left;
+    width:100%;
+    clear:left;
+    @include breakpoint(tablet){
+        width:30%;
+    }
+}
+
+.breadcrumbs {
+  list-style: none;
+  margin: 0;
+  padding: 10px;
+  float:left;
+  width:100%;
+  border-bottom:1px solid $lightgrey;
+  @include breakpoint(tablet){
+        width:70%;
+        margin-top:19px;
+        padding-bottom:13px;
+        text-align:right;
+    }
+}
+
+.breadcrumbs li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: inline;
+  font-family: Helvetica Neue,sans-serif;
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 300;
+  letter-spacing: .05em;
+  clear:both;
+}
+
+.breadcrumbs li a {
+  display: inline-block;
+  padding: 0 40px 0 0px;
+  position: relative;
+  perspective: 700px;
+}
+
+.breadcrumbs li a:after {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-color: #333;
+  border-style: solid;
+  border-width: 1px 1px 0 0;
+
+  -webkit-backface-visibility: hidden;
+  outline: 1px solid transparent;
+
+  position: absolute;
+  right: 30px;
+  top:5px;
+  -webkit-transform: rotateZ(45deg) skew(10deg, 10deg);
+     -moz-transform: rotateZ(45deg) skew(10deg, 10deg);
+      -ms-transform: rotateZ(45deg) skew(10deg, 10deg);
+          transform: rotateZ(45deg) skew(10deg, 10deg);
+}
+
+
+//  Index HTML
+// ===========================================================================================
+
+.picklist {
+    margin:0;
+    padding:0;
+    list-style:none;
+    width:100%;
+    display:block;
+    clear:left;
+    float:left;
+    li a { display:block; @extend .button;}
+
+    @include breakpoint(tablet){
+        max-width:60%;
+        margin:0 20%;
+    }
+}
