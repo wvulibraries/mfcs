@@ -1,9 +1,12 @@
 <?php
 
 // @TODO there is way too much logic in this file. It needs to be refactored out.
-
 include("../header.php");
 
+//Permissions Access
+if(!mfcsPerms::evaluatePageAccess(2)){
+	header('Location: /index.php?permissionFalse');
+}
 
 $formID = isset($engine->cleanPost['HTML']['id']) ? $engine->cleanPost['HTML']['id'] : (isset($engine->cleanGet['HTML']['id']) ? $engine->cleanGet['HTML']['id'] : NULL);
 if (is_empty($formID)) {
