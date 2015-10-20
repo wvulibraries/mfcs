@@ -36,7 +36,7 @@ if (isset($engine->cleanPost['HTML']['loginSubmit'])) {
 		$loginFail = TRUE;
 	}
 	else {
-		
+
 		global $engineVars;
 		if ($engine->login($loginType)) {
 			log::insert("Login");
@@ -67,39 +67,44 @@ if (isset($engine->cleanPost['HTML']['loginSubmit'])) {
 <html>
 <head>
 	<title>MFCS Login</title>
-
 	<link rel="stylesheet" type="text/css" href="/css/login.css"/>
-
 </head>
 
 <body>
 
+<!-- <header>
+	<h1>Metadata Form Creation System</h1>
+</header> -->
+
+
 <div id="loginBox">
 
-	<div>
-		<img src="/images/mfcs.png" alt="Metadata Form Creation System" />
-		<h1>Metadata Form Creation System</h1>
-		
-	</div>
+	<form name="loginForm" action="{phpself query="false"}<?php if(isset($page)){ echo "?page=".$page; if(isset($qs)) { echo "&qs=".(urlencode($qs)); } } ?>" method="post">
+		<div class="formHeader">
+			<h2> MFCS Login</h2>
+		</div>
+		{engine name="insertCSRF"}
+		<?php
+	if($loginFail) {
+		print "<div style=\"\"><p>Login Failed. User name or Password is incorrect.</p></div>";
+	}
+	if(isset($page)) {
+		print "<div style=\"color:red;\"><p>You are either not logged in or do not have access to the requested page.</p></div>";
+	}
+	?>
+		<label for="username" class="hidden">Username:</label>
+		<input type="text" name="username" id="username" class="styledInput" value="" autofocus="autofocus" placeholder="username" /> <br /><br />
+		<label for="password" class="hidden">Password:</label>
+		<input type="password" name="password" id="password" placeholder="password" class="styledInput"  value="" onkeypress="capsLockCheck(event);"/> <span id="capsLock" style="display:none;">Caps Lock is On</span>
+		<br/>
+		<div class="alignSubmit">
+			<input type="submit" class="styledInput" name="loginSubmit" id="submitButton" value="Login" />
+		</div>
+	</form>
+</div>
 
-<form name="loginForm" action="{phpself query="false"}<?php if(isset($page)){ echo "?page=".$page; if(isset($qs)) { echo "&qs=".(urlencode($qs)); } } ?>" method="post">
-
-	{engine name="insertCSRF"}
-	<?php
-if($loginFail) {
-	print "<div style=\"\"><p>Login Failed. User name or Password is incorrect.</p></div>";
-}
-if(isset($page)) {
-	print "<div style=\"color:red;\"><p>You are either not logged in or do not have access to the requested page.</p></div>";
-}
-?>
-	<label for="username">Username:</label> <br />
-	<input type="text" name="username" id="username" class="styledInput" value="" autofocus="autofocus" /> <br /><br />
-	<label for="password">Password:</label> <br />
-	<input type="password" name="password" id="password" class="styledInput"  value="" onkeypress="capsLockCheck(event);"/> <span id="capsLock" style="display:none;">Caps Lock is On</span>
-	<input type="submit" class="styledInput" name="loginSubmit" id="submitButton" value="Login" />
-</form>
-
+<div class="mfcs-logo">
+	<img src="/images/mfcs.png" alt="Metadata Form Creation System" />
 </div>
 
 </body>

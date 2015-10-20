@@ -1,40 +1,139 @@
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+  padding: 0px;
+  margin: 0px;
+}
+
+::-webkit-input-placeholder {
+   letter-spacing: 1px;
+   font-family: monospace;
+   font-style: oblique;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   letter-spacing: 1px;
+   font-family: monospace;
+   font-style: oblique;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   letter-spacing: 1px;
+   font-family: monospace;
+   font-style: oblique;
+}
+
+:-ms-input-placeholder {
+   letter-spacing: 1px;
+   font-family: monospace;
+   font-style: oblique;
+}
+
+
+body {
+	background:#eee;
+	display: block;
+    margin: 0;
+    padding: 0;
+    font-family: "Helvetica Neue", "Helvetica","Roboto", Arial, sans-serif;
+    font-size:1em;
+    overflow: hidden;
+    min-height:800px;
+    letter-spacing: 1px;
+}
+
+header{
+	background:#002855;
+	width:100%;
+	float:left;
+	padding:20px;
+}
+
+header h1 {
+	font-size:125%;
+	color:#fff;
+	text-align: center;
+}
+
 #loginBox {
-
-	width: 500px;
-	/*height: 375px;*/
-	margin-left: auto;
-	margin-right: auto;
-
-/*	border-style: solid;
-	border-width: 1px;*/
+	float:left;
+	width:100%;
+	padding:10px;
+	position:relative;
+	z-index:9999999;
 }
 
-.styledInput {
-	/*height: 3em;*/
-	width: 500px;
-
-	font-size: 2em;
+#loginBox form {
+	margin:5% auto;
+	width:90%;
+	background:rgba(256,255,255,0.8);
+	padding:20px;
+	box-shadow: rgba(0,0,0,0.3) 0px 1px 16px -1px;
+}
+/* tablet */
+@media (min-width: 48em) {
+  #loginBox form {
+  	margin:10% auto;
+    width: 50%;
+  }
 }
 
-h1 {
-	margin-left: auto;
-	margin-right:auto;
-	width: 95%;
+#loginBox input {
+	width:100%;
+	padding:10px;
+	outline:0;
+	border:1px solid #ccc;
 }
 
-#submitButton {
-	font-size: 1.25em;
-	margin-top: 20px;
+#loginBox input:focus {
+	outline: 0;
+	border:1px solid #005EB8;
 }
 
-#loginTypeSelector {
-	text-align: right;
-	position: relative;
-	bottom: 0;
-	right: 0;
+#loginBox input[type=submit]{
+	padding:15px 50px;
+	background:#005EB8;
+	border:none;
+    cursor:pointer;
+    margin-top:20px;
+    color:#fff;
+    text-transform: uppercase;
+    width:initial;
 }
+
+.alignSubmit {
+	text-align:right;
+}
+
+.hidden { border: 0; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px; }
+
+.formHeader {
+	width:100%;
+	text-align:center;
+}
+
+.formHeader h2 {
+	text-transform:uppercase;
+	padding:10px 0;
+	border-bottom:1px dotted #ccc;
+	color:#002855;
+	margin-bottom:20px;
+}
+
+.mfcs-logo{
+	position:absolute;
+	bottom:-5%;
+	right:5%;
+	-ms-transform: rotate(-12deg); /* IE 9 */
+    -webkit-transform: rotate(-12deg); /* Chrome, Safari, Opera */
+    transform: rotate(-12deg);
+}
+
 img{
-	width:300px; 
+	width:300px;
 	display:block;
 	margin-left: auto;
 	margin-right:auto;
