@@ -1,6 +1,11 @@
 <?php
 include("../header.php");
 
+//Permissions Access
+if(!mfcsPerms::evaluatePageAccess(2)){
+	header('Location: /index.php?permissionFalse');
+}
+
 $permissions      = TRUE;
 
 try {

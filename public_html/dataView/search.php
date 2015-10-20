@@ -2,6 +2,11 @@
 
 include("../header.php");
 
+//Permissions Access
+if(!mfcsPerms::evaluatePageAccess(2)){
+	header('Location: /index.php?permissionFalse');
+}
+
 // Setup the start of the breadcrumbs and pre-populate what we can
 $siteRoot = localvars::get('siteRoot');
 $breadCrumbs = array(
@@ -76,7 +81,7 @@ else{
 if(isset($results)) localvars::add("objectTable",listGenerator::createAllObjectList(0,50,NULL,$results));
 
 
-// build the search interface, we do this regardless of 
+// build the search interface, we do this regardless of
 try {
 
 	$interface = mfcsSearch::buildInterface();

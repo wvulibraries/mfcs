@@ -3,6 +3,11 @@ include("../header.php");
 
 log::insert("Form Creator: Copy: View");
 
+//Permissions Access
+if(!mfcsPerms::evaluatePageAccess(2)){
+	header('Location: /index.php?permissionFalse');
+}
+
 try {
 	// Get list of forms for choices dropdown
 	if (($objectForms = forms::getObjectForms()) === FALSE) {
