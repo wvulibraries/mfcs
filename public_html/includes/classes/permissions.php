@@ -18,7 +18,7 @@ class mfcsPerms {
 		return FALSE;
 	}
 
-	public function evaluatePageAccess($pageAccessBit, $username){
+	public static function evaluatePageAccess($pageAccessBit, $username = NULL){
 		if(isnull($username)) $username = sessionGet("username");
 
 		$userBit = self::evaluateUserBits($username);
