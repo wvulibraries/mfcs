@@ -14,8 +14,12 @@ catch(Exception $e) {
 }
 
 localVars::add("results",displayMessages());
-
 log::insert("Form Creator: View Forms");
+
+//Permissions Access
+if(!mfcsPerms::evaluatePageAccess(2)){
+	header('Location: /index.php?permissionFalse');
+}
 
 $engine->eTemplate("include","header");
 ?>
