@@ -18,9 +18,34 @@ class mfcsPerms {
 		return FALSE;
 	}
 
+	public function evaluatePageAccess($pageAccessBit, $username){
+		if(isnull($username)) $username = sessionGet("username");
+
+		$userBit = self::evaluateUserBits($username);
+		return ($pageAccessBit <= $userBit ? TRUE : FALSE);
+	}
+
+	public static function hasAdminAccess($username = NULL){
+		if(isnull($username)) $username = sessionGet("username");
+		$user = users::get($username);
+		return (strtolower($user['status']) == 'admin' ? TRUE : FALSE);
+	}
+
+	public static function hasEditorAccess($username = NULL){
+		if(isnull($username)) $username = sessionGet("username");
+		$user = users::get($username);
+		return (strtolower($user['status']) == 'editor' ? TRUE : FALSE);
+	}
+
+	public static function hasUserAccess($username = NULL){
+		if(isnull($username)) $username = sessionGet("username");
+		$user = users::get($username);
+		return (strtolower($user['status']) == 'user' ? TRUE : FALSE);
+	}
+
 	public static function isAdmin($formID, $username = NULL) {
 		if (isnull($username)) $username = sessionGet("username");
-		return self::getCount($formID,$username,mfcs::AUTH_ADMIN) || trim(strtolower(users::user('status','user'))) == 'systems';
+		return self::getCount($formID,$username,mfcs::AUTH_ADMIN) || trim(strtolower(users::user('status','user'))) == 'admin';
 	}
 
 	public static function isEditor($formID, $username = NULL) {
@@ -39,12 +64,12 @@ class mfcsPerms {
 			mfcs::$engine->openDB->escape($formID),
 			mfcs::$engine->openDB->escape($type));
 		$sqlResult = mfcs::$engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-		
+
 		return TRUE;
 	}
 
@@ -52,13 +77,29 @@ class mfcsPerms {
 		$sql = sprintf("DELETE FROM `permissions` WHERE `formID`='%s'",
 			mfcs::$engine->openDB->escape($id));
 		$sqlResult = mfcs::$engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-		
+
 		return TRUE;
+	}
+
+
+	private static function evaluateUserBits($username){
+		if(self::hasAdminAccess($username)){
+			return 3;
+		}
+		elseif(self::hasEditorAccess($username)){
+			return 2;
+		}
+		elseif(self::hasUserAccess($username)) {
+			return 1;
+		}
+		else {
+			return 0;
+		}
 	}
 }
 
