@@ -23,25 +23,20 @@ $engine->eTemplate("include","header");
 
 ?>
 
-<section>
+<section class="container-fluid">
 	<header class="page-header">
 		<h1>Select a Task</h1>
 	</header>
 
-	<nav id="breadcrumbs">
-		<ul class="breadcrumb">
-			<li><a href="{local var="siteRoot"}">Home</a></li>
-		</ul>
-	</nav>
+	<ul class="breadcrumbs">
+ 		<li><a href="/">Home</a></li>
+ 		<li></li>
+	</ul>
 
 	{local var="feedback"}
 	{local var="results"}
 
-	<ul>
-		{local var="projectList"}
-	</ul>
-
-	<ul class="pickList">
+	<ul class="picklist">
 		<li>
 			<a href="dataEntry/selectForm.php" class="btn">Create new Object</a>
 		</li>
@@ -60,6 +55,13 @@ $engine->eTemplate("include","header");
 	</ul>
 </section>
 
+<section>
+	<ul>
+		{local var="projectList"}
+	</ul>
+</section>
+
+
 <?php
-$engine->eTemplate("include","footer");
+ $engine->eTemplate("include","footer");
 ?>
