@@ -136,12 +136,8 @@ class FFMPEG {
 
         $getLogInfo = self::returnInformation();
         $date       = date('Y-m-d G:i:s');
-
-        $text       = PHP_EOL . " ========================== " .$date. " ========================== ". PHP_EOL;
-        $text       .= "Last Execution --> ". $getLogInfo['lastExecution']. PHP_EOL;
-        $text       .= "Last Return    --> ". $getLogInfo['lastReturn']. PHP_EOL;
+        $text       = " ========================== " .$date. " ========================== ". PHP_EOL;
         $text       .= "Last Command   --> ". $getLogInfo['lastCommand']. PHP_EOL;
-        $text       .= "ffmpeg Options --> ". $getLogInfo['options']. PHP_EOL;
 
         file_put_contents($logFile, print_r($text, true), FILE_APPEND);
     }
