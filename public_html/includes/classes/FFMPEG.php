@@ -135,12 +135,15 @@ class FFMPEG {
         }
 
         $getLogInfo = self::returnInformation();
-        $debug      = var_export($getLogInfo, true);
-        $date       = date('Y-m-d G:i');
-        $dataHead   = "========================== " .$date. " ==========================";
-        $text       = $dataHead + $debug;
+        $date       = date('Y-m-d G:i:s');
 
-        file_put_contents($logFile, $text);
+        $text       = PHP_EOL . " ========================== " .$date. " ========================== ". PHP_EOL;
+        $text       .= "Last Execution --> ". $getLogInfo['lastExecution']. PHP_EOL;
+        $text       .= "Last Return    --> ". $getLogInfo['lastReturn']. PHP_EOL;
+        $text       .= "Last Command   --> ". $getLogInfo['lastCommand']. PHP_EOL;
+        $text       .= "ffmpeg Options --> ". $getLogInfo['options']. PHP_EOL;
+
+        file_put_contents($logFile, print_r($text, true), FILE_APPEND);
     }
 
     public function getThumbnails($numThumbs, $path, $name, $height, $width, $format){
@@ -161,6 +164,8 @@ class FFMPEG {
         $options['r']           = 1;  // only grab 1 frame
         $options['t']           = 1;  // stop writing after this num of frames
         $options['s']           = $width."x".$height;
+
+        $format = ".".$format;  // add extension to format
 
 
         // generate the thumbnails
