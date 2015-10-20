@@ -1,9 +1,14 @@
 <?php
 
-// @TODO is this file ever used? 
+// @TODO is this file ever used?
 // The form select should probably be the index to this directory
 
 include("../header.php");
+
+//Permissions Access
+if(!mfcsPerms::evaluatePageAccess(1)){
+	header('Location: /index.php?permissionFalse');
+}
 
 try {
 

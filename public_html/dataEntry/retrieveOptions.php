@@ -1,6 +1,11 @@
 <?php
 include("../header.php");
 
+//Permissions Access
+if(!mfcsPerms::evaluatePageAccess(1)){
+	header('Location: /index.php?permissionFalse');
+}
+
 try {
 
 	$formID    = isset($engine->cleanGet['MYSQL']['formID'])    ? $engine->cleanGet['MYSQL']['formID']    : NULL;

@@ -1,6 +1,11 @@
 <?php
 include("../header.php");
 
+//Permissions Access
+if(!mfcsPerms::evaluatePageAccess(1)){
+	header('Location: /index.php?permissionFalse');
+}
+
 $permissions      = TRUE;
 
 try {
@@ -11,12 +16,12 @@ try {
 
 	if (objects::validID() === FALSE) {
 		throw new Exception("ObjectID Provided is invalid.");
-	} 
+	}
 
 	if (($object = objects::get($engine->cleanGet['MYSQL']['objectID'])) === FALSE) {
 		throw new Exception("Error retrieving Object");
 	}
- 
+
 	if (($form = forms::get($object['formID'])) === FALSE) {
 		throw new Exception("Error retrieving form.");
 	}
@@ -64,7 +69,7 @@ try {
 			$engine->openDB->escape($form['ID'])
 			);
 		$sqlResult = $engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 			throw new Exception("Error updating object record.");

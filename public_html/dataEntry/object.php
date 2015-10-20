@@ -1,6 +1,11 @@
 <?php
 include("../header.php");
 
+//Permissions Access
+if(!mfcsPerms::evaluatePageAccess(1)){
+	header('Location: /index.php?permissionFalse');
+}
+
 // Setup revision control
 $revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime');
 

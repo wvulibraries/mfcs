@@ -1,6 +1,11 @@
 <?php
 include("../header.php");
 
+//Permissions Access
+if(!mfcsPerms::evaluatePageAccess(1)){
+	header('Location: /index.php?permissionFalse');
+}
+
 try {
 
 	if (($formList = listGenerator::generateAccordionFormList(TRUE)) === FALSE) {

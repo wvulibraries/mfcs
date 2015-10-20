@@ -1,6 +1,11 @@
 <?php
 include("../header.php");
 
+//Permissions Access
+if(!mfcsPerms::evaluatePageAccess(1)){
+	header('Location: /index.php?permissionFalse');
+}
+
 if (isset($engine->cleanGet['HTML']['ajax']) && strtolower($engine->cleanGet['HTML']['ajax']) == "true") {
 	$ajax = TRUE;
 }
@@ -14,7 +19,7 @@ try {
 
 	if (objects::validID() === FALSE) {
 		throw new Exception("ObjectID Provided is invalid.");
-	} 
+	}
 
 	if (forms::validID() === FALSE) {
 		throw new Exception("No Form ID Provided.");
