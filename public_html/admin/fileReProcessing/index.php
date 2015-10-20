@@ -1,6 +1,11 @@
 <?php
 include("../../header.php");
 
+//Permissions Access
+if(!mfcsPerms::evaluatePageAccess(3)){
+	header('Location: /index.php?permissionFalse');
+}
+
 // if (isset($engine->cleanPost['MYSQL']['submit'])) {
 // 	try {
 // 		$engine->openDB->transBegin();

@@ -3,6 +3,11 @@ require("header.php");
 
 log::insert("Admin: View index Page");
 
+//Permissions Access
+if(!mfcsPerms::evaluatePageAccess(3)){
+	header('Location: /index.php?permissionFalse');
+}
+
 $engine->eTemplate("include","header");
 ?>
 

@@ -2,6 +2,11 @@
 
 include("../../header.php");
 
+//Permissions Access
+if(!mfcsPerms::evaluatePageAccess(3)){
+	header('Location: /index.php?permissionFalse');
+}
+
 $tableName = "users";
 
 function defineList($tableName) {
