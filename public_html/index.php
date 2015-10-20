@@ -5,10 +5,22 @@ include("header.php");
 require_once "includes/ajaxHandler.php";
 
 localVars::add("results",displayMessages());
-
 log::insert("Index: View Page");
 
+if(isset($engine->cleanGet['MYSQL']['permissionFalse'])){
+	print " No Permisson to that page, please select another page";
+
+	$errorLoggedIn = sprintf('<div class="alert alert-error alert-block error"><button type="button" class="close" data-dismiss="alert">&times;</button>
+  								<h4> Warning! </h4>
+  								<p> You do not have permissions to access the last page you visited, if you believe that this is an error contact your system admin. </p>
+  							 </div>'
+  	);
+
+  	localVars::add("feedback", $errorLoggedIn);
+}
+
 $engine->eTemplate("include","header");
+
 ?>
 
 <section>
@@ -22,6 +34,7 @@ $engine->eTemplate("include","header");
 		</ul>
 	</nav>
 
+	{local var="feedback"}
 	{local var="results"}
 
 	<ul>
