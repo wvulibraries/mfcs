@@ -1034,8 +1034,9 @@ class files {
 			$savePath = self::getSaveDir($assetsID,'video');
 			$format   = ".".$options['videoFormat'];
 
-			// conversions
-			$conversionOptions['ab'] = $options['videobitRate'];
+			// bitrate conversions
+			$bitrate = (isset($options['videobitRate']) ? floor(($options['videobitRate'] * 1024)) : number_format(256 * 1024, 2));
+			$conversionOptions['ab'] = $bitrate;
 
 			// return stuff
 			$returnArray = array(
@@ -1069,7 +1070,7 @@ class files {
 						$width,
 						$height
 					);
-					$conversionOptions['aspect'] = $aspectRatio;
+					$conversionOptions['aspect'] = $options['aspectRatio'];
 				}
 				else {
 					// height width set for original files aspect ratio
