@@ -1,13 +1,21 @@
 <link rel="stylesheet" type="text/css" href="{local var="siteRoot"}includes/css/mfcs.css">
-<script type="text/javascript" src="{local var="siteRoot"}includes/js/mfcs.js"></script>
-
-<script type="text/javascript" src="{local var="siteRoot"}includes/js/jquery-ui-1.10.1.custom.min.js"></script>
-<script type="text/javascript" src="{local var="siteRoot"}includes/js/jquery.ui.touch-punch.min.js"></script>
-<script type="text/javascript" src="{local var="siteRoot"}includes/js/jquery.tablesorter.min.js"></script>
-
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="{local var="siteRoot"}includes/select2-3.5.0/select2.css">
 <link rel="stylesheet" type="text/css" href="{local var="siteRoot"}includes/select2-3.5.0/select2-bootstrap.css">
+<link rel="stylesheet" type="text/css" href="{local var="siteRoot"}css/main.css">
+
+<!-- JavaScripts -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<!-- JQUERY UI -->
+<script type="text/javascript" src="{local var="siteRoot"}includes/js/jquery.ui.touch-punch.min.js"></script>
+<script type="text/javascript" src="{local var="siteRoot"}includes/js/jquery.tablesorter.min.js"></script>
+<!-- BootStrap -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<!-- Other-->
 <script type="text/javascript" src="{local var="siteRoot"}includes/select2-3.5.0/select2.min.js"></script>
+<script type="text/javascript" src="{local var="siteRoot"}includes/js/mfcs.js"></script>
+
 
 <?php
 // Pages that need fine uploader
