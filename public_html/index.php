@@ -7,6 +7,7 @@ require_once "includes/ajaxHandler.php";
 localVars::add("results",displayMessages());
 log::insert("Index: View Page");
 
+
 if(isset($engine->cleanGet['MYSQL']['permissionFalse'])){
 	print " No Permisson to that page, please select another page";
 
@@ -26,12 +27,12 @@ $engine->eTemplate("include","header");
 <section>
 	<header class="page-header">
 		<h1 class="page-title">Select a Task</h1>
-
-		<ul class="breadcrumbs">
- 			<li><a href="/">Home</a></li>
- 			<li></li>
-		</ul>
 	</header>
+
+	<ul class="breadcrumbs">
+			<li><a href="/">Home</a></li>
+			<li></li>
+	</ul>
 
 
 
