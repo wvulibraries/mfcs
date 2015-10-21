@@ -23,15 +23,17 @@ $engine->eTemplate("include","header");
 
 ?>
 
-<section class="container-fluid">
+<section>
 	<header class="page-header">
-		<h1>Select a Task</h1>
+		<h1 class="page-title">Select a Task</h1>
+
+		<ul class="breadcrumbs">
+ 			<li><a href="/">Home</a></li>
+ 			<li></li>
+		</ul>
 	</header>
 
-	<ul class="breadcrumbs">
- 		<li><a href="/">Home</a></li>
- 		<li></li>
-	</ul>
+
 
 	{local var="feedback"}
 	{local var="results"}
