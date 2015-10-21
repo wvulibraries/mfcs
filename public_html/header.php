@@ -44,7 +44,6 @@ $mfcsSearch = new mfcsSearch();
 // Load the user's current projects
 
 sessionSet('currentProject',users::loadProjects());
-
 recurseInsert("includes/functions.php","php");
 recurseInsert("includes/validator.php","php");
 
@@ -53,4 +52,7 @@ $engine->eTemplate("load","cleanTemplate");
 localVars::add("siteRoot",mfcs::config("siteRoot"));
 localVars::add('pageTitle',mfcs::config("pageTitle"));
 localVars::add('pageHeader',mfcs::config("pageHeader"));
+
+// JSON Object for Projects
+localVars::add('userCurrentProjectsJSON', json_encode(users::loadProjects()));
 ?>
