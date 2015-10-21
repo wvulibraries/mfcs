@@ -381,7 +381,7 @@ html {
   backface-vibisility: hidden; }
 
 h1 {
-  font-size: 150%; }
+  font-size: 180%; }
 
 h2 {
   font-size: 135%; }
@@ -462,40 +462,12 @@ section {
 
 .page-title {
   display: block; }
-  @media (min-width: 48em) {
-    .page-title {
-      display: block;
-      float: left;
-      width: 30%; } }
-  @media (min-width: tablet) {
-    .page-title {
-      display: block;
-      float: left;
-      width: 30%; } }
 
 .breadcrumbs {
   list-style: none;
   margin: 0;
   padding: 10px;
   width: 100%; }
-  @media (min-width: 48em) {
-    .breadcrumbs {
-      width: 70%;
-      display: block;
-      float: left;
-      margin-top: 9px;
-      padding-bottom: 13px;
-      text-align: right;
-      display: inline-block; } }
-  @media (min-width: tablet) {
-    .breadcrumbs {
-      width: 70%;
-      display: block;
-      float: left;
-      margin-top: 9px;
-      padding-bottom: 13px;
-      text-align: right;
-      display: inline-block; } }
 
 .breadcrumbs li {
   list-style: none;
@@ -552,6 +524,24 @@ section {
       list-style: none;
       margin: 0;
       padding: 0; }
+
+.selectedProjects {
+  position: relative; }
+
+.tags {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  display: block;
+  width: 70%;
+  list-style: none;
+  text-align: right;
+  right: 5px;
+  padding: 10px; }
+  .tags li {
+    display: inline-block;
+    margin-left: 5px;
+    margin-bottom: 2px; }
 
 .picklist {
   margin: 0;
