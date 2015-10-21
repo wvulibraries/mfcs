@@ -1,62 +1,102 @@
+// Document Ready
+// ===================================================================
 $(function(){
-    var selectedProjectsModal = $('#selectProjectsModal');
-    $('.projectToggle').click(function(){
+    var projects = CurrentProjects; // init the dipslay object
+    projects.init();
+    $('.projectToggle').click(projects.toggleLogic);
+    $('.modal .close, .modal .cancel').click(projects.closeModal);
+    $('.submitProjects').click(projects.saveSelectedProjects);
+});
+
+// Fake JS Class
+// ===================================================================
+CurrentProjects = {
+    init: function(){
+        this.displayCurrentProjects(JSON.parse(userCurrentProjects));
+    },
+
+    closeModal:function(){
+        $('#selectProjectsModal').fadeOut(600).addClass('hide');
+        CurrentProjects.resetCheckBoxes(JSON.parse(userCurrentProjects));
+    },
+
+    displayNoProjects:function(){
+        console.log('no projects to dipslay');
+        $('.selectedProjects .tags').html('<li class="label label-warning"> No Projects Selected </li>');
+    },
+
+    displayCurrentProjects:function(projects){
+        if(projects.length == "0"){
+            this.displayNoProjects();
+        }
+        else{
+            var output = "";
+            $.each(projects, function(index,object){
+                output += "<li><div class='label label-default'>"+object+"</div></li>";
+            });
+            $('.selectedProjects .tags').html(output);
+        }
+    },
+
+    resetCheckBoxes:function(projects){
+        $('#selectProjectsModal :checkbox').each(function(i,n){
+            var chkBox = $(n);
+            var ID = $(n).val();
+            if(typeof projects[ID] != 'undefined'){
+                chkBox.prop('checked', true);
+            }
+            else {
+                chkBox.prop('checked', false);
+            }
+        });
+    },
+
+    toggleLogic:function(){
+        var selectedProjectsModal = $('#selectProjectsModal');
         if(selectedProjectsModal.hasClass('hide')){
             selectedProjectsModal.removeClass('hide').fadeIn(600);
-        } else {
-            selectedProjectsModal.fadeOut(600).addClass('hide');
         }
-    });
-    // close modals
-    $('.modal').click(function(){
-        $(this).fadeOut(600).addClass('hide');
-    });
-    $('.modal .close, .modal .cancel').click(function(){
-       $(this).parent().parent().fadeOut(600).addClass('hide');
-    });
-});
-
-
-// Reset the modal's UI when it's hidden
-$('#selectProjectsModal').on('hide', function (){
-    var IDs = $('#currentProjectsLink').data('selected_projects');
-    if(typeof(IDs) != 'string') IDs = IDs.toString();
-    if(typeof(IDs) != 'array')  IDs = IDs.split(',');
-    $('#selectProjectsModal :checkbox').each(function(i,n){
-        var chkBox = $(n);
-        var ID = $(n).val();
-        chkBox.prop('checked', $.inArray(ID, IDs) !== -1 );
-    });
-});
-
-
-
-function saveSelectedProjects(){
-    // Get all the IDs of selected projects
-    var selectedProjectIDs   = [];
-    var selectedProjectNames = [];
-    $('#selectProjectsModal :checkbox:checked').each(function(i,n){
-        selectedProjectIDs.push($(n).val());
-        selectedProjectNames.push($(n).data('label'));
-    });
-    // And POST it to the server
-    var postData = {
-        engineCSRFCheck:  $(':input[name="engineCSRFCheck"]').val(),
-        action:           'updateUserProjects',
-        selectedProjects: selectedProjectIDs
-    };
-    $.post(siteRoot+'?ajax',postData,function(data){
-        if(data.success){
-            var newHTML = selectedProjectIDs.length
-                ? selectedProjectNames.join(", ")
-                : '<span style="color: #999; font-style: italic;">None Selected</span>';
-            $('#currentProjectsLink')
-                .html(newHTML)
-                .data('selected_projects',selectedProjectIDs.join(','));
-        }else{
-            alert("An error occurred!\n\n(check the browser console for details)");
-            if(typeof(console) != 'undefined') console.log("Error from AJAX call: "+data.errorMsg);
+        else {
+            CurrentProjects.closeProjectsModal();
         }
-        $('#selectProjectsModal').modal('hide');
-    });
+    },
+
+    saveSelectedProjects:function(){
+        // Get all the IDs of selected projects
+        var selectedProjectIDs   = [];
+        var selectedProjectNames = [];
+        var viewObject           = {};
+        $('#selectProjectsModal :checkbox:checked').each(function(i,n){
+            selectedProjectIDs.push($(n).val());
+            selectedProjectNames.push($(n).data('label'));
+            var item = $(n).val();
+            viewObject[item] = $(n).data('label');
+        });
+
+        // close the window
+        CurrentProjects.closeModal();
+        CurrentProjects.resetCheckBoxes(viewObject);
+
+        // And POST it to the server
+        var postData = {
+            engineCSRFCheck:  $(':input[name="engineCSRFCheck"]').val(),
+            action:           'updateUserProjects',
+            selectedProjects: selectedProjectIDs
+        };
+        $.post(siteRoot+'?ajax',postData,function(data){
+            if(data.success){
+                if(viewObject.length == "0"){
+                    CurrentProjects.displayNoProjects();
+                } else {
+                    CurrentProjects.displayCurrentProjects(viewObject);
+                }
+            }else{
+                alert("An error occurred!\n\n(check the browser console for details)");
+                if(typeof(console) != 'undefined') console.log("Error from AJAX call: "+data.errorMsg);
+            }
+            $('#selectProjectsModal').modal('hide');
+        });
+    },
+
 }
+
