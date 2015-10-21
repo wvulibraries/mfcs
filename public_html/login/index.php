@@ -86,12 +86,14 @@ if (isset($engine->cleanPost['HTML']['loginSubmit'])) {
 		{engine name="insertCSRF"}
 		<?php
 	if($loginFail) {
-		print "<div style=\"\"><p>Login Failed. User name or Password is incorrect.</p></div>";
+		print "<div class='error'><p>Login Failed. User name or Password is incorrect.</p></div>";
 	}
 	if(isset($page)) {
-		print "<div style=\"color:red;\"><p>You are either not logged in or do not have access to the requested page.</p></div>";
+		print "<div class='error'><p>You are either not logged in or do not have access to the requested page.</p></div>";
 	}
 	?>
+
+
 		<label for="username" class="hidden">Username:</label>
 		<input type="text" name="username" id="username" class="styledInput" value="" autofocus="autofocus" placeholder="username" /> <br /><br />
 		<label for="password" class="hidden">Password:</label>
