@@ -1,4 +1,5 @@
 // sass --watch main.scss:main.css
+@import 'normal';
 
 // MIXINS
 // ===========================================================================================
@@ -97,12 +98,20 @@ section {
 
 .applicationHeader {
     position:relative;
+    display:block;
     background:$lightgrey;
     padding:10px;
-    h1 {
-        margin:0;
-        font-size:150%;
-        padding-left:50px;
+    border-bottom:2px solid darken($lightgrey,5%);
+    clear:both;
+    .site-title{
+      max-width:325px;
+      margin-left:50px;
+      display:inline-block;
+      h1 {
+          margin:0;
+          font-size:150%;
+          //padding-left:50px;
+      }
     }
 }
 
@@ -119,27 +128,37 @@ section {
 // ===========================================================================================
 .page-header {
     margin:0;
-    text-align:center;
+    padding:0;
+    display:block;
     float:left;
+    text-align:left;
     width:100%;
-    clear:left;
-    @include breakpoint(tablet){
-        width:30%;
-    }
+    border-bottom:1px solid #ccc;
+    clear:both;
+}
+
+.page-title{
+  display:block;
+   @include breakpoint(tablet){
+      display:block;
+      float:left;
+      width:30%;
+   }
 }
 
 .breadcrumbs {
   list-style: none;
   margin: 0;
   padding: 10px;
-  float:left;
   width:100%;
-  border-bottom:1px solid $lightgrey;
   @include breakpoint(tablet){
         width:70%;
-        margin-top:19px;
+        display:block;
+        float:left;
+        margin-top:9px;
         padding-bottom:13px;
         text-align:right;
+        display:inline-block;
     }
 }
 
@@ -183,6 +202,35 @@ section {
           transform: rotateZ(45deg) skew(10deg, 10deg);
 }
 
+// Project Modal
+// ===========================================================================================
+.projectsToggle{
+  display:block;
+  float:right;
+}
+
+.modal {
+  width:100%;
+  height:100%;
+  background:rgba(#000,.8);
+  padding:10%;
+
+  div {
+    background:#fff;
+  }
+
+  h3 {
+    margin:0;
+    padding:0;
+  }
+
+  .modal-body {
+    padding:20px;
+    ul { list-style:none; margin:0; padding:0; }
+  }
+}
+
+
 
 //  Index HTML
 // ===========================================================================================
@@ -202,3 +250,4 @@ section {
         margin:0 20%;
     }
 }
+
