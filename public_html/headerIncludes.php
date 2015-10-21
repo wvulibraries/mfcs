@@ -1,7 +1,12 @@
-<link rel="stylesheet" type="text/css" href="{local var="siteRoot"}includes/css/mfcs.css">
+<!-- <link rel="stylesheet" type="text/css" href="{local var="siteRoot"}includes/css/mfcs.css">
+ -->
+
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
 <link rel="stylesheet" type="text/css" href="{local var="siteRoot"}includes/select2-3.5.0/select2.css">
 <link rel="stylesheet" type="text/css" href="{local var="siteRoot"}includes/select2-3.5.0/select2-bootstrap.css">
+
 <link rel="stylesheet" type="text/css" href="{local var="siteRoot"}css/main.css">
 
 <!-- JavaScripts -->
@@ -14,8 +19,8 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <!-- Other-->
 <script type="text/javascript" src="{local var="siteRoot"}includes/select2-3.5.0/select2.min.js"></script>
-<script type="text/javascript" src="{local var="siteRoot"}includes/js/mfcs.js"></script>
-
+<!-- <script type="text/javascript" src="{local var="siteRoot"}includes/js/mfcs.js"></script> -->
+<script type="text/javascript" src="{local var="siteRoot"}includes/js/currentProjects.js"></script>
 
 <?php
 // Pages that need fine uploader
