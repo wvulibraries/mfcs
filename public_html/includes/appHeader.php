@@ -17,6 +17,11 @@
     </div>
 </header>
 
+<section class="selectedProjects">
+    <ul class="tags">
+    </ul>
+</section>
+
 <!-- Modal - Select Current Projects -->
 <div id="selectProjectsModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
