@@ -60,4 +60,5 @@ if (in_array($_SERVER['SCRIPT_NAME'], $fineuploader)) {
 <script>
 	var siteRoot  = '{local var="siteRoot"}';
 	var csrfToken = '{engine name="csrf" insert="false"}';
+	var userCurrentProjects = '{local var="userCurrentProjectsJSON"}';
 </script>
