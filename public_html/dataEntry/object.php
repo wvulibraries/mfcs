@@ -173,20 +173,18 @@ $engine->eTemplate("include","header");
 		{local var="parentHeader"}
 	</header>
 
-	<nav id="breadcrumbs">
-		<ul class="breadcrumb">
-			<li><a href="{local var="siteRoot"}">Home</a></li>
-			<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
-			<!-- FLoat Right -->
-			<?php if(mfcsPerms::isAdmin($engine->cleanGet['MYSQL']['formID'])){ ?>
-			<li class="pull-right noDivider"><a href="{local var="siteRoot"}formCreator/index.php?id={local var="formID"}">Edit Form</a></li>
-			<?php
-			}
-			if (!isnull($engine->cleanGet['MYSQL']['objectID']) and $revisions->hasRevisions($engine->cleanGet['MYSQL']['objectID'])) { ?>
-				<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions/index.php?objectID={local var="objectID"}">Revisions</a></li>
-			<?php } ?>
-		</ul>
-	</nav>
+	<ul class="breadcrumbs">
+		<li><a href="{local var="siteRoot"}">Home</a></li>
+		<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
+		<!-- FLoat Right -->
+		<?php if(mfcsPerms::isAdmin($engine->cleanGet['MYSQL']['formID'])){ ?>
+		<li class="pull-right noDivider"><a href="{local var="siteRoot"}formCreator/index.php?id={local var="formID"}">Edit Form</a></li>
+		<?php
+		}
+		if (!isnull($engine->cleanGet['MYSQL']['objectID']) and $revisions->hasRevisions($engine->cleanGet['MYSQL']['objectID'])) { ?>
+			<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions/index.php?objectID={local var="objectID"}">Revisions</a></li>
+		<?php } ?>
+	</ul>
 
 	<div class="container-fluid">
 		<div class="span3">
@@ -200,8 +198,8 @@ $engine->eTemplate("include","header");
 
 			<?php if ($permissions === TRUE) { ?>
 
-			<div class="row-fluid">
-				<ul class="nav nav-tabs">
+			<div>
+				<ul>
 					<li><a data-toggle="tab" href="#metadata">Metadata</a></li>
 					<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
 						<li><a data-toggle="tab" href="#files" id="filesTab">Files</a></li>
@@ -213,7 +211,7 @@ $engine->eTemplate("include","header");
 				</ul>
 
 				<div class="tab-content">
-					<div class="tab-pane" id="metadata">
+					<div class="tab-pane show" id="metadata">
 						{local var="form"}
 					</div>
 
@@ -269,23 +267,6 @@ $engine->eTemplate("include","header");
 		</div>
 	</div>
 </section>
-
-<!-- @TODO : scripts should be moved out of this file -->
-<script type="text/javascript">
-	$(function() {
-		// Show first tab on page load
-		$(".nav-tabs a:first").tab("show");
-
-		var $objectSubmitBtn = $('#objectSubmitBtn');
-		$objectSubmitBtn.closest('form').submit(function(){
-			var $objectSubmitProcessing = $('#objectSubmitProcessing');
-			if($objectSubmitProcessing.length){
-				$objectSubmitBtn.hide();
-				$objectSubmitProcessing.show();
-			}
-		});
-	});
-</script>
 
 <?php
 $engine->eTemplate("include","footer");
