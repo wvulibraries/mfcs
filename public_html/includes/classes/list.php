@@ -140,9 +140,9 @@ class listGenerator {
 
 		$data = array();
 		foreach ($objects as $object) {
-			
+
 			$tmp    = array($object['idno'],self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("view",$object['ID']),date("Y-m-d h:ia",$object['createTime']),date("Y-m-d h:ia",$object['modifiedTime'])); //,self::genLinkURLs("revisions",$object['ID'])
-			$data[] = $tmp; 
+			$data[] = $tmp;
 
 		}
 
@@ -210,7 +210,7 @@ class listGenerator {
 			$tableHTML .= sprintf('<p><span class="paginationJumpLabel">Records per page:</span> %s</p>',
 				$pagination->recordsPerPageDropdown()
 				);
-			$tableHTML .= sprintf('<p><form id="jumpToIDNOForm"><span class="paginationJumpLabel">Jump to IDNO:</span> <input type="text" name="jumpToIDNO" id="jumpToIDNO" data-formid="%s" value="" /></form></p>', 
+			$tableHTML .= sprintf('<p><form id="jumpToIDNOForm"><span class="paginationJumpLabel">Jump to IDNO:</span> <input type="text" name="jumpToIDNO" id="jumpToIDNO" data-formid="%s" value="" /></form></p>',
 				(isnull($formID))?"":htmlSanitize($formID)
 				);
 
@@ -339,8 +339,8 @@ class listGenerator {
 				return FALSE;
 			}
 
-			$output .= '<div class="accordion-group">';
-			$output .= '<div class="accordion-heading" style="padding: 5px;">';
+			$output .= '<div class="accordion-group panel panel-default">';
+			$output .= '<div class="accordion-heading panel-heading" style="padding: 5px;">';
 			$output .= '<div>';
 			$output .= self::generateAccordionFormList_links($form,$entry);
 			if(sizeof(forms::getObjectFormMetaForms($form['ID']))){
@@ -350,7 +350,7 @@ class listGenerator {
 			$output .= '</div>';
 			$output .= "</div>"; // heading
 			$output .= sprintf('<div id="collapse%s" class="accordion-body collapse">', $count);
-			$output .= '<div class="accordion-inner">';
+			$output .= '<div class="accordion-inner panel-body">';
 
 			$output .= '<ul>';
 			foreach ($metedataForms as $I=>$metadataForm) {
