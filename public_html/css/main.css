@@ -483,7 +483,7 @@ section {
 
 .breadcrumbs li a {
   display: inline-block;
-  padding: 0 40px 0 0px;
+  padding: 0 15px 0 0px;
   position: relative;
   perspective: 700px; }
 
@@ -497,7 +497,7 @@ section {
   -webkit-backface-visibility: hidden;
   outline: 1px solid transparent;
   position: absolute;
-  right: 30px;
+  right: 5px;
   top: 5px;
   -webkit-transform: rotateZ(45deg) skew(10deg, 10deg);
   -moz-transform: rotateZ(45deg) skew(10deg, 10deg);
