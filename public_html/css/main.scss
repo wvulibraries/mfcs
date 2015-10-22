@@ -22,6 +22,41 @@
     }
 }
 
+// GRID FUNCTION
+// ===========================================================================================
+// CREDIT ZERO 3 6 for Concept
+// to use  gridwidth(12);  makes 100% without gutter
+// gridwidth(6, true);  example of 50%;
+
+$columns: 12 !default;
+$gutter: 2% !default;
+$column-prefix: 'span' !default;
+
+@mixin grid-setup($number: $columns) {
+  @for $i from 1 through $number {
+    // Style all but the last column
+    @if $i != $columns {
+        .#{$column-prefix + $i} {
+          width: 100% / $number * $i - $gutter;
+          display:block;
+          margin-right: $gutter;
+          float:left;
+          padding:10px;
+        }
+    }
+    @else {
+      // Ensure the last column has a width of 100%
+        .#{$column-prefix + $i} {
+          width: 100%;
+          display:block;
+          margin-right:0;
+        }
+    }
+  }
+}
+
+@include grid-setup();
+
 // COLORS
 // ===========================================================================================
 $blue : #005EB8;
@@ -253,5 +288,78 @@ section {
         max-width:60%;
         margin:0 20%;
     }
+}
+
+
+
+//  select Form
+// ===========================================================================================
+.panel-heading {
+  a:first-child{
+    font-weight:bold;
+    display:inline-block;
+    width:60%;
+  }
+}
+
+
+// Form Warning
+// ===========================================================================================
+.formAlert{
+  position:fixed;
+  bottom:20px;
+  z-index:999999;
+  width:90%;
+  right:5%;
+}
+
+.show { display:block; }
+
+#objectSubmitProcessing {
+  display:none;
+  position:relative;
+  height:72px;
+  margin-top:20px;
+  i { position:absolute; right:20px; top:20px;  }
+}
+
+
+// Form Styling
+// ===========================================================================================
+
+input{
+  width:100%;
+  padding:10px;
+  outline:0;
+  margin-bottom:20px;
+
+  &[type=text],  {
+     border:1px solid darken($lightgrey,10%);
+  }
+
+  &[type=submit]{
+    padding:15px 50px;
+    background:$blue;
+    border:none;
+    cursor:pointer;
+    margin-top:20px;
+    color:#fff;
+    text-transform: uppercase;
+    width:initial;
+
+    &:hover,&:active,&:focus {
+      background:$darkblue;
+      color:#fff;
+    }
+  }
+
+  &:hover,&:active {
+    border:1px solid darken($lightgrey,15%);
+  }
+
+  &:focus {
+    outline: 0;
+    border:1px solid $blue;
+  }
 }
 

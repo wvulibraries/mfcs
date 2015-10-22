@@ -368,6 +368,88 @@ td,
 th {
   padding: 0; }
 
+.span1 {
+  width: 6.33333%;
+  display: block;
+  margin-right: 2%;
+  float: left;
+  padding: 10px; }
+
+.span2 {
+  width: 14.66667%;
+  display: block;
+  margin-right: 2%;
+  float: left;
+  padding: 10px; }
+
+.span3 {
+  width: 23%;
+  display: block;
+  margin-right: 2%;
+  float: left;
+  padding: 10px; }
+
+.span4 {
+  width: 31.33333%;
+  display: block;
+  margin-right: 2%;
+  float: left;
+  padding: 10px; }
+
+.span5 {
+  width: 39.66667%;
+  display: block;
+  margin-right: 2%;
+  float: left;
+  padding: 10px; }
+
+.span6 {
+  width: 48%;
+  display: block;
+  margin-right: 2%;
+  float: left;
+  padding: 10px; }
+
+.span7 {
+  width: 56.33333%;
+  display: block;
+  margin-right: 2%;
+  float: left;
+  padding: 10px; }
+
+.span8 {
+  width: 64.66667%;
+  display: block;
+  margin-right: 2%;
+  float: left;
+  padding: 10px; }
+
+.span9 {
+  width: 73%;
+  display: block;
+  margin-right: 2%;
+  float: left;
+  padding: 10px; }
+
+.span10 {
+  width: 81.33333%;
+  display: block;
+  margin-right: 2%;
+  float: left;
+  padding: 10px; }
+
+.span11 {
+  width: 89.66667%;
+  display: block;
+  margin-right: 2%;
+  float: left;
+  padding: 10px; }
+
+.span12 {
+  width: 100%;
+  display: block;
+  margin-right: 0; }
+
 html {
   box-sizing: border-box; }
 
@@ -561,5 +643,55 @@ section {
     .picklist {
       max-width: 60%;
       margin: 0 20%; } }
+
+.panel-heading a:first-child {
+  font-weight: bold;
+  display: inline-block;
+  width: 60%; }
+
+.formAlert {
+  position: fixed;
+  bottom: 20px;
+  z-index: 999999;
+  width: 90%;
+  right: 5%; }
+
+.show {
+  display: block; }
+
+#objectSubmitProcessing {
+  display: none;
+  position: relative;
+  height: 72px;
+  margin-top: 20px; }
+  #objectSubmitProcessing i {
+    position: absolute;
+    right: 20px;
+    top: 20px; }
+
+input {
+  width: 100%;
+  padding: 10px;
+  outline: 0;
+  margin-bottom: 20px; }
+  input[type=text] {
+    border: 1px solid #d5d5d5; }
+  input[type=submit] {
+    padding: 15px 50px;
+    background: #005EB8;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+    color: #fff;
+    text-transform: uppercase;
+    width: initial; }
+    input[type=submit]:hover, input[type=submit]:active, input[type=submit]:focus {
+      background: #002855;
+      color: #fff; }
+  input:hover, input:active {
+    border: 1px solid #c8c8c8; }
+  input:focus {
+    outline: 0;
+    border: 1px solid #005EB8; }
 
 /*# sourceMappingURL=main.css.map */
