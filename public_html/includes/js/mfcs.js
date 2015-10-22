@@ -1,10 +1,4 @@
 $(function(){
-	// Instantiate the bootstrap tooltip, popover, and modal plugins
-	$("[rel='tooltip']").tooltip();
-	$("[rel='popover']").popover({
-		trigger:'click'
-	});
-	$("[rel='modal']").modal();
 
 	$('div.filePreview a.previewLink').click(function(){
 		var filePreview = $(this).closest('div')
@@ -66,18 +60,6 @@ $(function(){
 		});
 	});
 
-	// Reset the modal's UI when it's hidden
-	$('#selectProjectsModal').on('hide', function (){
-		var IDs = $('#currentProjectsLink').data('selected_projects');
-		if(typeof(IDs) != 'string') IDs = IDs.toString();
-		if(typeof(IDs) != 'array')  IDs = IDs.split(',');
-		$('#selectProjectsModal :checkbox').each(function(i,n){
-			var chkBox = $(n);
-			var ID = $(n).val();
-			chkBox.prop('checked', $.inArray(ID, IDs) !== -1 );
-		});
-	});
-
 	// Lock form submit button on form submittion
 	// This doesn't actually lock a submit button
 	// Modified by adding the disabled property
@@ -88,7 +70,6 @@ $(function(){
 	$(document)
 		.on('click',  '.metadataObjectEditor',               handler_setupMetadataModal)
 		.on('change', '#searchFormSelect',                   handler_setupSearchFormFields)
-		.on('click',  '.metadataListAccordionToggle',        handler_metadataListAccordionToggle)
 		.on('submit', 'form[name=insertForm]',               select_metadataMultiSelects)
 		.on('change', '#paginationPageDropdownID',           handler_jumpToPage)
 		.on('change', '#paginationRecordsPerPageDropdownID', handler_setPaginationPerPage)
