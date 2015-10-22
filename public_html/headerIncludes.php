@@ -24,6 +24,8 @@
 <!-- Refactored Managable JS -->
 <script type="text/javascript" src="{local var="siteRoot"}includes/js/refactored/currentProjects.js"></script>
 <script type="text/javascript" src="{local var="siteRoot"}includes/js/refactored/selectForm_dataEntry.js"></script>
+<script type="text/javascript" src="{local var="siteRoot"}includes/js/refactored/object_dataEntry.js"></script>
+
 
 <?php
 // Pages that need fine uploader
