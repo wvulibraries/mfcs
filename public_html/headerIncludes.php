@@ -20,7 +20,10 @@
 <!-- Other-->
 <script type="text/javascript" src="{local var="siteRoot"}includes/select2-3.5.0/select2.min.js"></script>
 <!-- <script type="text/javascript" src="{local var="siteRoot"}includes/js/mfcs.js"></script> -->
-<script type="text/javascript" src="{local var="siteRoot"}includes/js/currentProjects.js"></script>
+
+<!-- Refactored Managable JS -->
+<script type="text/javascript" src="{local var="siteRoot"}includes/js/refactored/currentProjects.js"></script>
+<script type="text/javascript" src="{local var="siteRoot"}includes/js/refactored/selectForm_dataEntry.js"></script>
 
 <?php
 // Pages that need fine uploader
