@@ -273,7 +273,13 @@ class forms {
 
 		}
 
-		localVars::add("projectWarning",'<div class="alert">This form is not associated with one of your current projects</div>');
+		$formWarning = '<div class="formAlert alert alert-warning alert-dismissible" role="alert">
+  							<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  							<strong>Warning!</strong>
+  							<p> This form is not associated with any of your current projects. This message will close in 15 seconds. </p>
+						</div>';
+
+		localVars::add("projectWarning",$formWarning);
 
 		return FALSE;
 	}
@@ -712,7 +718,7 @@ class forms {
 			// 			(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
 			// 			htmlSanitize($field['name'])
 			// 		);
-					
+
 			// 		$output .= sprintf("<script charset=\"utf-8\">
 			// 				$(function() {
 			// 					$('#%s')
@@ -761,7 +767,7 @@ class forms {
 			// 						});
 			// 					// $('#%s').select2( 'val', '%s' );
 			// 				});
-							
+
 			// 			</script>",
 			// 			htmlSanitize($field['name']),
 			// 			htmlSanitize($field['choicesForm']),
@@ -948,7 +954,11 @@ class forms {
 			$objectID ? "updateForm" : "submitForm"
 		);
 		if(isset($formHasFiles) and $formHasFiles){
-			$output .= '<div class="alert alert-block" id="objectSubmitProcessing"><strong>Processing Files</strong><br>Please Wait...</div>';
+			$output .= '<div class="alert alert-info" id="objectSubmitProcessing">
+							<strong>Processing Files</strong>
+
+							<br>Please Wait... <i class="fa fa-refresh fa-spin fa-2x"></i>
+						</div>';
 		}
 
 		$output .= "</form>";
