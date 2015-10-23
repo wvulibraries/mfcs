@@ -1,5 +1,5 @@
-// sass --watch main.scss:main.css
 @import 'normal';
+@import 'bootstrap3/bootstrap';
 
 // MIXINS
 // ===========================================================================================
@@ -332,6 +332,11 @@ input{
   padding:10px;
   outline:0;
   margin-bottom:20px;
+
+  &[type=checkbox]{
+    display:inline-block;
+    max-width:20px;
+  }
 
   &[type=text],  {
      border:1px solid darken($lightgrey,10%);
