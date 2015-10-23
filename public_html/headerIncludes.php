@@ -9,7 +9,7 @@
 <!-- <script type="text/javascript" src="{local var="siteRoot"}includes/js/mfcs.js"></script> -->
 
 <!-- Refactored Managable JS -->
-<script type="text/javascript" src="{local var="siteRoot"}includes/js/build/production.js"></script>
+<script type="text/javascript" src="{local var="siteRoot"}includes/js/build/production.min.js"></script>
 
 
 <?php
