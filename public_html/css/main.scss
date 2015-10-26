@@ -1,5 +1,6 @@
 @import 'normal';
 @import 'bootstrap3/bootstrap';
+@import 'select2';
 
 // MIXINS
 // ===========================================================================================
@@ -64,6 +65,7 @@ $darkblue : #002855;
 $gold : #EAAA00;
 $gold-darken : darken($gold,10%);
 $lightgrey : #eee;
+$light-blue : #9BD3DD;
 
 
 // MAIN STYINGS
@@ -252,6 +254,11 @@ section {
   }
 }
 
+.modal-body {
+  max-height:600px;
+  overflow:auto;
+}
+
 .selectedProjects{
   position:relative;
 }
@@ -292,7 +299,7 @@ section {
 
 
 
-//  select Form
+//  select Form page
 // ===========================================================================================
 .panel-heading {
   a:first-child{
@@ -302,6 +309,20 @@ section {
   }
 }
 
+
+// Object.php
+// ===========================================================================================
+.objectNavigation {
+  margin:0 0 20px;
+  padding:0;
+  list-style:none;
+  li {
+    display:inline-block;
+    a { @extend .btn; background:$blue; color:#fff; letter-spacing:1px;
+      &:hover,&:active,&:visited { background:$darkblue; color:#fff;}
+    }
+  }
+}
 
 // Form Warning
 // ===========================================================================================
@@ -321,6 +342,17 @@ section {
   height:72px;
   margin-top:20px;
   i { position:absolute; right:20px; top:20px;  }
+}
+
+.errorPrettyPrint {
+  float:left;
+  display:block;
+  margin:10px 0 0;
+  padding:0;
+  width:100%;
+  list-style:none;
+  li { display:inline-block; float:left; margin-bottom:10px; margin-right:10px; }
+  .errorMessage { margin:0; padding:5px; display:block; float:left; @extend .alert; @extend .alert-danger;}
 }
 
 
@@ -370,3 +402,170 @@ input{
   }
 }
 
+// File Select Box
+// ===========================================================================================
+
+//display: block;width: 100%;padding: 20px;text-align: center;border: 1px dotted #C8C8D8;
+
+.uploadFiles, .fineUploader{
+  display:block;
+  width:100%;
+}
+
+.qq-uploader {
+    position: relative;
+    display:block;
+    width: 100%;
+}
+
+.qq-upload-button, .qq-upload-drop-area {
+    display: block;
+    width:100%;
+    padding: 7px 0;
+    text-align: center;
+    border: 1px dotted #ccc;
+    color: #333;
+}
+
+
+.qq-upload-drop-area, .qq-upload-extra-drop-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 30px;
+    z-index: 2;
+    background: $lightgrey;
+    text-align: center;
+    margin-bottom:20px;
+}
+.qq-upload-drop-area span {
+    display: block;
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    margin-top: -8px;
+    font-size: 16px;
+}
+.qq-upload-extra-drop-area {
+    position: relative;
+    margin-top: 50px;
+    font-size: 16px;
+    padding-top: 30px;
+    height: 20px;
+    min-height: 40px;
+}
+.qq-upload-drop-area-active {
+    background: lighten($light-blue,15%);
+}
+.qq-upload-list {
+    margin: 20px 0 0;
+    padding: 0;
+    list-style: none;
+}
+.qq-upload-list li {
+    margin: 0;
+    padding: 9px;
+    line-height: 15px;
+    font-size: 16px;
+    display:block;
+  }
+.qq-upload-file, .qq-upload-spinner, .qq-upload-size, .qq-upload-cancel, .qq-upload-retry, .qq-upload-failed-text, .qq-upload-finished, .qq-upload-delete {
+    margin-right: 12px;
+}
+.qq-upload-file {
+}
+.qq-upload-spinner {
+    display: inline-block;
+    background: url("loading.gif");
+    width: 15px;
+    height: 15px;
+    vertical-align: text-bottom;
+}
+.qq-drop-processing {
+    display: none;
+}
+.qq-drop-processing-spinner {
+    display: inline-block;
+    background: url("processing.gif");
+    width: 24px;
+    height: 24px;
+    vertical-align: text-bottom;
+}
+.qq-upload-finished {
+    display:none;
+    width:15px;
+    height:15px;
+    vertical-align:text-bottom;
+}
+.qq-upload-retry, .qq-upload-delete {
+    display: none;
+    color: #000000;
+}
+.qq-upload-cancel, .qq-upload-delete {
+  color: #000000;
+}
+.qq-upload-retryable .qq-upload-retry {
+    display: inline;
+}
+.qq-upload-size, .qq-upload-cancel, .qq-upload-retry, .qq-upload-delete {
+    font-size: 12px;
+    font-weight: normal;
+}
+.qq-upload-failed-text {
+    display: none;
+    font-style: italic;
+    font-weight: bold;
+}
+.qq-upload-failed-icon {
+    display:none;
+    width:15px;
+    height:15px;
+    vertical-align:text-bottom;
+}
+.qq-upload-fail .qq-upload-failed-text {
+    display: inline;
+}
+.qq-upload-retrying .qq-upload-failed-text {
+    display: inline;
+    color: #D60000;
+}
+.qq-upload-list li.qq-upload-success {
+    background-color: $lightgrey;
+    color: #FFFFFF;
+}
+.qq-upload-list li.qq-upload-fail {
+    background-color: #D60000;
+    color: #FFFFFF;
+}
+.qq-progress-bar {
+    background:green;
+    width: 0%;
+    height: 15px;
+    border-radius: 6px;
+    margin-bottom: 3px;
+    display: none;
+}
+
+.qq-upload-list {
+  text-align: left;
+}
+
+li.alert-success {
+  background-color: #DFF0D8;
+}
+
+li.alert-error {
+  background-color: #F2DEDE;
+}
+
+.alert-error .qq-upload-failed-text {
+  display: inline;
+}
+
+// Form Stuff
+// =============================================================================
+.form-control {
+  max-width:650px;
+}
