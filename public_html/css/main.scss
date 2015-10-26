@@ -66,6 +66,7 @@ $gold : #EAAA00;
 $gold-darken : darken($gold,10%);
 $lightgrey : #eee;
 $light-blue : #9BD3DD;
+$darkgrey : #ccc;
 
 
 // MAIN STYINGS
@@ -250,13 +251,10 @@ section {
 
   .modal-body {
     padding:20px;
+    max-height:300px;
+    overflow:auto;
     ul { list-style:none; margin:0; padding:0; }
   }
-}
-
-.modal-body {
-  max-height:600px;
-  overflow:auto;
 }
 
 .selectedProjects{
@@ -323,6 +321,13 @@ section {
     }
   }
 }
+
+.loading {
+  text-align:center;
+  color: $darkgrey;
+  padding:20px 0;
+}
+
 
 // Form Warning
 // ===========================================================================================
