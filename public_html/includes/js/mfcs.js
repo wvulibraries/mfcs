@@ -9,22 +9,15 @@ $(function(){
 		}
 	});
 
-
-
-	// Lock form submit button on form submittion
-	// This doesn't actually lock a submit button
-	// Modified by adding the disabled property
 	$('form').submit(function(){
 		$(this).find(':submit').addClass('disabled').attr('readonly','readonly');
 	});
 
 	$(document)
-		.on('click',  '.metadataObjectEditor',               handler_setupMetadataModal)
 		.on('change', '#searchFormSelect',                   handler_setupSearchFormFields)
-		.on('submit', 'form[name=insertForm]',               select_metadataMultiSelects)
 		.on('change', '#paginationPageDropdownID',           handler_jumpToPage)
 		.on('change', '#paginationRecordsPerPageDropdownID', handler_setPaginationPerPage)
-		.on('submit', '#jumpToIDNOForm',                     handler_jumpToIDNO)
+		.on('submit', '#jumpToIDNOForm',                     handler_jumpToIDNO);
 
 	$('#metadataModal').bind('keypress keydown keyup', function(e){
 		if(e.keyCode == 13) { e.preventDefault(); }
@@ -88,19 +81,6 @@ function handler_setPaginationPerPage() {
 	});
 }
 
-function handler_metadataListAccordionToggle() {
-	event.preventDefault();
-	event.stopImmediatePropagation();
-
-	var currentValue = $(this).html();
-	if (currentValue == "Show Metadata Forms") {
-		$(this).html("Hide Metadata Forms");
-	}
-	else {
-		$(this).html("Show Metadata Forms");
-	}
-}
-
 function handler_setupSearchFormFields() {
 	event.preventDefault();
 	event.stopImmediatePropagation();
@@ -119,39 +99,7 @@ function handler_setupSearchFormFields() {
 	});
 }
 
-function handler_setupMetadataModal() {
-	event.preventDefault();
-	event.stopImmediatePropagation();
-	$("#metadataModal .modal-header h3").html($(this).attr("data-header"));
-
-	var dataFieldName = $(this).attr("data-fieldname");
-	var formID        = $(this).attr('data-formid');
-	var url           = siteRoot+'dataEntry/metadata.php?formID='+formID+'&ajax=true';
-
-	$.ajax({
-		type: "GET",
-		url: url,
-		dataType: "html",
-		success: function(responseData) {
-			$("#metadataModalBody").html(responseData);
-
-			$("#metadataModalBody :submit").remove();
-			$("#metadataModalBody header").remove();
-			$("#metadataModalBody footer").remove();
-			$("#metadataModalBody form").data("choicesform",formID);
-
-			$('#metadataModal').modal('show');
-		},
-		error: function(jqXHR,error,exception) {
-			$('#metadataModalBody').html("An Error has occurred: "+error);
-		}
-	});
-}
-
 function handler_displayMetadataFormModal(formID) {
-	// event.preventDefault();
-	// event.stopImmediatePropagation();
-
 	var choicesForm = formID;//$(this).attr("data-formID");
 
 	$("[data-choicesForm='"+choicesForm+"']").each(function() {
@@ -210,44 +158,3 @@ function submitMetadataModal() {
 	handler_displayMetadataFormModal(metadataFormID);
 }
 
-
-
-function addItemToID(id, item) {
-	var theSelect = document.getElementById(id);
-
-	if (item.value == "null") {
-		return;
-	}
-
-	for (i = theSelect.length - 1; i >= 0; i--) {
-		if (theSelect.options[i].value == item.value) {
-			return;
-		}
-	}
-
-	theSelect.options[theSelect.length] = new Option(item.text, item.value);
-}
-
-function addToID(id, value, text) {
-	var theSelect = document.getElementById(id);
-
-	for (i = theSelect.length - 1; i >= 0; i--) {
-		if (theSelect.options[i].value == value) {
-			return;
-		}
-	}
-
-	theSelect.options[theSelect.length] = new Option(text, value);
-}
-
-function removeFromList(id) {
-	var theSelect = document.getElementById(id);
-
-	for (var selIndex = theSelect.length - 1; selIndex >= 0; selIndex--) {
-		// Is this option selected?
-		if (theSelect.options[selIndex].selected) {
-			// Delete the option in the first select box.
-			theSelect[selIndex] = null;
-		}
-	}
-}

@@ -56,4 +56,16 @@ $(function(){
 
     $('.fineUploader').parent().addClass('uploadFiles');
     $('.qq-upload-drop-area').html('<div class="uploadText"> <i class="fa fa-dropbox fa-4x"></i> <br><br> Drop Files Here </div>');
+
+
+    // File Preview
+    // =============================================================
+    $('div.filePreview a.previewLink').click(function(){
+        var filePreview = $(this).closest('div')
+        if(filePreview.hasClass('open')){
+            filePreview.removeClass('open').find('div').slideUp();
+        }else{
+            filePreview.addClass('open').find('div').slideDown();
+        }
+    });
 });
