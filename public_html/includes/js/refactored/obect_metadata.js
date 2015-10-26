@@ -1,21 +1,23 @@
+var defaultModalBody;
 // Document Ready
 // ===================================================================
 $(function(){
-    console.log('metadata file loaded');
-
+    defaultModalBody = $('#metadataModalBody').html();
     // create uniform selects using select 2
     $('select').addClass('form-control');
 
     // Metadata Instantiation
     $('.metadataObjectEditor').click(metadataModal);
+
+    // kill the modal
+    $('#metadataModal').find('.close').click(closeModal);
+    $('#metadataModal').find('.saveMetadata').prev('button').click(closeModal);
 });
 
 function metadataModal(event){
     event.preventDefault();
-    console.log('testing click');
-
     $("#metadataModal .modal-header h3").html($(this).attr("data-header"));
-    $("#metadataModal").removeClass('hide').show();
+    $("#metadataModal").fadeIn(600).removeClass('hide').show();
 
     var dataFieldName = $(this).attr("data-fieldname");
     var formID        = $(this).attr('data-formid');
@@ -39,4 +41,10 @@ function metadataModal(event){
             $('#metadataModalBody').html("An Error has occurred: "+error);
         }
     });
+}
+
+function closeModal(event){
+    event.preventDefault();
+    $('#metadataModal').fadeOut().addClass('hide');
+    $('#metadataModalBody').html(defaultModalBody);
 }
