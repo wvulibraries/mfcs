@@ -30,14 +30,15 @@ $(function(){
                 allowedExtensions: allowedExtentions,
             },
             text: {
-                uploadButton: '<i class="icon-plus icon-white"></i> Select Files'
+                uploadButton: '<div class="uploadText"> <i class="fa fa-upload fa-4x"></i> <br> Drag or Click Here <br> To Upload Files </div>',
+                dropButton: 'HELP'
             },
             showMessage: function(message) {
-                $div.find(".qq-upload-list").append('<li class="alert alert-error">'+message+'</li >');
+                $div.find(".qq-upload-list").append('<li class="alert alert-danger">'+message+'</li >');
             },
             classes: {
                 success: "alert alert-success",
-                fail: "alert alert-error"
+                fail: "alert alert-danger"
             }
         }).on('submit',function(){
                 var uploads_working = $form.data('uploads_working');
@@ -52,4 +53,7 @@ $(function(){
                 if(i == 0) $form.find(':submit').removeAttr('disabled','disabled');
         });
     });
+
+    $('.fineUploader').parent().addClass('uploadFiles');
+    $('.qq-upload-drop-area').html('<div class="uploadText"> <i class="fa fa-dropbox fa-4x"></i> <br><br> Drop Files Here </div>');
 });
