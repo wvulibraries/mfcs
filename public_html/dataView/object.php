@@ -150,25 +150,6 @@ $engine->eTemplate("include","header");
 	</div>
 </section>
 
-<script type="text/javascript">
-	$(function() {
-		// Show first tab on page load
-		$(".nav-tabs a:first").tab("show");
-
-		// Disable form input fields
-		$(":input").not('.btn,.close').prop("disabled",true);
-
-		// Remove form submits
-		$(":input[type=submit]").remove();
-
-		// Remove file upload boxed
-		$('.fineUploader').remove();
-
-		// Remove form actions
-		$("form").removeAttr("action");
-	});
-</script>
-
 <?php
 $engine->eTemplate("include","footer");
 ?>
