@@ -199,7 +199,7 @@ $engine->eTemplate("include","header");
 			<?php if ($permissions === TRUE) { ?>
 
 			<div>
-				<ul>
+				<ul class="objectNavigation">
 					<li><a data-toggle="tab" href="#metadata">Metadata</a></li>
 					<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
 						<li><a data-toggle="tab" href="#files" id="filesTab">Files</a></li>
