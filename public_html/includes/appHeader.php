@@ -23,7 +23,7 @@
 </section>
 
 <!-- Modal - Select Current Projects -->
-<div id="selectProjectsModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="selectProjectsModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="selectProjectsModalWindow" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" aria-hidden="true">×</button>
         <h3>Your current projects:</h3>
@@ -35,14 +35,14 @@
     </div>
 </div>
 
-<div id="metadataModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="metadataEntryFormModal" aria-hidden="true">
+<div id="metadataModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="metadataModalWindow" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="metadataModalHeader"></h3>
     </div>
     <div class="modal-body" id="metadataModalBody"></div>
     <div class="modal-footer">
-        <button class="btn"  class="close" aria-hidden="true">Cancel</button>
-        <button class="btn btn-primary" onclick="submitMetadataModal();">Save changes</button>
+        <button class="btn"  class="close cancel" aria-hidden="true">Cancel</button>
+        <button class="btn btn-primary saveMetadata">Save changes</button>
     </div>
 </div>
