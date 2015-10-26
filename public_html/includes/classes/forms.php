@@ -612,11 +612,12 @@ class forms {
 			}
 
 			if ($field['type'] == "textarea" || $field['type'] == "wysiwyg") {
-				$output .= sprintf('<textarea name="%s" placeholder="%s" id="%s" class="%s" %s %s %s %s>%s</textarea>',
+				$output .= sprintf('<textarea name="%s" placeholder="%s" id="%s" class="%s %s" %s %s %s %s>%s</textarea>',
 					htmlSanitize($field['name']),
 					htmlSanitize($field['placeholder']),
 					htmlSanitize($field['id']),
 					htmlSanitize($field['class']),
+					($field['type'] == "wysiwyg" ? "wysiwyg" : ""),
 					(!isempty($field['style']))?'style="'.htmlSanitize($field['style']).'"':"",
 					//true/false type attributes
 					(strtoupper($field['required']) == "TRUE")?"required":"",
@@ -845,6 +846,7 @@ class forms {
 											},
 											results: function(data, page) {
 												var more = (page * data.pageSize) < data.total;
+												console.log(data);
 
 												return {
 													results: data.options,
