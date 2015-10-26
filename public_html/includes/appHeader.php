@@ -40,9 +40,14 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="metadataModalHeader"></h3>
     </div>
-    <div class="modal-body" id="metadataModalBody"></div>
+    <div class="modal-body" id="metadataModalBody">
+        <div class="loading">
+            <i class="fa fa-refresh fa-spin fa-4x"></i>
+            <p> Loading content ... </p>
+        </div>
+    </div>
     <div class="modal-footer">
-        <button class="btn"  class="close cancel" aria-hidden="true">Cancel</button>
+        <button class="btn cancelButton">Cancel</button>
         <button class="btn btn-primary saveMetadata">Save changes</button>
     </div>
 </div>
