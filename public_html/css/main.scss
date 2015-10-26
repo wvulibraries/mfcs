@@ -72,10 +72,6 @@ $darkgrey : #ccc;
 // MAIN STYINGS
 // ===========================================================================================
 
-html {
-  box-sizing: border-box;
-}
-
 *, *:before, *:after {
   box-sizing: inherit;
 }
@@ -86,6 +82,12 @@ html {
       -ms-backface-vibisility: hidden;
           backface-vibisility: hidden;
 }
+
+html {
+  box-sizing: border-box;
+}
+
+body { min-width:768px; }
 
 h1 { font-size:180%; }
 h2 { font-size:135%; }
@@ -113,6 +115,14 @@ section {
   }
 }
 
+.main {
+  margin-top:120px;
+
+  @include breakpoint(tablet){
+   margin-top:60px;
+  }
+}
+
 // HELPERS
 // ===========================================================================================
 
@@ -135,12 +145,16 @@ section {
 // ===========================================================================================
 
 .applicationHeader {
-    position:relative;
+    position:fixed;
+    height:56px;
+    width:100%;
+    margin-bottom:20px;
     display:block;
     background:$lightgrey;
     padding:10px;
     border-bottom:2px solid darken($lightgrey,5%);
     clear:both;
+    z-index:9999999;
     .site-title{
       max-width:325px;
       margin-left:50px;
@@ -160,10 +174,19 @@ section {
     top:7px;
     left:5px;
     img {width:100%;}
+    @include breakpoint(1280px){
+      left:0;
+    }
 }
 
 //  PAGE HEADER
 // ===========================================================================================
+.widthContainer {
+   max-width:1280px;
+   margin:0 auto;
+   position: relative;
+}
+
 .page-header {
     margin:0;
     padding:0;
@@ -239,6 +262,8 @@ section {
   height:100%;
   background:rgba(#000,.8);
   padding:10%;
+  position:absolute;
+  z-index:999999;
 
   div {
     background:#fff;
@@ -251,7 +276,7 @@ section {
 
   .modal-body {
     padding:20px;
-    max-height:300px;
+    max-height:50%;
     overflow:auto;
     ul { list-style:none; margin:0; padding:0; }
   }
@@ -259,19 +284,28 @@ section {
 
 .selectedProjects{
   position:relative;
+  padding:0;
+  margin:0;
 }
 
 .tags {
-  position:absolute;
-  margin:0;
+  margin:20px 0 0;
   padding:0;
   display:block;
-  width:70%;
+  width:100%;
   list-style:none;
   text-align:right;
-  right:5px;
   padding:10px;
   li { display:inline-block; margin-left:5px; margin-bottom:2px;}
+
+  @include breakpoint(tablet){
+    position:absolute;
+    width:70%;
+    top:10px;
+    right:5px;
+    width:70%;
+    margin:10px 0 20px;
+  }
 }
 
 
@@ -294,8 +328,6 @@ section {
         margin:0 20%;
     }
 }
-
-
 
 //  select Form page
 // ===========================================================================================
@@ -367,7 +399,7 @@ section {
 label { display:block; }
 
 input{
-  width:100%;
+  width:100% !important;
   padding:10px;
   outline:0;
   margin-bottom:20px;
@@ -571,6 +603,26 @@ li.alert-error {
 
 // Form Stuff
 // =============================================================================
-.form-control {
-  max-width:650px;
+.form-control, .select2-container, .select2-container .select2-choice, .select2-container-multi .select2-choices {
+  width:100% !important;
 }
+
+.select2-search{
+  padding:20px;
+}
+
+.select2-results {
+  padding:0 20px;
+  li {
+    border-bottom:1px dotted $lightgrey;
+    padding:5px;
+  }
+}
+
+.select2-container--focus { outline:0; border-color:$blue;}
+.select2-container:focus { outline:0; border-color:$blue;}
+
+.wysiwyg {
+  width:100% !important;
+}
+
