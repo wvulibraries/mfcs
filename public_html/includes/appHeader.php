@@ -1,26 +1,30 @@
 <header class="applicationHeader">
-    <div class="mfcs-logo">
-        <img src="/images/mfcs.png" alt="Metadata Form Creation System" />
-    </div>
+    <div class="widthContainer">
+        <div class="mfcs-logo">
+            <img src="/images/mfcs.png" alt="Metadata Form Creation System" />
+        </div>
 
-    <div class="site-title">
-        <h1>
-            <span class="desktop"> Metadata Form Creation System </span>
-            <span class="mobile"> MFCS </span>
-        </h1>
-    </div>
+        <div class="site-title">
+            <h1>
+                <span class="desktop"> Metadata Form Creation System </span>
+                <span class="mobile"> MFCS </span>
+            </h1>
+        </div>
 
-    <div class="projectsToggle">
-        <a href="javascript:void(0)" class="projectToggle">
-            <i class="fa fa-folder-open"></i> Select Projects
-        </a>
+        <div class="projectsToggle">
+            <a href="javascript:void(0)" class="projectToggle">
+                <i class="fa fa-folder-open"></i> Select Projects
+            </a>
+        </div>
+
+        <section class="selectedProjects">
+            <ul class="tags">
+            </ul>
+        </section>
     </div>
 </header>
 
-<section class="selectedProjects">
-    <ul class="tags">
-    </ul>
-</section>
+
 
 <!-- Modal - Select Current Projects -->
 <div id="selectProjectsModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="selectProjectsModalWindow" aria-hidden="true">
