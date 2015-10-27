@@ -38,7 +38,7 @@ ini_set('memory_limit','-1');
 			localvars::add('subTitle',' - '.$form['title']);
 			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=selectForm">Select Form</a>', $siteRoot);
 			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=form&formID=%s">%s</a>', $siteRoot, $form['ID'], $form['title']);
-				
+
 			// $time_end = microtime(true);
 			// $time = $time_end - $time_start;
 			// print "<pre>";
@@ -87,13 +87,12 @@ $engine->eTemplate("include","header");
 
 <section>
 	<header class="page-header">
-		<h1>List Objects{local var="subTitle"}</h1>
+		<h1 class="page-title">List Objects {local var="subTitle"}</h1>
 	</header>
-	<nav id="breadcrumbs">
-		<ul class="breadcrumb">
+
+	<ul class="breadcrumbs">
 			{local var="breadcrumbs"}
-		</ul>
-	</nav>
+	</ul>
 
 	{local var="results"}
 
