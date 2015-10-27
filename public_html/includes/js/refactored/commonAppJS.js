@@ -11,6 +11,7 @@ $(function(){
     $('.page-header').parent().addClass('main').wrapInner('<div class="widthContainer"></div>');
 
 
+    // Current Project Tags
     $(window).on("scroll", function() {
         var scrollPos = $(window).scrollTop();
         if (scrollPos <= 50) {
@@ -18,6 +19,11 @@ $(function(){
         } else {
             $(".tags").fadeOut();
         }
+    });
+
+    // Navigation Toggles
+    $('.toggleNav, .main-nav .close').click(function() {
+        $('.main-nav').toggle('slide');
     });
 
     // add event listeners
