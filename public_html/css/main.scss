@@ -162,6 +162,7 @@ section {
       h1 {
           margin:0;
           font-size:150%;
+          padding-top:10px;
           //padding-left:50px;
       }
     }
@@ -255,6 +256,7 @@ section {
 .projectsToggle{
   display:block;
   float:right;
+  padding:10px 0;
 }
 
 .modal {
@@ -263,7 +265,7 @@ section {
   background:rgba(#000,.8);
   padding:10%;
   position:absolute;
-  z-index:999999;
+  z-index:9999999999;
 
   div {
     background:#fff;
@@ -289,7 +291,7 @@ section {
 }
 
 .tags {
-  margin:20px 0 0;
+  margin:5px 0 0;
   padding:0;
   display:block;
   width:100%;
@@ -304,7 +306,7 @@ section {
     top:10px;
     right:5px;
     width:70%;
-    margin:10px 0 20px;
+    margin:-5px 0 20px;
   }
 }
 
@@ -626,3 +628,49 @@ li.alert-error {
   width:100% !important;
 }
 
+// Search
+// =============================================================================
+
+.searchForm {
+  max-width:70%;
+  margin:15px auto;
+  background:#fff;
+  border:1px solid lighten(#A2AAAD,10%);
+  padding:20px;
+  box-shadow: rgba(0,0,0,0.3) 0px 1px 16px -1px;
+
+  h2 {
+    text-align:center;
+    display:block;
+    color:#A2AAAD;
+    font-size:300%;
+    margin:0 0 20px;
+  }
+
+  .well{
+    background:rgba(#A2AAAD,.1);
+    border-color:lighten(#A2AAAD,10%);
+  }
+
+  .form-control {
+    height:42px;
+  }
+
+  h3 {
+    margin:0 0 20px;
+    padding:0;
+    text-transform:uppercase;
+    color: #A2AAAD;
+  }
+
+  .start,.end { width:49.6%; display:inline-block;}
+
+  .keywordBlock{
+    .keyword { width:55% !important; display:inline-block;}
+    select.form-control { width:41% !important; display:inline-block;}
+  }
+
+  .search input {
+    margin:0;
+  }
+}
