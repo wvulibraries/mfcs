@@ -39,14 +39,14 @@ class listGenerator {
 		$engine   = EngineAPI::singleton();
 		$projects = projects::getProjects();
 
-		$output = '<ul class="pickList">';
+		$output = '<div class="list-group">';
 		foreach ($projects as $project) {
-			$output .= sprintf('<li><a href="list.php?listType=project&amp;projectID=%s" class="btn">%s</a></li>',
+			$output .= sprintf('<a href="list.php?listType=project&amp;projectID=%s" class="list-group-item">%s</a></li>',
 				$project['ID'],
 				$project['projectName']
 				);
 		}
-		$output .= '</ul>';
+		$output .= '</div>';
 
 		return $output;
 	}
@@ -56,30 +56,26 @@ class listGenerator {
 		$engine  = EngineAPI::singleton();
 		$forms   = forms::getForms(TRUE,TRUE);
 
-		$output = '<ul class="pickList">';
+		$output = '';
 		foreach ($forms as $form) {
 
 			if ($form === FALSE) continue;
 
 			if (!mfcsPerms::isViewer($form['ID'])) continue;
 
-
-
-			$output .= sprintf('<div class="btn-group" style="display: block; margin: 5px;">
-				<a href="list.php?listType=form&amp;formID=%s" class="btn" style="width: 400px;">%s</a>
-				<button class="btn dropdown-toggle" data-toggle="dropdown">
-				<span class="caret"></span>
-				</button>
-				<ul class="dropdown-menu" style="width: 450px;">
-				<li><a href="list.php?listType=formShelfList&amp;formID=%s" style="width: 400px; text-align: right;">Shelf List</a></li>
-				</ul>
-				</div>',
+			$output .= sprintf('<div class="listForm panel panel-default span6">
+									<div class="panel-heading">
+										<a href="list.php?listType=form&amp;formID=%s"> %s</a>
+									</div>
+									<div class="panel-body">
+										<a href="list.php?listType=formShelfList&amp;formID=%s">Shelf List</a>
+									</div>
+								</div>',
 				$form['ID'],
 				forms::title($form['ID']),
 				$form['ID']
 				);
 		}
-		$output .= '</ul>';
 
 		return($output);
 
