@@ -42,7 +42,6 @@ $column-prefix: 'span' !default;
           display:block;
           margin-right: $gutter;
           float:left;
-          padding:10px;
         }
     }
     @else {
@@ -140,6 +139,9 @@ section {
     }
 }
 
+.btn-group {
+  margin-bottom:20px;
+}
 
 //  APP HEADER
 // ===========================================================================================
@@ -157,12 +159,12 @@ section {
     z-index:9999999;
     .site-title{
       max-width:325px;
-      margin-left:50px;
+      margin-left:60px;
       display:inline-block;
       h1 {
           margin:0;
           font-size:150%;
-          padding-top:10px;
+          padding-top:5px;
           //padding-left:50px;
       }
     }
@@ -189,7 +191,7 @@ section {
 }
 
 .page-header {
-    margin:0;
+    margin:0 0 20px;
     padding:0;
     display:block;
     float:left;
@@ -253,10 +255,18 @@ section {
 
 // Project Modal
 // ===========================================================================================
-.projectsToggle{
-  display:block;
+.projectsToggle,
+.navToggle {
+  display:inline-block;
+  width:100px;
+  position:absolute;
+  top:1px;
   float:right;
-  padding:10px 0;
+  right:40px;
+}
+
+.navToggle {
+  right:140px;
 }
 
 .modal {
@@ -291,7 +301,7 @@ section {
 }
 
 .tags {
-  margin:5px 0 0;
+  margin:25px 0 0;
   padding:0;
   display:block;
   width:100%;
@@ -306,7 +316,7 @@ section {
     top:10px;
     right:5px;
     width:70%;
-    margin:-5px 0 20px;
+    margin:10px 0 20px;
   }
 }
 
@@ -673,4 +683,73 @@ li.alert-error {
   .search input {
     margin:0;
   }
+}
+
+
+// Navigation -- Main Navigation
+// =============================================================================
+
+
+.main-nav {
+  position:absolute;
+  width:300px;
+  background:rgba(#000,.9);
+  height:100%;
+  z-index:9999999;
+  padding:10px 20px;
+  color:#fff;
+  letter-spacing:1px;
+  display:none;
+
+  a:visited { color:$light-blue; text-decoration:underline !important;}
+  a:hover,a:active { color:$gold; }
+
+  .close {
+    position:absolute;
+    top:10px;
+    right:10px;
+    z-index:999999999;
+    opacity:.5;
+    text-shadow:none;
+    a { color:#fff; }
+    a:visited,a:hover,a:active { color:#fff; }
+    &:hover { opacity:1;}
+  }
+
+  h2 {
+    font-size:36px;
+    letter-spacing:2px;
+    text-align:center;
+  }
+
+  ul {
+    list-style:none;
+    padding:0;
+    margin:0;
+       li {
+        display:block;
+        width:100%;
+        font-size:16px;
+        border-bottom:1px solid #333;
+      }
+
+      a { display:block; padding:10px;}
+
+      h3 { margin:20px 0 0; padding:0; font-size:18px; padding:10px; font-weight:300;}
+
+      i { padding:0 10px 0 5px;}
+  }
+}
+
+.pagination_bar {
+    ul {@extend .pagination;}
+}
+
+.staticListNav {
+  text-align:right;
+}
+
+a.list-group-item {
+  color:$blue;
+  &:hover,&:active,&:focus { color:$darkblue; text-decoration:underline !important;}
 }
