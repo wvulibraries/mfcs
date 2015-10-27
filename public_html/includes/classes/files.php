@@ -444,7 +444,10 @@ class files {
 		}
 
 		// Include the filePreview Modal, and the CSS and JavaScript links
-		$output .= '<div id="filePreviewModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3></h3></div><div class="modal-body"><iframe class="filePreview"></iframe></div><div class="modal-footer"><a class="btn previewDownloadLink">Download File</a><a class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</a></div></div>';
+		$output .= '<div id="filePreviewContainer" class="filePreview">
+						<iframe class="filePreview"></iframe>
+						<a class="btn previewDownloadLink">Download File</a>
+					</div>';
 		$output .= sprintf('<link href="%sincludes/css/filePreview.css" rel="stylesheet">', localvars::get('siteRoot'));
 		$output .= sprintf('<script src="%sincludes/js/filePreview.js"></script>', localvars::get('siteRoot'));
 
