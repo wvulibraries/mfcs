@@ -49,16 +49,10 @@ module.exports = function(grunt) {
       scripts: {
         files: ['public_html/includes/js/refactored/*.js'],
         tasks: ['concat', 'uglify'],
-        options: {
-          spawn: false,
-        }
       },
       css: {
         files: ['public_html/css/*.scss'],
         tasks: ['sass'],
-        options: {
-          spawn: false,
-        }
       },
     },
 
