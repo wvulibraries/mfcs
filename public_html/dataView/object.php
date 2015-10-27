@@ -56,18 +56,22 @@ try {
 
 	// build the files list for displaying
 	$filesViewer = files::buildFilesPreview($engine->cleanGet['MYSQL']['objectID']);
-//	if ($filesViewer === FALSE) {
-//		throw new Exception("Error building files view.");
-//	}
-
 	localvars::add("filesViewer",$filesViewer);
+
+
 	// Metadata Tab Stuff
 	//////////
 
 	//////////
 	// Project Tab Stuff
 	$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
-	localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects));
+	if(!is_empty($selectedProjects)){
+		localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects));
+	}
+	else {
+		localVars::add("projectOptions","<div class='alert alert-warning'> No Projects Assigned to this Object </div>");
+	}
+
 	// Project Tab Stuff
 	//////////
 
@@ -81,7 +85,7 @@ try {
 		localvars::add("formList",$formList);
 	}
 	$childList = listGenerator::generateChildList($engine->cleanGet['MYSQL']['objectID']);
-	localVars::add("childrenList", is_empty($childList) ? 'No children available' : $childList);
+	localVars::add("childrenList", is_empty($childList) ? '<div class="alert alert-warning"> No children available </div>' : $childList);
 	// Children Tab Stuff
 	//////////
 
@@ -102,52 +106,50 @@ $engine->eTemplate("include","header");
 		<h1>View Object</h1>
 	</header>
 
-	<div class="container-fluid">
 		<div class="span3">
 			{local var="leftnav"}
 		</div>
 
 		<div class="span9">
-			<div class="row-fluid" id="results">
-				{local var="results"}
-			</div>
+			{local var="results"}
 
 			<?php if ($permissions === TRUE) { ?>
 
-			<div class="row-fluid">
-				<ul class="nav nav-tabs">
-					<li><a data-toggle="tab" href="#metadata">Metadata</a></li>
-					<li><a data-toggle="tab" href="#files" id="filesTab">Files</a></li>
-					<li><a data-toggle="tab" href="#project">Project</a></li>
-					<li><a data-toggle="tab" href="#children">Children</a></li>
-				</ul>
 
-				<div class="tab-content">
-					<div class="tab-pane" id="metadata">
-						{local var="form"}
-					</div>
-					<div class="tab-pane" id="files">
-						{local var="filesViewer"}
-					</div>
-
-					<div class="tab-pane" id="project">
-						<h2>Change Project Membership</h2>
-
-						<form action="{phpself query="true"}" method="post">
-							{local var="projectOptions"}
-							{engine name="csrf"}
-							<input type="submit" class="btn btn-primary" name="projectForm">
-						</form>
-					</div>
-
-					<div class="tab-pane" id="children">
-						{local var="childrenList"}
-					</div>
+			<div class="btn-group btn-group-justified" role="group">
+				<div class="btn-group" role="group">
+					<a data-toggle="tab" href="#metadata" class="btn btn-primary">Metadata</a>
+				</div>
+				<div class="btn-group" role="group">
+					<a data-toggle="tab" href="#files" id="filesTab" class="btn btn-primary">Files</a>
+				</div>
+				<div class="btn-group" role="group">
+					<a data-toggle="tab" href="#project" class="btn btn-primary">Project</a>
+				</div>
+				<div class="btn-group" role="group">
+					<a data-toggle="tab" href="#children" class="btn btn-primary">Children</a>
 				</div>
 			</div>
-			<?php } // Permissions ?>
+
+			<div class="tab-content">
+				<div class="tab-pane" id="metadata">
+					{local var="form"}
+				</div>
+				<div class="tab-pane" id="files">
+					{local var="filesViewer"}
+				</div>
+
+				<div class="tab-pane" id="project">
+					<h2>Change Project Membership</h2>
+					{local var="projectOptions"}
+				</div>
+
+				<div class="tab-pane" id="children">
+					{local var="childrenList"}
+				</div>
+			</div>
 		</div>
-	</div>
+			<?php } // Permissions ?>
 </section>
 
 <?php
