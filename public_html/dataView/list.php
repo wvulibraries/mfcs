@@ -31,27 +31,24 @@ ini_set('memory_limit','-1');
 			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=selectProject">Select Project</a>', $siteRoot);
 			break;
 		case 'form':
-			// $time_start = microtime(true);
-
 			$list = listGenerator::createFormObjectList($engine->cleanGet['MYSQL']['formID']);
 			$form = forms::get($engine->cleanGet['MYSQL']['formID']);
 			localvars::add('subTitle',' - '.$form['title']);
 			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=selectForm">Select Form</a>', $siteRoot);
 			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=form&formID=%s">%s</a>', $siteRoot, $form['ID'], $form['title']);
-
-			// $time_end = microtime(true);
-			// $time = $time_end - $time_start;
-			// print "<pre>";
-			// var_dump($time);
-			// print "</pre>";
 			break;
 		case'formShelfList':
-			$list = listGenerator::createFormShelfList($engine->cleanGet['MYSQL']['formID']);
-			$form = forms::get($engine->cleanGet['MYSQL']['formID']);
-			localvars::add('subTitle',' - '.$form['title']);
-			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=selectForm">Select Form</a>', $siteRoot);
-			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=form&formID=%s">%s</a>', $siteRoot, $form['ID'], $form['title']);
-			break;
+			if(!mfcsPerms::isViewer($engine->cleanGet['MYSQL']['formID']) && !mfcsPerms::isAdmin($engine->cleanGet['MYSQL']['formID'])){
+				header('Location: /index.php?permissionFalse');
+			}
+			else {
+				$list = listGenerator::createFormShelfList($engine->cleanGet['MYSQL']['formID']);
+				$form = forms::get($engine->cleanGet['MYSQL']['formID']);
+				localvars::add('subTitle',' - '.$form['title']);
+				$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=selectForm">Select Form</a>', $siteRoot);
+				$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=form&formID=%s">%s</a>', $siteRoot, $form['ID'], $form['title']);
+				break;
+			}
 		case 'project':
 			$list    = listGenerator::createProjectObjectList($engine->cleanGet['MYSQL']['projectID']);
 			$project = projects::get($engine->cleanGet['MYSQL']['projectID']);
@@ -65,7 +62,6 @@ ini_set('memory_limit','-1');
 			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=all">All Objects</a>', $siteRoot);
 			break;
 		default:
-			$list = listGenerator::createInitialSelectList();
 			break;
 	}
 
@@ -82,6 +78,9 @@ ini_set('memory_limit','-1');
 
 localVars::add("results",displayMessages());
 
+$listNav = listGenerator::createInitialSelectList();
+localVars::add("staticListNav",$listNav);
+
 $engine->eTemplate("include","header");
 ?>
 
@@ -95,6 +94,10 @@ $engine->eTemplate("include","header");
 	</ul>
 
 	{local var="results"}
+
+	<div class="staticListNav">
+		{local var="staticListNav"}
+	</div>
 
 
 	{local var="list"}
