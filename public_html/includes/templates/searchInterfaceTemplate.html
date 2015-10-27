@@ -1,37 +1,48 @@
-<form action="{phpself query="false"}" method="post">
+<form action="{phpself query="false"}" method="post" class="searchForm">
 	{engine name="csrf"}
 
-	Search
-	 
-	<select name="formList" id="searchFormSelect">
-		{mfcsSearch name="formList"}
-	</select>
+	<h2> <i class="fa fa-search"></i> Search </h2>
 
-	for keyword 
+	<div class="">
 
-	<input type="text" name="query" />
+	</div>
 
-	in
+	<div class="searchBlock form-group well">
+		<h3>Select a form to search</h3>
+		<select name="formList" id="searchFormSelect">
+			{mfcsSearch name="formList"}
+		</select>
+	</div>
 
-	<!-- Form Fields will be populated via ajax -->
-	<select name="fieldList" id="formFieldsOptGroup">
-		<option value="idno">IDNO</option>
-		<!-- <option value="anyField">Any Field</option> -->
-		<optgroup label="Form Fields">
-		</optgroup>
-	</select>
+	<div class="keywordBlock form-group well">
+		<h3>Search Options </h3>
+		<label for="query" class="sr-only sr-only-focusable"> Keyword </label>
+		<input type="text" class="keyword" name="query" placeholder="for keyword"/>
 
-	<br />
+		<span>in</span>
+		<!-- Form Fields will be populated via ajax -->
+		<select name="fieldList" id="formFieldsOptGroup">
+			<option value="idno">IDNO</option>
+			<!-- <option value="anyField">Any Field</option> -->
+			<optgroup label="Form Fields">
+			</optgroup>
+		</select>
+	</div>
 
+	<div class="dates form-group well">
+		<h3> Filter By Dates </h3>
+		<div class="start">
+			<label for="startDate">Start Date</label>
+			<input type="date" name="startDate" />
+		</div>
+		<div class="end">
+			<label for="endDate">End Date</label>
+			<input type="date" name="endDate" />
+		</div>
+	</div>
 
-	<label for="startDate">Start Date</label>
-	<input type="date" name="startDate" />
-
-	<label for="endDate">End Date</label>
-	<input type="date" name="endDate" />
-
-	<br />
-
-	<input type="submit" name="search" value="search" />
+	<div class="search">
+		<input type="submit" name="search" value="search" />
+	</div>
 
 </form>
