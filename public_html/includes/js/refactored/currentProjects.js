@@ -6,6 +6,16 @@ $(function(){
     $('.projectToggle').click(projects.toggleLogic);
     $('.modal .close, .modal .cancel').click(projects.closeModal);
     $('.submitProjects').click(projects.saveSelectedProjects);
+
+    // alert window for non matching current project
+    setTimeout(removeFormAlert, 15000);
+
+    $(window).on("scroll", function(){
+        var scrollPos = $(window).scrollTop();
+        if (scrollPos >= 50) {
+           removeFormAlert();
+        }
+    });
 });
 
 // Fake JS Class
@@ -100,3 +110,12 @@ CurrentProjects = {
 
 }
 
+// Form Alert Function
+// ===================================================================
+
+function removeFormAlert(){
+    var formAlert = $('.formAlert');
+    if(formAlert.is(':visible')){
+        formAlert.hide();
+    }
+}

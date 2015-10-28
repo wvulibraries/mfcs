@@ -11,16 +11,5 @@ $(function(){
             objectSubmitProcessing.show();
         }
     });
-
-    // alert window
-    setTimeout(removeFormAlert, 15000);
 });
 
-// Form Alert Function
-// ===================================================================
-function removeFormAlert(){
-    var formAlert = $('.formAlert');
-    if(formAlert.is(':visible')){
-        formAlert.hide();
-    }
-}
