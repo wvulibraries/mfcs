@@ -433,9 +433,7 @@ if (!isnull($formID)) {
 else {
 	localVars::add("displayModal",'
 		<script type="text/javascript">
-			$(function() {
-				$("#formTypeSelector").modal("show");
-			});
+			console.log("need modal");
 		</script>');
 }
 
@@ -665,29 +663,33 @@ localVars::add("projectOptions",projects::generateProjectChecklist($selectedProj
 
 $engine->eTemplate("include","header");
 
-
 ?>
 
-<script type="text/javascript" src='{local var="siteRoot"}includes/js/createForm_functions.js'></script>
-
 <section>
-	<ul class="nav nav-tabs">
-		<li class="active"><a href="#formCreator" data-toggle="tab">Form Creator</a></li>
-		<?php if (!isnull($formID)) { ?>
-		<?php if (!forms::isMetadataForm($formID)) { ?>
-		<li><a href="#projects" data-toggle="tab">Assigned Projects</a></li>
-		<?php } ?>
-		<li><a href="#navigation" data-toggle="tab">Navigation Creator</a></li>
-		<li><a href="#permissions" data-toggle="tab">Form Permissions</a></li>
-		<li><a href="#deleteForm" data-toggle="tab" style="color: red;">Delete Form</a></li>
-		<?php } ?>
-	</ul>
-
-	<div class="tab-content">
-		<div class="tab-pane active" id="formCreator">
 			<header class="page-header">
 				<h1>Form Creator</h1>
 			</header>
+
+			<ul class="breadcrumbs">
+				<li><a href="{local var="siteRoot"}">Home</a></li>
+				<li><a href="{local var="siteRoot"}/formCreator/">Form Creator</a></li>
+			</ul>
+
+			<div class="tab-content">
+
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#formCreator" data-toggle="tab">Form Creator</a></li>
+				<?php if (!isnull($formID)) { ?>
+				<?php if (!forms::isMetadataForm($formID)) { ?>
+				<li><a href="#projects" data-toggle="tab">Assigned Projects</a></li>
+				<?php } ?>
+				<li><a href="#navigation" data-toggle="tab">Navigation Creator</a></li>
+				<li><a href="#permissions" data-toggle="tab">Form Permissions</a></li>
+				<li><a href="#deleteForm" data-toggle="tab" style="color: red;">Delete Form</a></li>
+				<?php } ?>
+			</ul>
+
+			<div class="tab-pane active" id="formCreator">
 
 			<div class="container-fluid">
 				<div class="row-fluid" id="results">
@@ -1689,7 +1691,7 @@ $engine->eTemplate("include","header");
 	</div>
 </section>
 
-<div class="modal hide fade" id="formTypeSelector">
+<div class="modal hide" id="formTypeSelector">
 	<div class="modal-header">
 		<h3>What type of form will this be?</h3>
 	</div>
