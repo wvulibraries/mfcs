@@ -69,6 +69,7 @@ header h1 {
 #loginBox form {
 	margin:5% auto;
 	width:90%;
+    max-width:600px;
 	background:rgba(256,255,255,0.8);
 	padding:20px;
 	box-shadow: rgba(0,0,0,0.3) 0px 1px 16px -1px;

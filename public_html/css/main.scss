@@ -451,6 +451,15 @@ input{
   }
 }
 
+textarea {
+  width:100% !important;
+  padding:10px;
+  outline:0;
+  margin-bottom:20px;
+  min-height:150px;
+  border:1px solid darken($lightgrey,10%);
+}
+
 // File Select Box
 // ===========================================================================================
 
@@ -642,19 +651,20 @@ li.alert-error {
 // =============================================================================
 
 .searchForm {
-  max-width:70%;
+  max-width:100%;
   margin:15px auto;
   background:#fff;
   border:1px solid lighten(#A2AAAD,10%);
   padding:20px;
   box-shadow: rgba(0,0,0,0.3) 0px 1px 16px -1px;
+  text-align:center;
 
   h2 {
-    text-align:center;
     display:block;
     color:#A2AAAD;
-    font-size:300%;
+    font-size:200%;
     margin:0 0 20px;
+
   }
 
   .well{
@@ -673,22 +683,33 @@ li.alert-error {
     color: #A2AAAD;
   }
 
-  .start,.end { width:49.6%; display:inline-block;}
+  @include breakpoint(laptop){
+    text-align:left;
 
-  .keywordBlock{
-    .keyword { width:55% !important; display:inline-block;}
-    select.form-control { width:41% !important; display:inline-block;}
-  }
+    .searchBlock,.keywordBlock  {
+      width:49%;
+      input{margin:0;}
+      display:inline-block;
+    }
+    .start,.end { width:49%; display:inline-block;}
+    .end {  margin-left:1.5%;}
 
-  .search input {
-    margin:0;
+    .keywordBlock{
+       margin-left:1.5%;
+      .keyword { width:54% !important; display:inline-block;}
+      select.form-control { width:41% !important; display:inline-block;}
+    }
+
+    .search input {
+      margin:0;
+    }
+
   }
 }
 
 
 // Navigation -- Main Navigation
 // =============================================================================
-
 
 .main-nav {
   position:absolute;
@@ -752,4 +773,8 @@ li.alert-error {
 a.list-group-item {
   color:$blue;
   &:hover,&:active,&:focus { color:$darkblue; text-decoration:underline !important;}
+}
+
+.nav-tabs {
+  margin-bottom:20px;
 }
