@@ -199,7 +199,7 @@ $engine->eTemplate("include","header");
 			<?php if ($permissions === TRUE) { ?>
 
 			<div>
-				<ul class="objectNavigation">
+				<ul class="nav nav-tabs">
 					<li><a data-toggle="tab" href="#metadata">Metadata</a></li>
 					<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
 						<li><a data-toggle="tab" href="#files" id="filesTab">Files</a></li>
@@ -211,7 +211,7 @@ $engine->eTemplate("include","header");
 				</ul>
 
 				<div class="tab-content">
-					<div class="tab-pane show" id="metadata">
+					<div class="tab-pane" id="metadata">
 						{local var="form"}
 					</div>
 
