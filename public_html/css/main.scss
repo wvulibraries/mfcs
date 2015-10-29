@@ -791,12 +791,14 @@ a.list-group-item {
     float:left;
     position:relative;
     width:100%;
-    padding:0 10px;
+    padding:10px 10px 20px;
     padding-left:30px;
     border:2px dashed #ccc;
     margin-bottom:10px;
     background-repeat:repeat-y;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAIAAACQKrqGAAAAUElEQVQokY3OwQ3AIAwEwYWWrv8O7JrMJxIJAeN7j07bzAwAJJGuF52796IDWkRU3Ay4OkkZfbvsdXFH+nd7unUbenIrTdyH5m7Sq3toxQED5XwsfPsskr0AAAAASUVORK5CYII=);
+
+    label { margin:0; padding:0; }
 
     i{ position:absolute; top:40%; left:20px; cursor:pointer; height:40px; width:40px; font-size:18px; display:inline-block; padding-left:0; float:left; color:$brand-danger;
       &:hover,&:active,&:focus { color:darken($brand-danger,20%);}
