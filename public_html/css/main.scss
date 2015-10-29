@@ -778,3 +778,50 @@ a.list-group-item {
 .nav-tabs {
   margin-bottom:20px;
 }
+
+
+
+// Form Creator
+// =============================================================================
+
+#formPreview_container {
+  ul { list-style:none; }
+  ul li { float:left; display:block; width:100%;}
+  .fieldPreview {
+    float:left;
+    position:relative;
+    width:100%;
+    padding:0 10px;
+    padding-left:30px;
+    border:2px dashed #ccc;
+    margin-bottom:10px;
+    background-repeat:repeat-y;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAIAAACQKrqGAAAAUElEQVQokY3OwQ3AIAwEwYWWrv8O7JrMJxIJAeN7j07bzAwAJJGuF52796IDWkRU3Ay4OkkZfbvsdXFH+nd7unUbenIrTdyH5m7Sq3toxQED5XwsfPsskr0AAAAASUVORK5CYII=);
+
+    i{ position:absolute; top:40%; left:20px; cursor:pointer; height:40px; width:40px; font-size:18px; display:inline-block; padding-left:0; float:left; color:$brand-danger;
+      &:hover,&:active,&:focus { color:darken($brand-danger,20%);}
+    }
+    div { display:inline-block; width:90%; float:right;}
+
+    &:active,&:focus {
+      border-color:$blue;
+      cursor: move;
+      background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAIAAACQKrqGAAAAU0lEQVQokY3OwQ2AIBBE0b80RxdaG11odevFBIVl2Dm/TL5xXADgrSJXks7OuyQdYO6ecT1g67xVRb9OvQ5uSWcX09AFdOVGKtyPatfp1r0044AHfiQrLgcpgkQAAAAASUVORK5CYII=);
+    }
+
+    img { width:100%;}
+  }
+}
+
+.icon-remove {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    &:before { content: "\f00d";}
+}
+
+select {
+  @extend .form-control;
+}
