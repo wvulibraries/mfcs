@@ -710,7 +710,7 @@ $engine->eTemplate("include","header");
 	</div>
 </section>
 
-<div class="modal hide" id="formTypeSelector">
+<div class="modal" id="formTypeSelector">
 	<div class="modal-header">
 		<h3>What type of form will this be?</h3>
 	</div>
