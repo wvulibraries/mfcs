@@ -7174,14 +7174,19 @@ $(function(){
 
 
     // Remove UI Checkbox for Toggling Information
-    $('*[data-toggleClick]').click(function(){
-      var dataValue = $(this).data('toggleClick');
-      $('*[data-toggleElment="'+dataValue+'"').toggle();
-    });
+    // $('*[data-toggleClick]').click(function(){
+    //   var dataValue = $(this).data('toggleClick');
+    //   $('*[data-toggleElment="'+dataValue+'"').toggle();
+    // });
 
 
     // Make the preview pane sortable -- sort order determines position
     sortableForm(); // makes the form fields draggable and droppable
+
+    // Binding Elements togather
+    fieldSettingsBindings();
+	// formSettingsBindings();
+	// modalBindings();
 
 	// Blank all panes when changing tabs
 	fieldTab.on("click", "a", function() {
@@ -7230,83 +7235,85 @@ $(function(){
 		}
 	});
 
+    // $('html, body').css({
+    //     'overflow': 'hidden',
+    //     'height': '100%'
+    // });
+
 
 	// // Re-order nesting on load
 	// // This loops through <li> and finds all the fieldsets, then loops through matching all <li> that have
 	// // the same fieldset name and moves them inside it
-	// $(".fieldValues :input[name^='type_'][value='fieldset']").each(function() {
-	// 	var fieldset = $(this).closest("li").prop("id");
-	// 	$(".fieldValues :input[name^='fieldset_'][value='"+$(this).siblings(":input[name^='fieldset_']").val()+"']").each(function() {
-	// 		if (fieldset != $(this).closest("li").prop("id")) {
-	// 			$(this).closest("li").detach().appendTo($("#"+fieldset+" ul"));
-	// 		}
-	// 	});
-	// });
+	$(".fieldValues :input[name^='type_'][value='fieldset']").each(function() {
+		var fieldset = $(this).closest("li").prop("id");
+		$(".fieldValues :input[name^='fieldset_'][value='"+$(this).siblings(":input[name^='fieldset_']").val()+"']").each(function() {
+			if (fieldset != $(this).closest("li").prop("id")) {
+				$(this).closest("li").detach().appendTo($("#"+fieldset+" ul"));
+			}
+		});
+	});
 
-// 	// Form submit handler
-// 	$("form[name=submitForm]").submit(function(e) {
-// 		// Calculate position of all fields
-// 		$(".fieldValues :input[name^=position_]").each(function(index) {
-// 			$(this).val(index);
-// 		});
+	// Form submit handler
+	$("form[name=submitForm]").submit(function(e) {
+		// Calculate position of all fields
+		$(".fieldValues :input[name^=position_]").each(function(index) {
+			$(this).val(index);
+		});
 
-// 		// Create a multidimentional object to store field info
-// 		var obj = {};
-// 		$(":input",formSettings).each(function() {
-// 			var form = $(this).prop("name").split("_");
+		// Create a multidimentional object to store field info
+		var obj = {};
+		$(":input",formSettings).each(function() {
+			var form = $(this).prop("name").split("_");
 
-// 			if ($(this).prop("type") == "checkbox") {
-// 				obj[ form[1] ] = $(this).prop("checked");
-// 			}
-// 			else {
-// 				obj[ form[1] ] = $(this).val();
-// 			}
-// 		});
-// 		// Convert object to JSON and add it to a hidden form field
-// 		$(":input[name=form]", this).val(JSON.stringify(obj));
+			if ($(this).prop("type") == "checkbox") {
+				obj[ form[1] ] = $(this).prop("checked");
+			}
+			else {
+				obj[ form[1] ] = $(this).val();
+			}
+		});
+		// Convert object to JSON and add it to a hidden form field
+		$(":input[name=form]", this).val(JSON.stringify(obj));
 
-// 		// Create a multidimentional object to store field info
-// 		var obj = {};
-// 		$(".fieldValues :input").each(function() {
-// 			var field = $(this).prop("name").split("_");
+		// Create a multidimentional object to store field info
+		var obj = {};
+		$(".fieldValues :input").each(function() {
+			var field = $(this).prop("name").split("_");
 
-// 			if (!obj[ field[1] ]) {
-// 				obj[ field[1] ] = {};
-// 			}
+			if (!obj[ field[1] ]) {
+				obj[ field[1] ] = {};
+			}
 
-// 			if ($(this).is('[id^="choicesOptions_"]') || $(this).is('[id^="allowedExtensions_"]')) {
-// 				obj[ field[1] ][ field[0] ] = {};
-// 				obj[ field[1] ][ field[0] ] = $(this).val().split("%,%");
-// 			}
-// 			else {
-// 				obj[ field[1] ][ field[0] ] = $(this).val();
-// 			}
-// 		});
+			if ($(this).is('[id^="choicesOptions_"]') || $(this).is('[id^="allowedExtensions_"]')) {
+				obj[ field[1] ][ field[0] ] = {};
+				obj[ field[1] ][ field[0] ] = $(this).val().split("%,%");
+			}
+			else {
+				obj[ field[1] ][ field[0] ] = $(this).val();
+			}
+		});
 
-// 		// Remove fieldsets from submission
-// 		for (var i in obj) {
-// 			if (obj[i]['type'] == 'fieldset' || obj[i]['type'] == 'Field Set') {
-// 				delete obj[i];
-// 			}
-// 		};
+		// Remove fieldsets from submission
+		for (var i in obj) {
+			if (obj[i]['type'] == 'fieldset' || obj[i]['type'] == 'Field Set') {
+				delete obj[i];
+			}
+		};
 
-// 		// Convert object to JSON and add it to a hidden form field
-// 		$(":input[name=fields]", this).val(JSON.stringify(obj));
+		// Convert object to JSON and add it to a hidden form field
+		$(":input[name=fields]", this).val(JSON.stringify(obj));
+	});
+
+
+
+    // Front End View Information Only
+	// ===========================================================
+	// Click through each field and then back to add field tab on page load to update form preview
+	$("li",formPreview).click();
+	$("li:last a",fieldTab).click();
+	// Enable the submit button and hide thenoJavaScriptWarning
+	$(':submit').removeAttr('disabled');
 });
-
-
-
-//     // Front End View Information Only
-// 	// ===========================================================
-// 	// Click through each field and then back to add field tab on page load to update form preview
-
-// 	$("li",formPreview).click();
-// 	$("li:last a",fieldTab).click();
-// 	$('#progressModal').modal('hide');
-
-// 	// Enable the submit button and hide thenoJavaScriptWarning
-// 	$(':submit').removeAttr('disabled');
-// });
 
 
 
@@ -7357,9 +7364,6 @@ function showFieldSettings(fullID) {
 		var opts;
 		var tmp;
 		var i;
-
-		// Select the Field Settings tab
-		$("#fieldTab a[href='#fieldSettings']").tab("show");
 
 		// Hide the nothing selected error and show the form
 		$("#noFieldSelected").hide();
@@ -7426,8 +7430,6 @@ function showFieldSettings(fullID) {
 
 					$("#fieldSettings_container_range").show();
 					$("#fieldSettings_range_step").parent().hide();
-					$("#fieldSettings_range_min").parent().addClass("span4").removeClass("span3");
-					$("#fieldSettings_range_max").parent().addClass("span4").removeClass("span3");
 
 					$("#fieldSettings_range_format option").remove();
 					$("#fieldSettings_range_format").append('<option value="characters">Characters</option><option value="words">Words</option>');
@@ -7439,8 +7441,6 @@ function showFieldSettings(fullID) {
 
 					$("#fieldSettings_container_range").show();
 					$("#fieldSettings_range_step").parent().hide();
-					$("#fieldSettings_range_min").parent().addClass("span4").removeClass("span3");
-					$("#fieldSettings_range_max").parent().addClass("span4").removeClass("span3");
 
 					$("#fieldSettings_range_format option").remove();
 					$("#fieldSettings_range_format").append('<option value="characters">Characters</option><option value="words">Words</option>');
@@ -7461,8 +7461,6 @@ function showFieldSettings(fullID) {
 
 					$("#fieldSettings_container_range").show();
 					$("#fieldSettings_range_step").parent().show();
-					$("#fieldSettings_range_min").parent().addClass("span3").removeClass("span4");
-					$("#fieldSettings_range_max").parent().addClass("span3").removeClass("span4");
 
 					$("#fieldSettings_range_format option").remove();
 					$("#fieldSettings_range_format").append('<option value="value">Value</option><option value="digits">Digits</option>');
@@ -7485,158 +7483,6 @@ function showFieldSettings(fullID) {
 					$("#fieldSettings_container_placeholder").show();
 					break;
 			}
-
-			// Update field settings to use values from form display
-			fieldSettings_name.val($("#name_"+id).val()).keyup();
-			$("#fieldSettings_label").val($("#label_"+id).val()).keyup();
-			$("#fieldSettings_value").val($("#value_"+id).val()).keyup();
-			$("#fieldSettings_placeholder").val($("#placeholder_"+id).val()).keyup();
-			$("#fieldSettings_id").val($("#id_"+id).val()).keyup();
-			$("#fieldSettings_class").val($("#class_"+id).val()).keyup();
-			$("#fieldSettings_style").val($("#style_"+id).val()).keyup();
-
-			var fieldHelp = $("#help_"+id).val();
-			if(fieldHelp !== ''){
-				var n = fieldHelp.indexOf('|');
-				var fieldHelpType  = fieldHelp.slice(0,n);
-				var fieldHelpValue = fieldHelp.slice(n+1);
-				$("#fieldSettings_help_type").val(fieldHelpType).change();
-				switch(fieldHelpType){
-					case 'text':
-						// de-escape HTML-breaking characters
-						fieldHelpValue = fieldHelpValue.replace(/&#34;/g, '"');
-						fieldHelpValue = fieldHelpValue.replace(/&#39;/g, "'");
-						fieldHelpValue = fieldHelpValue.replace(/&#62;/g, '>');
-						fieldHelpValue = fieldHelpValue.replace(/&#60;/g, '<');
-						$("#fieldSettings_help_text").val(fieldHelpValue).keyup();
-						break;
-					case 'html':
-						// de-escape HTML-breaking characters
-						fieldHelpValue = fieldHelpValue.replace(/&#34;/g, '"');
-						fieldHelpValue = fieldHelpValue.replace(/&#39;/g, "'");
-						$("#fieldSettings_help_html").val(fieldHelpValue).keyup();
-						break;
-					case 'web':
-						$("#fieldSettings_help_url").val(fieldHelpValue).keyup();
-						break;
-				}
-			}else{
-				$("#fieldSettings_help_type").val('').change();
-			}
-
-			var choicesOptions_val = $("#choicesOptions_"+id).val();
-			if (choicesOptions_val !== undefined) {
-				var fieldSettings_choices_manual = $("#fieldSettings_choices_manual");
-				opts                             = choicesOptions_val.split("%,%");
-				tmp                              = '';
-
-				// Update left panel
-				for (i = 0; i < opts.length; i++) {
-					tmp += addChoice(opts[i],$("#choicesDefault_"+id).val());
-				}
-				fieldSettings_choices_manual.html(tmp).find("input[name=fieldSettings_choices_text]").keyup();
-			}
-
-			$("#fieldSettings_choices_formSelect").val($("#choicesForm_"+id).val()).change();
-			$("#fieldSettings_choices_fieldSelect").val($("#choicesField_"+id).val()).change();
-			$("#fieldSettings_choices_fieldDefault").val($("#choicesFieldDefault_"+id).val()).change();
-
-			$("#fieldSettings_choices_type").val($("#choicesType_"+id).val()).change(); // Must be after options stuff
-			$("#fieldSettings_choices_null").prop("checked",($("#choicesNull_"+id).val()==='true')).change();
-
-			$("#fieldSettings_externalUpdate_formSelect").val($("#externalUpdateForm_"+id).val()).change();
-			$("#fieldSettings_externalUpdate_fieldSelect").val($("#externalUpdateField_"+id).val()).change();
-
-			fieldSettings_options_required.prop("checked",($("#required_"+id).val()==='true'));
-			fieldSettings_options_duplicates.prop("checked",($("#duplicates_"+id).val()==='true'));
-			fieldSettings_options_readonly.prop("checked",($("#readonly_"+id).val()==='true')).change();
-			fieldSettings_options_disabled.prop("checked",($("#disabled_"+id).val()==='true')).change();
-			$("#fieldSettings_options_disabled_insert").prop("checked",($("#disabledInsert_"+id).val()==='true')).change();
-			$("#fieldSettings_options_disabled_update").prop("checked",($("#disabledUpdate_"+id).val()==='true')).change();
-			$("#fieldSettings_options_publicRelease").prop("checked",($("#publicRelease_"+id).val()==='true')).change();
-			$("#fieldSettings_options_sortable").prop("checked",($("#sortable_"+id).val()==='true'));
-			$("#fieldSettings_options_searchable").prop("checked",($("#searchable_"+id).val()==='true'));
-			fieldSettings_options_displayTable.prop("checked",($("#displayTable_"+id).val()==='true'));
-			$("#fieldSettings_options_hidden").prop("checked",($("#hidden_"+id).val()==='true'));
-			$("#fieldSettings_validation").val($("#validation_"+id).val()).change();
-			$("#fieldSettings_validationRegex").val($("#validationRegex_"+id).val());
-			$("#fieldSettings_range_min").val($("#min_"+id).val()).change();
-			$("#fieldSettings_range_max").val($("#max_"+id).val()).change();
-			$("#fieldSettings_range_step").val($("#step_"+id).val()).change();
-			$("#fieldSettings_range_format").val($("#format_"+id).val()).change();
-			$("#fieldSettings_idno_managedBy").val($("#managedBy_"+id).val()).change();
-			$("#fieldSettings_idno_format").val($("#idnoFormat_"+id).val());
-			$("#fieldSettings_idno_startIncrement").val($("#startIncrement_"+id).val());
-			$("#fieldSettings_idno_confirm").prop("checked",($("#idnoConfirm_"+id).val()==='true'));
-
-			var allowedExtensions_val = $("#allowedExtensions_"+id).val();
-			if (allowedExtensions_val !== undefined) {
-				var fieldSettings_file_allowedExtensions = $("#fieldSettings_file_allowedExtensions");
-				opts                                     = allowedExtensions_val.split("%,%");
-				tmp                                      = '';
-
-				fieldSettings_file_allowedExtensions.html('');
-				for (i = 0; i < opts.length; i++) {
-					tmp += addAllowedExtension(opts[i]);
-				}
-				fieldSettings_file_allowedExtensions.append(tmp);
-				fieldSettings_file_allowedExtensions.find(":input[name=fieldSettings_allowedExtension_text]:first").keyup();
-			}
-
-			$("#fieldSettings_file_options_bgProcessing").prop("checked",($("#bgProcessing_"+id).val()==='true')).change();
-
-			var $fieldSettings_file_options_multipleFiles = $("#fieldSettings_file_options_multipleFiles");
-			$fieldSettings_file_options_multipleFiles.prop("checked",($("#multipleFiles_"+id).val()==='true'));
-			if($("#combine_"+id).val()==='true'){
-				$("#fieldSettings_file_options_combine").prop("checked",true);
-				$fieldSettings_file_options_multipleFiles.attr('disabled','disabled');
-			}else{
-				$("#fieldSettings_file_options_combine").prop("checked",false);
-				$fieldSettings_file_options_multipleFiles.removeAttr('disabled');
-			}
-			$("#fieldSettings_file_options_ocr").prop("checked",($("#ocr_"+id).val()==='true'));
-			$("#fieldSettings_file_options_convert").prop("checked",($("#convert_"+id).val()==='true')).change();
-			$("#fieldSettings_file_convert_height").val($("#convertHeight_"+id).val());
-			$("#fieldSettings_file_convert_width").val($("#convertWidth_"+id).val());
-			$("#fieldSettings_file_convert_resolution").val($("#convertResolution_"+id).val());
-			$("#fieldSettings_file_convert_format").val($("#convertFormat_"+id).val());
-			$("#fieldSettings_file_convert_watermark").prop("checked",($("#watermark_"+id).val()==='true')).change();
-			$("#fieldSettings_file_watermark_image").val($("#watermarkImage_"+id).val());
-			$("#fieldSettings_file_watermark_location").val($("#watermarkLocation_"+id).val());
-			$("#fieldSettings_file_convert_border").prop("checked",($("#border_"+id).val()==='true')).change();
-			$("#fieldSettings_file_border_height").val($("#borderHeight_"+id).val());
-			$("#fieldSettings_file_border_width").val($("#borderWidth_"+id).val());
-			$("#fieldSettings_file_border_color").val($("#borderColor_"+id).val());
-			$("#fieldSettings_file_options_thumbnail").prop("checked",($("#thumbnail_"+id).val()==='true')).change();
-			$("#fieldSettings_file_thumbnail_height").val($("#thumbnailHeight_"+id).val());
-			$("#fieldSettings_file_thumbnail_width").val($("#thumbnailWidth_"+id).val());
-			$("#fieldSettings_file_thumbnail_format").val($("#thumbnailFormat_"+id).val());
-
-			// Audio Bindings
-			$("#fieldSettings_file_options_convertAudio").prop("checked",($("#convertAudio_"+id).val()==='true')).change();
-			$(".bitRate option[value='"+$('#bitRate_'+id).val()+"']").prop("selected", true);
-			$(".audioFormat option[value='"+$('#audioFormat_'+id).val()+"']").prop("selected", true);
-
-			// Video Bindings
-			$("#fieldSettings_file_options_convertVideo").prop("checked",($("#convertVideo_"+id).val()==='true')).change();
-			$("#fieldSettings_file_options_videothumbnail").prop("checked",($("#videothumbnail_"+id).val()==='true')).change();
-
-			$(".videobitRate").find("option[value=" + $('#videobitRate_'+id).val()+"]").prop("selected", true);
-
-
-			$('#fieldSettings_file_video_height').val($('#videoHeight_'+id).val());
-			$('#fieldSettings_file_video_width').val($('#videoWidth_'+id).val());
-			$(".videoAspectRatio").find("option[value='"+$('#aspectRatio_'+id).val()+"']").prop("selected", true);
-
-
-			$('#fieldSettings_file_video_frames').val($('#videoThumbFrames_'+id).val());
-			$('#fieldSettings_file_video_thumbheight').val($('#videoThumbHeight_'+id).val());
-			$('#fieldSettings_file_video_thumbwidth').val($('#videoThumbWidth_'+id).val());
-			$('#fieldSettings_file_video_formatThumb').val($('#videoFormatThumb_'+id).val());
-			$('#fieldSettings_file_video_aspectRatio').val($('#aspectRatio_'+id).val());
-
-			$(".videoFormat option[value='" + $('#videoFormat_' + id).val() + "']").prop("selected", true);
-
 
 			// Fieldset types
 			if (type != 'fieldset') {
@@ -7664,23 +7510,78 @@ function showFieldSettings(fullID) {
 	}
 }
 
-// function fieldSettingsBindings() {
-// 	var choicesFields = {};
+function dataBind(model, initialState){
+	if(typeof initialState !== 'undefined' && initialState == true){
+		model.each(function(){
+			var dataModel = $(this).data('bind');
+			var value = $(this).val();
+			var dataBinder = $('[data-model=\"' + dataModel + '\"]');
 
-// 	// Create jQuery shortcuts (code optimization)
-// 	var formPreview = $("#formPreview");
+			if($(this).is('input[type=checkbox]')){
+				value = evaluateCheck($(this));
+			}
 
-// 	// Select a field to change settings
-// 	formPreview.on("click", "li", function(event) {
-// 		event.stopPropagation();
-// 		var li = $(this);
-// 		if (!li.hasClass("well")) {
-// 			formPreview.find(".well").removeClass("well");
-// 			li.addClass("well well-small");
-// 			$("#fieldTab a[href='#fieldSettings']").tab("show");
-// 			showFieldSettings(li.attr("id"));
-// 		}
-// 	});
+	        bindValues(value,dataBinder);
+					dataBind(myDataModel, false);
+		});
+	}
+	else {
+		model.each(function(){
+	        $(this).bind("keyup change", function(e) {
+				var dataModel = $(this).data('model');
+				var value = $(this).val();
+				var dataBinder = $('[data-bind=\"' + dataModel + '\"]');
+
+				if($(this).is('input[type=checkbox]')){
+					value = evaluateCheck($(this));
+				}
+
+	        	bindValues(value,dataBinder);
+	        });
+	    });
+	}
+}
+
+function evaluateCheck(object){
+	return (object.is(':checked') ? true : false);
+}
+
+function bindValues(value,binder){
+	if(binder.is("input[type=text], textarea")){
+    	binder.val(value);
+  	}
+
+	if(binder.is("input[type=checkbox]")){
+    	binder.val(value).prop('checked', value);
+  	}
+
+	if(binder.is('select')){
+		binder.find('option[value="' + value + '"]').prop('selected', true);
+	}
+
+	if(binder.not("input,textarea,select")){
+		binder.html(value);
+	}
+}
+
+function fieldSettingsBindings() {
+	var choicesFields = {};
+
+	// Create jQuery shortcuts (code optimization)
+	var formPreview = $("#formPreview");
+
+	// Select a field to change settings
+	formPreview.on("click", "li", function(event) {
+		event.stopPropagation();
+		var li = $(this);
+		if(!li.hasClass('activeField')){
+			formPreview.find('.activeField').removeClass('activeField');
+			li.addClass('activeField');
+			$("#fieldTab a[href='#fieldSettings']").tab("show");
+			showFieldSettings(li.attr("id"));
+			console.log(li.attr('id'));
+		}
+	});
 
 // 	// Add class to field Settings
 // 	$("#fieldSettings :input").addClass('fieldSettings');
@@ -8894,7 +8795,7 @@ function showFieldSettings(fullID) {
 // 			// Hide modal
 // 			$("#formTypeSelector").modal("hide");
 // 		});
-// }
+}
 
 function addNewField(item) {
 	// Remove class to designate this is not new for next time
