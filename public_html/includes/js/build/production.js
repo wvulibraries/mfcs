@@ -7296,9 +7296,9 @@ $(function(){
 	$('.addFieldNav').click();// trigger click to open left pane
 });
 
-// Create Form Navigation
-// ===================================================================
 
+// Create For Nav Sumbissions
+// ===================================================================
 $(function() {
 	var groupingsPreview = $("#GroupingsPreview");
 
@@ -7654,6 +7654,10 @@ function dataBind(model, binder, initialState) {
 
             if ($(this).is('input[type=checkbox]')) {
                 value = evaluateCheck($(this));
+            }
+
+            if($(this).is('[data-model^="name"')){
+            	applyLabelName();
             }
 
             bindValues(value, dataBinder);
