@@ -16,6 +16,11 @@ $(function(){
            removeFormAlert();
         }
     });
+
+    // $('html, body').css({
+    //     'overflow': 'hidden',
+    //     'height': '100%'
+    // });
 });
 
 // Fake JS Class
