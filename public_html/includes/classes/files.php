@@ -1198,7 +1198,6 @@ class files {
 
 
 	public static function createOCRTextFile($originalFile,$assetsID,$filename) {
-		require_once 'class.tesseract_ocr.php';
 
 		$text = TesseractOCR::recognize($originalFile);
 
