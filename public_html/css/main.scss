@@ -68,6 +68,18 @@ $light-blue : #9BD3DD;
 $darkgrey : #ccc;
 
 
+// UI URI Images
+// ===========================================================================================
+$draggableDotsGray : url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOC4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHZpZXdCb3g9IjAgMCAxMCAzLjciIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDEwIDMuNyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8cmVjdCB4PSIwLjUiIHk9IjAuNSIgb3BhY2l0eT0iMC45IiBmaWxsPSIjQ0NDQ0NDIiB3aWR0aD0iMi43IiBoZWlnaHQ9IjIuNyIvPg0KPHJlY3QgeD0iNi45IiB5PSIwLjUiIG9wYWNpdHk9IjAuMiIgZmlsbD0iI0NDQ0NDQyIgd2lkdGg9IjIuNyIgaGVpZ2h0PSIyLjciLz4NCjxyZWN0IHg9IjMuNyIgeT0iMC41IiBvcGFjaXR5PSIwLjUiIGZpbGw9IiNDQ0NDQ0MiIHdpZHRoPSIyLjciIGhlaWdodD0iMi43Ii8+DQo8L3N2Zz4NCg==);
+
+
+$draggableDotsBlue : url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOC4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHZpZXdCb3g9IjAgMCAxMCAzLjciIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDEwIDMuNyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8cmVjdCB4PSIwLjUiIHk9IjAuNSIgb3BhY2l0eT0iMC45IiBmaWxsPSIjMjMzRjk1IiB3aWR0aD0iMi43IiBoZWlnaHQ9IjIuNyIvPg0KPHJlY3QgeD0iNi45IiB5PSIwLjUiIG9wYWNpdHk9IjAuMyIgZmlsbD0iIzIzM0Y5NSIgd2lkdGg9IjIuNyIgaGVpZ2h0PSIyLjciLz4NCjxyZWN0IHg9IjMuNyIgeT0iMC41IiBvcGFjaXR5PSIwLjciIGZpbGw9IiMyMzNGOTUiIHdpZHRoPSIyLjciIGhlaWdodD0iMi43Ii8+DQo8L3N2Zz4NCg==);
+
+$draggLines : url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAIAAACQKrqGAAAAUElEQVQokY3OwQ3AIAwEwYWWrv8O7JrMJxIJAeN7j07bzAwAJJGuF52796IDWkRU3Ay4OkkZfbvsdXFH+nd7unUbenIrTdyH5m7Sq3toxQED5XwsfPsskr0AAAAASUVORK5CYII=);
+
+$draggLinesBlue : url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAIAAACQKrqGAAAAU0lEQVQokY3OwQ2AIBBE0b80RxdaG11odevFBIVl2Dm/TL5xXADgrSJXks7OuyQdYO6ecT1g67xVRb9OvQ5uSWcX09AFdOVGKtyPatfp1r0044AHfiQrLgcpgkQAAAAASUVORK5CYII=);
+
+
 // MAIN STYINGS
 // ===========================================================================================
 
@@ -277,33 +289,76 @@ section {
   right:140px;
 }
 
-// .modal {
-//   width:100%;
-//   height:100%;
-//   background:rgba(#000,.8);
-//   padding:10%;
-//   position:absolute;
-//   z-index:9999999999;
+.bgCloak {
+  width:100%;
+  height:100%;
+  position:absolute;
+  z-index:999999999;
+  background:rgba(#000, .5);
+  display:none;
+}
 
-//   div {
-//     background:#fff;
-//   }
+.menuModal {
+  width:60%;
+  height:60%;
+  margin:10% 20%;
+  position:absolute;
+  z-index:9999999999;
 
-//   h3 {
-//     margin:0;
-//     padding:0;
-//   }
+  .modalContainer {
+    background:#fff;
+    box-shadow: rgba(0,0,0,0.3) 0px 1px 16px -1px;
+    height:100%;
+    width:100%;
+    position:relative;
+  }
 
-//   .modal-body {
-//     padding:20px;
-//     max-height:50%;
-//     overflow:auto;
-//     ul { list-style:none; margin:0; padding:0; }
-//   }
-// }
+  h3 {
+    margin:0;
+    padding:0;
+  }
+
+  .modal-footer {
+    position:absolute;
+    width:100%;
+    bottom:0;
+  }
+
+  .modal-body {
+    padding:20px;
+    height:50%;
+    overflow:auto;
+    ul { list-style:none; margin:0; padding:0; }
+  }
+}
+
+.modal {
+  background:#fff;
+  width:60%;
+  height:60%;
+  margin:10% 20%;
+  position:absolute;
+  z-index:9999999999;
+}
+
+// form type modal
+.formType {
+  height:20%;
+  .modal-body {
+    margin:20px 0 0;
+  }
+  button {
+    display:inline-block;
+    width:48%;
+    padding:15px;
+    font-size:18px;
+    @extend .btn; @extend .btn-primary;
+  }
+}
 
 .modalBlockScroll{
    overflow:hidden;
+   height:100%;
 }
 
 .selectedProjects{
@@ -795,37 +850,64 @@ a.list-group-item {
 
 // Form Creator
 // =============================================================================
+#rightPanel{
+  padding-left:20px;
+  border-left:1px solid #efe;
+}
 
 #formPreview_container {
+  #formTitle { margin:0 0 10px; padding-bottom:10px; border-bottom:1px solid #ccc; text-transform:uppercase;}
+  #formDescription { margin-bottom:20px; color:#666; }
   ul { list-style:none; }
   ul li { float:left; display:block; width:100%;}
   .fieldPreview {
     float:left;
     position:relative;
     width:100%;
-    padding:10px 10px 20px;
-    padding-left:30px;
-    border:2px dashed #ccc;
+    padding:10px 10px 10px;
+    padding-left:50px;
+    border:1px solid #ccc;
     margin-bottom:10px;
-    background-repeat:repeat-y;
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAIAAACQKrqGAAAAUElEQVQokY3OwQ3AIAwEwYWWrv8O7JrMJxIJAeN7j07bzAwAJJGuF52796IDWkRU3Ay4OkkZfbvsdXFH+nd7unUbenIrTdyH5m7Sq3toxQED5XwsfPsskr0AAAAASUVORK5CYII=);
+    &:before{
+        content: '';
+        display: block;
+        width: 5%;
+        position: absolute;
+        left: 2px;
+        height: 95%;
+        top: 2%;
+        background-repeat:repeat-y;
+        background-size:100%;
+        background-image:$draggableDotsGray;
+        opacity:.5;
+      }
+      &:active,&:focus {
+        border-color:$blue;
+          &:before{
+            background-image: $draggableDotsBlue;
+            opacity:.2;
+          }
+      }
 
-    label { margin:0; padding:0; }
+    label { margin:0; padding:0; text-align:left; }
 
-    i{ position:absolute; top:40%; left:20px; cursor:pointer; height:40px; width:40px; font-size:18px; display:inline-block; padding-left:0; float:left; color:$brand-danger;
+    i{ position:absolute; top:40%; left:-5%; cursor:pointer; height:40px; width:35px; font-size:18px; display:inline-block; padding-left:0; float:left; color:$brand-danger;
       &:hover,&:active,&:focus { color:darken($brand-danger,20%);}
     }
-    div { display:inline-block; width:90%; float:right;}
+    div { display:inline-block; width:100%; }
 
-    &:active,&:focus {
-      border-color:$blue;
-      cursor: move;
-      background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAIAAACQKrqGAAAAU0lEQVQokY3OwQ2AIBBE0b80RxdaG11odevFBIVl2Dm/TL5xXADgrSJXks7OuyQdYO6ecT1g67xVRb9OvQ5uSWcX09AFdOVGKtyPatfp1r0044AHfiQrLgcpgkQAAAAASUVORK5CYII=);
-    }
-
-    img { width:100%;}
+    img { width:100%; margin-bottom:10px;}
   }
 }
+
+.ui-sortable-helper{
+  background:none !important;
+  &:before {
+    background:none !important;
+  }
+}
+
+.highlight { display:none;}
 
 .icon-remove {
     display: inline-block;
@@ -838,6 +920,69 @@ a.list-group-item {
 
 select {
   @extend .form-control;
+}
+
+.btn-block {
+  @extend .btn-primary;
+}
+
+.mainFormElements, .fieldSet{
+  ul {
+    list-style:none;
+    padding:0;
+    margin:0 0 20px;
+    li { display:inline-block; width:48%; margin-right:2%; text-align:center;
+      &:nth-of-type(2n){ margin:0; }
+    }
+  }
+
+  ul li {
+    a {
+      float:left;
+      display:block;
+      width:100%;
+      border:1px solid #ccc;
+      padding:10px;
+      text-align:center;
+      position:relative;
+      &:before{
+        content: '';
+        display: block;
+        width: 23px;
+        position: absolute;
+        left: 2px;
+        height: 96%;
+        top: 2px;
+        background-repeat:repeat-y;
+        background-size:100%;
+        background-image:$draggableDotsGray;
+        opacity:.5;
+      }
+      &:active,&:focus {
+        border-color:$blue;
+          &:before{
+            background-image: $draggableDotsBlue;
+            opacity:.2;
+          }
+      }
+    }
+  }
+}
+
+.activeField{ padding-left:10%; border-left: 2px solid $blue; margin-bottom:20px;}
+
+.fieldSet ul li {
+  width:100%;
+}
+
+.bindingData {
+  position:fixed;
+  display:none;
+  bottom:20%;
+  left:25%;
+  width:50%;
+  text-align:center;
+  h2, i, p { margin:20px 0; }
 }
 
 // File Preview
@@ -886,3 +1031,11 @@ ul.filePreviews{
   height: 100%;
   background-color: #999;
 }
+
+// Pretty Print Formatting
+// =============================================================================
+
+.errorPrettyPrint li, .errorPrettyPrint span { width:100%; display:block;}
+.errorPrettyPrint .errorMessage { @extend .alert; @extend .alert-danger; padding:10px;}
+.errorPrettyPrint .successMessage { @extend .alert; @extend .alert-success; padding:10px;}
+
