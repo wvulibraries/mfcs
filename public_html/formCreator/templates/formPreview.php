@@ -60,7 +60,7 @@
                             <div class="control-group" id="fieldSettings_container_fieldset">
                                 <label for="fieldSettings_fieldset">
                                     Fieldset Label
-                                    <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If a label is entered here, the field will be surrounded by a FieldSet, and the label used."></i>
+                                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="If a label is entered here, the field will be surrounded by a FieldSet, and the label used."></i>
                                 </label>
                                 <input type="text" class="input-block-level" id="fieldSettings_fieldset" name="fieldSettings_fieldset" data-bindName="fieldset"/>
                                 <span class="help-block hidden"></span>
@@ -77,7 +77,7 @@
                             <div class="control-group " id="formSettings_formTitle_container">
                                 <label for="formSettings_formTitle">
                                     Form Title
-                                    <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="The form name is a unique value that is used to identify a form."></i>
+                                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The form name is a unique value that is used to identify a form."></i>
                                 </label>
                                 <input type="text" class="input-block-level" id="formSettings_formTitle" name="formSettings_formTitle" value="{local var="formTitle"}" />
                                 <span class="help-block hidden"></span>
@@ -102,7 +102,7 @@
                             <div class="control-group " id="formSettings_formDescription_container">
                                 <label for="formSettings_formDescription">
                                     Form Description
-                                    <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="The form description explains the purpose of this form to users."></i>
+                                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The form description explains the purpose of this form to users."></i>
                                 </label>
                                 <input type="text" class="input-block-level" id="formSettings_formDescription" name="formSettings_formDescription" value="{local var="formDescription"}" />
                                 <span class="help-block hidden"></span>
@@ -114,7 +114,7 @@
                                 <div class="control-group " id="formSettings_submitButton_container">
                                     <label for="formSettings_submitButton">
                                         Submit Button
-                                        <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="The text that is displayed on the form's submit button."></i>
+                                        <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The text that is displayed on the form's submit button."></i>
                                     </label>
                                     <input type="text" class="input-block-level" id="formSettings_submitButton" name="formSettings_submitButton" value="{local var="submitButton"}" />
                                     <span class="help-block hidden"></span>
@@ -125,7 +125,7 @@
                                 <div class="control-group " id="formSettings_updateButton_container">
                                     <label for="formSettings_updateButton">
                                         Update Button
-                                        <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="The text that is displayed on the form's update button."></i>
+                                        <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The text that is displayed on the form's update button."></i>
                                     </label>
                                     <input type="text" class="input-block-level" id="formSettings_updateButton" name="formSettings_updateButton" value="{local var="updateButton"}" />
                                     <span class="help-block hidden"></span>
