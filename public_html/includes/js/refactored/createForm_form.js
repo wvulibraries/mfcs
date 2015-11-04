@@ -808,8 +808,8 @@ function newFieldPreview(id,type) {
 			default:
 				break;
 		}
-		output += ' <span class="icon-question-sign helpPreview" style="display: none; cursor: pointer;"></span>';
-		output += ' <span class="icon-question-sign helpPreviewModal" style="display: none; cursor: pointer;" title="Click to view help" onclick="$(\'#fieldHelpModal\').modal(\'show\')"></span>';
+		output += ' <span class="fa fa-question-circle helpPreview" style="display: none; cursor: pointer;"></span>';
+		output += ' <span class="fa fa-question-circle helpPreviewModal" style="display: none; cursor: pointer;" title="Click to view help" onclick="$(\'#fieldHelpModal\').modal(\'show\')"></span>';
 		output += '</div></div>';
 	}
 	return output;
