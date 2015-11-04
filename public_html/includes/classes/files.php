@@ -747,6 +747,14 @@ class files {
 				'type'   => self::getMimeType($newFilename),
 				'errors' => '',
 				);
+
+			// Insert into filesChecks table (fixity)
+			if (!self::fixityInsert(self::getSaveDir($assetsID,'archive',FALSE).DIRECTORY_SEPARATOR.$cleanedFilename)) {
+				errorHandle::newError(__METHOD__."() - couldn't create fixity entry.", errorHandle::DEBUG);
+				// @todo : we need a script that periodically checks to make sure all files are in
+				// filesChecks table ... I don't think we want to return FALSE here on failure because some files
+				// have already been moved ... 
+			}
 		}
 
 		// Remove the uploads directory (now that we're done with it) and lock-down the originals dir
