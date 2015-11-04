@@ -757,6 +757,23 @@ class files {
 		return $return;
 	}
 
+	// Take a location and put it into the 
+	private static function fixityInsert($location) {
+
+		$sql       = sprintf("INSERT INTO `filesChecks` (`location`) VALUES('%s')",
+			mfcs::$engine->openDB->escape($location)
+			);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+		return TRUE;
+
+	}
+
 	private static function createHOCR($path=NULL) {
 
 		if (isnull($path)) {
