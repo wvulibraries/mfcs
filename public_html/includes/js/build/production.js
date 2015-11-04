@@ -7173,12 +7173,6 @@ $(function(){
 	var leftPanel    = $('#leftPanel');
 	var testStart = performance.now();
 
-    // Remove UI Checkbox for Toggling Information
-    // $('*[data-toggleClick]').click(function(){
-    //   var dataValue = $(this).data('toggleClick');
-    //   $('*[data-toggleElment="'+dataValue+'"').toggle();
-    // });
-
 	// helper functions
     sortableForm();
     fieldSettingsBindings();
@@ -7619,6 +7613,7 @@ function showFieldSettings(fullID) {
 
 function coupleBinding(obj, dataID) {
 	dataID = parseInt(dataID);
+	$('.bindingData').show();
     if(dataID || dataID === 0){
 	    $(obj).each(function () {
 			var dataName = $(this).data('bindname');
@@ -7663,6 +7658,7 @@ function dataBind(model, binder, initialState) {
             bindValues(value, dataBinder);
         });
     });
+    $('.bindingData').hide();
 }
 
 
@@ -7972,8 +7968,8 @@ function newFieldPreview(id,type) {
 			default:
 				break;
 		}
-		output += ' <span class="icon-question-sign helpPreview" style="display: none; cursor: pointer;"></span>';
-		output += ' <span class="icon-question-sign helpPreviewModal" style="display: none; cursor: pointer;" title="Click to view help" onclick="$(\'#fieldHelpModal\').modal(\'show\')"></span>';
+		output += ' <span class="fa fa-question-circle helpPreview" style="display: none; cursor: pointer;"></span>';
+		output += ' <span class="fa fa-question-circle helpPreviewModal" style="display: none; cursor: pointer;" title="Click to view help" onclick="$(\'#fieldHelpModal\').modal(\'show\')"></span>';
 		output += '</div></div>';
 	}
 	return output;
@@ -8466,8 +8462,9 @@ $(function(){
     var projects = CurrentProjects; // init the dipslay object
     projects.init();
     $('.projectToggle').click(projects.toggleLogic);
-    $('.modal .close, .modal .cancel').click(projects.closeModal);
+    $('.menuModal .close, .menuModal .cancel').click(projects.closeModal);
     $('.submitProjects').click(projects.saveSelectedProjects);
+    $('.bgCloak').click(projects.closeModal);
 
     // alert window for non matching current project
     setTimeout(removeFormAlert, 15000);
@@ -8479,10 +8476,9 @@ $(function(){
         }
     });
 
-    // $('html, body').css({
-    //     'overflow': 'hidden',
-    //     'height': '100%'
-    // });
+    console.log('testing current Projects stuff');
+
+
 });
 
 // Fake JS Class
@@ -8495,6 +8491,8 @@ CurrentProjects = {
     closeModal:function(){
         $('#selectProjectsModal').fadeOut(600).addClass('hide');
         CurrentProjects.resetCheckBoxes(JSON.parse(userCurrentProjects));
+        $('.bgCloak').hide();
+        $('html,body').removeClass('modalBlockScroll');
     },
 
     displayNoProjects:function(){
@@ -8532,9 +8530,11 @@ CurrentProjects = {
         var selectedProjectsModal = $('#selectProjectsModal');
         if(selectedProjectsModal.hasClass('hide')){
             selectedProjectsModal.removeClass('hide').fadeIn(600);
+            $('.bgCloak').show();
+            $('html,body').addClass('modalBlockScroll');
         }
         else {
-            CurrentProjects.closeProjectsModal();
+            CurrentProjects.closeModal();
         }
     },
 

@@ -4,8 +4,9 @@ $(function(){
     var projects = CurrentProjects; // init the dipslay object
     projects.init();
     $('.projectToggle').click(projects.toggleLogic);
-    $('.modal .close, .modal .cancel').click(projects.closeModal);
+    $('.menuModal .close, .menuModal .cancel').click(projects.closeModal);
     $('.submitProjects').click(projects.saveSelectedProjects);
+    $('.bgCloak').click(projects.closeModal);
 
     // alert window for non matching current project
     setTimeout(removeFormAlert, 15000);
@@ -17,10 +18,9 @@ $(function(){
         }
     });
 
-    // $('html, body').css({
-    //     'overflow': 'hidden',
-    //     'height': '100%'
-    // });
+    console.log('testing current Projects stuff');
+
+
 });
 
 // Fake JS Class
@@ -33,6 +33,8 @@ CurrentProjects = {
     closeModal:function(){
         $('#selectProjectsModal').fadeOut(600).addClass('hide');
         CurrentProjects.resetCheckBoxes(JSON.parse(userCurrentProjects));
+        $('.bgCloak').hide();
+        $('html,body').removeClass('modalBlockScroll');
     },
 
     displayNoProjects:function(){
@@ -70,9 +72,11 @@ CurrentProjects = {
         var selectedProjectsModal = $('#selectProjectsModal');
         if(selectedProjectsModal.hasClass('hide')){
             selectedProjectsModal.removeClass('hide').fadeIn(600);
+            $('.bgCloak').show();
+            $('html,body').addClass('modalBlockScroll');
         }
         else {
-            CurrentProjects.closeProjectsModal();
+            CurrentProjects.closeModal();
         }
     },
 

@@ -9,12 +9,6 @@ $(function(){
 	var leftPanel    = $('#leftPanel');
 	var testStart = performance.now();
 
-    // Remove UI Checkbox for Toggling Information
-    // $('*[data-toggleClick]').click(function(){
-    //   var dataValue = $(this).data('toggleClick');
-    //   $('*[data-toggleElment="'+dataValue+'"').toggle();
-    // });
-
 	// helper functions
     sortableForm();
     fieldSettingsBindings();
@@ -455,6 +449,7 @@ function showFieldSettings(fullID) {
 
 function coupleBinding(obj, dataID) {
 	dataID = parseInt(dataID);
+	$('.bindingData').show();
     if(dataID || dataID === 0){
 	    $(obj).each(function () {
 			var dataName = $(this).data('bindname');
@@ -499,6 +494,7 @@ function dataBind(model, binder, initialState) {
             bindValues(value, dataBinder);
         });
     });
+    $('.bindingData').hide();
 }
 
 
