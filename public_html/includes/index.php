@@ -16,10 +16,7 @@ require_once "classes/revisions.php";
 require_once "classes/search.php";
 require_once "classes/stats.php";
 require_once "classes/users.php";
-<<<<<<< HEAD
 require_once "classes/FFMPEG.php";
-=======
 require_once "class.tesseract_ocr.php";
->>>>>>> origin/master
 
 ?>
