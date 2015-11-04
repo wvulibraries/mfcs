@@ -26,7 +26,7 @@ while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
 	$checksum = md5_file(mfcs::config('archivalPathMFCS')."/".$row['location']);
 
-	$sql       = sprintf("UPDATE `filesChecks` set `checksum`='%s', lastChecked='%s' WHERE ID='%s' LIMIT 1",
+	$sql       = sprintf("UPDATE `filesChecks` set `checksum`='%s', lastChecked='%s', pass='1' WHERE ID='%s' LIMIT 1",
 		$checksum,
 		time(),
 		$row['ID']
