@@ -18,35 +18,30 @@
 
                 <div class="tab-content">
                     <div class="tab-pane" id="fieldAdd">
-                        <div class="row-fluid">
-                            <div class="span6">
-                                <ul class="unstyled draggable">
-                                    <li><a href="#" class="btn btn-block">ID Number</a></li>
-                                    <li><a href="#" class="btn btn-block">Single Line Text</a></li>
-                                    <li><a href="#" class="btn btn-block">Paragraph Text</a></li>
-                                    <li><a href="#" class="btn btn-block">Radio</a></li>
-                                    <li><a href="#" class="btn btn-block">Checkboxes</a></li>
-                                    <li><a href="#" class="btn btn-block">Number</a></li>
-                                    <li><a href="#" class="btn btn-block">Email</a></li>
-                                    <li><a href="#" class="btn btn-block">Phone</a></li>
-                                </ul>
-                            </div>
-                            <div class="span6">
-                                <ul class="unstyled draggable">
-                                    <li><a href="#" class="btn btn-block">Dropdown</a></li>
-                                    <li><a href="#" class="btn btn-block">Multi-Select</a></li>
-                                    <li><a href="#" class="btn btn-block">File Upload</a></li>
-                                    <li><a href="#" class="btn btn-block">WYSIWYG</a></li>
-                                    <li><a href="#" class="btn btn-block">Date</a></li>
-                                    <li><a href="#" class="btn btn-block">Time</a></li>
-                                    <li><a href="#" class="btn btn-block">Website</a></li>
-                                </ul>
-                            </div>
+                        <div class="mainFormElements">
+                            <ul class="unstyled draggable">
+                                <li><a href="#">ID Number</a></li>
+                                <li><a href="#">Single Line Text</a></li>
+                                <li><a href="#">Paragraph Text</a></li>
+                                <li><a href="#">Radio</a></li>
+                                <li><a href="#">Checkboxes</a></li>
+                                <li><a href="#">Number</a></li>
+                                <li><a href="#">Email</a></li>
+                                <li><a href="#">Phone</a></li>
+                                <li><a href="#">Dropdown</a></li>
+                                <li><a href="#">Multi-Select</a></li>
+                                <li><a href="#">File Upload</a></li>
+                                <li><a href="#">WYSIWYG</a></li>
+                                <li><a href="#">Date</a></li>
+                                <li><a href="#">Time</a></li>
+                                <li><a href="#">Website</a></li>
+                            </ul>
                         </div>
-                        <hr>
-                        <ul class="unstyled draggable">
-                            <li><a href="#" class="btn btn-block">Field Set</a></li>
-                        </ul>
+                        <div class="fieldSet">
+                            <ul class="unstyled draggable">
+                                <li><a href="#">Field Set</a></li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="tab-pane" id="fieldSettings">
