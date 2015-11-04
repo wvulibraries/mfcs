@@ -4,7 +4,7 @@
             <div class="control-group " id="fieldSettings_container_name">
                 <label for="fieldSettings_name">
                     Field Name
-                    <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="The field name is a unique value that is used to identify a field."></i>
+                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The field name is a unique value that is used to identify a field."></i>
                 </label>
                 <input type="text" class="input-block-level" id="fieldSettings_name" data-bindName="name" name="fieldSettings_name"/>
                 <span class="help-block hidden"></span>
@@ -15,7 +15,7 @@
             <div class="control-group " id="fieldSettings_container_label">
                 <label for="fieldSettings_label">
                     Field Label
-                    <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="The field label tells your users what to enter in this field."></i>
+                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The field label tells your users what to enter in this field."></i>
                 </label>
                 <input type="text" class="input-block-level" id="fieldSettings_label" data-bindName="label" name="fieldSettings_label"/>
                 <span class="help-block hidden"></span>
@@ -29,7 +29,7 @@
             <div class="control-group ">
                 <label for="fieldSettings_value">
                     Value
-                    <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="When the form is first displayed, this value will already be prepopulated."></i>
+                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="When the form is first displayed, this value will already be prepopulated."></i>
                 </label>
                 <a href="javascript:;" class="pull-right" onclick="$('#defaultValueVariables').modal('show')" id="fieldVariablesLink" style="display: none;">Variables</a>
                 <input type="text" class="input-block-level" id="fieldSettings_value" name="fieldSettings_value" data-bindName="value"/>
@@ -76,7 +76,7 @@
             <div class="control-group ">
                 <label for="fieldSettings_placeholder">
                     Placeholder Text
-                    <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If there is no value in the field, this can tell your users what to input."></i>
+                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="If there is no value in the field, this can tell your users what to input."></i>
                 </label>
                 <input type="text" class="input-block-level" id="fieldSettings_placeholder" name="fieldSettings_placeholder" data-bindName="placeholder"/>
                 <span class="help-block hidden"></span>
@@ -89,7 +89,7 @@
             <div class="control-group " id="fieldSettings_container_id">
                 <label for="fieldSettings_id">
                     CSS ID
-                    <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="The ID is a unique value that can be used to identify a field."></i>
+                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The ID is a unique value that can be used to identify a field."></i>
                 </label>
                 <input type="text" class="input-block-level" id="fieldSettings_id" name="fieldSettings_id" data-bindName="id"/>
                 <span class="help-block hidden"></span>
@@ -100,7 +100,7 @@
             <div class="control-group " id="fieldSettings_container_class">
                 <label for="fieldSettings_class">
                     CSS Classes
-                    <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Classes can be entered to give the field a different look and feel."></i>
+                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Classes can be entered to give the field a different look and feel."></i>
                 </label>
                 <input type="text" class="input-block-level" id="fieldSettings_class" name="fieldSettings_class" data-bindName="class"/>
                 <span class="help-block hidden"></span>
@@ -111,7 +111,7 @@
     <div class="noHide control-group " id="fieldSettings_container_style">
             <label for="fieldSettings_style">
                 Local Styles
-                <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="You can set any HTML styles and they will only apply to this field."></i>
+                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="You can set any HTML styles and they will only apply to this field."></i>
             </label>
             <input type="text" class="input-block-level" id="fieldSettings_style" name="fieldSettings_style" data-bindName="style"/>
             <span class="help-block hidden"></span>
@@ -120,7 +120,7 @@
     <div class="noHide control-group" id="fieldSettings_container_style">
         <label for="fieldSettings_style">
             Field Help
-            <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="You can set any help text you want displayed with this field. Any angle brackets in HTML text will be treated as HTML"></i>
+            <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="You can set any help text you want displayed with this field. Any angle brackets in HTML text will be treated as HTML"></i>
         </label>
         <select class="input-block-level" id="fieldSettings_help_type" name="fieldSettings_help_type" data-bindName="helpType">
             <option value="">None</option>
@@ -208,7 +208,7 @@
     <div class="control-group" id="fieldSettings_container_externalUpdate">
         <label for="fieldSettings_externalUpdate">
             Update External Form
-            <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="When the value of this field changes, update the selected form and field."></i>
+            <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="When the value of this field changes, update the selected form and field."></i>
         </label>
         <div id="fieldSettings_externalUpdate_form">
             <label for="fieldSettings_externalUpdate_formSelect">
@@ -288,7 +288,7 @@
             </div>
             <div>
                 <p> Audio Options </p>
-                <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="More options will be added for more processing information."></i>
+                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="More options will be added for more processing information."></i>
                 <ul class="checkboxList">
                     <li>
                         <label class="checkbox">
@@ -300,7 +300,7 @@
             </div>
             <div>
                 <p> Video Options </p>
-                <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="More options will be added for more processing information."></i>
+                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="More options will be added for more processing information."></i>
                 <ul class="checkboxList">
                     <li>
                         <label class="checkbox">
@@ -371,7 +371,7 @@
             </div>
 
             <div>
-                Video Size <i class="icon-question-sign formatSettings"> </i>
+                Video Size <i class="fa fa-question-circle formatSettings"> </i>
 
                 <div class=" formatSettingsHelp alert alert-block">
                     <span class="span6">
@@ -400,14 +400,14 @@
             <span class="span6">
                 <label for="fieldSettings_file_video_height">
                     Height (px)
-                    <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
+                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
                 </label>
                 <input type="number" class="input-block-level" id="fieldSettings_file_video_height" name="fieldSettings_file_video_height" min="0" data-bindName="videoHeight"/>
             </span>
             <span class="span6">
                 <label for="fieldSettings_file_video_width">
                     Width (px)
-                    <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
+                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
                 </label>
                 <input type="number" class="input-block-level" id="fieldSettings_file_video_width" name="fieldSettings_file_video_width" min="0"  data-bindName="videoWidth"/>
             </span>
@@ -429,7 +429,7 @@
     <div class="control-group " id="fieldSettings_container_file_videoThumbnail">
         <label for="fieldSettings_file_thumbnail">
             Video Thumbnail Options
-            <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Video thumbnails will automatically be generated, please select
+            <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Video thumbnails will automatically be generated, please select
             the number of thumbnails to generate and specify the details of the thumbnails themselves.  If you need to upload your own thumbnail image
             of the video please create an extra file upload field named thumbnail and use the image settings."></i>
         </label>
@@ -437,21 +437,21 @@
             <span class="span4">
                 <label for="fieldSettings_file_video_frames">
                     Number
-                    <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="The number of frames that a thumbnail will be grabbed.  Max 10."></i>
+                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The number of frames that a thumbnail will be grabbed.  Max 10."></i>
                 </label>
                 <input type="number" class="input-block-level" id="fieldSettings_file_video_frames" name="fieldSettings_file_video_frames" min="0" data-bindName="videoThumbFrames"/>
             </span>
             <span class="span4">
                 <label for="fieldSettings_file_video_thumbheight">
                     Height (px)
-                    <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
+                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
                 </label>
                 <input type="number" class="input-block-level" id="fieldSettings_file_video_thumbheight" name="fieldSettings_file_video_thumbheight" min="0" data-bindName="videoThumbHeight"/>
             </span>
             <span class="span4">
                 <label for="fieldSettings_file_video_thumbwidth">
                     Width (px)
-                    <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
+                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
                 </label>
                 <input type="number" class="input-block-level" id="fieldSettings_file_video_thumbwidth" name="fieldSettings_file_video_thumbwidth" min="0" data-bindName="videoThumbWidth"/>
             </span>
@@ -540,7 +540,7 @@
                     <div class="span4">
                         <label for="fieldSettings_file_border_height">
                             Height (px)
-                            <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Border width of the top and bottom."></i>
+                            <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Border width of the top and bottom."></i>
                         </label>
                         <input type="number" class="input-block-level" id="fieldSettings_file_border_height" name="fieldSettings_file_border_height" min="0" data-bindName="borderHeight"/>
                     </div>
@@ -548,7 +548,7 @@
                     <div class="span4">
                         <label for="fieldSettings_file_border_width">
                             Width (px)
-                            <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Border width of the left and right."></i>
+                            <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Border width of the left and right."></i>
                         </label>
                         <input type="number" class="input-block-level" id="fieldSettings_file_border_width" name="fieldSettings_file_border_width" min="0" data-bindName="borderWidth"/>
                     </div>
@@ -572,14 +572,14 @@
             <span class="span4">
                 <label for="fieldSettings_file_thumbnail_height">
                     Height (px)
-                    <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
+                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
                 </label>
                 <input type="number" class="input-block-level" id="fieldSettings_file_thumbnail_height" name="fieldSettings_file_thumbnail_height" min="0" data-bindName="thumbnailHeight"/>
             </span>
             <span class="span4">
                 <label for="fieldSettings_file_thumbnail_width">
                     Width (px)
-                    <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
+                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
                 </label>
                 <input type="number" class="input-block-level" id="fieldSettings_file_thumbnail_width" name="fieldSettings_file_thumbnail_width" min="0" data-bindName="thumbnailWidth"/>
             </span>
@@ -605,66 +605,66 @@
                         <label class="checkbox">
                             <input type="checkbox" id="fieldSettings_options_required" name="fieldSettings_options_required" data-bindName="required"> Required
                         </label>
-                        <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is required to be filled out."></i>
+                        <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is required to be filled out."></i>
                     </li>
                     <li>
                         <label class="checkbox">
                             <input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates" data-bindName="duplicates"> No duplicates
                         </label>
-                        <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Duplicate entries for this form are not allowed."></i>
+                        <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Duplicate entries for this form are not allowed."></i>
                     </li>
                     <li>
                         <label class="checkbox">
                             <input type="checkbox" id="fieldSettings_options_readonly" name="fieldSettings_options_readonly" data-bindName="readonly"> Read only
                         </label>
-                        <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is read-only, data is pulled from form definition on insert, previous revision on update. not from POST"></i>
+                        <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is read-only, data is pulled from form definition on insert, previous revision on update. not from POST"></i>
                     </li>
                     <li>
                         <label class="checkbox">
                             <input type="checkbox" id="fieldSettings_options_disabled" name="fieldSettings_options_disabled" data-bindName="disabled"> Disabled
                         </label>
-                        <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is disabled and not submitted to POST"></i>
+                        <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is disabled and not submitted to POST"></i>
                     </li>
                     <li>
                         <label class="checkbox">
                             <input type="checkbox" id="fieldSettings_options_disabled_insert" name="fieldSettings_options_disabled_insert" data-bindName="disabledInsert"> Disabled on Insert
                         </label>
-                        <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is hideen and disabled on insert forms."></i>
+                        <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is hideen and disabled on insert forms."></i>
                     </li>
                     <li>
                         <label class="checkbox">
                             <input type="checkbox" id="fieldSettings_options_disabled_update" name="fieldSettings_options_disabled_update" data-bindName="disabledUpdate"> Read only on Update
                         </label>
-                        <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is set to read only on update forms. Only read and inserted into the database on insert forms."></i>
+                        <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is set to read only on update forms. Only read and inserted into the database on insert forms."></i>
                     </li>
                     <li>
                         <label class="checkbox">
                             <input type="checkbox" id="fieldSettings_options_publicRelease" name="fieldSettings_options_publicRelease" data-bindName="publicRelease"> Public release</label>
-                            <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Dependant on Export Script: Metadata check to determine if field should be exported to XML"></i>
+                            <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Dependant on Export Script: Metadata check to determine if field should be exported to XML"></i>
                     </li>
                     <li>
                         <label class="checkbox">
                             <input type="checkbox" id="fieldSettings_options_sortable" name="fieldSettings_options_sortable" data-bindName="sortable"> Sortable
                         </label>
-                        <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is Sortable in list table in MFCS."></i>
+                        <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is Sortable in list table in MFCS."></i>
                     </li>
                     <li>
                         <label class="checkbox">
                             <input type="checkbox" id="fieldSettings_options_searchable" name="fieldSettings_options_searchable" data-bindName="searchable"> Searchable
                         </label>
-                        <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Dependant on Export: Can search on this field in public facing repository."></i>
+                        <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Dependant on Export: Can search on this field in public facing repository."></i>
                     </li>
                     <li>
                         <label class="checkbox">
                             <input type="checkbox" id="fieldSettings_options_displayTable" name="fieldSettings_options_displayTable" data-bindName="displayTable"> Display in list table
                         </label>
-                        <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Field is displayed in the listing table in MFCS"></i>
+                        <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is displayed in the listing table in MFCS"></i>
                     </li>
                     <li>
                         <label class="checkbox">
                             <input type="checkbox" id="fieldSettings_options_hidden" name="fieldSettings_options_hidden" data-bindName="hidden"> Hidden
                         </label>
-                        <i class="icon-question-sign" rel="tooltip" data-placement="right" data-title="Input type is set to Hidden."></i>
+                        <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Input type is set to Hidden."></i>
                     </li>
                 </ul>
             </div>
