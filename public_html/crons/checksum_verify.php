@@ -22,9 +22,28 @@ if (!$sqlResult['result']) {
 	return FALSE;
 }
 
+$fileMissingCount = 0;
+
 while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
-	$checksum = md5_file(mfcs::config('archivalPathMFCS')."/".$row['location']);
+	// if there are more than 50 missing files, break out of the loop. 
+	// we assume that there is something wrong with the file system at this
+	// point. 
+	if ($fileMissingCount > 50) break;
+
+	// the full path of the file that we are checking
+	$filePath = mfcs::config('archivalPathMFCS')."/".$row['location']
+
+	// If the file cannot be found
+	if (!file_exists($filePath)) {
+		$fileMissingCount++;
+
+		// @todo alert via email
+	}
+
+	$checksum = md5_file($filePath);
+
+	// if the checksum doesn't match up
 	if ($checksum != $row['checksum']) {
 		// set pass = 0
 		
