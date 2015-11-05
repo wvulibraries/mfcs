@@ -336,7 +336,7 @@ section {
   background:#fff;
   width:60%;
   height:60%;
-  margin:10% 20%;
+  margin:20% 20%;
   position:absolute;
   z-index:9999999999;
 }
@@ -344,6 +344,7 @@ section {
 // form type modal
 .formType {
   height:20%;
+  min-height:200px;
   .modal-body {
     margin:20px 0 0;
   }
