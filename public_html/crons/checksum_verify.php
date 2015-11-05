@@ -33,7 +33,7 @@ while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
 	// the full path of the file that we are checking
 	$filePath = mfcs::config('archivalPathMFCS')."/".$row['location'];
-print $filePath."\n";
+
 	// If the file cannot be found
 	if (!file_exists($filePath)) {
 		$fileMissingCount++;
