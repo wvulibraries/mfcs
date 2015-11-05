@@ -32,13 +32,14 @@ while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 	if ($fileMissingCount > 50) break;
 
 	// the full path of the file that we are checking
-	$filePath = mfcs::config('archivalPathMFCS')."/".$row['location']
-
+	$filePath = mfcs::config('archivalPathMFCS')."/".$row['location'];
+print $filePath."\n";
 	// If the file cannot be found
 	if (!file_exists($filePath)) {
 		$fileMissingCount++;
 
-		// @todo alert via email
+		notification::notifyAdmins("File missing", $filePath);
+		continue;
 	}
 
 	$checksum = md5_file($filePath);
@@ -53,11 +54,10 @@ while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 		$sqlResult_insert = $engine->openDB->query($sql);
 
 		if (!$sqlResult_insert['result']) {
-		// @todo alert via email? 
-		
+			notification::notifyAdmins("MFCS Database Update Failure", "Failed to set checksum pass check to 0");
 		}
 
-		// alert the world
+		notification::notifyAdmins("Checksum failure", $filePath);
 	}
 
 }
