@@ -26,6 +26,13 @@ class notification {
 
 	}
 
+	public static function notifyAdmins($subject,$message) {
+
+		global $notificationEmails;
+		return self::email($notificationEmails,$subject,$message);
+
+	}
+
 }
 
 ?>
