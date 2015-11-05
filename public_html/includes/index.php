@@ -9,6 +9,7 @@ require_once "classes/forms.php";
 require_once "classes/list.php";
 require_once "classes/log.php";
 require_once "classes/navigation.php";
+require_once "classes/notification.php";
 require_once "classes/objects.php";
 require_once "classes/permissions.php";
 require_once "classes/projects.php";
