@@ -122,8 +122,7 @@ $(function(){
 
 	// Enable the submit button and hide thenoJavaScriptWarning
 	$(':submit').removeAttr('disabled');
-
-	$('.addFieldNav').click();// trigger click to open left pane
+	//$('.addFieldNav').click();// trigger click to open left pane
 });
 
 
@@ -443,7 +442,7 @@ function showFieldSettings(fullID) {
 			}
 		}
 
-		coupleBinding('[data-bindname]', id);
+		// coupleBinding('[data-bindname]', id);
 	}
 }
 
@@ -526,10 +525,13 @@ function bindValues(value, binder) {
 function fieldSettingsBindings(){
 	var choicesFields = {};
 	var formPreview   = $("#formPreview");
-
+	formPreview.children('li').removeClass('activeField');
 	// Select a field to change settings
 	formPreview.on("click", "li", function(event) {
+		console.log("Being called from " + arguments.callee.caller.toString());
+
 		event.stopPropagation();
+		console.log('click deteced');
 		var li = $(this);
 		if(!li.hasClass('activeField')){
 			formPreview.find('.activeField').removeClass('activeField');
@@ -637,7 +639,6 @@ function modalBindings() {
 		.on("click", "button:contains('Metadata')", function() {
 			// Select Metadata form
 			$("#formSettings_formMetadata").prop("checked", true).change();
-
 			// Hide modal
 			$("#formTypeSelector").modal("hide");
 		})
@@ -724,9 +725,7 @@ function newFieldPreview(id,type) {
 		output += '<fieldset><legend></legend><ul class="unstyled sortable"></ul></fieldset>';
 	}
 	else {
-		output += '<div class="control-group">
-                        <label class="control-label fieldLabels">Untitled</label>
-                            <div class="controls">';
+		output += '<div class="control-group"><label class="control-label fieldLabels">Untitled</label><div class="controls">';
 
 		switch(type) {
 			case 'ID Number':
@@ -822,7 +821,7 @@ function newFieldValues(id,type,vals) {
     vals.type = determineType(type);
     type = vals.type;
 
-    var defaultHiddenFormFields = ['position', 'type', 'name', 'label', 'value', 'placeholder', 'id', 'class', 'style',
+    var defaultHiddenFormFields = ['position', 'type', 'label', 'value', 'placeholder', 'id', 'class', 'style',
     'help', 'helpType', 'required', 'duplicates', 'readonly', 'disabled', 'disabledInsert', 'disabledUpdate', 'publicRelease',
     'sortable', 'searchable', 'displayTable', 'hidden', 'validation', 'validationRegex', 'access', 'fieldset' ];
 
@@ -864,7 +863,9 @@ function newFieldValues(id,type,vals) {
                 'videoHeight', 'videoWidth', 'videobitRate', 'aspectRatio', 'videoFormat', 'videothumbnail', 'videoThumbFrames', 'videoThumbHeight',
                 'videoThumbWidth', 'videoFormatThumb'];
 
+
              // default values
+            output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'"     data-bind="allowedExtensions_'+id+'"    value="'+((vals.allowedExtensions !== undefined)?vals.allowedExtensions:'tif%,%tiff,mp4')+'">';
 			output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'"     data-bind="allowedExtensions_'+id+'"    value="'+((vals.allowedExtensions !== undefined)?vals.allowedExtensions:'tif%,%tiff,mp4')+'">';
 			output += '<input type="hidden" id="convertResolution_'+id+'" name="convertResolution_'+id+'"     data-bind="convertResolution_'+id+'"    value="'+((vals.convertResolution !== undefined)?vals.convertResolution:'192')+'">';
 			output += '<input type="hidden" id="convertFormat_'+id+'"     name="convertFormat_'+id+'"         data-bind="convertFormat_'+id+'"        value="'+((vals.convertFormat !== undefined)?vals.convertFormat:'JPG')+'">';
