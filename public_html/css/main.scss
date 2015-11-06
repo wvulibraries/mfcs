@@ -1025,11 +1025,15 @@ select {
   label, input, div,{
     float:left;
     width:100%;
+    margin-bottom:10px;
   }
 }
 
+strong { margin-bottom:10px;}
+
 .checkboxList{
   list-style:none;
+  input[type=checkbox], label{ display:inline-block; width:50%; }
 }
 
 #fieldVariablesLink{
@@ -1045,6 +1049,8 @@ select {
 .control-group {
   position:relative;
 }
+
+.tooltip.right .tooltip-arrow { display:none; } // arrow tip is doing weird things hide it for now
 
 // File Preview
 // =============================================================================
