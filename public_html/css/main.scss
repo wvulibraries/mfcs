@@ -38,17 +38,23 @@ $column-prefix: 'span' !default;
     // Style all but the last column
     @if $i != $columns {
         .#{$column-prefix + $i} {
-          width: 100% / $number * $i - $gutter;
+          width:100%;
           display:block;
-          margin-right: $gutter;
           float:left;
+          margin-right:0;
+          @include breakpoint(laptop){
+            width: 100% / $number * $i - $gutter;
+            display:block;
+            margin-right: $gutter;
+            float:left;
+          }
         }
     }
     @else {
       // Ensure the last column has a width of 100%
         .#{$column-prefix + $i} {
           width: 100%;
-          display:block;
+          display:inline-block;
           margin-right:0;
         }
     }
@@ -480,7 +486,7 @@ label { display:block; }
 
 input{
   width:100% !important;
-  padding:10px;
+  padding:6px;
   outline:0;
   margin-bottom:20px;
 
@@ -780,7 +786,7 @@ li.alert-error {
 // =============================================================================
 
 .main-nav {
-  position:absolute;
+  position:fixed;
   width:300px;
   background:rgba(#000,.9);
   height:100%;
@@ -806,7 +812,7 @@ li.alert-error {
   }
 
   h2 {
-    font-size:36px;
+    font-size:24px;
     letter-spacing:2px;
     text-align:center;
   }
@@ -818,13 +824,13 @@ li.alert-error {
        li {
         display:block;
         width:100%;
-        font-size:16px;
+        font-size:14px;
         border-bottom:1px solid #333;
       }
 
       a { display:block; padding:10px;}
 
-      h3 { margin:20px 0 0; padding:0; font-size:18px; padding:10px; font-weight:300;}
+      h3 { margin:10px 0 0; padding:0; font-size:16px; padding:10px; font-weight:300;}
 
       i { padding:0 10px 0 5px;}
   }
@@ -984,6 +990,50 @@ select {
   width:50%;
   text-align:center;
   h2, i, p { margin:20px 0; }
+}
+
+
+.dataSettings {
+  .group {
+    border:1px solid $lightgrey;
+    padding:20px;
+    margin-bottom:20px;
+    display:block;
+    float:left;
+    width:100%;
+  }
+
+  .well { padding:10px;
+    input { margin:0; }
+  }
+
+  // .group:first-child {
+  //     div { display:inline-block; margin-right:2%; width:49%;}
+  //     div:nth-of-type(2n){ margin-right:0; }
+  // }
+
+  label, input, div,{
+    float:left;
+    width:100%;
+  }
+}
+
+.checkboxList{
+  list-style:none;
+}
+
+#fieldVariablesLink{
+  position:absolute;
+  right:0px;
+  top:0px;
+}
+
+#defaultValueVariables {
+  min-height:500px;
+}
+
+.control-group {
+  position:relative;
 }
 
 // File Preview
