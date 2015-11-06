@@ -377,7 +377,7 @@ if (!isnull($formID)) {
 
 			if (!is_empty($field['fieldset']) && isset($fieldsets[$field['fieldset']])) {
 				$formPreview .= sprintf('
-					<li id="formPreview_%s">
+					<li id="formPreview_%s" data-id="%s">
 						<div class="fieldPreview">
 							<script type="text/javascript">
 								$("#formPreview_%s .fieldPreview").html(newFieldPreview("%s","%s"));
@@ -389,6 +389,7 @@ if (!isnull($formID)) {
 							</script>
 						</div>
 					</li>',
+					htmlSanitize($field['position'] + $positionOffset),
 					htmlSanitize($field['position'] + $positionOffset),
 					htmlSanitize($field['position'] + $positionOffset),
 					htmlSanitize($field['position'] + $positionOffset),
@@ -404,7 +405,7 @@ if (!isnull($formID)) {
 			}
 
 			$formPreview .= sprintf('
-				<li id="formPreview_%s">
+				<li id="formPreview_%s" data-id="%s">
 					<div class="fieldPreview">
 						<script type="text/javascript">
 							$("#formPreview_%s .fieldPreview").html(newFieldPreview("%s","%s"));
@@ -416,6 +417,7 @@ if (!isnull($formID)) {
 						</script>
 					</div>
 				</li>',
+				htmlSanitize($field['position'] + $positionOffset),
 				htmlSanitize($field['position'] + $positionOffset),
 				htmlSanitize($field['position'] + $positionOffset),
 				htmlSanitize($field['position'] + $positionOffset),
