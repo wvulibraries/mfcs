@@ -976,7 +976,17 @@ select {
   }
 }
 
-.activeField{ padding-left:10%; border-left: 2px solid $blue; margin-bottom:20px;}
+.activeField, .well{
+    padding:10px;
+    background:transparent;
+    border:none;
+    box-shadow:none;
+    text-shadow:none;
+    border-radius:none;
+    padding-left:7%;
+    border: 2px dotted $blue;
+    margin-bottom:20px;
+}
 
 .fieldSet ul li {
   width:100%;
