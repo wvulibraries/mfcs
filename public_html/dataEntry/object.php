@@ -53,6 +53,28 @@ try {
 	}
 	/* End Parent Object 'Stuff' */
 
+	// Editor information
+	$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
+	if (is_empty($object['createdBy'])) {
+		localvars::add("createdByUsername","Unavailable");
+	}
+	else {
+		$user   = users::get($object['createdBy']);
+		localvars::add("createdByUsername",$user['username']);
+	}
+	
+	localvars::add("createdOnDate",date('D, d M Y H:i',$object['createTime']));
+
+	if (is_empty($object['modifiedBy'])) {
+		localvars::add("modifiedByUsername","Unavailable");
+	}
+	else {
+		$user   = users::get($object['modifiedBy']);
+		localvars::add("modifiedByUsername",$user['username']);
+	}
+
+	localvars::add("modifiedOnDate",date('D, d M Y H:i',$object['modifiedTime']));
+
 	//////////
 	// Project Tab Stuff
 	$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
@@ -210,6 +232,11 @@ $engine->eTemplate("include","header");
 				<div class="tab-content">
 					<div class="tab-pane" id="metadata">
 						{local var="form"}
+
+						<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
+							<p>Created by: {local var="createdByUsername"} on {local var="createdOnDate"}</p>
+							<p>Modified by: {local var="modifiedByUsername"} on {local var="modifiedOnDate"}</p>
+						<?php } ?>
 					</div>
 
 					<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
