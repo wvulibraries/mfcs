@@ -338,13 +338,15 @@ class objects {
 		}
 		
 		// Insert into the database
-		$sql       = sprintf("INSERT INTO `objects` (parentID,formID,data,metadata,modifiedTime,createTime) VALUES('%s','%s','%s','%s','%s','%s')",
+		$sql       = sprintf("INSERT INTO `objects` (parentID,formID,data,metadata,modifiedTime,createTime,modifiedBy,createdBy) VALUES('%s','%s','%s','%s','%s','%s','%s','%s')",
 			isset(mfcs::$engine->cleanPost['MYSQL']['parentID'])?mfcs::$engine->cleanPost['MYSQL']['parentID']:"0",
 			mfcs::$engine->openDB->escape($formID),
 			encodeFields($data),
 			mfcs::$engine->openDB->escape($form['metadata']),
 			time(),
-			time()
+			time(),
+			mfcs::$engine->openDB->escape(users::user('ID')),
+			mfcs::$engine->openDB->escape(users::user('ID'))
 			);
 
 		$sqlResult = mfcs::$engine->openDB->query($sql);
@@ -536,12 +538,13 @@ class objects {
 		}
 
 		// insert new version
-		$sql = sprintf("UPDATE `objects` SET `parentID`='%s', `data`='%s', `formID`='%s', `metadata`='%s', `modifiedTime`='%s' WHERE `ID`='%s'",
+		$sql = sprintf("UPDATE `objects` SET `parentID`='%s', `data`='%s', `formID`='%s', `metadata`='%s', `modifiedTime`='%s', `modifiedBy`='%s' WHERE `ID`='%s'",
 			isset(mfcs::$engine->cleanPost['MYSQL']['parentID'])?mfcs::$engine->cleanPost['MYSQL']['parentID']:mfcs::$engine->openDB->escape($parentID),
 			encodeFields($data),
 			mfcs::$engine->openDB->escape($formID),
 			mfcs::$engine->openDB->escape($metadata),
 			(isnull($modifiedTime))?time():$modifiedTime,
+			mfcs::$engine->openDB->escape(users::user('ID')),
 			mfcs::$engine->openDB->escape($objectID)
 			); 
 
