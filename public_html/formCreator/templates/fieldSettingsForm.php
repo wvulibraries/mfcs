@@ -1,140 +1,113 @@
-<div class="#fieldSettingsForm noHide">
-    <div class="control-group " id="fieldSettings_container_name">
-        <label for="fieldSettings_name">
-            Field Name
-            <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The field name is a unique value that is used to identify a field."></i>
-        </label>
-        <input type="text" class="input-block-level" id="fieldSettings_name" data-bindName="name" name="fieldSettings_name"/>
-        <span class="help-block hidden"></span>
-    </div>
+<div class="#fieldSettingsForm dataSettings noHide">
+    <div class="group noHide">
+        <div class="control-group  " id="fieldSettings_container_name">
+            <label for="fieldSettings_name">
+                Field Name
+                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The field name is a unique value that is used to identify a field."></i>
+            </label>
+            <input type="text" class="input-block-level" id="fieldSettings_name" data-bindName="name" name="fieldSettings_name"/>
+            <span class="help-block hidden"></span>
+        </div>
 
-    <div class="control-group " id="fieldSettings_container_label">
-        <label for="fieldSettings_label">
-            Field Label
-            <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The field label tells your users what to enter in this field."></i>
-        </label>
-        <input type="text" class="input-block-level" id="fieldSettings_label" data-bindName="label" name="fieldSettings_label"/>
-        <span class="help-block hidden"></span>
-    </div>
+        <div class="control-group " id="fieldSettings_container_label">
+            <label for="fieldSettings_label">
+                Field Label
+                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The field label tells your users what to enter in this field."></i>
+            </label>
+            <input type="text" class="input-block-level" id="fieldSettings_label" data-bindName="label" name="fieldSettings_label"/>
+            <span class="help-block hidden"></span>
+        </div>
 
-    <div id="fieldSettings_container_value" class="control-group">
-        <label for="fieldSettings_value">
-            Value
-            <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="When the form is first displayed, this value will already be prepopulated."></i>
-        </label>
-        <a href="javascript:;" class="pull-right" onclick="$('#defaultValueVariables').modal('show')" id="fieldVariablesLink" style="display: none;">Variables</a>
-        <input type="text" class="input-block-level" id="fieldSettings_value" name="fieldSettings_value" data-bindName="value"/>
-        <span class="help-block hidden"></span>
-            <div id="defaultValueVariables" class="modal" rel="modal" data-show="false">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3 id="myModalLabel">Available variables for default value</h3>
-                </div>
-                <div class="modal-body">
-                    <b>User</b>
-                    <ul style="list-style: none;">
-                        <li><b>%userid%</b><br>The user id for the currently logged in user. (<i>Example: <?php echo forms::applyFieldVariables('%userid%') ?></i>)</li>
-                        <li><b>%username%</b><br>The username for the currently logged in user. (<i>Example: <?php echo forms::applyFieldVariables('%username%') ?></i>)</li>
-                        <li><b>%firstname%</b><br>The first name for the currently logged in user. (<i>Example: <?php echo forms::applyFieldVariables('%firstname%') ?></i>)</li>
-                        <li><b>%lastname%</b><br>The last name for the currently logged in user. (<i>Example: <?php echo forms::applyFieldVariables('%lastname%') ?></i>)</li>
-                    </ul>
-                    <hr>
-                    <b>Static Date/Time</b>
-                    <ul style="list-style: none;">
-                        <li><b>%date%</b><br>The current date as MM/DD/YYYY. (<i>Example: <?php echo forms::applyFieldVariables('%date%') ?></i>)</li>
-                        <li><b>%time%</b><br>The current time as HH:MM:SS. (<i>Example: <?php echo forms::applyFieldVariables('%time%') ?></i>)</li>
-                        <li><b>%time12%</b><br>The current 12-hr time. (<i>Example: <?php echo forms::applyFieldVariables('%time12%') ?></i>)</li>
-                        <li><b>%time24%</b><br>The current 24-hr time. (<i>Example: <?php echo forms::applyFieldVariables('%time24%') ?></i>)</li>
-                        <li><b>%timestamp%</b><br>The current UNIX system timestamp. (<i>Example: <?php echo forms::applyFieldVariables('%timestamp%') ?></i>)</li>
-                    </ul>
-                    <hr>
-                    <b>Custom Date/Time</b>
-                    <ul style="list-style: none;">
-                        <li>
-                            <b>%date(FORMAT)%</b><br>
-                            You can specify a custom format when creating dates and times where FORMAT is a PHP <a href="http://us2.php.net/manual/en/function.date.php" target="_blank">date()</a> format string.
-                            <br>
-                            <b><i>Example:</i></b> %date(l, m j Y)% becomes <?php echo forms::applyFieldVariables('%date(l, F j Y)%') ?>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-    </div>
+        <div id="fieldSettings_container_value" class="control-group ">
+            <label for="fieldSettings_value">
+                Value
+                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="When the form is first displayed, this value will already be prepopulated."></i>
+            </label>
+            <a href="javascript:;" class="pull-right" onclick="$('#defaultValueVariables').modal('show')" id="fieldVariablesLink" style="display: none;">Variables</a>
+            <input type="text" class="input-block-level" id="fieldSettings_value" name="fieldSettings_value" data-bindName="value"/>
+            <span class="help-block hidden"></span>
+        </div>
 
-    <div class="control-group" id="fieldSettings_container_placeholder">
-        <label for="fieldSettings_placeholder">
-            Placeholder Text
-            <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="If there is no value in the field, this can tell your users what to input."></i>
-        </label>
-        <input type="text" class="input-block-level" id="fieldSettings_placeholder" name="fieldSettings_placeholder" data-bindName="placeholder"/>
-        <span class="help-block hidden"></span>
-    </div>
+        <div class="control-group " id="fieldSettings_container_placeholder">
+            <label for="fieldSettings_placeholder">
+                Placeholder Text
+                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="If there is no value in the field, this can tell your users what to input."></i>
+            </label>
+            <input type="text" class="input-block-level" id="fieldSettings_placeholder" name="fieldSettings_placeholder" data-bindName="placeholder"/>
+            <span class="help-block hidden"></span>
+        </div>
 
-    <div class="control-group " id="fieldSettings_container_id">
-        <label for="fieldSettings_id">
-            CSS ID
-            <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The ID is a unique value that can be used to identify a field."></i>
-        </label>
-        <input type="text" class="input-block-level" id="fieldSettings_id" name="fieldSettings_id" data-bindName="id"/>
-        <span class="help-block hidden"></span>
-    </div>
+        <div class="control-group " id="fieldSettings_container_id">
+            <label for="fieldSettings_id">
+                CSS ID
+                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The ID is a unique value that can be used to identify a field."></i>
+            </label>
+            <input type="text" class="input-block-level" id="fieldSettings_id" name="fieldSettings_id" data-bindName="id"/>
+            <span class="help-block hidden"></span>
+        </div>
 
-    <div class="control-group " id="fieldSettings_container_class">
-        <label for="fieldSettings_class">
-            CSS Classes
-            <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Classes can be entered to give the field a different look and feel."></i>
-        </label>
-        <input type="text" class="input-block-level" id="fieldSettings_class" name="fieldSettings_class" data-bindName="class"/>
-        <span class="help-block hidden"></span>
-    </div>
+        <div class="control-group " id="fieldSettings_container_class">
+            <label for="fieldSettings_class">
+                CSS Classes
+                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Classes can be entered to give the field a different look and feel."></i>
+            </label>
+            <input type="text" class="input-block-level" id="fieldSettings_class" name="fieldSettings_class" data-bindName="class"/>
+            <span class="help-block hidden"></span>
+        </div>
 
-    <div class="noHide control-group " id="fieldSettings_container_style">
-        <label for="fieldSettings_style">
-            Local Styles
-            <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="You can set any HTML styles and they will only apply to this field."></i>
-        </label>
-        <input type="text" class="input-block-level" id="fieldSettings_style" name="fieldSettings_style" data-bindName="style"/>
-        <span class="help-block hidden"></span>
-    </div>
-
-    <div class="noHide control-group" id="fieldSettings_container_style">
-        <label for="fieldSettings_style">
-            Field Help
-            <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="You can set any help text you want displayed with this field. Any angle brackets in HTML text will be treated as HTML"></i>
-        </label>
-        <select class="input-block-level" id="fieldSettings_help_type" name="fieldSettings_help_type" data-bindName="helpType">
-            <option value="">None</option>
-            <option value="text">Plain text</option>
-            <option value="html">HTML text</option>
-            <option value="web">Webpage (URL)</option>
-        </select>
-        <input type="text" class="input-block-level" id="fieldSettings_help_text" name="fieldSettings_help_text" style="display: none;" data-bindName="help">
-        <textarea class="input-block-level" id="fieldSettings_help_html" name="fieldSettings_help_html" style="display: none;" data-bindName="help"></textarea>
-        <input type="text" class="input-block-level" id="fieldSettings_help_url" name="fieldSettings_help_url" style="display: none;" data-bindName="help" placeholder="http://example.com">
-        <span class="help-block hidden"></span>
-
-        <div id="fieldHelpModal" class="modal">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h3 id="myModalLabel">Field Help</h3>
-            </div>
-            <div class="modal-body">
-                <iframe id="fieldHelpModalURL" seamless="seamless" style="width: 100%; height: 100%;"></iframe>
-            </div>
+        <div class="control-group " id="fieldSettings_container_style">
+            <label for="fieldSettings_style">
+                Local Styles
+                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="You can set any HTML styles and they will only apply to this field."></i>
+            </label>
+            <input type="text" class="input-block-level" id="fieldSettings_style" name="fieldSettings_style" data-bindName="style"/>
+            <span class="help-block hidden"></span>
         </div>
     </div>
 
-    <div class="control-group" id="fieldSettings_container_choices">
-        <label for="fieldSettings_choices">
-            Choices
-        </label>
-        <select class="input-block-level" id="fieldSettings_choices_type" name="fieldSettings_choices_type" data-bindName="choicesType">
-            <option value="manual">Manual</option>
-            <option value="form">Another Form</option>
-        </select>
-            <label style="width: 100%;"><input type="checkbox" id="fieldSettings_choices_null" name="fieldSettings_choices_null" data-bindName="choicesNull"> Include 'Make a selection' placeholder</label></span>
+    <div class="group noHide">
+        <div class="control-group" id="fieldSettings_container_style">
+            <label for="fieldSettings_style">
+                Field Help
+                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="You can set any help text you want displayed with this field. Any angle brackets in HTML text will be treated as HTML"></i>
+            </label>
+
+            <select class="input-block-level" id="fieldSettings_help_type" name="fieldSettings_help_type" data-bindName="helpType">
+                <option value="">None</option>
+                <option value="text">Plain text</option>
+                <option value="html">HTML text</option>
+                <option value="web">Webpage (URL)</option>
+            </select>
+
+            <input type="text" class="input-block-level hide" id="fieldSettings_help_text" name="fieldSettings_help_text" data-bindName="help">
+
+            <textarea class="input-block-level hide" id="fieldSettings_help_html" name="fieldSettings_help_html" data-bindName="help"></textarea>
+
+            <input type="text" class="input-block-level hide" id="fieldSettings_help_url" name="fieldSettings_help_url" data-bindName="help" placeholder="http://example.com">
+
+            <span class="help-block hidden"></span>
+        </div>
+    </div>
+
+    <div class="group">
+        <div class="control-group" id="fieldSettings_container_choices">
+            <label for="fieldSettings_choices">
+                Choices
+            </label>
+
+            <select class="input-block-level" id="fieldSettings_choices_type" name="fieldSettings_choices_type" data-bindName="choicesType">
+                <option value="manual">Manual</option>
+                <option value="form">Another Form</option>
+            </select>
+
+            <label>
+                <input type="checkbox" id="fieldSettings_choices_null" name="fieldSettings_choices_null" data-bindName="choicesNull"> Include 'Make a selection' placeholder
+            </label>
+
             <div id="fieldSettings_choices_manual"></div>
+
             <div id="fieldSettings_choices_form">
+
                 <label for="fieldSettings_choices_formSelect">
                     Select a Form
                 </label>
@@ -153,36 +126,38 @@
                 </label>
                 <input type="test" id="fieldSettings_choices_fieldDefault" name="fieldSettings_choices_fieldDefault" data-bindName="choicesDefault">
             </div>
-        </p>
-        <span class="help-block hidden"></span>
+            <span class="help-block hidden"></span>
+        </div>
     </div>
 
 
-    <div class="control-group " id="fieldSettings_container_range">
-        <span class="span3">
-            <label for="fieldSettings_range_min">
-                Min
-            </label>
-            <input type="number" class="input-block-level" id="fieldSettings_range_min" name="fieldSettings_range_min" min="0" data-bindName="min"/>
-        </span>
-        <span class="span3">
-            <label for="fieldSettings_range_max">
-                Max
-            </label>
-            <input type="number" class="input-block-level" id="fieldSettings_range_max" name="fieldSettings_range_max" min="0" data-bindName="max" />
-        </span>
-        <span class="span2">
-            <label for="fieldSettings_range_step">
-                Step
-            </label>
-            <input type="number" class="input-block-level" id="fieldSettings_range_step" name="fieldSettings_range_step" min="0" data-bindName="step"/>
-        </span>
-        <span class="span4">
-            <label for="fieldSettings_range_format">
-                Format
-            </label>
-            <select class="input-block-level" id="fieldSettings_range_format" name="fieldSettings_range_format" data-bindName="format"></select>
-        </span>
+    <div class="group">
+        <div class="control-group " id="fieldSettings_container_range">
+            <span class="span3">
+                <label for="fieldSettings_range_min">
+                    Min
+                </label>
+                <input type="number" class="input-block-level" id="fieldSettings_range_min" name="fieldSettings_range_min" min="0" data-bindName="min"/>
+            </span>
+            <span class="span3">
+                <label for="fieldSettings_range_max">
+                    Max
+                </label>
+                <input type="number" class="input-block-level" id="fieldSettings_range_max" name="fieldSettings_range_max" min="0" data-bindName="max" />
+            </span>
+            <span class="span2">
+                <label for="fieldSettings_range_step">
+                    Step
+                </label>
+                <input type="number" class="input-block-level" id="fieldSettings_range_step" name="fieldSettings_range_step" min="0" data-bindName="step"/>
+            </span>
+            <span class="span6">
+                <label for="fieldSettings_range_format">
+                    Format
+                </label>
+                <select class="input-block-level" id="fieldSettings_range_format" name="fieldSettings_range_format" data-bindName="format"></select>
+            </span>
+        </div>
     </div>
 
     <div class="control-group" id="fieldSettings_container_externalUpdate">
@@ -668,5 +643,47 @@
                 </select>
             </div> -->
         </span>
+    </div>
+</div>
+
+
+
+
+
+
+<!-- Modals ===================================================================  -->
+
+ <div id="defaultValueVariables" class="modal hide" rel="modal" data-show="false">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Available variables for default value</h3>
+    </div>
+    <div class="modal-body">
+        <b>User</b>
+        <ul style="list-style: none;">
+            <li><b>%userid%</b><br>The user id for the currently logged in user. (<i>Example: <?php echo forms::applyFieldVariables('%userid%') ?></i>)</li>
+            <li><b>%username%</b><br>The username for the currently logged in user. (<i>Example: <?php echo forms::applyFieldVariables('%username%') ?></i>)</li>
+            <li><b>%firstname%</b><br>The first name for the currently logged in user. (<i>Example: <?php echo forms::applyFieldVariables('%firstname%') ?></i>)</li>
+            <li><b>%lastname%</b><br>The last name for the currently logged in user. (<i>Example: <?php echo forms::applyFieldVariables('%lastname%') ?></i>)</li>
+        </ul>
+        <hr>
+        <b>Static Date/Time</b>
+        <ul style="list-style: none;">
+            <li><b>%date%</b><br>The current date as MM/DD/YYYY. (<i>Example: <?php echo forms::applyFieldVariables('%date%') ?></i>)</li>
+            <li><b>%time%</b><br>The current time as HH:MM:SS. (<i>Example: <?php echo forms::applyFieldVariables('%time%') ?></i>)</li>
+            <li><b>%time12%</b><br>The current 12-hr time. (<i>Example: <?php echo forms::applyFieldVariables('%time12%') ?></i>)</li>
+            <li><b>%time24%</b><br>The current 24-hr time. (<i>Example: <?php echo forms::applyFieldVariables('%time24%') ?></i>)</li>
+            <li><b>%timestamp%</b><br>The current UNIX system timestamp. (<i>Example: <?php echo forms::applyFieldVariables('%timestamp%') ?></i>)</li>
+        </ul>
+        <hr>
+        <b>Custom Date/Time</b>
+        <ul style="list-style: none;">
+            <li>
+                <b>%date(FORMAT)%</b><br>
+                You can specify a custom format when creating dates and times where FORMAT is a PHP <a href="http://us2.php.net/manual/en/function.date.php" target="_blank">date()</a> format string.
+                <br>
+                <b><i>Example:</i></b> %date(l, m j Y)% becomes <?php echo forms::applyFieldVariables('%date(l, F j Y)%') ?>
+            </li>
+        </ul>
     </div>
 </div>
