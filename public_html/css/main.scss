@@ -490,6 +490,13 @@ input{
   outline:0;
   margin-bottom:20px;
 
+  &[readonly], .disabled{
+    cursor: not-allowed;
+    opacity:.6;
+    background:$lightgrey;
+    &:focus { border: 1px solid #ccc;}
+  }
+
   &[type=checkbox]{
     display:inline-block;
     max-width:20px;
