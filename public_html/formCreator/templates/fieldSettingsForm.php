@@ -5,7 +5,7 @@
                 Field Name
                 <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The field name is a unique value that is used to identify a field."></i>
             </label>
-            <input type="text" class="input-block-level" id="fieldSettings_name" data-bindName="name" name="fieldSettings_name"/>
+            <input type="text" class="input-block-level" id="fieldSettings_name" data-bindModel="name" name="fieldSettings_name"/>
             <span class="help-block hidden"></span>
         </div>
 
@@ -14,7 +14,7 @@
                 Field Label
                 <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The field label tells your users what to enter in this field."></i>
             </label>
-            <input type="text" class="input-block-level" id="fieldSettings_label" data-bindName="label" name="fieldSettings_label"/>
+            <input type="text" class="input-block-level" id="fieldSettings_label" data-bindModel="label" name="fieldSettings_label"/>
             <span class="help-block hidden"></span>
         </div>
 
@@ -24,7 +24,7 @@
                 <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="When the form is first displayed, this value will already be prepopulated."></i>
             </label>
             <a href="javascript:;" class="pull-right" onclick="$('#defaultValueVariables').modal('show')" id="fieldVariablesLink" style="display: none;">Variables</a>
-            <input type="text" class="input-block-level" id="fieldSettings_value" name="fieldSettings_value" data-bindName="value"/>
+            <input type="text" class="input-block-level" id="fieldSettings_value" name="fieldSettings_value" data-bindModel="value"/>
             <span class="help-block hidden"></span>
         </div>
 
@@ -33,7 +33,7 @@
                 Placeholder Text
                 <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="If there is no value in the field, this can tell your users what to input."></i>
             </label>
-            <input type="text" class="input-block-level" id="fieldSettings_placeholder" name="fieldSettings_placeholder" data-bindName="placeholder"/>
+            <input type="text" class="input-block-level" id="fieldSettings_placeholder" name="fieldSettings_placeholder" data-bindModel="placeholder"/>
             <span class="help-block hidden"></span>
         </div>
 
@@ -42,7 +42,7 @@
                 CSS ID
                 <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The ID is a unique value that can be used to identify a field."></i>
             </label>
-            <input type="text" class="input-block-level" id="fieldSettings_id" name="fieldSettings_id" data-bindName="id"/>
+            <input type="text" class="input-block-level" id="fieldSettings_id" name="fieldSettings_id" data-bindModel="id"/>
             <span class="help-block hidden"></span>
         </div>
 
@@ -51,7 +51,7 @@
                 CSS Classes
                 <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Classes can be entered to give the field a different look and feel."></i>
             </label>
-            <input type="text" class="input-block-level" id="fieldSettings_class" name="fieldSettings_class" data-bindName="class"/>
+            <input type="text" class="input-block-level" id="fieldSettings_class" name="fieldSettings_class" data-bindModel="class"/>
             <span class="help-block hidden"></span>
         </div>
 
@@ -60,7 +60,7 @@
                 Local Styles
                 <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="You can set any HTML styles and they will only apply to this field."></i>
             </label>
-            <input type="text" class="input-block-level" id="fieldSettings_style" name="fieldSettings_style" data-bindName="style"/>
+            <input type="text" class="input-block-level" id="fieldSettings_style" name="fieldSettings_style" data-bindModel="style"/>
             <span class="help-block hidden"></span>
         </div>
     </div>
@@ -72,18 +72,18 @@
                 <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="You can set any help text you want displayed with this field. Any angle brackets in HTML text will be treated as HTML"></i>
             </label>
 
-            <select class="input-block-level" id="fieldSettings_help_type" name="fieldSettings_help_type" data-bindName="helpType">
+            <select class="input-block-level" id="fieldSettings_help_type" name="fieldSettings_help_type" data-bindModel="helpType">
                 <option value="">None</option>
                 <option value="text">Plain text</option>
                 <option value="html">HTML text</option>
                 <option value="web">Webpage (URL)</option>
             </select>
 
-            <input type="text" class="input-block-level hide" id="fieldSettings_help_text" name="fieldSettings_help_text" data-bindName="help">
+            <input type="text" class="input-block-level hide" id="fieldSettings_help_text" name="fieldSettings_help_text" data-bindModel="help">
 
-            <textarea class="input-block-level hide" id="fieldSettings_help_html" name="fieldSettings_help_html" data-bindName="help"></textarea>
+            <textarea class="input-block-level hide" id="fieldSettings_help_html" name="fieldSettings_help_html" data-bindModel="help"></textarea>
 
-            <input type="text" class="input-block-level hide" id="fieldSettings_help_url" name="fieldSettings_help_url" data-bindName="help" placeholder="http://example.com">
+            <input type="text" class="input-block-level hide" id="fieldSettings_help_url" name="fieldSettings_help_url" data-bindModel="help" placeholder="http://example.com">
 
             <span class="help-block hidden"></span>
         </div>
@@ -95,13 +95,13 @@
                 Choices
             </label>
 
-            <select class="input-block-level" id="fieldSettings_choices_type" name="fieldSettings_choices_type" data-bindName="choicesType">
+            <select class="input-block-level" id="fieldSettings_choices_type" name="fieldSettings_choices_type" data-bindModel="choicesType">
                 <option value="manual">Manual</option>
                 <option value="form">Another Form</option>
             </select>
 
             <label>
-                <input type="checkbox" id="fieldSettings_choices_null" name="fieldSettings_choices_null" data-bindName="choicesNull"> Include 'Make a selection' placeholder
+                <input type="checkbox" id="fieldSettings_choices_null" name="fieldSettings_choices_null" data-bindModel="choicesNull"> Include 'Make a selection' placeholder
             </label>
 
             <div id="fieldSettings_choices_manual"></div>
@@ -111,20 +111,20 @@
                 <label for="fieldSettings_choices_formSelect">
                     Select a Form
                 </label>
-                <select class="input-block-level" id="fieldSettings_choices_formSelect" name="fieldSettings_choices_formSelect" data-bindName="choicesForm">
+                <select class="input-block-level" id="fieldSettings_choices_formSelect" name="fieldSettings_choices_formSelect" data-bindModel="choicesForm">
                     {local var="formsOptions"}
                 </select>
 
                 <label for="fieldSettings_choices_fieldSelect">
                     Select a Field
                 </label>
-                <select class="input-block-level" id="fieldSettings_choices_fieldSelect" name="fieldSettings_choices_fieldSelect" data-bindName="choicesField">
+                <select class="input-block-level" id="fieldSettings_choices_fieldSelect" name="fieldSettings_choices_fieldSelect" data-bindModel="choicesField">
                 </select>
 
                 <label for="fieldSettings_choices_fieldDefault">
                     Default Value
                 </label>
-                <input type="test" id="fieldSettings_choices_fieldDefault" name="fieldSettings_choices_fieldDefault" data-bindName="choicesDefault">
+                <input type="test" id="fieldSettings_choices_fieldDefault" name="fieldSettings_choices_fieldDefault" data-bindModel="choicesDefault">
             </div>
             <span class="help-block hidden"></span>
         </div>
@@ -137,25 +137,25 @@
                 <label for="fieldSettings_range_min">
                     Min
                 </label>
-                <input type="number" class="input-block-level" id="fieldSettings_range_min" name="fieldSettings_range_min" min="0" data-bindName="min"/>
+                <input type="number" class="input-block-level" id="fieldSettings_range_min" name="fieldSettings_range_min" min="0" data-bindModel="min"/>
             </span>
             <span class="span3">
                 <label for="fieldSettings_range_max">
                     Max
                 </label>
-                <input type="number" class="input-block-level" id="fieldSettings_range_max" name="fieldSettings_range_max" min="0" data-bindName="max" />
+                <input type="number" class="input-block-level" id="fieldSettings_range_max" name="fieldSettings_range_max" min="0" data-bindModel="max" />
             </span>
             <span class="span2">
                 <label for="fieldSettings_range_step">
                     Step
                 </label>
-                <input type="number" class="input-block-level" id="fieldSettings_range_step" name="fieldSettings_range_step" min="0" data-bindName="step"/>
+                <input type="number" class="input-block-level" id="fieldSettings_range_step" name="fieldSettings_range_step" min="0" data-bindModel="step"/>
             </span>
             <span class="span6">
                 <label for="fieldSettings_range_format">
                     Format
                 </label>
-                <select class="input-block-level" id="fieldSettings_range_format" name="fieldSettings_range_format" data-bindName="format"></select>
+                <select class="input-block-level" id="fieldSettings_range_format" name="fieldSettings_range_format" data-bindModel="format"></select>
             </span>
         </div>
     </div>
@@ -170,7 +170,7 @@
                 <label for="fieldSettings_externalUpdate_formSelect">
                     Select a Form
                 </label>
-                <select class="input-block-level" id="fieldSettings_externalUpdate_formSelect" name="fieldSettings_externalUpdate_formSelect" data-bindName="externalUpdateForm">
+                <select class="input-block-level" id="fieldSettings_externalUpdate_formSelect" name="fieldSettings_externalUpdate_formSelect" data-bindModel="externalUpdateForm">
                     <option value="">None</option>
                     {local var="formsOptions"}
                 </select>
@@ -178,7 +178,7 @@
                 <label for="fieldSettings_externalUpdate_fieldSelect">
                     Select a Field
                 </label>
-                <select class="input-block-level" id="fieldSettings_externalUpdate_fieldSelect" name="fieldSettings_externalUpdate_fieldSelect" data-bindName="externalUpdateField">
+                <select class="input-block-level" id="fieldSettings_externalUpdate_fieldSelect" name="fieldSettings_externalUpdate_fieldSelect" data-bindModel="externalUpdateField">
                 </select>
             </div>
             <span class="help-block hidden"></span>
@@ -190,7 +190,7 @@
             <label for="fieldSettings_idno_managedBy">
                 ID Number Options
             </label>
-            <select class="input-block-level" id="fieldSettings_idno_managedBy" name="fieldSettings_idno_managedBy" data-bindName="managedBy">
+            <select class="input-block-level" id="fieldSettings_idno_managedBy" name="fieldSettings_idno_managedBy" data-bindModel="managedBy">
                 <option value="system">Managed by System</option>
                 <option value="user">Managed by User</option>
             </select>
@@ -199,19 +199,19 @@
                 <label for="fieldSettings_idno_format">
                     Format
                 </label>
-                <input type="text" class="input-block-level" id="fieldSettings_idno_format" name="fieldSettings_idno_format" placeholder="st_###"  data-bindName="idnoFormat"/>
+                <input type="text" class="input-block-level" id="fieldSettings_idno_format" name="fieldSettings_idno_format" placeholder="st_###"  data-bindModel="idnoFormat"/>
             </div>
 
             <div class="span6" id="fieldSettings_container_idno_startIncrement">
                 <label for="fieldSettings_idno_startIncrement">
                     Auto Increment Start
                 </label>
-                <input type="number" class="input-block-level" id="fieldSettings_idno_startIncrement" name="fieldSettings_idno_startIncrement" min="0"  data-bindName="startIncrement"/>
+                <input type="number" class="input-block-level" id="fieldSettings_idno_startIncrement" name="fieldSettings_idno_startIncrement" min="0"  data-bindModel="startIncrement"/>
             </div>
 
             <div class="hidden" id="fieldSettings_container_idno_confirm">
                 <label class="checkbox">
-                    <input type="checkbox" id="fieldSettings_idno_confirm" name="fieldSettings_idno_confirm"  data-bindName="idnoConfirm">
+                    <input type="checkbox" id="fieldSettings_idno_confirm" name="fieldSettings_idno_confirm"  data-bindModel="idnoConfirm">
                     Are you sure? <span class="text-warning">This change could cause potential conflicts.</span>
                 </label>
             </div>
@@ -234,18 +234,18 @@
             <strong> File Upload Options </strong>
 
             <ul class="checkboxList">
-                <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_bgProcessing" name="fieldSettings_file_options_bgProcessing"  data-bindName="bgProcessing"> Process files in the background</label></li>
+                <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_bgProcessing" name="fieldSettings_file_options_bgProcessing"  data-bindModel="bgProcessing"> Process files in the background</label></li>
             </ul>
 
             <div class="fileTypeAdjustments">
                 <div>
                     <p> Image Options </p>
                     <ul class="checkboxList">
-                        <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_multipleFiles" name="fieldSettings_file_options_multipleFiles" data-bindName="multipleFiles"> Allow multiple files in single upload</label></li>
-                        <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_combine" name="fieldSettings_file_options_combine" data-bindName="combine"> Combine into single PDF</label></li>
-                        <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_ocr" name="fieldSettings_file_options_ocr" data-bindName="ocr"> Optical character recognition (OCR)</label></li>
-                        <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_convert" name="fieldSettings_file_options_convert" data-bindName="convert"> Convert Image file</label></li>
-                        <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_thumbnail" name="fieldSettings_file_options_thumbnail" data-bindName="thumbnail"> Create thumbnail</label></li>
+                        <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_multipleFiles" name="fieldSettings_file_options_multipleFiles" data-bindModel="multipleFiles"> Allow multiple files in single upload</label></li>
+                        <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_combine" name="fieldSettings_file_options_combine" data-bindModel="combine"> Combine into single PDF</label></li>
+                        <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_ocr" name="fieldSettings_file_options_ocr" data-bindModel="ocr"> Optical character recognition (OCR)</label></li>
+                        <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_convert" name="fieldSettings_file_options_convert" data-bindModel="convert"> Convert Image file</label></li>
+                        <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_thumbnail" name="fieldSettings_file_options_thumbnail" data-bindModel="thumbnail"> Create thumbnail</label></li>
                     </ul>
                 </div>
                 <div>
@@ -254,7 +254,7 @@
                     <ul class="checkboxList">
                         <li>
                             <label class="checkbox">
-                                <input type="checkbox" id="fieldSettings_file_options_convertAudio" name="fieldSettings_file_options_convert" data-bindName="convertAudio">
+                                <input type="checkbox" id="fieldSettings_file_options_convertAudio" name="fieldSettings_file_options_convert" data-bindModel="convertAudio">
                                 Convert or Modify Audio
                             </label>
                         </li>
@@ -266,12 +266,12 @@
                     <ul class="checkboxList">
                         <li>
                             <label class="checkbox">
-                                <input type="checkbox" id="fieldSettings_file_options_convertVideo" name="fieldSettings_file_options_convertVideo" data-bindName="convertVideo">
+                                <input type="checkbox" id="fieldSettings_file_options_convertVideo" name="fieldSettings_file_options_convertVideo" data-bindModel="convertVideo">
                                 Convert or Modify Video
                             </label>
                         </li>
                         <li>
-                            <label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_videothumbnail" name="fieldSettings_file_options_videothumbnail" data-bindName="videoThumbnail">
+                            <label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_videothumbnail" name="fieldSettings_file_options_videothumbnail" data-bindModel="videoThumbnail">
                                 Create thumbnail
                             </label>
                         </li>
@@ -290,7 +290,7 @@
                     <label class="span4">
                         Change BitRate:
                     </label>
-                    <select class="bitRate span8 last" data-bindName="bitRate">
+                    <select class="bitRate span8 last" data-bindModel="bitRate">
                             <option value="">  Select a BitRate  </option>
                             {local var="bitRates"}
                     </select>
@@ -300,7 +300,7 @@
                     <label class="span4 left">
                         Change Format:
                     </label>
-                    <select class="audioFormat span8 last" data-bindName="audioFormat">
+                    <select class="audioFormat span8 last" data-bindModel="audioFormat">
                             <option value="">    Select a Format  </option>
                             {local var="audioOptions"}
                     </select>
@@ -320,7 +320,7 @@
                     <label class="span4">
                         Change BitRate:
                     </label>
-                    <select class="videobitRate span8 last" data-bindName="videobitRate">
+                    <select class="videobitRate span8 last" data-bindModel="videobitRate">
                             <option value="">  Select a BitRate  </option>
                             {local var="bitRates"}
                     </select>
@@ -330,7 +330,7 @@
                     <label class="span4 left">
                         Change Format:
                     </label>
-                    <select class="videoFormat span8 last" data-bindName="videoFormat">
+                    <select class="videoFormat span8 last" data-bindModel="videoFormat">
                             <option value="">    Select a Format  </option>
                             {local var="videoTypes"}
                     </select>
@@ -367,20 +367,20 @@
                         Height (px)
                         <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
                     </label>
-                    <input type="number" class="input-block-level" id="fieldSettings_file_video_height" name="fieldSettings_file_video_height" min="0" data-bindName="videoHeight"/>
+                    <input type="number" class="input-block-level" id="fieldSettings_file_video_height" name="fieldSettings_file_video_height" min="0" data-bindModel="videoHeight"/>
                 </span>
                 <span class="span6">
                     <label for="fieldSettings_file_video_width">
                         Width (px)
                         <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
                     </label>
-                    <input type="number" class="input-block-level" id="fieldSettings_file_video_width" name="fieldSettings_file_video_width" min="0"  data-bindName="videoWidth"/>
+                    <input type="number" class="input-block-level" id="fieldSettings_file_video_width" name="fieldSettings_file_video_width" min="0"  data-bindModel="videoWidth"/>
                 </span>
                 </div>
                 <div class="" id="fieldSettings_file_videoThumbnail">
                     <span class="span12">
                         <label for="fieldSettings_file_video_aspectRatio"> Aspect Ratio </label>
-                            <select class="videoAspectRatio span12 last" data-bindName="aspectRatio">
+                            <select class="videoAspectRatio span12 last" data-bindModel="aspectRatio">
                                 <option value="">     Select an Aspect Ratio    </option>
                                 <option value="4:3">  Standard Definition - 4:3 </option>
                                 <option value="16:9"> Wide Screen - 16:9        </option>
@@ -405,21 +405,21 @@
                         Number
                         <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The number of frames that a thumbnail will be grabbed.  Max 10."></i>
                     </label>
-                    <input type="number" class="input-block-level" id="fieldSettings_file_video_frames" name="fieldSettings_file_video_frames" min="0" data-bindName="videoThumbFrames"/>
+                    <input type="number" class="input-block-level" id="fieldSettings_file_video_frames" name="fieldSettings_file_video_frames" min="0" data-bindModel="videoThumbFrames"/>
                 </span>
                 <span class="span4">
                     <label for="fieldSettings_file_video_thumbheight">
                         Height (px)
                         <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
                     </label>
-                    <input type="number" class="input-block-level" id="fieldSettings_file_video_thumbheight" name="fieldSettings_file_video_thumbheight" min="0" data-bindName="videoThumbHeight"/>
+                    <input type="number" class="input-block-level" id="fieldSettings_file_video_thumbheight" name="fieldSettings_file_video_thumbheight" min="0" data-bindModel="videoThumbHeight"/>
                 </span>
                 <span class="span4">
                     <label for="fieldSettings_file_video_thumbwidth">
                         Width (px)
                         <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
                     </label>
-                    <input type="number" class="input-block-level" id="fieldSettings_file_video_thumbwidth" name="fieldSettings_file_video_thumbwidth" min="0" data-bindName="videoThumbWidth"/>
+                    <input type="number" class="input-block-level" id="fieldSettings_file_video_thumbwidth" name="fieldSettings_file_video_thumbwidth" min="0" data-bindModel="videoThumbWidth"/>
                 </span>
             </div>
             <div class="" id="fieldSettings_video_thumbnail">
@@ -427,7 +427,7 @@
                     <label for="fieldSettings_file_video_formatThumb">
                         Format
                     </label>
-                    <select class="input-block-level" id="fieldSettings_file_video_formatThumb" name="fieldSettings_file_video_formatThumb" data-bindName="videoFormatThumb">
+                    <select class="input-block-level" id="fieldSettings_file_video_formatThumb" name="fieldSettings_file_video_formatThumb" data-bindModel="videoFormatThumb">
                         <option value="">Select Format</option>
                         {local var="videoThumbs"}
                     </select>
@@ -446,28 +446,28 @@
                     <label for="fieldSettings_file_convert_height">
                         Max Height (px)
                     </label>
-                    <input type="number" class="input-block-level" id="fieldSettings_file_convert_height" name="fieldSettings_file_convert_height" min="1" data-bindName="convertHeight"/>
+                    <input type="number" class="input-block-level" id="fieldSettings_file_convert_height" name="fieldSettings_file_convert_height" min="1" data-bindModel="convertHeight"/>
                 </div>
 
                 <div class="span3" id="fieldSettings_container_file_convert_width">
                     <label for="fieldSettings_file_convert_width">
                         Max Width (px)
                     </label>
-                    <input type="number" class="input-block-level" id="fieldSettings_file_convert_width" name="fieldSettings_file_convert_width" min="1" data-bindName="convertWidth"/>
+                    <input type="number" class="input-block-level" id="fieldSettings_file_convert_width" name="fieldSettings_file_convert_width" min="1" data-bindModel="convertWidth"/>
                 </div>
 
                 <div class="span3" id="fieldSettings_container_file_convert_reolution">
                     <label for="fieldSettings_file_convert_resolution">
                         Resolution (DPI)
                     </label>
-                    <input type="number" class="input-block-level" id="fieldSettings_file_convert_resolution" name="fieldSettings_file_convert_resolution" min="72" data-bindName="convertResolution"/>
+                    <input type="number" class="input-block-level" id="fieldSettings_file_convert_resolution" name="fieldSettings_file_convert_resolution" min="72" data-bindModel="convertResolution"/>
                 </div>
 
                 <div class="span3" id="fieldSettings_container_file_convert_extension">
                     <label for="fieldSettings_file_convert_format">
                         Format
                     </label>
-                    <select class="input-block-level" id="fieldSettings_file_convert_format" name="fieldSettings_file_convert_format" data-bindName="convertFormat">
+                    <select class="input-block-level" id="fieldSettings_file_convert_format" name="fieldSettings_file_convert_format" data-bindModel="convertFormat">
                         <option value="">Select Format</option>
                         {local var="conversionFormats"}
                     </select>
@@ -476,13 +476,13 @@
 
             <ul class="checkboxList">
                 <li>
-                    <label class="checkbox"><input type="checkbox" id="fieldSettings_file_convert_watermark" name="fieldSettings_file_convert_watermark" data-bindName="watermark">Watermark</label>
+                    <label class="checkbox"><input type="checkbox" id="fieldSettings_file_convert_watermark" name="fieldSettings_file_convert_watermark" data-bindModel="watermark">Watermark</label>
                     <div class="">
                         <div class="span6">
                             <label for="fieldSettings_file_watermark_image">
                                 Image
                             </label>
-                            <select class="input-block-level" id="fieldSettings_file_watermark_image" name="fieldSettings_file_watermark_image" data-bindName="watermarkImage">
+                            <select class="input-block-level" id="fieldSettings_file_watermark_image" name="fieldSettings_file_watermark_image" data-bindModel="watermarkImage">
                                 <option value="">Select Image</option>
                                 {local var="watermarkList"}
                             </select>
@@ -491,7 +491,7 @@
                             <label for="fieldSettings_file_watermark_location">
                                 Location
                             </label>
-                            <select class="input-block-level" id="fieldSettings_file_watermark_location" name="fieldSettings_file_watermark_location" data-bindName="watermarkLocation">
+                            <select class="input-block-level" id="fieldSettings_file_watermark_location" name="fieldSettings_file_watermark_location" data-bindModel="watermarkLocation">
                                 <option value="">Select Location</option>
                                 {local var="imageLocations"}
                             </select>
@@ -500,7 +500,7 @@
                 </li>
                 <li>
                     <label class="checkbox">
-                        <input type="checkbox" id="fieldSettings_file_convert_border" name="fieldSettings_file_convert_border" data-bindName="border">
+                        <input type="checkbox" id="fieldSettings_file_convert_border" name="fieldSettings_file_convert_border" data-bindModel="border">
                         Border
                     </label>
                     <div class="">
@@ -509,7 +509,7 @@
                                 Height (px)
                                 <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Border width of the top and bottom."></i>
                             </label>
-                            <input type="number" class="input-block-level" id="fieldSettings_file_border_height" name="fieldSettings_file_border_height" min="0" data-bindName="borderHeight"/>
+                            <input type="number" class="input-block-level" id="fieldSettings_file_border_height" name="fieldSettings_file_border_height" min="0" data-bindModel="borderHeight"/>
                         </div>
 
                         <div class="span4">
@@ -517,14 +517,14 @@
                                 Width (px)
                                 <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Border width of the left and right."></i>
                             </label>
-                            <input type="number" class="input-block-level" id="fieldSettings_file_border_width" name="fieldSettings_file_border_width" min="0" data-bindName="borderWidth"/>
+                            <input type="number" class="input-block-level" id="fieldSettings_file_border_width" name="fieldSettings_file_border_width" min="0" data-bindModel="borderWidth"/>
                         </div>
 
                         <div class="span4">
                             <label for="fieldSettings_file_border_color">
                                 Color
                             </label>
-                            <input type="color" class="input-block-level" id="fieldSettings_file_border_color" name="fieldSettings_file_border_color" data-bindName="borderColor"/>
+                            <input type="color" class="input-block-level" id="fieldSettings_file_border_color" name="fieldSettings_file_border_color" data-bindModel="borderColor"/>
                         </div>
                     </div>
                 </li>
@@ -543,20 +543,20 @@
                         Height (px)
                         <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
                     </label>
-                    <input type="number" class="input-block-level" id="fieldSettings_file_thumbnail_height" name="fieldSettings_file_thumbnail_height" min="0" data-bindName="thumbnailHeight"/>
+                    <input type="number" class="input-block-level" id="fieldSettings_file_thumbnail_height" name="fieldSettings_file_thumbnail_height" min="0" data-bindModel="thumbnailHeight"/>
                 </span>
                 <span class="span4">
                     <label for="fieldSettings_file_thumbnail_width">
                         Width (px)
                         <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="If set to 0, aspect ratio will be maintained."></i>
                     </label>
-                    <input type="number" class="input-block-level" id="fieldSettings_file_thumbnail_width" name="fieldSettings_file_thumbnail_width" min="0" data-bindName="thumbnailWidth"/>
+                    <input type="number" class="input-block-level" id="fieldSettings_file_thumbnail_width" name="fieldSettings_file_thumbnail_width" min="0" data-bindModel="thumbnailWidth"/>
                 </span>
                 <span class="span4">
                     <label for="fieldSettings_file_thumbnail_format">
                         Format
                     </label>
-                    <select class="input-block-level" id="fieldSettings_file_thumbnail_format" name="fieldSettings_file_thumbnail_format" data-bindName="thumbnailFormat">
+                    <select class="input-block-level" id="fieldSettings_file_thumbnail_format" name="fieldSettings_file_thumbnail_format" data-bindModel="thumbnailFormat">
                         <option value="">Select Format</option>
                         {local var="conversionFormats"}
                     </select>
@@ -572,74 +572,74 @@
             <ul class="checkboxList">
                 <li>
                     <label class="checkbox">
-                        <input type="checkbox" id="fieldSettings_options_required" name="fieldSettings_options_required" data-bindName="required"> Required
+                        <input type="checkbox" id="fieldSettings_options_required" name="fieldSettings_options_required" data-bindModel="required"> Required
                          <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is required to be filled out."></i>
                     </label>
 
                 </li>
                 <li>
                     <label class="checkbox">
-                        <input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates" data-bindName="duplicates"> No duplicates
+                        <input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates" data-bindModel="duplicates"> No duplicates
                          <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Duplicate entries for this form are not allowed."></i>
                     </label>
 
                 </li>
                 <li>
                     <label class="checkbox">
-                        <input type="checkbox" id="fieldSettings_options_readonly" name="fieldSettings_options_readonly" data-bindName="readonly"> Read only
+                        <input type="checkbox" id="fieldSettings_options_readonly" name="fieldSettings_options_readonly" data-bindModel="readonly"> Read only
                          <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is read-only, data is pulled from form definition on insert, previous revision on update. not from POST"></i>
                     </label>
 
                 </li>
                 <li>
                     <label class="checkbox">
-                        <input type="checkbox" id="fieldSettings_options_disabled" name="fieldSettings_options_disabled" data-bindName="disabled"> Disabled
+                        <input type="checkbox" id="fieldSettings_options_disabled" name="fieldSettings_options_disabled" data-bindModel="disabled"> Disabled
                          <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is disabled and not submitted to POST"></i>
                     </label>
 
                 </li>
                 <li>
                     <label class="checkbox">
-                        <input type="checkbox" id="fieldSettings_options_disabled_insert" name="fieldSettings_options_disabled_insert" data-bindName="disabledInsert"> Disabled on Insert
+                        <input type="checkbox" id="fieldSettings_options_disabled_insert" name="fieldSettings_options_disabled_insert" data-bindModel="disabledInsert"> Disabled on Insert
                          <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is hideen and disabled on insert forms."></i>
                     </label>
                 </li>
                 <li>
                     <label class="checkbox">
-                        <input type="checkbox" id="fieldSettings_options_disabled_update" name="fieldSettings_options_disabled_update" data-bindName="disabledUpdate"> Read only on Update
+                        <input type="checkbox" id="fieldSettings_options_disabled_update" name="fieldSettings_options_disabled_update" data-bindModel="disabledUpdate"> Read only on Update
                          <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is set to read only on update forms. Only read and inserted into the database on insert forms."></i>
                     </label>
                 </li>
                 <li>
                     <label class="checkbox">
-                        <input type="checkbox" id="fieldSettings_options_publicRelease" name="fieldSettings_options_publicRelease" data-bindName="publicRelease"> Public release
+                        <input type="checkbox" id="fieldSettings_options_publicRelease" name="fieldSettings_options_publicRelease" data-bindModel="publicRelease"> Public release
                         <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Dependant on Export Script: Metadata check to determine if field should be exported to XML"></i>
                     </label>
                 </li>
                 <li>
                     <label class="checkbox">
-                        <input type="checkbox" id="fieldSettings_options_sortable" name="fieldSettings_options_sortable" data-bindName="sortable"> Sortable
+                        <input type="checkbox" id="fieldSettings_options_sortable" name="fieldSettings_options_sortable" data-bindModel="sortable"> Sortable
                         <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is Sortable in list table in MFCS."></i>
                     </label>
 
                 </li>
                 <li>
                     <label class="checkbox">
-                        <input type="checkbox" id="fieldSettings_options_searchable" name="fieldSettings_options_searchable" data-bindName="searchable"> Searchable
+                        <input type="checkbox" id="fieldSettings_options_searchable" name="fieldSettings_options_searchable" data-bindModel="searchable"> Searchable
                         <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Dependant on Export: Can search on this field in public facing repository."></i>
                     </label>
 
                 </li>
                 <li>
                     <label class="checkbox">
-                        <input type="checkbox" id="fieldSettings_options_displayTable" name="fieldSettings_options_displayTable" data-bindName="displayTable"> Display in list table
+                        <input type="checkbox" id="fieldSettings_options_displayTable" name="fieldSettings_options_displayTable" data-bindModel="displayTable"> Display in list table
                        <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is displayed in the listing table in MFCS"></i>
                     </label>
 
                 </li>
                 <li>
                     <label class="checkbox">
-                        <input type="checkbox" id="fieldSettings_options_hidden" name="fieldSettings_options_hidden" data-bindName="hidden"> Hidden
+                        <input type="checkbox" id="fieldSettings_options_hidden" name="fieldSettings_options_hidden" data-bindModel="hidden"> Hidden
                           <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Input type is set to Hidden."></i>
                     </label>
                 </li>
@@ -652,11 +652,11 @@
             <label for="fieldSettings_validation">
                 Validation
             </label>
-            <select class="input-block-level" id="fieldSettings_validation" name="fieldSettings_validation" data-bindName="validation">
+            <select class="input-block-level" id="fieldSettings_validation" name="fieldSettings_validation" data-bindModel="validation">
                 {local var="validationTypes"}
             </select>
             <br>
-            <input type="text" class="input-block-level hide" id="fieldSettings_validationRegex" name="fieldSettings_validationRegex" placeholder="Enter a Regex" data-bindName="validationRegex"/>
+            <input type="text" class="input-block-level hide" id="fieldSettings_validationRegex" name="fieldSettings_validationRegex" placeholder="Enter a Regex" data-bindModel="validationRegex"/>
         </div>
     </div>
 </div>
