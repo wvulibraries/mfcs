@@ -3580,7 +3580,7 @@ qq.UploadHandlerForm = function(o, uploadCompleteCallback, logCallback) {
 /*globals qq, File, XMLHttpRequest, FormData, Blob*/
 qq.UploadHandlerXhr = function(o, uploadCompleteCallback, logCallback) {
     "use strict";
-
+    
     var options = o,
         uploadComplete = uploadCompleteCallback,
         log = logCallback,
@@ -7184,6 +7184,7 @@ $(function(){
 	modalBindings();
 	applyLabelName();
 
+
 	// Blank all panes when changing tabs
 	fieldTab.on("click", "a", function() {
 		$('li', formPreview).removeClass("well");
@@ -7413,9 +7414,6 @@ $(function() {
 // Helper Functions
 // ===================================================================
 function applyLabelName(){
-	// added for performance.  Labels the element in the form preview
-	// Other method was added through clickthrough and was bad for performance
-	// 31 ms versus 5299.128ms
 	$('.fieldLabels').each(function(){
 		var label = $(this).parent().parent().next().find($('input[name^="name"]')).val();
 		$(this).html(label);
@@ -7466,7 +7464,6 @@ function showFieldSettings(fullID) {
 		var opts;
 		var tmp;
 		var i;
-
 		// Hide the nothing selected error and show the form
 		$("#noFieldSelected").hide();
 		if (type == "fieldset") {
@@ -7476,6 +7473,7 @@ function showFieldSettings(fullID) {
 		else {
 			fieldSettings_fieldset_form.hide();
 			fieldSettings_form.show();
+			//fieldSettings_form.children().hide();
 
 			// Create jQuery shortcuts (code optimization)
 			var fieldSettings_name                 = $("#fieldSettings_name");
@@ -7608,89 +7606,13 @@ function showFieldSettings(fullID) {
 	}
 }
 
-// function coupleBinding(obj, dataID) {
-// 	dataID = parseInt(dataID);
-// 	$('.bindingData').show();
-//     if(dataID || dataID === 0){
-// 	    $(obj).each(function () {
-// 			var dataName = $(this).data('bindname');
-// 			var model    = $('[data-model]');
-// 			var binder   = $('[data-bind]');
-
-// 	        $(this).attr('data-model', dataName + "_" + dataID);
-// 	        dataBind(model, binder, true); // set initial state to get data
-// 	    });
-// 	}
-// }
-
-// function dataBind(model, binder, initialState) {
-//     // initial grabbing of data
-//     if (typeof initialState !== 'undefined' && initialState) {
-//         binder.each(function () {
-//             var dataModel = $(this).data('bind');
-//             var value = $(this).val();
-//             var dataBinder = $('[data-model=\"' + dataModel + '\"]');
-
-//             if ($(this).is('input[type=checkbox]')) {
-//                 value = evaluateCheck($(this));
-//             }
-
-//             bindValues(value, dataBinder);
-//         });
-//     }
-//     model.each(function () {
-//         $(this).bind("keyup change", function (e) {
-//             var dataModel = $(this).data('model');
-//             var value = $(this).val();
-//             var dataBinder = $('[data-bind=\"' + dataModel + '\"]');
-
-//             if ($(this).is('input[type=checkbox]')) {
-//                 value = evaluateCheck($(this));
-//             }
-
-//             if($(this).is('[data-model^="name"')){
-//             	applyLabelName();
-//             }
-
-//             bindValues(value, dataBinder);
-//         });
-//     });
-//     $('.bindingData').hide();
-// }
-
-
-// function evaluateCheck(object){
-// 	return (object.is(':checked') ? true : false);
-// }
-
-// function bindValues(value, binder) {
-//     if(binder.is("input, textarea")) {
-//         binder.val(value);
-//     }
-//     else if(binder.is("input[type=checkbox]")) {
-// 		if(value == "true"){
-// 			binder.prop('checked', true);
-// 		}
-// 		else {
-// 			binder.prop('checked', false);
-// 		}
-//     }
-//     else if(binder.is('select')) {
-//         binder.find('option[value="' + value + '"]').prop('selected', true);
-//     }
-
-//     if(binder.not('select,input,textarea')){
-//         binder.html(value);
-//     }
-// }
-
 function fieldSettingsBindings(){
 	var choicesFields = {};
 	var formPreview   = $("#formPreview");
 	formPreview.children('li').removeClass('activeField');
 
     // Setup Form Bindings
-    formPreview.find('[data-bind]').bind('change', setBindValues);
+    $('#fieldSettings_form').find("[data-bindmodel]").bind('change keyup', bindToHiddenForm);
 
 	// Select a field to change settings
 	formPreview.on("click", "li", function(event) {
@@ -7698,14 +7620,14 @@ function fieldSettingsBindings(){
 		var id = $(this).data('id');
 		globalFieldID = id;
 
-		console.log(globalFieldID);
+		formPreview.find('[data-bind]').bind('change', setOriginalValues);
 
 		if(!$(this).hasClass('activeField')){
 			formPreview.find('.activeField').removeClass('activeField');
 			$(this).addClass('activeField');
 			$("#fieldTab a[href='#fieldSettings']").tab("show");
 			showFieldSettings(id);
-            setInitialBind();
+			setInitialBind();
 		}
 	});
 
@@ -7714,7 +7636,6 @@ function fieldSettingsBindings(){
 
 function setInitialBind(){
     var id = globalFieldID;
-
     if (typeof id == 'undefined') {
         return;
     }
@@ -7722,19 +7643,54 @@ function setInitialBind(){
         var parentObj  = $("#formPreview").find("[data-id='"+ id +"']");
         var hiddenForm = parentObj.find('.fieldValues');
         hiddenForm.find('[data-bind]').change();
+        $("#formPreview").find('[data-bind]').unbind('change', setOriginalValues);
     }
 }
 
-function setBindValues(){
+function setOriginalValues(){
     var id          = globalFieldID;
     var bindObj     = $(this).data('bind');
-    var value       = $(this).val();
+    var value      = $(this).is("input[type=checkbox]") ? evaluateCheck($(this)) : $(this).val();
     var bindToInput = $('#fieldSettings_form').find("[data-bindmodel='" + bindObj + "']");
-    if(bindToInput.is('input[type=text]')){
+
+    console.log($(this));
+    console.log(bindToInput);
+
+    // Modifications for inputs and selects need to be done here same with checks
+    if(bindToInput.is('input[type=text],textarea')){
         bindToInput.val(value);
+    }
+    else if(bindToInput.is("input[type=checkbox]")) {
+		if(value == "true"){
+			bindToInput.prop('checked', true);
+		}
+		else {
+			bindToInput.prop('checked', false);
+		}
+    }
+    else if(bindToInput.is('select')) {
+    	console.log('select menu' + $(this));
+        bindToInput.find('option[value="' + value + '"]').prop('selected', true);
     }
 }
 
+function bindToHiddenForm(){
+	var id = globalFieldID;
+	if (typeof id == 'undefined') {
+        return;
+    }
+    else {
+		var inputObj   = $(this).data('bindmodel');
+		var value      = $(this).is("input[type=checkbox]") ? evaluateCheck($(this)) : $(this).val();
+		var parentObj  = $("#formPreview").find("[data-id='"+ id +"']");
+		var hiddenForm = parentObj.find('.fieldValues');
+		hiddenForm.find("[data-bind='"+ inputObj +"']").val(value);
+    }
+}
+
+function evaluateCheck(object){
+	return (object.is(':checked') ? true : false);
+}
 
 function formSettingsBindings() {
 	$("#formTitle").on("click", function() {
@@ -8096,7 +8052,15 @@ function newFieldValues(id,type,vals) {
     vals.type = determineType(type);
     type = vals.type;
 
-    var defaultHiddenFormFields = ['position', 'type', 'label', 'value', 'placeholder', 'id', 'class', 'style',
+    var help = vals.help;
+    if(help.length > 0){
+			var helpValue = help.split("|")[1];
+			var helpType  = help.split("|")[0];
+			vals.help     = helpValue;
+			vals.helpType = helpType;
+    }
+
+    var defaultHiddenFormFields = ['name','position', 'type', 'label', 'value', 'placeholder', 'id', 'class', 'style',
     'help', 'helpType', 'required', 'duplicates', 'readonly', 'disabled', 'disabledInsert', 'disabledUpdate', 'publicRelease',
     'sortable', 'searchable', 'displayTable', 'hidden', 'validation', 'validationRegex', 'access', 'fieldset' ];
 
