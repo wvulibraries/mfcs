@@ -1,3 +1,7 @@
+// Global Variable
+// ===================================================================
+var globalFieldID;
+
 // Document Ready
 // ===================================================================
 $(function(){
@@ -292,8 +296,7 @@ function showFieldSettings(fullID) {
 		fieldSettings_form.hide();
 	}
 	else {
-
-		var id       = fullID.split("_")[1];
+		var id       = fullID;
 		var type     = $("#type_"+id).val();
 		var fieldset = $("#fieldset_"+id);
 		var opts;
@@ -309,9 +312,6 @@ function showFieldSettings(fullID) {
 		else {
 			fieldSettings_fieldset_form.hide();
 			fieldSettings_form.show();
-
-			// Hide all but the common fields
-			fieldSettings_form.children().not(".noHide").hide();
 
 			// Create jQuery shortcuts (code optimization)
 			var fieldSettings_name                 = $("#fieldSettings_name");
@@ -441,8 +441,6 @@ function showFieldSettings(fullID) {
 				$('#fieldVariablesLink').hide();
 			}
 		}
-
-		// coupleBinding('[data-bindname]', id);
 	}
 }
 
@@ -530,16 +528,32 @@ function fieldSettingsBindings(){
 	// Select a field to change settings
 	formPreview.on("click", "li", function(event) {
 		event.stopPropagation();
+		var id = $(this).data('id');
+		globalFieldID = id;
+
+		console.log(globalFieldID);
 
 		if(!$(this).hasClass('activeField')){
 			formPreview.find('.activeField').removeClass('activeField');
 			$(this).addClass('activeField');
-			console.log($(this).data('id'));
-			// $("#fieldTab a[href='#fieldSettings']").tab("show");
-			// showFieldSettings(li.attr("id"));
+			$("#fieldTab a[href='#fieldSettings']").tab("show");
+			showFieldSettings(id);
 		}
 	});
+
+	setInitialBind(true);
 }  // end function
+
+function setTheBind(){
+	var id = globalFieldID;
+	var parentObj = $("#formPreview").find("[data-id='"+ id +"']");
+	var targetFields = parentObj.find('.fieldValues');
+}
+
+function setInitialBind(init = false){
+	var id = globalFieldID;
+	console.log(init);
+}
 
 
 function formSettingsBindings() {
@@ -1084,7 +1098,7 @@ function createHiddenFields(fieldArray,id, vals){
     $.each(fieldArray, function(index, value) {
         var field = value + "_" + id;
         var hiddenValues = ((vals[value] !== undefined) ? vals[value]: '');
-        output += '<input type="hidden" id="'+field+'" name="'+field+'" data-bind="'+field+'" value="'+hiddenValues+'"/>';
+        output += '<input type="hidden" id="'+field+'" name="'+field+'" data-bind="'+value+'" value="'+hiddenValues+'"/>';
     });
     return output;
 }
