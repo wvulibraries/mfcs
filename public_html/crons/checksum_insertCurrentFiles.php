@@ -14,24 +14,53 @@ if (!isCLI()) {
 // Turn off EngineAPI template engine
 $engine->obCallback = FALSE;
 
-$forms = forms::getForms(TRUE);
+$sql       = sprintf("SELECT COUNT(*) FROM `objects`");
+$sqlResult = $engine->openDB->query($sql);
+
+if (!$sqlResult['result']) {
+	errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+	return FALSE;
+}
+
+$row          = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+$totalObjects = $row["COUNT(*)"];
+printf("Total Objects: %s\n",$totalObjects);
+
+$sql       = sprintf("SELECT `ID` FROM `objects`");
+$sqlResult = $engine->openDB->query($sql);
+
+if (!$sqlResult['result']) {
+	errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+	return FALSE;
+}
 
 $count = 0;
-foreach ($forms as $form) {
-	$objects = objects::getAllObjectsForForm($form['ID']);
-	$count  += getFiles($form,$objects);
+while ($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+
+	$objects = objects::get($row['ID'],TRUE);
+	$count  += getFiles($objects);
+
 }
+
+
+// for ($I=1;$I<= $totalObjects;$I += 10000) {
+	// $objects = objects::getObjects(1,80000);
+	// $count  += getFiles($objects);
+	// printf("Current Count: %s\n",$count);
+// }
 
 print "$count\n";
 
 #### ###################################################################### ####
 
-function getFiles($form,$objects) {
+function getFiles($object) {
 
 	$count = 0;
-	foreach ($objects as $object) {
+	// foreach ($objects as $object) {
 
-		if ($object['metadata'] == 1) continue;
+		if ($object['metadata'] == 1) return 0;
+
+		$form = forms::get($object['formID']);
 
 		foreach ($form['fields'] as $field) {
 			if ($field['type'] == "file") {
@@ -44,6 +73,21 @@ function getFiles($form,$objects) {
 
 					foreach ($object['data'][$field['name']]['files']['archive'] as $file) {
 						$count++;
+						$location = sprintf("%s/%s",
+							$file['path'],
+							$file['name']
+							);
+
+						$sql       = sprintf("INSERT INTO `filesChecks` (`location`) VALUES('%s')",
+							mfcs::$engine->openDB->escape($location)
+							);
+						$sqlResult = mfcs::$engine->openDB->query($sql);
+
+						if (!$sqlResult['result']) {
+							errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+							return FALSE;
+						}
+
 					}
 
 				}
@@ -51,7 +95,7 @@ function getFiles($form,$objects) {
 		}
 
 
-	}
+	// }
 
 	return $count;
 }
