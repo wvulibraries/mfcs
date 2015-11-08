@@ -53,4 +53,6 @@ $engine->eTemplate("load","distribution");
 localVars::add("siteRoot",mfcs::config("siteRoot"));
 localVars::add('pageTitle',mfcs::config("pageTitle"));
 localVars::add('pageHeader',mfcs::config("pageHeader"));
+
+$notificationEmails = array("mrbond@mail.wvu.edu"=>"Michael Bond");
 ?>

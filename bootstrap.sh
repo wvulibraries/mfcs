@@ -62,6 +62,10 @@ touch /vagrant/serverConfiguration/serverlogs/error_log
 /etc/init.d/httpd restart
 chkconfig httpd on
 
+# setup emailing support (this is a vagrant requirement) due to symbolic linking
+sudo mkdir -p /tmp/git/phpincludes/engine/phpmailer
+sudo cp /home/mfcs.lib.wvu.edu/phpincludes/engine/phpmailer/*.php /tmp/git/phpincludes/engine/phpmailer/
+
 # Base Post Setup
 
 ln -s $SERVERURL $ENGINEAPIHOME
