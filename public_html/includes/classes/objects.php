@@ -852,6 +852,29 @@ class objects {
 		return TRUE;
 	}
 
+	public static function lock($objectID) {
+
+		if (self::is_locked($objectID)) {
+			errorHandle::errorMsg("Object already locked.");
+			return FALSE;
+		}
+
+		$sql       = sprintf("INSERT INTO `locks` (`type`,`typeID`,`user`,`date`) VALUES('object','%s','%s','%s')",
+			mfcs::$engine->openDB->escape($objectID),
+			mfcs::$engine->openDB->escape(users::user('ID')),
+			time()
+			);
+		$sqlResult = $engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+		$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+	}
+
 }
 
 ?>
