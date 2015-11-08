@@ -852,6 +852,32 @@ class objects {
 		return TRUE;
 	}
 
+	/**
+	 * Checks to see if an object is already being edited. 
+	 * @param  INT $objectID objectID of object to check lock status of
+	 * @return BOOL  TRUE if object is locked, false otherwise. 
+	 */
+	public static function is_locked($objectID) {
+
+		$sql       = sprintf("SELECT COUNT(*) from `locks` WHERE `type`='object' AND `typeID`='%s'",
+			mfcs::$engine->openDB->escape($objectID));
+		$sqlResult = $engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+		if ($row["COUNT(*)"] != 0) {
+			return TRUE;
+		}
+
+		return FALSE;
+
+	}
+
 	public static function lock($objectID) {
 
 		if (self::is_locked($objectID)) {
