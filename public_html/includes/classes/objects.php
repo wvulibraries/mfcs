@@ -875,6 +875,26 @@ class objects {
 
 	}
 
+	/**
+	 * Removes all locks on object
+	 * @param  int $objectID object to unlock
+	 * @return Book  true on success, false otherwise
+	 */
+	public static function unlock($objectID) {
+
+		$sql       = sprintf("DELETE FROM `locks` WHERE `type`='object' AND `typeID`='%s'",
+			mfcs::$engine->openDB->escape($objectID));
+		$sqlResult = $engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - unlocking object: ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+		return TRUE;
+
+	}
+
 }
 
 ?>
