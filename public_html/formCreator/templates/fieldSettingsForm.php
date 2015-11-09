@@ -1,5 +1,6 @@
-<div class="#fieldSettingsForm dataSettings noHide">
-    <div class="group noHide">
+<div class="#fieldSettingsForm dataSettings">
+
+    <div class="group noHide default">
         <div class="control-group  " id="fieldSettings_container_name">
             <label for="fieldSettings_name">
                 Field Name
@@ -65,7 +66,7 @@
         </div>
     </div>
 
-    <div class="group noHide">
+    <div class="group noHide default">
         <div class="control-group" id="fieldSettings_container_style">
             <label for="fieldSettings_style">
                 Field Help
