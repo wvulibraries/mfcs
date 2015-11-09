@@ -36,7 +36,11 @@ $engine->eTemplate("include","header");
 </section>
 
 <section class="aboutMFCS">
+	<div class="skewBg"></div>
 	<div class="widthContainer">
+		<div class="pic">
+			<img src="images/mfcsData.png" alt="mfcs holding a data icon" />
+		</div>
 		<div class="text">
 			<h2> Welcome to Metadata Form Creation System </h2>
 			<p> MFCS is a system built to store and archive digital projects, finding aids, and historical material entrusted to the library.  This system allows us to keep secure data, achive the original, and make modifications for other technologies to use.  The matieral ultimately ends up in a system such as Hydra, Islandora, or DLXS. <br><br>  As systems change, become obsolete, or are updated the only change that should be needed to migrate data to a new system are new or updated MFCS export scripts. No more exporting and importing data between your old authoritative system and your new one, which reduces the risk of cross walking errors and data corruption.  </p>
