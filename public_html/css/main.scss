@@ -958,7 +958,7 @@ a.list-group-item {
 
 .highlight { display:none;}
 
-.icon-remove {
+.icon-remove, .icon-ok, .icon-plus {
     display: inline-block;
     font: normal normal normal 14px/1 FontAwesome;
     font-size: inherit;
@@ -966,6 +966,9 @@ a.list-group-item {
     -webkit-font-smoothing: antialiased;
     &:before { content: "\f00d";}
 }
+
+.icon-ok:before { content: "\f00a";}
+.icon-plus:before{ content: "\f00b";}
 
 select {
   @extend .form-control;
