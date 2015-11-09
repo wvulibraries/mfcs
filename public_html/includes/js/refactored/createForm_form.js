@@ -81,6 +81,10 @@ $(function(){
 
 	// Form submit handler
 	$("form[name=submitForm]").submit(function(e) {
+		// Undo Bindings
+		$("#formPreview").find('[data-bind]').unbind('change', setOriginalValues);
+		$('#fieldSettings_form').find("[data-bindmodel]").unbind('change keyup', bindToHiddenForm);
+
 		// Create a multidimentional object to store field info
 		var obj = {};
 		$(":input",formSettings).each(function() {
@@ -127,7 +131,6 @@ $(function(){
 
 	// Enable the submit button and hide thenoJavaScriptWarning
 	$(':submit').removeAttr('disabled');
-	//$('.addFieldNav').click();// trigger click to open left pane
 });
 
 
@@ -275,6 +278,14 @@ function sortableForm() {
 			$(ui.item).click();
 			sortableForm();
 		}
+	});
+	calculatePosition();
+}
+
+function calculatePosition(){
+	$('#formCreator ul.sortable').children('li').each(function(index){
+		$(this).attr('data-position', index);
+		$(this).find("[data-bind='position']").val(index);
 	});
 }
 
@@ -489,9 +500,6 @@ function setOriginalValues(){
     var value      = $(this).is("input[type=checkbox]") ? evaluateCheck($(this)) : $(this).val();
     var bindToInput = $('#fieldSettings_form').find("[data-bindmodel='" + bindObj + "']");
 
-    console.log($(this));
-    console.log(bindToInput);
-
     // Modifications for inputs and selects need to be done here same with checks
     if(bindToInput.is('input[type=text],textarea')){
         bindToInput.val(value);
@@ -505,7 +513,6 @@ function setOriginalValues(){
 		}
     }
     else if(bindToInput.is('select')) {
-    	console.log('select menu' + $(this));
         bindToInput.find('option[value="' + value + '"]').prop('selected', true);
     }
 }
@@ -519,9 +526,14 @@ function bindToHiddenForm(){
 		var inputObj   = $(this).data('bindmodel');
 		var value      = $(this).is("input[type=checkbox]") ? evaluateCheck($(this)) : $(this).val();
 		var parentObj  = $("#formPreview").find("[data-id='"+ id +"']");
+		var label      = $("#formPreview_"+id).find('.fieldLabels');
 		var hiddenForm = parentObj.find('.fieldValues');
 		hiddenForm.find("[data-bind='"+ inputObj +"']").val(value);
-    }
+
+		if(inputObj == 'name'){
+			label.html(value);
+		}
+	}
 }
 
 function evaluateCheck(object){
@@ -889,12 +901,14 @@ function newFieldValues(id,type,vals) {
     type = vals.type;
 
     var help = vals.help;
-    if(help.length > 0){
-			var helpValue = help.split("|")[1];
-			var helpType  = help.split("|")[0];
-			vals.help     = helpValue;
-			vals.helpType = helpType;
-    }
+    if(typeof help !== "undefined"){
+	    if(help.length > 0){
+				var helpValue = help.split("|")[1];
+				var helpType  = help.split("|")[0];
+				vals.help     = helpValue;
+				vals.helpType = helpType;
+	    }
+	}
 
     var defaultHiddenFormFields = ['name','position', 'type', 'label', 'value', 'placeholder', 'id', 'class', 'style',
     'help', 'helpType', 'required', 'duplicates', 'readonly', 'disabled', 'disabledInsert', 'disabledUpdate', 'publicRelease',
