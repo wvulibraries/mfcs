@@ -7475,6 +7475,8 @@ function showFieldSettings(fullID) {
 		var opts;
 		var tmp;
 		var i;
+
+		console.log(type);
 		// Hide the nothing selected error and show the form
 		$("#noFieldSelected").hide();
 		if (type == "fieldset") {
@@ -7484,7 +7486,8 @@ function showFieldSettings(fullID) {
 		else {
 			fieldSettings_fieldset_form.hide();
 			fieldSettings_form.show();
-			//fieldSettings_form.children().hide();
+			fieldSettings_form.find('.dataSettings').children().hide();
+			fieldSettings_form.find('.default').show();
 
 			// Create jQuery shortcuts (code optimization)
 			var fieldSettings_name                 = $("#fieldSettings_name");
@@ -7526,30 +7529,22 @@ function showFieldSettings(fullID) {
 			// Show optional fields
 			switch(type) {
 				case 'idno':
-					$("#fieldSettings_container_value").show();
-					$("#fieldSettings_container_placeholder").show();
-					$("#fieldSettings_container_idno").show();
+					$("#fieldSettings_container_idno").parent().show();
 					break;
 
 				case 'text':
-					$("#fieldSettings_container_externalUpdate").show();
-					$("#fieldSettings_container_value").show();
-					$("#fieldSettings_container_placeholder").show();
-
-					$("#fieldSettings_container_range").show();
+					$("#fieldSettings_container_externalUpdate").parent().show();
+					$("#fieldSettings_container_range").parent().show();
 					$("#fieldSettings_range_step").parent().hide();
-
+					$('#fieldSettings_range_format').parent().removeClass('span4').addClass('span6');
 					$("#fieldSettings_range_format option").remove();
 					$("#fieldSettings_range_format").append('<option value="characters">Characters</option><option value="words">Words</option>');
 					break;
 
 				case 'textarea':
-					$("#fieldSettings_container_value").show();
-					$("#fieldSettings_container_placeholder").show();
-
-					$("#fieldSettings_container_range").show();
+					$("#fieldSettings_container_range").parent().show();
 					$("#fieldSettings_range_step").parent().hide();
-
+					$('#fieldSettings_range_format').parent().removeClass('span4').addClass('span6');
 					$("#fieldSettings_range_format option").remove();
 					$("#fieldSettings_range_format").append('<option value="characters">Characters</option><option value="words">Words</option>');
 					break;
@@ -7558,24 +7553,19 @@ function showFieldSettings(fullID) {
 				case 'checkbox':
 				case 'select':
 				case 'multiselect':
-					$("#fieldSettings_container_value").hide();
-					$("#fieldSettings_container_placeholder").hide();
-					$("#fieldSettings_container_choices").show();
+					$("#fieldSettings_container_choices").parent().show();
 					break;
 
 				case 'number':
-					$("#fieldSettings_container_value").show();
-					$("#fieldSettings_container_placeholder").show();
-
-					$("#fieldSettings_container_range").show();
+					$("#fieldSettings_container_range").parent().show();
 					$("#fieldSettings_range_step").parent().show();
+					$('#fieldSettings_range_format').parent().removeClass('span6').addClass('span4');
 
 					$("#fieldSettings_range_format option").remove();
 					$("#fieldSettings_range_format").append('<option value="value">Value</option><option value="digits">Digits</option>');
 					break;
 
 				case 'wysiwyg':
-					$("#fieldSettings_container_value").show();
 					$("#fieldSettings_container_placeholder").hide();
 					break;
 
@@ -7592,7 +7582,62 @@ function showFieldSettings(fullID) {
 					break;
 			}
 
-			// Fieldset types
+			var fieldHelp = $("#help_"+id).val();
+			if(fieldHelp !== ''){
+				var n = fieldHelp.indexOf('|');
+				var fieldHelpType  = fieldHelp.slice(0,n);
+				var fieldHelpValue = fieldHelp.slice(n+1);
+				$("#fieldSettings_help_type").val(fieldHelpType).change();
+				switch(fieldHelpType){
+					case 'text':
+						// de-escape HTML-breaking characters
+						fieldHelpValue = fieldHelpValue.replace(/&#34;/g, '"');
+						fieldHelpValue = fieldHelpValue.replace(/&#39;/g, "'");
+						fieldHelpValue = fieldHelpValue.replace(/&#62;/g, '>');
+						fieldHelpValue = fieldHelpValue.replace(/&#60;/g, '<');
+						$("#fieldSettings_help_text").val(fieldHelpValue).keyup();
+						break;
+					case 'html':
+						// de-escape HTML-breaking characters
+						fieldHelpValue = fieldHelpValue.replace(/&#34;/g, '"');
+						fieldHelpValue = fieldHelpValue.replace(/&#39;/g, "'");
+						$("#fieldSettings_help_html").val(fieldHelpValue).keyup();
+						break;
+					case 'web':
+						$("#fieldSettings_help_url").val(fieldHelpValue).keyup();
+						break;
+				}
+			}else{
+				$("#fieldSettings_help_type").val('').change();
+			}
+
+			var choicesOptions_val = $("#choicesOptions_"+id).val();
+			if (choicesOptions_val !== undefined) {
+				var fieldSettings_choices_manual = $("#fieldSettings_choices_manual");
+				opts                             = choicesOptions_val.split("%,%");
+				tmp                              = '';
+
+				// Update left panel
+				for (i = 0; i < opts.length; i++) {
+					tmp += addChoice(opts[i],$("#choicesDefault_"+id).val());
+				}
+				fieldSettings_choices_manual.html(tmp).find("input[name=fieldSettings_choices_text]").keyup();
+			}
+
+			var allowedExtensions_val = $("#allowedExtensions_"+id).val();
+			if (allowedExtensions_val !== undefined) {
+				var fieldSettings_file_allowedExtensions = $("#fieldSettings_file_allowedExtensions");
+				opts                                     = allowedExtensions_val.split("%,%");
+				tmp                                      = '';
+
+				fieldSettings_file_allowedExtensions.html('');
+				for (i = 0; i < opts.length; i++) {
+					tmp += addAllowedExtension(opts[i]);
+				}
+				fieldSettings_file_allowedExtensions.append(tmp);
+				fieldSettings_file_allowedExtensions.find(":input[name=fieldSettings_allowedExtension_text]:first").keyup();
+			}
+
 			if (type != 'fieldset') {
 				var parentFieldset = fieldset.parents("li").parents("li");
 				if (parentFieldset.length > 0) {
