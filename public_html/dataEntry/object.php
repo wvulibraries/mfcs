@@ -12,6 +12,7 @@ $revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime'
 $selectedProjects = NULL;
 $parentObject     = NULL;
 $permissions      = TRUE;
+$locked           = FALSE;
 
 try {
 
@@ -28,6 +29,16 @@ try {
 	if (mfcsPerms::isEditor($engine->cleanGet['MYSQL']['formID']) === FALSE) {
 		$permissions = FALSE;
 		throw new Exception("Permission Denied to view objects created with this form.");
+	}
+
+	// @TODO check lock
+	// If locked, warn, allow to steal
+	if (objects::is_locked($engine->cleanGet['MYSQL']['objectID'])) {
+		$locked = TRUE;
+	}
+	// If not locked, lock it.
+	if (!($lockID = objects::lock($engine->cleanGet['MYSQL']['objectID']))) {
+		throw new Exception("Unable to lock Object").
 	}
 
 	if (isset($engine->cleanGet['MYSQL']['parentID']) && objects::validID(TRUE,$engine->cleanGet['MYSQL']['parentID']) === FALSE) {
@@ -220,7 +231,7 @@ $engine->eTemplate("include","header");
 				{local var="results"}
 			</div>
 
-			<?php if ($permissions === TRUE) { ?>
+			<?php if ($permissions === TRUE && $locked === FALSE) { ?>
 
 			<div class="row-fluid">
 				<ul class="nav nav-tabs">
@@ -292,7 +303,12 @@ $engine->eTemplate("include","header");
 					<?php } ?>
 				</div>
 			</div>
-			<?php } // permissions ?>
+			<?php } else if ($locked === TRUE) { // permissions && Locked?>
+
+			<!-- display warning and ability to steal here -->
+
+			<?php }?>
+
 		</div>
 	</div>
 </section>
