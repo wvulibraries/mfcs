@@ -33,27 +33,23 @@ $engine->eTemplate("include","header");
 			<li><a href="/">Home</a></li>
 			<li></li>
 	</ul>
+</section>
 
+<section class="aboutMFCS">
+	<div class="widthContainer">
+		<div class="text">
+			<h2> Welcome to Metadata Form Creation System </h2>
+			<p> MFCS is a system built to store and archive digital projects, finding aids, and historical material entrusted to the library.  This system allows us to keep secure data, achive the original, and make modifications for other technologies to use.  The matieral ultimately ends up in a system such as Hydra, Islandora, or DLXS. <br><br>  As systems change, become obsolete, or are updated the only change that should be needed to migrate data to a new system are new or updated MFCS export scripts. No more exporting and importing data between your old authoritative system and your new one, which reduces the risk of cross walking errors and data corruption.  </p>
+		</div>
+	</div>
+</section>
 
-
-	{local var="feedback"}
-	{local var="results"}
-
-	<ul class="picklist">
+<section class="createIndex">
+	<h2> Create Objects </h2>
+	<ul>
 		<li>
-			<a href="dataEntry/selectForm.php" class="btn">Create new Object</a>
-		</li>
-		<li>
-			<a href="dataView/list.php" class="btn">List Objects</a>
-		</li>
-		<li>
-			<a href="dataView/search.php" class="btn">Search Objects</a>
-		</li>
-		<li>
-			<a href="exports/" class="btn">Export</a>
-		</li>
-		<li>
-			<a href="stats/" class="btn">Statistics</a>
+			<h3> Objects </h3>
+			<a class="btn btn-primary"> New Object </a>
 		</li>
 	</ul>
 </section>
