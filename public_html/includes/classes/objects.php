@@ -859,7 +859,7 @@ class objects {
 	 */
 	public static function is_locked($objectID) {
 
-		return lock::is_locked($obejctID,"object");
+		return locks::is_locked($obejctID,"object");
 
 	}
 
@@ -870,7 +870,7 @@ class objects {
 	 */
 	public static function lock($objectID) {
 
-		return lock::lock($objectID,"object");
+		return locks::lock($objectID,"object");
 
 	}
 
@@ -881,7 +881,7 @@ class objects {
 	 */
 	public static function unlock($objectID) {
 
-		return lock::unlock($objectID,"object");
+		return locks::unlock($objectID,"object");
 
 	}
 

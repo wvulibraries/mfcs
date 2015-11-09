@@ -1,6 +1,6 @@
 <?php
 
-class lock {
+class locks {
 
 	public static function lock($objectID, $type) {
 
@@ -22,7 +22,7 @@ class lock {
 			return FALSE;
 		}
 		
-		return $sqlResult['id']
+		return $sqlResult['id'];
 
 	}
 
