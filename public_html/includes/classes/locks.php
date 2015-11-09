@@ -15,7 +15,7 @@ class locks {
 			mfcs::$engine->openDB->escape(users::user('ID')),
 			time()
 			);
-		$sqlResult = $engine->openDB->query($sql);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 		
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
@@ -32,7 +32,7 @@ class locks {
 			mfcs::$engine->openDB->escape($type),
 			mfcs::$engine->openDB->escape($objectID)
 			);
-		$sqlResult = $engine->openDB->query($sql);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 		
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - unlocking object: ".$sqlResult['error'], errorHandle::DEBUG);
@@ -49,7 +49,7 @@ class locks {
 			mfcs::$engine->openDB->escape($type),
 			mfcs::$engine->openDB->escape($objectID)
 			);
-		$sqlResult = $engine->openDB->query($sql);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 		
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
