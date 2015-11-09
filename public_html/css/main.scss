@@ -967,8 +967,24 @@ a.list-group-item {
     &:before { content: "\f00d";}
 }
 
-.icon-ok:before { content: "\f00a";}
-.icon-plus:before{ content: "\f00b";}
+.icon-ok:before { content: "\f00c";}
+.icon-plus:before{ content: "\f067";}
+
+#fieldSettings_choices_manual {
+  .input-append input { width:70% !important}
+  button {width:10%; float:left; @extend .btn-default; background:$lightgrey; border-radius:0;
+    &:first-of-type { border-radius: 5px 0 0 5px; }
+    &:last-of-type { border-radius:0 5px 5px 0; @extend .btn-danger;}
+  }
+  button.active {@extend .btn-success; border-radius: 5px 0 0 5px;}
+}
+
+#fieldSettings_file_allowedExtensions{
+  .input-append input { width:80% !important;}
+  button {width:10%; float:left; @extend .btn-default; background:$lightgrey; border-radius:0;
+    &:last-of-type { border-radius:0 5px 5px 0; @extend .btn-danger;}
+  }
+}
 
 select {
   @extend .form-control;
