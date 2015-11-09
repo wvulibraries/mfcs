@@ -878,6 +878,11 @@ class objects {
 
 	}
 
+	/**
+	 * Lock the current file
+	 * @param  INT $objectID ID of object to Lock
+	 * @return mixed           BOOL false if lock fails, otherwise lock ID. 
+	 */
 	public static function lock($objectID) {
 
 		if (self::is_locked($objectID)) {
@@ -897,7 +902,7 @@ class objects {
 			return FALSE;
 		}
 		
-		$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+		return $sqlResult['id']
 
 	}
 
