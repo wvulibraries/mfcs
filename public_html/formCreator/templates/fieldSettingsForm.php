@@ -95,19 +95,22 @@
             <label for="fieldSettings_choices">
                 Choices
             </label>
-
-            <select class="input-block-level" id="fieldSettings_choices_type" name="fieldSettings_choices_type" data-bindModel="choicesType">
+            <input type="hidden" name="fieldSettings_choices" id="fieldSettings_choices" class="fieldSettings_choices"  data-bindModel="choicesOptions" value="">
+            <select class="input-block-level" id="fieldSettings_choices_type" name="fieldSettings_choices_type">
                 <option value="manual">Manual</option>
                 <option value="form">Another Form</option>
             </select>
 
-            <label>
-                <input type="checkbox" id="fieldSettings_choices_null" name="fieldSettings_choices_null" data-bindModel="choicesNull"> Include 'Make a selection' placeholder
-            </label>
 
-            <div id="fieldSettings_choices_manual"></div>
+            <div class="manual_choices">
+                <label>
+                    <input type="checkbox" id="fieldSettings_choices_null" name="fieldSettings_choices_null" data-bindModel="choicesNull"> Include 'Make a selection' placeholder
+                </label>
 
-            <div id="fieldSettings_choices_form">
+                <div id="fieldSettings_choices_manual"></div>
+            </div>
+
+            <div id="fieldSettings_choices_form" class="form_choices">
 
                 <label for="fieldSettings_choices_formSelect">
                     Select a Form

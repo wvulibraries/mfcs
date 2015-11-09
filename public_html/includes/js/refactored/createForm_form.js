@@ -312,7 +312,6 @@ function showFieldSettings(fullID) {
 		var tmp;
 		var i;
 
-		console.log(type);
 		// Hide the nothing selected error and show the form
 		$("#noFieldSelected").hide();
 		if (type == "fieldset") {
@@ -452,7 +451,6 @@ function showFieldSettings(fullID) {
 				var fieldSettings_choices_manual = $("#fieldSettings_choices_manual");
 				opts                             = choicesOptions_val.split("%,%");
 				tmp                              = '';
-
 				// Update left panel
 				for (i = 0; i < opts.length; i++) {
 					tmp += addChoice(opts[i],$("#choicesDefault_"+id).val());
@@ -494,6 +492,9 @@ function showFieldSettings(fullID) {
 			}else{
 				$('#fieldVariablesLink').hide();
 			}
+
+			// bind functionality of form
+			enableChoiceFunctionality();
 		}
 	}
 }
@@ -560,6 +561,16 @@ function setOriginalValues(){
     else if(bindToInput.is('select')) {
         bindToInput.find('option[value="' + value + '"]').prop('selected', true);
     }
+
+    if(bindToInput.is($("#fieldSettings_choices_type"))){
+		if(value == 'manual'){
+			$('#fieldSettings_container_choices').find('.manual_choices').show();
+			$('#fieldSettings_container_choices').find('.form_choices').hide();
+		} else {
+			$('#fieldSettings_container_choices').find('.manual_choices').hide();
+			$('#fieldSettings_container_choices').find('.form_choices').show();
+		}
+	}
 }
 
 function bindToHiddenForm(){
@@ -577,6 +588,20 @@ function bindToHiddenForm(){
 
 		if(inputObj == 'name'){
 			label.html(value);
+		}
+
+		if(inputObj == 'choicesType'){
+			if(value == 'manual'){
+				$('#fieldSettings_container_choices').find('.manual_choices').show();
+				$('#fieldSettings_container_choices').find('.form_choices').hide();
+			} else {
+				$('#fieldSettings_container_choices').find('.manual_choices').hide();
+				$('#fieldSettings_container_choices').find('.form_choices').show();
+			}
+		}
+
+		if(inputObj == 'choicesOptions'){
+			console.log('test -- ' + $(this));
 		}
 	}
 }
@@ -987,7 +1012,7 @@ function newFieldValues(id,type,vals) {
 		case 'multiselect':
             var choiceHiddenFields = ['choicesType', 'choicesNull', 'choicesDefault', 'choicesForm', 'choicesField', 'choicesFieldDefault'];
             output += createHiddenFields(choiceHiddenFields, id, vals);
-			output += '<input type="hidden" id="choicesOptions_'+id+'" name="choicesOptions_'+id+'" value="'+((vals.choicesOptions !== undefined)?vals.choicesOptions:'First Choice%,%Second Choice')+'">';
+			output += '<input type="hidden" id="choicesOptions_'+id+'" name="choicesOptions_'+id+'" data-bind="choicesOptions" value="'+((vals.choicesOptions !== undefined)?vals.choicesOptions:'First Choice%,%Second Choice')+'">';
 			break;
 
 		case 'file':
@@ -1144,7 +1169,7 @@ function createHiddenFields(fieldArray,id, vals){
 
 function addChoice(val,def) {
 	if (val === undefined) {
-		return '<div class="row-fluid input-prepend input-append">'+
+		return '<div class="input-prepend input-append" data-itemtype="choice">'+
 					'<button name="default" class="btn" type="button" data-toggle="buttons-radio" title="Set this choice as the default."><i class="icon-ok"></i></button>'+
 					'<input name="fieldSettings_choices_text" type="text">'+
 					'<button name="add" class="btn" type="button" title="Add a choice."><i class="icon-plus"></i></button>'+
@@ -1152,15 +1177,14 @@ function addChoice(val,def) {
 				'</div>';
 	}
 	else if (def === undefined) {
-		return '<div class="row-fluid input-prepend input-append">'+
+		return '<div class="input-prepend input-append" data-itemtype="choice">'+
 					'<button name="default" class="btn" type="button" data-toggle="buttons-radio" title="Set this choice as the default."><i class="icon-ok"></i></button>'+
 					'<input name="fieldSettings_choices_text" type="text" value="'+val+'">'+
 					'<button name="add" class="btn" type="button" title="Add a choice."><i class="icon-plus"></i></button>'+
 					'<button name="remove" class="btn" type="button" title="Remove this choice."><i class="icon-remove"></i></button>'+
 				'</div>';
 	}
-
-	return '<div class="row-fluid input-prepend input-append">'+
+	return '<div class="input-prepend input-append" data-itemtype="choice">'+
 				'<button name="default" class="btn'+(val==def?" active":"")+'" type="button" data-toggle="buttons-radio" title="Set this choice as the default."><i class="icon-ok"></i></button>'+
 				'<input name="fieldSettings_choices_text" type="text" value="'+val+'">'+
 				'<button name="add" class="btn" type="button" title="Add a choice."><i class="icon-plus"></i></button>'+
@@ -1174,11 +1198,33 @@ function addAllowedExtension(val) {
 		val = '';
 	}
 
-	return '<div class="row-fluid input-append">'+
+	return '<div class="row-fluid input-append" data-itemtype="extension">'+
 				'<input name="fieldSettings_allowedExtension_text" type="text" value="'+val+'">'+
 				'<button name="add" class="btn" type="button" title="Add an extension."><i class="icon-plus"></i></button>'+
 				'<button name="remove" class="btn" type="button" title="Remove this extension."><i class="icon-remove"></i></button>'+
 			'</div>';
+}
+
+function enableChoiceFunctionality(){
+	$('.input-append').find('button').click(function(){
+		var state = $(this).attr('name');
+		var type  = $(this).parent().data('itemtype');
+
+		if(state == "add"){
+			if(type == "choice"){
+				$(this).parent().after(addChoice());
+			}
+			else {
+				$(this).parent().after(addAllowedExtension());
+			}
+			// EVENT LISTENER Recouple
+			$('.input-append').find('button').unbind('click');
+			enableChoiceFunctionality();
+		}
+		else if(state == "remove"){
+			$(this).parent().remove();
+		}
+	});
 }
 
 // /*
