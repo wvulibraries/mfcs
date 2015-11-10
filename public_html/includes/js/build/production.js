@@ -7165,6 +7165,7 @@ function handler_displayMetadataFormModal(formID) {
 // Global Variable
 // ===================================================================
 var globalFieldID;
+var choicesFields = {};
 
 // Document Ready
 // ===================================================================
@@ -7184,6 +7185,7 @@ $(function(){
 	modalBindings();
 	applyLabelName();
 
+	console.log(getFormFields());
 
 	// Blank all panes when changing tabs
 	fieldTab.on("click", "a", function() {
@@ -7418,7 +7420,7 @@ $(function() {
 // ===================================================================
 function applyLabelName(){
 	$('.fieldLabels').each(function(){
-		var label = $(this).parent().parent().next().find($('input[name^="name"]')).val();
+		var label = $(this).parent().parent().next().find($('input[name^="label"]')).val();
 		$(this).html(label);
 	});
 }
@@ -7581,35 +7583,6 @@ function showFieldSettings(fullID) {
 					break;
 			}
 
-			var fieldHelp = $("#help_"+id).val();
-			if(fieldHelp !== ''){
-				var n = fieldHelp.indexOf('|');
-				var fieldHelpType  = fieldHelp.slice(0,n);
-				var fieldHelpValue = fieldHelp.slice(n+1);
-				$("#fieldSettings_help_type").val(fieldHelpType).change();
-				switch(fieldHelpType){
-					case 'text':
-						// de-escape HTML-breaking characters
-						fieldHelpValue = fieldHelpValue.replace(/&#34;/g, '"');
-						fieldHelpValue = fieldHelpValue.replace(/&#39;/g, "'");
-						fieldHelpValue = fieldHelpValue.replace(/&#62;/g, '>');
-						fieldHelpValue = fieldHelpValue.replace(/&#60;/g, '<');
-						$("#fieldSettings_help_text").val(fieldHelpValue).keyup();
-						break;
-					case 'html':
-						// de-escape HTML-breaking characters
-						fieldHelpValue = fieldHelpValue.replace(/&#34;/g, '"');
-						fieldHelpValue = fieldHelpValue.replace(/&#39;/g, "'");
-						$("#fieldSettings_help_html").val(fieldHelpValue).keyup();
-						break;
-					case 'web':
-						$("#fieldSettings_help_url").val(fieldHelpValue).keyup();
-						break;
-				}
-			}else{
-				$("#fieldSettings_help_type").val('').change();
-			}
-
 			var choicesOptions_val = $("#choicesOptions_"+id).val();
 			if (choicesOptions_val !== undefined) {
 				var fieldSettings_choices_manual = $("#fieldSettings_choices_manual");
@@ -7657,6 +7630,33 @@ function showFieldSettings(fullID) {
 				$('#fieldVariablesLink').hide();
 			}
 
+			// Ajax Stuff that still needed
+			$("#fieldSettings_externalUpdate_formSelect").change(function() {
+				var val             = $(this).val();
+
+				if (choicesFields[val] === undefined) {
+					choicesFields[val] = '';
+
+					$.ajax({
+						url: "../includes/getFormFields.php",
+						async: false
+					}).always(function(data) {
+						var obj = JSON.parse(data);
+
+						$.each(obj, function(I, field) {
+							var options = '';
+							$.each(field, function(i, f) {
+								options += '<option value="'+f.name+'">'+f.label+'</option>';
+							});
+							choicesFields[I] = options;
+						});
+					});
+				}
+
+				$("#externalUpdateForm_"+id).val(val).change();
+				$("#fieldSettings_externalUpdate_fieldSelect").html(choicesFields[val]).change();
+			});
+
 			// bind functionality of form
 			enableChoiceFunctionality();
 		}
@@ -7664,7 +7664,6 @@ function showFieldSettings(fullID) {
 }
 
 function fieldSettingsBindings(){
-	var choicesFields = {};
 	var formPreview   = $("#formPreview");
 	formPreview.children('li').removeClass('activeField');
 
@@ -7687,8 +7686,6 @@ function fieldSettingsBindings(){
 			setInitialBind();
 		}
 	});
-
-
 }  // end function
 
 function setInitialBind(){
@@ -7709,9 +7706,31 @@ function setOriginalValues(){
     var bindObj     = $(this).data('bind');
     var value      = $(this).is("input[type=checkbox]") ? evaluateCheck($(this)) : $(this).val();
     var bindToInput = $('#fieldSettings_form').find("[data-bindmodel='" + bindObj + "']");
+    console.log('setting values');
+    // Object Specific Value Change
+	if( bindObj == 'help'){
+		helpType = value.split(" | ")[0];
+		help     = value.split(" | ")[1];
+		value    = help;
+		$(this).val(helpType + " | " + help);
+		$('#fieldSettings_help_type').val(helpType);
+
+		$('.helpPreview').popover('destroy');
+	 	$('.helpPreview').hide();
+
+		var popoverContent = (helpType == 'html' ? 'html' : 'content');
+		if(typeof help !== "undefined"){
+			$('#formPreview_'+id).find('.helpPreview').show();
+			$('.helpPreview').popover({
+				'title' : helpType,
+				'content' : help,
+				'trigger': 'hover'
+			});
+		}
+	}
 
     // Modifications for inputs and selects need to be done here same with checks
-    if(bindToInput.is('input[type=text],textarea')){
+    if(bindToInput.is('input[type=text],textarea,input[type=hidden]')){
         bindToInput.val(value);
     }
     else if(bindToInput.is("input[type=checkbox]")) {
@@ -7735,6 +7754,8 @@ function setOriginalValues(){
 			$('#fieldSettings_container_choices').find('.form_choices').show();
 		}
 	}
+
+	$('#fieldSettings_choices_formSelect').change();
 }
 
 function bindToHiddenForm(){
@@ -7758,16 +7779,75 @@ function bindToHiddenForm(){
 			if(value == 'manual'){
 				$('#fieldSettings_container_choices').find('.manual_choices').show();
 				$('#fieldSettings_container_choices').find('.form_choices').hide();
+				$('#choicesForm_'+id).val('');
 			} else {
 				$('#fieldSettings_container_choices').find('.manual_choices').hide();
 				$('#fieldSettings_container_choices').find('.form_choices').show();
 			}
 		}
 
-		if(inputObj == 'choicesOptions'){
-			console.log('test -- ' + $(this));
+		if(inputObj == 'help'){
+			var val      = $(this).val();
+			var newValue = "";
+			var type = $('#fieldSettings_help_type').val();
+			if(type == "html"){
+				// Escape HTML-breaking characters
+				newValue = escapeHtml(val);
+				hiddenForm.find("[data-bind='"+ inputObj +"']").val(type + " | " + newValue);
+			}
+			else if(type == "web"){
+				hiddenForm.find("[data-bind='"+ inputObj +"']").val(type + " | " + val);
+			}
+			else {
+				// remove HTML characters
+				newValue = removeHtml(val);
+				hiddenForm.find("[data-bind='"+ inputObj +"']").val(type + " | " + newValue);
+			}
 		}
 	}
+}
+
+function getFormFields(){
+	var options = '';
+	$.ajax({
+		url: "../includes/getFormFields.php",
+		async: false
+	}).always(function(data) {
+		var obj = JSON.parse(data);
+		$.each(obj, function(I, field) {
+			$.each(field, function(i, f) {
+				options += '<option value="'+f.name+'">'+f.label+'</option>';
+			});
+		});
+	});
+	return options;
+}
+
+function escapeHtml(string) {
+	return string.replace(/&/g, '&amp;')
+                 .replace(/>/g, '&gt;')
+                 .replace(/</g, '&lt;')
+                 .replace(/"/g, '&quot;')
+                 .replace(/'/g, '&apos;')
+                 .replace(/\//g, '&#x2F;');
+}
+
+function unEscapeHtml(string) {
+	return string.replace(/&amp;/g, '&')
+                 .replace(/&gt;/g, '>')
+                 .replace(/&lt;/g, '<')
+                 .replace(/&quot;/g, '"')
+                 .replace(/&#39;/g, "'")
+                 .replace(/&#x2F;/g, '/');
+}
+
+function removeHtml(string){
+	return string.replace(/&/g, '&amp;')
+                 .replace(/>/g, '')
+                 .replace(/</g, '')
+                 .replace(/"/g, '&quot;')
+                 .replace(/'/g, '&apos;')
+                 .replace(/\//g, '');
 }
 
 function evaluateCheck(object){
@@ -7855,8 +7935,6 @@ function formSettingsBindings() {
 		}
 	}).change();
 }
-
-
 
 
 function formSettingsBindings() {
@@ -8116,8 +8194,7 @@ function newFieldPreview(id,type) {
 			default:
 				break;
 		}
-		output += ' <span class="fa fa-question-circle helpPreview" style="display: none; cursor: pointer;"></span>';
-		output += ' <span class="fa fa-question-circle helpPreviewModal" style="display: none; cursor: pointer;" title="Click to view help" onclick="$(\'#fieldHelpModal\').modal(\'show\')"></span>';
+		output += ' <span class="fa fa-question-circle helpPreview"></span>';
 		output += '</div></div>';
 	}
 	return output;
@@ -8134,19 +8211,7 @@ function newFieldValues(id,type,vals) {
     vals.type = determineType(type);
     type = vals.type;
 
-    var help = vals.help;
-    if(typeof help !== "undefined"){
-	    if(help.length > 0){
-				var helpValue = help.split("|")[1];
-				var helpType  = help.split("|")[0];
-				vals.help     = helpValue;
-				vals.helpType = helpType;
-	    }
-	}
-
-    var defaultHiddenFormFields = ['name','position', 'type', 'label', 'value', 'placeholder', 'id', 'class', 'style',
-    'help', 'helpType', 'required', 'duplicates', 'readonly', 'disabled', 'disabledInsert', 'disabledUpdate', 'publicRelease',
-    'sortable', 'searchable', 'displayTable', 'hidden', 'validation', 'validationRegex', 'access', 'fieldset' ];
+    var defaultHiddenFormFields = ['name','position', 'type', 'label', 'value', 'placeholder', 'id', 'class', 'style', 'help', 'helpType', 'required', 'duplicates', 'readonly', 'disabled', 'disabledInsert', 'disabledUpdate', 'publicRelease', 'sortable', 'searchable', 'displayTable', 'hidden', 'validation', 'validationRegex', 'access', 'fieldset' ];
 
     output += createHiddenFields(defaultHiddenFormFields, id, vals);
 
@@ -8389,6 +8454,45 @@ function enableChoiceFunctionality(){
 			$(this).parent().remove();
 		}
 	});
+
+	$('.input-append').find('input').bind('change keyup', modifyChoiceBinding)
+
+	$("#fieldSettings_choices_formSelect").change(function(){
+		var val             = $(this).val();
+		if (choicesFields[val] === undefined) {
+			var options;
+			choicesFields[null] = options;
+
+			$.ajax({
+				url: "../includes/getFormFields.php",
+				async: false
+			}).always(function(data) {
+				var obj = JSON.parse(data);
+
+				$.each(obj, function(I, field) {
+					var options;
+					$.each(field, function(i, f) {
+						options += '<option value="'+f.name+'">'+f.label+'</option>';
+					});
+					choicesFields[I] = options;
+					console.log(choicesFields);
+				});
+			});
+		}
+
+		$("#fieldSettings_choices_fieldSelect").html(choicesFields[val]);
+	});
+}
+
+function modifyChoiceBinding(){
+	var valueObject = [];
+	$('.input-append').find('input').each(function(index){
+		value = $(this).val();
+		valueObject[index] = value;
+	});
+
+	var choices = valueObject.join('%,%');
+	$('.choicesOptions').val(choices).change();
 }
 
 // /*
