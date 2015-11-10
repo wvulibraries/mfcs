@@ -744,6 +744,17 @@ li.alert-error {
   width:100% !important;
 }
 
+.helpPreview {
+    display:none;
+    cursor: pointer;
+    position: absolute;
+    left: -80px;
+    top: -10px;
+}
+
+.popover.right>.arrow:after{ left:100%; }
+.popover.right>.arrow { border-right:none !important;}
+
 .select2-search{
   padding:20px;
 }
@@ -1087,6 +1098,10 @@ select {
     float:left;
     width:100%;
     margin-bottom:10px;
+  }
+
+  textarea {
+    margin-bottom:0;
   }
 }
 
