@@ -7185,8 +7185,6 @@ $(function(){
 	modalBindings();
 	applyLabelName();
 
-	console.log(getFormFields());
-
 	// Blank all panes when changing tabs
 	fieldTab.on("click", "a", function() {
 		$('li', formPreview).removeClass("well");
@@ -7419,9 +7417,33 @@ $(function() {
 // Helper Functions
 // ===================================================================
 function applyLabelName(){
-	$('.fieldLabels').each(function(){
-		var label = $(this).parent().parent().next().find($('input[name^="label"]')).val();
-		$(this).html(label);
+	var formPreview;
+
+	if(typeof globalFieldID === 'undefined'){
+		formPreview = $('#formPreview').children().find('.fieldPreview');
+		console.log(formPreview.lenth);
+	}
+	else {
+		formPreview = $('#formPreview_'+globalFieldID).find('.fieldPreview');
+		console.log(formPreview.length);
+	}
+
+	formPreview.each(function(){
+		var label       = $(this).find('.fieldLabels');
+		var controls    = $(this).find('.controls').children().first();
+		var settings    = $(this).next();
+		var placeholder = settings.find($('input[name^="placeholder"]')).val();
+		var name        = settings.find($('input[name^="name"]')).val();
+		var style       = settings.find($('input[name^="style"]')).val();
+		var labelValue  = settings.find($('input[name^="label"]')).val();
+
+		controls.attr({
+			'placeholder' : placeholder,
+			'name'        : name,
+			'style'       : style
+		});
+
+		label.html(labelValue)
 	});
 }
 
@@ -7684,6 +7706,7 @@ function fieldSettingsBindings(){
 			$("#fieldTab a[href='#fieldSettings']").tab("show");
 			showFieldSettings(id);
 			setInitialBind();
+			applyLabelName();
 		}
 	});
 }  // end function
@@ -7706,7 +7729,6 @@ function setOriginalValues(){
     var bindObj     = $(this).data('bind');
     var value      = $(this).is("input[type=checkbox]") ? evaluateCheck($(this)) : $(this).val();
     var bindToInput = $('#fieldSettings_form').find("[data-bindmodel='" + bindObj + "']");
-    console.log('setting values');
     // Object Specific Value Change
 	if( bindObj == 'help'){
 		helpType = value.split(" | ")[0];
@@ -7730,10 +7752,7 @@ function setOriginalValues(){
 	}
 
     // Modifications for inputs and selects need to be done here same with checks
-    if(bindToInput.is('input[type=text],textarea,input[type=hidden]')){
-        bindToInput.val(value);
-    }
-    else if(bindToInput.is("input[type=checkbox]")) {
+   if(bindToInput.is("input[type=checkbox]")) {
 		if(value == "true"){
 			bindToInput.prop('checked', true);
 		}
@@ -7743,6 +7762,9 @@ function setOriginalValues(){
     }
     else if(bindToInput.is('select')) {
         bindToInput.find('option[value="' + value + '"]').prop('selected', true);
+    }
+    else{
+    	bindToInput.val(value);
     }
 
     if(bindToInput.is($("#fieldSettings_choices_type"))){
@@ -7770,10 +7792,6 @@ function bindToHiddenForm(){
 		var label      = $("#formPreview_"+id).find('.fieldLabels');
 		var hiddenForm = parentObj.find('.fieldValues');
 		hiddenForm.find("[data-bind='"+ inputObj +"']").val(value);
-
-		if(inputObj == 'name'){
-			label.html(value);
-		}
 
 		if(inputObj == 'choicesType'){
 			if(value == 'manual'){
@@ -8475,7 +8493,6 @@ function enableChoiceFunctionality(){
 						options += '<option value="'+f.name+'">'+f.label+'</option>';
 					});
 					choicesFields[I] = options;
-					console.log(choicesFields);
 				});
 			});
 		}
