@@ -79,12 +79,9 @@
                 <option value="html">HTML text</option>
                 <option value="web">Webpage (URL)</option>
             </select>
+            <br>
 
-            <input type="text" class="input-block-level hide" id="fieldSettings_help_text" name="fieldSettings_help_text" data-bindModel="help">
-
-            <textarea class="input-block-level hide" id="fieldSettings_help_html" name="fieldSettings_help_html" data-bindModel="help"></textarea>
-
-            <input type="text" class="input-block-level hide" id="fieldSettings_help_url" name="fieldSettings_help_url" data-bindModel="help" placeholder="http://example.com">
+            <textarea class="input-block-level" id="fieldSettings_help_text" name="fieldSettings_help_text" data-bindModel="help"> </textarea>
 
             <span class="help-block hidden"></span>
         </div>
@@ -95,18 +92,17 @@
             <label for="fieldSettings_choices">
                 Choices
             </label>
-            <input type="hidden" name="fieldSettings_choices" id="fieldSettings_choices" class="fieldSettings_choices"  data-bindModel="choicesOptions" value="">
-            <select class="input-block-level" id="fieldSettings_choices_type" name="fieldSettings_choices_type">
+            <input type="hidden" class="choicesOptions" name="fieldSettings_choicesOptions" data-bindModel="choicesOptions">
+            <select class="input-block-level" id="fieldSettings_choices_type" name="fieldSettings_choices_type" data-bindModel="choicesType" >
                 <option value="manual">Manual</option>
                 <option value="form">Another Form</option>
             </select>
 
+            <label>
+                <input type="checkbox" id="fieldSettings_choices_null" name="fieldSettings_choices_null" data-bindModel="choicesNull"> Include 'Make a selection' placeholder
+            </label>
 
             <div class="manual_choices">
-                <label>
-                    <input type="checkbox" id="fieldSettings_choices_null" name="fieldSettings_choices_null" data-bindModel="choicesNull"> Include 'Make a selection' placeholder
-                </label>
-
                 <div id="fieldSettings_choices_manual"></div>
             </div>
 
@@ -128,7 +124,7 @@
                 <label for="fieldSettings_choices_fieldDefault">
                     Default Value
                 </label>
-                <input type="test" id="fieldSettings_choices_fieldDefault" name="fieldSettings_choices_fieldDefault" data-bindModel="choicesDefault">
+                <input type="text" id="fieldSettings_choices_fieldDefault" name="fieldSettings_choices_fieldDefault" data-bindModel="choicesFieldDefault">
             </div>
             <span class="help-block hidden"></span>
         </div>
