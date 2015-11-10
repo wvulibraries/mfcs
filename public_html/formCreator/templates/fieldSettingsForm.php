@@ -566,7 +566,7 @@
     </div>
 
 
-    <div class="group">
+    <div class="group default">
         <div class="control-group " id="fieldSettings_container_options">
             <strong> Options </strong>
             <ul class="checkboxList">
@@ -647,7 +647,7 @@
         </div>
     </div>
 
-    <div class="group">
+    <div class="group default">
         <div class="control-group " id="fieldSettings_container_validation">
             <label for="fieldSettings_validation">
                 Validation
