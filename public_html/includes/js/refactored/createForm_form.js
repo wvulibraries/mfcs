@@ -257,11 +257,9 @@ function applyLabelName(){
 
 	if(typeof globalFieldID === 'undefined'){
 		formPreview = $('#formPreview').children().find('.fieldPreview');
-		console.log(formPreview.lenth);
 	}
 	else {
 		formPreview = $('#formPreview_'+globalFieldID).find('.fieldPreview');
-		console.log(formPreview.length);
 	}
 
 	formPreview.each(function(){
@@ -392,6 +390,8 @@ function showFieldSettings(fullID) {
 					break;
 
 				case 'text':
+					$("#fieldSettings_container_value").show();
+					$("#fieldSettings_container_placeholder").show();
 					$("#fieldSettings_container_externalUpdate").parent().show();
 					$("#fieldSettings_container_range").parent().show();
 					$("#fieldSettings_range_step").parent().hide();
@@ -401,6 +401,8 @@ function showFieldSettings(fullID) {
 					break;
 
 				case 'textarea':
+					$("#fieldSettings_container_value").show();
+					$("#fieldSettings_container_placeholder").show();
 					$("#fieldSettings_container_range").parent().show();
 					$("#fieldSettings_range_step").parent().hide();
 					$('#fieldSettings_range_format').parent().removeClass('span4').addClass('span6');
@@ -416,6 +418,8 @@ function showFieldSettings(fullID) {
 					break;
 
 				case 'number':
+					$("#fieldSettings_container_value").hide();
+					$("#fieldSettings_container_placeholder").show();
 					$("#fieldSettings_container_range").parent().show();
 					$("#fieldSettings_range_step").parent().show();
 					$('#fieldSettings_range_format').parent().removeClass('span6').addClass('span4');
@@ -426,11 +430,12 @@ function showFieldSettings(fullID) {
 
 				case 'wysiwyg':
 					$("#fieldSettings_container_placeholder").hide();
+					$("#fieldSettings_container_value").hide();
 					break;
 
 				case 'file':
-					$("#fieldSettings_container_file_allowedExtensions").show();
-					$("#fieldSettings_container_file_options").show();
+					$("#fieldSettings_container_file_allowedExtensions").parent().show();
+					$("#fieldSettings_container_file_options").parent().show();
 					$("#fieldSettings_container_value").hide();
 					$("#fieldSettings_container_placeholder").hide();
 					break;
@@ -587,6 +592,11 @@ function setOriginalValues(){
 		}
 	}
 
+	if(bindObj == 'watermark' || bindObj == 'border' || bindObj == 'thumbnail' || bindObj == 'convert' || bindObj == 'videothumbnail' || bindObj == 'convertVideo' || bindObj == 'convertAudio'){
+		bindToInput.change();
+	}
+
+
     // Modifications for inputs and selects need to be done here same with checks
    if(bindToInput.is("input[type=checkbox]")) {
 		if(value == "true"){
@@ -656,6 +666,15 @@ function bindToHiddenForm(){
 				// remove HTML characters
 				newValue = removeHtml(val);
 				hiddenForm.find("[data-bind='"+ inputObj +"']").val(type + " | " + newValue);
+			}
+		}
+
+		if(inputObj == 'watermark' || inputObj == 'border' || inputObj == 'thumbnail' || inputObj == 'convert' || inputObj == 'videothumbnail' || inputObj == 'convertVideo' || inputObj == 'convertAudio'){
+			if(!!value === true){
+				$('.'+inputObj).show();
+			}
+			else{
+				$('.'+inputObj).hide();
 			}
 		}
 	}
@@ -1105,15 +1124,15 @@ function newFieldValues(id,type,vals) {
                 'videoHeight', 'videoWidth', 'videobitRate', 'aspectRatio', 'videoFormat', 'videothumbnail', 'videoThumbFrames', 'videoThumbHeight',
                 'videoThumbWidth', 'videoFormatThumb'];
 
+     		output += createHiddenFields(fileHiddenFields, id, vals);
 
              // default values
-            output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'"     data-bind="allowedExtensions_'+id+'"    value="'+((vals.allowedExtensions !== undefined)?vals.allowedExtensions:'tif%,%tiff,mp4')+'">';
-			output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'"     data-bind="allowedExtensions_'+id+'"    value="'+((vals.allowedExtensions !== undefined)?vals.allowedExtensions:'tif%,%tiff,mp4')+'">';
-			output += '<input type="hidden" id="convertResolution_'+id+'" name="convertResolution_'+id+'"     data-bind="convertResolution_'+id+'"    value="'+((vals.convertResolution !== undefined)?vals.convertResolution:'192')+'">';
-			output += '<input type="hidden" id="convertFormat_'+id+'"     name="convertFormat_'+id+'"         data-bind="convertFormat_'+id+'"        value="'+((vals.convertFormat !== undefined)?vals.convertFormat:'JPG')+'">';
-			output += '<input type="hidden" id="thumbnailHeight_'+id+'"   name="thumbnailHeight_'+id+'"       data-bind="thumbnailHeight_'+id+'"      value="'+((vals.thumbnailHeight !== undefined)?vals.thumbnailHeight:'150')+'">';
-			output += '<input type="hidden" id="thumbnailWidth_'+id+'"    name="thumbnailWidth_'+id+'"        data-bind="thumbnailWidth_'+id+'"       value="'+((vals.thumbnailWidth !== undefined)?vals.thumbnailWidth:'150')+'">';
-			output += '<input type="hidden" id="thumbnailFormat_'+id+'"   name="thumbnailFormat_'+id+'"       data-bind="thumbnailFormat_'+id+'"      value="'+((vals.thumbnailFormat !== undefined)?vals.thumbnailFormat:'JPG')+'">';
+            output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'"     data-bind="allowedExtensions"    value="'+((vals.allowedExtensions !== undefined)?vals.allowedExtensions:'tif%,%tiff,mp4')+'">';
+			output += '<input type="hidden" id="convertResolution_'+id+'" name="convertResolution_'+id+'"     data-bind="convertResolution"    value="'+((vals.convertResolution !== undefined)?vals.convertResolution:'192')+'">';
+			output += '<input type="hidden" id="convertFormat_'+id+'"     name="convertFormat_'+id+'"         data-bind="convertFormat"        value="'+((vals.convertFormat !== undefined)?vals.convertFormat:'JPG')+'">';
+			output += '<input type="hidden" id="thumbnailHeight_'+id+'"   name="thumbnailHeight_'+id+'"       data-bind="thumbnailHeight"      value="'+((vals.thumbnailHeight !== undefined)?vals.thumbnailHeight:'150')+'">';
+			output += '<input type="hidden" id="thumbnailWidth_'+id+'"    name="thumbnailWidth_'+id+'"        data-bind="thumbnailWidth"       value="'+((vals.thumbnailWidth !== undefined)?vals.thumbnailWidth:'150')+'">';
+			output += '<input type="hidden" id="thumbnailFormat_'+id+'"   name="thumbnailFormat_'+id+'"       data-bind="thumbnailFormat"      value="'+((vals.thumbnailFormat !== undefined)?vals.thumbnailFormat:'JPG')+'">';
 			break;
 
 		default:
@@ -1338,14 +1357,23 @@ function enableChoiceFunctionality(){
 }
 
 function modifyChoiceBinding(){
+	console.log('test');
 	var valueObject = [];
+	var dataType = $(this).data('itemtype');
+
 	$('.input-append').find('input').each(function(index){
 		value = $(this).val();
 		valueObject[index] = value;
 	});
 
 	var choices = valueObject.join('%,%');
-	$('.choicesOptions').val(choices).change();
+
+	if(dataType == 'choice'){
+		$('.choicesOptions').val(choices).change();
+	}
+	else {
+		$('.allowedExtensions').val(choices).change();
+	}
 }
 
 // /*

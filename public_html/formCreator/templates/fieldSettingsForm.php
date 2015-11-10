@@ -224,6 +224,7 @@
             <label for="fieldSettings_file_allowedExtensions">
                 Allowed Extensions
             </label>
+            <input type="hidden" class="allowedExtensions" name="fieldSettings_allowedExtensions" data-bindModel="allowedExtensions">
             <div id="fieldSettings_file_allowedExtensions"></div>
             <span class="help-block hidden"></span>
         </div>
@@ -231,57 +232,60 @@
 
     <div class="group">
         <div class="control-group " id="fieldSettings_container_file_options">
-            <strong> File Upload Options </strong>
 
-            <ul class="checkboxList">
-                <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_bgProcessing" name="fieldSettings_file_options_bgProcessing"  data-bindModel="bgProcessing"> Process files in the background</label></li>
-            </ul>
-
-            <div class="fileTypeAdjustments">
-                <div>
-                    <p> Image Options </p>
-                    <ul class="checkboxList">
-                        <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_multipleFiles" name="fieldSettings_file_options_multipleFiles" data-bindModel="multipleFiles"> Allow multiple files in single upload</label></li>
-                        <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_combine" name="fieldSettings_file_options_combine" data-bindModel="combine"> Combine into single PDF</label></li>
-                        <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_ocr" name="fieldSettings_file_options_ocr" data-bindModel="ocr"> Optical character recognition (OCR)</label></li>
-                        <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_convert" name="fieldSettings_file_options_convert" data-bindModel="convert"> Convert Image file</label></li>
-                        <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_thumbnail" name="fieldSettings_file_options_thumbnail" data-bindModel="thumbnail"> Create thumbnail</label></li>
-                    </ul>
-                </div>
-                <div>
-                    <p> Audio Options </p>
-                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="More options will be added for more processing information."></i>
-                    <ul class="checkboxList">
-                        <li>
-                            <label class="checkbox">
-                                <input type="checkbox" id="fieldSettings_file_options_convertAudio" name="fieldSettings_file_options_convert" data-bindModel="convertAudio">
-                                Convert or Modify Audio
-                            </label>
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <p> Video Options </p>
-                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="More options will be added for more processing information."></i>
-                    <ul class="checkboxList">
-                        <li>
-                            <label class="checkbox">
-                                <input type="checkbox" id="fieldSettings_file_options_convertVideo" name="fieldSettings_file_options_convertVideo" data-bindModel="convertVideo">
-                                Convert or Modify Video
-                            </label>
-                        </li>
-                        <li>
-                            <label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_videothumbnail" name="fieldSettings_file_options_videothumbnail" data-bindModel="videoThumbnail">
-                                Create thumbnail
-                            </label>
-                        </li>
-                    </ul>
-                </div>
+            <div class="microGroup">
+                <strong> File Upload Options </strong>
+                <ul>
+                    <li> <label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_bgProcessing" name="fieldSettings_file_options_bgProcessing"  data-bindModel="bgProcessing"> Process files in the background</label> </li>
+                </ul>
             </div>
+
+            <div class="microGroup">
+                <strong> Image Options </strong>
+                <ul>
+                    <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_multipleFiles" name="fieldSettings_file_options_multipleFiles" data-bindModel="multipleFiles"> Allow multiple files in single upload</label></li>
+                    <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_combine" name="fieldSettings_file_options_combine" data-bindModel="combine"> Combine into single PDF</label></li>
+                    <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_ocr" name="fieldSettings_file_options_ocr" data-bindModel="ocr"> Optical character recognition (OCR)</label></li>
+                    <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_convert" name="fieldSettings_file_options_convert" data-bindModel="convert"> Convert Image file</label></li>
+                    <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_thumbnail" name="fieldSettings_file_options_thumbnail" data-bindModel="thumbnail"> Create thumbnail</label></li>
+                </ul>
+            </div>
+
+            <div class="microGroup">
+                <strong> Audio Options </strong>
+                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="More options will be added for more processing information."></i>
+                <ul>
+                    <li>
+                        <label class="checkbox">
+                            <input type="checkbox" id="fieldSettings_file_options_convertAudio" name="fieldSettings_file_options_convert" data-bindModel="convertAudio">
+                            Convert or Modify Audio
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="microGroup">
+                <strong> Video Options </strong>
+                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="More options will be added for more processing information."></i>
+                <ul>
+                    <li>
+                        <label class="checkbox">
+                            <input type="checkbox" id="fieldSettings_file_options_convertVideo" name="fieldSettings_file_options_convertVideo" data-bindModel="convertVideo">
+                            Convert or Modify Video
+                        </label>
+                    </li>
+                    <li>
+                        <label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_videothumbnail" name="fieldSettings_file_options_videothumbnail" data-bindModel="videothumbnail">
+                            Create thumbnail
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
         </div>
     </div>
 
-    <div class="group">
+    <div class="group audio">
         <div class="control-group" id="fieldSettings_container_file_convertAudio">
             <p> Audio Conversions </p>
 
@@ -310,12 +314,12 @@
     </div>
 
 
-    <div class="group">
+    <div class="group convertVideo">
         <div class="control-group " id="fieldSettings_container_file_convertVideo">
 
             <strong> Video Options </strong>
 
-            <div class="audio">
+            <div>
                 <div id="fieldSettings_container_file_convert_bitrate" class="">
                     <label class="span4">
                         Change BitRate:
@@ -377,7 +381,7 @@
                     <input type="number" class="input-block-level" id="fieldSettings_file_video_width" name="fieldSettings_file_video_width" min="0"  data-bindModel="videoWidth"/>
                 </span>
                 </div>
-                <div class="" id="fieldSettings_file_videoThumbnail">
+                <div class="" id="fieldSettings_file_video_aspect">
                     <span class="span12">
                         <label for="fieldSettings_file_video_aspectRatio"> Aspect Ratio </label>
                             <select class="videoAspectRatio span12 last" data-bindModel="aspectRatio">
@@ -391,7 +395,7 @@
         </div>
     </div>
 
-    <div class="group">
+    <div class="group videothumbnail">
         <div class="control-group " id="fieldSettings_container_file_videoThumbnail">
             <label for="fieldSettings_file_thumbnail">
                 Video Thumbnail Options
@@ -436,7 +440,7 @@
         </div>
     </div>
 
-    <div class="group">
+    <div class="group convert">
         <div class="control-group " id="fieldSettings_container_file_convert">
 
             <strong> Image Conversions </strong>
@@ -477,62 +481,55 @@
             <ul class="checkboxList">
                 <li>
                     <label class="checkbox"><input type="checkbox" id="fieldSettings_file_convert_watermark" name="fieldSettings_file_convert_watermark" data-bindModel="watermark">Watermark</label>
-                    <div class="">
-                        <div class="span6">
-                            <label for="fieldSettings_file_watermark_image">
-                                Image
-                            </label>
-                            <select class="input-block-level" id="fieldSettings_file_watermark_image" name="fieldSettings_file_watermark_image" data-bindModel="watermarkImage">
-                                <option value="">Select Image</option>
-                                {local var="watermarkList"}
-                            </select>
-                        </div>
-                        <div class="span6">
-                            <label for="fieldSettings_file_watermark_location">
-                                Location
-                            </label>
-                            <select class="input-block-level" id="fieldSettings_file_watermark_location" name="fieldSettings_file_watermark_location" data-bindModel="watermarkLocation">
-                                <option value="">Select Location</option>
-                                {local var="imageLocations"}
-                            </select>
-                        </div>
-                    </div>
                 </li>
                 <li>
                     <label class="checkbox">
                         <input type="checkbox" id="fieldSettings_file_convert_border" name="fieldSettings_file_convert_border" data-bindModel="border">
                         Border
                     </label>
-                    <div class="">
-                        <div class="span4">
-                            <label for="fieldSettings_file_border_height">
-                                Height (px)
-                                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Border width of the top and bottom."></i>
-                            </label>
-                            <input type="number" class="input-block-level" id="fieldSettings_file_border_height" name="fieldSettings_file_border_height" min="0" data-bindModel="borderHeight"/>
-                        </div>
-
-                        <div class="span4">
-                            <label for="fieldSettings_file_border_width">
-                                Width (px)
-                                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Border width of the left and right."></i>
-                            </label>
-                            <input type="number" class="input-block-level" id="fieldSettings_file_border_width" name="fieldSettings_file_border_width" min="0" data-bindModel="borderWidth"/>
-                        </div>
-
-                        <div class="span4">
-                            <label for="fieldSettings_file_border_color">
-                                Color
-                            </label>
-                            <input type="color" class="input-block-level" id="fieldSettings_file_border_color" name="fieldSettings_file_border_color" data-bindModel="borderColor"/>
-                        </div>
-                    </div>
                 </li>
             </ul>
         </div>
     </div>
 
-    <div class="group">
+     <div class="group border">
+            <label for="fieldSettings_file_border_height">
+                Height (px)
+                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Border width of the top and bottom."></i>
+            </label>
+            <input type="number" class="input-block-level" id="fieldSettings_file_border_height" name="fieldSettings_file_border_height" min="0" data-bindModel="borderHeight"/>
+
+            <label for="fieldSettings_file_border_width">
+                Width (px)
+                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Border width of the left and right."></i>
+            </label>
+            <input type="number" class="input-block-level" id="fieldSettings_file_border_width" name="fieldSettings_file_border_width" min="0" data-bindModel="borderWidth"/>
+
+            <label for="fieldSettings_file_border_color">
+                Color
+            </label>
+            <input type="color" class="input-block-level" id="fieldSettings_file_border_color" name="fieldSettings_file_border_color" data-bindModel="borderColor"/>
+    </div>
+
+    <div class="group watermark">
+        <label for="fieldSettings_file_watermark_image">
+            Image
+        </label>
+        <select class="input-block-level" id="fieldSettings_file_watermark_image" name="fieldSettings_file_watermark_image" data-bindModel="watermarkImage">
+            <option value="">Select Image</option>
+            {local var="watermarkList"}
+        </select>
+
+        <label for="fieldSettings_file_watermark_location">
+            Location
+        </label>
+        <select class="input-block-level" id="fieldSettings_file_watermark_location" name="fieldSettings_file_watermark_location" data-bindModel="watermarkLocation">
+            <option value="">Select Location</option>
+            {local var="imageLocations"}
+        </select>
+    </div>
+
+    <div class="group imageThumb">
         <div class="control-group " id="fieldSettings_container_file_thumbnail">
             <label for="fieldSettings_file_thumbnail">
                 Thumbnail Options
@@ -668,7 +665,7 @@
 
 <!-- Modals ===================================================================  -->
 
- <div id="defaultValueVariables" class="modal hide" rel="modal" data-show="false">
+ <div id="defaultValueVariables" class="modal" rel="modal" data-show="false">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="myModalLabel">Available variables for default value</h3>

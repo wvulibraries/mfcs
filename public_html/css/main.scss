@@ -525,6 +525,13 @@ input{
   outline:0;
   margin-bottom:20px;
 
+  &[type=color]{
+    height:40px;
+    padding:0;
+    border:1px solid darken($lightgrey,10%);
+    background:#fff;
+  }
+
   &[readonly], .disabled{
     cursor: not-allowed;
     opacity:.6;
@@ -1083,6 +1090,13 @@ select {
     display:block;
     float:left;
     width:100%;
+  }
+
+  .microGroup{
+    padding:20px 0;
+    border-top:1px solid $lightgrey;
+    &:first-child { border:0; }
+    ul { list-style:none;}
   }
 
   .well { padding:10px;
