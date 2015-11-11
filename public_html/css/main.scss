@@ -140,6 +140,12 @@ section {
   }
 }
 
+table {
+  width:100%;
+  th,td { padding:10px; }
+  th { text-align:center; }
+}
+
 
 // ICON FIXES
 // ===========================================================================================
@@ -518,6 +524,15 @@ section {
 // ===========================================================================================
 
 label { display:block; }
+
+#deleteFormFrm{
+  h1 {margin:0 0 20px;}
+  input[type=button]{
+    width:48.8% !important;
+    margin-right:2%;
+    &:last-of-type { margin-right:0; }
+  }
+}
 
 input{
   width:100% !important;
