@@ -7162,6 +7162,119 @@ function handler_displayMetadataFormModal(formID) {
 
 
 
+// Create For Nav Sumbissions
+// ===================================================================
+$(function() {
+    var groupingsPreview = $("#GroupingsPreview");
+
+    // Blank all panes when changing tabs
+    $("#groupingTab").on("click", "a", function() {
+        groupingsPreview.find("li").removeClass("well");
+        showSettings(); // blank the Settings pane
+    });
+
+    // Make draggable, linked to preview pane
+    $("#groupingsAdd .draggable li").draggable({
+        connectToSortable: "#navigation ul.sortable",
+        helper: "clone",
+        revert: "invalid",
+        cancel: ".noDrag",
+    }).disableSelection();
+
+    // Add new on click as well as drag
+    $("#groupingsAdd").on("click", "li", function(event) {
+        event.preventDefault();
+
+        if (!$(this).hasClass("noDrag")) {
+            $(this).clone().appendTo(groupingsPreview);
+            addNew(groupingsPreview.find("li:last"));
+            sortableNav();
+        }
+    });
+
+    // Delete form handlers
+    $('#deleteFormBtn-Cancel').click(function(){
+        $("a[href='#formCreator']").click();
+    });
+    $('#deleteFormBtn-Submit').click(function(e){
+        if(prompt("Last chance!\nAre you sure you want to permanently delete this form?\n\nAnything but 'yes' will cancel").toLowerCase() == 'yes'){
+            $('#deleteFormFrm').submit();
+        }
+    });
+
+    groupingsPreview
+        // Delete icon binding
+        .on("click", ".groupingPreview i.icon-remove", function() {
+            if (confirm("Are you sure you want to remove this grouping?")) {
+                var thisLI = $(this).parent().parent();
+
+                // If I'm a grouping, move any groupings that are within me
+                if ($(this).parent().next().children(":input[name^=nav_type_]").val() == 'grouping') {
+                    thisLI.after($(this).next().find("li"));
+                }
+                // Delete this li
+                thisLI.remove();
+            }
+        })
+        // Disable links in preview
+        .on("click", "a", function(event) {
+            event.preventDefault();
+        });
+
+    // Re-order nesting on load
+    // This loops through <li> and finds all the fieldsets, then loops through matching all <li> that have
+    // the same grouping name and moves them inside it
+    $(".groupingValues :input[name^='nav_type_'][value='grouping']").each(function() {
+        var grouping = $(this).parents("li").prop("id");
+        $(".groupingValues :input[name^='nav_grouping_'][value='"+$(this).siblings(":input[name^='nav_grouping_']").val()+"']").each(function() {
+            if (grouping != $(this).parents("li").prop("id")) {
+                $(this).parents("li").detach().appendTo($("#"+grouping+" ul"));
+            }
+        });
+    });
+
+    sortableNav();
+    settingsBindings();
+
+    // Click through each field and then back to add field tab on page load to update form preview
+    groupingsPreview.find("li").click();
+    $("#groupingTab li:first a").click();
+
+    $("form[name=submitNavigation]").submit(function(event) {
+        // event.preventDefault();
+
+        // Calculate position of all fields
+        $(".groupingValues :input[name^=nav_position_]").each(function(index) {
+            $(this).val(index);
+        });
+
+        // Create a multidimentional object to store field info
+        var obj = {};
+        $(".groupingValues :input").each(function() {
+            var grouping = $(this).prop("name").split("_");
+
+            if (!obj[ grouping[2] ]) {
+                obj[ grouping[2] ] = {};
+            }
+
+            obj[ grouping[2] ][ grouping[1] ] = $(this).val();
+        });
+
+        // Remove groupings from submission
+        for (var i in obj) {
+            if (obj[i]['type'] == 'grouping') {
+                delete obj[i];
+            }
+        };
+
+        // Convert object to JSON and add it to a hidden form field
+        $(":input[name=groupings]", this).val(JSON.stringify(obj));
+
+        $("#groupingsSettings :input").prop("disabled", true);
+        groupingsPreview.find(":input").prop("disabled", true);
+    });
+});
+
 // Global Variable
 // ===================================================================
 var globalFieldID;
@@ -7183,7 +7296,7 @@ $(function(){
     fieldSettingsBindings();
 	formSettingsBindings();
 	modalBindings();
-	applyLabelName();
+	applyFormPreview();
 
 	// Blank all panes when changing tabs
 	fieldTab.on("click", "a", function() {
@@ -7298,125 +7411,9 @@ $(function(){
 });
 
 
-// Create For Nav Sumbissions
-// ===================================================================
-$(function() {
-	var groupingsPreview = $("#GroupingsPreview");
-
-	// Blank all panes when changing tabs
-	$("#groupingTab").on("click", "a", function() {
-		groupingsPreview.find("li").removeClass("well");
-		showSettings(); // blank the Settings pane
-	});
-
-	// Make draggable, linked to preview pane
-	$("#groupingsAdd .draggable li").draggable({
-		connectToSortable: "#navigation ul.sortable",
-		helper: "clone",
-		revert: "invalid",
-		cancel: ".noDrag",
-	}).disableSelection();
-
-	// Add new on click as well as drag
-	$("#groupingsAdd").on("click", "li", function(event) {
-		event.preventDefault();
-
-		if (!$(this).hasClass("noDrag")) {
-			$(this).clone().appendTo(groupingsPreview);
-			addNew(groupingsPreview.find("li:last"));
-			sortableNav();
-		}
-	});
-
-	// Delete form handlers
-	$('#deleteFormBtn-Cancel').click(function(){
-		$("a[href='#formCreator']").click();
-	});
-	$('#deleteFormBtn-Submit').click(function(e){
-		if(prompt("Last chance!\nAre you sure you want to permanently delete this form?\n\nAnything but 'yes' will cancel").toLowerCase() == 'yes'){
-			$('#deleteFormFrm').submit();
-		}
-	});
-
-	groupingsPreview
-		// Delete icon binding
-		.on("click", ".groupingPreview i.icon-remove", function() {
-			if (confirm("Are you sure you want to remove this grouping?")) {
-				var thisLI = $(this).parent().parent();
-
-				// If I'm a grouping, move any groupings that are within me
-				if ($(this).parent().next().children(":input[name^=nav_type_]").val() == 'grouping') {
-					thisLI.after($(this).next().find("li"));
-				}
-				// Delete this li
-				thisLI.remove();
-			}
-		})
-		// Disable links in preview
-		.on("click", "a", function(event) {
-			event.preventDefault();
-		});
-
-	// Re-order nesting on load
-	// This loops through <li> and finds all the fieldsets, then loops through matching all <li> that have
-	// the same grouping name and moves them inside it
-	$(".groupingValues :input[name^='nav_type_'][value='grouping']").each(function() {
-		var grouping = $(this).parents("li").prop("id");
-		$(".groupingValues :input[name^='nav_grouping_'][value='"+$(this).siblings(":input[name^='nav_grouping_']").val()+"']").each(function() {
-			if (grouping != $(this).parents("li").prop("id")) {
-				$(this).parents("li").detach().appendTo($("#"+grouping+" ul"));
-			}
-		});
-	});
-
-	sortableNav();
-	settingsBindings();
-
-	// Click through each field and then back to add field tab on page load to update form preview
-	groupingsPreview.find("li").click();
-	$("#groupingTab li:first a").click();
-
-	$("form[name=submitNavigation]").submit(function(event) {
-		// event.preventDefault();
-
-		// Calculate position of all fields
-		$(".groupingValues :input[name^=nav_position_]").each(function(index) {
-			$(this).val(index);
-		});
-
-		// Create a multidimentional object to store field info
-		var obj = {};
-		$(".groupingValues :input").each(function() {
-			var grouping = $(this).prop("name").split("_");
-
-			if (!obj[ grouping[2] ]) {
-				obj[ grouping[2] ] = {};
-			}
-
-			obj[ grouping[2] ][ grouping[1] ] = $(this).val();
-		});
-
-		// Remove groupings from submission
-		for (var i in obj) {
-			if (obj[i]['type'] == 'grouping') {
-				delete obj[i];
-			}
-		};
-
-		// Convert object to JSON and add it to a hidden form field
-		$(":input[name=groupings]", this).val(JSON.stringify(obj));
-
-		$("#groupingsSettings :input").prop("disabled", true);
-		groupingsPreview.find(":input").prop("disabled", true);
-	});
-});
-
-
-
-
 // Helper Functions
 // ===================================================================
-function applyLabelName(){
+function applyFormPreview(){
 	var formPreview;
 
 	if(typeof globalFieldID === 'undefined'){
@@ -7434,11 +7431,15 @@ function applyLabelName(){
 		var name        = settings.find($('input[name^="name"]')).val();
 		var style       = settings.find($('input[name^="style"]')).val();
 		var labelValue  = settings.find($('input[name^="label"]')).val();
+		var id 	        = settings.find($('input[name^="id"]')).val();
+		var someClass	= settings.find($('input[name^="class"]')).val();
 
 		controls.attr({
 			'placeholder' : placeholder,
 			'name'        : name,
-			'style'       : style
+			'style'       : style,
+			'id'		  : id,
+			'class'		  : someClass
 		});
 
 		label.html(labelValue)
@@ -7477,8 +7478,8 @@ function calculatePosition(){
 
 // This function creates the form view
 // It allows you to see the fields, drag and drop
-// It also selects what field options show when a field
-// Is selected from the list.
+// It also selects what field options show when a field is clicked
+// This form is the main caller of bindings and form previews
 
 function showFieldSettings(fullID) {
 	// Create jQuery shortcuts (code optimization)
@@ -7721,7 +7722,7 @@ function fieldSettingsBindings(){
 			$("#fieldTab a[href='#fieldSettings']").tab("show");
 			showFieldSettings(id);
 			setInitialBind();
-			applyLabelName();
+			applyFormPreview();
 		}
 	});
 }  // end function
@@ -7840,6 +7841,8 @@ function bindToHiddenForm(){
 				hiddenForm.find("[data-bind='"+ inputObj +"']").val(type + " | " + newValue);
 			}
 		}
+
+		applyFormPreview();
 	}
 }
 
@@ -8786,6 +8789,49 @@ function newGroupingValues(id,type,vals) {
 }
 
 // Document Ready
+// =================================================================
+//
+$(function() {
+	$("form[name=submitPermissions]").submit(function() {
+		entrySubmit();
+	});
+});
+
+// Helper Functions
+// =================================================================
+
+function removeItemFromID(id, item) {
+	var selIndex = item.selectedIndex;
+	if (selIndex != -1) {
+		for (i = item.length - 1; i >= 0; i--) {
+			if (item.options[i].selected) {
+				item.options[i] = null;
+			}
+		}
+		if (item.length > 0) {
+			item.selectedIndex = selIndex == 0 ? 0 : selIndex - 1;
+		}
+	}
+}
+
+function selectAllOnSubmit(id) {
+	var item = document.getElementById(id);
+    if(item != null){
+        for (i = item.length - 1; i >= 0; i--) {
+            item.options[i].selected = true;
+        }
+    }
+}
+
+function entrySubmit() {
+	selectAllOnSubmit("selectedEntryUsers");
+	selectAllOnSubmit("selectedViewUsers");
+	selectAllOnSubmit("selectedUsersAdmins");
+
+	return true;
+}
+
+// Document Ready
 // ===================================================================
 $(function(){
     var projects = CurrentProjects; // init the dipslay object
@@ -8804,10 +8850,6 @@ $(function(){
            removeFormAlert();
         }
     });
-
-    console.log('testing current Projects stuff');
-
-
 });
 
 // Fake JS Class
@@ -8915,6 +8957,25 @@ function removeFormAlert(){
         formAlert.hide();
     }
 }
+function previewFile(linkObj,url){
+	var $link     = $(linkObj);
+	var $modal    = $('#filePreviewModal');
+	var linkLabel = $link.text();
+	var filename  = $link.closest('.btn-group').siblings('.filename').text();
+	var iFrame    = $modal.find('iframe.filePreview')[0];
+
+	// Create a ucfirst() version of the linkLabel
+	var typeLabel = linkLabel.charAt(0).toUpperCase() + linkLabel.substr(1).toLowerCase();
+
+	$modal.modal('hide');
+	iFrame.src = 'about:blank';
+	$modal.find('h3').html( filename+' - '+typeLabel );
+	iFrame.src = url;
+	$modal.find('a.previewDownloadLink')[0].href = url+'&download=1';
+	$modal.modal('show');
+}
+
+
 // Document Ready
 // ===================================================================
 // Initializes and gives parameters to Fine Uploader divs
@@ -9142,6 +9203,53 @@ $(function(){
     });
 });
 
+
+
+var objectID = $('#revisionsScript').data("objectid");
+
+function scrollSync(iFrameObj){
+	$($(iFrameObj).contents()).scroll(function(){
+		if($('#revisionSelector').val()){
+			var thisObj     = $(this);
+			var url         = thisObj[0].URL;
+			var fieldName   = url.match(/field=\w+/i)[0].split('=')[1];
+			var iFrameClass = url.match(/#\w+/i)[0].substr(1);
+			var targetClass = iFrameClass=='rightFileViewer' ? 'leftFileViewer' : 'rightFileViewer';
+			var scrollTop   = thisObj.scrollTop();
+			var scrollLeft  = thisObj.scrollLeft();
+			$('.'+targetClass+'[data-field_name="'+fieldName+'"]').contents().scrollTop(scrollTop).scrollLeft(scrollLeft);
+		}
+	});
+	// onLoad, trigger sync from the left fileViewer
+	$('.leftFileViewer').contents().scroll();
+}
+
+$(function(){
+	$('#revisionSelector').change(function(){
+		var url = '?objectID='+objectID+'&revisionID='+$(this).val();
+		$('#revisionViewer').load(url);
+	});
+	$('#revertBtn').click(function(){
+		if(confirm('Are you sure you want to revert back to this version?')){
+			$('#revisionID').val( $('#revisionSelector').val() );
+			$('#revisionForm').submit();
+			$('#revisions :input').attr('disabled','disabled');
+		}else{
+			alert('Revert canceled');
+		}
+	});
+	$('#objectComparator').on('click','.toggleFileList',function(){
+		$link = $(this);
+		$ul   = $link.next('ul');
+		if($ul.is(':visible')){
+			$ul.slideUp('fast');
+			$link.html('click to show list');
+		}else{
+			$ul.slideDown('fast');
+			$link.html('click to hide list');
+		}
+	});
+});
 
 // Document Ready
 // ===================================================================
