@@ -17,10 +17,6 @@ $(function(){
            removeFormAlert();
         }
     });
-
-    console.log('testing current Projects stuff');
-
-
 });
 
 // Fake JS Class
