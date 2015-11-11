@@ -16,7 +16,7 @@ function displayMessages() {
 	if (is_empty($engine->errorStack)) {
 		return FALSE;
 	}
-	return '<header class="page-header"><h1>Results</h1></header>'.errorHandle::prettyPrint();
+	return errorHandle::prettyPrint();
 }
 
 function encodeFields($fields) {
