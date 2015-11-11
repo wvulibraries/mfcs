@@ -524,12 +524,16 @@ input{
   padding:6px;
   outline:0;
   margin-bottom:20px;
+  min-height:35px;
 
   &[type=color]{
-    height:40px;
+    height:43px;
     padding:0;
-    border:1px solid darken($lightgrey,10%);
     background:#fff;
+    border:0;
+    margin-top:-4px;
+    cursor:pointer;
+    &:focus,&:active,&:hover {  border:0; }
   }
 
   &[readonly], .disabled{
@@ -544,7 +548,7 @@ input{
     max-width:20px;
   }
 
-  &[type=text],  {
+  &[type=text]  {
      border:1px solid darken($lightgrey,10%);
   }
 
@@ -1114,6 +1118,16 @@ select {
     margin-bottom:10px;
   }
 
+  .span6 {
+    width:49%;
+    margin-right:2%;
+    &:nth-of-type(2n){
+      margin-right:0;
+    }
+  }
+
+  .audio { margin:0; }
+
   textarea {
     margin-bottom:0;
   }
@@ -1144,6 +1158,7 @@ strong { margin-bottom:10px;}
 
 .sortable { float:left; width:100%;}
 
+.group .control-group { margin:0; }
 // File Preview
 // =============================================================================
 
