@@ -17,24 +17,24 @@
             </ul>
 
             <div class="tab-content">
-                <div class="tab-pane mainFormElements" id="groupingsAdd">
-                    <ul class="unstyled draggable">
-                        <li><a href="#">New Grouping</a></li>
-                        <li><a href="#">Log Out</a></li>
-                        <li><a href="#">Export Link</a></li>
-                        <li><a href="#">Link</a></li>
+                <div class="tab-pane" id="groupingsAdd">
+                    <ul class="unstyled draggable metadataLinks">
+                        <li data-type="grouping"><a href="#">New Grouping</a></li>
+                        <li data-type="logout"><a href="#">Log Out</a></li>
+                        <li data-type="export"><a href="#">Export Link</a></li>
+                        <li data-type="link"><a href="#">Link</a></li>
                     </ul>
 
                     {local var="metadataForms"}
                 </div>
 
                 <div class="tab-pane" id="groupingsSettings">
-                    <div class="alert alert-block" id="noGroupingSelected">
+                    <div class="alert alert-warning" id="noGroupingSelected">
                         <h4>No Grouping Selected</h4>
                         To change a grouping, click on it in the preview to the right.
                     </div>
 
-                    <div class="control-group well well-small" id="groupingsSettings_container_grouping">
+                    <div class="control-group " id="groupingsSettings_container_grouping">
                         <label for="groupingsSettings_grouping">
                             Grouping Label
                         </label>
@@ -42,7 +42,7 @@
                         <span class="help-block hidden"></span>
                     </div>
 
-                    <div class="control-group well well-small" id="groupingsSettings_container_label">
+                    <div class="control-group " id="groupingsSettings_container_label">
                         <label for="groupingsSettings_label">
                             Label
                         </label>
@@ -50,7 +50,7 @@
                         <span class="help-block hidden"></span>
                     </div>
 
-                    <div class="control-group well well-small" id="groupingsSettings_container_url">
+                    <div class="control-group " id="groupingsSettings_container_url">
                         <label for="groupingsSettings_url">
                             Address
                         </label>
@@ -71,6 +71,7 @@
         </div>
 
         <div class="span6">
+            <h2 class="formTitle">Navigation Preview </h2>
             <ul class="sortable unstyled" id="GroupingsPreview">
                 {local var="existingGroupings"}
             </ul>
