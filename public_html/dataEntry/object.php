@@ -59,26 +59,28 @@ try {
 	/* End Parent Object 'Stuff' */
 
 	// Editor information
-	$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
-	if (is_empty($object['createdBy'])) {
-		localvars::add("createdByUsername","Unavailable");
-	}
-	else {
-		$user   = users::get($object['createdBy']);
-		localvars::add("createdByUsername",$user['username']);
-	}
-	
-	localvars::add("createdOnDate",date('D, d M Y H:i',$object['createTime']));
+	if (!isnull($engine->cleanGet['MYSQL']['objectID'])) {
+		$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
+		if (is_empty($object['createdBy'])) {
+			localvars::add("createdByUsername","Unavailable");
+		}
+		else {
+			$user   = users::get($object['createdBy']);
+			localvars::add("createdByUsername",$user['username']);
+		}
 
-	if (is_empty($object['modifiedBy'])) {
-		localvars::add("modifiedByUsername","Unavailable");
-	}
-	else {
-		$user   = users::get($object['modifiedBy']);
-		localvars::add("modifiedByUsername",$user['username']);
-	}
+		localvars::add("createdOnDate",date('D, d M Y H:i',$object['createTime']));
 
-	localvars::add("modifiedOnDate",date('D, d M Y H:i',$object['modifiedTime']));
+		if (is_empty($object['modifiedBy'])) {
+			localvars::add("modifiedByUsername","Unavailable");
+		}
+		else {
+			$user   = users::get($object['modifiedBy']);
+			localvars::add("modifiedByUsername",$user['username']);
+		}
+
+		localvars::add("modifiedOnDate",date('D, d M Y H:i',$object['modifiedTime']));
+	}
 
 	//////////
 	// Project Tab Stuff
