@@ -17,14 +17,12 @@
             </ul>
 
             <div class="tab-content">
-                <div class="tab-pane" id="groupingsAdd">
-                    <ul class="unstyled draggable span6">
-                        <li><a href="#" class="btn btn-block">New Grouping</a></li>
-                        <li><a href="#" class="btn btn-block">Log Out</a></li>
-                    </ul>
-                    <ul class="unstyled draggable span6">
-                        <li><a href="#" class="btn btn-block">Export Link (needs definable properties)</a></li>
-                        <li><a href="#" class="btn btn-block">Link</a></li>
+                <div class="tab-pane mainFormElements" id="groupingsAdd">
+                    <ul class="unstyled draggable">
+                        <li><a href="#">New Grouping</a></li>
+                        <li><a href="#">Log Out</a></li>
+                        <li><a href="#">Export Link</a></li>
+                        <li><a href="#">Link</a></li>
                     </ul>
 
                     {local var="metadataForms"}
