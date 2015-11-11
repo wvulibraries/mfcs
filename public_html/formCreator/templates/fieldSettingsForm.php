@@ -290,21 +290,21 @@
             <p> Audio Conversions </p>
 
             <div class="audio">
-                <div id="fieldSettings_container_file_convert_bitrate" class="">
-                    <label class="span4">
+                <div id="fieldSettings_container_file_convert_bitrate" class="span6">
+                    <label>
                         Change BitRate:
                     </label>
-                    <select class="bitRate span8 last" data-bindModel="bitRate">
+                    <select class="bitRate" data-bindModel="bitRate">
                             <option value="">  Select a BitRate  </option>
                             {local var="bitRates"}
                     </select>
                 </div>
 
-                <div id="fieldSettings_container_file_convert_audioFormat" class="">
-                    <label class="span4 left">
+                <div id="fieldSettings_container_file_convert_audioFormat" class="span6">
+                    <label>
                         Change Format:
                     </label>
-                    <select class="audioFormat span8 last" data-bindModel="audioFormat">
+                    <select class="audioFormat" data-bindModel="audioFormat">
                             <option value="">    Select a Format  </option>
                             {local var="audioOptions"}
                     </select>
@@ -320,21 +320,21 @@
             <strong> Video Options </strong>
 
             <div>
-                <div id="fieldSettings_container_file_convert_bitrate" class="">
-                    <label class="span4">
+                <div id="fieldSettings_container_file_convert_bitrate" class="span6">
+                    <label>
                         Change BitRate:
                     </label>
-                    <select class="videobitRate span8 last" data-bindModel="videobitRate">
+                    <select class="videobitRate" data-bindModel="videobitRate">
                             <option value="">  Select a BitRate  </option>
                             {local var="bitRates"}
                     </select>
                 </div>
 
-                <div id="fieldSettings_container_file_convert_videoFormat" class="">
-                    <label class="span4 left">
+                <div id="fieldSettings_container_file_convert_videoFormat" class="span6 last">
+                    <label>
                         Change Format:
                     </label>
-                    <select class="videoFormat span8 last" data-bindModel="videoFormat">
+                    <select class="videoFormat" data-bindModel="videoFormat">
                             <option value="">    Select a Format  </option>
                             {local var="videoTypes"}
                     </select>
@@ -479,10 +479,10 @@
             </div>
 
             <ul class="checkboxList">
-                <li>
+                <li class="uxOptions">
                     <label class="checkbox"><input type="checkbox" id="fieldSettings_file_convert_watermark" name="fieldSettings_file_convert_watermark" data-bindModel="watermark">Watermark</label>
                 </li>
-                <li>
+                <li class="uxOptions">
                     <label class="checkbox">
                         <input type="checkbox" id="fieldSettings_file_convert_border" name="fieldSettings_file_convert_border" data-bindModel="border">
                         Border
@@ -493,40 +493,47 @@
     </div>
 
      <div class="group border">
+        <span class="span4">
             <label for="fieldSettings_file_border_height">
                 Height (px)
                 <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Border width of the top and bottom."></i>
             </label>
             <input type="number" class="input-block-level" id="fieldSettings_file_border_height" name="fieldSettings_file_border_height" min="0" data-bindModel="borderHeight"/>
-
+        </span>
+        <span class="span4">
             <label for="fieldSettings_file_border_width">
                 Width (px)
                 <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Border width of the left and right."></i>
             </label>
             <input type="number" class="input-block-level" id="fieldSettings_file_border_width" name="fieldSettings_file_border_width" min="0" data-bindModel="borderWidth"/>
-
+        </span>
+        <span class="span4">
             <label for="fieldSettings_file_border_color">
                 Color
             </label>
             <input type="color" class="input-block-level" id="fieldSettings_file_border_color" name="fieldSettings_file_border_color" data-bindModel="borderColor"/>
+        </span>
     </div>
 
     <div class="group watermark">
-        <label for="fieldSettings_file_watermark_image">
-            Image
-        </label>
-        <select class="input-block-level" id="fieldSettings_file_watermark_image" name="fieldSettings_file_watermark_image" data-bindModel="watermarkImage">
-            <option value="">Select Image</option>
-            {local var="watermarkList"}
-        </select>
-
-        <label for="fieldSettings_file_watermark_location">
-            Location
-        </label>
-        <select class="input-block-level" id="fieldSettings_file_watermark_location" name="fieldSettings_file_watermark_location" data-bindModel="watermarkLocation">
-            <option value="">Select Location</option>
-            {local var="imageLocations"}
-        </select>
+        <span class="span6">
+            <label for="fieldSettings_file_watermark_image">
+                Image
+            </label>
+            <select class="input-block-level" id="fieldSettings_file_watermark_image" name="fieldSettings_file_watermark_image" data-bindModel="watermarkImage">
+                <option value="">Select Image</option>
+                {local var="watermarkList"}
+            </select>
+        </span>
+        <span class="span6">
+            <label for="fieldSettings_file_watermark_location">
+                Location
+            </label>
+            <select class="input-block-level" id="fieldSettings_file_watermark_location" name="fieldSettings_file_watermark_location" data-bindModel="watermarkLocation">
+                <option value="">Select Location</option>
+                {local var="imageLocations"}
+            </select>
+        </span>
     </div>
 
     <div class="group thumbnail">
