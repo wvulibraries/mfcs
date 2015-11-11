@@ -24,7 +24,7 @@
                 Value
                 <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="When the form is first displayed, this value will already be prepopulated."></i>
             </label>
-            <a href="javascript:;" class="pull-right" onclick="$('#defaultValueVariables').modal('show')" id="fieldVariablesLink" style="display: none;">Variables</a>
+            <a href="javascript:void(0);" class="pull-right" onclick="$('#defaultValueVariables').modal('show')" id="fieldVariablesLink" style="display: none;">Variables</a>
             <input type="text" class="input-block-level" id="fieldSettings_value" name="fieldSettings_value" data-bindModel="value"/>
             <span class="help-block hidden"></span>
         </div>
@@ -240,7 +240,7 @@
                 </ul>
             </div>
 
-            <div class="microGroup">
+            <div class="microGroup uxOptions">
                 <strong> Image Options </strong>
                 <ul>
                     <li><label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_multipleFiles" name="fieldSettings_file_options_multipleFiles" data-bindModel="multipleFiles"> Allow multiple files in single upload</label></li>
@@ -251,7 +251,7 @@
                 </ul>
             </div>
 
-            <div class="microGroup">
+            <div class="microGroup uxOptions">
                 <strong> Audio Options </strong>
                 <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="More options will be added for more processing information."></i>
                 <ul>
@@ -264,7 +264,7 @@
                 </ul>
             </div>
 
-            <div class="microGroup">
+            <div class="microGroup uxOptions">
                 <strong> Video Options </strong>
                 <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="More options will be added for more processing information."></i>
                 <ul>
@@ -285,7 +285,7 @@
         </div>
     </div>
 
-    <div class="group audio">
+    <div class="group convertAudio">
         <div class="control-group" id="fieldSettings_container_file_convertAudio">
             <p> Audio Conversions </p>
 
@@ -529,7 +529,7 @@
         </select>
     </div>
 
-    <div class="group imageThumb">
+    <div class="group thumbnail">
         <div class="control-group " id="fieldSettings_container_file_thumbnail">
             <label for="fieldSettings_file_thumbnail">
                 Thumbnail Options

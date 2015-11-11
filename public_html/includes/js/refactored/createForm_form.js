@@ -520,6 +520,16 @@ function showFieldSettings(fullID) {
 				$("#fieldSettings_externalUpdate_fieldSelect").html(choicesFields[val]).change();
 			});
 
+			$('.uxOptions').find('input').change(function(){
+				var dataObj = $(this).data('bindmodel');
+				var element  = $("."+dataObj);
+				if($(this).is(':checked') || $(this).value){
+					element.show();
+				} else {
+					element.hide();
+				}
+			});
+
 			// bind functionality of form
 			enableChoiceFunctionality();
 		}
@@ -592,18 +602,15 @@ function setOriginalValues(){
 		}
 	}
 
-	if(bindObj == 'watermark' || bindObj == 'border' || bindObj == 'thumbnail' || bindObj == 'convert' || bindObj == 'videothumbnail' || bindObj == 'convertVideo' || bindObj == 'convertAudio'){
-		bindToInput.change();
-	}
-
-
     // Modifications for inputs and selects need to be done here same with checks
    if(bindToInput.is("input[type=checkbox]")) {
 		if(value == "true"){
 			bindToInput.prop('checked', true);
+			bindToInput.change();
 		}
 		else {
 			bindToInput.prop('checked', false);
+			bindToInput.change();
 		}
     }
     else if(bindToInput.is('select')) {
@@ -624,6 +631,7 @@ function setOriginalValues(){
 	}
 
 	$('#fieldSettings_choices_formSelect').change();
+	$('#fieldSettings_container_file_options').find('li').change();
 }
 
 function bindToHiddenForm(){
@@ -666,15 +674,6 @@ function bindToHiddenForm(){
 				// remove HTML characters
 				newValue = removeHtml(val);
 				hiddenForm.find("[data-bind='"+ inputObj +"']").val(type + " | " + newValue);
-			}
-		}
-
-		if(inputObj == 'watermark' || inputObj == 'border' || inputObj == 'thumbnail' || inputObj == 'convert' || inputObj == 'videothumbnail' || inputObj == 'convertVideo' || inputObj == 'convertAudio'){
-			if(!!value === true){
-				$('.'+inputObj).show();
-			}
-			else{
-				$('.'+inputObj).hide();
 			}
 		}
 	}
