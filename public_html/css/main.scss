@@ -551,6 +551,8 @@ input{
     &:focus,&:active,&:hover {  border:0; }
   }
 
+  label { text-align:left; }
+
   &[readonly], .disabled{
     cursor: not-allowed;
     opacity:.6;
@@ -563,7 +565,7 @@ input{
     max-width:20px;
   }
 
-  &[type=text]  {
+  &[type=text],&[type=file]  {
      border:1px solid darken($lightgrey,10%);
   }
 
@@ -1333,3 +1335,22 @@ ul.filePreviews{
 .errorPrettyPrint .errorMessage { @extend .alert; @extend .alert-danger; padding:10px;}
 .errorPrettyPrint .successMessage { @extend .alert; @extend .alert-success; padding:10px;}
 
+
+// Watermark
+// =============================================================================
+.watermarks {
+  margin:0;
+  padding:0;
+  list-style:none;
+
+  li { display:inline-block; width:50%; padding:20px; }
+  .imgOwner {font-size:18px; border-bottom:1px solid $blue}
+  a:hover,a:active, a:visited { text-decoration:none; }
+  img { border:1px solid $lightgrey; max-width:100%; height:auto;}
+}
+
+.watermarkForm {
+  input[type=file] { border:1px solid #ccc;}
+  label { text-align:left !important;}
+  button { float:right; padding:10px 20px; margin-left:10px;}
+}
