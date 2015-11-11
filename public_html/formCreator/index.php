@@ -478,9 +478,9 @@ if (!isnull($formID)) {
 		localvars::add("selectedMetadataForms",$selectedMetadataForms);
 		if (!empty($metadataFormsEven) || !empty($metadataFormsOdd)) {
 			localvars::add("metadataForms", sprintf('
-				<h3>Metadata Forms</h3>
+				<h3 class="mdTitle"> Metadata Forms</h3>
 				<div class="row-fluid">
-					<ul class="unstyled draggable">%s %s</ul>
+					<ul class="unstyled draggable metadataLinks">%s %s</ul>
 				</div>',
 				$metadataFormsEven,
 				$metadataFormsOdd
@@ -521,7 +521,7 @@ if (!isnull($formID)) {
 
 				if (!is_empty($V['grouping']) && isset($groupings[$V['grouping']])) {
 					$preview .= sprintf('
-						<li id="GroupingsPreview_%s">
+						<li id="GroupingsPreview_%s" class="%s">
 							<div class="groupingPreview">
 								<script type="text/javascript">
 									$("#GroupingsPreview_%s .groupingPreview").html(newGroupingPreview("%s"));
@@ -534,6 +534,7 @@ if (!isnull($formID)) {
 							</div>
 						</li>',
 						htmlSanitize($V['position'] + $positionOffset),
+						htmlSanitize($groupings[$V['grouping']]['type']),
 						htmlSanitize($V['position'] + $positionOffset),
 						htmlSanitize($groupings[$V['grouping']]['type']),
 						htmlSanitize($V['position'] + $positionOffset),
@@ -547,7 +548,7 @@ if (!isnull($formID)) {
 				}
 
 				$preview .= sprintf('
-					<li id="GroupingsPreview_%s">
+					<li id="GroupingsPreview_%s" class="%s">
 						<div class="groupingPreview">
 							<script type="text/javascript">
 								$("#GroupingsPreview_%s .groupingPreview").html(newGroupingPreview("%s"));
@@ -560,6 +561,7 @@ if (!isnull($formID)) {
 						</div>
 					</li>',
 					htmlSanitize($V['position'] + $positionOffset),
+					htmlSanitize($V['type']),
 					htmlSanitize($V['position'] + $positionOffset),
 					htmlSanitize($V['type']),
 					htmlSanitize($V['position'] + $positionOffset),
