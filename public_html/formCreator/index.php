@@ -469,7 +469,7 @@ if (!isnull($formID)) {
 	// Now loop through all the metadata forms building their HTML and putting it in the right place
 		foreach ($metadataForms as $i => $form) {
 			$targetVar   = ($i % 2) ? 'metadataFormsOdd' : 'metadataFormsEven';
-			$$targetVar .= sprintf('<li data-type="metadataForm" data-formid="%s"><a href="#" class="btn btn-block">%s</a></li>',
+			$$targetVar .= sprintf('<li data-type="metadataForm" data-formid="%s"><a href="#">%s</a></li>',
 				htmlSanitize($form['formID']),
 				htmlSanitize($form['title'])
 				);
@@ -480,8 +480,7 @@ if (!isnull($formID)) {
 			localvars::add("metadataForms", sprintf('
 				<h3>Metadata Forms</h3>
 				<div class="row-fluid">
-					<ul class="unstyled draggable span6">%s</ul>
-					<ul class="unstyled draggable span6">%s</ul>
+					<ul class="unstyled draggable">%s %s</ul>
 				</div>',
 				$metadataFormsEven,
 				$metadataFormsOdd
