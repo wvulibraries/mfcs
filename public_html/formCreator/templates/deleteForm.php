@@ -10,7 +10,7 @@
     {engine name="csrf"}
     <input type="hidden" name="deleteForm" value="deleteForm">
     <br>
-    <div class="alert alert-warning">
+    <div class="alert alert-danger">
         <h1 class="danger"> WARNING </h1>
         Are you sure you want to delete this form? <br> This will permanently delete this form and all associated objects, and cannot be undone.</div>
     <input type="button" value="Cancel" class="btn" id="deleteFormBtn-Cancel">
