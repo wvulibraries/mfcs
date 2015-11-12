@@ -741,6 +741,11 @@ class objects {
 
 		$engine = EngineAPI::singleton();
 
+		// check locks. 
+		if (!locks::check_for_update($objectID,"object")) {
+			return FALSE;
+		}
+
 		if ($engine->openDB->transBegin("objectProjects") !== TRUE) {
 			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
 			return FALSE;

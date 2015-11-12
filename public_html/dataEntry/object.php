@@ -288,6 +288,7 @@ $engine->eTemplate("include","header");
 							<h2>Change Project Membership</h2>
 
 							<form action="{phpself query="true"}" method="post">
+								<input type="hidden" name="lockID" value="{local var="lockID"}" />
 							{local var="projectOptions"}
 							{engine name="csrf"}
 							<input type="submit" class="btn btn-primary" name="projectForm">
