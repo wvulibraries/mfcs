@@ -75,5 +75,36 @@ class locks {
 
 	}
 
+	public static function check_for_update($objectID,$type) {
+
+
+		$lockID = self::is_locked($objectID,$type);
+
+		// Make sure we have a Lock ID from the POST
+		if (!isset(mfcs::$engine->cleanPost['MYSQL']['lockID'])) {
+			errorHandle::errorMsg("Lock ID is missing from POST. (Please report this to developers)");
+			return FALSE;
+		}
+
+		// Make sure the object is locked
+		if ($lockID === FALSE) {
+			errorHandle::errorMsg("Object was not locked for editing.");
+			return FALSE;
+		}
+
+		// Make sure that the database lock ID matches the ID that was given
+		if ($lockID != mfcs::$engine->cleanPost['MYSQL']['lockID']) {
+			errorHandle::errorMsg("Lock IDs do not match! (Most likely cause is you have this item for edit in multiple windows or Someone else 'Stole' your session.)");
+			return FALSE;
+		}
+
+		// We are good to go. Repopulate the local variable with the current Lock ID
+		// This will be used for drawing the form after submission.
+		localvars::add("lockID",$lockID);
+
+		return TRUE;
+
+	}
+
 }
 ?>
