@@ -531,6 +531,13 @@ class forms {
 				);
 		}
 
+		// If there is a Lock ID add it to the form
+		if (!isempty(localvars::get("lockID"))) {
+			$output .= sprintf('<input type="hidden" name="lockID" value="%s">',
+				localvars::get("lockID")
+				);
+		}
+
 		// $output .= sprintf('<header><h1>%s</h1><h2>%s</h2></header>',
 		// 	htmlSanitize($form['title']),
 		// 	htmlSanitize($form['description']));
