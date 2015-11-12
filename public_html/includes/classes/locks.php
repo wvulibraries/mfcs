@@ -22,6 +22,8 @@ class locks {
 			return FALSE;
 		}
 		
+		localvars::add("lockID",$sqlResult['id']);
+
 		return $sqlResult['id'];
 
 	}
