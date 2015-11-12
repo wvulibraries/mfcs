@@ -87,6 +87,16 @@
         </div>
     </div>
 
+    <div class="group default">
+        <div class="control-group" id="fieldSettings_container_choices">
+            <label for="fieldSettings_metadataType">
+               Metadata Standard
+            </label>
+            <input type="type" class="metadataStandard" name="fieldSettings_metadataStandard" data-bindModel="metadataStandard">
+            <div id="metadataStandard_options" class="metadataStandard_options"> </div>
+        </div>
+    </div>
+
     <div class="group">
         <div class="control-group" id="fieldSettings_container_choices">
             <label for="fieldSettings_choices">

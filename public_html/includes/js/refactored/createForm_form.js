@@ -360,6 +360,19 @@ function showFieldSettings(fullID) {
 				fieldSettings_file_allowedExtensions.find(":input[name=fieldSettings_allowedExtension_text]:first").keyup();
 			}
 
+			var metaDataStandards = $('#metadataStandard_'+id).val();
+			if(metaDataStandards !== undefined){
+				var displayMDStandards = $("#metadataStandard_options");
+				opts = metaDataStandards.split("%,%");
+				tmp  = '';
+
+				for (i = 0; i < opts.length; i++) {
+					tmp += addMetadataStandard(opts[i]);
+				}
+
+				displayMDStandards.append(tmp);
+			}
+
 			if (type != 'fieldset') {
 				var parentFieldset = fieldset.parents("li").parents("li");
 				if (parentFieldset.length > 0) {
@@ -973,7 +986,7 @@ function newFieldValues(id,type,vals) {
     vals.type = determineType(type);
     type = vals.type;
 
-    var defaultHiddenFormFields = ['name','position', 'type', 'label', 'value', 'placeholder', 'id', 'class', 'style', 'help', 'helpType', 'required', 'duplicates', 'readonly', 'disabled', 'disabledInsert', 'disabledUpdate', 'publicRelease', 'sortable', 'searchable', 'displayTable', 'hidden', 'validation', 'validationRegex', 'access', 'fieldset' ];
+    var defaultHiddenFormFields = ['name','position', 'type', 'label', 'value', 'placeholder', 'id', 'class', 'style', 'help', 'helpType', 'required', 'duplicates', 'readonly', 'disabled', 'disabledInsert', 'disabledUpdate', 'publicRelease', 'sortable', 'searchable', 'displayTable', 'hidden', 'validation', 'validationRegex', 'access', 'fieldset', 'metadataStandard' ];
 
     output += createHiddenFields(defaultHiddenFormFields, id, vals);
 
@@ -1184,15 +1197,26 @@ function addChoice(val,def) {
 }
 
 function addAllowedExtension(val) {
-
 	if (val === undefined) {
 		val = '';
 	}
-
 	return '<div class="row-fluid input-append" data-itemtype="extension">'+
 				'<input name="fieldSettings_allowedExtension_text" type="text" value="'+val+'">'+
 				'<button name="add" class="btn" type="button" title="Add an extension."><i class="icon-plus"></i></button>'+
 				'<button name="remove" class="btn" type="button" title="Remove this extension."><i class="icon-remove"></i></button>'+
+			'</div>';
+}
+
+function addMetadataStandard(val){
+	if (val === undefined) {
+		val = '';
+	}
+	var metaDataOptions = '<select class="input-block-level form-control" id="fieldSettings_standardType" name="fieldSettings_standardType"><option value=""> None </option> {local var="metadataSchema"} </select>';
+
+	return '<div class="row-fluid input-append metadata-item" data-itemtype="metadataStandard">' + metaDataOptions +
+				'<input name="fieldSettings_metadataIdentifer" type="text" value="'+val+'">'+
+				'<button name="add" class="btn" type="button" title="Add Metadata Standard"><i class="icon-plus"></i></button>'+
+				'<button name="remove" class="btn" type="button" title="Remove Metadata Standard"><i class="icon-remove"></i></button>'+
 			'</div>';
 }
 
@@ -1205,9 +1229,13 @@ function enableChoiceFunctionality(){
 			if(type == "choice"){
 				$(this).parent().after(addChoice());
 			}
-			else {
+			else if(type == "extension") {
 				$(this).parent().after(addAllowedExtension());
 			}
+			else {
+				$(this).parent().after(addMetadataStandard());
+			}
+
 			// EVENT LISTENER Recouple
 			$('.input-append').find('button').unbind('click');
 			enableChoiceFunctionality();
@@ -1217,7 +1245,7 @@ function enableChoiceFunctionality(){
 		}
 	});
 
-	$('.input-append').find('input').bind('change keyup', modifyChoiceBinding)
+	$('.input-append').find($('input[type=text], select')).bind('change keyup', modifyChoiceBinding)
 
 	$("#fieldSettings_choices_formSelect").change(function(){
 		var val             = $(this).val();
@@ -1250,17 +1278,29 @@ function modifyChoiceBinding(){
 	var valueObject = [];
 	var dataType = $(this).data('itemtype');
 
-	$('.input-append').find('input').each(function(index){
-		value = $(this).val();
-		valueObject[index] = value;
-	});
+	if(dataType == 'choice' || dataType == 'extension'){
+		$(this).parent().find('input').each(function(index){
+			value = $(this).val();
+			valueObject[index] = value;
+		});
+	}
+	else {
+		$(this).parent().parent().find($('input[type=text]')).each(function(index){
+			var select = $(this).prev('select').val();
+			value = select + " : " + $(this).val();
+			valueObject[index] = value;
+		});
+	}
 
 	var choices = valueObject.join('%,%');
 
 	if(dataType == 'choice'){
 		$('.choicesOptions').val(choices).change();
 	}
-	else {
+	else if(dataType == "extension") {
 		$('.allowedExtensions').val(choices).change();
+	}
+	else {
+		$('.metadataStandard').val(choices).change();
 	}
 }

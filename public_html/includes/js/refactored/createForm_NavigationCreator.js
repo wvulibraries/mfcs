@@ -72,8 +72,6 @@ $(function() {
     settingsBindings();
 
     // Click through each field and then back to add field tab on page load to update form preview
-    groupingsPreview.find("li").click();
-    $("#groupingTab li:first a").click();
 
     $("form[name=submitNavigation]").submit(function(event) {
         //event.preventDefault();

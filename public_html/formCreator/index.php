@@ -646,12 +646,19 @@ $videoThumbs = array(
 	'png'        => 'Png'
 );
 
+$metadataChoices = array(
+	'dublin'  => 'dublin core',
+	'test'    => 'test option',
+	'fake'    => 'fake option'
+);
+
 
 // Render Stuff
 localvars::add('bitRates', renderToOptions($bitrates));
 localvars::add('audioOptions', renderToOptions($audioTypes));
 localvars::add('videoTypes', renderToOptions($videoTypes));
 localvars::add('videoThumbs', renderToOptions($videoThumbs));
+localvars::add('metadataSchema', renderToOptions($metadataChoices));
 
 localvars::add("selectedEntryUsers",$selectedEntryUsers);
 localvars::add("selectedViewUsers",$selectedViewUsers);
