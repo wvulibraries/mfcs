@@ -99,8 +99,9 @@ $engine->eTemplate("include","header");
 		{local var="staticListNav"}
 	</div>
 
-
-	{local var="list"}
+	<div class="objectLists">
+		{local var="list"}
+	</div>
 
 
 </section>
