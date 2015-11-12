@@ -62,6 +62,8 @@ class locks {
 
 		if ($row["COUNT(*)"] != 0) {
 			return TRUE;
+			localvars::add("lockUsername",$row['username']);
+			localvars::add("lockDate",date("D,  M d Y H:i",$row['date']));
 		}
 
 		return FALSE;
