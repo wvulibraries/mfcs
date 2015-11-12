@@ -859,7 +859,7 @@ class objects {
 	 */
 	public static function is_locked($objectID) {
 
-		return locks::is_locked($obejctID,"object");
+		return locks::is_locked($objectID,"object");
 
 	}
 
