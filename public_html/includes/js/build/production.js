@@ -7058,8 +7058,29 @@ $(function(){
         .on('change', '#paginationPageDropdownID',           handler_jumpToPage)
         .on('change', '#paginationRecordsPerPageDropdownID', handler_setPaginationPerPage)
         .on('submit', '#jumpToIDNOForm',                     handler_jumpToIDNO);
+
+
+    // index page equal heights
+    var indexElments = $('.createIndex');
+    if(indexElments.length){
+        var resizeTimer;
+        var elementsToSize = indexElments.find('span');
+        resizeElms(elementsToSize);
+        $(window).on('resize', function(e) {
+            elementsToSize.height('auto');
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                resizeElms(elementsToSize);
+            }, 250);
+        });
+    }
 });
 
+function resizeElms(elms){
+    console.log(elms)
+    var maxHeight = Math.max($(elms[0]).height(),$(elms[1]).height(),$(elms[2]).height());
+    $(elms).height(maxHeight);
+}
 
 // Helper Functions
 // ===================================================================
@@ -9071,6 +9092,12 @@ $(function(){
     });
 
     $('.wysiwyg').removeClass('wysiwyg').parent().addClass('wysiwyg');
+
+    $('.bgCloak').click(closeModal);
+
+     if($('ul.nav.nav-tabs').length){
+        $('ul.nav.nav-tabs').find('a').click();
+    }
 });
 
 // MetaData Modals
@@ -9080,6 +9107,8 @@ function metadataModal(event){
     event.preventDefault();
     $("#metadataModal .modal-header h3").html($(this).attr("data-header"));
     $("#metadataModal").fadeIn(600).removeClass('hide').show();
+    $('.bgCloak').show();
+    $('html,body').addClass('modalBlockScroll');
 
     var dataFieldName = $(this).attr("data-fieldname");
     var formID        = $(this).attr('data-formid');
@@ -9144,6 +9173,8 @@ function closeModal(event){
     event.preventDefault();
     $('#metadataModal').fadeOut().addClass('hide');
     $('#metadataModalBody').html(defaultModalBody);
+    $('.bgCloak').hide();
+    $('html,body').removeClass('modalBlockScroll');
 }
 
 

@@ -32,8 +32,29 @@ $(function(){
         .on('change', '#paginationPageDropdownID',           handler_jumpToPage)
         .on('change', '#paginationRecordsPerPageDropdownID', handler_setPaginationPerPage)
         .on('submit', '#jumpToIDNOForm',                     handler_jumpToIDNO);
+
+
+    // index page equal heights
+    var indexElments = $('.createIndex');
+    if(indexElments.length){
+        var resizeTimer;
+        var elementsToSize = indexElments.find('span');
+        resizeElms(elementsToSize);
+        $(window).on('resize', function(e) {
+            elementsToSize.height('auto');
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                resizeElms(elementsToSize);
+            }, 250);
+        });
+    }
 });
 
+function resizeElms(elms){
+    console.log(elms)
+    var maxHeight = Math.max($(elms[0]).height(),$(elms[1]).height(),$(elms[2]).height());
+    $(elms).height(maxHeight);
+}
 
 // Helper Functions
 // ===================================================================

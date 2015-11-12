@@ -52,7 +52,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="metadataModalHeader"></h3>
     </div>
-    <div class="modal-body" id="metadataModalBody">
+    <div class="modalbody" id="metadataModalBody">
         <div class="loading">
             <i class="fa fa-refresh fa-spin fa-4x"></i>
             <p> Loading content ... </p>

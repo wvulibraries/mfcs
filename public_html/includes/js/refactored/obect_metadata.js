@@ -19,6 +19,12 @@ $(function(){
     });
 
     $('.wysiwyg').removeClass('wysiwyg').parent().addClass('wysiwyg');
+
+    $('.bgCloak').click(closeModal);
+
+     if($('ul.nav.nav-tabs').length){
+        $('ul.nav.nav-tabs').find('a').click();
+    }
 });
 
 // MetaData Modals
@@ -28,6 +34,8 @@ function metadataModal(event){
     event.preventDefault();
     $("#metadataModal .modal-header h3").html($(this).attr("data-header"));
     $("#metadataModal").fadeIn(600).removeClass('hide').show();
+    $('.bgCloak').show();
+    $('html,body').addClass('modalBlockScroll');
 
     var dataFieldName = $(this).attr("data-fieldname");
     var formID        = $(this).attr('data-formid');
@@ -92,6 +100,8 @@ function closeModal(event){
     event.preventDefault();
     $('#metadataModal').fadeOut().addClass('hide');
     $('#metadataModalBody').html(defaultModalBody);
+    $('.bgCloak').hide();
+    $('html,body').removeClass('modalBlockScroll');
 }
 
 

@@ -212,10 +212,14 @@ $engine->eTemplate("include","header");
 
 	<div class="container-fluid">
 		<div class="span3">
-			{local var="leftnav"}
+			<h2> Object Navigation </h2>
+			<ul class="objectNav">
+				{local var="leftnav"}
+			</ul>
 		</div>
 
 		<div class="span9">
+			<h2> Data Entry </h2>
 			<div class="row-fluid" id="results">
 				{local var="results"}
 			</div>

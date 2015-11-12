@@ -23,45 +23,79 @@
     }
 }
 
-// GRID FUNCTION
+// GRID
 // ===========================================================================================
-// CREDIT ZERO 3 6 for Concept
-// to use  gridwidth(12);  makes 100% without gutter
-// gridwidth(6, true);  example of 50%;
+section {
+  clear: both;
+  padding: 0px;
+  margin: 0px;
+}
 
-$columns: 12 !default;
-$gutter: 2% !default;
-$column-prefix: 'span' !default;
+[class*="span"] {
+  margin: 1% 0 1% 0%;
+  width: 100%;
+  display: block;
+  float:left;
 
-@mixin grid-setup($number: $columns) {
-  @for $i from 1 through $number {
-    // Style all but the last column
-    @if $i != $columns {
-        .#{$column-prefix + $i} {
-          width:100%;
-          display:block;
-          float:left;
-          margin-right:0;
-          @include breakpoint(laptop){
-            width: 100% / $number * $i - $gutter;
-            display:block;
-            margin-right: $gutter;
-            float:left;
-          }
-        }
-    }
-    @else {
-      // Ensure the last column has a width of 100%
-        .#{$column-prefix + $i} {
-          width: 100%;
-          display:inline-block;
-          margin-right:0;
-        }
-    }
+  &:first-child { margin-left: 0; }
+  &:before,
+  &:after { content:""; display:table; }
+  &:after { clear:both;}
+  &{ zoom:1;}
+
+  @include breakpoint(tablet){
+    margin: 1% 0 1% 2%;
   }
 }
 
-@include grid-setup();
+@include breakpoint(tablet){
+  .span12 {
+    width: 100%;
+  }
+
+  .span11{
+      width: 91.5%;
+  }
+  .span10 {
+      width: 83%;
+  }
+
+  .span9 {
+      width: 74.5%;
+  }
+
+  .span8 {
+      width: 66%;
+  }
+
+  .span7 {
+      width: 57.5%;
+  }
+
+  .span6 {
+      width: 49%;
+  }
+
+  .span5 {
+      width: 40.5%;
+  }
+
+  .span4{
+      width: 32%;
+  }
+
+  .span3 {
+      width: 23.5%;
+  }
+
+  .span2 {
+      width: 15%;
+  }
+
+  .span1 {
+      width: 6.5%;
+  }
+}
 
 // COLORS
 // ===========================================================================================
@@ -350,7 +384,7 @@ table {
   background:#fff;
   width:60%;
   height:60%;
-  margin:20% 20%;
+  margin:10% 20%;
   position:absolute;
   z-index:9999999999;
 }
@@ -408,35 +442,63 @@ table {
 // ===========================================================================================
 
 .aboutMFCS {
-   padding:40px 0;
    position:relative;
-
-   $colorStop1: rgba($light-blue, .2);
-   $colorStop2: rgba($light-blue, .0);
-
-  .skewBg {
-    width:100%;
-    height:90%;
-    background:linear-gradient( 0deg, $colorStop1, 40%, $colorStop2);
-    bottom:-10px;
-    position:absolute;
-  }
+   @include breakpoint(tablet){
+      padding:10px 0 80px;
+      margin-bottom:200px;
+   }
 
   .text {
-    width:60%;
+    width:100%;
     display:inline-block;
-    padding:20px 0 40px 0;
+    padding:0 20px;
     font-size:16px;
+     @include breakpoint(tablet){
+      width:60%;
+    }
   }
   .pic {
     display:none;
-    position:relative;
+    opacity:.4;
+    z-index:0;
     @include breakpoint(tablet){
+      position:relative;
+      opacity:1;
       display:inline-block;
       width:33%;
-      img { width:100%; height:auto; position:absolute; bottom:-80px; width:80%;}
+      img { width:210px; height:auto; position:absolute; bottom:-40px; left:20%;}
     }
   }
+}
+
+.createIndex {
+  span {
+    border:1px solid $gold;
+    position:relative;
+    border-radius:10px;
+    @include breakpoint(tablet){
+      border:0;
+      border-left:1px solid $gold;
+      border-right:1px solid $gold;
+      border-bottom:1px solid $gold;
+      border-radius:0 0 10px 10px;
+    }
+  }
+  .hero {
+    width:100%;
+    position:absolute;
+    text-align:center;
+    bottom:93%;
+    left:0;
+    img { width:90%; display:none;}
+
+    @include breakpoint(tablet){
+      text-align:center;
+      img { display:block; margin:0 auto;}
+    }
+  }
+  .text{ padding:0 30px 30px; }
+  .btn { margin-bottom:2%; }
 }
 
 
@@ -1353,4 +1415,33 @@ ul.filePreviews{
   input[type=file] { border:1px solid #ccc;}
   label { text-align:left !important;}
   button { float:right; padding:10px 20px; margin-left:10px;}
+}
+
+// Data Entry
+// =============================================================================
+.objectNav {
+  list-style:none;
+  margin:0;
+  padding:0;
+  li { padding:10px; margin-bottom:10px; border-bottom:1px solid $lightgrey; float:left; display:block; width:100%; }
+  a {dipslay:block; }
+}
+
+
+.modal {
+  .modalbody {
+    padding:20px;
+    width:100%;
+    float:left;
+    clear: both;
+    overflow-y: scroll;
+    height: 650px;
+    section {float:none;}
+    ul { list-style:none; margin:0; padding:0; }
+  }
+  .modal-footer {
+    float: left;
+    border-top: 1px solid #e5e5e5;
+    width: 100%;
+  }
 }
