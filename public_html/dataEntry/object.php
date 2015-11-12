@@ -120,6 +120,9 @@ try {
 		if (objects::addProjects($engine->cleanGet['MYSQL']['objectID'],$engine->cleanPost['MYSQL']['projects']) === FALSE) {
 			throw new Exception("Error adding projects to Object.");
 		}
+		else {
+			errorHandle::successMsg("Object Projects updated successfully.");
+		}
 
 		log::insert("Data Entry: Object: Successful Project Update",$engine->cleanGet['MYSQL']['objectID'],$form['ID']);
 
