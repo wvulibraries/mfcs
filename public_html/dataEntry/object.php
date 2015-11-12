@@ -31,16 +31,6 @@ try {
 		throw new Exception("Permission Denied to view objects created with this form.");
 	}
 
-	// @TODO check lock
-	// If locked, warn, allow to steal
-	if (objects::is_locked($engine->cleanGet['MYSQL']['objectID'])) {
-		$locked = TRUE;
-	}
-	// If not locked, lock it.
-	if (!($lockID = objects::lock($engine->cleanGet['MYSQL']['objectID']))) {
-		throw new Exception("Unable to lock Object").
-	}
-
 	if (isset($engine->cleanGet['MYSQL']['parentID']) && objects::validID(TRUE,$engine->cleanGet['MYSQL']['parentID']) === FALSE) {
 		throw new Exception("ParentID Provided is invalid.");
 	}
@@ -135,6 +125,35 @@ try {
 
 	}
 
+	// If locked, warn, allow to steal
+	// We only need to check for locks on edits, not new objects
+	if (!isnull($engine->cleanGet['MYSQL']['objectID'])) {
+
+		if (isset($engine->cleanGet['MYSQL']['unlock']) && $engine->cleanGet['MYSQL']['unlock'] == "unlock") {
+			log::insert("Data Entry: Object: Unlocked Object",$engine->cleanGet['MYSQL']['objectID']);
+			objects::unlock($engine->cleanGet['MYSQL']['objectID']);
+		}
+		else if (isset($engine->cleanGet['MYSQL']['unlock']) && $engine->cleanGet['MYSQL']['unlock'] == "cancel") {
+			log::insert("Data Entry: Object: Unlocked Object",$engine->cleanGet['MYSQL']['objectID']);
+			objects::unlock($engine->cleanGet['MYSQL']['objectID']);
+			header("Location: /");
+			die();
+		}
+
+		// If the object is locked and it is the lock ID that is set in Localvars, we assume that the form was just submitted and we are redisplaying. 
+		if (objects::is_locked($engine->cleanGet['MYSQL']['objectID']) && objects::is_locked($engine->cleanGet['MYSQL']['objectID']) == localvars::get("lockID")) {
+			$locked = FALSE;
+		}
+		// We are editing it ... lock it
+		else if (objects::is_locked($engine->cleanGet['MYSQL']['objectID'])) {
+			$locked = TRUE;
+		}
+		// If not locked, lock it.
+		else if ($locked === FALSE && !(objects::lock($engine->cleanGet['MYSQL']['objectID']))) {
+			throw new Exception("Unable to lock Object");
+		}
+	}
+
 	// build the files list for displaying
 	if(isset($engine->cleanGet['MYSQL']['objectID'])){
 
@@ -220,6 +239,7 @@ $engine->eTemplate("include","header");
 			if (!isnull($engine->cleanGet['MYSQL']['objectID']) and $revisions->hasRevisions($engine->cleanGet['MYSQL']['objectID'])) { ?>
 				<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions/index.php?objectID={local var="objectID"}">Revisions</a></li>
 			<?php } ?>
+			<li class="pull-right noDivider"><a href="{phpself query="true"}&unlock=cancel">Cancel Edit &amp; Unlock object</a></li>
 		</ul>
 	</nav>
 
@@ -307,7 +327,28 @@ $engine->eTemplate("include","header");
 			</div>
 			<?php } else if ($locked === TRUE) { // permissions && Locked?>
 
-			<!-- display warning and ability to steal here -->
+			<h1>Object is locked by another User</h1>
+
+			<p>Form Name: {local var="formName"}</p>
+			<p>Object IDNO: {local var="objectIDNO"}</p>
+			<p>Locked by: {local var="lockUsername"}</p>
+			<p>Locked On: {local var="lockDate"}</p>
+
+			<p>
+				This object is locked for editing. If you are the user that locked this file it is possible that you have
+			 	it open in another browser window, or closed the browser window where you were previously working on this 
+			 	object without clearing your lock.
+			</p>
+
+			<p>
+				If another user is listed as the locking user, please check with them before unlocking this object to edit it. 
+			</p>
+
+			<p>
+				If you unlock this object the previous opened version will not be able to be submitted.
+			</p>
+
+			<a href="{phpself query="true"}&unlock=unlock">Unlock this object</a>
 
 			<?php }?>
 
