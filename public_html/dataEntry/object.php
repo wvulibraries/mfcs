@@ -60,7 +60,7 @@ try {
 	/* End Parent Object 'Stuff' */
 
 	// Editor information
-	if (!isnull($engine->cleanGet['MYSQL']['objectID'])) {
+	
 		$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
 		if (is_empty($object['createdBy'])) {
 			localvars::add("createdByUsername","Unavailable");
@@ -81,7 +81,7 @@ try {
 		}
 
 		localvars::add("modifiedOnDate",date('D, d M Y H:i',$object['modifiedTime']));
-	}
+	
 
 	//////////
 	// Project Tab Stuff
