@@ -92,7 +92,7 @@
             <label for="fieldSettings_metadataType">
                Metadata Standard
             </label>
-            <input type="type" class="metadataStandard" name="fieldSettings_metadataStandard" data-bindModel="metadataStandard">
+            <input type="hidden" class="metadataStandard" name="fieldSettings_metadataStandard" data-bindModel="metadataStandard">
             <div id="metadataStandard_options" class="metadataStandard_options"> </div>
         </div>
     </div>
