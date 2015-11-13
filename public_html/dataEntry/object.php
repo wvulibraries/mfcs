@@ -377,6 +377,30 @@ $engine->eTemplate("include","header");
 	});
 </script>
 
+<script type="text/javascript">
+
+inForm = false;
+$("form").submit(function(e){inForm = true;});
+
+$(window).on("beforeunload", function() {
+	if (!inForm) {
+
+		$.ajax({
+			url: "/includes/ajax/unlock.php?lockID="+{local var="lockID"},
+			dataType: "json",
+			success: function(responseData) {
+			},
+			error: function(jqXHR,error,exception) {
+			},
+			async:   true
+
+		});
+
+	}
+});
+
+</script>
+
 <?php
 $engine->eTemplate("include","footer");
 ?>
