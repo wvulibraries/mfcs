@@ -106,5 +106,23 @@ class locks {
 
 	}
 
+	public static function unlock_by_lockID($lockID) {
+
+		$sql       = sprintf("SELECT `type`, `typeID` FROM `locks` WHERE `ID`='%s'",
+			mfcs::$engine->openDB->escape($lockID)
+			);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+		$row  = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+		return self::unlock($row['typeID'],$row['type']);
+
+	}
+
 }
 ?>
