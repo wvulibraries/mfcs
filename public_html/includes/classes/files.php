@@ -449,8 +449,6 @@ class files {
 						<a class="btn previewDownloadLink">Download File</a>
 					</div>';
 		$output .= sprintf('<link href="%sincludes/css/filePreview.css" rel="stylesheet">', localvars::get('siteRoot'));
-		$output .= sprintf('<script src="%sincludes/js/filePreview.js"></script>', localvars::get('siteRoot'));
-
 		return $output;
 	}
 
@@ -756,7 +754,7 @@ class files {
 				errorHandle::newError(__METHOD__."() - couldn't create fixity entry.", errorHandle::DEBUG);
 				// @todo : we need a script that periodically checks to make sure all files are in
 				// filesChecks table ... I don't think we want to return FALSE here on failure because some files
-				// have already been moved ... 
+				// have already been moved ...
 			}
 		}
 
@@ -768,19 +766,19 @@ class files {
 		return $return;
 	}
 
-	// Take a location and put it into the 
+	// Take a location and put it into the
 	private static function fixityInsert($location) {
 
 		$sql       = sprintf("INSERT INTO `filesChecks` (`location`) VALUES('%s')",
 			mfcs::$engine->openDB->escape($location)
 			);
 		$sqlResult = mfcs::$engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-		
+
 		return TRUE;
 
 	}
