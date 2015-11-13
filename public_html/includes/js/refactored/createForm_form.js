@@ -487,6 +487,12 @@ function setOriginalValues(){
     var bindObj     = $(this).data('bind');
     var value      = $(this).is("input[type=checkbox]") ? evaluateCheck($(this)) : $(this).val();
     var bindToInput = $('#fieldSettings_form').find("[data-bindmodel='" + bindObj + "']");
+
+    if(bindObj == 'name'){
+    	value = $.trim(value);
+    	evaluateSpace(value, bindToInput);
+    }
+
     // Object Specific Value Change
 	if( bindObj == 'help'){
 		helpType = value.split(" | ")[0];
@@ -555,22 +561,7 @@ function bindToHiddenForm(){
 		hiddenForm.find("[data-bind='"+ inputObj +"']").val(value);
 
 		if(inputObj == 'name'){
-			if(checkForSpaces(value)){
-				$(this).addClass('has-error');
-				var alert = '<div class="formAlert alert alert-danger alert-dismissible" role="alert">
-							  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-							  <strong> Space Warning! </strong>
-							  <p> There are no spaces allowed your field name, please replace the spaces with an underscore, or remove them. </p>
-							</div>';
-				$('body').append(alert);
-				$('input[type=submit]').addClass('disabled').attr('disabled', true);
-			}
-			else {
-				$(this).removeClass('has-error');
-				$('input[type=submit]').removeClass('disabled').removeAttr('disabled');
-				$('.formAlert').remove();
-			}
-			// remove starting and trailing spaces
+			evaluateSpace(value, $(this));
 		}
 
 		if(inputObj == 'choicesType'){
@@ -609,6 +600,19 @@ function bindToHiddenForm(){
 
 function checkForSpaces(string) {
   return /\s/g.test(string);
+}
+
+function evaluateSpace(value, input){
+	if(checkForSpaces(value)){
+		input.addClass('has-error testy');
+		$('.noSpacesAlert').show();
+		$('input[type=submit]').addClass('disabled').attr('disabled', true);
+	}
+	else {
+		input.removeClass('has-error');
+		$('input[type=submit]').removeClass('disabled').removeAttr('disabled');
+		$('.noSpacesAlert').hide();
+	}
 }
 
 function getFormFields(){
