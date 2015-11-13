@@ -71,7 +71,7 @@ try {
 		}
 
 		localvars::add("createdOnDate",date('D, d M Y H:i',$object['createTime']));
-
+		
 		if (is_empty($object['modifiedBy'])) {
 			localvars::add("modifiedByUsername","Unavailable");
 		}
