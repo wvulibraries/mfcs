@@ -652,13 +652,24 @@ $metadataChoices = array(
 	'fake'    => 'fake option'
 );
 
+try {
+	$metadataChoices = listGenerator::getMetadataStandards();
+	if(!$metadataChoices){
+		throw new Exception("Error -- MetadataStandards have not been found.");
+	}
+	localvars::add('metadataSchema', renderToOptions($metadataChoices));
+} catch (Exception $e) {
+	errorHandle::errorMsg($e->getMessage());
+}
+
+
 
 // Render Stuff
 localvars::add('bitRates', renderToOptions($bitrates));
 localvars::add('audioOptions', renderToOptions($audioTypes));
 localvars::add('videoTypes', renderToOptions($videoTypes));
 localvars::add('videoThumbs', renderToOptions($videoThumbs));
-localvars::add('metadataSchema', renderToOptions($metadataChoices));
+
 
 localvars::add("selectedEntryUsers",$selectedEntryUsers);
 localvars::add("selectedViewUsers",$selectedViewUsers);
