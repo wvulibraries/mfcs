@@ -728,6 +728,13 @@ $engine->eTemplate("include","header");
 </div>
 {local var="displayModal"}
 
+
+<div class="formAlert noSpacesAlert alert alert-danger alert-dismissible" role="alert" style="display:none;">
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	<strong> Space Warning! </strong>
+	<p> There are no spaces allowed your field name, please replace the spaces with an underscore, or remove them. </p>
+</div>
+
 <!-- Needed Inline to get the variable to JS
      Local vars will not work within js for dynamic creation -->
 <script type="text/javascript">
