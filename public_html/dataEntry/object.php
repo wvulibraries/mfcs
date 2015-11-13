@@ -117,7 +117,7 @@ try {
 		$engine->cleanPost['MYSQL']['projects'] = (isset($engine->cleanPost['MYSQL']['projects']))?$engine->cleanPost['MYSQL']['projects']:array();
 
 		// Add All the new ones
-		if (objects::addProjects($engine->cleanGet['MYSQL']['objectID'],$engine->cleanPost['MYSQL']['projects']) === FALSE) {
+		if (objects::addProjects($engine->cleanPost['MYSQL']['projects_objectID'],$engine->cleanPost['MYSQL']['projects']) === FALSE) {
 			throw new Exception("Error adding projects to Object.");
 		}
 		else {
@@ -292,6 +292,7 @@ $engine->eTemplate("include","header");
 
 							<form action="{phpself query="true"}" method="post">
 								<input type="hidden" name="lockID" value="{local var="lockID"}" />
+								<input type="hidden" name="projects_objectID" value="{local var="objectID"}" ?>
 							{local var="projectOptions"}
 							{engine name="csrf"}
 							<input type="submit" class="btn btn-primary" name="projectForm">
