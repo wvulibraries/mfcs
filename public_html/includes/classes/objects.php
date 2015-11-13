@@ -290,10 +290,13 @@ class objects {
 				$tmp[] = &$object['idno'];
 			}
 			else {
-				$tmp[] = &$object['data'][$sortField]; 
+				$tmp[] = strtolower(&$object['data'][$sortField]); 
 			}
 		}
 
+		// @TODO after we can stop supporting 5.3 we should use the natural
+		// sort flag to this (first available in 5.4) ... remove the strtolower
+		// when switching to nat sort
 		array_multisort($tmp, $objects); 
 
 		return $objects;
