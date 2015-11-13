@@ -21,10 +21,6 @@ $(function(){
     $('.wysiwyg').removeClass('wysiwyg').parent().addClass('wysiwyg');
 
     $('.bgCloak').click(closeModal);
-
-     if($('ul.nav.nav-tabs').length){
-        $('ul.nav.nav-tabs').find('a').click();
-    }
 });
 
 // MetaData Modals
