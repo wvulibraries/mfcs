@@ -7915,12 +7915,18 @@ function showFieldSettings(fullID) {
 				var displayMDStandards = $("#metadataStandard_options");
 				opts = metaDataStandards.split("%,%");
 				tmp  = '';
+				displayMDStandards.html('');
 
 				for (i = 0; i < opts.length; i++) {
 					tmp += addMetadataStandard(opts[i]);
 				}
-
 				displayMDStandards.append(tmp);
+
+				// need to be used to get the values into the select menus
+				$('.mdStandardSelect').each(function(){
+					var selectValue = $(this).data('selectvalue');
+					$(this).val(selectValue);
+				});
 			}
 
 			if (type != 'fieldset') {
@@ -8761,10 +8767,17 @@ function addMetadataStandard(val){
 	if (val === undefined) {
 		val = '';
 	}
-	var metaDataOptions = '<select class="input-block-level form-control" id="fieldSettings_standardType" name="fieldSettings_standardType"><option value=""> None </option> {local var="metadataSchema"} </select>';
+
+	var options    = metadataSchema;
+	var identifier = val.split(' : ')[1];
+	var standard   = val.split(' : ')[0];
+
+	var metaDataOptions = '<select class="input-block-level form-control mdStandardSelect" id="fieldSettings_standardType" name="fieldSettings_standardType" data-selectvalue="' + standard +'"><option value=""> None </option>' + options + '</select>';
+
+
 
 	return '<div class="row-fluid input-append metadata-item" data-itemtype="metadataStandard">' + metaDataOptions +
-				'<input name="fieldSettings_metadataIdentifer" type="text" value="'+val+'">'+
+				'<input name="fieldSettings_metadataIdentifer" type="text" value="'+identifier+'">'+
 				'<button name="add" class="btn" type="button" title="Add Metadata Standard"><i class="icon-plus"></i></button>'+
 				'<button name="remove" class="btn" type="button" title="Remove Metadata Standard"><i class="icon-remove"></i></button>'+
 			'</div>';
