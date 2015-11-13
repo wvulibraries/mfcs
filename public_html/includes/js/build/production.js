@@ -7074,6 +7074,11 @@ $(function(){
             }, 250);
         });
     }
+
+    // Navigation Tabs
+    if($('.nav-tabs').length){
+        $(".nav-tabs a:first").tab("show");
+    }
 });
 
 function resizeElms(elms){
@@ -9132,10 +9137,6 @@ $(function(){
     $('.wysiwyg').removeClass('wysiwyg').parent().addClass('wysiwyg');
 
     $('.bgCloak').click(closeModal);
-
-     if($('ul.nav.nav-tabs').length){
-        $('ul.nav.nav-tabs').find('a').click();
-    }
 });
 
 // MetaData Modals
@@ -9262,6 +9263,9 @@ function removeFromList(id) {
 // Document Ready
 // ===================================================================
 $(function(){
+    // Show first tab on page load
+    $(".nav-tabs a:first").tab("show");
+
     // form processing
     var objectSubmitBtn = $('#objectSubmitBtn');
 
@@ -9273,6 +9277,8 @@ $(function(){
         }
     });
 });
+
+
 
 
 
