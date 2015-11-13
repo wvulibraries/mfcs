@@ -1196,11 +1196,20 @@ a.list-group-item {
   button.active {@extend .btn-success; border-radius: 5px 0 0 5px;}
 }
 
-#fieldSettings_file_allowedExtensions{
+#fieldSettings_file_allowedExtensions, .metadata-item{
   .input-append input { width:80% !important;}
   button {width:10%; float:left; @extend .btn-default; background:$lightgrey; border-radius:0;
     &:last-of-type { border-radius:0 5px 5px 0; @extend .btn-danger;}
   }
+}
+
+.metadata-item {
+  select, input {
+    width:40% !important;
+    float:left;
+    height:36px;
+  }
+  button { height:36px; }
 }
 
 select {
