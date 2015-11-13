@@ -669,6 +669,10 @@ input{
   }
 }
 
+input.has-error{
+  border:1px solid $brand-danger;
+}
+
 textarea {
   width:100% !important;
   padding:10px;
