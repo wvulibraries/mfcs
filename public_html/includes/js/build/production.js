@@ -8104,6 +8104,25 @@ function bindToHiddenForm(){
 		var hiddenForm = parentObj.find('.fieldValues');
 		hiddenForm.find("[data-bind='"+ inputObj +"']").val(value);
 
+		if(inputObj == 'name'){
+			if(checkForSpaces(value)){
+				$(this).addClass('has-error');
+				var alert = '<div class="formAlert alert alert-danger alert-dismissible" role="alert">
+							  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							  <strong> Space Warning! </strong>
+							  <p> There are no spaces allowed your field name, please replace the spaces with an underscore, or remove them. </p>
+							</div>';
+				$('body').append(alert);
+				$('input[type=submit]').addClass('disabled').attr('disabled', true);
+			}
+			else {
+				$(this).removeClass('has-error');
+				$('input[type=submit]').removeClass('disabled').removeAttr('disabled');
+				$('.formAlert').remove();
+			}
+			// remove starting and trailing spaces
+		}
+
 		if(inputObj == 'choicesType'){
 			if(value == 'manual'){
 				$('#fieldSettings_container_choices').find('.manual_choices').show();
@@ -8136,6 +8155,10 @@ function bindToHiddenForm(){
 
 		applyFormPreview();
 	}
+}
+
+function checkForSpaces(string) {
+  return /\s/g.test(string);
 }
 
 function getFormFields(){
