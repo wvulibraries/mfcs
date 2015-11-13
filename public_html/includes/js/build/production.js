@@ -8359,8 +8359,8 @@ function modalBindings() {
 		})
 		.on("click", "button:contains('Metadata')", function() {
 			// Select Metadata form
+			$('.nav-tabs li:nth-child(3) a').click();
 			$("#formSettings_formMetadata").prop("checked", true).change();
-			// Hide modal
 			$("#formTypeSelector").modal("hide");
 		})
 		.on("click", "button:contains('Object')", function() {
