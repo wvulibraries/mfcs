@@ -728,6 +728,12 @@ $engine->eTemplate("include","header");
 </div>
 {local var="displayModal"}
 
+<!-- Needed Inline to get the variable to JS
+     Local vars will not work within js for dynamic creation -->
+<script type="text/javascript">
+	var metadataSchema = '{local var="metadataSchema"}';
+</script>
+
 <?php
  $engine->eTemplate("include","footer");
 ?>
