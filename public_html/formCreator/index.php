@@ -587,7 +587,7 @@ $selectedUsersAdmins = "";
 
 if (isset($engine->cleanGet['MYSQL']['id']) && !isempty($engine->cleanGet['MYSQL']['id'])) {
 
-	$sql = sprintf("SELECT permissions.type, users.status, users.firstname, users.lastname, users.username, users.ID as userID FROM permissions LEFT JOIN users ON permissions.userID=users.ID WHERE permissions.formID='%s'",
+	$sql = sprintf("SELECT permissions.type, users.status, users.firstname, users.lastname, users.username, users.ID as userID FROM permissions LEFT JOIN users ON permissions.userID=users.ID WHERE permissions.formID='%s' ORDER BY `users`.`lastname`",
 		$engine->cleanGet['MYSQL']['id']
 		);
 	$sqlResult = $engine->openDB->query($sql);

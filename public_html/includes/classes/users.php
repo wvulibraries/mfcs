@@ -134,7 +134,7 @@ class users {
 
     public static function getUsers() {
 
-        $sql       = sprintf("SELECT `ID` FROM `users`");
+        $sql       = sprintf("SELECT `ID` FROM `users` ORDER BY `lastname`");
         $sqlResult = mfcs::$engine->openDB->query($sql);
         
         if (!$sqlResult['result']) {
