@@ -71,7 +71,7 @@ try {
 		}
 
 		localvars::add("createdOnDate",date('D, d M Y H:i',$object['createTime']));
-		
+
 		if (is_empty($object['modifiedBy'])) {
 			localvars::add("modifiedByUsername","Unavailable");
 		}
@@ -143,7 +143,7 @@ try {
 			die();
 		}
 
-		// If the object is locked and it is the lock ID that is set in Localvars, we assume that the form was just submitted and we are redisplaying. 
+		// If the object is locked and it is the lock ID that is set in Localvars, we assume that the form was just submitted and we are redisplaying.
 		if (objects::is_locked($engine->cleanGet['MYSQL']['objectID']) && objects::is_locked($engine->cleanGet['MYSQL']['objectID']) == localvars::get("lockID")) {
 			$locked = FALSE;
 		}
@@ -230,7 +230,6 @@ $engine->eTemplate("include","header");
 		{local var="parentHeader"}
 	</header>
 
-<<<<<<< HEAD
 	<ul class="breadcrumbs">
 		<li><a href="{local var="siteRoot"}">Home</a></li>
 		<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
@@ -242,24 +241,8 @@ $engine->eTemplate("include","header");
 		if (!isnull($engine->cleanGet['MYSQL']['objectID']) and $revisions->hasRevisions($engine->cleanGet['MYSQL']['objectID'])) { ?>
 			<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions/index.php?objectID={local var="objectID"}">Revisions</a></li>
 		<?php } ?>
+		<li class="pull-right noDivider"><a href="{phpself query="true"}&unlock=cancel">Cancel Edit &amp; Unlock object</a></li>
 	</ul>
-=======
-	<nav id="breadcrumbs">
-		<ul class="breadcrumb">
-			<li><a href="{local var="siteRoot"}">Home</a></li>
-			<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
-			<!-- FLoat Right -->
-			<?php if(mfcsPerms::isAdmin($engine->cleanGet['MYSQL']['formID'])){ ?>
-			<li class="pull-right noDivider"><a href="{local var="siteRoot"}formCreator/index.php?id={local var="formID"}">Edit Form</a></li>
-			<?php
-			}
-			if (!isnull($engine->cleanGet['MYSQL']['objectID']) and $revisions->hasRevisions($engine->cleanGet['MYSQL']['objectID'])) { ?>
-				<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions/index.php?objectID={local var="objectID"}">Revisions</a></li>
-			<?php } ?>
-			<li class="pull-right noDivider"><a href="{phpself query="true"}&unlock=cancel">Cancel Edit &amp; Unlock object</a></li>
-		</ul>
-	</nav>
->>>>>>> origin/develop
 
 	<div class="container-fluid">
 		<div class="span3">
@@ -360,12 +343,12 @@ $engine->eTemplate("include","header");
 
 			<p>
 				This object is locked for editing. If you are the user that locked this file it is possible that you have
-			 	it open in another browser window, or closed the browser window where you were previously working on this 
+			 	it open in another browser window, or closed the browser window where you were previously working on this
 			 	object without clearing your lock.
 			</p>
 
 			<p>
-				If another user is listed as the locking user, please check with them before unlocking this object to edit it. 
+				If another user is listed as the locking user, please check with them before unlocking this object to edit it.
 			</p>
 
 			<p>
@@ -380,33 +363,12 @@ $engine->eTemplate("include","header");
 	</div>
 </section>
 
-<<<<<<< HEAD
-=======
 <!-- @TODO : scripts should be moved out of this file -->
 <script type="text/javascript">
-	$(function() {
-		// Show first tab on page load
-		$(".nav-tabs a:first").tab("show");
-
-		var $objectSubmitBtn = $('#objectSubmitBtn');
-		$objectSubmitBtn.closest('form').submit(function(){
-			var $objectSubmitProcessing = $('#objectSubmitProcessing');
-			if($objectSubmitProcessing.length){
-				$objectSubmitBtn.hide();
-				$objectSubmitProcessing.show();
-			}
-		});
-	});
-</script>
-
-<script type="text/javascript">
-
 inForm = false;
 $("form").submit(function(e){inForm = true;});
-
 $(window).on("beforeunload", function() {
 	if (!inForm) {
-
 		$.ajax({
 			url: "/includes/ajax/unlock.php?lockID="+{local var="lockID"},
 			dataType: "json",
@@ -417,13 +379,10 @@ $(window).on("beforeunload", function() {
 			async:   true
 
 		});
-
 	}
 });
-
 </script>
 
->>>>>>> origin/develop
 <?php
 $engine->eTemplate("include","footer");
 ?>
