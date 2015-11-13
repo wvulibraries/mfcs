@@ -48,6 +48,11 @@ $(function(){
             }, 250);
         });
     }
+
+    // Navigation Tabs
+    if($('.nav-tabs').length){
+        $(".nav-tabs a:first").tab("show");
+    }
 });
 
 function resizeElms(elms){
