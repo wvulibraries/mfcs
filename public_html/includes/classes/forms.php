@@ -537,6 +537,13 @@ class forms {
 				);
 		}
 
+		// If there is a Lock ID add it to the form
+		if (!isempty(localvars::get("lockID"))) {
+			$output .= sprintf('<input type="hidden" name="lockID" value="%s">',
+				localvars::get("lockID")
+				);
+		}
+
 		// $output .= sprintf('<header><h1>%s</h1><h2>%s</h2></header>',
 		// 	htmlSanitize($form['title']),
 		// 	htmlSanitize($form['description']));
@@ -1343,6 +1350,15 @@ class forms {
 			$newObject = FALSE;
 		}
 
+		// Check the Lock, if this is an update
+		if ($newObject === FALSE) {
+
+			if (!locks::check_for_update($objectID,"object")) {
+				return FALSE;
+			}
+
+		}
+
 		// Get the current Form
 		if (($form = self::get($formID)) === FALSE) {
 			errorHandle::newError(__METHOD__."() - retrieving form by formID", errorHandle::DEBUG);
@@ -1355,7 +1371,7 @@ class forms {
 			$idnoInfo = self::getFormIDInfo($formID);
 			if ($idnoInfo === FALSE) {
 				errorHandle::newError(__METHOD__."() - no IDNO field for object form.", errorHandle::DEBUG);
-				return(FALSE);
+				return FALSE;
 			}
 		}
 

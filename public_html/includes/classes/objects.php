@@ -290,10 +290,13 @@ class objects {
 				$tmp[] = &$object['idno'];
 			}
 			else {
-				$tmp[] = &$object['data'][$sortField]; 
+				$tmp[] = strtolower(&$object['data'][$sortField]); 
 			}
 		}
 
+		// @TODO after we can stop supporting 5.3 we should use the natural
+		// sort flag to this (first available in 5.4) ... remove the strtolower
+		// when switching to nat sort
 		array_multisort($tmp, $objects); 
 
 		return $objects;
@@ -741,6 +744,11 @@ class objects {
 
 		$engine = EngineAPI::singleton();
 
+		// check locks. 
+		if (!locks::check_for_update($objectID,"object")) {
+			return FALSE;
+		}
+
 		if ($engine->openDB->transBegin("objectProjects") !== TRUE) {
 			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
 			return FALSE;
@@ -850,6 +858,39 @@ class objects {
 		mfcs::$engine->openDB->transEnd();
 
 		return TRUE;
+	}
+
+	/**
+	 * Checks to see if an object is already being edited. 
+	 * @param  INT $objectID objectID of object to check lock status of
+	 * @return BOOL  TRUE if object is locked, false otherwise. 
+	 */
+	public static function is_locked($objectID) {
+
+		return locks::is_locked($objectID,"object");
+
+	}
+
+	/**
+	 * Lock the current file
+	 * @param  INT $objectID ID of object to Lock
+	 * @return mixed           BOOL false if lock fails, otherwise lock ID. 
+	 */
+	public static function lock($objectID) {
+
+		return locks::lock($objectID,"object");
+
+	}
+
+	/**
+	 * Removes all locks on object
+	 * @param  int $objectID object to unlock
+	 * @return Book  true on success, false otherwise
+	 */
+	public static function unlock($objectID) {
+
+		return locks::unlock($objectID,"object");
+
 	}
 
 }

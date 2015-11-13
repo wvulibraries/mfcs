@@ -12,6 +12,7 @@ $revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime'
 $selectedProjects = NULL;
 $parentObject     = NULL;
 $permissions      = TRUE;
+$locked           = FALSE;
 
 try {
 
@@ -70,7 +71,7 @@ try {
 		}
 
 		localvars::add("createdOnDate",date('D, d M Y H:i',$object['createTime']));
-
+		
 		if (is_empty($object['modifiedBy'])) {
 			localvars::add("modifiedByUsername","Unavailable");
 		}
@@ -116,12 +117,44 @@ try {
 		$engine->cleanPost['MYSQL']['projects'] = (isset($engine->cleanPost['MYSQL']['projects']))?$engine->cleanPost['MYSQL']['projects']:array();
 
 		// Add All the new ones
-		if (objects::addProjects($engine->cleanGet['MYSQL']['objectID'],$engine->cleanPost['MYSQL']['projects']) === FALSE) {
+		if (objects::addProjects($engine->cleanPost['MYSQL']['projects_objectID'],$engine->cleanPost['MYSQL']['projects']) === FALSE) {
 			throw new Exception("Error adding projects to Object.");
+		}
+		else {
+			errorHandle::successMsg("Object Projects updated successfully.");
 		}
 
 		log::insert("Data Entry: Object: Successful Project Update",$engine->cleanGet['MYSQL']['objectID'],$form['ID']);
 
+	}
+
+	// If locked, warn, allow to steal
+	// We only need to check for locks on edits, not new objects
+	if (!isnull($engine->cleanGet['MYSQL']['objectID'])) {
+
+		if (isset($engine->cleanGet['MYSQL']['unlock']) && $engine->cleanGet['MYSQL']['unlock'] == "unlock") {
+			log::insert("Data Entry: Object: Unlocked Object",$engine->cleanGet['MYSQL']['objectID']);
+			objects::unlock($engine->cleanGet['MYSQL']['objectID']);
+		}
+		else if (isset($engine->cleanGet['MYSQL']['unlock']) && $engine->cleanGet['MYSQL']['unlock'] == "cancel") {
+			log::insert("Data Entry: Object: Unlocked Object",$engine->cleanGet['MYSQL']['objectID']);
+			objects::unlock($engine->cleanGet['MYSQL']['objectID']);
+			header("Location: /");
+			die();
+		}
+
+		// If the object is locked and it is the lock ID that is set in Localvars, we assume that the form was just submitted and we are redisplaying. 
+		if (objects::is_locked($engine->cleanGet['MYSQL']['objectID']) && objects::is_locked($engine->cleanGet['MYSQL']['objectID']) == localvars::get("lockID")) {
+			$locked = FALSE;
+		}
+		// We are editing it ... lock it
+		else if (objects::is_locked($engine->cleanGet['MYSQL']['objectID'])) {
+			$locked = TRUE;
+		}
+		// If not locked, lock it.
+		else if ($locked === FALSE && !(objects::lock($engine->cleanGet['MYSQL']['objectID']))) {
+			throw new Exception("Unable to lock Object");
+		}
 	}
 
 	// build the files list for displaying
@@ -197,6 +230,7 @@ $engine->eTemplate("include","header");
 		{local var="parentHeader"}
 	</header>
 
+<<<<<<< HEAD
 	<ul class="breadcrumbs">
 		<li><a href="{local var="siteRoot"}">Home</a></li>
 		<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
@@ -209,6 +243,23 @@ $engine->eTemplate("include","header");
 			<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions/index.php?objectID={local var="objectID"}">Revisions</a></li>
 		<?php } ?>
 	</ul>
+=======
+	<nav id="breadcrumbs">
+		<ul class="breadcrumb">
+			<li><a href="{local var="siteRoot"}">Home</a></li>
+			<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
+			<!-- FLoat Right -->
+			<?php if(mfcsPerms::isAdmin($engine->cleanGet['MYSQL']['formID'])){ ?>
+			<li class="pull-right noDivider"><a href="{local var="siteRoot"}formCreator/index.php?id={local var="formID"}">Edit Form</a></li>
+			<?php
+			}
+			if (!isnull($engine->cleanGet['MYSQL']['objectID']) and $revisions->hasRevisions($engine->cleanGet['MYSQL']['objectID'])) { ?>
+				<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions/index.php?objectID={local var="objectID"}">Revisions</a></li>
+			<?php } ?>
+			<li class="pull-right noDivider"><a href="{phpself query="true"}&unlock=cancel">Cancel Edit &amp; Unlock object</a></li>
+		</ul>
+	</nav>
+>>>>>>> origin/develop
 
 	<div class="container-fluid">
 		<div class="span3">
@@ -224,7 +275,7 @@ $engine->eTemplate("include","header");
 				{local var="results"}
 			</div>
 
-			<?php if ($permissions === TRUE) { ?>
+			<?php if ($permissions === TRUE && $locked === FALSE) { ?>
 
 			<div>
 				<ul class="nav nav-tabs">
@@ -259,6 +310,8 @@ $engine->eTemplate("include","header");
 							<h2>Change Project Membership</h2>
 
 							<form action="{phpself query="true"}" method="post">
+								<input type="hidden" name="lockID" value="{local var="lockID"}" />
+								<input type="hidden" name="projects_objectID" value="{local var="objectID"}" ?>
 							{local var="projectOptions"}
 							{engine name="csrf"}
 							<input type="submit" class="btn btn-primary" name="projectForm">
@@ -296,11 +349,81 @@ $engine->eTemplate("include","header");
 					<?php } ?>
 				</div>
 			</div>
-			<?php } // permissions ?>
+			<?php } else if ($locked === TRUE) { // permissions && Locked?>
+
+			<h1>Object is locked by another User</h1>
+
+			<p>Form Name: {local var="formName"}</p>
+			<p>Object IDNO: {local var="objectIDNO"}</p>
+			<p>Locked by: {local var="lockUsername"}</p>
+			<p>Locked On: {local var="lockDate"}</p>
+
+			<p>
+				This object is locked for editing. If you are the user that locked this file it is possible that you have
+			 	it open in another browser window, or closed the browser window where you were previously working on this 
+			 	object without clearing your lock.
+			</p>
+
+			<p>
+				If another user is listed as the locking user, please check with them before unlocking this object to edit it. 
+			</p>
+
+			<p>
+				If you unlock this object the previous opened version will not be able to be submitted.
+			</p>
+
+			<a href="{phpself query="true"}&unlock=unlock">Unlock this object</a>
+
+			<?php }?>
+
 		</div>
 	</div>
 </section>
 
+<<<<<<< HEAD
+=======
+<!-- @TODO : scripts should be moved out of this file -->
+<script type="text/javascript">
+	$(function() {
+		// Show first tab on page load
+		$(".nav-tabs a:first").tab("show");
+
+		var $objectSubmitBtn = $('#objectSubmitBtn');
+		$objectSubmitBtn.closest('form').submit(function(){
+			var $objectSubmitProcessing = $('#objectSubmitProcessing');
+			if($objectSubmitProcessing.length){
+				$objectSubmitBtn.hide();
+				$objectSubmitProcessing.show();
+			}
+		});
+	});
+</script>
+
+<script type="text/javascript">
+
+inForm = false;
+$("form").submit(function(e){inForm = true;});
+
+$(window).on("beforeunload", function() {
+	if (!inForm) {
+
+		$.ajax({
+			url: "/includes/ajax/unlock.php?lockID="+{local var="lockID"},
+			dataType: "json",
+			success: function(responseData) {
+			},
+			error: function(jqXHR,error,exception) {
+			},
+			async:   true
+
+		});
+
+	}
+});
+
+</script>
+
+>>>>>>> origin/develop
 <?php
 $engine->eTemplate("include","footer");
 ?>
