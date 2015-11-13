@@ -1,6 +1,9 @@
 // Document Ready
 // ===================================================================
 $(function(){
+    // Show first tab on page load
+    $(".nav-tabs a:first").tab("show");
+
     // form processing
     var objectSubmitBtn = $('#objectSubmitBtn');
 
@@ -12,4 +15,6 @@ $(function(){
         }
     });
 });
+
+
 
