@@ -8755,7 +8755,7 @@ function createHiddenFields(fieldArray,id, vals){
 }
 
 function addChoice(val,def) {
-	if (val === undefined) {
+	if (typeof val === 'undefined') {
 		return '<div class="input-prepend input-append" data-itemtype="choice">'+
 					'<button name="default" class="btn" type="button" data-toggle="buttons-radio" title="Set this choice as the default."><i class="icon-ok"></i></button>'+
 					'<input name="fieldSettings_choices_text" type="text">'+
@@ -8763,7 +8763,7 @@ function addChoice(val,def) {
 					'<button name="remove" class="btn" type="button" title="Remove this choice."><i class="icon-remove"></i></button>'+
 				'</div>';
 	}
-	else if (def === undefined) {
+	else if (typeof def === 'undefined') {
 		return '<div class="input-prepend input-append" data-itemtype="choice">'+
 					'<button name="default" class="btn" type="button" data-toggle="buttons-radio" title="Set this choice as the default."><i class="icon-ok"></i></button>'+
 					'<input name="fieldSettings_choices_text" type="text" value="'+val+'">'+
@@ -8780,7 +8780,7 @@ function addChoice(val,def) {
 }
 
 function addAllowedExtension(val) {
-	if (val === undefined) {
+	if (typeof val === 'undefined') {
 		val = '';
 	}
 	return '<div class="row-fluid input-append" data-itemtype="extension">'+
@@ -8791,7 +8791,7 @@ function addAllowedExtension(val) {
 }
 
 function addMetadataStandard(val){
-	if (val === undefined) {
+	if (typeof val === 'undefined') {
 		val = '';
 	}
 
@@ -8799,8 +8799,15 @@ function addMetadataStandard(val){
 	var identifier = val.split(' : ')[1];
 	var standard   = val.split(' : ')[0];
 
-	var metaDataOptions = '<select class="input-block-level form-control mdStandardSelect" id="fieldSettings_standardType" name="fieldSettings_standardType" data-selectvalue="' + standard +'"><option value=""> None </option>' + options + '</select>';
+	if(typeof identifier === 'undefined'){
+		identifier = '';
+	}
 
+	if(typeof standard === 'undefined'){
+		 standard = '';
+	}
+
+	var metaDataOptions = '<select class="input-block-level form-control mdStandardSelect" id="fieldSettings_standardType" name="fieldSettings_standardType" data-selectvalue="' + standard +'"><option value=""> None </option>' + options + '</select>';
 
 
 	return '<div class="row-fluid input-append metadata-item" data-itemtype="metadataStandard">' + metaDataOptions +
