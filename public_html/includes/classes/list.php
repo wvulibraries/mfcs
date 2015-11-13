@@ -502,11 +502,35 @@ class listGenerator {
 			}
 
 		}
-
 		return self::createTable($data);
-
 		return;
+	}
 
+	public static function getMetadataStandards($id = null){
+		$engine = EngineAPI::singleton();
+
+		if (!isnull($id)){
+			$sql = sprintf("SELECT * FROM `metadataStandards` WHERE `formID`=%s",
+				$engine->openDB->escape($id)
+			);
+		}
+		else {
+			$sql = "SELECT * FROM `metadataStandards`";
+		}
+
+		$sqlResult = $engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - getting all objects for form: ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		$objects = array();
+		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+			$objects[$row['typeID']] = $row['type'];
+		}
+
+		return $objects;
 	}
 
 }
