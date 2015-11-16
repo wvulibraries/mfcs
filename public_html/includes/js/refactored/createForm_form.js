@@ -1289,10 +1289,11 @@ function enableChoiceFunctionality(){
 		}
 		else if(state == "remove"){
 			$(this).parent().remove();
+			$(this).change();
 		}
 	});
 
-	$('.input-append').find($('input[type=text], select')).bind('change keyup', modifyChoiceBinding)
+	$('.input-append').find($('input[type=text], select')).bind('change keyup', modifyChoiceBinding);
 
 	$("#fieldSettings_choices_formSelect").change(function(){
 		var val             = $(this).val();
@@ -1321,12 +1322,13 @@ function enableChoiceFunctionality(){
 }
 
 function modifyChoiceBinding(){
-	console.log('test');
 	var valueObject = [];
-	var dataType = $(this).data('itemtype');
+	var dataType = $(this).parent().data('itemtype');
+
+	console.log(dataType);
 
 	if(dataType == 'choice' || dataType == 'extension'){
-		$(this).parent().find('input').each(function(index){
+		$(this).parent().parent().find($('input[type=text]')).each(function(index){
 			value = $(this).val();
 			valueObject[index] = value;
 		});
@@ -1338,6 +1340,8 @@ function modifyChoiceBinding(){
 			valueObject[index] = value;
 		});
 	}
+
+	console.log(valueObject);
 
 	var choices = valueObject.join('%,%');
 
