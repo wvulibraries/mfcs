@@ -8079,6 +8079,9 @@ function setOriginalValues(){
     else if(bindToInput.is('select')) {
         bindToInput.find('option[value="' + value + '"]').prop('selected', true);
     }
+    else if(bindToInput.is("input[type=number]")){
+    	bindToInput.val(parseInt(value));
+    }
     else{
     	bindToInput.val(value);
     }
@@ -8578,8 +8581,8 @@ function newFieldValues(id,type,vals) {
 		case 'idno':
             var idnoHiddenFields = ['managedBy', 'idnoFormat'];
             output += createHiddenFields(idnoHiddenFields, id, vals);
-			output += '<input type="hidden" id="startIncrement_'+id+'" name="startIncrement_'+id+'"   data-bind="startIncrement_'+id+'"    value="'+((vals.startIncrement !== undefined)?vals.startIncrement:'1')+'">';
-			output += '<input type="hidden" id="idnoConfirm_'+id+'"    name="idnoConfirm_'+id+'"      data-bind"idnoConfirm_'+id+'"        value="false">';  // why is this hard coded
+			output += '<input type="hidden" id="startIncrement_'+id+'" name="startIncrement_'+id+'"   data-bind="startIncrement"    value="'+((vals.startIncrement !== undefined)?vals.startIncrement:'1')+'">';
+			output += '<input type="hidden" id="idnoConfirm_'+id+'"    name="idnoConfirm_'+id+'"      data-bind"idnoConfirm"        value="false">';  // why is this hard coded
 			break;
 
 		case 'text':
@@ -8818,6 +8821,8 @@ function addMetadataStandard(val){
 }
 
 function enableChoiceFunctionality(){
+	$('.input-append').find($('input[type=text], select')).bind('change keyup', modifyChoiceBinding);
+
 	$('.input-append').find('button').click(function(){
 		var state = $(this).attr('name');
 		var type  = $(this).parent().data('itemtype');
@@ -8839,11 +8844,9 @@ function enableChoiceFunctionality(){
 		}
 		else if(state == "remove"){
 			$(this).parent().remove();
-			$(this).change();
+			$('.input-append').find($('input[type=text]')).addClass('frank').change();
 		}
 	});
-
-	$('.input-append').find($('input[type=text], select')).bind('change keyup', modifyChoiceBinding);
 
 	$("#fieldSettings_choices_formSelect").change(function(){
 		var val             = $(this).val();
@@ -8875,8 +8878,6 @@ function modifyChoiceBinding(){
 	var valueObject = [];
 	var dataType = $(this).parent().data('itemtype');
 
-	console.log(dataType);
-
 	if(dataType == 'choice' || dataType == 'extension'){
 		$(this).parent().parent().find($('input[type=text]')).each(function(index){
 			value = $(this).val();
@@ -8890,8 +8891,6 @@ function modifyChoiceBinding(){
 			valueObject[index] = value;
 		});
 	}
-
-	console.log(valueObject);
 
 	var choices = valueObject.join('%,%');
 
