@@ -1451,11 +1451,12 @@ class forms {
 				else {
 					// if we don't have files, and this is an update, we need to pull the files information from the
 					// version that is already in the system.
+					if ($newObject === FALSE) {
+						$oldObject = objects::get($objectID);
 
-					$oldObject = objects::get($objectID);
-
-					if ($newObject === FALSE && objects::hasFiles($objectID,$field['name']) === TRUE) {
-						$values[$field['name']] = $oldObject['data'][$field['name']];
+						if (objects::hasFiles($objectID,$field['name']) === TRUE) {
+							$values[$field['name']] = $oldObject['data'][$field['name']];
+						}
 					}
 				}
 
