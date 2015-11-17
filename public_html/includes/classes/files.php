@@ -325,6 +325,13 @@ class files {
 		return $mimeType;
 	}
 
+	// Chris Jester-Young's combined with php.net's and a precision argument
+	public function formatBytes($size, $precision = 1){
+    	$base = log($size, 1024);
+   	 	$suffixes = array('', 'KB', 'MB', 'GB', 'TB');
+    	return round(pow(1024, $base - floor($base)), $precision) . " " . $suffixes[floor($base)];
+	}
+
 	public static function buildFilesPreview($objectID,$fieldName=NULL){
 
 		if (objects::validID(TRUE,$objectID) === FALSE) {
@@ -349,22 +356,54 @@ class files {
 		foreach($fields as $field){
 
 			if($field['type'] != 'file') continue;
-
-			// If there's nothing uploaded for the field, no need to continue
 			if(empty($object['data'][ $field['name'] ])) continue;
 
 			// Figure out some needed vars for later
 			$fileDataArray = $object['data'][$field['name']];
 			$assetsID      = $fileDataArray['uuid'];
-			$fileLIs = array();
-
+			$fileLIs       = array();
 
 			uasort($fileDataArray['files']['archive'],function($a,$b) { return strnatcasecmp($a['name'],$b['name']); });
 
 			foreach($fileDataArray['files']['archive'] as $fileID => $file){
 				$_filename = pathinfo($file['name']);
 				$filename  = $_filename['filename'];
+				$icon      = "";
 				$links     = array();
+				$type 	   = explode('/', $file['type']);
+
+				$fi            = new finfo();
+				$filePathFull  = '/home/mfcs.lib.wvu.edu/data/archives/mfcs/'.$file['path'].DIRECTORY_SEPARATOR.$file['name'];
+				$filesize      = filesize($filePathFull);
+				$extraFileInfo = $fi->file($filePathFull);
+				$filesize      = self::formatBytes($filesize);
+
+				// Choose an Icon for the type of data
+				switch ($type[0]) {
+					case 'image':
+						$icon = '<i class="fa fa-file-image-o"></i>';
+						break;
+					case 'video':
+						$icon = '<i class="fa fa-file-video-o"></i>';
+						break;
+					case 'audio':
+						$icon = '<i class="fa fa-file-sound-o"></i>';
+						break;
+					case 'text':
+						$icon = '<i class="fa fa-file-text-o"></i>';
+						break;
+					case 'application':
+						if($type[1] == 'pdf'){
+							$icon = '<i class="fa fa-file-pdf-o"></i>';
+						} else {
+							$icon = '<i class="fa fa-file-o"></i>';
+						}
+						break;
+					default:
+						$icon = '<i class="fa fa-file-o"></i>';
+						break;
+				}
+
 
 				$links['Original'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
 					localvars::get('siteRoot'),
@@ -409,18 +448,38 @@ class files {
 						$field['name'],
 						'combinedThumb');
 				}
-
+				if(str2bool($field['convertAudio'])){
+					$links['Converted Audio'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
+						localvars::get('siteRoot'),
+						$objectID,
+						$field['name'],
+						'audio');
+				}
+				if(str2bool($field['convertVideo'])){
+					$links['Converted Video'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
+						localvars::get('siteRoot'),
+						$objectID,
+						$field['name'],
+						'video');
+				}
+				if(str2bool($field['videothumbnail'])){
+					$links['VideoThumbs'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
+						localvars::get('siteRoot'),
+						$objectID,
+						$field['name'],
+						'thumbnails');
+				}
 
 				$previewLinks  = array();
 				$downloadLinks = array();
 				foreach($links as $linkLabel => $linkURL){
-					$previewLinks[]  = sprintf('<li><a tabindex="-1" href="javascript:;" onclick="previewFile(this,\'%s\')">%s</a></li>', $linkURL, $linkLabel);
+					$previewLinks[]  = sprintf('<li><a tabindex="-1" href="%s">%s</a></li>', $linkURL, $linkLabel);
 					$downloadLinks[] = sprintf('<li><a tabindex="-1" href="%s&download=1">%s</a></li>',$linkURL, $linkLabel);
 				}
 
 				// Build the preview dropdown HTML
 				$previewDropdown  = '<div class="btn-group">';
-				$previewDropdown .= '	<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">';
+				$previewDropdown .= '	<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">';
 				$previewDropdown .= '		Preview <span class="caret"></span>';
 				$previewDropdown .= '	</a>';
 				$previewDropdown .= sprintf('<ul class="dropdown-menu">%s</ul>', implode('', $previewLinks));
@@ -428,27 +487,29 @@ class files {
 
 				// Build the download dropbox HTML
 				$downloadDropdown  = '<div class="btn-group">';
-				$downloadDropdown .= '	<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">';
+				$downloadDropdown .= '	<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">';
 				$downloadDropdown .= '		Download <span class="caret"></span>';
 				$downloadDropdown .= '	</a>';
 				$downloadDropdown .= sprintf('<ul class="dropdown-menu">%s</ul>', implode('', $downloadLinks));
 				$downloadDropdown .= '</div>';
 
-				$fileLIs[] = sprintf('<li><div class="filename">%s</div><!-- TODO <button class="btn">Field Details</button> -->%s%s</li>',
+				// Build the Context Menu
+				$contextMenu = '<div class="fileContextMenu">';
+				$contextMenu .= sprintf('<ul class="dropdown-menu"><li class="list-header"> Preview Files </li> %s <li class="list-header"> Download Files </li> %s </ul>', implode('', $previewLinks), implode('', $downloadLinks));
+				$contextMenu .= '</div>';
+
+				$fileLIs[] = sprintf('<li><span class="filename span6">%s %s <span class="filesize">  %s </span></span><span class="dropdowns span6"> %s %s </span> %s</li>',
+					$icon,
 					$file['name'],
+					$filesize,
 					$previewDropdown,
-					$downloadDropdown);
+					$downloadDropdown,
+					$contextMenu
+				);
 			}
 
-			$output .= sprintf('<div class="filePreviewField"><header>%s</header><ul class="filePreviews">%s</ul></div>', $field['label'], implode('', $fileLIs));
+			$output .= sprintf('<div class="filePreviewField"><header><i class="fa fa-folder-open"></i> %s</header><ul class="filePreviews">%s</ul></div>', $field['label'], implode('', $fileLIs));
 		}
-
-		// Include the filePreview Modal, and the CSS and JavaScript links
-		$output .= '<div id="filePreviewContainer" class="filePreview">
-						<iframe class="filePreview"></iframe>
-						<a class="btn previewDownloadLink">Download File</a>
-					</div>';
-		$output .= sprintf('<link href="%sincludes/css/filePreview.css" rel="stylesheet">', localvars::get('siteRoot'));
 		return $output;
 	}
 
@@ -854,6 +915,7 @@ class files {
 						$_filename    = pathinfo($originalFile);
 						$filename     = $_filename['filename'];
 
+
 						$baseFilename = $tmpDir.DIRECTORY_SEPARATOR.$filename;
 
 						// Create a thumbnail of the first image
@@ -1070,7 +1132,8 @@ class files {
 				'path'    => $savePath,
 				'format'  => $format,
 				'options' => $conversionOptions,
-				'info'    => $ffmpeg->returnInformation()
+				'info'    => $ffmpeg->returnInformation(),
+				'originialFileData' => $originialFileData,
 			);
 
 			// Valid File?
