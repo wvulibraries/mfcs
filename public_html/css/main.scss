@@ -553,6 +553,7 @@ table {
 .objectLists {
   float:left;
   clear:both;
+  width:100%;
   .span6 {
     &:nth-of-type(odd){
       margin-left:0;
@@ -1371,49 +1372,92 @@ strong { margin-bottom:10px;}
 // File Preview
 // =============================================================================
 
+$fileColor: lighten(#333F48,60%);
+
 .filePreviewField{
-  margin-bottom: 10px;
+  float:left;
+  clear:both;
+  width:100%;
+  margin-bottom: 30px;
+  border:1px solid darken($fileColor, 10%);
+
     header{
-      font-size: 16px;
+      font-size: 18px;
       font-weight: bold;
+      border-bottom:1px solid darken($fileColor, 10%);
+      padding:10px;
+      background: $fileColor;
     }
 
     section{
       display: none;
       padding: 10px;
     }
+
+    .filePreviews {
+      list-style: none;
+      margin:0;
+      padding:0;
+
+      > li{
+        display:block;
+        float:left;
+        width:100%;
+        padding:10px;
+        &:nth-of-type(even){
+          background:lighten($fileColor,10%);
+        }
+      }
+
+      span { margin-top:0; margin-bottom:0; }
+
+      .dropdowns{
+        text-align:right;
+      }
+
+      .btn-group{
+        margin:0;
+      }
+
+      .filename{
+        font-weight: bold;
+        font-size: 14px;
+        margin-top:5px;
+      }
+
+      .filesize {
+        font-size:12px;
+        font-weight:200;
+        letter-spacing:1px;
+        font-style:oblique;
+        color:lighten(#000,50%);
+      }
+
+      i { margin-right:10px; }
+    }
 }
 
-ul.filePreviews{
-  list-style: none;
-    > li{
-      margin-bottom: 10px;
-    }
-    > li div.filename{
-      font-weight: bold;
-      font-size: 14px;
-    }
-}
 
-#filePreviewModal {
-  position: fixed;
-  left:50%;
-  top:50%;
-  margin: -25% 0 0 -40%;
-  width: 80%;
-  height: 80%;
-}
-#filePreviewModal .modal-body{
-  max-height: 100%;
-  height: 85%;
-  padding: 0;
-  overflow: hidden;
-}
-#filePreviewModal iframe{
-  width: 100%;
-  height: 100%;
-  background-color: #999;
-}
+
+// #filePreviewModal {
+//   position: fixed;
+//   left:50%;
+//   top:50%;
+//   margin: -25% 0 0 -40%;
+//   width: 80%;
+//   height: 80%;
+// }
+// #filePreviewModal .modal-body{
+//   max-height: 100%;
+//   height: 85%;
+//   padding: 0;
+//   overflow: hidden;
+// }
+// #filePreviewModal iframe{
+//   width: 100%;
+//   height: 100%;
+//   background-color: #999;
+// }
 
 // Pretty Print Formatting
 // =============================================================================
