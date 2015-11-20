@@ -279,30 +279,33 @@ class files {
 		// Get the file's source
 		if(!isset($fileData)) $fileData = file_get_contents($filename);
 
+		// List of Video Mime types
+		$videoMimeTypes = array( 'application/mp4', 'application/ogg', 'video/3gpp', 'video/3gpp2', 'video/flv', 'video/h264', 'video/mp4', 'video/mpeg', 'video/mpeg-2', 'video/mpeg4', 'video/ogg', 'video/ogm', 'video/quicktime', 'video/avi');
+
+		$audioMimeTypes  = array('audio/acc', 'audio/mp4', 'audio/mp3', 'audio/mp2', 'audio/mpeg', 'audio/oog', 'audio/midi', 'audio/wav', 'audio/x-ms-wma','audio/webm');
+
+
+		$imageMimeTypes = array('image/jpeg', 'image/gif', 'image/png', 'image/bmp', 'image/tiff', 'image/x-icon');
+
+		$pdfMimeTypes   = array('application/pdf');
+
 		// Figure out what to do with the data
 		switch(trim(strtolower($mimeType))){
 			case 'image/tiff':
 				self::printImage($filename,$mimeType);
-				break;
+			break;
 
-			case 'image/gif':
-			case 'image/jpeg':
-			case 'image/png':
-			case 'text/css':
-			case 'text/csv':
-			case 'text/html':
-			case 'text/javascript':
-			case 'text/plain':
-			case 'text/xml':
-			case 'application/javascript':
-			case 'application/pdf':
+			case in_array($mimeType, $imageMimeTypes):
+			case in_array($mimeType, $pdfMimeTypes):
+			case in_array($mimeType, $audioMimeTypes):
+			case in_array($mimeType, $videoMimeTypes):
 				ini_set('memory_limit',-1);
 				header("Content-type: $mimeType");
 				die(file_get_contents($filename));
-				break;
+			break;
 
 			default:
-				echo '[No preview available - Unknown file type]';
+				echo '[No preview available - Unknown file type please download the file]';
 				break;
 		}
 	}
@@ -467,7 +470,7 @@ class files {
 						localvars::get('siteRoot'),
 						$objectID,
 						$field['name'],
-						'thumbnails');
+						'videoThumbs');
 				}
 
 				$previewLinks  = array();
@@ -1119,8 +1122,15 @@ class files {
 			$originalFileData = $ffmpeg->getMetadata();
 
 			// video options
-			$savePath = self::getSaveDir($assetsID,'video');
-			$format   = ".".$options['videoFormat'];
+			$savePath        = self::getSaveDir($assetsID,'video');
+			$format          = ".".$options['videoFormat'];
+			$previewFormat   = ".mp4";
+			$previewPath     = self::getSaveDir($assetsID,'preview');
+			$fullPreviewPath = $previewPath.$name.$previewFormat;
+
+			// Create a Preview
+			// Makes a simple mp4 to use
+			$ffmpeg->convert($fullPreviewPath, array(), array());
 
 			// bitrate conversions
 			$bitrate = (isset($options['videobitRate']) ? floor(($options['videobitRate'] * 1024)) : number_format(256 * 1024, 2));
@@ -1128,11 +1138,12 @@ class files {
 
 			// return stuff
 			$returnArray = array(
-				'name'    => $name.$format,
-				'path'    => $savePath,
-				'format'  => $format,
-				'options' => $conversionOptions,
-				'info'    => $ffmpeg->returnInformation(),
+				'name'              => $name.$format,
+				'path'              => $savePath,
+				'previewPath'       => $fullPreviewPath,
+				'format'            => $format,
+				'options'           => $conversionOptions,
+				'info'              => $ffmpeg->returnInformation(),
 				'originialFileData' => $originialFileData,
 			);
 
@@ -1262,6 +1273,12 @@ class files {
 			$savePath = self::getSaveDir($assetsID,'audio');
 			$format   = $options['audioFormat'];
 
+			// Make a Preview File for in Browser
+			$previewFormat   = ".mp3";
+			$previewPath     = self::getSaveDir($assetsID,'preview');
+			$fullPreviewPath = $previewPath.$name.$previewFormat;
+			$ffmpeg->convert($fullPreviewPath, array(), array());
+
 			if(!is_dir($savePath)){
 				throw new Exception("Directory is not setup");
 				return FALSE;
@@ -1274,12 +1291,13 @@ class files {
 		}
 
 		$returnArray = array(
-			'name'    => $name.".".$format,
-			'path'    => $savePath,
-			'format'  => $format,
-			'options' => $conversionOptions,
-			'info'    => $ffmpeg->returnInformation(),
-			'errors'  => '',
+			'name'        => $name.".".$format,
+			'path'        => $savePath,
+			'format'      => $format,
+			'options'     => $conversionOptions,
+			'info'        => $ffmpeg->returnInformation(),
+			'errors'      => '',
+			'previewPath' => $fullPreviewPath,
 		);
 
 		return $returnArray;

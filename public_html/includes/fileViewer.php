@@ -3,7 +3,19 @@ include("../header.php");
 
 // Turn off EngineAPI template engine
 $engine->obCallback = FALSE;
-	
+// $engine->eTemplate("include","header");
+
+
+// List of Video Mime types
+	$videoMimeTypes = array( 'application/mp4', 'application/ogg', 'video/3gpp', 'video/3gpp2', 'video/flv', 'video/h264', 'video/mp4', 'video/mpeg', 'video/mpeg-2', 'video/mpeg4', 'video/ogg', 'video/ogm', 'video/quicktime', 'video/avi');
+
+	$audioMimeTypes  = array('audio/acc', 'audio/mp4', 'audio/mp3', 'audio/mp2', 'audio/mpeg', 'audio/oog', 'audio/midi', 'audio/wav', 'audio/x-ms-wma','audio/webm');
+
+	$imageMimeTypes = array('image/jpeg', 'image/gif', 'image/png', 'image/bmp', 'image/tiff', 'image/x-icon');
+
+	$pdfMimeTypes   = array('application/pdf');
+	$webMimeTypes   = array('audio/mp4', 'audio/mp3', 'video/mp4', 'video/mpeg', 'video/ogg');
+
 try{
 	// Check for simple (stupid developer errors)
 	if(!isset($engine->cleanGet['MYSQL']['objectID'])) throw new Exception('No Object ID provided!');
@@ -17,10 +29,6 @@ try{
 	$fileType  = trim($engine->cleanGet['MYSQL']['type']);
 	$fileArray = $object['data'][ $fieldName ];
 	$fileUUID  = $fileArray['uuid'];
-
-	// print "<pre>";
-	// var_dump($fileArray);
-	// print "</pre>";
 
 	if (FALSE === strpos($fileType,'combined')) {
 		// Non-combined file
@@ -80,9 +88,65 @@ try{
 			header("Content-type: text/plain");
 			die("Failed to locate requested file!"); // die so nothing else will be displayed
 		}
-		else {
-			files::generateFilePreview($filepath, $mimeType);
-			exit();
+		else{
+			if(in_array($mimeType, $webMimeTypes)){
+    			$fp       = fopen($filepath, 'rb');
+			    $size     = filesize($filepath);
+			    $length   = $size;
+			    $fi       = new finfo(FILEINFO_MIME_TYPE);
+			    $mimeType = $fi->file($filepath);
+			    $start    = 0;
+			    $end      = $size - 1;
+
+			    // Send the content type header
+			    header("Content-type: $mimeType");
+			    header("Accept-Ranges: bytes 0-$length");
+			    if (isset($_SERVER['HTTP_RANGE'])) {
+			        $c_start = $start;
+			        $c_end   = $end;
+			        list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
+			        if (strpos($range, ',') !== false) {
+			            header('HTTP/1.1 416 Requested Range Not Satisfiable');
+			            header("Content-Range: bytes $start-$end/$size");
+			            exit;
+			        }
+			        if ($range == '-') {
+			            $c_start = $size - substr($range, 1);
+			        }else{
+			            $range  = explode('-', $range);
+			            $c_start = $range[0];
+			            $c_end   = (isset($range[1]) && is_numeric($range[1])) ? $range[1] : $size;
+			        }
+			        $c_end = ($c_end > $end) ? $end : $c_end;
+			        if ($c_start > $c_end || $c_start > $size - 1 || $c_end >= $size) {
+			            header('HTTP/1.1 416 Requested Range Not Satisfiable');
+			            header("Content-Range: bytes $start-$end/$size");
+			            exit;
+			        }
+			        $start  = $c_start;
+			        $end    = $c_end;
+			        $length = $end - $start + 1;
+			        fseek($fp, $start);
+			        header('HTTP/1.1 206 Partial Content');
+			    }
+			    header("Content-Range: bytes $start-$end/$size");
+			    header("Content-Length: ".$length);
+			    $buffer = 1024 * 8;
+			    while(!feof($fp) && ($p = ftell($fp)) <= $end) {
+			        if ($p + $buffer > $end) {
+			            $buffer = $end - $p + 1;
+			        }
+			        set_time_limit(0);
+			        echo fread($fp, $buffer);
+			        flush();
+			    }
+			    fclose($fp);
+			    exit();
+			}
+			else{
+				files::generateFilePreview($filepath, $mimeType);
+				exit();
+			}
 		}
 	}
 }
