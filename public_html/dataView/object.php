@@ -63,7 +63,7 @@ try {
 		$user   = users::get($object['createdBy']);
 		localvars::add("createdByUsername",$user['username']);
 	}
-	
+
 	localvars::add("createdOnDate",date('D, d M Y H:i',$object['createTime']));
 
 	if (is_empty($object['modifiedBy'])) {
@@ -148,13 +148,14 @@ $engine->eTemplate("include","header");
 					<div class="tab-pane" id="metadata">
 						{local var="form"}
 
-						
+
 						<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
 							<p>Created by: {local var="createdByUsername"} on {local var="createdOnDate"}</p>
 							<p>Modified by: {local var="modifiedByUsername"} on {local var="modifiedOnDate"}</p>
 						<?php } ?>
 					</div>
 					<div class="tab-pane" id="files">
+						<a href="/dataView/allfiles.php?objectID={local var="objectID"}"  class="btn btn-primary">Download All Files (Zip)</a><br><br>
 						{local var="filesViewer"}
 					</div>
 
