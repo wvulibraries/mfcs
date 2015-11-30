@@ -230,7 +230,7 @@ $engine->eTemplate("include","header");
 		{local var="parentHeader"}
 	</header>
 
-<<<<<<< HEAD
+
 	<ul class="breadcrumbs">
 		<li><a href="{local var="siteRoot"}">Home</a></li>
 		<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
@@ -243,25 +243,9 @@ $engine->eTemplate("include","header");
 			<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions/index.php?objectID={local var="objectID"}">Revisions</a></li>
 		<?php } ?>
 		<li class="pull-right noDivider"><a href="{phpself query="true"}&unlock=cancel">Cancel Edit &amp; Unlock object</a></li>
+		<li class="pull-right noDivider"><a href="/data/object/history/">History</a></li>
 	</ul>
-=======
-	<nav id="breadcrumbs">
-		<ul class="breadcrumb">
-			<li><a href="{local var="siteRoot"}">Home</a></li>
-			<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
-			<!-- FLoat Right -->
-			<?php if(mfcsPerms::isAdmin($engine->cleanGet['MYSQL']['formID'])){ ?>
-			<li class="pull-right noDivider"><a href="{local var="siteRoot"}formCreator/index.php?id={local var="formID"}">Edit Form</a></li>
-			<?php
-			}
-			if (!isnull($engine->cleanGet['MYSQL']['objectID']) and $revisions->hasRevisions($engine->cleanGet['MYSQL']['objectID'])) { ?>
-				<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions/index.php?objectID={local var="objectID"}">Revisions</a></li>
-			<?php } ?>
-			<li class="pull-right noDivider"><a href="{phpself query="true"}&unlock=cancel">Cancel Edit &amp; Unlock object</a></li>
-			<li class="pull-right noDivider"><a href="/data/object/history/">History</a></li>
-		</ul>
-	</nav>
->>>>>>> origin/develop
+
 
 	<div class="container-fluid">
 		<div class="span3">
