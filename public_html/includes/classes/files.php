@@ -466,11 +466,25 @@ class files {
 						'video');
 				}
 				if(str2bool($field['videothumbnail'])){
-					$links['VideoThumbs'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
-						localvars::get('siteRoot'),
-						$objectID,
-						$field['name'],
-						'videoThumbs');
+					$numVideoThumbs = $field['videoThumbFrames'];
+
+					for($i = 0; $i < $numVideoThumbs; $i++){
+						$filename = $file['name'];
+						$filename = explode(".", $filename);
+						$filename = $filename[0];
+
+						if(!$i == 0){
+							$filename = $filename."_".$i;
+						}
+
+						$links["Thumbnail_".$i] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s&name=%s',
+							localvars::get('siteRoot'),
+							$objectID,
+							$field['name'],
+							'thumbnails',
+							$filename
+						);
+					}
 				}
 
 				$previewLinks  = array();
@@ -496,18 +510,13 @@ class files {
 				$downloadDropdown .= sprintf('<ul class="dropdown-menu">%s</ul>', implode('', $downloadLinks));
 				$downloadDropdown .= '</div>';
 
-				// Build the Context Menu
-				$contextMenu = '<div class="fileContextMenu">';
-				$contextMenu .= sprintf('<ul class="dropdown-menu"><li class="list-header"> Preview Files </li> %s <li class="list-header"> Download Files </li> %s </ul>', implode('', $previewLinks), implode('', $downloadLinks));
-				$contextMenu .= '</div>';
 
-				$fileLIs[] = sprintf('<li><span class="filename span6">%s %s <span class="filesize">  %s </span></span><span class="dropdowns span6"> %s %s </span> %s</li>',
+				$fileLIs[] = sprintf('<li><span class="filename span6">%s %s <span class="filesize">  %s </span></span><span class="dropdowns span6"> %s %s </span></li>',
 					$icon,
 					$file['name'],
 					$filesize,
 					$previewDropdown,
-					$downloadDropdown,
-					$contextMenu
+					$downloadDropdown
 				);
 			}
 
