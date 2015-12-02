@@ -35,18 +35,6 @@ $engine->eTemplate("include","header");
 	</ul>
 </section>
 
-<section class="aboutMFCS">
-	<div class="widthContainer">
-		<div class="pic">
-			<img src="images/mfcsData.png" alt="mfcs holding a data icon" />
-		</div>
-		<div class="text">
-			<h2> Welcome to Metadata Form Creation System </h2>
-			<p> MFCS is a system built to store and archive digital projects, finding aids, and historical material entrusted to the library.  This system allows us to keep secure data, achive the original, and make modifications for other technologies to use.  The matieral ultimately ends up in a repository system such as Hydra, Islandora, or DLXS. </p>
-		</div>
-	</div>
-</section>
-
 <section class="createIndex">
 	<div class="widthContainer">
 		<span class="span4">
@@ -76,6 +64,18 @@ $engine->eTemplate("include","header");
 				<p> There are other things that can be managed by system administrators.  Adding users, granting permissions, and exporting for digital repositories.  If you are need one of these tasks done contact your system administrator. </p>
 			</div>
 		</span>
+	</div>
+</section>
+
+<section class="aboutMFCS">
+	<div class="widthContainer">
+		<div class="pic">
+			<img src="images/mfcsData.png" alt="mfcs holding a data icon" />
+		</div>
+		<div class="text">
+			<h2> Welcome to Metadata Form Creation System </h2>
+			<p> MFCS is a system built to store and archive digital projects, finding aids, and historical material entrusted to the library.  This system allows us to keep secure data, achive the original, and make modifications for other technologies to use.  The matieral ultimately ends up in a repository system such as Hydra, Islandora, or DLXS. </p>
+		</div>
 	</div>
 </section>
 
