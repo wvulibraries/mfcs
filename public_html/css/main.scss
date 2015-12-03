@@ -23,6 +23,10 @@
     }
 }
 
+.row {
+  padding:0 15px;
+}
+
 // GRID
 // ===========================================================================================
 section {
@@ -1285,12 +1289,13 @@ select {
 
 .dataSettings {
   .group {
-    border:1px solid $lightgrey;
+    border:1px solid darken($lightgrey,5%);
     padding:20px;
     margin-bottom:20px;
     display:block;
     float:left;
     width:100%;
+    background: lighten($lightgrey,3%);
   }
 
   .microGroup{
@@ -1309,18 +1314,10 @@ select {
   //     div:nth-of-type(2n){ margin-right:0; }
   // }
 
-  label, input, div,{
+  label, input{
     float:left;
     width:100%;
     margin-bottom:10px;
-  }
-
-  .span6 {
-    width:49%;
-    margin-right:2%;
-    &:nth-of-type(2n){
-      margin-right:0;
-    }
   }
 
   .audio { margin:0; }
@@ -1354,8 +1351,6 @@ strong { margin-bottom:10px;}
 .tooltip.right .tooltip-arrow { display:none; } // arrow tip is doing weird things hide it for now
 
 .sortable { float:left; width:100%;}
-
-.group .control-group { margin:0; }
 
 .activeField, .well{
     padding:10px;
