@@ -7681,6 +7681,7 @@ $(function(){
 
 	// Enable the submit button and hide thenoJavaScriptWarning
 	$(':submit').removeAttr('disabled');
+
 });
 
 
@@ -8047,10 +8048,30 @@ function setOriginalValues(){
 	if( bindObj == 'help'){
 		helpType = value.split(" | ")[0];
 		help     = value.split(" | ")[1];
-		value    = help;
+		value    = (help == 'undefined' ? "" : help);
 		$(this).val(helpType + " | " + help);
 
+		$("#fieldSettings_help_textarea").val(value).hide().bind('change keyup', bindHelpText);
+		$("#fieldSettings_help_url").hide().val(value).bind('change keyup', bindHelpUrl);
+
 		$('#fieldSettings_help_type').val(helpType);
+		$('#fieldSettings_help_type').change(function(){
+			switch($(this).val()){
+				case 'none':
+					$("#fieldSettings_help_textarea").hide().removeClass('hidden');
+					$("#fieldSettings_help_url").hide().removeClass('hidden');
+					break;
+				case 'text':
+				case 'html':
+					$("#fieldSettings_help_textarea").show().removeClass('hidden');
+					$("#fieldSettings_help_url").hide().removeClass('hidden');
+					break;
+				case 'web':
+					$("#fieldSettings_help_url").show().removeClass('hidden');
+					$("#fieldSettings_help_textarea").hide().removeClass('hidden');
+					break;
+			}
+		});
 
 		$('.helpPreview').popover('destroy');
 	 	$('.helpPreview').hide();
@@ -8117,6 +8138,7 @@ function bindToHiddenForm(){
 
 		if(inputObj == 'name'){
 			evaluateSpace(value, $(this));
+			titleField();
 		}
 
 		if(inputObj == 'choicesType'){
@@ -8134,6 +8156,7 @@ function bindToHiddenForm(){
 			var val      = $(this).val();
 			var newValue = "";
 			var type = $('#fieldSettings_help_type').val();
+
 			if(type == "html"){
 				// Escape HTML-breaking characters
 				newValue = escapeHtml(val);
@@ -8419,8 +8442,8 @@ function modalBindings() {
 			$("#fieldSettings_options_displayTable").prop("checked", true).change();
 
 			// Click through each field and then back to add field tab to update form preview
-			$("#formPreview li").click();
 			$("#fieldTab li:last a").click();
+			$('#formPreview li').removeClass('activeField');
 
 			// Deselect object form
 			$("#formSettings_formMetadata").removeAttr("checked").change();
@@ -8628,7 +8651,6 @@ function newFieldValues(id,type,vals) {
 		default:
 			break;
 	}
-
 	return output;
 }
 
@@ -8907,9 +8929,57 @@ function modifyChoiceBinding(){
 	}
 }
 
+function bindHelpUrl(){
+	var bindValue = $(this).val();
+
+	console.log(bindValue);
+
+	if(bindValue === 'undefined'){
+		bindValue = "";
+		$this.val("");
+	}
+	console.log(validateURL(bindValue));
+	if(validateURL(bindValue)){
+		$(this).removeClass('has-error');
+		$('#fieldSettings_help_text').val(bindValue).change();
+	} else {
+		$(this).addClass('has-error');
+	}
+}
+
+function bindHelpText(){
+	var value    = $(this).val();
+	var newValue = sanitizeInput(value);
+	$('#fieldSettings_help_text').val(newValue).change();
+}
+
+// Title Field Form Settings
+function titleField(){
+	var titleField   = $('#formSettings_objectTitleField');
+	var titleOptions = "";
+
+	$('#formPreview').find($(':input[type=text]')).each(function(){
+		var name = $(this).parent().parent().parent().next('div').find($("input[name^='label']" )).val();
+		var optionValue = $(this).parent().parent().parent().next('div').find($("input[name^='name']" )).val();
+		if(optionValue === "idno"){
+			//do nothing
+		} else {
+			titleOptions += "<option value='"+optionValue+"'>"+optionValue+"</option>";
+		}
+	});
+
+	titleField.html(titleOptions);
+}
+
 // User RegEx to return if valid URL
 function validateURL(value) {
-    return /^((https?|ftp):\/\/)?(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(value);
+    var urlregex = /^((https?|ftp):\/\/)?([a-zA-Z0-9.-]+(:[a-zA-Z0-9.&%$-]+)*@)*((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}|([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(:[0-9]+)*(\/($|[a-zA-Z0-9.,?'\\+&%$#=~_-]+))*$/;
+    return urlregex.test(value);
+}
+
+function sanitizeInput(value){
+	var regex = /<(script|embed|object|frameset|frame|iframe|meta|link|style).*?>.*? <\/(script|embed|object|frameset|frame|iframe|meta|link|style).*?>/gmi;
+	return value.replace(regex, "");
 }
 // Document Ready
 // =================================================================
