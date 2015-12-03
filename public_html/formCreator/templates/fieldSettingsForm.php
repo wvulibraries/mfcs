@@ -1,68 +1,76 @@
 <div class="#fieldSettingsForm dataSettings">
 
     <div class="group noHide default">
-        <div class="control-group  " id="fieldSettings_container_name">
-            <label for="fieldSettings_name">
-                Field Name
-                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The field name is a unique value that is used to identify a field."></i>
-            </label>
-            <input type="text" class="input-block-level" id="fieldSettings_name" data-bindModel="name" name="fieldSettings_name"/>
-            <span class="help-block hidden"></span>
+        <div class="row">
+            <div class="control-group span6" id="fieldSettings_container_name">
+                <label for="fieldSettings_name">
+                    Field Name
+                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The field name is a unique value that is used to identify a field."></i>
+                </label>
+                <input type="text" class="input-block-level" id="fieldSettings_name" data-bindModel="name" name="fieldSettings_name"/>
+                <span class="help-block hidden"></span>
+            </div>
+
+            <div class="control-group span6" id="fieldSettings_container_label">
+                <label for="fieldSettings_label">
+                    Field Label
+                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The field label tells your users what to enter in this field."></i>
+                </label>
+                <input type="text" class="input-block-level" id="fieldSettings_label" data-bindModel="label" name="fieldSettings_label"/>
+                <span class="help-block hidden"></span>
+            </div>
         </div>
 
-        <div class="control-group " id="fieldSettings_container_label">
-            <label for="fieldSettings_label">
-                Field Label
-                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The field label tells your users what to enter in this field."></i>
-            </label>
-            <input type="text" class="input-block-level" id="fieldSettings_label" data-bindModel="label" name="fieldSettings_label"/>
-            <span class="help-block hidden"></span>
+        <div class="row">
+            <div id="fieldSettings_container_value" class="control-group span6">
+                <label for="fieldSettings_value">
+                    Value
+                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="When the form is first displayed, this value will already be prepopulated."></i>
+                </label>
+                <a href="javascript:void(0);" class="pull-right" onclick="$('#defaultValueVariables').modal('show')" id="fieldVariablesLink" style="display: none;">Variables</a>
+                <input type="text" class="input-block-level" id="fieldSettings_value" name="fieldSettings_value" data-bindModel="value"/>
+                <span class="help-block hidden"></span>
+            </div>
+
+            <div class="control-group span6" id="fieldSettings_container_placeholder">
+                <label for="fieldSettings_placeholder">
+                    Placeholder Text
+                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="If there is no value in the field, this can tell your users what to input."></i>
+                </label>
+                <input type="text" class="input-block-level" id="fieldSettings_placeholder" name="fieldSettings_placeholder" data-bindModel="placeholder"/>
+                <span class="help-block hidden"></span>
+            </div>
         </div>
 
-        <div id="fieldSettings_container_value" class="control-group ">
-            <label for="fieldSettings_value">
-                Value
-                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="When the form is first displayed, this value will already be prepopulated."></i>
-            </label>
-            <a href="javascript:void(0);" class="pull-right" onclick="$('#defaultValueVariables').modal('show')" id="fieldVariablesLink" style="display: none;">Variables</a>
-            <input type="text" class="input-block-level" id="fieldSettings_value" name="fieldSettings_value" data-bindModel="value"/>
-            <span class="help-block hidden"></span>
+        <div class="row">
+            <div class="control-group span6" id="fieldSettings_container_id">
+                <label for="fieldSettings_id">
+                    CSS ID
+                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The ID is a unique value that can be used to identify a field."></i>
+                </label>
+                <input type="text" class="input-block-level" id="fieldSettings_id" name="fieldSettings_id" data-bindModel="id"/>
+                <span class="help-block hidden"></span>
+            </div>
+
+            <div class="control-group span6" id="fieldSettings_container_class">
+                <label for="fieldSettings_class">
+                    CSS Classes
+                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Classes can be entered to give the field a different look and feel."></i>
+                </label>
+                <input type="text" class="input-block-level" id="fieldSettings_class" name="fieldSettings_class" data-bindModel="class"/>
+                <span class="help-block hidden"></span>
+            </div>
         </div>
 
-        <div class="control-group " id="fieldSettings_container_placeholder">
-            <label for="fieldSettings_placeholder">
-                Placeholder Text
-                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="If there is no value in the field, this can tell your users what to input."></i>
-            </label>
-            <input type="text" class="input-block-level" id="fieldSettings_placeholder" name="fieldSettings_placeholder" data-bindModel="placeholder"/>
-            <span class="help-block hidden"></span>
-        </div>
-
-        <div class="control-group " id="fieldSettings_container_id">
-            <label for="fieldSettings_id">
-                CSS ID
-                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="The ID is a unique value that can be used to identify a field."></i>
-            </label>
-            <input type="text" class="input-block-level" id="fieldSettings_id" name="fieldSettings_id" data-bindModel="id"/>
-            <span class="help-block hidden"></span>
-        </div>
-
-        <div class="control-group " id="fieldSettings_container_class">
-            <label for="fieldSettings_class">
-                CSS Classes
-                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Classes can be entered to give the field a different look and feel."></i>
-            </label>
-            <input type="text" class="input-block-level" id="fieldSettings_class" name="fieldSettings_class" data-bindModel="class"/>
-            <span class="help-block hidden"></span>
-        </div>
-
-        <div class="control-group " id="fieldSettings_container_style">
-            <label for="fieldSettings_style">
-                Local Styles
-                <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="You can set any HTML styles and they will only apply to this field."></i>
-            </label>
-            <input type="text" class="input-block-level" id="fieldSettings_style" name="fieldSettings_style" data-bindModel="style"/>
-            <span class="help-block hidden"></span>
+        <div class="row">
+            <div class="control-group " id="fieldSettings_container_style">
+                <label for="fieldSettings_style">
+                    Local Styles
+                    <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="You can set any HTML styles and they will only apply to this field."></i>
+                </label>
+                <input type="text" class="input-block-level" id="fieldSettings_style" name="fieldSettings_style" data-bindModel="style"/>
+                <span class="help-block hidden"></span>
+            </div>
         </div>
     </div>
 
@@ -74,15 +82,15 @@
             </label>
 
             <select class="input-block-level" id="fieldSettings_help_type" name="fieldSettings_help_type" data-bindModel="helpType">
-                <option value="">None</option>
+                <option value="none">None</option>
                 <option value="text">Plain text</option>
                 <option value="html">HTML text</option>
                 <option value="web">Webpage (URL)</option>
             </select>
             <br>
-
-            <textarea class="input-block-level" id="fieldSettings_help_text" name="fieldSettings_help_text" data-bindModel="help"> </textarea>
-
+            <input type="hidden" class="input-block-level" id="fieldSettings_help_text"    name="fieldSettings_help_text" data-bindModel="help" />
+            <textarea class="input-block-level" id="fieldSettings_help_textarea" name="fieldSettings_help_text"> </textarea>
+            <input type="url" class="input-block-level" id="fieldSettings_help_url"    name="fieldSettings_help_text" placeholder="http://www.website.com" />
             <span class="help-block hidden"></span>
         </div>
     </div>
@@ -205,18 +213,20 @@
                 <option value="user">Managed by User</option>
             </select>
 
-            <div class="span6" id="fieldSettings_container_idno_format">
-                <label for="fieldSettings_idno_format">
-                    Format
-                </label>
-                <input type="text" class="input-block-level" id="fieldSettings_idno_format" name="fieldSettings_idno_format" placeholder="st_###"  data-bindModel="idnoFormat"/>
-            </div>
+            <div class="row">
+                <div class="span6" id="fieldSettings_container_idno_format">
+                    <label for="fieldSettings_idno_format">
+                        Format
+                    </label>
+                    <input type="text" class="input-block-level" id="fieldSettings_idno_format" name="fieldSettings_idno_format" placeholder="st_###"  data-bindModel="idnoFormat"/>
+                </div>
 
-            <div class="span6" id="fieldSettings_container_idno_startIncrement">
-                <label for="fieldSettings_idno_startIncrement">
-                    Auto Increment Start
-                </label>
-                <input type="number" class="input-block-level" id="fieldSettings_idno_startIncrement" name="fieldSettings_idno_startIncrement" min="0"  data-bindModel="startIncrement"/>
+                <div class="span6" id="fieldSettings_container_idno_startIncrement">
+                    <label for="fieldSettings_idno_startIncrement">
+                        Auto Increment Start
+                    </label>
+                    <input type="number" class="input-block-level" id="fieldSettings_idno_startIncrement" name="fieldSettings_idno_startIncrement" min="0"  data-bindModel="startIncrement"/>
+                </div>
             </div>
 
             <div class="hidden" id="fieldSettings_container_idno_confirm">
