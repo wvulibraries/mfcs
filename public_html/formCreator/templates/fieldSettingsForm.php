@@ -95,10 +95,10 @@
         </div>
     </div>
 
-    <div class="group default">
-        <div class="control-group" id="fieldSettings_container_choices">
+    <div class="group default noHide">
+        <div class="control-group" id="fieldSettings_container_metadataSchema">
             <label for="fieldSettings_metadataType">
-               Metadata Standard
+               Metadata Schema
             </label>
             <input type="hidden" class="metadataStandard" name="fieldSettings_metadataStandard" data-bindModel="metadataStandard">
             <div id="metadataStandard_options" class="metadataStandard_options"> </div>
@@ -680,7 +680,7 @@
                 {local var="validationTypes"}
             </select>
             <br>
-            <input type="text" class="input-block-level hide" id="fieldSettings_validationRegex" name="fieldSettings_validationRegex" placeholder="Enter a Regex" data-bindModel="validationRegex"/>
+            <input type="text" class="input-block-level" id="fieldSettings_validationRegex" name="fieldSettings_validationRegex" placeholder="Enter a Regex" data-bindModel="validationRegex" style="display:none;"/>
         </div>
     </div>
 </div>
