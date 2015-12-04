@@ -1203,10 +1203,16 @@ a.list-group-item {
 .icon-plus:before{ content: "\f067";}
 
 #fieldSettings_choices_manual {
-  .input-append input { width:70% !important}
+  div {
+    float:left;
+    width:100%;
+  }
+
+  input[type=text] { width:70% !important;}
   button {width:10%; float:left; @extend .btn-default; background:$lightgrey; border-radius:0;
     &:first-of-type { border-radius: 5px 0 0 5px; }
     &:last-of-type { border-radius:0 5px 5px 0; @extend .btn-danger;}
+    height:35px;
   }
   button.active {@extend .btn-success; border-radius: 5px 0 0 5px;}
 }
