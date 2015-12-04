@@ -8152,6 +8152,15 @@ function bindToHiddenForm(){
 			}
 		}
 
+		if(inputObj == 'validation'){
+			var validationValue = $('#fieldSettings_validation').val();
+			if(validationValue === 'regexp'){
+				$('#fieldSettings_validationRegex').show();
+			} else {
+				$('#fieldSettings_validationRegex').hide().val('');
+			}
+		}
+
 		if(inputObj == 'help'){
 			var val      = $(this).val();
 			var newValue = "";
@@ -8564,7 +8573,7 @@ function newFieldPreview(id,type) {
 
 			case 'Multi-Select':
 			case 'multiselect':
-				output += '<select multiple></select><br><select></select>';
+				output += '<select multiple></select><br><select class="selectPreview"></select>';
 				break;
 
 			case 'WYSIWYG':
@@ -8589,9 +8598,15 @@ function newFieldPreview(id,type) {
 function newFieldValues(id,type,vals) {
 	var output = "";
 
+	// sets default values for new fields if they are currently undefined
 	if (vals === undefined) {
 		vals = {};
-        vals.validation = determineValidation(type);
+		vals.validation    = determineValidation(type);
+		vals.name          = 'Untitled'+'_'+id;
+		vals.label         = 'Untitiled';
+		vals.help          = 'none | ';
+		vals.choicesType   = 'manual';
+		vals.publicRelease = true;
 	}
 
     vals.type = determineType(type);
@@ -8917,6 +8932,34 @@ function modifyChoiceBinding(){
 	}
 
 	var choices = valueObject.join('%,%');
+
+	// use global id  to make form changes
+	var targetFormPreview = $('#formPreview_'+globalFieldID);
+	var targetType        = targetFormPreview.find($('#type_'+globalFieldID)).val();
+	var output            = "";
+
+	for(var iterateChoice = 0; iterateChoice < valueObject.length; iterateChoice++){
+		if(targetType == 'multiselect' || targetType == 'select'){
+			output += "<option value='"+valueObject[iterateChoice]+"'>"+valueObject[iterateChoice]+"</option>";
+		}
+		else if(targetType == 'checkbox') {
+			output += "<label for='checkbox'><input type='checkbox'/>"+valueObject[iterateChoice]+"</option>";
+		} else {
+			// do nothing
+		}
+	}
+
+	if(targetType == 'multiselect'){
+		var target = targetFormPreview.find($('.controls')).find($('.selectPreview'));
+		target.html(output);
+	} else if(targetType == 'checkbox') {
+		var target = targetFormPreview.find($('.controls'));
+		target.find($('label')).remove();
+		target.append(output);
+	} else if(targetType == 'select'){
+		var target = targetFormPreview.find($('.controls')).find($('select'));
+		target.html(output);
+	}
 
 	if(dataType == 'choice'){
 		$('.choicesOptions').val(choices).change();
