@@ -563,6 +563,11 @@ table {
       margin-left:0;
     }
   }
+
+  .panel-heading {
+    position:relative;
+
+  }
 }
 
 iframe { width:100%; height:auto;}
@@ -1499,7 +1504,10 @@ $fileColor: lighten(#333F48,60%);
   list-style:none;
   margin:0;
   padding:0;
-  li { padding:10px; margin-bottom:10px; border-bottom:1px solid $lightgrey; float:left; display:block; width:100%; }
+  li { padding:10px; margin-bottom:10px; border-bottom:1px solid darken($lightgrey,5%); float:left; display:block; width:100%; }
+  ul li:last-child{ border-bottom:0;}
+  ul { padding:0; margin:0;}
+  ul li { margin-bottom:0; border-bottom:1px solid #eee;}
   a {dipslay:block; }
 }
 
@@ -1510,8 +1518,8 @@ $fileColor: lighten(#333F48,60%);
     width:100%;
     float:left;
     clear: both;
-    overflow-y: scroll;
-    height: 650px;
+    overflow-y: auto;
+    max-height: 80%;
     section {float:none;}
     ul { list-style:none; margin:0; padding:0; }
   }
