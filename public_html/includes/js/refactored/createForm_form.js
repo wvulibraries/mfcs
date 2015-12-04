@@ -1105,7 +1105,7 @@ function newFieldValues(id,type,vals) {
      		output += createHiddenFields(fileHiddenFields, id, vals);
 
              // default values
-            output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'"     data-bind="allowedExtensions"    value="'+((vals.allowedExtensions !== undefined)?vals.allowedExtensions:'tif%,%tiff,mp4')+'">';
+            output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'"     data-bind="allowedExtensions"    value="'+((vals.allowedExtensions !== undefined)?vals.allowedExtensions:'tif%,%tiff%,%jpg')+'">';
 			output += '<input type="hidden" id="convertResolution_'+id+'" name="convertResolution_'+id+'"     data-bind="convertResolution"    value="'+((vals.convertResolution !== undefined)?vals.convertResolution:'192')+'">';
 			output += '<input type="hidden" id="convertFormat_'+id+'"     name="convertFormat_'+id+'"         data-bind="convertFormat"        value="'+((vals.convertFormat !== undefined)?vals.convertFormat:'JPG')+'">';
 			output += '<input type="hidden" id="thumbnailHeight_'+id+'"   name="thumbnailHeight_'+id+'"       data-bind="thumbnailHeight"      value="'+((vals.thumbnailHeight !== undefined)?vals.thumbnailHeight:'150')+'">';
@@ -1402,11 +1402,13 @@ function modifyChoiceBinding(){
 	if(targetType == 'multiselect'){
 		var target = targetFormPreview.find($('.controls')).find($('.selectPreview'));
 		target.html(output);
-	} else if(targetType == 'checkbox') {
+	}
+	else if(targetType == 'checkbox') {
 		var target = targetFormPreview.find($('.controls'));
 		target.find($('label')).remove();
 		target.append(output);
-	} else if(targetType == 'select'){
+	}
+	else if(targetType == 'select'){
 		var target = targetFormPreview.find($('.controls')).find($('select'));
 		target.html(output);
 	}
