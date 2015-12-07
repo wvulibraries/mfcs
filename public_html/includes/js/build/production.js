@@ -7036,7 +7036,6 @@ $(function(){
     // add style stuff
     $('.page-header').parent().addClass('main').wrapInner('<div class="widthContainer"></div>');
 
-
     // Current Project Tags
     $(window).on("scroll", function() {
         var scrollPos = $(window).scrollTop();
@@ -7044,6 +7043,17 @@ $(function(){
             $(".tags").fadeIn();
         } else {
             $(".tags").fadeOut();
+        }
+    });
+
+    // shelf list controls
+    $('.shelfList').hide();
+    $('.expandShelfList').click(function(){
+        $(this).parent().next().slideToggle('fast').toggleClass('active');
+        if($(this).parent().next().hasClass('active')){
+            $(this).removeClass('fa-plus-square-o').addClass('fa-minus-square-o');
+        } else {
+            $(this).removeClass('fa-minus-square-o').addClass('fa-plus-square-o');
         }
     });
 
