@@ -47,7 +47,7 @@ sessionSet('currentProject',users::loadProjects());
 recurseInsert("includes/functions.php","php");
 recurseInsert("includes/validator.php","php");
 
-$engine->eTemplate("load","cleanTemplate");
+$engine->eTemplate("load","mfcsTemplate");
 
 localVars::add("siteRoot",mfcs::config("siteRoot"));
 localVars::add('pageTitle',mfcs::config("pageTitle"));
