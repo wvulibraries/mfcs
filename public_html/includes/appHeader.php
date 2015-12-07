@@ -6,8 +6,10 @@
 
         <div class="site-title">
             <h1>
-                <span class="desktop"> Metadata Form Creation System </span>
-                <span class="mobile"> MFCS </span>
+                <a href="/">
+                    <span class="desktop"> Metadata Form Creation System </span>
+                    <span class="mobile"> MFCS </span>
+                </a>
             </h1>
         </div>
 
