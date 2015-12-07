@@ -66,8 +66,9 @@ class listGenerator {
 			$output .= sprintf('<div class="listForm panel panel-default span6">
 									<div class="panel-heading">
 										<a href="list.php?listType=form&amp;formID=%s"> %s</a>
+										<i class="expandShelfList fa fa-plus-square-o"></i>
 									</div>
-									<div class="panel-body">
+									<div class="panel-body shelfList">
 										<a href="list.php?listType=formShelfList&amp;formID=%s">Shelf List</a>
 									</div>
 								</div>',
