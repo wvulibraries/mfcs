@@ -525,11 +525,23 @@ table {
 //  select Form page
 // ===========================================================================================
 .panel-heading {
+  position:relative;
   a:first-child{
     font-weight:bold;
     display:inline-block;
-    width:60%;
+    width:80%;
   }
+}
+
+.expandShelfList{
+  position:absolute;
+  right:0;
+  top:0;
+  cursor:pointer;
+  padding:13px;
+  width:40px;
+  text-align:center;
+  font-size:17px;
 }
 
 
@@ -964,6 +976,7 @@ li.alert-error {
   color:#fff;
   letter-spacing:1px;
   display:none;
+  overflow-y:auto;
 
   a:visited { color:$light-blue; text-decoration:underline !important;}
   a:hover,a:active { color:$gold; }
@@ -997,9 +1010,9 @@ li.alert-error {
         border-bottom:1px solid #333;
       }
 
-      a { display:block; padding:10px;}
+      a { display:block; padding:5px;}
 
-      h3 { margin:10px 0 0; padding:0; font-size:16px; padding:10px; font-weight:300;}
+      h3 { margin:10px 0 0; padding:0; font-size:16px; padding:5px; font-weight:300;}
 
       i { padding:0 10px 0 5px;}
   }
