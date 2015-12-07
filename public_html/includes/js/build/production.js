@@ -7074,14 +7074,14 @@ $(function(){
     var indexElments = $('.createIndex');
     if(indexElments.length){
         var resizeTimer;
-        var elementsToSize = indexElments.find('span');
+        var elementsToSize = indexElments.find($('.text'));
         resizeElms(elementsToSize);
         $(window).on('resize', function(e) {
             elementsToSize.height('auto');
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(function() {
                 resizeElms(elementsToSize);
-            }, 250);
+            }, 150);
         });
     }
 
@@ -7092,7 +7092,6 @@ $(function(){
 });
 
 function resizeElms(elms){
-    console.log(elms)
     var maxHeight = Math.max($(elms[0]).height(),$(elms[1]).height(),$(elms[2]).height());
     $(elms).height(maxHeight);
 }
