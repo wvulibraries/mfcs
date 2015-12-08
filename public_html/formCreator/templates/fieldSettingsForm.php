@@ -89,8 +89,8 @@
             </select>
             <br>
             <input type="hidden" class="input-block-level" id="fieldSettings_help_text"    name="fieldSettings_help_text" data-bindModel="help" />
-            <textarea class="input-block-level" id="fieldSettings_help_textarea" name="fieldSettings_help_text"> </textarea>
-            <input type="url" class="input-block-level" id="fieldSettings_help_url"    name="fieldSettings_help_text" placeholder="http://www.website.com" />
+            <textarea class="input-block-level" id="fieldSettings_help_textarea" name="fieldSettings_help_text" data-bindModel="helpText"> </textarea>
+            <input type="url" class="input-block-level" id="fieldSettings_help_url" name="fieldSettings_help_text" placeholder="http://www.website.com" data-bindModel="helpURL"/>
             <span class="help-block hidden"></span>
         </div>
     </div>
