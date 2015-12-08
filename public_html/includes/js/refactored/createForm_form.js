@@ -302,7 +302,7 @@ function showFieldSettings(fullID) {
 				case 'text':
 					$("#fieldSettings_container_value").show();
 					$("#fieldSettings_container_placeholder").show();
-					$("#fieldSettings_container_externalUpdate").parent().show();
+					$("#fieldSettings_container_externalUpdate").parent().hide();
 					$("#fieldSettings_container_range").parent().show();
 					$("#fieldSettings_range_step").parent().hide();
 					$('#fieldSettings_range_format').parent().removeClass('span4').addClass('span6');
@@ -597,7 +597,6 @@ function bindToHiddenForm(){
 
 		if(inputObj == 'helpText' || inputObj == 'helpURL'){
 			formatHelpForHiddenField(hiddenForm);
-			console.log('bind change?')
 		}
 
 		if(inputObj == 'helpType'){
@@ -653,7 +652,7 @@ function formatHelpForHiddenField(hiddenForm){
 	if(type == 'html' || type == 'text'){
 		$('#formPreview_'+id).find('.helpPreview').show();
 		$('.helpPreview').popover({
-			'title'   : 'Help Field',
+			'title'   : 'Help',
 			'content' : '<div>' + value + '</div>',
 			'trigger' : 'click',
 			'html' : true
@@ -1317,6 +1316,9 @@ function addMetadataStandard(val){
 
 function enableChoiceFunctionality(){
 	$('.input-append').find($('input[type=text], select')).bind('change keyup', modifyChoiceBinding);
+	$('#fieldSettings_choices_null').change(function(){
+		$('.input-append').find('input[type=text]').change();
+	});
 
 	$('.input-append').find('button').click(function(){
 		var state = $(this).attr('name');
@@ -1388,6 +1390,10 @@ function modifyChoiceBinding(){
 	}
 
 	var choices = valueObject.join('%,%');
+
+	if($('#fieldSettings_choices_null').is(':checked')){
+		valueObject.unshift('Make A Selection');
+	}
 
 	// use global id  to make form changes
 	var targetFormPreview = $('#formPreview_'+globalFieldID);
