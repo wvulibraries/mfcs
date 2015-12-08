@@ -7690,7 +7690,6 @@ $(function(){
 
 	// Enable the submit button and hide thenoJavaScriptWarning
 	$(':submit').removeAttr('disabled');
-
 });
 
 
@@ -7707,15 +7706,21 @@ function applyFormPreview(){
 	}
 
 	formPreview.each(function(){
-		var label       = $(this).find('.fieldLabels');
-		var controls    = $(this).find('.controls').children().first();
-		var settings    = $(this).next();
-		var placeholder = settings.find($('input[name^="placeholder"]')).val();
-		var name        = settings.find($('input[name^="name"]')).val();
-		var style       = settings.find($('input[name^="style"]')).val();
-		var labelValue  = settings.find($('input[name^="label"]')).val();
-		var id 	        = settings.find($('input[name^="id"]')).val();
-		var someClass	= settings.find($('input[name^="class"]')).val();
+		var label          = $(this).find('.fieldLabels');
+		var controls       = $(this).find('.controls').children().first();
+		var settings       = $(this).next();
+
+		var placeholder    = settings.find($('input[name^="placeholder"]')).val();
+		var name           = settings.find($('input[name^="name"]')).val();
+		var style          = settings.find($('input[name^="style"]')).val();
+		var labelValue     = settings.find($('input[name^="label"]')).val();
+		var id             = settings.find($('input[name^="id"]')).val();
+		var someClass      = settings.find($('input[name^="class"]')).val();
+		var value          = settings.find($('input[name^="value"]')).val();
+
+		var disabled       = settings.find($('input[name^="disabled"')).val();
+		var readonly       = settings.find($('input[name^="readonly"')).val();
+		var hidden         = settings.find($('input[name^="hidden"]')).val();
 
 		controls.attr({
 			'placeholder' : placeholder,
@@ -7724,6 +7729,16 @@ function applyFormPreview(){
 			'id'		  : id,
 			'class'		  : someClass
 		});
+
+		if(disabled === "true" || readonly === "true"){
+			controls.prop('readonly', true);
+		} else {
+			controls.prop('readonly', false);
+		}
+
+		if(value.length){
+			controls.val(value);
+		}
 
 		label.html(labelValue)
 	});
@@ -7816,8 +7831,14 @@ function showFieldSettings(fullID) {
 					checked:  true,
 					disabled: true,
 				}).change();
-				fieldSettings_options_readonly.prop("disabled", true);
-				fieldSettings_options_disabled.removeAttr("checked").change().prop("disabled", true);
+				fieldSettings_options_readonly.prop({
+					checked:  true,
+					disabled: true,
+				}).change();
+				fieldSettings_options_disabled.prop({
+					checked:  false,
+					disabled: true,
+				}).change();
 			}
 			else if (type == 'file') {
 				fieldSettings_options_displayTable.removeAttr("checked").change().prop("disabled", true);
@@ -8055,57 +8076,23 @@ function setOriginalValues(){
 
     // Object Specific Value Change
 	if( bindObj == 'help'){
-		helpType = value.split(" | ")[0];
-		help     = value.split(" | ")[1];
-		value    = (help == 'undefined' ? "" : help);
+		var helpType = value.split(" | ")[0];
+		var help     = value.split(" | ")[1];
+		var value    = (help == 'undefined' ? "" : help);
 		$(this).val(helpType + " | " + help);
 
-		$("#fieldSettings_help_textarea").val(value).hide().bind('change keyup', bindHelpText);
-		$("#fieldSettings_help_url").hide().val(value).bind('change keyup', bindHelpUrl);
-
-		$('#fieldSettings_help_type').val(helpType);
-		$('#fieldSettings_help_type').change(function(){
-			switch($(this).val()){
-				case 'none':
-					$("#fieldSettings_help_textarea").hide().removeClass('hidden');
-					$("#fieldSettings_help_url").hide().removeClass('hidden');
-					break;
-				case 'text':
-				case 'html':
-					$("#fieldSettings_help_textarea").show().removeClass('hidden');
-					$("#fieldSettings_help_url").hide().removeClass('hidden');
-					break;
-				case 'web':
-					$("#fieldSettings_help_url").show().removeClass('hidden');
-					$("#fieldSettings_help_textarea").hide().removeClass('hidden');
-					break;
-			}
-		});
-
-		$('.helpPreview').popover('destroy');
-	 	$('.helpPreview').hide();
-
-		var popoverContent = (helpType == 'html' ? 'html' : 'content');
-		if(typeof help !== "undefined"){
-			$('#formPreview_'+id).find('.helpPreview').show();
-			$('.helpPreview').popover({
-				'title' : helpType,
-				'content' : help,
-				'trigger': 'hover'
-			});
-		}
-
+		$("#fieldSettings_help_textarea").val(value).hide();
+		$("#fieldSettings_help_url").hide().val(value);
+		$('#fieldSettings_help_type').val(helpType).change();
 	}
 
     // Modifications for inputs and selects need to be done here same with checks
    if(bindToInput.is("input[type=checkbox]")) {
 		if(value == "true"){
 			bindToInput.prop('checked', true);
-			bindToInput.change();
 		}
 		else {
 			bindToInput.prop('checked', false);
-			bindToInput.change();
 		}
     }
     else if(bindToInput.is('select')) {
@@ -8127,9 +8114,6 @@ function setOriginalValues(){
 			$('#fieldSettings_container_choices').find('.form_choices').show();
 		}
 	}
-
-	$('#fieldSettings_choices_formSelect').change();
-	$('#fieldSettings_container_file_options').find('li').change();
 }
 
 function bindToHiddenForm(){
@@ -8170,32 +8154,81 @@ function bindToHiddenForm(){
 			}
 		}
 
-		if(inputObj == 'help'){
-			var val      = $(this).val();
-			var newValue = "";
-			var type = $('#fieldSettings_help_type').val();
+		if(inputObj == 'helpText' || inputObj == 'helpURL'){
+			formatHelpForHiddenField(hiddenForm);
+			console.log('bind change?')
+		}
 
-			if(type == "html"){
-				// Escape HTML-breaking characters
-				newValue = escapeHtml(val);
-				hiddenForm.find("[data-bind='"+ inputObj +"']").val(type + " | " + newValue);
+		if(inputObj == 'helpType'){
+			switch($(this).val()){
+				case 'text':
+				case 'html':
+					$("#fieldSettings_help_textarea").show().removeClass('hidden');
+					$("#fieldSettings_help_url").hide().removeClass('hidden');
+					break;
+				case 'web':
+					$("#fieldSettings_help_url").show().removeClass('hidden');
+					$("#fieldSettings_help_textarea").hide().removeClass('hidden');
+					break;
+				case 'none':
+				case 'default':
+					$("#fieldSettings_help_textarea").hide().removeClass('hidden');
+					$("#fieldSettings_help_url").hide().removeClass('hidden');
+					break;
 			}
-			else if(type == "web"){
-				hiddenForm.find("[data-bind='"+ inputObj +"']").val(type + " | " + val);
-			}
-			else {
-				// remove HTML characters
-				newValue = removeHtml(val);
-				hiddenForm.find("[data-bind='"+ inputObj +"']").val(type + " | " + newValue);
-			}
+			formatHelpForHiddenField(hiddenForm);
 		}
 
 		applyFormPreview();
 	}
 }
 
-function checkForSpaces(string) {
-  return /\s/g.test(string);
+function formatHelpForHiddenField(hiddenForm){
+	var value;
+	var type = $('#fieldSettings_help_type').val();
+	var id = globalFieldID;
+
+	if(type == 'text' || type == 'html'){
+		value = sanitizeInput($('#fieldSettings_help_textarea').val());
+	}
+	else {
+		value = $('#fieldSettings_help_url').val();
+
+		if(validateURL(value)){
+			$('#fieldSettings_help_url').removeClass('has-error');
+		} else {
+			$('#fieldSettings_help_url').addClass('has-error');
+		}
+	}
+
+	var newValues = type + " | " + value;
+
+	$('#fieldSettings_help_text').val(newValues);
+	hiddenForm.find("[data-bind='help']").val(newValues);
+
+	$('.helpPreview').popover('destroy');
+ 	$('.helpPreview').hide();
+
+	if(type == 'html' || type == 'text'){
+		$('#formPreview_'+id).find('.helpPreview').show();
+		$('.helpPreview').popover({
+			'title'   : 'Help Field',
+			'content' : '<div>' + value + '</div>',
+			'trigger' : 'click',
+			'html' : true
+		});
+	} else if(type == 'web'){
+		$('#formPreview_'+id).find('.helpPreview').show();
+		$('.helpPreview').popover({
+			'title'   : 'Help Url',
+			'content' : '<div><a href="'+value+'">' + value + '</a></div>',
+			'trigger' : 'click',
+			'html' : true
+		});
+	} else {
+		$('.helpPreview').hide();
+	}
+
 }
 
 function evaluateSpace(value, input){
@@ -8227,33 +8260,6 @@ function getFormFields(){
 	return options;
 }
 
-function escapeHtml(string) {
-	return string.replace(/&/g, '&amp;')
-                 .replace(/>/g, '&gt;')
-                 .replace(/</g, '&lt;')
-                 .replace(/"/g, '&quot;')
-                 .replace(/'/g, '&apos;')
-                 .replace(/\//g, '&#x2F;');
-}
-
-function unEscapeHtml(string) {
-	return string.replace(/&amp;/g, '&')
-                 .replace(/&gt;/g, '>')
-                 .replace(/&lt;/g, '<')
-                 .replace(/&quot;/g, '"')
-                 .replace(/&#39;/g, "'")
-                 .replace(/&#x2F;/g, '/');
-}
-
-function removeHtml(string){
-	return string.replace(/&/g, '&amp;')
-                 .replace(/>/g, '')
-                 .replace(/</g, '')
-                 .replace(/"/g, '&quot;')
-                 .replace(/'/g, '&apos;')
-                 .replace(/\//g, '');
-}
-
 function evaluateCheck(object){
 	return (object.is(':checked') ? true : false);
 }
@@ -8279,7 +8285,7 @@ function formSettingsBindings() {
 		var fieldAdd = $('#fieldAdd');
 		var idnoType = $("#formPreview").find("input[name^=type_][value=idno]");
 
-		if ($(this).is(":checked")) {
+		if ($(this).is(":checked")){
 			$("#formSettings_linkTitle_container").show();
 
 			if (idnoType.length === 0) {
@@ -8892,7 +8898,7 @@ function enableChoiceFunctionality(){
 		}
 		else if(state == "remove"){
 			$(this).parent().remove();
-			$('.input-append').find($('input[type=text]')).addClass('frank').change();
+			$('.input-append').find($('input[type=text]')).change();
 		}
 	});
 
@@ -8983,30 +8989,6 @@ function modifyChoiceBinding(){
 	}
 }
 
-function bindHelpUrl(){
-	var bindValue = $(this).val();
-
-	console.log(bindValue);
-
-	if(bindValue === 'undefined'){
-		bindValue = "";
-		$this.val("");
-	}
-	console.log(validateURL(bindValue));
-	if(validateURL(bindValue)){
-		$(this).removeClass('has-error');
-		$('#fieldSettings_help_text').val(bindValue).change();
-	} else {
-		$(this).addClass('has-error');
-	}
-}
-
-function bindHelpText(){
-	var value    = $(this).val();
-	var newValue = sanitizeInput(value);
-	$('#fieldSettings_help_text').val(newValue).change();
-}
-
 // Title Field Form Settings
 function titleField(){
 	var titleField   = $('#formSettings_objectTitleField');
@@ -9025,7 +9007,8 @@ function titleField(){
 	titleField.html(titleOptions);
 }
 
-// User RegEx to return if valid URL
+// REGEX VALIDATION FUNCTIONS
+// ====================================================================
 function validateURL(value) {
     var urlregex = /^((https?|ftp):\/\/)?([a-zA-Z0-9.-]+(:[a-zA-Z0-9.&%$-]+)*@)*((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}|([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(:[0-9]+)*(\/($|[a-zA-Z0-9.,?'\\+&%$#=~_-]+))*$/;
     return urlregex.test(value);
@@ -9035,6 +9018,38 @@ function sanitizeInput(value){
 	var regex = /<(script|embed|object|frameset|frame|iframe|meta|link|style).*?>.*? <\/(script|embed|object|frameset|frame|iframe|meta|link|style).*?>/gmi;
 	return value.replace(regex, "");
 }
+
+function checkForSpaces(string) {
+  return /\s/g.test(string);
+}
+
+function escapeHtml(string) {
+	return string.replace(/&/g, '&amp;')
+                 .replace(/>/g, '&gt;')
+                 .replace(/</g, '&lt;')
+                 .replace(/"/g, '&quot;')
+                 .replace(/'/g, '&apos;')
+                 .replace(/\//g, '&#x2F;');
+}
+
+function unEscapeHtml(string) {
+	return string.replace(/&amp;/g, '&')
+                 .replace(/&gt;/g, '>')
+                 .replace(/&lt;/g, '<')
+                 .replace(/&quot;/g, '"')
+                 .replace(/&#39;/g, "'")
+                 .replace(/&#x2F;/g, '/');
+}
+
+function removeHtml(string){
+	return string.replace(/&/g, '&amp;')
+                 .replace(/>/g, '')
+                 .replace(/</g, '')
+                 .replace(/"/g, '&quot;')
+                 .replace(/'/g, '&apos;')
+                 .replace(/\//g, '');
+}
+
 // Document Ready
 // =================================================================
 //
