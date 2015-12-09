@@ -54,7 +54,7 @@ $engine->eTemplate("include","header");
 				<p> MFCS allows you to manage forms, and forms that you have created.  Forms can be edited by using the list forms link in the Form Management section.  Editing objects works in a similar fashion using the Data Entry section.    </p> <br>
 				<div class="actionButton">
 					<a href="/dataEntry/selectForm.php" class="btn btn-primary"> Create Objects </a>
-					<a href="/dataView/list.php" class="btn btn-primary"> List Objects </a>
+					<a href="/dataView/list.php?listType=selectForm" class="btn btn-primary"> List Objects </a>
 					<a href="/dataView/search.php" class="btn btn-primary"> Search </a>
 				</div>
 			</div>
