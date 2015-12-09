@@ -9,7 +9,7 @@
         <div>
             <li> <h3> Data Entry </h3> </li>
             <li><a href="/dataEntry/selectForm.php"><i class="fa fa-angle-double-right"></i> Create</a></li>
-            <li><a href="/dataView/list.php"><i class="fa fa-angle-double-right"></i> List</a></li>
+            <li><a href="/dataView/list.php?listType=selectForm"><i class="fa fa-angle-double-right"></i> List</a></li>
             <li><a href="/dataView/search.php"><i class="fa fa-angle-double-right"></i> Search</a></li>
         </div>
 
