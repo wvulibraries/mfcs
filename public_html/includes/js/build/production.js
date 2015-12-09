@@ -7707,7 +7707,7 @@ function applyFormPreview(){
 
 	formPreview.each(function(){
 		var label          = $(this).find('.fieldLabels');
-		var controls       = $(this).find('.controls').children().first();
+		var controls       = $(this).find('.controls').children();
 		var settings       = $(this).next();
 
 		var placeholder    = settings.find($('input[name^="placeholder"]')).val();
@@ -7731,9 +7731,11 @@ function applyFormPreview(){
 		});
 
 		if(disabled === "true" || readonly === "true"){
-			controls.prop('readonly', true);
+			controls.prop('readonly', true).addClass('disabled');
+			controls.prop('disabled', true).addClass('disabled');
 		} else {
-			controls.prop('readonly', false);
+			controls.prop('readonly', false).removeClass('disabled');
+			controls.prop('disabled', false).removeClass('disabled');
 		}
 
 		if(value.length){
@@ -9006,7 +9008,10 @@ function modifyChoiceBinding(){
 			output += "<option value='"+valueObject[iterateChoice]+"'>"+valueObject[iterateChoice]+"</option>";
 		}
 		else if(targetType == 'checkbox') {
-			output += "<label for='checkbox'><input type='checkbox'/>"+valueObject[iterateChoice]+"</option>";
+			output += "<label for='checkbox'><input type='checkbox'/>"+valueObject[iterateChoice]+"</label>";
+		}
+		else if(targetType == 'radio') {
+			output += "<label for='checkbox'><input type='radio'/>"+valueObject[iterateChoice]+"</label>";
 		} else {
 			// do nothing
 		}
@@ -9016,7 +9021,7 @@ function modifyChoiceBinding(){
 		var target = targetFormPreview.find($('.controls')).find($('.selectPreview'));
 		target.html(output);
 	}
-	else if(targetType == 'checkbox') {
+	else if(targetType == 'checkbox' || targetType == 'radio') {
 		var target = targetFormPreview.find($('.controls'));
 		target.find($('label')).remove();
 		target.append(output);
