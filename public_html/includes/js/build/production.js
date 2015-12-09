@@ -7561,6 +7561,7 @@ function sortableNav() {
 // ===================================================================
 var globalFieldID;
 var choicesFields = {};
+var idnoValues = {}; // global
 
 // Document Ready
 // ===================================================================
@@ -8079,6 +8080,14 @@ function setOriginalValues(){
     	evaluateSpace(value, bindToInput);
     }
 
+    if(bindObj == 'idnoFormat'){
+    	idnoValues.idnoFormat = value;
+    }
+
+    if(bindObj == 'startIncrement'){
+    	idnoValues.startIncrement = value;
+    }
+
     // Object Specific Value Change
 	if( bindObj == 'help'){
 		var helpType = value.split(" | ")[0];
@@ -8124,9 +8133,9 @@ function setOriginalValues(){
 	// system
 	if(bindObj == 'managedBy'){
 		if(value == 'system'){
-			$("#fieldSettings_idno_managedBy").next().hide();
-		} else {
 			$("#fieldSettings_idno_managedBy").next().show();
+		} else {
+			$("#fieldSettings_idno_managedBy").next().hide();
 		}
 	}
 
@@ -8182,9 +8191,19 @@ function bindToHiddenForm(){
 		if(inputObj == 'managedBy'){
 			console.log('managedBy');
 			if(value == 'system'){
-				$("#fieldSettings_idno_managedBy").next().hide().addClass('monkey');
+				$("#fieldSettings_idno_managedBy").next().show();
 			} else {
-				$("#fieldSettings_idno_managedBy").next().show().addClass('tails');
+				$("#fieldSettings_idno_managedBy").next().hide();
+			}
+		}
+
+		if(inputObj == 'idnoFormat' || inputObj == 'startIncrement'){
+			$('#fieldSettings_container_idno_confirm').removeClass('hidden').show();
+
+			var idnoConfirm = $('#fieldSettings_idno_confirm').is(':checked');
+			if( idnoConfirm === false && idnoValues.idnoFormat){
+				$('#fieldSettings_idno_format').val(idnoValues.idnoFormat);
+				$('#fieldSettings_idno_startIncrement').val(idnoValues.startIncrement);
 			}
 		}
 
@@ -8665,6 +8684,7 @@ function newFieldValues(id,type,vals) {
 		vals.choicesType   = 'manual';
 		vals.publicRelease = true;
 		vals.managedBy     = 'system';
+		vals.idnoFormat    = 'st_###';
 	}
 
     vals.type = determineType(type);
