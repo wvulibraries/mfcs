@@ -229,7 +229,7 @@
                 </div>
             </div>
 
-            <div class="hidden" id="fieldSettings_container_idno_confirm">
+            <div class="row idnoConfirm hidden" id="fieldSettings_container_idno_confirm">
                 <label class="checkbox">
                     <input type="checkbox" id="fieldSettings_idno_confirm" name="fieldSettings_idno_confirm"  data-bindModel="idnoConfirm">
                     Are you sure? <span class="text-warning">This change could cause potential conflicts.</span>
