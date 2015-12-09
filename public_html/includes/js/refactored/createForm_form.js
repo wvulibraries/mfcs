@@ -546,6 +546,7 @@ function setOriginalValues(){
     	bindToInput.val(value);
     }
 
+    // choices
     if(bindToInput.is($("#fieldSettings_choices_type"))){
 		if(value == 'manual'){
 			$('#fieldSettings_container_choices').find('.manual_choices').show();
@@ -553,6 +554,15 @@ function setOriginalValues(){
 		} else {
 			$('#fieldSettings_container_choices').find('.manual_choices').hide();
 			$('#fieldSettings_container_choices').find('.form_choices').show();
+		}
+	}
+
+	// system
+	if(bindObj == 'managedBy'){
+		if(value == 'system'){
+			$("#fieldSettings_idno_managedBy").next().hide();
+		} else {
+			$("#fieldSettings_idno_managedBy").next().show();
 		}
 	}
 }
@@ -583,6 +593,15 @@ function bindToHiddenForm(){
 			} else {
 				$('#fieldSettings_container_choices').find('.manual_choices').hide();
 				$('#fieldSettings_container_choices').find('.form_choices').show();
+			}
+		}
+
+		if(inputObj == 'managedBy'){
+			console.log('managedBy');
+			if(value == 'system'){
+				$("#fieldSettings_idno_managedBy").next().hide().addClass('monkey');
+			} else {
+				$("#fieldSettings_idno_managedBy").next().show().addClass('tails');
 			}
 		}
 
@@ -1062,6 +1081,7 @@ function newFieldValues(id,type,vals) {
 		vals.help          = 'none | ';
 		vals.choicesType   = 'manual';
 		vals.publicRelease = true;
+		vals.managedBy     = 'system';
 	}
 
     vals.type = determineType(type);
