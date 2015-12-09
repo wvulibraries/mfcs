@@ -8069,6 +8069,9 @@ function setOriginalValues(){
     var value      = $(this).is("input[type=checkbox]") ? evaluateCheck($(this)) : $(this).val();
     var bindToInput = $('#fieldSettings_form').find("[data-bindmodel='" + bindObj + "']");
 
+    var parentObj  = $("#formPreview").find("[data-id='"+ id +"']");
+    var formPreview = parentObj.find('.fieldPreview');
+
     if(bindObj == 'name'){
     	value = $.trim(value);
     	evaluateSpace(value, bindToInput);
@@ -8124,6 +8127,15 @@ function setOriginalValues(){
 			$("#fieldSettings_idno_managedBy").next().show();
 		}
 	}
+
+	if(bindObj == 'hidden'){
+		if(value == true){
+			formPreview.css('opacity', '.5');
+		}
+		else{
+			formPreview.css('opacity', '1');
+		}
+	}
 }
 
 function bindToHiddenForm(){
@@ -8137,11 +8149,21 @@ function bindToHiddenForm(){
 		var parentObj  = $("#formPreview").find("[data-id='"+ id +"']");
 		var label      = $("#formPreview_"+id).find('.fieldLabels');
 		var hiddenForm = parentObj.find('.fieldValues');
+		var formPreview = parentObj.find('.fieldPreview');
 		hiddenForm.find("[data-bind='"+ inputObj +"']").val(value);
 
 		if(inputObj == 'name'){
 			evaluateSpace(value, $(this));
 			titleField();
+		}
+
+		if(inputObj == 'hidden'){
+			if(value == true){
+				formPreview.css('opacity', '.5');
+			}
+			else{
+				formPreview.css('opacity', '1');
+			}
 		}
 
 		if(inputObj == 'choicesType'){
