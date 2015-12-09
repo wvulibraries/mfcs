@@ -658,6 +658,10 @@ input{
     max-width:20px;
   }
 
+  &[type=radio]{
+    width: 30px !important;
+  }
+
   &[type=text],&[type=file]  {
      border:1px solid darken($lightgrey,10%);
   }
@@ -687,6 +691,11 @@ input{
     border:1px solid $blue;
   }
 }
+
+ input:disabled, .disabled {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36zwjjgzhhYWGMYAEYB8RmROaABADeOQ8CXl/xfgAAAABJRU5ErkJggg==) repeat;
+    cursor: not-allowed;
+  }
 
 input.has-error{
   border:1px solid $brand-danger;
