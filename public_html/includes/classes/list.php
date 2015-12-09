@@ -52,18 +52,19 @@ class listGenerator {
 	}
 
 	public static function createFormSelectList() {
-
-		$engine  = EngineAPI::singleton();
-		$forms   = forms::getForms(TRUE,TRUE);
-
+		$engine = EngineAPI::singleton();
+		$forms  = forms::getForms(TRUE,TRUE);
 		$output = '';
+		$count  = 0;
+
+		$i = 0;
 		foreach ($forms as $form) {
-
 			if ($form === FALSE) continue;
-
 			if (!mfcsPerms::isViewer($form['ID'])) continue;
+			$i++;
 
-			$output .= sprintf('<div class="listForm panel panel-default span6">
+			// create the panel
+			$panel = sprintf('<div class="listForm panel panel-default span6">
 									<div class="panel-heading">
 										<a href="list.php?listType=form&amp;formID=%s"> %s</a>
 										<i class="expandShelfList fa fa-plus-square-o"></i>
@@ -75,7 +76,18 @@ class listGenerator {
 				$form['ID'],
 				forms::title($form['ID']),
 				$form['ID']
-				);
+			);
+
+			//iterate for every 2 elements wrap in a row
+			if($i == 1){
+				$output .= "<div class='row'>";
+				$output .= $panel;
+			}
+			if($i == 2){
+				$output .= $panel;
+				$output .= "</div>";
+				$i = 0;
+			}
 		}
 
 		return($output);
