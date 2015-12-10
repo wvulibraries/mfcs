@@ -9660,10 +9660,10 @@ $(function(){
         var accordionClass = $('.accordion-body');
         var thisAccordion  = $(this).parent().parent().next(accordionClass);
         if (thisAccordion.is(':visible')){
-            $(this).html("Show Metadata Forms");
+            $(this).html("<i class='fa fa-plus-square-o'></i> Metadata Forms");
         }
         else {
-            $(this).html("Hide Metadata Forms");
+            $(this).html("<i class='fa fa-minus-square-o'></i> Metadata Forms");
         }
     });
 });
