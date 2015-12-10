@@ -68,7 +68,7 @@
                     </div>
 
                     <div class="tab-pane" id="formSettings">
-                        <div class="row-fluid noHide">
+                        <div class="row group noHide">
                             <div class="control-group " id="formSettings_formTitle_container">
                                 <label for="formSettings_formTitle">
                                     Form Title
@@ -104,7 +104,7 @@
                             </div>
                         </div>
 
-                        <div class="row-fluid noHide">
+                        <div class="row group noHide">
                             <div class="span6">
                                 <div class="control-group " id="formSettings_submitButton_container">
                                     <label for="formSettings_submitButton">
@@ -138,7 +138,7 @@
                             <span class="help-block hidden"></span>
                         </div>
 
-                        <div class="row-fluid noHide">
+                        <div class="row group noHide">
                             <div class="control-group " id="formSettings_formContainer_container">
                                 <ul class="checkboxList">
                                     <li><label class="checkbox" for="formSettings_formContainer"><input type="checkbox" id="formSettings_formContainer" name="formSettings_formContainer" {local var="formContainer"}> Act as Container</label></li>
