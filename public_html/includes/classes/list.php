@@ -383,7 +383,7 @@ class listGenerator {
 		$output .= "</div>";
 
 		if (count($metaForms) > 0) {
-			$output .= '<h1>Unassigned Metadata Forms</h1>';
+			$output .= '<div class="unassignedForms"> <h1>Unassigned Metadata Forms</h1>';
 			$output .= "<ul>";
 			foreach ($metaForms as $metadataForm) {
 
@@ -395,7 +395,7 @@ class listGenerator {
 				}
 				$output .= '</li>';
 			}
-			$output .= "</ul>";
+			$output .= "</ul> </div>";
 		}
 
 		return $output;
