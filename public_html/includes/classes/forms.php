@@ -51,7 +51,9 @@ class forms {
 			$engine->openDB->escape($formID),
 			($productionOnly === TRUE)?" AND `production`='1'":""
 		);
+
 		$sqlResult = $engine->openDB->query($sql);
+
 
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
@@ -242,21 +244,37 @@ class forms {
 
 	}
 
-	public static function checkFormInProject($projectID,$formID) {
+	public static function formHasProjects($formID){
+		if(validate::integer($formID)){
+			$engine    = EngineAPI::singleton();
+			$sql       = sprintf("SELECT count(*) FROM forms_projects WHERE formID = %s",  $formID);
+			$sqlResult = $engine->openDB->query($sql);
 
+			if (!$sqlResult['result']) {
+				errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+				return FALSE;
+			}
+
+			$result = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+			return $result['count(*)'];
+		} else {
+			return FALSE;
+		}
+	}
+
+
+	public static function checkFormInProject($projectID,$formID) {
 		$projectForms = projects::getForms($projectID);
-		if (in_array($formID, projects::getForms($projectID))) {
+
+		if (in_array($formID, $projectForms)) {
 			return TRUE;
 		}
 
 		foreach ($projectForms as $projectFormID) {
-
 			$metadataForms = self::getObjectFormMetaForms($projectFormID);
-
 			if (isset($metadataForms[$formID])) {
 				return TRUE;
 			}
-
 		}
 
 		return FALSE;
@@ -264,13 +282,16 @@ class forms {
 	}
 
 	public static function checkFormInCurrentProjects($formID) {
+		$formsProjectCount = self::formHasProjects($formID);
+
+		if(validate::integer($formsProjectCount) && $formsProjectCount == 0){
+			return TRUE;
+		}
 
 		foreach (sessionGet('currentProject') as $projectID=>$project) {
-
 			if (self::checkFormInProject($projectID,$formID) === TRUE) {
 				return TRUE;
 			}
-
 		}
 
 		$formWarning = '<div class="formAlert alert alert-warning alert-dismissible" role="alert">
