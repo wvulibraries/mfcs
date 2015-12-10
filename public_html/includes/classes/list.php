@@ -349,11 +349,11 @@ class listGenerator {
 			}
 
 			$output .= '<div class="accordion-group panel panel-default">';
-			$output .= '<div class="accordion-heading panel-heading" style="padding: 5px;">';
+			$output .= '<div class="accordion-heading panel-heading" style="padding: 10px;">';
 			$output .= '<div>';
 			$output .= self::generateAccordionFormList_links($form,$entry);
 			if(sizeof(forms::getObjectFormMetaForms($form['ID']))){
-				$output .= sprintf('<a class="pull-right metadataListAccordionToggle" data-toggle="collapse" data-parent="#formListAccordion" href="#collapse%s">Show Metadata Forms</a>',
+				$output .= sprintf('<a class="pull-right metadataListAccordionToggle" data-toggle="collapse" data-parent="#formListAccordion" href="#collapse%s"><i class="fa fa-plus-square-o"></i> Metadata Forms</a>',
 					++$count);
 			}
 			$output .= '</div>';
