@@ -7692,6 +7692,13 @@ $(function(){
 	// make sure that form settings is showing first and when updating
 	$('#fieldTab li:nth-child(3)').find('a').click();
 
+	// Unassigned forms empty?
+	if($('.unassignedForms li').length == 0){
+		$('.unassignedForms').hide();
+	} else {
+		$('.unassignedForms').show();
+	}
+
 	// Enable the submit button and hide thenoJavaScriptWarning
 	$(':submit').removeAttr('disabled');
 
