@@ -240,7 +240,7 @@
 
     <div class="group">
         <div class="control-group " id="fieldSettings_container_file_allowedExtensions">
-            <div id="allowedExtensionsAlert" style="display:none;" class="alert alert-error">No allowed extensions included! Currently, no files will be uploadable!</div>
+            <div id="allowedExtensionsAlert" style="display:none;" class="alert alert-error">Warning! If you delete all of the extensions no files will be uploadable! Change the options to make sure a file is uploaded or delete the file upload field. </div>
             <label for="fieldSettings_file_allowedExtensions">
                 Allowed Extensions
             </label>
