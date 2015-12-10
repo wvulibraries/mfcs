@@ -234,18 +234,19 @@ $engine->eTemplate("include","header");
 	<ul class="breadcrumbs">
 		<li><a href="{local var="siteRoot"}">Home</a></li>
 		<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
+
 		<!-- FLoat Right -->
 		<?php if(mfcsPerms::isAdmin($engine->cleanGet['MYSQL']['formID'])){ ?>
-		<li class="pull-right noDivider"><a href="{local var="siteRoot"}formCreator/index.php?id={local var="formID"}">Edit Form</a></li>
-		<?php
-		}
-		if (!isnull($engine->cleanGet['MYSQL']['objectID']) and $revisions->hasRevisions($engine->cleanGet['MYSQL']['objectID'])) { ?>
-			<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions/index.php?objectID={local var="objectID"}">Revisions</a></li>
-		<?php } ?>
-		<li class="pull-right noDivider"><a href="{phpself query="true"}&unlock=cancel">Cancel Edit &amp; Unlock object</a></li>
-		<li class="pull-right noDivider"><a href="/data/object/history/">History</a></li>
-	</ul>
+			<li class="pull-right noDivider"><a href="{local var="siteRoot"}formCreator/index.php?id={local var="formID"}">Edit Form</a></li>
+			<?php
+			}
+			if (!isnull($engine->cleanGet['MYSQL']['objectID']) and $revisions->hasRevisions($engine->cleanGet['MYSQL']['objectID'])) { ?>
+				<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions/index.php?objectID={local var="objectID"}">Revisions</a></li>
 
+			<li class="pull-right noDivider"><a href="{phpself query="true"}&unlock=cancel">Cancel Edit &amp; Unlock object</a></li>
+			<li class="pull-right noDivider"><a href="/data/object/history/">History</a></li>
+	<?php } ?>
+	</ul>
 
 	<div class="container-fluid">
 		<div class="span3">
@@ -285,7 +286,7 @@ $engine->eTemplate("include","header");
 						<?php } ?>
 					</div>
 
-					<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
+					<?php if(!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
 						<div class="tab-pane" id="files">
 							<a href="/dataView/allfiles.php?objectID={local var="objectID"}">Download All Files (Zip)</a><br />
 							<!-- <a href="/dataView/allfiles.php?id=$engine->cleanGet['MYSQL']['objectID']&amp;type=tar">Download All Files (tar)</a> -->
