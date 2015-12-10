@@ -541,6 +541,18 @@ table {
   font-size:17px;
 }
 
+.metadataListAccordionToggle{
+  color:#333;
+  padding:5px 10px;
+  margin-top:-5px;
+  border-left:1px solid #ccc;
+  &:hover,&:active, &:focus { border-bottom:0; color:#333; text-decoration:none;}
+}
+
+#formListAccordion{
+  ul { list-style:none; margin:0; padding:0;}
+  ul li { padding:5px; border-bottom:1px dotted #ccc; padding-left:20px;}
+}
 
 // Object.php
 // ===========================================================================================
