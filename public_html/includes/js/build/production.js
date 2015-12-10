@@ -8185,11 +8185,23 @@ function bindToHiddenForm(){
 			} else {
 				$('#fieldSettings_container_choices').find('.manual_choices').hide();
 				$('#fieldSettings_container_choices').find('.form_choices').show();
+
+				var  type = hiddenForm.find($('input[name^="type"]')).val();
+
+				if(type == 'multiselect'){
+					formPreview.find('.controls').find($('select')).html();
+
+				}
+				else if(type == 'checkbox' || type == 'radio') {
+					formPreview.find('.controls').find($('label')).remove();
+				}
+				else if(type == 'select'){
+					formPreview.find($('.controls')).find($('select')).html(output);
+				}
 			}
 		}
 
 		if(inputObj == 'managedBy'){
-			console.log('managedBy');
 			if(value == 'system'){
 				$("#fieldSettings_idno_managedBy").next().show();
 			} else {
@@ -8876,7 +8888,7 @@ function createHiddenFields(fieldArray,id, vals){
 
 function addChoice(val,def) {
 	if (typeof val === 'undefined') {
-		return '<div class="input-prepend input-append" data-itemtype="choice">'+
+		return '<div class="input-prepend input-append choicesItem" data-itemtype="choice">'+
 					'<button name="default" class="btn" type="button" data-toggle="buttons-radio" title="Set this choice as the default."><i class="icon-ok"></i></button>'+
 					'<input name="fieldSettings_choices_text" type="text">'+
 					'<button name="add" class="btn" type="button" title="Add a choice."><i class="icon-plus"></i></button>'+
@@ -8884,14 +8896,14 @@ function addChoice(val,def) {
 				'</div>';
 	}
 	else if (typeof def === 'undefined') {
-		return '<div class="input-prepend input-append" data-itemtype="choice">'+
+		return '<div class="input-prepend input-append choicesItem" data-itemtype="choice">'+
 					'<button name="default" class="btn" type="button" data-toggle="buttons-radio" title="Set this choice as the default."><i class="icon-ok"></i></button>'+
 					'<input name="fieldSettings_choices_text" type="text" value="'+val+'">'+
 					'<button name="add" class="btn" type="button" title="Add a choice."><i class="icon-plus"></i></button>'+
 					'<button name="remove" class="btn" type="button" title="Remove this choice."><i class="icon-remove"></i></button>'+
 				'</div>';
 	}
-	return '<div class="input-prepend input-append" data-itemtype="choice">'+
+	return '<div class="input-prepend input-append choicesItem" data-itemtype="choice">'+
 				'<button name="default" class="btn'+(val==def?" active":"")+'" type="button" data-toggle="buttons-radio" title="Set this choice as the default."><i class="icon-ok"></i></button>'+
 				'<input name="fieldSettings_choices_text" type="text" value="'+val+'">'+
 				'<button name="add" class="btn" type="button" title="Add a choice."><i class="icon-plus"></i></button>'+
@@ -8903,7 +8915,7 @@ function addAllowedExtension(val) {
 	if (typeof val === 'undefined') {
 		val = '';
 	}
-	return '<div class="row-fluid input-append" data-itemtype="extension">'+
+	return '<div class="row-fluid input-append extensionItem" data-itemtype="extension">'+
 				'<input name="fieldSettings_allowedExtension_text" type="text" value="'+val+'">'+
 				'<button name="add" class="btn" type="button" title="Add an extension."><i class="icon-plus"></i></button>'+
 				'<button name="remove" class="btn" type="button" title="Remove this extension."><i class="icon-remove"></i></button>'+
@@ -8938,7 +8950,11 @@ function addMetadataStandard(val){
 }
 
 function enableChoiceFunctionality(){
-	$('.input-append').find($('input[type=text], select')).bind('change keyup', modifyChoiceBinding);
+	//bind choices
+	$('.choicesItem').find($('input[type=text], select')).bind('change keyup', modifyChoiceBinding);
+	$('.extensionItem').find($('input[type=text], select')).bind('change keyup', extensionBinding);
+	$('.metadata-item').find($('input[type=text], select')).bind('change keyup', metadataBinding);
+
 	$('#fieldSettings_choices_null').change(function(){
 		$('.input-append').find('input[type=text]').change();
 	});
@@ -8998,22 +9014,16 @@ function modifyChoiceBinding(){
 	var valueObject = [];
 	var dataType = $(this).parent().data('itemtype');
 
-	if(dataType == 'choice' || dataType == 'extension'){
-		$(this).parent().parent().find($('input[type=text]')).each(function(index){
-			value = $(this).val();
-			valueObject[index] = value;
-		});
-	}
-	else {
-		$(this).parent().parent().find($('input[type=text]')).each(function(index){
-			var select = $(this).prev('select').val();
-			value = select + " : " + $(this).val();
-			valueObject[index] = value;
-		});
-	}
+	$(this).parent().parent().find($('input[type=text]')).each(function(index){
+		value = $(this).val();
+		valueObject[index] = value;
+	});
 
+	// hidden form binding
 	var choices = valueObject.join('%,%');
+	$('.choicesOptions').val(choices).change();
 
+	// preivew binding
 	if($('#fieldSettings_choices_null').is(':checked')){
 		valueObject.unshift('Make A Selection');
 	}
@@ -9038,7 +9048,7 @@ function modifyChoiceBinding(){
 	}
 
 	if(targetType == 'multiselect'){
-		var target = targetFormPreview.find($('.controls')).find($('.selectPreview'));
+		var target = targetFormPreview.find($('.controls')).find($('select'));
 		target.html(output);
 	}
 	else if(targetType == 'checkbox' || targetType == 'radio') {
@@ -9050,16 +9060,45 @@ function modifyChoiceBinding(){
 		var target = targetFormPreview.find($('.controls')).find($('select'));
 		target.html(output);
 	}
+}
 
-	if(dataType == 'choice'){
-		$('.choicesOptions').val(choices).change();
+function extensionBinding(){
+	var valueObject = [];
+
+	$(this).parent().parent().find($('input[type=text]')).each(function(index){
+		value = $(this).val();
+		valueObject[index] = value;
+	});
+
+	// hidden form binding
+	var choices = valueObject.join('%,%');
+	$('.allowedExtensions').val(choices).change();
+
+	var numOfExtensions = $('#fieldSettings_file_allowedExtensions').children().length;
+
+	if(numOfExtensions <= 1){
+		$('#allowedExtensionsAlert').show();
+	} else {
+		$('#allowedExtensionsAlert').hide();
 	}
-	else if(dataType == "extension") {
-		$('.allowedExtensions').val(choices).change();
+
+	if(numOfExtensions < 1){
+		$(this).parent().after(addAllowedExtension());
 	}
-	else {
-		$('.metadataStandard').val(choices).change();
-	}
+}
+
+function metadataBinding(){
+	var valueObject = [];
+	var dataType = $(this).parent().data('itemtype');
+
+	$(this).parent().parent().find($('input[type=text]')).each(function(index){
+		var select = $(this).prev('select').val();
+		value = select + " : " + $(this).val();
+		valueObject[index] = value;
+	});
+
+	var choices = valueObject.join('%,%');
+	$('.metadataStandard').val(choices).change();
 }
 
 // Title Field Form Settings
