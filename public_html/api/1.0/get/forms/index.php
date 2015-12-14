@@ -2,6 +2,9 @@
 include("../../../../header.php");
 
 
+// we don't need engine's display handling here. 
+$engine->obCallback = FALSE;
+
 try {
 
 	if (($forms = forms::getForms(TRUE,TRUE)) === FALSE) {
