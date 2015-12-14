@@ -15,7 +15,7 @@ try {
 		throw new Exception("error getting object.");
 	}
 
-	print json_encode($object);
+	print json_encode(process_objects($object));
 
 	exit;
 }

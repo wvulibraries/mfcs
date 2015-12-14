@@ -26,7 +26,9 @@ try {
 	// we only return 1000? objects at a time. Calling application tells us where to start 
 	$objects = array_slice($objects, $engine->cleanGet['MYSQL']['start'], $slice);
 
-	print json_encode($objects);
+	$objects = array_map("process_objects", $objects);
+
+	print json_encode(array_filter($objects));
 
 	exit;
 }
