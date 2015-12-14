@@ -19,8 +19,7 @@ try {
 }
 catch(Exception $e) {
 
-	print json_encode(array("error" => "true"));
-
+	print json_encode(array("error" => "true", "message" => $e->getMessage()));
 
 }
 
