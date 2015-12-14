@@ -7,6 +7,8 @@ set_time_limit(0);
 // we don't need engine's display handling here. 
 $engine->obCallback = FALSE;
 
+$slice = (isset($engine->cleanGet['MYSQL']['slice']) && validate::integer($engine->cleanGet['MYSQL']['slice']))?$engine->cleanGet['MYSQL']['slice']:1000;
+
 try {
 
 	// ID is always passed into the API as "id" 
@@ -22,7 +24,7 @@ try {
 	}
 
 	// we only return 1000? objects at a time. Calling application tells us where to start 
-	$objects = array_slice($objects, $engine->cleanGet['MYSQL']['start'], 1000);
+	$objects = array_slice($objects, $engine->cleanGet['MYSQL']['start'], $slice);
 
 	print json_encode($objects);
 
