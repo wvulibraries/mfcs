@@ -86,4 +86,41 @@ function convertString($string) {
 	return $string;
 }
 
+function get_heading_by_id($id,$title) {
+	$object = objects::get($id);
+	return($object['data'][$title]);
+}
+
+function link_select_to_objects($object) {
+
+	$form = forms::get($object['formID']);
+
+	foreach ($form['fields'] as $field) {
+
+		if (($field['type'] == "select" || $field['type'] == "multiselect") && isset($field['choicesForm'])) {
+
+			$temp = array();
+			if (isset($object['data'][$field['name']]) && is_array($object['data'][$field['name']])) {
+				foreach ($object['data'][$field['name']] as $heading_id) {
+					$temp[] = get_heading_by_id($heading_id,$field['choicesField']);
+				}
+			}
+
+			$object['data'][$field['name']] = $temp;
+
+		}
+
+	}
+
+	return $object;
+}
+
+function process_objects($object) {
+
+	if ($object['data']['publicRelease'] == "No") return;
+
+	return link_select_to_objects($object);
+
+}
+
 ?>
