@@ -9666,4 +9666,8 @@ $(function(){
             $(this).html("<i class='fa fa-minus-square-o'></i> Metadata Forms");
         }
     });
+
+    if($('.hasDescription').length){
+        $('.hasDescription').parent().parent().addClass('panelHasDescription');
+    }
 });
