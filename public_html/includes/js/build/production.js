@@ -7214,7 +7214,7 @@ $(function() {
         helper: "clone",
         revert: "invalid",
         cancel: ".noDrag",
-    }).disableSelection();
+    });
 
     // Add new on click as well as drag
     $("#groupingsAdd").on("click", "li", function(event) {
