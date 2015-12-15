@@ -523,10 +523,27 @@ table {
 // ===========================================================================================
 .panel-heading {
   position:relative;
+  height:40px;
+  p {
+    font-size: 12px;
+    font-style: italic;
+    color: #888888;
+    font-weight: 300;
+    letter-spacing: 1px;
+  }
   a:first-child{
     font-weight:bold;
     display:inline-block;
-    width:80%;
+    width:70%;
+  }
+
+  .metadataListAccordionToggle{
+    color:#333;
+    border-left:1px solid #ccc;
+    height:40px;
+    padding:10px 20px;
+    margin-top:-10px;
+    &:hover,&:active, &:focus { border-bottom:0; color:#333; text-decoration:none;}
   }
 }
 
@@ -541,12 +558,19 @@ table {
   font-size:17px;
 }
 
-.metadataListAccordionToggle{
-  color:#333;
-  padding:5px 10px;
-  margin-top:-5px;
-  border-left:1px solid #ccc;
-  &:hover,&:active, &:focus { border-bottom:0; color:#333; text-decoration:none;}
+
+
+.panelHasDescription.panel-heading{
+  height: 70px;
+
+  .metadataListAccordionToggle{
+    color:#333;
+    border-left:1px solid #ccc;
+    height:70px;
+    padding:25px 20px;
+    margin-top:-10px;
+    &:hover,&:active, &:focus { border-bottom:0; color:#333; text-decoration:none;}
+  }
 }
 
 #formListAccordion{
