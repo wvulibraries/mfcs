@@ -524,7 +524,7 @@ if (!isnull($formID)) {
 						<li id="GroupingsPreview_%s" class="%s">
 							<div class="groupingPreview">
 								<script type="text/javascript">
-									$("#GroupingsPreview_%s .groupingPreview").html(newGroupingPreview("%s"));
+									$("#GroupingsPreview_%s .groupingPreview").html(newGroupingPreview("%s",%s));
 								</script>
 							</div>
 							<div class="groupingValues">
@@ -537,6 +537,7 @@ if (!isnull($formID)) {
 						htmlSanitize($groupings[$V['grouping']]['type']),
 						htmlSanitize($V['position'] + $positionOffset),
 						htmlSanitize($groupings[$V['grouping']]['type']),
+						json_encode($groupings[$V['grouping']]),
 						htmlSanitize($V['position'] + $positionOffset),
 						htmlSanitize($V['position'] + $positionOffset),
 						htmlSanitize($groupings[$V['grouping']]['type']),
@@ -551,7 +552,7 @@ if (!isnull($formID)) {
 					<li id="GroupingsPreview_%s" class="%s">
 						<div class="groupingPreview">
 							<script type="text/javascript">
-								$("#GroupingsPreview_%s .groupingPreview").html(newGroupingPreview("%s"));
+								$("#GroupingsPreview_%s .groupingPreview").html(newGroupingPreview("%s",%s));
 							</script>
 						</div>
 						<div class="groupingValues">
@@ -564,6 +565,7 @@ if (!isnull($formID)) {
 					htmlSanitize($V['type']),
 					htmlSanitize($V['position'] + $positionOffset),
 					htmlSanitize($V['type']),
+					$values,
 					htmlSanitize($V['position'] + $positionOffset),
 					htmlSanitize($V['position'] + $positionOffset),
 					htmlSanitize($V['type']),
