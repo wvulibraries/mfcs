@@ -1628,5 +1628,6 @@ $fileColor: lighten(#333F48,60%);
 footer{
   float:left;
   width:100%;
+  margin-top:20px;
   .wrap { @extend .widthContainer; text-align: center; padding:20px; }
 }
