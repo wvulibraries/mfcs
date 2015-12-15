@@ -141,7 +141,16 @@ class forms {
 		}
 
 		return htmlSanitize(!empty($form['displayTitle']) ? $form['displayTitle'] : (!empty($form['title']) ? $form['title'] : '[No form title]'));
+	}
 
+	public static function description($formID){
+		$form = self::get($formID);
+
+		if($form === FALSE) {
+			return FALSE;
+		}
+
+		return htmlSanitize(isnull($form['description']) ? '' : $form['description']);
 	}
 
 	public static function getObjectTitleField($formID) {
