@@ -1631,3 +1631,10 @@ footer{
   margin-top:20px;
   .wrap { @extend .widthContainer; text-align: center; padding:20px; }
 }
+
+.alignCenter {
+  text-align:center;
+  input[type=checkbox]{ margin-top:10px;}
+  display:block;
+  padding:10px;
+}
