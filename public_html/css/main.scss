@@ -575,7 +575,9 @@ table {
 
 #formListAccordion{
   ul { list-style:none; margin:0; padding:0;}
-  ul li { padding:5px; border-bottom:1px dotted #ccc; padding-left:20px;}
+  ul li { padding:5px; border-bottom:1px dotted #ccc; padding-left:20px;
+    &:last-child{ border:none;}
+  }
 }
 
 // Object.php
