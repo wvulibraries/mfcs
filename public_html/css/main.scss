@@ -1114,6 +1114,14 @@ a.list-group-item {
   }
 }
 
+#navigation {
+  .sortable{
+    padding:20px;
+  }
+}
+
+
+
 #GroupingsPreview {
   list-style:none;
   padding:0;
@@ -1171,6 +1179,12 @@ a.list-group-item {
         opacity:.2;
       }
   }
+
+  .highlight {
+    border:2px dotted #ccc;
+    margin:5px 0;
+    padding:40px;
+  }
 }
 
 .mdTitle  { float:left; margin-bottom:20px;  display:block; width:100%;}
@@ -1227,8 +1241,6 @@ a.list-group-item {
     background:none !important;
   }
 }
-
-.highlight { display:none;}
 
 .icon-remove, .icon-ok, .icon-plus {
     display: inline-block;
