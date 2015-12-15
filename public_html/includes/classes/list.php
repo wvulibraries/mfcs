@@ -68,7 +68,6 @@ class listGenerator {
 									<div class="panel-heading">
 										<span>
 											<a href="list.php?listType=form&amp;formID=%s"> %s
-												<p> %s </p>
 											</a>
 										</span>
 										<i class="expandShelfList fa fa-plus-square-o"></i>
@@ -79,7 +78,6 @@ class listGenerator {
 								</div>',
 				$form['ID'],
 				forms::title($form['ID']),
-				forms::description($form['ID']),
 				$form['ID']
 			);
 
@@ -311,12 +309,19 @@ class listGenerator {
 		}
 
 		if ($entry === FALSE) {
-			return sprintf('<a href="index.php?id=%s" class="%s">%s<p>%s</p></a>',
-				htmlSanitize($form['ID']),
-				(is_empty(forms::description($form['ID'])) ? '' : 'hasDescription'),
-				forms::title($form['ID']),
-				(is_empty(forms::description($form['ID'])) ? '' : forms::description($form['ID']))
-			);
+			if($metadata === FALSE){
+				return sprintf('<a href="index.php?id=%s" class="%s">%s<p>%s</p></a>',
+					htmlSanitize($form['ID']),
+					(is_empty(forms::description($form['ID'])) ? '' : 'hasDescription'),
+					forms::title($form['ID']),
+					(is_empty(forms::description($form['ID'])) ? '' : forms::description($form['ID']))
+				);
+			} else {
+				return sprintf('<a href="index.php?id=%s">%s</a>',
+					htmlSanitize($form['ID']),
+					forms::title($form['ID'])
+				);
+			}
 		}
 		else {
 			return sprintf('<a href="%sdataEntry/%s.php?formID=%s">%s</a>',
@@ -375,7 +380,8 @@ class listGenerator {
 				}
 
 				$output .= '<li>';
-				if (($output .= self::generateAccordionFormList_links($metadataForm,$entry,($entry===TRUE)?TRUE:FALSE)) === FALSE) {
+				// these are metadata forms the end should be true.
+				if (($output .= self::generateAccordionFormList_links($metadataForm,$entry,TRUE)) === FALSE) {
 					return FALSE;
 				}
 				$output .= '</li>';
