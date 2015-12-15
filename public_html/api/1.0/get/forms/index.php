@@ -13,7 +13,8 @@ try {
 
 	$json = array();
 	foreach ($forms as $form) {
-		$json[] = array("ID" => $form['ID'], "title" => $form['title'], "displayTitle" => $form['displayTitle'], "description" => $form['description']);
+		$object_count = count(objects::getAllObjectsForForm($form['ID']));
+		$json[] = array("ID" => $form['ID'], "title" => $form['title'], "displayTitle" => $form['displayTitle'], "description" => $form['description'],"object_count"=>$object_count);
 	}
 
 	print json_encode($json);
