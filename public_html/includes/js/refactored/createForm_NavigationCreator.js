@@ -176,10 +176,6 @@ function showSettings(fullID) {
         var type     = $("#nav_type_"+id).val();
         var grouping = $("#nav_grouping_"+id);
 
-        console.log(id);
-        console.log(type);
-        console.log(grouping);
-
         // Show the form
         if (type == "grouping") {
             $("#groupingsSettings_container_grouping").show();
@@ -261,13 +257,13 @@ function addNew(item) {
 
     $(item)
         .attr({"id":"GroupingsPreview_"+newID})
-        .html('<div class="groupingPreview">'+newGroupingPreview(type)+'</div><div class="groupingValues">'+newGroupingValues(newID,type,vals)+'</div>');
+        .html('<div class="groupingPreview">'+newGroupingPreview(type, vals)+'</div><div class="groupingValues">'+newGroupingValues(newID,type,vals)+'</div>');
 
     // Display settings for new field
     $("#GroupingsPreview_"+newID).click();
 }
 
-function newGroupingPreview(type) {
+function newGroupingPreview(type, vals) {
     var output;
 
     output = '<i class="icon-remove"></i>';
@@ -276,7 +272,11 @@ function newGroupingPreview(type) {
         output += '<ul class="unstyled sortable"></ul>';
     }
     else {
-        output += '<a href="#">[Link]</a>';
+        if(vals === undefined || vals === null){
+            output += '<a href="#">[Link]</a>';
+        } else {
+            output += '<a href="'+((vals.url !== undefined)?vals.url:'')+'">'+((vals.label !== undefined)?vals.label:'Untitled')+'</a>';
+        }
     }
 
     return output;
