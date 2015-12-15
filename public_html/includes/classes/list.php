@@ -66,7 +66,11 @@ class listGenerator {
 			// create the panel
 			$panel = sprintf('<div class="listForm panel panel-default span6">
 									<div class="panel-heading">
-										<a href="list.php?listType=form&amp;formID=%s"> %s</a>
+										<span>
+											<a href="list.php?listType=form&amp;formID=%s"> %s
+												<p> %s </p>
+											</a>
+										</span>
 										<i class="expandShelfList fa fa-plus-square-o"></i>
 									</div>
 									<div class="panel-body shelfList">
@@ -75,6 +79,7 @@ class listGenerator {
 								</div>',
 				$form['ID'],
 				forms::title($form['ID']),
+				forms::description($form['ID']),
 				$form['ID']
 			);
 
@@ -306,10 +311,12 @@ class listGenerator {
 		}
 
 		if ($entry === FALSE) {
-			return sprintf('<a href="index.php?id=%s">%s</a>',
+			return sprintf('<a href="index.php?id=%s" class="%s">%s<p>%s</p></a>',
 				htmlSanitize($form['ID']),
-				forms::title($form['ID'])
-				);
+				(is_empty(forms::description($form['ID'])) ? '' : 'hasDescription'),
+				forms::title($form['ID']),
+				(is_empty(forms::description($form['ID'])) ? '' : forms::description($form['ID']))
+			);
 		}
 		else {
 			return sprintf('<a href="%sdataEntry/%s.php?formID=%s">%s</a>',
@@ -317,9 +324,8 @@ class listGenerator {
 				($metadata === TRUE)?"metadata":"object",
 				htmlSanitize($form['ID']),
 				forms::title($form['ID'])
-				);
+			);
 		}
-
 	}
 
 	// if entry is TRUE, the links will go to the data entry pages, otherwise form creator
