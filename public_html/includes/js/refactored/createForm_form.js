@@ -24,7 +24,7 @@ $(function(){
 
 	// Blank all panes when changing tabs
 	fieldTab.on("click", "a", function() {
-		$('li', formPreview).removeClass("well");
+		$('li', formPreview).removeClass("well activeField");
 		showFieldSettings(); // blank the Field Settings pane
 	});
 
