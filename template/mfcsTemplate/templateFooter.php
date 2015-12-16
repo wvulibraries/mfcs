@@ -1,6 +1,10 @@
-<?php
-    print file_get_contents("https://lib.wvu.edu/index.php?location=/templateIncludes/2014/templateFooter.php&releaseType=1");
-?>
+<footer class="footer">
+    <div class="widthContainer">
+        <div class="builtBy">
+            <span class="built">Built </span><span class="by">By </span><span class="wvu">WVU</span><span class="libs">Libraries</span>
+        </div>
+    </div>
+</footer>
 
 <?php recurseInsert("footerIncludes.php","php") ?>
 

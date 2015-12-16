@@ -1649,13 +1649,30 @@ input[type=submit] {
   }
 }
 
-@import 'wvuStyles/footer';
 
 footer{
-  float:left;
   width:100%;
-  margin-top:20px;
-  .wrap { @extend .widthContainer; text-align: center; padding:20px; }
+  position:absolute;
+  bottom:0;
+  left:0;
+  background: #eee;
+  padding: 10px;
+  border-top: 2px solid #e1e1e1;
+
+  .builtBy {
+    color: #aaa;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    width:16%;
+    min-width:250px;
+    float:right;
+    text-align:right;
+  }
+
+  .built, .by { font-weight: 300; }
+  .wvu { color: #002855; }
+  .libs { color: $gold; }
 }
 
 .alignCenter {
