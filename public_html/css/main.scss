@@ -1593,15 +1593,22 @@ $fileColor: lighten(#333F48,60%);
 
 // Data Entry
 // =============================================================================
-.objectNav {
+.objectNav, .menu {
   list-style:none;
   margin:0;
   padding:0;
-  li { padding:10px; margin-bottom:10px; border-bottom:1px solid darken($lightgrey,5%); float:left; display:block; width:100%; }
+  li { padding:10px; border-bottom:1px solid darken($lightgrey,5%); float:left; display:block; width:100%; }
   ul li:last-child{ border-bottom:0;}
   ul { padding:0; margin:0;}
   ul li { margin-bottom:0; border-bottom:1px solid #eee;}
   a {dipslay:block; }
+}
+
+input[type=submit] {
+  width:100%;
+  @include breakpoint(tablet){
+    width:25% !important; float:right;
+  }
 }
 
 
@@ -1635,6 +1642,31 @@ footer{
 .alignCenter {
   text-align:center;
   input[type=checkbox]{ margin-top:10px;}
-  display:block;
   padding:10px;
+}
+
+.editUsersTable {
+  table {
+    @extend .table; @extend .table-striped;
+    td:first-child,td:nth-of-type(2),td:nth-of-type(3),th:first-child,th:nth-of-type(2),th:nth-of-type(3){
+      width:170px;
+    }
+    td:nth-of-type(4),td:nth-of-type(5){
+      width:170px;
+    }
+
+    td input {
+      margin:0;
+    }
+
+  }
+}
+
+.projectsEditTable, .metadataTables {
+  table {
+    @extend .table; @extend .table-striped;
+    td input {
+      margin:0;
+    }
+  }
 }
