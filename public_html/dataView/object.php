@@ -126,7 +126,9 @@ $engine->eTemplate("include","header");
 
 	<div class="container-fluid">
 		<div class="span3">
-			{local var="leftnav"}
+			<ul class="menu">
+				{local var="leftnav"}
+			</ul>
 		</div>
 
 		<div class="span9">
