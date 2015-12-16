@@ -80,12 +80,12 @@ $engine->eTemplate("include","header");
 	<header class="page-header">
 		<h1>Copy a Form</h1>
 	</header>
-	<nav id="breadcrumbs">
-		<ul class="breadcrumb">
-			<li><a href="{local var="siteRoot"}">Home</a></li>
-			<li><a href="{local var="siteRoot"}/formCreator/copy.php">Copy Form</a></li>
-		</ul>
-	</nav>
+
+	<ul class="breadcrumbs">
+		<li><a href="{local var="siteRoot"}">Home</a></li>
+		<li><a href="{local var="siteRoot"}/formCreator/copy.php">Copy Form</a></li>
+	</ul>
+
 
 	{local var="results"}
 
