@@ -58,12 +58,11 @@ $engine->eTemplate("include","header");
         <h1>Manage Projects</h1>
     </header>
 
-    <nav id="breadcrumbs">
-        <ul class="breadcrumb">
-            <li><a href="{local var="siteRoot"}">Home</a></li>
-            <li><a href="{local var="siteRoot"}/admin/">Admin</a></li>
-        </ul>
-    </nav>
+    <ul class="breadcrumbs">
+        <li><a href="{local var="siteRoot"}">Home</a></li>
+        <li><a href="{local var="siteRoot"}/admin/">Admin</a></li>
+    </ul>
+
 
     {local var="results"}
 
@@ -76,12 +75,14 @@ $engine->eTemplate("include","header");
 
     <hr />
 
-    <section>
-        <header>
-            <h2>Edit Metadata Standards</h2>
-        </header>
-        {listObject display="editTable"}
-    </section>
+    <div class="metadataTables responsive-table">
+        <section>
+            <header>
+                <h2>Edit Metadata Standards</h2>
+            </header>
+            {listObject display="editTable"}
+        </section>
+    </div>
 </section>
 
 <?php
