@@ -8158,6 +8158,14 @@ function setOriginalValues(){
 			formPreview.css('opacity', '1');
 		}
 	}
+
+	if(bindObj == 'validation'){
+		if(value == 'regexp'){
+			$('#fieldSettings_validationRegex').show();
+		} else {
+			$('#fieldSettings_validationRegex').hide();
+		}
+	}
 }
 
 function bindToHiddenForm(){
@@ -8603,8 +8611,11 @@ function addNewField(item) {
 }
 
 function newFieldPreview(id,type) {
-	var output;
-	output = '<i class="icon-remove"></i>';
+	var output ="";
+
+	if(type !== 'idno'){
+		output += '<i class="icon-remove"></i>';
+	}
 
 	if (type == 'Field Set' || type == 'fieldset') {
 		output += '<fieldset><legend></legend><ul class="unstyled sortable"></ul></fieldset>';
