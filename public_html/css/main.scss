@@ -172,6 +172,7 @@ section {
 
 .main {
   margin-top:120px;
+  padding-bottom:60px;
 
   @include breakpoint(tablet){
    margin-top:60px;
@@ -1612,7 +1613,7 @@ input[type=submit] {
   }
 }
 
-#formCreator {
+#formCreator, #projects, #navigation, #permissions, #deleteForm {
   input[type=submit] {
     width:100% !important;
   }
