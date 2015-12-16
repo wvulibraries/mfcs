@@ -607,6 +607,22 @@ function setOriginalValues(){
 			$('#fieldSettings_validationRegex').hide();
 		}
 	}
+
+	if(bindObj == 'choicesForm'){
+		if(value == "null" || value == undefined){
+			// remove options add errors
+			$('select[data-bindmodel="choicesField"]').addClass('has-error').html('');
+			$('#fieldSettings_choices_formSelect').addClass('has-error');
+		} else{
+			$('select[data-bindmodel="choicesField"]').removeClass('has-error');
+			$('#fieldSettings_choices_formSelect').removeClass('has-error');
+		}
+	}
+
+	if(bindObj == 'choicesDefault'){
+		$('input[value="'+value+'"]').prev().addClass('active');
+	}
+
 }
 
 function bindToHiddenForm(){
@@ -1157,6 +1173,7 @@ function newFieldValues(id,type,vals) {
 		vals.label         = 'Untitiled';
 		vals.help          = 'none | ';
 		vals.choicesType   = 'manual';
+		vals.choicesForm   = 'null';
 		vals.publicRelease = true;
 		vals.managedBy     = 'system';
 		vals.idnoFormat    = 'st_###';
@@ -1445,10 +1462,35 @@ function enableChoiceFunctionality(){
 			$(this).parent().remove();
 			$('.input-append').find($('input[type=text]')).change();
 		}
+		else if(state == "default"){
+			console.log('default state clicked');
+			// get value
+			var value = $(this).next().val();
+			var id = globalFieldID;
+			// change hidden form
+			$('#choicesDefault_' + id).val(value);
+			// remove active classes and use this active class
+			$('button[name="default"]').removeClass('active');
+
+			if($(this).hasClass('focus')){
+				$(this).addClass('selected');
+			}
+		}
+
 	});
 
 	$("#fieldSettings_choices_formSelect").change(function(){
 		var val             = $(this).val();
+
+		if(val == "null"){
+			// remove options add errors
+			$('select[data-bindmodel="choicesField"]').addClass('has-error').html('');
+			$('#fieldSettings_choices_formSelect').addClass('has-error');
+		} else{
+			$('select[data-bindmodel="choicesField"]').removeClass('has-error');
+			$('#fieldSettings_choices_formSelect').removeClass('has-error');
+		}
+
 		if (choicesFields[val] === undefined) {
 			var options;
 			choicesFields[null] = options;
