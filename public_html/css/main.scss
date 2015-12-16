@@ -1617,7 +1617,17 @@ input[type=submit] {
   }
 }
 
-.tooltip-inner { min-width: 300px; max-width:400px;}
+.tooltip-inner { min-width: 300px; max-width:400px;
+  padding: 13px 8px;
+  color: #fff;
+  text-align: center;
+  background-color: rgba(#000,.95);
+  text-shadow: 2px 2px 8px #333;
+  border-radius: 4px;
+  font-size: 14px;
+  letter-spacing: 1px;
+
+}
 
 
 .modal {
