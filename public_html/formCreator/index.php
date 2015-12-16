@@ -182,6 +182,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 		$engine->openDB->transCommit();
 		$engine->openDB->transEnd();
 		errorHandle::successMsg("Successfully submitted form.");
+		header( "refresh:1;url=/formCreator/index.php?id=$formID");
 	}
 }
 
