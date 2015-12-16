@@ -289,6 +289,7 @@ try {
 
 	$tmp = array();
 	if (is_array($metadataForms)) {
+		$tmp[]  = '<option value="null"> Select a Form </option>';
 		foreach ($metadataForms as $form) {
 			$tmp[] = sprintf('<option value="%s">%s</option>',
 				$form['ID'],
