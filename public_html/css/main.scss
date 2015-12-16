@@ -755,8 +755,9 @@ input{
     cursor: not-allowed;
   }
 
-input.has-error{
-  border:1px solid $brand-danger;
+input.has-error, select.has-error{
+  border:1px solid $brand-danger !important;
+  box-shadow:none !important;
 }
 
 textarea {
