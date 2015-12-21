@@ -8,6 +8,9 @@ if(!mfcsPerms::evaluatePageAccess(2)){
 	header('Location: /index.php?permissionFalse');
 }
 
+// for determining if the page has had an error
+$formCreationError = FALSE;
+
 $formID = isset($engine->cleanPost['HTML']['id']) ? $engine->cleanPost['HTML']['id'] : (isset($engine->cleanGet['HTML']['id']) ? $engine->cleanGet['HTML']['id'] : NULL);
 if (is_empty($formID)) {
 	$formID = NULL;
@@ -73,6 +76,11 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 		}
 
 		array_multisort($positions, SORT_ASC, $fields);
+
+		$query['form']   = $form;
+		$query['fields'] = $fields;
+		$query['idno']   = $idno;
+		$query['count']  = $count;
 	}
 
 	if (!isnull($formID)) {
@@ -167,14 +175,17 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - Inserting new form: ".$sqlResult['error']." == ".$sql, errorHandle::DEBUG);
-			errorHandle::errorMsg("Failed to create form.");
+			errorHandle::errorMsg("Failed to create form. Inserting new form caused the following errors: ".$sqlResult['error']);
+
+			$formCreationError  = TRUE;
 		}
 		else {
 			$formID = $sqlResult['id'];
+			$formCreationError  = FALSE;
 		}
 	}
 
-	if (!is_empty($engine->errorStack)) {
+	if (!is_empty($engine->errorStack) || !$sqlResult['result']) {
 		$engine->openDB->transRollback();
 		$engine->openDB->transEnd();
 	}
@@ -182,7 +193,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 		$engine->openDB->transCommit();
 		$engine->openDB->transEnd();
 		errorHandle::successMsg("Successfully submitted form.");
-		header( "refresh:1;url=/formCreator/index.php?id=$formID");
+		header("refresh:.5;url=/formCreator/index.php?id=$formID");
 	}
 }
 
@@ -254,7 +265,6 @@ if (isset($engine->cleanPost['MYSQL']['projectForm']) && forms::isMetadataForm($
 		$engine->openDB->transCommit();
 		$engine->openDB->transEnd();
 	}
-
 }
 
 try {
@@ -324,11 +334,9 @@ catch (Exception $e) {
 
 localVars::add("thisSubmitButton","Add Form");
 
-if (!isnull($formID)) {
+if (!isnull($formID) && $formCreationError === FALSE) {
 	localVars::add("thisSubmitButton","Update Form");
-
 	$form = forms::get($formID);
-
 	if ($form !== FALSE) {
 		$formPreview = NULL;
 
@@ -429,6 +437,114 @@ if (!isnull($formID)) {
 				htmlSanitize($field['type']),
 				$values
 				);
+		}
+
+		localVars::add("formPreview",$formPreview);
+	}
+}
+else if($formCreationError === TRUE){
+	$form = $query['form'];
+	$form['fields'] = $query['fields'];
+
+	if ($form !== FALSE) {
+		$formPreview = NULL;
+
+		localVars::add("formTitle",       htmlSanitize($form['formTitle']));
+		localVars::add("displayTitle",    htmlSanitize($form['objectDisplayTitle']));
+		localVars::add("linkTitle",       htmlSanitize($form['linkTitle']));
+		localVars::add("formDescription", htmlSanitize($form['formDescription']));
+		localVars::add("submitButton",    htmlSanitize($form['submitButton']));
+		localVars::add("updateButton",    htmlSanitize($form['updateButton']));
+		localVars::add("formContainer",   ($form['formContainer'] == '1')  ? "checked" : "");
+		localVars::add("formProduction",  ($form['formProduction'] == '1') ? "checked" : "");
+		localVars::add("formMetadata",    ($form['formMetadata'] == '1')   ? "checked" : "");
+
+		if (is_empty($form['fields'])) {
+			$form['fields'] = array();
+		}
+
+		// Get all fieldsets needed
+		foreach ($form['fields'] as $I => $field) {
+			if (!is_empty($field['fieldset'])) {
+				$fieldsets[$field['fieldset']] = array(
+					"type"     => "fieldset",
+					"fieldset" => $field['fieldset'],
+					);
+			}
+		}
+
+		$positionOffset = 0;
+		foreach($form['fields'] as $I => $field) {
+			if (isset($field['choicesOptions']) && is_array($field['choicesOptions'])) {
+				$field['choicesOptions'] = implode("%,%",$field['choicesOptions']);
+			}
+			else if (isset($field['allowedExtensions']) && is_array($field['allowedExtensions'])) {
+				$field['allowedExtensions'] = implode("%,%",$field['allowedExtensions']);
+			}
+
+			if ($field['type'] == 'text') {
+				localVars::add("objectTitleFieldOptions", sprintf('%s<option value="%s"%s>%s</option>',
+					localVars::get("objectTitleFieldOptions"),
+					$field['name'],
+					($field['name'] == $form['objectTitleField']) ? " selected" : NULL,
+					$field['label']
+					));
+			}
+
+			$values = json_encode($field);
+
+			if (!is_empty($field['fieldset']) && isset($fieldsets[$field['fieldset']])) {
+				$formPreview .= sprintf('
+					<li id="formPreview_%s" data-id="%s">
+						<div class="fieldPreview">
+							<script type="text/javascript">
+								$("#formPreview_%s .fieldPreview").html(newFieldPreview("%s","%s"));
+							</script>
+						</div>
+						<div class="fieldValues">
+							<script type="text/javascript">
+								$("#formPreview_%s .fieldValues").html(newFieldValues("%s","%s",%s));
+							</script>
+						</div>
+					</li>',
+					htmlSanitize($field['position'] + $positionOffset),
+					htmlSanitize($field['position'] + $positionOffset),
+					htmlSanitize($field['position'] + $positionOffset),
+					htmlSanitize($field['position'] + $positionOffset),
+					htmlSanitize($fieldsets[$field['fieldset']]['type']),
+					htmlSanitize($field['position'] + $positionOffset),
+					htmlSanitize($field['position'] + $positionOffset),
+					htmlSanitize($fieldsets[$field['fieldset']]['type']),
+					json_encode($fieldsets[$field['fieldset']])
+					);
+
+				$positionOffset++;
+				unset($fieldsets[$field['fieldset']]);
+			}
+
+			$formPreview .= sprintf('
+				<li id="formPreview_%s" data-id="%s">
+					<div class="fieldPreview">
+						<script type="text/javascript">
+							$("#formPreview_%s .fieldPreview").html(newFieldPreview("%s","%s"));
+						</script>
+					</div>
+					<div class="fieldValues">
+						<script type="text/javascript">
+							$("#formPreview_%s .fieldValues").html(newFieldValues("%s","%s",%s));
+						</script>
+					</div>
+				</li>',
+				htmlSanitize($field['position'] + $positionOffset),
+				htmlSanitize($field['position'] + $positionOffset),
+				htmlSanitize($field['position'] + $positionOffset),
+				htmlSanitize($field['position'] + $positionOffset),
+				htmlSanitize($field['type']),
+				htmlSanitize($field['position'] + $positionOffset),
+				htmlSanitize($field['position'] + $positionOffset),
+				htmlSanitize($field['type']),
+				$values
+			);
 		}
 
 		localVars::add("formPreview",$formPreview);
@@ -650,12 +766,6 @@ $videoThumbs = array(
 	'png'        => 'Png'
 );
 
-$metadataChoices = array(
-	'dublin'  => 'dublin core',
-	'test'    => 'test option',
-	'fake'    => 'fake option'
-);
-
 try {
 	$metadataChoices = listGenerator::getMetadataStandards();
 	if(!$metadataChoices){
@@ -665,7 +775,6 @@ try {
 } catch (Exception $e) {
 	errorHandle::errorMsg($e->getMessage());
 }
-
 
 
 // Render Stuff
