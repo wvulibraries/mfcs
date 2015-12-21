@@ -390,7 +390,7 @@ if (!isnull($formID) && $formCreationError === FALSE) {
 					<li id="formPreview_%s" data-id="%s">
 						<div class="fieldPreview">
 							<script type="text/javascript">
-								$("#formPreview_%s .fieldPreview").html(newFieldPreview("%s","%s"));
+								$("#formPreview_%s .fieldPreview").html(newFieldPreview("%s","%s", %s));
 							</script>
 						</div>
 						<div class="fieldValues">
@@ -404,6 +404,7 @@ if (!isnull($formID) && $formCreationError === FALSE) {
 					htmlSanitize($field['position'] + $positionOffset),
 					htmlSanitize($field['position'] + $positionOffset),
 					htmlSanitize($fieldsets[$field['fieldset']]['type']),
+					json_encode($fieldsets[$field['fieldset']]),
 					htmlSanitize($field['position'] + $positionOffset),
 					htmlSanitize($field['position'] + $positionOffset),
 					htmlSanitize($fieldsets[$field['fieldset']]['type']),
@@ -418,7 +419,7 @@ if (!isnull($formID) && $formCreationError === FALSE) {
 				<li id="formPreview_%s" data-id="%s">
 					<div class="fieldPreview">
 						<script type="text/javascript">
-							$("#formPreview_%s .fieldPreview").html(newFieldPreview("%s","%s"));
+							$("#formPreview_%s .fieldPreview").html(newFieldPreview("%s","%s", %s));
 						</script>
 					</div>
 					<div class="fieldValues">
@@ -432,6 +433,7 @@ if (!isnull($formID) && $formCreationError === FALSE) {
 				htmlSanitize($field['position'] + $positionOffset),
 				htmlSanitize($field['position'] + $positionOffset),
 				htmlSanitize($field['type']),
+				$values,
 				htmlSanitize($field['position'] + $positionOffset),
 				htmlSanitize($field['position'] + $positionOffset),
 				htmlSanitize($field['type']),
