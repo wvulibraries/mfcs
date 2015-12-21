@@ -144,6 +144,10 @@ html {
 
 body { min-width:420px; }
 
+html, body {
+  height: 100%;
+}
+
 h1 { font-size:180%; }
 h2 { font-size:135%; }
 h3,h4,h5 { font-size:125%; }
@@ -1652,10 +1656,11 @@ input[type=submit] {
 
 
 footer{
-  width:100%;
-  position:absolute;
-  bottom:0;
-  left:0;
+  width: 100%;
+  position: relative;
+  float: left;
+  bottom: 0;
+  left: 0;
   background: #eee;
   padding: 10px;
   border-top: 2px solid #e1e1e1;
