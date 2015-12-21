@@ -7701,7 +7701,6 @@ $(function(){
 
 	// Enable the submit button and hide thenoJavaScriptWarning
 	$(':submit').removeAttr('disabled');
-
 });
 
 
@@ -7723,6 +7722,7 @@ function applyFormPreview(){
 		var settings       = $(this).next();
 
 		var placeholder    = settings.find($('input[name^="placeholder"]')).val();
+		var type           = settings.find($('input[name^="type"]')).val();
 		var name           = settings.find($('input[name^="name"]')).val();
 		var style          = settings.find($('input[name^="style"]')).val();
 		var labelValue     = settings.find($('input[name^="label"]')).val();
@@ -7733,6 +7733,10 @@ function applyFormPreview(){
 		var disabled       = settings.find($('input[name^="disabled"')).val();
 		var readonly       = settings.find($('input[name^="readonly"')).val();
 		var hidden         = settings.find($('input[name^="hidden"]')).val();
+
+		var choices        = settings.find($('input[name^="choicesOptions"]')).val();
+		var choicesType    = settings.find($('input[name^="choicesType"]')).val();
+
 
 		controls.attr({
 			'placeholder' : placeholder,
@@ -8626,7 +8630,7 @@ function addNewField(item) {
 	}
 }
 
-function newFieldPreview(id,type) {
+function newFieldPreview(id,type, vals) {
 	var output = "";
 
 	if(type !== 'idno'){
@@ -8654,17 +8658,63 @@ function newFieldPreview(id,type) {
 
 			case 'Radio':
 			case 'radio':
+				if(vals.choicesOptions){
+					var choices = vals.choicesOptions;
+					var defaultChoice = vals.choicesDefault;
+					choices = choices.split('%,%');
+
+					$.each(choices, function( index, value ) {
+						if(value == defaultChoice){
+							output += '<label> <input type="radio" checked> '+value+'</label>';
+						} else {
+							output += '<label> <input type="radio"> '+value+'</label>';
+						}
+					});
+
+				} else{
 				output += '<label class="radio"><input type="radio">First Choice</label><label class="radio"><input type="radio">Second Choice</label>';
+				}
 				break;
 
 			case 'Checkboxes':
 			case 'checkbox':
+				if(vals.choicesOptions){
+					var choices = vals.choicesOptions;
+					var defaultChoice = vals.choicesDefault;
+					choices = choices.split('%,%');
+
+					$.each(choices, function( index, value ) {
+						if(value == defaultChoice){
+							output += '<label> <input type="checkbox" checked> '+value+'</label>';
+						} else {
+							output += '<label> <input type="checkbox"> '+value+'</label>';
+						}
+					});
+
+				} else{
 				output += '<label class="checkbox"><input type="checkbox">First Choice</label><label class="checkbox"><input type="checkbox">Second Choice</label>';
+				}
 				break;
 
 			case 'Dropdown':
 			case 'select':
-				output += '<select></select>';
+				if(vals.choicesType == 'manual'){
+					var choices = vals.choicesOptions;
+					var defaultChoice = vals.choicesDefault;
+					choices = choices.split('%,%');
+
+					output += '<select>';
+						$.each(choices, function( index, value ) {
+							if(value == defaultChoice){
+								output += '<option value="'+value+'" selected>'+value+'</option>';
+							} else {
+								output += '<option value="'+value+'">'+value+'</option>';
+							}
+						});
+					output += '</select>';
+				} else {
+					output += '<select></select>';
+				}
 				break;
 
 			case 'Number':
@@ -8699,7 +8749,23 @@ function newFieldPreview(id,type) {
 
 			case 'Multi-Select':
 			case 'multiselect':
-				output += '<select multiple></select><br><select class="selectPreview"></select>';
+				if(vals.choicesType == 'manual'){
+					var choices = vals.choicesOptions;
+					var defaultChoice = vals.choicesDefault;
+					choices = choices.split('%,%');
+
+					output += '<select multiple></select><br><select class="selectPreview">';
+						$.each(choices, function( index, value ) {
+							if(value == defaultChoice){
+								output += '<option value="'+value+'" selected>'+value+'</option>';
+							} else {
+								output += '<option value="'+value+'">'+value+'</option>';
+							}
+						});
+					output += '</select>';
+				} else {
+					output += '<select multiple></select><br><select class="selectPreview"></select>';
+				}
 				break;
 
 			case 'WYSIWYG':
@@ -8797,6 +8863,7 @@ function newFieldValues(id,type,vals) {
 	}
 	return output;
 }
+
 
 function determineValidation(type){
     switch (type) {
@@ -8990,9 +9057,9 @@ function addMetadataStandard(val){
 
 function enableChoiceFunctionality(){
 	//bind choices
-	$('.choicesItem').find($('input[type=text], select')).bind('change keyup', modifyChoiceBinding);
-	$('.extensionItem').find($('input[type=text], select')).bind('change keyup', extensionBinding);
-	$('.metadata-item').find($('input[type=text], select')).bind('change keyup', metadataBinding);
+	$('.choicesItem').find($('input[type=text], select')).bind('change keyup', modifyChoiceBinding).change();
+	$('.extensionItem').find($('input[type=text], select')).bind('change keyup', extensionBinding).change();
+	$('.metadata-item').find($('input[type=text], select')).bind('change keyup', metadataBinding).change();
 
 	$('#fieldSettings_choices_null').change(function(){
 		$('.input-append').find('input[type=text]').change();
@@ -9022,7 +9089,6 @@ function enableChoiceFunctionality(){
 			$('.input-append').find($('input[type=text]')).change();
 		}
 		else if(state == "default"){
-			console.log('default state clicked');
 			// get value
 			var value = $(this).next().val();
 			var id = globalFieldID;
@@ -9035,7 +9101,6 @@ function enableChoiceFunctionality(){
 				$(this).addClass('selected');
 			}
 		}
-
 	});
 
 	$("#fieldSettings_choices_formSelect").change(function(){
@@ -9224,6 +9289,10 @@ function removeHtml(string){
                  .replace(/"/g, '&quot;')
                  .replace(/'/g, '&apos;')
                  .replace(/\//g, '');
+}
+
+function isEmpty(str) {
+    return (!str || 0 === str.length);
 }
 
 // Document Ready
