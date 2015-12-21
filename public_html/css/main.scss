@@ -755,8 +755,10 @@ input{
   }
 }
 
- input:disabled, .disabled {
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36zwjjgzhhYWGMYAEYB8RmROaABADeOQ8CXl/xfgAAAABJRU5ErkJggg==) repeat;
+ input:disabled, .disabled, select:disabled, select.disabled,.form-control[disabled], select[disabled], fieldset[disabled] .form-control, fieldset[disabled] select{
+    background-color: #eee;
+    color:#555;
+    opacity: .8;
     cursor: not-allowed;
   }
 
@@ -983,6 +985,14 @@ li.alert-error {
   padding:20px;
   box-shadow: rgba(0,0,0,0.3) 0px 1px 16px -1px;
   text-align:center;
+
+  @include breakpoint(tablet){
+    padding-bottom: 90px;
+  }
+
+  @include breakpoint(laptop){
+    padding-bottom:70px;
+  }
 
   h2 {
     display:block;
