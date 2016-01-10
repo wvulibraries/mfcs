@@ -24,11 +24,23 @@ try {
 	}
 
 	// we only return 1000? objects at a time. Calling application tells us where to start 
-	$objects = array_slice($objects, $engine->cleanGet['MYSQL']['start'], $slice);
-	
-	$objects = array_map("process_objects", $objects);
+	$objects       = array_slice($objects, $engine->cleanGet['MYSQL']['start'], $slice);
+	$objects       = array_map("process_objects", $objects);
+	$objects       = array_filter($objects);
+	$objects_count = count($objects);
 
-	$json = json_encode(array_filter($objects));
+	if ($objects_count > count($objects)) {
+
+		$temp = array();
+		foreach ($objects as $object) {
+			array_push($temp, $object);
+		}
+
+		$objects = $temp;
+
+	}
+
+	$json = json_encode($objects);
 	print (isset($engine->cleanGet['HTML']['prettyPrint']))?json_format($json):$json;
 
 	exit;
