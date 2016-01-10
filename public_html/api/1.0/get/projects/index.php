@@ -16,7 +16,8 @@ try {
 		$json[] = array("ID" => $project['ID'], "title" => $project['projectName'], "shortTitle" => $project['projectID']);
 	}
 
-	print json_encode($json);
+	$json = json_encode($objects);
+	print (isset($engine->cleanGet['HTML']['prettyPrint']))?json_format($json):$json;
 
 	exit;
 }

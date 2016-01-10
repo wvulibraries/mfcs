@@ -21,7 +21,8 @@ try {
 		throw new Exception("error getting forms.");
 	}
 
-	print json_encode(array_filter($form));
+	$json = json_encode(array_filter($objects));
+	print (isset($engine->cleanGet['HTML']['prettyPrint']))?json_format($json):$json;
 
 	exit;
 }

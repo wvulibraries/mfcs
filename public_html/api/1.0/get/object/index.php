@@ -15,7 +15,8 @@ try {
 		throw new Exception("error getting object.");
 	}
 
-	print json_encode(process_objects($object));
+	$json = json_encode(process_objects($object));
+	print (isset($engine->cleanGet['HTML']['prettyPrint']))?json_format($json):$json;
 
 	exit;
 }

@@ -28,7 +28,8 @@ try {
 	
 	$objects = array_map("process_objects", $objects);
 
-	print json_encode(array_filter($objects));
+	$json = json_encode(array_filter($objects));
+	print (isset($engine->cleanGet['HTML']['prettyPrint']))?json_format($json):$json;
 
 	exit;
 }
