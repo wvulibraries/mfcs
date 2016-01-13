@@ -1,5 +1,5 @@
 <?php
-include("../../../../header.php");
+include("../../../../../header.php");
 
 ini_set('memory_limit',-1);
 set_time_limit(0);
@@ -21,7 +21,9 @@ try {
 		throw new Exception("error getting forms.");
 	}
 
-	$json = json_encode(array_filter($objects));
+	$form = forms::associate_fields($form);
+
+	$json = json_encode($form);
 	print (isset($engine->cleanGet['HTML']['prettyPrint']))?json_format($json):$json;
 
 	exit;
