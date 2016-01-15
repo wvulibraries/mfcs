@@ -8633,6 +8633,21 @@ function addNewField(item) {
 function newFieldPreview(id,type, vals) {
 	var output = "";
 
+	// sets default values for new fields if they are currently undefined
+	if (vals === undefined) {
+		vals = {};
+		vals.validation    = determineValidation(type);
+		vals.name          = 'Untitled'+'_'+id;
+		vals.label         = 'Untitiled';
+		vals.help          = 'none | ';
+		vals.choicesType   = 'manual';
+		vals.choicesForm   = 'null';
+		vals.choicesOptions = 'First Choice%,%Second Choice';
+		vals.publicRelease = true;
+		vals.managedBy     = 'system';
+		vals.idnoFormat    = 'st_###';
+	}
+
 	if(type !== 'idno'){
 		output += '<i class="icon-remove"></i>';
 	}
