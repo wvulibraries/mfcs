@@ -1,128 +1,9 @@
 @import 'normal';
 @import 'bootstrap3/bootstrap';
 @import 'select2';
-
-// MIXINS
-// ===========================================================================================
-
-@mixin breakpoint($break) {
-  @if $break == tablet {
-        @media (min-width: 48em) { @content; }
-    }
-    @if $break == laptop {
-        @media (min-width: 60em) { @content; }
-    }
-    @if $break == desktop {
-        @media (min-width: 80em) { @content; }
-    }
-    @if $break == print {
-         @media print { @content; }
-    }
-    @else {
-      @media (min-width: $break) { @content; }
-    }
-}
-
-.row {
-  padding:0 15px;
-}
-
-// GRID
-// ===========================================================================================
-section {
-  clear: both;
-  padding: 0px;
-  margin: 0px;
-}
-
-[class*="span"] {
-  margin: 1% 0 1% 0%;
-  width: 100%;
-  display: block;
-  float:left;
-
-  &:first-child { margin-left: 0; }
-  &:before,
-  &:after { content:""; display:table; }
-  &:after { clear:both;}
-  &{ zoom:1;}
-
-  @include breakpoint(tablet){
-    margin: 1% 0 1% 2%;
-  }
-}
-
-@include breakpoint(tablet){
-  .span12 {
-    width: 100%;
-  }
-
-  .span11{
-      width: 91.5%;
-  }
-  .span10 {
-      width: 83%;
-  }
-
-  .span9 {
-      width: 74.5%;
-  }
-
-  .span8 {
-      width: 66%;
-  }
-
-  .span7 {
-      width: 57.5%;
-  }
-
-  .span6 {
-      width: 49%;
-  }
-
-  .span5 {
-      width: 40.5%;
-  }
-
-  .span4{
-      width: 32%;
-  }
-
-  .span3 {
-      width: 23.5%;
-  }
-
-  .span2 {
-      width: 15%;
-  }
-
-  .span1 {
-      width: 6.5%;
-  }
-}
-
-// COLORS
-// ===========================================================================================
-$blue : #005EB8;
-$darkblue : #002855;
-$gold : #EAAA00;
-$gold-darken : darken($gold,10%);
-$lightgrey : #eee;
-$light-blue : #9BD3DD;
-$darkgrey : #ccc;
-
-
-// UI URI Images
-// ===========================================================================================
-$draggableDotsGray : url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOC4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHZpZXdCb3g9IjAgMCAxMCAzLjciIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDEwIDMuNyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8cmVjdCB4PSIwLjUiIHk9IjAuNSIgb3BhY2l0eT0iMC45IiBmaWxsPSIjQ0NDQ0NDIiB3aWR0aD0iMi43IiBoZWlnaHQ9IjIuNyIvPg0KPHJlY3QgeD0iNi45IiB5PSIwLjUiIG9wYWNpdHk9IjAuMiIgZmlsbD0iI0NDQ0NDQyIgd2lkdGg9IjIuNyIgaGVpZ2h0PSIyLjciLz4NCjxyZWN0IHg9IjMuNyIgeT0iMC41IiBvcGFjaXR5PSIwLjUiIGZpbGw9IiNDQ0NDQ0MiIHdpZHRoPSIyLjciIGhlaWdodD0iMi43Ii8+DQo8L3N2Zz4NCg==);
-
-
-$draggableDotsBlue : url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOC4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHZpZXdCb3g9IjAgMCAxMCAzLjciIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDEwIDMuNyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8cmVjdCB4PSIwLjUiIHk9IjAuNSIgb3BhY2l0eT0iMC45IiBmaWxsPSIjMjMzRjk1IiB3aWR0aD0iMi43IiBoZWlnaHQ9IjIuNyIvPg0KPHJlY3QgeD0iNi45IiB5PSIwLjUiIG9wYWNpdHk9IjAuMyIgZmlsbD0iIzIzM0Y5NSIgd2lkdGg9IjIuNyIgaGVpZ2h0PSIyLjciLz4NCjxyZWN0IHg9IjMuNyIgeT0iMC41IiBvcGFjaXR5PSIwLjciIGZpbGw9IiMyMzNGOTUiIHdpZHRoPSIyLjciIGhlaWdodD0iMi43Ii8+DQo8L3N2Zz4NCg==);
-
-$draggLines : url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAIAAACQKrqGAAAAUElEQVQokY3OwQ3AIAwEwYWWrv8O7JrMJxIJAeN7j07bzAwAJJGuF52796IDWkRU3Ay4OkkZfbvsdXFH+nd7unUbenIrTdyH5m7Sq3toxQED5XwsfPsskr0AAAAASUVORK5CYII=);
-
-$draggLinesBlue : url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAIAAACQKrqGAAAAU0lEQVQokY3OwQ2AIBBE0b80RxdaG11odevFBIVl2Dm/TL5xXADgrSJXks7OuyQdYO6ecT1g67xVRb9OvQ5uSWcX09AFdOVGKtyPatfp1r0044AHfiQrLgcpgkQAAAAASUVORK5CYII=);
-
+@import 'mixins';
+@import 'grid';
+@import 'dataURI';
 
 // MAIN STYINGS
 // ===========================================================================================
@@ -146,6 +27,7 @@ body { min-width:420px; }
 
 html, body {
   height: 100%;
+  background:#eee;
 }
 
 h1 { font-size:180%; }
@@ -179,7 +61,7 @@ section {
   padding-bottom:60px;
 
   @include breakpoint(tablet){
-   margin-top:60px;
+   margin-top:55px;
   }
 }
 
@@ -1116,7 +998,6 @@ a.list-group-item {
 }
 
 
-
 // Form Creator
 // =============================================================================
 #rightPanel{
@@ -1138,8 +1019,11 @@ a.list-group-item {
   list-style:none;
   padding:0;
   margin:0;
+  float:left;
+  width:100%;
+  position:relative;
 
-  li a {
+  li {
     float:left;
     position:relative;
     width:48%;
