@@ -939,6 +939,7 @@ li.alert-error {
   letter-spacing:1px;
   display:none;
   overflow-y:auto;
+  right:0;
 
   a:visited { color:$light-blue; text-decoration:underline !important;}
   a:hover,a:active { color:$gold; }
