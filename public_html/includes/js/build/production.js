@@ -7601,7 +7601,7 @@ $(function(){
 	});
 
 	// Deleted The field
-	formPreview.on("click", ".fieldPreview i.icon-remove", function() {
+	$('.fieldPreview i.icon-remove').click(function() {
 		if (confirm("Are you sure you want to remove this field?")) {
 			var thisLI = $(this).parent().parent();
 
@@ -7609,7 +7609,13 @@ $(function(){
 				thisLI.after($(this).next().find("li"));
 			}
 
-			thisLI.remove();
+			var activeNavTab = $('.addFieldNav').parent();
+
+			if(!activeNavTab.hasClass('active')){
+				$('.addFieldNav').click().tab('show');
+			}
+
+			thisLI.removeClass('well activeField').remove();
 
 			if ($("#formSettings_formMetadata").not(":checked")) {
 				if ($(":input[name^=type_][value=idno]",formPreview).length == 0) {
