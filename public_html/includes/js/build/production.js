@@ -7611,11 +7611,12 @@ $(function(){
 
 			var activeNavTab = $('.addFieldNav').parent();
 
+			thisLI.removeClass('well activeField').remove();
+
 			if(!activeNavTab.hasClass('active')){
 				$('.addFieldNav').click().tab('show');
+			 	$('#formPreview li:first-child').trigger('click');
 			}
-
-			thisLI.removeClass('well activeField').remove();
 
 			if ($("#formSettings_formMetadata").not(":checked")) {
 				if ($(":input[name^=type_][value=idno]",formPreview).length == 0) {
