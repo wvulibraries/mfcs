@@ -17,6 +17,14 @@ $(function(){
            removeFormAlert();
         }
     });
+
+    $(document).keyup(function(e) {
+        if (e.keyCode == 27) { // escape key maps to keycode `27`
+            if($('.projectToggle').hasClass('active')){
+                projects.closeModal();
+            }
+        }
+    });
 });
 
 // Fake JS Class
@@ -31,6 +39,7 @@ CurrentProjects = {
         CurrentProjects.resetCheckBoxes(JSON.parse(userCurrentProjects));
         $('.bgCloak').hide();
         $('html,body').removeClass('modalBlockScroll');
+        $('.projectToggle').removeClass('active');
     },
 
     displayNoProjects:function(){
@@ -70,6 +79,7 @@ CurrentProjects = {
             selectedProjectsModal.removeClass('hide').fadeIn(600);
             $('.bgCloak').show();
             $('html,body').addClass('modalBlockScroll');
+            $('.projectToggle').toggleClass('active')
         }
         else {
             CurrentProjects.closeModal();
