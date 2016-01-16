@@ -33,7 +33,13 @@ $(function(){
 
     // Navigation Toggles
     $('.toggleNav, .main-nav .close').click(function() {
-        $('.main-nav').toggle('slide');
+        $('.main-nav').toggle('slide', {direction:'right'});
+    });
+
+    $(document).keyup(function(e) {
+         if (e.keyCode == 27) { // escape key maps to keycode `27`
+           $('.main-nav').hide('slide', {direction:'right'});
+        }
     });
 
     // add event listeners
