@@ -622,7 +622,7 @@ class forms {
 
 			// build the actual input box
 
-			$output .= '<div class="">';
+			$output .= '<div class="formCreator dataEntry">';
 
 
 			// Handle disabled on insert form
@@ -959,18 +959,17 @@ class forms {
 			if(isset($field['help']) && $field['help']){
 
 				list($helpType,$helpValue) = explode('|', $field['help'], 2);
-
 				$helpType = trim($helpType);
 
 				switch($helpType){
 					case 'text':
-						$output .= sprintf(' <a href="javascript:;" rel="popover" data-placement="right" data-content="%s"> <i class="fa fa-question-circle"></i> </a>', $helpValue);
+						$output .= sprintf(' <a class="creatorFormHelp" href="javascript:;" rel="popover" data-placement="right" data-content="%s"> <i class="fa fa-question-circle"></i> </a>', $helpValue);
 						break;
 					case 'html':
-						$output .= sprintf(' <a href="javascript:;" rel="popover" data-html="true" data-placement="right" data-trigger="hover" data-content="%s"><i class="fa fa-question-circle"></i></a>', $helpValue);
+						$output .= sprintf(' <a class="creatorFormHelp" href="javascript:;" rel="popover" data-html="true" data-placement="right" data-trigger="hover" data-content="%s"><i class="fa fa-question-circle"></i></a>', $helpValue);
 						break;
 					case 'web':
-						$output .= sprintf(' <a href="%s" target="_blank" style="target-new: tab;"> <i class="fa fa-question-circle"></i> </a>', $helpValue);
+						$output .= sprintf(' <a class="creatorFormHelp" href="%s" target="_blank" style="target-new: tab;"> <i class="fa fa-question-circle"></i> </a>', $helpValue);
 						// $output .= sprintf(' <a href="javascript:;" title="Click for help" class="icon-question-sign" onclick="$(\'#helpModal_%s\').modal(\'show\');"></a>', $field['id']);
 						// $output .= sprintf('<div id="helpModal_%s" rel="modal" class="modal hide fade" data-show="false">', $field['id']);
 						// $output .= '	<div class="modal-header">';
