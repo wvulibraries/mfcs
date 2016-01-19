@@ -573,7 +573,7 @@ label { display:block; }
 }
 
 input{
-  width:100% !important;
+  width:100%;
   padding:6px;
   outline:0;
   margin-bottom:20px;
@@ -604,7 +604,7 @@ input{
   }
 
   &[type=radio]{
-    width: 30px !important;
+    width: 30px;
   }
 
   &[type=text],&[type=file]  {
@@ -650,7 +650,7 @@ input.has-error, select.has-error{
 }
 
 textarea {
-  width:100% !important;
+  width:100%;
   padding:10px;
   outline:0;
   margin-bottom:20px;
