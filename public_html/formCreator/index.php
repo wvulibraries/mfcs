@@ -811,7 +811,7 @@ $engine->eTemplate("include","header");
 				<?php if (!forms::isMetadataForm($formID)) { ?>
 				<li><a href="#projects" data-toggle="tab">Assigned Projects</a></li>
 				<?php } ?>
-				<li><a href="#navigation" data-toggle="tab">Navigation Creator</a></li>
+				<li><a href="#navigation" class="navigationCreator" data-toggle="tab">Navigation Creator</a></li>
 				<li><a href="#permissions" data-toggle="tab">Form Permissions</a></li>
 				<li><a href="#deleteForm" data-toggle="tab" style="color: red;">Delete Form</a></li>
 				<?php } ?>

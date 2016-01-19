@@ -7712,6 +7712,11 @@ $(function(){
 		$('.unassignedForms').show();
 	}
 
+	// Navigation Tab Clicked
+	$('.navigationCreator').click(function(){
+		$('#groupingTab li:first-child').find('a').click().tab('show');
+	});
+
 	// Enable the submit button and hide thenoJavaScriptWarning
 	$(':submit').removeAttr('disabled');
 });
@@ -8661,7 +8666,9 @@ function newFieldPreview(id,type, vals) {
 		vals.idnoFormat    = 'st_###';
 	}
 
-	if(type !== 'idno'){
+	if(type == 'idno' || type == 'ID Number'){
+		// do not add delete
+	} else {
 		output += '<i class="icon-remove"></i>';
 	}
 
