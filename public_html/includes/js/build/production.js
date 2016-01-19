@@ -7755,14 +7755,15 @@ function applyFormPreview(){
 		var choices        = settings.find($('input[name^="choicesOptions"]')).val();
 		var choicesType    = settings.find($('input[name^="choicesType"]')).val();
 
-
 		controls.attr({
-			'placeholder' : placeholder,
-			'name'        : name,
-			'style'       : style,
-			'id'		  : id,
-			'class'		  : someClass
+			'placeholder' : (placeholder == '' ? '' : placeholder),
+			'name'        : (name == '' ? '' : name),
+			//'style'       : style,
+			'id'		  : (id == '' ? '' : id),
+			'class'		  : (someClass == '' ? '' : someClass)
 		});
+
+		controls.val(value);
 
 		if(disabled === "true" || readonly === "true"){
 			controls.prop('readonly', true).addClass('disabled');
