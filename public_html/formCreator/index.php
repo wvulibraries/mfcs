@@ -142,7 +142,8 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			$engine->openDB->escape($form['formProduction']),     // production=
 			$engine->openDB->escape($form['formMetadata']),       // metadata=
 			$countSql,                                            // count=
-			$engine->openDB->escape($form['objectDisplayTitle']), // displayTitle=
+			(is_empty($engine->openDB->escape($form['objectDisplayTitle'])) ? $engine->openDB->escape($form['formTitle']) : $engine->openDB->escape($form['objectDisplayTitle'])),
+			// displayTitle
 			$engine->openDB->escape($form['objectTitleField']),   // objectTitleField=
 			!is_empty($form['linkTitle']) ? "'".$engine->openDB->escape($form['linkTitle'])."'" : "NULL", // linkTitle=
 			$engine->openDB->escape($formID)                      // ID=
@@ -167,7 +168,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			$engine->openDB->escape($form['formProduction']),
 			$engine->openDB->escape($form['formMetadata']),
 			$engine->openDB->escape($count),
-			$engine->openDB->escape($form['objectDisplayTitle']),
+			(is_empty($engine->openDB->escape($form['objectDisplayTitle'])) ? $engine->openDB->escape($form['formTitle']) : $engine->openDB->escape($form['objectDisplayTitle'])),
 			$engine->openDB->escape($form['objectTitleField']),
 			!is_empty($form['linkTitle']) ? "'".$engine->openDB->escape($form['linkTitle'])."'" : "NULL" // linkTitle=
 			);
