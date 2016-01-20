@@ -684,6 +684,14 @@ textarea {
 }
 
 
+.requiredField{
+  position:relative;
+  width:100%;
+  color:#FF0000;
+}
+
+.formLabel { color:#333;}
+
 .qq-upload-drop-area, .qq-upload-extra-drop-area {
     position: absolute;
     top: 0;
