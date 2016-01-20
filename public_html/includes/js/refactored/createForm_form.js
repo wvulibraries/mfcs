@@ -28,6 +28,24 @@ $(function(){
 		showFieldSettings(); // blank the Field Settings pane
 	});
 
+
+
+	// Form Builder Extended Functionality
+	$('html, body').click( function(){
+		if($('formPreview').length){
+			$('#formPreview li').removeClass('activeField');
+			$('.addFieldNav').click().tab('show');
+		}
+	});
+
+	$(document).keyup(function(e) {
+         if (e.keyCode == 27) { // escape key maps to keycode `27`
+          	$('#formPreview li').removeClass('activeField');
+			$('.addFieldNav').click().tab('show');
+        }
+    });
+
+
 	// Click and Draggable form fields.
 	$(".draggable li", fieldAdd)
 		.draggable({
