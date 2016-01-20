@@ -7657,6 +7657,12 @@ $(function(){
 
 	// Form submit handler
 	$("form[name=submitForm]").submit(function(e) {
+
+		// Make sure has a display title
+		if($('#formSettings_objectDisplayTitle').val().length === 0){
+			$('#formSettings_objectDisplayTitle').val($('#formSettings_formTitle').val()).change();
+		}
+
 		// Undo Bindings
 		$("#formPreview").find('[data-bind]').unbind('change', setOriginalValues);
 		$('#fieldSettings_form').find("[data-bindmodel]").unbind('change keyup', bindToHiddenForm);
@@ -7759,11 +7765,10 @@ function applyFormPreview(){
 		var choicesType    = settings.find($('input[name^="choicesType"]')).val();
 
 		controls.attr({
-			'placeholder' : (placeholder == '' ? '' : placeholder),
-			'name'        : (name == '' ? '' : name),
-			//'style'       : style,
-			'id'		  : (id == '' ? '' : id),
-			'class'		  : (someClass == '' ? '' : someClass)
+			'placeholder' : placeholder,
+			'name'        : name,
+			'id'		  : id,
+			'class'		  : someClass
 		});
 
 		controls.val(value);
@@ -8411,9 +8416,11 @@ function formSettingsBindings() {
 		$("#fieldTab a[href='#formSettings']").click();
 		$("#formSettings_formTitle").focus();
 	});
+
 	$("#formSettings_formTitle").keyup(function() {
 		$("#formTitle").html($(this).val());
-		if($(this).val() !== ''){
+
+		if($(this).val().length !== 0){
 			$('#submitForm input[type="submit"]').prop('disabled', false).removeClass('disabled');
 		} else {
 			$('#submitForm input[type="submit"]').prop('disabled', true).addClass('disabled');
@@ -8538,6 +8545,9 @@ function modalBindings() {
 
 			// Hide modal
 			$("#formTypeSelector").modal("hide");
+
+			// trigger keyup for title change
+			$("#formSettings_formTitle").keyup();
 		});
 }
 
@@ -9095,7 +9105,7 @@ function enableChoiceFunctionality(){
 				var obj = JSON.parse(data);
 
 				$.each(obj, function(I, field) {
-					options += "<option value> Select A Field</option>";
+					options = "<option value> Select A Field</option>";
 					$.each(field, function(i, f) {
 						options += '<option value="'+f.name+'">'+f.label+'</option>';
 					});
