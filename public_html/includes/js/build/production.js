@@ -7600,7 +7600,7 @@ $(function(){
 
 	// Form Builder Extended Functionality
 	$('html, body').click( function(){
-		if($('formPreview').length){
+		if($('#formPreview').length){
 			$('#formPreview li').removeClass('activeField');
 			$('.addFieldNav').click().tab('show');
 		}
