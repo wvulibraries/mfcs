@@ -702,13 +702,16 @@ function bindToHiddenForm(){
 			}
 		}
 
-		if(inputObj == 'idnoFormat' || inputObj == 'startIncrement'){
+		if(inputObj == 'idnoFormat' || inputObj == 'startIncrement' || inputObj == 'idnoConfirm'){
 			$('#fieldSettings_container_idno_confirm').removeClass('hidden').show();
 
 			var idnoConfirm = $('#fieldSettings_idno_confirm').is(':checked');
 			if( idnoConfirm === false && idnoValues.idnoFormat){
-				$('#fieldSettings_idno_format').val(idnoValues.idnoFormat);
-				$('#fieldSettings_idno_startIncrement').val(idnoValues.startIncrement);
+				// $('#fieldSettings_idno_format').val(idnoValues.idnoFormat);
+				// $('#fieldSettings_idno_startIncrement').val(idnoValues.startIncrement);
+				$('#submitForm input[type="submit"]').prop('disabled', true).addClass('disabled');
+			} else {
+				$('#submitForm input[type="submit"]').prop('disabled', false).removeClass('disabled');
 			}
 		}
 
