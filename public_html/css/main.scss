@@ -532,7 +532,7 @@ iframe { width:100%; height:auto;}
   position:fixed;
   bottom:20px;
   z-index:999999;
-  width:90%;
+  width:100%;
   right:5%;
 }
 
@@ -573,7 +573,7 @@ label { display:block; }
 }
 
 input{
-  width:90%;
+  width:100%;
   padding:6px;
   outline:0;
   margin-bottom:20px;
@@ -839,7 +839,7 @@ li.alert-error {
 // Form Stuff
 // =============================================================================
 .form-control, .select2-container, .select2-container .select2-choice, .select2-container-multi .select2-choices {
-  width:90%;
+  width:100%;
 }
 
 .helpPreview {
@@ -1177,7 +1177,7 @@ a.list-group-item {
     float:left;
     position:relative;
     width:100%;
-    padding:10px 10px 10px;
+    padding:10px 25px 10px;
     padding-left:50px;
     border:1px solid #ccc;
     margin-bottom:10px;
