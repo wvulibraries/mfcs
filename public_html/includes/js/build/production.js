@@ -8208,6 +8208,11 @@ function setOriginalValues(){
 		$('input[value="'+value+'"]').prev().addClass('active');
 	}
 
+	if(bindObj == 'choicesField'){
+		$('#fieldSettings_choices_formSelect').change();
+		$('#fieldSettings_choices_fieldSelect').val(value).change();
+	}
+
 }
 
 function bindToHiddenForm(){
@@ -9085,7 +9090,7 @@ function enableChoiceFunctionality(){
 				var obj = JSON.parse(data);
 
 				$.each(obj, function(I, field) {
-					var options;
+					options += "<option value> Select A Field</option>";
 					$.each(field, function(i, f) {
 						options += '<option value="'+f.name+'">'+f.label+'</option>';
 					});
