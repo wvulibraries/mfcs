@@ -69,6 +69,9 @@ $(function(){
     if($('.nav-tabs').length){
         $(".nav-tabs a:first").tab("show");
     }
+
+    // add required to fields
+    $('.requiredField').append("<span> * </span>");
 });
 
 function resizeElms(elms){
