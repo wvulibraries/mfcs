@@ -8413,6 +8413,11 @@ function formSettingsBindings() {
 	});
 	$("#formSettings_formTitle").keyup(function() {
 		$("#formTitle").html($(this).val());
+		if($(this).val() !== ''){
+			$('#submitForm input[type="submit"]').prop('disabled', false).removeClass('disabled');
+		} else {
+			$('#submitForm input[type="submit"]').prop('disabled', true).addClass('disabled');
+		}
 	}).keyup();
 
 	$("#formDescription").on("click", function() {
