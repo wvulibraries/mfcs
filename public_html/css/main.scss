@@ -683,14 +683,22 @@ textarea {
     color: #333;
 }
 
-
-.requiredField{
+.formLabel {
+  color:#333;
+  font-weight:600;
   position:relative;
-  width:100%;
-  color:#FF0000;
+
+  &.requiredField span {
+    letter-spacing:2px;
+    font-size:24px;
+    color:#ff0000;
+    position:absolute;
+    top:-5px;
+    padding:10px;
+  }
 }
 
-.formLabel { color:#333;}
+
 
 .qq-upload-drop-area, .qq-upload-extra-drop-area {
     position: absolute;
