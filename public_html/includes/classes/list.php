@@ -72,10 +72,12 @@ class listGenerator {
 				</button>
 				<ul class="dropdown-menu" style="width: 450px;">
 				<li><a href="list.php?listType=formShelfList&amp;formID=%s" style="width: 400px; text-align: right;">Shelf List</a></li>
+				<li><a href="list.php?listType=formThumbnailView&amp;formID=%s" style="width: 400px; text-align: right;">Thumbnail View</a></li>
 				</ul>
 				</div>',
 				$form['ID'],
 				forms::title($form['ID']),
+				$form['ID'],
 				$form['ID']
 				);
 		}
@@ -85,7 +87,7 @@ class listGenerator {
 
 	}
 
-	public static function createFormObjectList($formID) {
+	public static function createFormObjectList($formID, $thumbnail=FALSE) {
 
 		$engine        = mfcs::$engine;
 		$objects       = objects::getAllObjectsForForm($formID,"idno");
@@ -103,6 +105,10 @@ class listGenerator {
 			}
 		}
 
+		if ($thumbnail) {
+			array_unshift($headers, "Thumbnail");
+		}
+
 		$data = array();
 		foreach ($objects as $object) {
 
@@ -116,6 +122,10 @@ class listGenerator {
 				if (str2bool($field['displayTable'])) {
 					$tmp[] = $object['data'][$field['name']];
 				}
+			}
+
+			if ($thumbnail) {
+				array_unshift($tmp, sprintf('<img src="%s" />',files::buildThumbnailURL($object['ID'])));
 			}
 
 			$data[] = $tmp;
