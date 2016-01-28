@@ -132,7 +132,9 @@ class objects {
 		return($children);
 	}
 
-	public static function getAllObjectsForForm($formID,$sortField=NULL,$metadata=TRUE) {
+	// $range is an array. $range[0] is the start, $range[1], is the length. 
+	// Applies LIMIT $start,$length to SQL query
+	public static function getAllObjectsForForm($formID,$sortField=NULL,$metadata=TRUE,$range=NULL) {
 		$engine = EngineAPI::singleton();
 
 		if (!isnull($sortField)) {
@@ -147,9 +149,27 @@ class objects {
 			$sortField = " ORDER BY `objects`.`ID`";
 		} 
  
-		$sql       = sprintf("SELECT * FROM `objects` WHERE `formID`='%s'%s",
+ 		// If a range is provided, and the range is an array, and the first 2 indexes are valid integers
+ 		// and start is >= 0, and length is greater than 0
+		if (!isnull($range)              && 
+			is_array($range)             && 
+			validate::integer($range[0]) && 
+			validate::integer($range[1]) &&
+			$range[0] >= 0               &&
+			$range[1] > 0
+			) {
+
+			$range_clause = sprintf(" LIMIT %s,%s",$range[0],$range[1]);
+
+		}
+		else {
+			$range_clause = "";
+		}
+
+		$sql       = sprintf("SELECT * FROM `objects` WHERE `formID`='%s'%s%s",
 			$engine->openDB->escape($formID),
-			$sortField
+			$sortField,
+			$range_clause
 			);
 
 		$sqlResult = $engine->openDB->query($sql);
