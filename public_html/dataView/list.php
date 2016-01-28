@@ -67,7 +67,7 @@ ini_set('memory_limit','-1');
 			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=project&projectID=%s">%s</a>', $siteRoot, $project['ID'], $project['projectName']);
 			break;
 		case 'all':
-			$list = listGenerator::createAllObjectList();
+			$list = listGenerator::createAllObjectList_new();
 			localvars::add('subTitle',' - All Objects');
 			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=all">All Objects</a>', $siteRoot);
 			break;
