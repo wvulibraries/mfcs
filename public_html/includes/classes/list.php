@@ -35,6 +35,64 @@ class listGenerator {
 
 	}
 
+	//@TODO this needs to completely replace the above function, after search is overhauled
+	public static function createAllObjectList_new() {
+
+		$engine = mfcs::$engine;
+		
+		//@TODO this should go into the objects class
+		$sql       = sprintf("SELECT COUNT(*) FROM `objects` WHERE `metadata`='0'");
+		$sqlResult = $engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+		$object_count = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+		//end TODO
+
+		$data_size                = $object_count["COUNT(*)"];
+
+		$userPaginationCount      = users::user('pagination',25); // how many items to display in the table
+		$pagination               = new pagination($data_size);
+		$pagination->itemsPerPage = $userPaginationCount;
+		$pagination->currentPage  = isset($engine->cleanGet['MYSQL'][ $pagination->urlVar ])
+									? $engine->cleanGet['MYSQL'][ $pagination->urlVar ]
+									: 1;
+		$startPos                 = $userPaginationCount*($pagination->currentPage-1);
+		$objects                  = objects::getObjects($startPos,$userPaginationCount,FALSE);
+
+
+		$excludeFields = array("idno","file");
+
+		$headers = array("Thumbnail","View","Edit","Creation Date","Modified Date","System IDNO","Form IDNO"); //"Revisions",
+
+		$data = array();
+		foreach ($objects as $object) {
+
+			// Is this needed? Redundant?
+			// $form = forms::get($object['formID']);
+
+			$tmp = array(
+				sprintf('<img src="%s" />',files::buildThumbnailURL($object['ID'])),
+				self::genLinkURLs("view",$object['ID']),
+				self::genLinkURLs("edit",$object['ID']),
+				date("Y-m-d h:ia",$object['createTime']),
+				date("Y-m-d h:ia",$object['modifiedTime']),
+				$object['ID'],
+				$object['idno']
+				); 
+
+
+			$data[] = $tmp;
+
+		}
+
+		return self::createTable_new($data,$headers,$data_size,$pagination);
+
+	}
+
 	public static function createProjectSelectList() {
 		$engine   = EngineAPI::singleton();
 		$projects = projects::getProjects();
