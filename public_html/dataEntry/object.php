@@ -242,10 +242,9 @@ $engine->eTemplate("include","header");
 			}
 			if (!isnull($engine->cleanGet['MYSQL']['objectID']) and $revisions->hasRevisions($engine->cleanGet['MYSQL']['objectID'])) { ?>
 				<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions/index.php?objectID={local var="objectID"}">Revisions</a></li>
-
-			<li class="pull-right noDivider"><a href="{phpself query="true"}&unlock=cancel">Cancel Edit &amp; Unlock object</a></li>
-			<li class="pull-right noDivider"><a href="/data/object/history/?objectID={local var="objectID"}">History</a></li>
-	<?php } ?>
+		<?php } ?>
+		<li class="pull-right noDivider"><a href="{phpself query="true"}&unlock=cancel">Cancel Edit &amp; Unlock object</a></li>
+		<li class="pull-right noDivider"><a href="/data/object/history/?objectID={local var="objectID"}">History</a></li>
 	</ul>
 
 	<div class="container-fluid">
