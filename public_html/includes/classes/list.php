@@ -109,6 +109,18 @@ class listGenerator {
 			array_unshift($headers, "Thumbnail");
 		}
 
+		# We need to slice the array here to speed things up
+		$data_size                = sizeof($objects);
+		$userPaginationCount      = users::user('pagination',25);
+		$pagination               = new pagination(sizeof($objects));
+		$pagination->itemsPerPage = $userPaginationCount;
+		$pagination->currentPage  = isset($engine->cleanGet['MYSQL'][ $pagination->urlVar ])
+									? $engine->cleanGet['MYSQL'][ $pagination->urlVar ]
+									: 1;
+		$startPos                 = $userPaginationCount*($pagination->currentPage-1);
+		$objects                  = array_slice($objects, $startPos, $userPaginationCount);
+
+
 		$data = array();
 		foreach ($objects as $object) {
 
@@ -132,8 +144,52 @@ class listGenerator {
 
 		}
 
-		return self::createTable($data,$headers,TRUE,$formID);
+		return self::createTable_new($data,$headers,$data_size,$pagination,$formID);
 
+#		return self::createTable($data,$headers,TRUE,$formID);
+
+	}
+
+	private static function createTable_new($data,$headers = NULL,$array_size=TRUE,$pagination,$formID=NULL) {
+		$table = new tableObject("array");
+
+		$table->summary  = "Object Listing";
+		$table->sortable = FALSE;
+		$table->class    = "table table-striped table-bordered";
+		$table->id       = "objectListingTable";
+		$table->layout   = TRUE;
+
+		if (isnull($headers)) {
+			$headers = array();
+			$headers[] = "System IDNO";
+			$headers[] = "Form IDNO";
+			$headers[] = "Title";
+			$headers[] = "View";
+			$headers[] = "Edit";
+			// $headers[] = "Revisions";
+		}
+
+		$table->headers($headers);
+
+		$userPaginationCount = users::user('pagination',25);
+		if($array_size > $userPaginationCount){
+			
+			$tableHTML  = $table->display($data);
+			$tableHTML .= $pagination->nav_bar();
+			$tableHTML .= sprintf('<p><span class="paginationJumpLabel">Jump to Page:</span> %s</p>',
+				$pagination->dropdown()
+				);
+			$tableHTML .= sprintf('<p><span class="paginationJumpLabel">Records per page:</span> %s</p>',
+				$pagination->recordsPerPageDropdown()
+				);
+			$tableHTML .= sprintf('<p><form id="jumpToIDNOForm"><span class="paginationJumpLabel">Jump to IDNO:</span> <input type="text" name="jumpToIDNO" id="jumpToIDNO" data-formid="%s" value="" /></form></p>', 
+				(isnull($formID))?"":htmlSanitize($formID)
+				);
+
+			return $tableHTML;
+		}else{
+			return $table->display($data);
+		}
 	}
 
 	public static function createFormShelfList($formID) {
