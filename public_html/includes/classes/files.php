@@ -451,6 +451,53 @@ class files {
 		return $output;
 	}
 
+	public static function buildThumbnailURL($objectID) {
+
+		if (objects::validID(TRUE,$objectID) === FALSE) {
+			return FALSE;
+		}
+
+		if (($object = objects::get($objectID,TRUE)) === FALSE) {
+			return FALSE;
+		}
+
+		$output = "";
+
+		$fields = forms::getFields($object['formID']);
+
+		foreach ($fields as $field) {
+
+			if ($field['type'] != 'file') continue;
+
+			// If there's nothing uploaded for the field, no need to continue
+			if (empty($object['data'][ $field['name'] ])) continue;
+
+			$fileDataArray = $object['data'][$field['name']];
+
+			uasort($fileDataArray['files']['archive'],function($a,$b) { return strnatcasecmp($a['name'],$b['name']); });
+
+			foreach ($fileDataArray['files']['archive'] as $fileID => $file) {
+
+				$_filename = pathinfo($file['name']);
+				$filename  = $_filename['filename'];
+
+				$output = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
+						localvars::get('siteRoot'),
+						$objectID,
+						$field['name'],
+						$fileID,
+						'thumbs');
+
+				break;
+
+			}
+
+		}
+
+		return $output;
+
+	}
+
 	/**
 	 * Returns the base path to be used when uploading files
 	 *

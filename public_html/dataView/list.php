@@ -52,6 +52,13 @@ ini_set('memory_limit','-1');
 			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=selectForm">Select Form</a>', $siteRoot);
 			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=form&formID=%s">%s</a>', $siteRoot, $form['ID'], $form['title']);
 			break;
+		case 'formThumbnailView':
+		    $list = listGenerator::createFormObjectList($engine->cleanGet['MYSQL']['formID'],TRUE);
+		    $form = forms::get($engine->cleanGet['MYSQL']['formID']);
+		    localvars::add('subTitle',' - '.$form['title']);
+		    $breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=selectForm">Select Form</a>', $siteRoot);
+			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=form&formID=%s">%s</a>', $siteRoot, $form['ID'], $form['title']);
+		    break;
 		case 'project':
 			$list    = listGenerator::createProjectObjectList($engine->cleanGet['MYSQL']['projectID']);
 			$project = projects::get($engine->cleanGet['MYSQL']['projectID']);
