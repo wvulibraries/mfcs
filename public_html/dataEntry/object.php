@@ -244,7 +244,7 @@ $engine->eTemplate("include","header");
 				<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions/index.php?objectID={local var="objectID"}">Revisions</a></li>
 
 			<li class="pull-right noDivider"><a href="{phpself query="true"}&unlock=cancel">Cancel Edit &amp; Unlock object</a></li>
-			<li class="pull-right noDivider"><a href="/data/object/history/">History</a></li>
+			<li class="pull-right noDivider"><a href="/data/object/history/?objectID={local var="objectID"}">History</a></li>
 	<?php } ?>
 	</ul>
 
