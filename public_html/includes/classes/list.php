@@ -89,11 +89,23 @@ class listGenerator {
 
 	public static function createFormObjectList($formID, $thumbnail=FALSE) {
 
-		$engine        = mfcs::$engine;
-		$objects       = objects::getAllObjectsForForm($formID,"idno");
+		$engine = mfcs::$engine;
+		
 		if (($form     = forms::get($formID)) === FALSE) {
 			return FALSE;
 		}
+
+		$data_size                = forms::countInForm($formID);
+		$userPaginationCount      = users::user('pagination',25); // how many items to display in the table
+		$pagination               = new pagination($data_size);
+		$pagination->itemsPerPage = $userPaginationCount;
+		$pagination->currentPage  = isset($engine->cleanGet['MYSQL'][ $pagination->urlVar ])
+									? $engine->cleanGet['MYSQL'][ $pagination->urlVar ]
+									: 1;
+		$startPos                 = $userPaginationCount*($pagination->currentPage-1);
+		$objects                  = objects::getAllObjectsForForm($formID,"idno",TRUE,array($startPos,$userPaginationCount));
+
+
 		$excludeFields = array("idno","file");
 
 		$headers = array("View","Edit","Creation Date","Modified Date","System IDNO","Form IDNO"); //"Revisions",
@@ -108,18 +120,6 @@ class listGenerator {
 		if ($thumbnail) {
 			array_unshift($headers, "Thumbnail");
 		}
-
-		# We need to slice the array here to speed things up
-		$data_size                = sizeof($objects);
-		$userPaginationCount      = users::user('pagination',25);
-		$pagination               = new pagination(sizeof($objects));
-		$pagination->itemsPerPage = $userPaginationCount;
-		$pagination->currentPage  = isset($engine->cleanGet['MYSQL'][ $pagination->urlVar ])
-									? $engine->cleanGet['MYSQL'][ $pagination->urlVar ]
-									: 1;
-		$startPos                 = $userPaginationCount*($pagination->currentPage-1);
-		$objects                  = array_slice($objects, $startPos, $userPaginationCount);
-
 
 		$data = array();
 		foreach ($objects as $object) {
