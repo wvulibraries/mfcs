@@ -577,10 +577,10 @@ function setOriginalValues(){
 
     // Object Specific Value Change
 	if( bindObj == 'help'){
-		var helpType = value.split(" | ")[0];
-		var help     = value.split(" | ")[1];
+		var helpType = value.split("|")[0];
+		var help     = value.split("|")[1];
 		var value    = (help == 'undefined' ? "" : help);
-		$(this).val(helpType + " | " + help);
+		$(this).val(helpType + "|" + help);
 
 		$("#fieldSettings_help_textarea").val(value).hide();
 		$("#fieldSettings_help_url").hide().val(value);
@@ -782,10 +782,11 @@ function formatHelpForHiddenField(hiddenForm){
 
 	if(type == 'text' || type == 'html'){
 		value = sanitizeInput($('#fieldSettings_help_textarea').val());
+		console.log(value);
 	}
 	else {
 		value = $('#fieldSettings_help_url').val();
-
+		cosnole.log(value);
 		if(validateURL(value)){
 			$('#fieldSettings_help_url').removeClass('has-error');
 		} else {
@@ -793,7 +794,7 @@ function formatHelpForHiddenField(hiddenForm){
 		}
 	}
 
-	var newValues = type + " | " + value;
+	var newValues = type + "|" + value;
 
 	$('#fieldSettings_help_text').val(newValues);
 	hiddenForm.find("[data-bind='help']").val(newValues);
@@ -801,7 +802,7 @@ function formatHelpForHiddenField(hiddenForm){
 	$('.helpPreview').popover('destroy');
  	$('.helpPreview').hide();
 
-	if(type == 'html' || type == 'text'){
+	if(type === 'html' || type === 'text'){
 		$('#formPreview_'+id).find('.helpPreview').show();
 		$('.helpPreview').popover({
 			'title'   : 'Help',
@@ -809,7 +810,7 @@ function formatHelpForHiddenField(hiddenForm){
 			'trigger' : 'click',
 			'html' : true
 		});
-	} else if(type == 'web'){
+	} else if(type === 'web'){
 		$('#formPreview_'+id).find('.helpPreview').show();
 		$('.helpPreview').popover({
 			'title'   : 'Help Url',
@@ -818,7 +819,7 @@ function formatHelpForHiddenField(hiddenForm){
 			'html' : true
 		});
 	} else {
-		$('.helpPreview').hide();
+		//$('.helpPreview').hide();
 	}
 
 }
@@ -1038,7 +1039,7 @@ function addNewField(item) {
 }
 
 var numIDNOs = 0; // global only associated with this function keeps track of total
-function newFieldPreview(id,type, vals) {
+function newFieldPreview(id,type,vals) {
 	var output = "";
 	// sets default values for new fields if they are currently undefined
 	if (vals === undefined) {
@@ -1046,7 +1047,7 @@ function newFieldPreview(id,type, vals) {
 		vals.validation    = determineValidation(type);
 		vals.name          = 'Untitled'+'_'+id;
 		vals.label         = 'Untitiled';
-		vals.help          = 'none | ';
+		vals.help          = 'none|';
 		vals.choicesType   = 'manual';
 		vals.choicesForm   = 'null';
 		vals.choicesOptions = 'First Choice%,%Second Choice';
@@ -1060,6 +1061,8 @@ function newFieldPreview(id,type, vals) {
 	} else {
 		output += '<i class="icon-remove"></i>';
 	}
+
+	output += '<span class="fa fa-question-circle helpPreview"></span>';
 
 	if (type == 'Field Set' || type == 'fieldset') {
 		output += '<fieldset><legend></legend><ul class="unstyled sortable"></ul></fieldset>';
@@ -1206,7 +1209,6 @@ function newFieldPreview(id,type, vals) {
 			default:
 				break;
 		}
-		output += ' <span class="fa fa-question-circle helpPreview"></span>';
 		output += '</div></div>';
 	}
 	return output;
@@ -1221,7 +1223,7 @@ function newFieldValues(id,type,vals) {
 		vals.validation    = determineValidation(type);
 		vals.name          = 'Untitled'+'_'+id;
 		vals.label         = 'Untitiled';
-		vals.help          = 'none | ';
+		vals.help          = 'none|';
 		vals.choicesType   = 'manual';
 		vals.choicesForm   = 'null';
 		vals.publicRelease = true;
@@ -1281,6 +1283,7 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="thumbnailHeight_'+id+'"   name="thumbnailHeight_'+id+'"       data-bind="thumbnailHeight"      value="'+((vals.thumbnailHeight !== undefined)?vals.thumbnailHeight:'150')+'">';
 			output += '<input type="hidden" id="thumbnailWidth_'+id+'"    name="thumbnailWidth_'+id+'"        data-bind="thumbnailWidth"       value="'+((vals.thumbnailWidth !== undefined)?vals.thumbnailWidth:'150')+'">';
 			output += '<input type="hidden" id="thumbnailFormat_'+id+'"   name="thumbnailFormat_'+id+'"       data-bind="thumbnailFormat"      value="'+((vals.thumbnailFormat !== undefined)?vals.thumbnailFormat:'JPG')+'">';
+			output += '<input type="hidden" id="help_'+id+'"   name="help_'+id+'"       data-bind="help"      value="'+((vals.help !== undefined)?vals.help:'none|')+'">';
 			break;
 
 		default:
@@ -1680,31 +1683,38 @@ function validateURL(value) {
     return urlregex.test(value);
 }
 
-function sanitizeInput(value){
-	var regex = /<(script|embed|object|frameset|frame|iframe|meta|link|style).*?>.*? <\/(script|embed|object|frameset|frame|iframe|meta|link|style).*?>/gmi;
-	return value.replace(regex, "");
-}
+// Prototypical Helper Functions
+// ====================================================================
+String.prototype.sanitizeInput = function(){
+    var regex = /<\/?(script|embed|object|frameset|frame|iframe|meta|link|style).*?>/gmi;
+  return this.replace(regex, "");
+};
 
-function checkForSpaces(string) {
-  return /\s/g.test(string);
-}
+String.prototype.escapeHtml = function(){
+    var string = this.replace(/&/g, '&amp;')
+    .replace(/>/g, '&gt;')
+    .replace(/</g, '&lt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;')
+    .replace(/\//g, '&#x2F;');
 
-function escapeHtml(string) {
-	return string.replace(/&/g, '&amp;')
-                 .replace(/>/g, '&gt;')
-                 .replace(/</g, '&lt;')
-                 .replace(/"/g, '&quot;')
-                 .replace(/'/g, '&apos;')
-                 .replace(/\//g, '&#x2F;');
-}
+   return string;
+};
 
-function unEscapeHtml(string) {
-	return string.replace(/&amp;/g, '&')
+String.prototype.unEscapeHtml = function(){
+   var string  = this.replace(/&amp;/g, '&')
                  .replace(/&gt;/g, '>')
                  .replace(/&lt;/g, '<')
                  .replace(/&quot;/g, '"')
                  .replace(/&#39;/g, "'")
                  .replace(/&#x2F;/g, '/');
+    return string;
+};
+
+// Prototypical Helper Functions
+// ====================================================================
+function checkForSpaces(string) {
+  return /\s/g.test(string);
 }
 
 function removeHtml(string){
