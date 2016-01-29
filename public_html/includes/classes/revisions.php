@@ -73,10 +73,14 @@ class revisions {
 		return $output;
 	}
 
+	// object = array | integer
 	// $type = created | modified
 	public static function history_build($objectID,$type) {
 
-		if (($object = objects::get($objectID)) === FALSE) {
+		if (is_array($objectID)) {
+			$object = $objectID;
+		}
+		else if (($object = objects::get($objectID)) === FALSE) {
 			return FALSE;
 		}
 
