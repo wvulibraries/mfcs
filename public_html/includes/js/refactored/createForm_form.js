@@ -28,16 +28,6 @@ $(function(){
 		showFieldSettings(); // blank the Field Settings pane
 	});
 
-
-
-	// Form Builder Extended Functionality
-	$('html, body').click( function(){
-		if($('#formPreview').length){
-			$('#formPreview li').removeClass('activeField');
-			$('.addFieldNav').click().tab('show');
-		}
-	});
-
 	$(document).keyup(function(e) {
          if (e.keyCode == 27) { // escape key maps to keycode `27`
           	$('#formPreview li').removeClass('activeField');
@@ -59,40 +49,6 @@ $(function(){
 			sortableForm();
 	});
 
-	// Deleted The field
-	$('.fieldPreview i.icon-remove').click(function() {
-		if (confirm("Are you sure you want to remove this field?")) {
-			var thisLI = $(this).parent().parent();
-
-			if ($(this).parent().next().children(":input[name^=type_]").val() == 'fieldset') {
-				thisLI.after($(this).next().find("li"));
-			}
-
-			var activeNavTab = $('.addFieldNav').parent();
-
-			thisLI.removeClass('well activeField').remove();
-
-			if(!activeNavTab.hasClass('active')){
-				$('.addFieldNav').click().tab('show');
-			 	$('#formPreview li:first-child').trigger('click');
-			}
-
-			if ($("#formSettings_formMetadata").not(":checked")) {
-				if ($(":input[name^=type_][value=idno]",formPreview).length == 0) {
-					$("#formSettings_formProduction").prop({
-						checked:  false,
-						disabled: true,
-						title:    "This form needs an ID Number field.",
-					});
-				}
-				else {
-					$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
-				}
-			}
-		}
-	});
-
-
 	// Re-order nesting on load
 	// This loops through <li> and finds all the fieldsets, then loops through matching all <li> that have
 	// the same fieldset name and moves them inside it
@@ -108,7 +64,7 @@ $(function(){
 	// Form submit handler
 	$("form[name=submitForm]").submit(function(e) {
 
-		// Make sure has a display title
+		// // Make sure has a display title
 		if($('#formSettings_objectDisplayTitle').val().length === 0){
 			$('#formSettings_objectDisplayTitle').val($('#formSettings_formTitle').val()).change();
 		}
@@ -179,6 +135,40 @@ $(function(){
 	// Enable the submit button and hide thenoJavaScriptWarning
 	$(':submit').removeAttr('disabled');
 });
+
+// Remove Item Function
+// ===================================================================
+function removeFormPreviewItem(icon){
+	if (confirm("Are you sure you want to remove this field?")) {
+		var thisLI = icon.parent().parent();
+
+		if (icon.parent().next().children(":input[name^=type_]").val() == 'fieldset') {
+			thisLI.after(icon.next().find("li"));
+		}
+
+		var activeNavTab = $('.addFieldNav').parent();
+
+		thisLI.removeClass('well activeField').remove();
+
+		if(!activeNavTab.hasClass('active')){
+			$('.addFieldNav').click().tab('show');
+		 	$('#formPreview li:first-child').trigger('click');
+		}
+
+		if ($("#formSettings_formMetadata").not(":checked")) {
+			if ($(":input[name^=type_][value=idno]",formPreview).length === 0) {
+				$("#formSettings_formProduction").prop({
+					checked:  false,
+					disabled: true,
+					title:    "This form needs an ID Number field.",
+				});
+			}
+			else {
+				$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
+			}
+		}
+	}
+}
 
 
 // Helper Functions
@@ -529,18 +519,23 @@ function fieldSettingsBindings(){
 	// Select a field to change settings
 	formPreview.on("click", "li", function(event) {
 		event.stopPropagation();
-		var id = $(this).data('id');
-		globalFieldID = id;
+		if($(event.target).is('.icon-remove')){
+			console.log($(this));
+			removeFormPreviewItem($(event.target));
+		} else {
+			var id = $(this).data('id');
+			globalFieldID = id;
 
-		formPreview.find('[data-bind]').bind('change', setOriginalValues);
+			formPreview.find('[data-bind]').bind('change', setOriginalValues);
 
-		if(!$(this).hasClass('activeField')){
-			formPreview.find('.activeField').removeClass('activeField');
-			$(this).addClass('activeField');
-			$("#fieldTab a[href='#fieldSettings']").tab("show");
-			showFieldSettings(id);
-			setInitialBind();
-			applyFormPreview();
+			if(!$(this).hasClass('activeField')){
+				formPreview.find('.activeField').removeClass('activeField');
+				$(this).addClass('activeField');
+				$("#fieldTab a[href='#fieldSettings']").tab("show");
+				showFieldSettings(id);
+				setInitialBind();
+				applyFormPreview();
+			}
 		}
 	});
 }  // end function
@@ -997,7 +992,7 @@ function modalBindings() {
 			$("#formTypeSelector").modal("hide");
 
 			// trigger keyup for title change
-			$("#formSettings_formTitle").keyup();
+			$("#formSettings_formTitle");
 		});
 }
 
@@ -1042,9 +1037,9 @@ function addNewField(item) {
 	}
 }
 
+var numIDNOs = 0; // global only associated with this function keeps track of total
 function newFieldPreview(id,type, vals) {
 	var output = "";
-
 	// sets default values for new fields if they are currently undefined
 	if (vals === undefined) {
 		vals = {};
@@ -1060,8 +1055,8 @@ function newFieldPreview(id,type, vals) {
 		vals.idnoFormat    = 'st_###';
 	}
 
-	if(type == 'idno' || type == 'ID Number'){
-		// do not add delete
+	if((type == 'idno' || type == 'ID Number') && numIDNOs === 0){
+
 	} else {
 		output += '<i class="icon-remove"></i>';
 	}
@@ -1078,6 +1073,7 @@ function newFieldPreview(id,type, vals) {
 			case 'Single Line Text':
 			case 'text':
 				output += '<input type="text">';
+				numIDNOs++;
 				break;
 
 			case 'Paragraph Text':
