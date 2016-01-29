@@ -138,7 +138,12 @@ class forms {
 			return FALSE;
 		}
 
-		return htmlSanitize(!empty($form['displayTitle']) ? $form['displayTitle'] : (!empty($form['title']) ? $form['title'] : '[No form title]'));
+		$form_title = (is_empty($form['title']))?'[No form title]':$form['title'];
+		if (!is_empty($form['displayTitle'])) {
+			$form_title = $form['displayTitle'];
+		}
+
+		return htmlSanitize($form_title);
 
 	}
 
