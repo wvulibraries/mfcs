@@ -1064,7 +1064,7 @@ class forms {
 						);
 
 				foreach ($form['fields'] as $field) {
-					$temp[] = sprintf('<input type="%s" style="%s" name="%s_%s" value="%s" />',
+					$temp[] = sprintf('<input type="%s" style="%s" name="%s_%s" value="%s" readonly />',
 						$field['type'],
 						$field['style'],
 						$field['name'],
