@@ -58,6 +58,52 @@ class revisions {
 
 		return $output;
 	}
+
+	// $type = created | modified
+	public static function history_build($objectID,$type) {
+
+		if (($object = objects::get($objectID)) === FALSE) {
+			return FALSE;
+		}
+
+		$type_by = (strtolower($type) == "created")?"createdBy"  : "modifiedBy";
+		$type_on = (strtolower($type) == "created")?"createTime" : "modifiedTime";
+
+		if (!is_empty($object[$type_by])) {
+			$user = users::get($object[$type_by]);
+			$user = $user['username'];
+		}
+		else {
+			$user = "Unavailable";
+		}
+
+		$date = date('D, d M Y H:i',$object[$type_on]);
+
+		return array($user,$date);
+
+	}
+
+	public static function history_created($objectID) {
+
+		$created = self::history_build($objectID,"created");
+
+		localvars::add("createdOnDate",     $created[1]);
+		localvars::add("createdByUsername", $created[0]);
+
+		return $created;
+
+	}
+
+	public static function history_last_modified($objectID) {
+
+		$modified = self::history_build($objectID,"modified");
+
+		localvars::add("modifiedOnDate",     $modified[1]);
+		localvars::add("modifiedByUsername", $modified[0]);
+
+		return $modified;
+
+	}
 }
 
 ?>
