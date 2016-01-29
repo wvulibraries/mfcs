@@ -122,6 +122,23 @@ class revisions {
 		return $modified;
 
 	}
+
+	public static function history_revision_history($objectID) {
+
+		$history = array();
+
+		$revisions = revisions::create();
+		foreach($revisions->getSecondaryIDs($objectID, 'ASC') as $secondaryID){
+			
+			$revision                 = $revisions->getMetadataForID($revisions->getRevisionID($objectID,$secondaryID));
+			$revision['modifiedTime'] = $secondaryID;
+
+			$history[] = self::history_build($revision,"modified");
+		}
+
+		return $history;
+
+	} 
 }
 
 ?>
