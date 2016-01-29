@@ -959,6 +959,16 @@ class forms {
 			(isnull($objectID))?htmlSanitize($form["submitButton"]):htmlSanitize($form["updateButton"]),
 			$objectID ? "updateForm" : "submitForm"
 		);
+
+		// Display a delete link on updates to metadate forms
+		if (!isnull($objectID) && self::isMetadataForm($formID)) {
+			$output .= sprintf('<a href="%sdata/metadata/edit/delete/?objectID=%s&formID=%s">Delete</a>',
+				localvars::get('siteRoot'),
+				$objectID,
+				$formID
+				);
+		}
+
 		if(isset($formHasFiles) and $formHasFiles){
 			$output .= '<div class="alert alert-block" id="objectSubmitProcessing"><strong>Processing Files</strong><br>Please Wait...</div>';
 		}
@@ -1020,8 +1030,17 @@ class forms {
 
 		if (count($objects) > 0) {
 
+			// @todo -- we are modifying this so that we can scale. Large forms 
+			// are timing out because browsers are having difficulty submitting
+			// 15,000 input fields. 
+			// 
+			// We are penalizing smaller forms to make larger forms work. it would
+			// be nice to allow smaller forms to be able to use the edit table.
+
 			$headers = array();
-			$headers[] = "Delete";
+			// $headers[] = "Delete";
+			$headers[] = "Edit";
+
 			foreach ($form['fields'] as $field) {
 				$headers[] = $field['label'];
 			}
@@ -1035,9 +1054,14 @@ class forms {
 			for($I=0;$I<count($objects);$I++) {
 
 				$temp   = array();
-				$temp[] = sprintf('<input type="checkbox" name="delete[]" value="%s"',
-					$objects[$I]['ID']
-				);
+				// $temp[] = sprintf('<input type="checkbox" name="delete[]" value="%s"',
+				// 	$objects[$I]['ID']
+				// );
+
+				$temp[] = sprintf('<a href="%sdata/metadata/edit/?objectID=%s" target="_window">Edit</a>',
+						localvars::get('siteRoot'),
+						$objects[$I]['ID']
+						);
 
 				foreach ($form['fields'] as $field) {
 					$temp[] = sprintf('<input type="%s" style="%s" name="%s_%s" value="%s" />',
@@ -1089,7 +1113,7 @@ class forms {
 
 			$output .= $table->display($tableRows);
 
-			$output .= '<input type="submit" name="updateEdit" value="Update" class="btn" />';
+			// $output .= '<input type="submit" name="updateEdit" value="Update" class="btn" />';
 			$output .= "</form>";
 
 			// Add in pagination bar
@@ -1344,7 +1368,8 @@ class forms {
 		}
 
 		// Check the Lock, if this is an update
-		if ($newObject === FALSE) {
+		// we don't lock metadata updates.
+		if ($newObject === FALSE && !self::isMetadataForm($formID)) {
 
 			if (!locks::check_for_update($objectID,"object")) {
 				return FALSE;
