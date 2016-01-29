@@ -30,6 +30,18 @@ try {
 	log::insert("Data View: Object History",$engine->cleanGet['MYSQL']['objectID'],$engine->cleanGet['MYSQL']['formID']);
 
 	// $revision_history
+	revisions::history_created($engine->cleanGet['MYSQL']['objectID']);
+	revisions::history_last_modified($engine->cleanGet['MYSQL']['objectID']);
+
+	$history = revisions::history_revision_history($engine->cleanGet['MYSQL']['objectID']);
+	
+
+	$revision_history = "<ul>";
+	foreach ($history as $edit) {
+		$revision_history .= sprintf("<li><p>Username: %s</p><p>Date: %s</p></li>", $edit[0], $edit[1]);
+	}
+	$revision_history .= "</ul>";
+	localvars::add("revision_history",$revision_history);
 
 }
 catch(Exception $e) {
@@ -65,6 +77,17 @@ $engine->eTemplate("include","header");
 
 	<div>
 
+		<h2>Current Information</h2>
+
+		<p>Created by:  {local var="createdByUsername"}  on {local var="createdOnDate"}</p>
+
+		<p>Last Modified by: {local var="modifiedByUsername"} on {local var="modifiedOnDate"}</p>
+
+	</div>
+
+	<div id="history_revision_history">
+		<h2>Revision History</h2>
+		{local var="revision_history"}
 	</div>
 </section>
 
