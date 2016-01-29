@@ -913,6 +913,64 @@ class objects {
 
 	}
 
+	public static function delete($objectID,$formID) {
+
+		if (forms::isMetadataForm($formID) === FALSE) {
+			errorHandle::errorMsg("Object ID must be a Metadata Object.");
+			return FALSE;
+		}
+
+		if (!self::checkObjectInForm($formID,$objectID)) {
+			throw new Exception("Object not from this form");
+		}
+
+		// begin transactions
+		if (mfcs::$engine->openDB->transBegin("objects") !== TRUE) {
+			errorHandle::errorMsg("Database transactions could not begin.");
+			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		// delete the dupe matching stuff
+		$sql       = sprintf("DELETE FROM `dupeMatching` WHERE `objectID`='%s'",
+			$objectID
+			);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			mfcs::$engine->openDB->transRollback();
+			mfcs::$engine->openDB->transEnd();
+
+			errorHandle::errorMsg("Error deleting objects.");
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		// delete the actual item
+		$sql       = sprintf("DELETE FROM `objects` WHERE ID='%s' AND `metadata`='1' AND `formID`='%s' LIMIT 1",
+			mfcs::$engine->openDB->escape($objectID),
+			mfcs::$engine->openDB->escape($formID)
+			);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			mfcs::$engine->openDB->transRollback();
+			mfcs::$engine->openDB->transEnd();
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			errorHandle::errorMsg("Error deleting object from database.");
+			return FALSE;
+		}
+
+		// end transactions
+		mfcs::$engine->openDB->transCommit();
+		mfcs::$engine->openDB->transEnd();
+
+		errorHandle::successMsg("Item successfully Deleted.");
+		
+		return TRUE;
+
+	}
+
 }
 
 ?>
