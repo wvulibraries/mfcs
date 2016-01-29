@@ -846,8 +846,14 @@ li.alert-error {
     display:none;
     cursor: pointer;
     position: absolute;
-    left: -80px;
-    top: -10px;
+    left: -5%;
+    top: 10px;
+}
+
+.popover.right>.arrow {
+    top: 50%;
+    right: 0;
+    width: 0px !important;
 }
 
 .popover { min-width: 280px;
