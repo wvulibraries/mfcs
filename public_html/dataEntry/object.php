@@ -75,7 +75,7 @@ try {
 	localvars::add("formName",$form['title']);
 	localvars::add("formID",$form['ID']);
 
-	log::insert("Data Entry: Object: View Page",0,$form['ID']);
+	log::insert("Data Entry: Object: View Page",$engine->cleanGet['MYSQL']['objectID'],$form['ID']);
 
 	// handle submission
 	if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
