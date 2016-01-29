@@ -252,7 +252,7 @@ $engine->eTemplate("include","header");
 						<li><a data-toggle="tab" href="#files" id="filesTab">Files</a></li>
 						<li><a data-toggle="tab" href="#project">Project</a></li>
 						<?php if(forms::isContainer($engine->cleanGet['MYSQL']['formID'])) { ?>
-							<li><a data-toggle="tab" href="#children">Children</a></li>
+							<!-- <li><a data-toggle="tab" href="#children">Children</a></li> -->
 						<?php } ?>
 					<?php } ?>
 				</ul>
@@ -286,7 +286,7 @@ $engine->eTemplate("include","header");
 							</form>
 						</div>
 						<?php if(forms::isContainer($engine->cleanGet['MYSQL']['formID'])) { ?>
-							<div class="tab-pane" id="children">
+							<!-- <div class="tab-pane" id="children">
 
 								<div class="accordion" id="accordion2">
 									<div class="accordion-group">
@@ -303,15 +303,15 @@ $engine->eTemplate("include","header");
 											</div>
 										</div>
 									</div>
-								</div>
+								</div> -->
 
-								<section>
+								<!-- <section>
 									<header>
 										<h1>Children</h1>
 									</header>
 
 									{local var="childrenList"}
-								</section>
+								</section> -->
 							</div>
 						<?php } ?>
 					<?php } ?>
