@@ -1638,3 +1638,49 @@ footer{
     }
   }
 }
+
+// Revisions
+// ===============================================
+
+#objectComparator {
+  float: left;
+  width: 100%;
+  background: #eee;
+  padding: 20px;
+}
+
+.revisionSection{
+  width:49%;
+  padding:20px;
+  float:left;
+  margin-right:2%;
+  &:last-of-type{
+    margin-right:0;
+  }
+  .revisionTool {
+    select {width:100%; float:left; height:36px;}
+  }
+
+  .revisionHeader{
+    height:100px;
+  }
+
+  .objectField{
+    border:1px solid #ccc;
+    margin-bottom:20px;
+  }
+
+
+  .fieldName, .fieldValue{
+    padding:10px;
+    background:#ccc;
+  }
+
+  .fieldName {
+    font-weight:bold;
+  }
+
+  .fieldValue {
+    background:#fff;
+  }
+}

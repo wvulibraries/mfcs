@@ -27,17 +27,17 @@ try{
 
 		log::insert("Data Entry: Revision: Revert",$objectID);
 
-		// @TODO this should use revert2Revision() method instead of this ... 
+		// @TODO this should use revert2Revision() method instead of this ...
 
 		$revisionID = $revisions->getRevisionID($engine->cleanGet['MYSQL']['objectID'], $engine->cleanPost['MYSQL']['revisionID']);
-	
+
 		if (($revision = $revisions->getMetadataForID($revisionID)) === FALSE) {
 			throw new Exception('Could not load revision.');
-		} 
+		}
 
 		if (objects::update($engine->cleanGet['MYSQL']['objectID'],$revision['formID'],(decodeFields($revision['data'])),$revision['metadata'],$revision['parentID']) !== FALSE) {
 			// Reload the object - To refresh the data
-			$object = objects::get($objectID,TRUE); 
+			$object = objects::get($objectID,TRUE);
 		}
 		else {
 			throw new Exception('Could not update object with revision.');
@@ -63,8 +63,8 @@ try{
 	// Build the select list
 	$selectARevision = "";
 	foreach($revisions->getSecondaryIDs($engine->cleanGet['MYSQL']['objectID'], 'DESC') as $revisionID){
-		$selectARevision .= sprintf('<option value="%s">%s</option>', 
-			$revisionID, 
+		$selectARevision .= sprintf('<option value="%s">%s</option>',
+			$revisionID,
 			date('D, M d, Y - h:i a', $revisionID)
 			);
 	}
@@ -87,55 +87,55 @@ localVars::add("results",displayMessages());
 
 $engine->eTemplate("include","header");
 ?>
+<section>
+	<form id="revisionForm" action="" method="post">
+		{engine name="csrf"}
+		<input type="hidden" name="revisionID" id="revisionID" value="">
+	</form>
 
-<form id="revisionForm" action="" method="post">
-	{engine name="csrf"}
-	<input type="hidden" name="revisionID" id="revisionID" value="">
-</form>
 
+	<header class="page-header">
+		<h1>{local var="formName"}</h1>
+	</header>
 
-<header class="page-header">
-	<h1>{local var="formName"}</h1>
-</header>
-
-<nav id="breadcrumbs">
-	<ul class="breadcrumb">
+	<ul class="breadcrumbs">
 		<li><a href="{local var="siteRoot"}">Home</a></li>
 		<li><a href="{local var="siteRoot"}/dataEntry/selectForm.php">Select a Form</a></li>
 		<li><a href="{local var="siteRoot"}dataEntry/object.php?objectID={local var="objectID"}">Object Edit Page</a></li>
 	</ul>
-</nav>
 
-
-<div id="left">
-	{local var="leftnav"}
-</div>
-
-<div class="row-fluid" id="results">
-	{local var="results"}
-</div>
-
-<div id="objectComparator">
-	<section class="revisionSection" id="current">
-	<header>Current Version:</header>
-	{local var="currentVersion"}
-	</section>
-	<section class="revisionSection" id="revisions">
-		<header>
-			Past Version:
-			<div>
-				<select id="revisionSelector">
-					<option>Select a revision</option>
-					{local var="selectARevision"}
-				</select>
-				<input id="revertBtn" type="button" value="Revert">
+	<div id="objectComparator">
+		<div class="revisionSection" id="current">
+			<div class="revisionHeader">
+				<h2>Current Version:</h2>
 			</div>
-		</header>
-		<div id="revisionViewer"></div>
-	</section>
-</div>
+			<div id="#grabVersion" class="revisionBody">
+				{local var="currentVersion"}
+			</div>
+		</div>
+		<div class="revisionSection" id="revisions">
+			<div class="revisionHeader">
+				<h2> Past Version:</h2>
+				<div class="revisionTool">
+					<select id="revisionSelector">
+						<option>Select a revision</option>
+						{local var="selectARevision"}
+					</select>
+				</div>
+			</div>
+			<div class="revisionBody">
+				<div id="revisionViewer"></div>
+			</div>
 
-<script src="{local var="siteRoot"}includes/js/revisions.js" type="text/javascript" id="revisionsScript" data-objectid="{local var="objectID"}"></script>
+			<div class="revert">
+				<h2> Revert to this Revision? </h2>
+				<input id="revertBtn" class="btn btn-primary" type="button" value="Revert">
+			</div>
+		</div>
+	</div>
+</section>
+
+<div id="revisionsScript" data-objectid="{local var="objectID"}"></div>
 
 <?php
 $engine->eTemplate("include","footer");
