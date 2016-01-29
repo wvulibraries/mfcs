@@ -43,6 +43,13 @@ try {
 	$revision_history .= "</ul>";
 	localvars::add("revision_history",$revision_history);
 
+	$view_history = "<ul>";
+	foreach (log::pull_actions(array("Data View: Object","Data Entry: Object: View Page"),$engine->cleanGet['MYSQL']['objectID']) as $view) {
+		$view_history .= sprintf("<li><p>Username: %s</p><p>Date: %s</p></li>", $view[0], $view[1]);
+	}
+	$view_history .= "</ul>";
+	localvars::add("view_history",$view_history);
+
 }
 catch(Exception $e) {
 	log::insert("Data View: Object History: Error",0,0,$e->getMessage());
@@ -75,7 +82,7 @@ $engine->eTemplate("include","header");
 		</ul>
 	</nav>
 
-	<div>
+	<div id="history_current">
 
 		<h2>Current Information</h2>
 
@@ -88,6 +95,11 @@ $engine->eTemplate("include","header");
 	<div id="history_revision_history">
 		<h2>Revision History</h2>
 		{local var="revision_history"}
+	</div>
+
+	<div id="history_views">
+		<h2>View History</h2>
+		{local var="view_history"}
 	</div>
 </section>
 
