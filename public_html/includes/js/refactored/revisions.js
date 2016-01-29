@@ -1,5 +1,5 @@
 
-var objectID = $('#revisionsScript').data("objectid");
+
 
 function scrollSync(iFrameObj){
 	$($(iFrameObj).contents()).scroll(function(){
@@ -19,10 +19,16 @@ function scrollSync(iFrameObj){
 }
 
 $(function(){
+	var objectID = $('#revisionsScript').data("objectid");
+
 	$('#revisionSelector').change(function(){
-		var url = '?objectID='+objectID+'&revisionID='+$(this).val();
-		$('#revisionViewer').load(url);
+		var url = '?objectID='+objectID+'&revisionID='+$(this).val()+'#grabVersion';
+		$('#revisionViewer').load(url, function(){
+		  console.log( "Load was performed." );
+		  console.log(url);
+		});
 	});
+
 	$('#revertBtn').click(function(){
 		if(confirm('Are you sure you want to revert back to this version?')){
 			$('#revisionID').val( $('#revisionSelector').val() );
