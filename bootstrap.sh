@@ -11,12 +11,14 @@ SERVERURL="/home/mfcs.lib.wvu.edu"
 DOCUMENTROOT="public_html"
 SQLFILES="/vagrant/SQLFiles/migrations/*.sql"
 
+#this should match extension_dir from phpinfo()
+PHPMODULES="/usr/lib64/php/modules/"
 
 yum -y install \
 	httpd httpd-devel httpd-manual httpd-tools \
 	mysql-connector-java mysql-connector-odbc mysql-devel mysql-lib mysql-server \
 	mod_auth_kerb mod_auth_mysql mod_authz_ldap mod_evasive mod_perl mod_security mod_ssl mod_wsgi \
-	php php-bcmath php-cli php-common php-gd php-ldap php-mbstring php-mcrypt php-mysql
+	php php-devel php-bcmath php-cli php-common php-gd php-ldap php-mbstring php-mcrypt php-mysql \
 	php-odbc php-pdo php-pear php-pear-Benchmark php-pecl-apc php-pecl-imagick php-pecl-memcache php-soap php-xml php-xmlrpc \
 	emacs emacs-common emacs-nox git \
 	http://www.webmin.com/download/rpm/webmin-current.rpm
@@ -131,6 +133,15 @@ ln -s /usr/local/bin/hocr2pdf /usr/bin/
 ## Video Dependencies
 yum -y install mplayer
 yum -y install ffmpeg-devel ffmpeg
+
+## ClamAV
+yum -y install clamav clamav-db clamav-devel
+# tar -zxf /vagrant/serverConfiguration/3rdParty/php-clamav_0.15.8.tar.gz --directory=/tmp
+# cd /tmp/php-clamav-0.15.8
+# phpize
+# ./configure --with-clamav
+# make
+# cp modules/clamav.so $PHPMODULES
 
 /sbin/service httpd restart
 
