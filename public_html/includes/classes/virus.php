@@ -42,6 +42,16 @@ class virus {
 
 	public static function clear_table() {
 
+		$sql       = sprintf("DELETE FROM `virusChecks` WHERE `state`='0'");
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+		return TRUE;
+
 	}
 
 	public static function scan_file() {
