@@ -6,11 +6,9 @@
 <link rel="stylesheet" type="text/css" href="{local var="siteRoot"}includes/select2-3.5.0/select2-bootstrap.css">
 <link rel="stylesheet" type="text/css" href="{local var="siteRoot"}css/main.css">
 
-<!-- <script type="text/javascript" src="{local var="siteRoot"}includes/js/mfcs.js"></script> -->
-
 <!-- Refactored Managable JS -->
-<script type="text/javascript" src="{local var="siteRoot"}includes/js/build/production.min.js"></script>
-<!--  <script type="text/javascript" src="{local var="siteRoot"}includes/js/build/production.js"></script> -->
+<script type="text/javascript" src="{local var="siteRoot"}includes/js/build/libs/libs.js"></script>
+<script type="text/javascript" src="{local var="siteRoot"}includes/js/build/common/main.js"></script>
 
 
 <?php
