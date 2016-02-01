@@ -41,6 +41,17 @@ section {
     padding:0 20px;
 }
 
+
+.sticky {
+  top:100px;
+  position:fixed;
+  width:39.5%;
+  overflow-y:auto;
+  overflow-x:hidden;
+  height:87%;
+  padding-bottom:20px;
+}
+
 .button {
   display: inline-block;
   font-weight: 600;
@@ -532,8 +543,9 @@ iframe { width:100%; height:auto;}
   position:fixed;
   bottom:20px;
   z-index:999999;
-  width:100%;
+  width:90%;
   right:5%;
+  left:5%;
 }
 
 .show { display:block; }
