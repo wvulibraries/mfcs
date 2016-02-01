@@ -41,15 +41,47 @@ section {
     padding:0 20px;
 }
 
+form[name="updateForm"]{
+  margin-top:20px;
+  margin-bottom:20px;
+}
+
+.span7 {
+  position:relative;
+  z-index:0;
+}
+
+.span5 {
+  position:relative;
+  height:100%;
+}
+
+#leftPanelFixed{
+  width:100%;
+}
 
 .sticky {
-  top:100px;
-  position:fixed;
-  width:39.5%;
-  overflow-y:auto;
-  overflow-x:hidden;
-  height:87%;
+  position:absolute;
+  width:100%;
   padding-bottom:20px;
+  overflow-y:auto;
+  height:100%;
+
+  #leftPanelFixed {
+    position:fixed;
+    overflow-x:visible;
+    z-index:999;
+    width:39.5%;
+    max-width:520px;
+    top:80px;
+    height:100%;
+
+    #widthContstrain {
+      overflow-y:auto;
+      height:90%;
+      padding:20px;
+    }
+  }
 }
 
 .button {
@@ -705,11 +737,15 @@ textarea {
     font-size:24px;
     color:#ff0000;
     position:absolute;
-    top:-5px;
+    top:-15px;
     padding:10px;
   }
 }
 
+
+.dataEntry {
+  label, input[type=text] { clear:both; float:left; width:100%;}
+}
 
 
 .qq-upload-drop-area, .qq-upload-extra-drop-area {
@@ -1391,7 +1427,7 @@ strong { margin-bottom:10px;}
 
 .checkboxList{
   list-style:none;
-  input[type=checkbox], label{ display:inline-block; width:50%; }
+  input[type=checkbox], label{ display:inline-block; width:100%; }
 }
 
 #fieldVariablesLink{
@@ -1407,8 +1443,6 @@ strong { margin-bottom:10px;}
 .control-group {
   position:relative;
 }
-
-.tooltip.right .tooltip-arrow { display:none; } // arrow tip is doing weird things hide it for now
 
 .sortable { float:left; width:100%;}
 
@@ -1557,7 +1591,7 @@ $fileColor: lighten(#333F48,60%);
 input[type=submit] {
   width:100%;
   @include breakpoint(tablet){
-    width:25% !important; float:right;
+    width:25% !important; float:unset;
   }
 }
 
@@ -1576,9 +1610,12 @@ input[type=submit] {
   border-radius: 4px;
   font-size: 14px;
   letter-spacing: 1px;
-
 }
 
+.tooltip.right {
+  position:absolute;
+  z-index:99999999;
+}
 
 .modal {
   .modalbody {
