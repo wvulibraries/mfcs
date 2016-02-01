@@ -35,6 +35,16 @@ $(function(){
         }
     });
 
+    // Get panel to scroll with the user after 700px
+    if($(window).width() >= 768){
+		var stickyEl = $('#leftPanel');
+		var elTop = stickyEl.offset().top - 80;
+
+	    $(window).scroll(function() {
+	        stickyEl.toggleClass('sticky', $(window).scrollTop() > elTop);
+	    });
+	 }
+
 
 	// Click and Draggable form fields.
 	$(".draggable li", fieldAdd)
@@ -369,6 +379,8 @@ function showFieldSettings(fullID) {
 				case 'select':
 				case 'multiselect':
 					$("#fieldSettings_container_choices").parent().show();
+					$("#fieldSettings_container_value").hide();
+					$("#fieldSettings_container_placeholder").hide();
 					break;
 
 				case 'number':
@@ -578,11 +590,11 @@ function setOriginalValues(){
     // Object Specific Value Change
 	if( bindObj == 'help'){
 		var helpType = value.split("|")[0];
-		var help     = value.split("|")[1];
+		var help     = value.split("|")[1].sanitizeInput().escapeHtml();
 		var value    = (help == 'undefined' ? "" : help);
 		$(this).val(helpType + "|" + help);
 
-		$("#fieldSettings_help_textarea").val(value).hide();
+		$("#fieldSettings_help_textarea").val(value.unEscapeHtml()).hide();
 		$("#fieldSettings_help_url").hide().val(value);
 		$('#fieldSettings_help_type').val(helpType).change();
 	}
@@ -748,7 +760,7 @@ function bindToHiddenForm(){
 		}
 
 		if(inputObj == 'helpText' || inputObj == 'helpURL'){
-			formatHelpForHiddenField(hiddenForm);
+			$('#fieldSettings_help_type').change(); // pass the buck to help type
 		}
 
 		if(inputObj == 'helpType'){
@@ -781,12 +793,12 @@ function formatHelpForHiddenField(hiddenForm){
 	var id = globalFieldID;
 
 	if(type == 'text' || type == 'html'){
-		value = sanitizeInput($('#fieldSettings_help_textarea').val());
+		value = $('#fieldSettings_help_textarea').val().sanitizeInput().unEscapeHtml();
 		console.log(value);
 	}
 	else {
 		value = $('#fieldSettings_help_url').val();
-		cosnole.log(value);
+		console.log(value);
 		if(validateURL(value)){
 			$('#fieldSettings_help_url').removeClass('has-error');
 		} else {
@@ -794,7 +806,7 @@ function formatHelpForHiddenField(hiddenForm){
 		}
 	}
 
-	var newValues = type + "|" + value;
+	var newValues = type + "|" + value.sanitizeInput().escapeHtml().removeQuotes();
 
 	$('#fieldSettings_help_text').val(newValues);
 	hiddenForm.find("[data-bind='help']").val(newValues);
@@ -806,7 +818,7 @@ function formatHelpForHiddenField(hiddenForm){
 		$('#formPreview_'+id).find('.helpPreview').show();
 		$('.helpPreview').popover({
 			'title'   : 'Help',
-			'content' : '<div>' + value + '</div>',
+			'content' : '<div>' + value.unEscapeHtml().removeQuotes() + '</div>',
 			'trigger' : 'click',
 			'html' : true
 		});
@@ -1234,9 +1246,11 @@ function newFieldValues(id,type,vals) {
     vals.type = determineType(type);
     type = vals.type;
 
-    var defaultHiddenFormFields = ['name','position', 'type', 'label', 'value', 'placeholder', 'id', 'class', 'style', 'help', 'helpType', 'required', 'duplicates', 'readonly', 'disabled', 'disabledInsert', 'disabledUpdate', 'publicRelease', 'sortable', 'searchable', 'displayTable', 'hidden', 'validation', 'validationRegex', 'access', 'fieldset', 'metadataStandard' ];
+    var defaultHiddenFormFields = ['name','position', 'type', 'label', 'value', 'placeholder', 'id', 'class', 'style', 'helpType', 'required', 'duplicates', 'readonly', 'disabled', 'disabledInsert', 'disabledUpdate', 'publicRelease', 'sortable', 'searchable', 'displayTable', 'hidden', 'validation', 'validationRegex', 'access', 'fieldset', 'metadataStandard' ];
 
     output += createHiddenFields(defaultHiddenFormFields, id, vals);
+
+    output += '<input type="hidden" id="help_'+id+'"   name="help_'+id+'"       data-bind="help"      value="'+((vals.help !== undefined)?vals.help.removeQuotes().escapeHtml():'none|')+'">';
 
     // handle additional form information based on field added
 	switch(type) {
@@ -1283,7 +1297,6 @@ function newFieldValues(id,type,vals) {
 			output += '<input type="hidden" id="thumbnailHeight_'+id+'"   name="thumbnailHeight_'+id+'"       data-bind="thumbnailHeight"      value="'+((vals.thumbnailHeight !== undefined)?vals.thumbnailHeight:'150')+'">';
 			output += '<input type="hidden" id="thumbnailWidth_'+id+'"    name="thumbnailWidth_'+id+'"        data-bind="thumbnailWidth"       value="'+((vals.thumbnailWidth !== undefined)?vals.thumbnailWidth:'150')+'">';
 			output += '<input type="hidden" id="thumbnailFormat_'+id+'"   name="thumbnailFormat_'+id+'"       data-bind="thumbnailFormat"      value="'+((vals.thumbnailFormat !== undefined)?vals.thumbnailFormat:'JPG')+'">';
-			output += '<input type="hidden" id="help_'+id+'"   name="help_'+id+'"       data-bind="help"      value="'+((vals.help !== undefined)?vals.help:'none|')+'">';
 			break;
 
 		default:
@@ -1711,19 +1724,25 @@ String.prototype.unEscapeHtml = function(){
     return string;
 };
 
-// Prototypical Helper Functions
-// ====================================================================
-function checkForSpaces(string) {
-  return /\s/g.test(string);
-}
+String.prototype.removeQuotes = function(){
+	var string = this.replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+	return string;
+};
 
-function removeHtml(string){
-	return string.replace(/&/g, '&amp;')
+String.prototype.removeHTML = function(){
+	var string = this.replace(/&/g, '&amp;')
                  .replace(/>/g, '')
                  .replace(/</g, '')
                  .replace(/"/g, '&quot;')
                  .replace(/'/g, '&apos;')
                  .replace(/\//g, '');
+    return string;
+}
+
+// Test Functions
+// ====================================================================
+function checkForSpaces(string) {
+  return /\s/g.test(string);
 }
 
 function isEmpty(str) {
