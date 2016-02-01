@@ -69,7 +69,9 @@ class virus {
 
 		exec($command, $cmd_output, $return_value);
 
-		if ($return_value == 0) {
+		// use === here, because if the command doesn't exist, 0 evaluates to 
+		// a success
+		if ($return_value === 0) {
 			return TRUE;
 		}
 
@@ -108,6 +110,14 @@ class virus {
 			return FALSE;
 		}
 		
+		// check to make sure the scanning command is available, before we 
+		// loop through the files. 
+		$check_cmd = mfcs::config('virus_scan_cmd_check');
+		if (!`which $check_cmd`) {
+			checks::set_error("virus_cmd");
+			return FALSE;
+		}
+
 		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
 			// set the state of the row to 2, the "working" state
