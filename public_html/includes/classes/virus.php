@@ -85,7 +85,7 @@ class virus {
 
 		$sql       = sprintf("UPDATE `virusChecks` SET `state`='%s' WHERE `ID`='%s'",
 			mfcs::$engine->openDB->escape($state),
-			mfcs::$engine->openDB->escape($rowID)
+			mfcs::$engine->openDB->escape($virus_id)
 			);
 		$sqlResult = mfcs::$engine->openDB->query($sql);
 
