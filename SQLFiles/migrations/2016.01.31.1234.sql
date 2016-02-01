@@ -7,3 +7,5 @@ CREATE TABLE `virusChecks` (
 	`timestamp` int(11) unsigned,
 	PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO `checks` (`name`,`value`) VALUES("virus_cmd","1");
