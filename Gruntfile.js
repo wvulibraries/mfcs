@@ -57,18 +57,13 @@ module.exports = function(grunt) {
             { src:[
                 'public_html/includes/js/refactored/currentProjects.js',
                 'public_html/includes/js/refactored/filePreview.js',
-                'public_html/includes/js/refactored/commonAppJS.js'
-              ],
-              dest: 'public_html/includes/js/build/common/main.js'
-            },
-            // Object Creator JS
-            { src:[
-                'public_html/includes/js/refactored/object_metadata.js',
+                'public_html/includes/js/refactored/commonAppJS.js',
+                'public_html/includes/js/refactored/obect_metadata.js',
                 'public_html/includes/js/refactored/object_dataEntry.js',
                 'public_html/includes/js/refactored/selectForm_dataEntry.js',
                 'public_html/includes/js/refactored/fineUploaderInit.js'
               ],
-              dest: 'public_html/includes/js/build/object/object.js'
+              dest: 'public_html/includes/js/build/common/main.js'
             },
             // Revisions Page
             { src:[
