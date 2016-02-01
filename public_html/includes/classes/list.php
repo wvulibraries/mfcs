@@ -121,8 +121,6 @@ class listGenerator {
 
 			if (!mfcsPerms::isViewer($form['ID'])) continue;
 
-
-
 			$output .= sprintf('<div class="btn-group" style="display: block; margin: 5px;">
 				<a href="list.php?listType=form&amp;formID=%s" class="btn" style="width: 400px;">%s</a>
 				<button class="btn dropdown-toggle" data-toggle="dropdown">
@@ -458,6 +456,8 @@ class listGenerator {
 
 			if ($form === FALSE) continue;
 
+			if(!mfcsPerms::isEditor($form['ID'])) continue;
+
 			if (($metedataForms = forms::getObjectFormMetaForms($form['ID'])) === FALSE) {
 				errorHandle::errorMsg("Error getting Metadata Forms");
 				return FALSE;
@@ -503,6 +503,7 @@ class listGenerator {
 			foreach ($metaForms as $metadataForm) {
 
 				if ($metadataForm === FALSE) continue;
+				if(!mfcsPerms::isEditor($metadataForm['ID'])) continue;
 
 				$output .= '<li>';
 				if (($output .= self::generateAccordionFormList_links($metadataForm,$entry,($entry===TRUE)?TRUE:FALSE)) === FALSE) {
