@@ -672,6 +672,7 @@ function setOriginalValues(){
 	}
 
 	if(bindObj == 'choicesField'){
+		console.log(value);
 		$('#fieldSettings_choices_formSelect').change();
 		$('#fieldSettings_choices_fieldSelect').val(value).change();
 	}
@@ -1641,6 +1642,10 @@ function modifyChoiceBinding(){
 	else if(targetType == 'select'){
 		var target = targetFormPreview.find($('.controls')).find($('select'));
 		target.html(output);
+	}
+
+	if($(this).prev().hasClass('btn active')){
+		$('#choicesDefault_'+globalFieldID).val($(this).val());
 	}
 }
 
