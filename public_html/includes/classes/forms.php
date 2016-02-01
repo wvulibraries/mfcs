@@ -1544,6 +1544,17 @@ class forms {
 
 		if (!is_empty($backgroundProcessing)) {
 			foreach ($backgroundProcessing as $fieldName=>$V) {
+
+				// insert into the virusChecks table
+				if (virus::insert_into_table($objectID,$fieldName) === FALSE) {
+					$engine->openDB->transRollback();
+					$engine->openDB->transEnd();
+
+					errorHandle::newError(__METHOD__."() - Virus checks table", errorHandle::DEBUG);
+
+					return FALSE;
+				}
+
 				if ($V === FALSE) {
 					// No background processing. do it now.
 					files::process($objectID,$fieldName);

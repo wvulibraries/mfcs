@@ -26,13 +26,13 @@ if (!$sqlResult['result']) {
 if ($sqlResult['numrows'] == "0") {
 
 	// This is the expect result
-	$sql = sprintf("UPDATE `checks` SET `value`='1' WHERE `name`='uniqueIDCheck' LIMIT 1");
+	checks::set_ok("uniqueIDCheck");
 
 }
 else {
 
 	// This is the bad result
-	$sql = sprintf("UPDATE `checks` SET `value`='0' WHERE `name`='uniqueIDCheck' LIMIT 1");
+	checks::set_error("uniqueIDCheck");
 }
 
 $sqlResult = mfcs::$engine->openDB->query($sql);

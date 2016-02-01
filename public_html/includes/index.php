@@ -2,6 +2,7 @@
 
 require_once "classes/mfcs.php";
 
+require_once "classes/checks.php";
 require_once "classes/duplicates.php";
 require_once "classes/exporting.php";
 require_once "classes/files.php";
@@ -19,6 +20,7 @@ require_once "classes/search.php";
 require_once "classes/stats.php";
 require_once "classes/users.php";
 require_once "classes/FFMPEG.php";
+require_once "classes/virus.php";
 require_once "class.tesseract_ocr.php";
 
 ?>
