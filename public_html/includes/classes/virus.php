@@ -148,6 +148,22 @@ class virus {
 
 	}
 
+	public static function notify_of_virus() {
+
+		$sql       = sprintf("SELECT * FROM `virusChecks` WHERE `state`='3'");
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+			notification::notifyAdmins("Virus Found.", "ObjectID: ".$row['objectID']);
+		}
+
+	}
+
 }
 
 ?>
