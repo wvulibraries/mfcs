@@ -15,5 +15,7 @@ if (!isCLI()) {
 $engine->obCallback = FALSE;
 
 virus::process();
+virus::notify_of_virus();
+virus::clear_table();
 
 ?>
