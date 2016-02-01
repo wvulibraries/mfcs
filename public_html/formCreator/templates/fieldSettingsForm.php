@@ -597,76 +597,71 @@
                 <li>
                     <label class="checkbox">
                         <input type="checkbox" id="fieldSettings_options_required" name="fieldSettings_options_required" data-bindModel="required"> Required
-                         <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is required to be filled out."></i>
+                         <i class="fa fa-question-circle" rel="tooltip"  data-placement="top" data-title="Field is required to be filled out."></i>
                     </label>
 
                 </li>
                 <li>
                     <label class="checkbox">
                         <input type="checkbox" id="fieldSettings_options_duplicates" name="fieldSettings_options_duplicates" data-bindModel="duplicates"> No duplicates
-                         <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Duplicate entries for this form are not allowed."></i>
+                         <i class="fa fa-question-circle" rel="tooltip"  data-placement="top" data-title="Duplicate entries for this form are not allowed."></i>
                     </label>
 
                 </li>
                 <li>
                     <label class="checkbox">
                         <input type="checkbox" id="fieldSettings_options_readonly" name="fieldSettings_options_readonly" data-bindModel="readonly"> Read only
-                         <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is read-only, data is pulled from form definition on insert, previous revision on update. not from POST"></i>
+                         <i class="fa fa-question-circle" rel="tooltip"  data-placement="top" data-title="Field is read-only, data is pulled from form definition on insert, previous revision on update. not from POST"></i>
                     </label>
 
                 </li>
                 <li>
                     <label class="checkbox">
                         <input type="checkbox" id="fieldSettings_options_disabled" name="fieldSettings_options_disabled" data-bindModel="disabled"> Disabled
-                         <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is disabled and not submitted to POST"></i>
+                         <i class="fa fa-question-circle" rel="tooltip"  data-placement="top" data-title="Field is disabled and not submitted to POST"></i>
                     </label>
 
                 </li>
                 <li>
                     <label class="checkbox">
                         <input type="checkbox" id="fieldSettings_options_disabled_insert" name="fieldSettings_options_disabled_insert" data-bindModel="disabledInsert"> Disabled on Insert
-                         <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is hideen and disabled on insert forms."></i>
+                         <i class="fa fa-question-circle" rel="tooltip"  data-placement="top" data-title="Field is hideen and disabled on insert forms."></i>
                     </label>
                 </li>
+
                 </ul>
                 <ul class="checkboxList span6 last">
                 <li>
                     <label class="checkbox">
-                        <input type="checkbox" id="fieldSettings_options_disabled_update" name="fieldSettings_options_disabled_update" data-bindModel="disabledUpdate"> Read only on Update
-                         <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is set to read only on update forms. Only read and inserted into the database on insert forms."></i>
-                    </label>
-                </li>
-                <li>
-                    <label class="checkbox">
                         <input type="checkbox" id="fieldSettings_options_publicRelease" name="fieldSettings_options_publicRelease" data-bindModel="publicRelease"> Public release
-                        <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Dependant on Export Script: Metadata check to determine if field should be exported to XML"></i>
+                        <i class="fa fa-question-circle" rel="tooltip"  data-placement="top" data-title="Dependant on Export Script: Metadata check to determine if field should be exported to XML"></i>
                     </label>
                 </li>
                 <li>
                     <label class="checkbox">
                         <input type="checkbox" id="fieldSettings_options_sortable" name="fieldSettings_options_sortable" data-bindModel="sortable"> Sortable
-                        <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is Sortable in list table in MFCS."></i>
+                        <i class="fa fa-question-circle" rel="tooltip"  data-placement="top" data-title="Field is Sortable in list table in MFCS."></i>
                     </label>
 
                 </li>
                 <li>
                     <label class="checkbox">
                         <input type="checkbox" id="fieldSettings_options_searchable" name="fieldSettings_options_searchable" data-bindModel="searchable"> Searchable
-                        <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Dependant on Export: Can search on this field in public facing repository."></i>
+                        <i class="fa fa-question-circle" rel="tooltip"  data-placement="top" data-title="Dependant on Export: Can search on this field in public facing repository."></i>
                     </label>
 
                 </li>
                 <li>
                     <label class="checkbox">
                         <input type="checkbox" id="fieldSettings_options_displayTable" name="fieldSettings_options_displayTable" data-bindModel="displayTable"> Display in list table
-                       <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is displayed in the listing table in MFCS"></i>
+                       <i class="fa fa-question-circle" rel="tooltip"  data-placement="top" data-title="Field is displayed in the listing table in MFCS"></i>
                     </label>
 
                 </li>
                 <li>
                     <label class="checkbox">
                         <input type="checkbox" id="fieldSettings_options_hidden" name="fieldSettings_options_hidden" data-bindModel="hidden"> Hidden
-                          <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Input type is set to Hidden."></i>
+                          <i class="fa fa-question-circle" rel="tooltip"  data-placement="top" data-title="Input type is set to Hidden."></i>
                     </label>
                 </li>
             </ul>
