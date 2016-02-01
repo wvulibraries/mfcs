@@ -592,8 +592,8 @@
 
     <div class="group default">
         <div class="control-group " id="fieldSettings_container_options">
-            <strong> Options </strong>
-            <ul class="checkboxList">
+            <div> <strong> Options </strong> </div>
+            <ul class="checkboxList span6">
                 <li>
                     <label class="checkbox">
                         <input type="checkbox" id="fieldSettings_options_required" name="fieldSettings_options_required" data-bindModel="required"> Required
@@ -628,6 +628,8 @@
                          <i class="fa fa-question-circle" rel="tooltip" data-placement="right" data-title="Field is hideen and disabled on insert forms."></i>
                     </label>
                 </li>
+                </ul>
+                <ul class="checkboxList span6 last">
                 <li>
                     <label class="checkbox">
                         <input type="checkbox" id="fieldSettings_options_disabled_update" name="fieldSettings_options_disabled_update" data-bindModel="disabledUpdate"> Read only on Update
