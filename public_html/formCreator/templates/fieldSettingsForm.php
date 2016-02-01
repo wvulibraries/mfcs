@@ -723,10 +723,3 @@
         </ul>
     </div>
 </div>
-
-<div class="tooltip top" role="tooltip">
-  <div class="tooltip-arrow"></div>
-  <div class="tooltip-inner">
-    Some tooltip text!
-  </div>
-</div>
