@@ -131,12 +131,12 @@ class virus {
 
 				if (self::scan_file($row['ID'],sprintf("%s/%s/%s",mfcs::config('archivalPathMFCS'),$file['path'],$file['name'])) === FALSE) {
 					// Virus Found
-					self::set_virus_state($virus_id,'3');
+					self::set_virus_state($row['ID'],'3');
 
 				}
 				else {
 					// clean
-					self::set_virus_state($virus_id,'0');
+					self::set_virus_state($row['ID'],'0');
 				}
 
 			}
