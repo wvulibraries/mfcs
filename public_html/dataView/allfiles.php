@@ -40,11 +40,19 @@ try {
 		$type = "tar";
 	}
 
-	if (is_array($object['data']['digitalFiles'])) {
+	//determine the field name
+	$field_name = "";
+	$form = forms::get($object['formID']);
+	foreach ($form['fields'] as $field) {
+		if ($field['type'] != "file") continue;
+		$field_name = $field['name'];
+	}
+
+	if (is_array($object['data'][$field_name])) {
 
 		$files = array();
 
-		foreach ($object['data']['digitalFiles']['files']['archive'] as $file) {
+		foreach ($object['data'][$field_name]['files']['archive'] as $file) {
 
 			$files[] = sprintf("%s",$file['name']);
 
