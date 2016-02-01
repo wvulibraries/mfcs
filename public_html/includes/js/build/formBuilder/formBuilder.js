@@ -36,9 +36,10 @@ $(function(){
     });
 
     // Get panel to scroll with the user after 700px
-    if($(window).width() >= 768){
+    if($(window).width() >= 768 && $(document).height() >= 1600){
 		var stickyEl = $('#leftPanel');
 		var elTop = stickyEl.offset().top - 80;
+		stickyEl.wrapInner( "<div id='leftPanelFixed'><div id='widthContstrain'></div></div>");
 
 	    $(window).scroll(function() {
 	        stickyEl.toggleClass('sticky', $(window).scrollTop() > elTop);
