@@ -13,15 +13,16 @@
             </h1>
         </div>
 
-        <div class="navToggle">
-            <a href="javascript:void(0)" class="toggleNav btn btn-primary">
-                <i class="fa fa-bars"></i> Menu
-            </a>
-        </div>
 
         <div class="projectsToggle">
             <a href="javascript:void(0)" class="projectToggle btn btn-primary">
                 <i class="fa fa-folder-open"></i> Select Projects
+            </a>
+        </div>
+
+        <div class="navToggle">
+            <a href="javascript:void(0)" class="toggleNav btn btn-primary">
+                <i class="fa fa-bars"></i> Menu
             </a>
         </div>
 

@@ -268,10 +268,10 @@ table {
   position:absolute;
   top:1px;
   float:right;
-  right:40px;
+  right:-10px;
 }
 
-.navToggle {
+.projectsToggle {
   right:140px;
 }
 
@@ -1427,6 +1427,8 @@ strong { margin-bottom:10px;}
 
 .checkboxList{
   list-style:none;
+  padding-left: 20px;
+  margin: 0;
   input[type=checkbox], label{ display:inline-block; width:100%; }
 }
 
