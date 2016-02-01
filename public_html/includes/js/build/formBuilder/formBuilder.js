@@ -967,6 +967,17 @@ function modalBindings() {
 			backdrop: "static"
 		})
 		.on("click", "button:contains('Metadata')", function() {
+			var fieldAdd                         = $('#fieldAdd');
+			var formPreviewWell                  = $("#formPreview .well");
+			var fieldSettings_label              = $("#fieldSettings_label");
+			var fieldSettings_options_sortable   = $("#fieldSettings_options_sortable");
+			var fieldSettings_options_searchable = $("#fieldSettings_options_searchable");
+
+			// Add a title Field
+			fieldAdd.find("li:contains('Single Line Text')").click();
+			$("#fieldSettings_name").val('title').keyup();
+			fieldSettings_label.val('Title').keyup();
+
 			// Select Metadata form
 			$('.nav-tabs li:nth-child(3) a').click();
 			$("#formSettings_formMetadata").prop("checked", true).change();
