@@ -101,7 +101,7 @@ class virus {
 	public static function process() {
 
 		$sql       = sprintf("SELECT * FROM `virusChecks` WHERE `state`='1'");
-		$sqlResult = $engine->openDB->query($sql);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 		
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
@@ -118,10 +118,24 @@ class virus {
 			$files    = $object['data'][$row['fieldName']];
 			$assetsID = $files['uuid'];
 
-			foreach file?
-				scan_file
+			foreach ($files['files']['archive'] as $file) {
+
+				if (self::scan_file($row['ID'],sprintf("%s/%s/%s",mfcs::config('archivalPathMFCS'),$file['path'],$file['name'])) === FALSE) {
+					// Virus Found
+					self::set_virus_state($virus_id,'3');
+
+				}
+				else {
+					// clean
+					self::set_virus_state($virus_id,'0');
+				}
+
+			}
+
 
 		}
+
+		return TRUE;
 
 	}
 
