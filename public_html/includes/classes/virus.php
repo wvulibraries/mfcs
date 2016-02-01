@@ -54,7 +54,26 @@ class virus {
 
 	}
 
-	public static function scan_file() {
+	private static function scan_file($virus_id, $filename) {
+
+		if (!file_exists($filename)) {
+			errorHandle::newError(__METHOD__."() - File does not exist!", errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		$filename     = escapeshellarg($filename);
+		$command      = sprintf("%s %s",mfcs::config('virus_scan_cmd'), $filename);
+		
+		$return_value = -1;
+		$cmd_output   = "";
+
+		exec($command, $cmd_output, $return_value);
+
+		if ($return_value == 0) {
+			return TRUE;
+		}
+
+		return FALSE;
 
 	}
 
