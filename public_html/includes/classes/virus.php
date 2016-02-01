@@ -14,23 +14,22 @@ class virus {
 			return FALSE;
 		}
 
-		foreach (self::$insertFieldNames as $fieldname) {
-			$sql       = sprintf("INSERT INTO `virusChecks` (`objectID`,`fieldName`,`state`, `timestamp`) VALUES('%s','%s','1','%s')",
-				mfcs::$engine->openDB->escape($objID),
-				mfcs::$engine->openDB->escape($fieldname),
-				time()
-				);
-			$sqlResult = mfcs::$engine->openDB->query($sql);
+		$sql       = sprintf("INSERT INTO `virusChecks` (`objectID`,`fieldName`,`state`, `timestamp`) VALUES('%s','%s','1','%s')",
+			mfcs::$engine->openDB->escape($objectID),
+			mfcs::$engine->openDB->escape($field_name),
+			time()
+			);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 
-			if (!$sqlResult['result']) {
+		if (!$sqlResult['result']) {
 
-				mfcs::$engine->openDB->transRollback();
-				mfcs::$engine->openDB->transEnd();
+			mfcs::$engine->openDB->transRollback();
+			mfcs::$engine->openDB->transEnd();
 
-				errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
-				return FALSE;
-			}
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
 		}
+		
 
 		// end transactions
 		mfcs::$engine->openDB->transCommit();
