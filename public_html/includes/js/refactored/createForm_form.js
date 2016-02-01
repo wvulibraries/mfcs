@@ -328,8 +328,8 @@ function showFieldSettings(fullID) {
 					disabled: true,
 				}).change();
 				fieldSettings_options_readonly.prop({
-					checked:  true,
-					disabled: true,
+					checked:  false,
+					disabled: false,
 				}).change();
 				fieldSettings_options_disabled.prop({
 					checked:  false,
@@ -634,8 +634,10 @@ function setOriginalValues(){
 	if(bindObj == 'managedBy'){
 		if(value == 'system'){
 			$("#fieldSettings_idno_managedBy").next().show();
+			$("#fieldSettings_options_readonly").prop({checked:true, disabled:true});
 		} else {
 			$("#fieldSettings_idno_managedBy").next().hide();
+			$("#fieldSettings_options_readonly").prop({checked:false, disabled:true});
 		}
 	}
 
@@ -734,8 +736,10 @@ function bindToHiddenForm(){
 		if(inputObj == 'managedBy'){
 			if(value == 'system'){
 				$("#fieldSettings_idno_managedBy").next().show();
+				$("#fieldSettings_options_readonly").prop({checked:true, disabled:true});
 			} else {
 				$("#fieldSettings_idno_managedBy").next().hide();
+				$("#fieldSettings_options_readonly").prop({checked:false, disabled:true});
 			}
 		}
 
