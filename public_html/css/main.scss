@@ -284,7 +284,7 @@ table {
   display:none;
 }
 
-.menuModal {
+.menuModal, .imagePreviewModal {
   width:60%;
   height:60%;
   margin:10% 20%;
@@ -316,6 +316,12 @@ table {
     overflow:auto;
     ul { list-style:none; margin:0; padding:0; }
   }
+}
+
+.imagePreviewModal .modal-body {
+  height:100%;
+  padding:0;
+  .video-container { height:86.5%;}
 }
 
 .modal {
@@ -1764,4 +1770,20 @@ footer{
     .fieldName { background:rgba(#ED8B00,.4); }
     .fieldValue { background:rgba(#ED8B00,.2); }
   }
+}
+
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    padding-top: 30px; height: 0; overflow: hidden;
+}
+
+.video-container iframe,
+.video-container object,
+.video-container embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
