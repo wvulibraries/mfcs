@@ -1397,6 +1397,8 @@ select {
   .microGroup{
     padding:20px 0;
     border-top:1px solid $lightgrey;
+    float: left;
+    width: 100%;
     &:first-child { border:0; }
     ul { list-style:none;}
   }
