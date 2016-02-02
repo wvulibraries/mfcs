@@ -36,14 +36,22 @@ $(function(){
     });
 
     // Get panel to scroll with the user after 700px
-    if($(window).width() >= 768 && $(document).height() >= 1600){
+    if($(window).width() >= 768){
 		var stickyEl = $('#leftPanel');
-		var elTop = stickyEl.offset().top - 80;
+		var elTop = stickyEl.offset().top - 150;
 		stickyEl.wrapInner( "<div id='leftPanelFixed'><div id='widthContstrain'></div></div>");
+		var mainHeight = $('.main').height();
+		var windowHeight = $(window).height();
 
-	    $(window).scroll(function() {
-	        stickyEl.toggleClass('sticky', $(window).scrollTop() > elTop);
-	    });
+		console.log(mainHeight + " - " + windowHeight);
+
+		if(mainHeight > windowHeight){
+		    $(window).scroll(function() {
+		        stickyEl.toggleClass('sticky', $(window).scrollTop() > elTop);
+		    });
+		} else {
+			stickyEl.addClass('tooSmallSticky');
+		}
 	 }
 
 
