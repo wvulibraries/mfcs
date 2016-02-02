@@ -88,7 +88,7 @@ class projects {
 	}
 
 	// $selected is an array of projectIDs
-	public static function generateProjectCheckList($selected=array()) {
+	public static function generateProjectCheckList($selected=array(),$formID=NULL) {
 
 		if (!is_array($selected)) {
 			return(FALSE);
@@ -96,8 +96,16 @@ class projects {
 
 		$allProjects      = projects::getProjects();
 
+		if (!isnull($formID)) {
+			$forms_projects   = forms::getProjects($formID);
+		}
+
 		$output = "";
 		foreach ($allProjects as $project) {
+
+			if (!isnull($formID) && !in_array($project['ID'], $forms_projects)) {
+				continue;
+			}
 
 			$output .= sprintf('<li><label class="checkbox" for="%s"><input type="checkbox" id="%s" name="projects[]" value="%s"%s> %s</label></li>',
 				htmlSanitize("project_".$project['ID']),                           // for=

@@ -86,7 +86,7 @@ try {
 	//////////
 	// Project Tab Stuff
 	$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
-	localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects));
+	localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects,$engine->cleanGet['MYSQL']['formID']));
 	// Project Tab Stuff
 	//////////
 
@@ -201,7 +201,7 @@ if (forms::validID()) {
 		//////////
 		// Project Tab Stuff
 		$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
-		localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects));
+		localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects,$engine->cleanGet['MYSQL']['formID']));
 		// Project Tab Stuff
 		//////////
 	}
