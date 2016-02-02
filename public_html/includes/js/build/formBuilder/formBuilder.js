@@ -519,8 +519,15 @@ function showFieldSettings(fullID) {
 				var element  = $("."+dataObj);
 				if($(this).is(':checked') || $(this).value){
 					element.show();
+					console.log('element show');
 				} else {
 					element.hide();
+					console.log('element hide');
+				}
+
+				if(dataObj == 'convert' && (!$(this).is(':checked') || !$(this).value)){
+					$('#fieldSettings_file_convert_watermark').prop('checked', false).change();
+					$('#fieldSettings_file_convert_border').prop('checked', false).change();
 				}
 			});
 
@@ -695,7 +702,7 @@ function setOriginalValues(){
 
 function fileInterface(dataObj, value){
 	var element  = $("."+dataObj);
-	if(value){
+	if(value === "true"){
 		element.show();
 	} else {
 		element.hide();
