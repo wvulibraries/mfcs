@@ -17,6 +17,8 @@ try {
 		throw new Exception("ObjectID Provided is invalid.");
 	}
 
+	localvars::add("objectID",$engine->cleanGet['MYSQL']['objectID']);
+
 	if (forms::validID() === FALSE) {
 		throw new Exception("No Form ID Provided.");
 	}
@@ -69,16 +71,11 @@ $engine->eTemplate("include","header");
 		<ul class="breadcrumb">
 			<li><a href="{local var="siteRoot"}">Home</a></li>
 			<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
+			<li><a href="{local var="siteRoot"}dataEntry/object.php?objectID={local var="objectID"}">Object Edit Form</a></li>
 			<!-- FLoat Right -->
-			<?php if(mfcsPerms::isAdmin($engine->cleanGet['MYSQL']['formID'])){ ?>
-			<li class="pull-right noDivider"><a href="{local var="siteRoot"}formCreator/index.php?id={local var="formID"}">Edit Form</a></li>
-			<?php
-			}
-			if (!isnull($engine->cleanGet['MYSQL']['objectID']) and $revisions->hasRevisions($engine->cleanGet['MYSQL']['objectID'])) { ?>
+			<?php if (!isnull($engine->cleanGet['MYSQL']['objectID']) and $revisions->hasRevisions($engine->cleanGet['MYSQL']['objectID'])) { ?>
 				<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions/index.php?objectID={local var="objectID"}">Revisions</a></li>
 			<?php } ?>
-			<li class="pull-right noDivider"><a href="{phpself query="true"}&unlock=cancel">Cancel Edit &amp; Unlock object</a></li>
-			<li class="pull-right noDivider"><a href="/data/object/history/">History</a></li>
 		</ul>
 	</nav>
 
