@@ -1,3 +1,5 @@
+var filePrevModal;
+
 // Document Ready
 // ===================================================================
 $(function(){
@@ -14,7 +16,23 @@ $(function(){
             objectSubmitProcessing.show();
         }
     });
+
+    // File Preview Modals
+    // ====================================================
+
+    $('.fileModalPreview').find('a').click( function(){
+        filePrevModal = $(this).data('target');
+
+        $('#'+filePrevModal).addClass('show');
+        $('.bgCloak').show();
+        $('body').addClass('filePreviewModalLives');
+    });
 });
+
+function closeModal(){
+    $('#'+filePrevModal).removeClass('show').hide();
+    $('.bgCloak').hide();
+}
 
 
 
