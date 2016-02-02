@@ -624,7 +624,7 @@ class listGenerator {
 					}
 				}
 				else if (strtolower($field['type']) == "multiselect") {
-					if (in_array($objectID,$object['data'][$field['name']])) {
+					if (is_array($object['data'][$field['name']]) && in_array($objectID,$object['data'][$field['name']])) {
 						$data[] = array($object['ID'],$object['idno'],$object['data'][$form['objectTitleField']],self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("revisions",$object['ID']));
 					}
 				}
