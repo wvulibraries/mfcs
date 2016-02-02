@@ -1,6 +1,3 @@
-
-
-
 function scrollSync(iFrameObj){
 	$($(iFrameObj).contents()).scroll(function(){
 		if($('#revisionSelector').val()){
@@ -20,12 +17,24 @@ function scrollSync(iFrameObj){
 
 $(function(){
 	var objectID = $('#revisionsScript').data("objectid");
+	var currentObjects = $('#current .revisionBody').find('div.objectField');
 
 	$('#revisionSelector').change(function(){
 		var url = '?objectID='+objectID+'&revisionID='+$(this).val()+'#grabVersion';
 		$('#revisionViewer').load(url, function(){
 		  console.log( "Load was performed." );
 		  console.log(url);
+
+		  	var newObjects = $('#revisions .revisionBody').find('div.objectField');
+			for(var i = 0; i < currentObjects.length; i++){
+				var elm1 = currentObjects[i];
+				var elm2 = newObjects[i];
+
+				if(!elm1.isEqualNode(elm2)){
+					$(elm1).addClass('diffCurrent');
+					$(elm2).addClass('diffRevision');
+				}
+			}
 		});
 	});
 
