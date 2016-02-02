@@ -22,9 +22,6 @@ $(function(){
 	$('#revisionSelector').change(function(){
 		var url = '?objectID='+objectID+'&revisionID='+$(this).val()+'#grabVersion';
 		$('#revisionViewer').load(url, function(){
-		  console.log( "Load was performed." );
-		  console.log(url);
-
 		  	var newObjects = $('#revisions .revisionBody').find('div.objectField');
 			for(var i = 0; i < currentObjects.length; i++){
 				var elm1 = currentObjects[i];

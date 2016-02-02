@@ -1,6 +1,3 @@
-<!-- <link rel="stylesheet" type="text/css" href="{local var="siteRoot"}includes/css/mfcs.css">
- -->
-
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 <link rel="stylesheet" type="text/css" href="{local var="siteRoot"}includes/select2-3.5.0/select2.css">
 <link rel="stylesheet" type="text/css" href="{local var="siteRoot"}includes/select2-3.5.0/select2-bootstrap.css">
