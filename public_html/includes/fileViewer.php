@@ -77,11 +77,6 @@ try{
 	if (isPHP('5.3')) {
 		$fi = new finfo(FILEINFO_MIME_TYPE);
 		$mimeType = $fi->file($filepath);
-
-		print "<pre>";
-		var_dump($fi->file($filepath));
-		print "</pre>";
-
 	}
 	// else {
 	// 	$fi = new finfo(FILEINFO_MIME);
@@ -91,31 +86,31 @@ try{
 
 
 	//Set the correct MIME-Type headers, and output the file's content
-	// if (isset($engine->cleanGet['MYSQL']['download']) and str2bool($engine->cleanGet['MYSQL']['download'])) {
-	// 	header(sprintf("Content-Disposition: attachment; filename='%s'",
-	// 			isset($downloadFilename) ? $downloadFilename : basename($filepath))
-	// 	);
-	// 	header("Content-Type: application/octet-stream");
-	// 	ini_set('memory_limit',-1);
-	// 	die(file_get_contents($filepath)); // die so nothing else will be displayed
-	// }
-	// else {
-	// 	if ($mimeType == 'application/x-empty') {
-	// 		errorHandle::newError("Failed to locate file to display!", errorHandle::HIGH);
-	// 		header("Content-type: text/plain");
-	// 		die("Failed to locate requested file!"); // die so nothing else will be displayed
-	// 	}
-	// 	else{
-	// 		if(in_array($mimeType, $webMimeTypes)){
- //    			$stream = new VideoStream($filepath, $mimeType);
-	// 			$stream->start();
-	// 		}
-	// 		else{
-	// 			files::generateFilePreview($filepath, $mimeType);
-	// 			exit();
-	// 		}
-	// 	}
-	// }
+	if (isset($engine->cleanGet['MYSQL']['download']) and str2bool($engine->cleanGet['MYSQL']['download'])) {
+		header(sprintf("Content-Disposition: attachment; filename='%s'",
+				isset($downloadFilename) ? $downloadFilename : basename($filepath))
+		);
+		header("Content-Type: application/octet-stream");
+		ini_set('memory_limit',-1);
+		die(file_get_contents($filepath)); // die so nothing else will be displayed
+	}
+	else {
+		if ($mimeType == 'application/x-empty') {
+			errorHandle::newError("Failed to locate file to display!", errorHandle::HIGH);
+			header("Content-type: text/plain");
+			die("Failed to locate requested file!"); // die so nothing else will be displayed
+		}
+		else{
+			if(in_array($mimeType, $webMimeTypes)){
+    			$stream = new VideoStream($filepath, $mimeType);
+				$stream->start();
+			}
+			else{
+				files::generateFilePreview($filepath, $mimeType);
+				exit();
+			}
+		}
+	}
 }
 catch (Exception $e) {
 	errorHandle::newError($e->getMessage(), errorHandle::DEBUG);
