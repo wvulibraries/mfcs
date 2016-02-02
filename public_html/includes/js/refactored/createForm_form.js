@@ -592,7 +592,7 @@ function setOriginalValues(){
 	if( bindObj == 'help'){
 		var helpType = value.split("|")[0];
 		var help     = value.split("|")[1];
-		var value    = (help == 'undefined' ? "" : help.sanitizeInput().escapeHtml());
+		var value    = (help == 'undefined' ? "" : help);
 		$(this).val(helpType + "|" + help);
 
 		$("#fieldSettings_help_textarea").val(value.unEscapeHtml()).hide();
