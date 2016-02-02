@@ -253,12 +253,14 @@
     <div class="group">
         <div class="control-group " id="fieldSettings_container_file_options">
 
-            <div class="microGroup">
-                <strong> File Upload Options </strong>
+            <strong> File Upload Options </strong>
+
+           <!-- <div class="microGroup">
+
                 <ul>
                     <li> <label class="checkbox"><input type="checkbox" id="fieldSettings_file_options_bgProcessing" name="fieldSettings_file_options_bgProcessing"  data-bindModel="bgProcessing"> Process files in the background</label> </li>
                 </ul>
-            </div>
+            </div> -->
 
             <div class="microGroup uxOptions">
                 <strong> Image Options </strong>
