@@ -143,7 +143,7 @@ $engine->eTemplate("include","header");
 					<li><a data-toggle="tab" href="#metadata">Metadata</a></li>
 					<li><a data-toggle="tab" href="#files" id="filesTab">Files</a></li>
 					<li><a data-toggle="tab" href="#project">Project</a></li>
-					<li><a data-toggle="tab" href="#children">Children</a></li>
+					<!-- <li><a data-toggle="tab" href="#children">Children</a></li> -->
 				</ul>
 
 				<div class="tab-content">
@@ -171,9 +171,9 @@ $engine->eTemplate("include","header");
 						</form>
 					</div>
 
-					<div class="tab-pane" id="children">
+<!-- 					<div class="tab-pane" id="children">
 						{local var="childrenList"}
-					</div>
+					</div> -->
 				</div>
 			</div>
 			<?php } // Permissions ?>
