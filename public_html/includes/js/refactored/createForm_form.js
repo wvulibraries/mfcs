@@ -583,6 +583,10 @@ function setOriginalValues(){
     var parentObj  = $("#formPreview").find("[data-id='"+ id +"']");
     var formPreview = parentObj.find('.fieldPreview');
 
+	if(bindObj == "convert" || bindObj == "convertAudio" || bindObj == "convertVideo" || bindObj =="videothumbnail" || bindObj == "thumbnail" || bindObj == "watermark" || bindObj == "border"){
+		fileInterface(bindObj, value);
+	}
+
     if(bindObj == 'name'){
     	value = $.trim(value);
     	evaluateSpace(value, bindToInput);
@@ -687,6 +691,15 @@ function setOriginalValues(){
 		$('#fieldSettings_choices_fieldSelect').val(value).change();
 	}
 
+}
+
+function fileInterface(dataObj, value){
+	var element  = $("."+dataObj);
+	if(value){
+		element.show();
+	} else {
+		element.hide();
+	}
 }
 
 function bindToHiddenForm(){
@@ -1308,7 +1321,7 @@ function newFieldValues(id,type,vals) {
 
 		case 'file':
             var fileHiddenFields = [
-                'bgProcessing', 'multipleFiles', 'combine', 'ocr', 'convert', 'convertHeight', 'convertWidth', 'watermark', 'watermarkImage',
+                'multipleFiles', 'combine', 'ocr', 'convert', 'convertHeight', 'convertWidth', 'watermark', 'watermarkImage',
                 'watermarkLocation', 'border', 'borderHeight', 'borderWidth', 'borderColor', 'thumbnail', 'convertAudio', 'bitRate', 'audioFormat', 'convertVideo',
                 'videoHeight', 'videoWidth', 'videobitRate', 'aspectRatio', 'videoFormat', 'videothumbnail', 'videoThumbFrames', 'videoThumbHeight',
                 'videoThumbWidth', 'videoFormatThumb'];
@@ -1316,6 +1329,8 @@ function newFieldValues(id,type,vals) {
      		output += createHiddenFields(fileHiddenFields, id, vals);
 
              // default values
+            output += '<input type="hidden" id="bgProcessing_'+id+'" name="bgProcessing_'+id+'"     data-bind="bgProcessing"    value="true">';
+
             output += '<input type="hidden" id="allowedExtensions_'+id+'" name="allowedExtensions_'+id+'"     data-bind="allowedExtensions"    value="'+((vals.allowedExtensions !== undefined)?vals.allowedExtensions:'tif%,%tiff%,%jpg')+'">';
 			output += '<input type="hidden" id="convertResolution_'+id+'" name="convertResolution_'+id+'"     data-bind="convertResolution"    value="'+((vals.convertResolution !== undefined)?vals.convertResolution:'192')+'">';
 			output += '<input type="hidden" id="convertFormat_'+id+'"     name="convertFormat_'+id+'"         data-bind="convertFormat"        value="'+((vals.convertFormat !== undefined)?vals.convertFormat:'JPG')+'">';
