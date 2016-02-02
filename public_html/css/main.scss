@@ -1714,12 +1714,22 @@ footer{
   &:last-of-type{
     margin-right:0;
   }
+
+  h2 { width:38%; margin-right:2%; margin:0; float:left; margin-bottom:20px;}
   .revisionTool {
-    select {width:100%; float:left; height:36px;}
+    select {width:60%; float:left; height:36px; margin-top:-15px;}
   }
 
   .revisionHeader{
-    height:100px;
+    width:100%;
+    float:left;
+    border-bottom:1px solid #ccc;
+    margin-bottom:20px;
+  }
+
+  .revisionBody{
+    width:100%;
+    float:left;
   }
 
   .objectField{
