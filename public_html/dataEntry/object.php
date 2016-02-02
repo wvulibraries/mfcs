@@ -145,8 +145,13 @@ try {
 		if (($filesViewer = files::buildFilesPreview($engine->cleanGet['MYSQL']['objectID'])) === FALSE) {
 			throw new Exception("Error building files preview.");
 		}
+
+		if (($modals = files::buildModals($engine->cleanGet['MYSQL']['objectID'])) === FALSE) {
+			throw new Exception("Error building Modals for file preview.");
+		}
 		localvars::add("filesViewer",$filesViewer);
 		localvars::add("objectID", $engine->cleanGet['MYSQL']['objectID']);
+		localvars::add('iFrame', $modals);
 
 		//////////
 		// Children Tab Stuff
@@ -198,6 +203,7 @@ forms::checkFormInCurrentProjects($engine->cleanGet['MYSQL']['formID']);
 
 localvars::add("actionHeader",(isnull($engine->cleanGet['MYSQL']['objectID']))?"Add":"Edit");
 localvars::add("parentHeader",(isnull($parentObject))?"":"<h2>Adding Child to Parent '".$parentObject['data'][$form['objectTitleField']]."'</h2>");
+
 
 $engine->eTemplate("include","header");
 ?>
@@ -346,6 +352,9 @@ $engine->eTemplate("include","header");
 		</div>
 	</div>
 </section>
+
+
+{local var="iFrame"}
 
 <!-- @TODO : scripts should be moved out of this file -->
 <script type="text/javascript">
