@@ -489,8 +489,10 @@ class files {
 
 				$previewLinks  = array();
 				$downloadLinks = array();
+				$iFrameOutput;
 				foreach($links as $linkLabel => $linkURL){
-					$previewLinks[]  = sprintf('<li><a tabindex="-1" href="%s">%s</a></li>', $linkURL, $linkLabel);
+					// Build Links
+					$previewLinks[]  = sprintf('<li><a tabindex="-1" href="javascript:void(0);" data-target="%s">%s</a></li>', $filename."_".$linkLabel, $linkLabel);
 					$downloadLinks[] = sprintf('<li><a tabindex="-1" href="%s&download=1">%s</a></li>',$linkURL, $linkLabel);
 				}
 
@@ -499,7 +501,7 @@ class files {
 				$previewDropdown .= '	<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">';
 				$previewDropdown .= '		Preview <span class="caret"></span>';
 				$previewDropdown .= '	</a>';
-				$previewDropdown .= sprintf('<ul class="dropdown-menu">%s</ul>', implode('', $previewLinks));
+				$previewDropdown .= sprintf('<ul class="dropdown-menu fileModalPreview">%s</ul>', implode('', $previewLinks));
 				$previewDropdown .= '</div>';
 
 				// Build the download dropbox HTML
@@ -520,9 +522,169 @@ class files {
 				);
 			}
 
+
 			$output .= sprintf('<div class="filePreviewField"><header><i class="fa fa-folder-open"></i> %s</header><ul class="filePreviews">%s</ul></div>', $field['label'], implode('', $fileLIs));
+
+			// $output .= $iFrameOutput;
+
 		}
 		return $output;
+	}
+
+
+	public static function buildModals($objectID,$fieldName=NULL){
+
+		if (objects::validID(TRUE,$objectID) === FALSE) {
+			return FALSE;
+		}
+
+		if (($object = objects::get($objectID,TRUE)) === FALSE) {
+			return FALSE;
+		}
+
+		$iFrameOutput = '';
+
+		if (isset($fieldName)) {
+			$field  = forms::getField($object['formID'],$fieldName);
+			$fields = array($field);
+		}
+		else {
+			$fields = forms::getFields($object['formID']);
+		}
+
+		$fileLIs = array();
+		foreach($fields as $field){
+
+			if($field['type'] != 'file') continue;
+			if(empty($object['data'][ $field['name'] ])) continue;
+
+			// Figure out some needed vars for later
+			$fileDataArray = $object['data'][$field['name']];
+			$assetsID      = $fileDataArray['uuid'];
+			$fileLIs       = array();
+
+			uasort($fileDataArray['files']['archive'],function($a,$b) { return strnatcasecmp($a['name'],$b['name']); });
+
+			foreach($fileDataArray['files']['archive'] as $fileID => $file){
+				$_filename = pathinfo($file['name']);
+				$filename  = $_filename['filename'];
+				$icon      = "";
+				$links     = array();
+				$type 	   = explode('/', $file['type']);
+
+				$fi            = new finfo();
+				$filePathFull  = '/home/mfcs.lib.wvu.edu/data/archives/mfcs/'.$file['path'].DIRECTORY_SEPARATOR.$file['name'];
+				$filesize      = filesize($filePathFull);
+				$extraFileInfo = $fi->file($filePathFull);
+				$filesize      = self::formatBytes($filesize);
+
+				$links['Original'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
+					localvars::get('siteRoot'),
+					$objectID,
+					$field['name'],
+					$fileID,
+					'archive');
+
+				if(str2bool($field['convert'])){
+					$links['Converted'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
+						localvars::get('siteRoot'),
+						$objectID,
+						$field['name'],
+						$fileID,
+						'processed');
+				}
+				if(str2bool($field['thumbnail'])){
+					$links['Thumbnail'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
+						localvars::get('siteRoot'),
+						$objectID,
+						$field['name'],
+						$fileID,
+						'thumbs');
+				}
+				if(str2bool($field['ocr'])){
+					$links['OCR'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
+						localvars::get('siteRoot'),
+						$objectID,
+						$field['name'],
+						$fileID,
+						'ocr');
+				}
+				if(str2bool($field['combine'])){
+					$links['Combined PDF'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
+						localvars::get('siteRoot'),
+						$objectID,
+						$field['name'],
+						'combinedPDF');
+					$links['Combined Thumbnail'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
+						localvars::get('siteRoot'),
+						$objectID,
+						$field['name'],
+						'combinedThumb');
+				}
+				if(str2bool($field['convertAudio'])){
+					$links['Converted Audio'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
+						localvars::get('siteRoot'),
+						$objectID,
+						$field['name'],
+						'audio');
+				}
+				if(str2bool($field['convertVideo'])){
+					$links['Converted Video'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
+						localvars::get('siteRoot'),
+						$objectID,
+						$field['name'],
+						'video');
+				}
+				if(str2bool($field['videothumbnail'])){
+					$numVideoThumbs = $field['videoThumbFrames'];
+
+					for($i = 0; $i < $numVideoThumbs; $i++){
+						$filename = $file['name'];
+						$filename = explode(".", $filename);
+						$filename = $filename[0];
+
+						if(!$i == 0){
+							$filename = $filename."_".$i;
+						}
+
+						$links["Thumbnail_".$i] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s&name=%s',
+							localvars::get('siteRoot'),
+							$objectID,
+							$field['name'],
+							'thumbnails',
+							$filename
+						);
+					}
+				}
+
+				foreach($links as $linkLabel => $linkURL){
+					// Build Modals
+					$iFrameOutput .= sprintf('<div class="modal imagePreviewModal" id="%s" tabindex="-1" role="dialog" aria-labelledby="%s" aria-hidden="true">
+							<div class="modalContainer">
+						        <div class="modal-header">
+						            <button type="button" class="close" aria-hidden="true">×</button>
+						            <h3>Image Preview %s:</h3>
+						        </div>
+	       						<div class="modal-body">
+						     		<div class="video-container">
+						         		<iframe src="%s" frameborder="0"></iframe>
+						         	</div>
+						      	</div>
+						        <div class="modal-footer">
+						            <button class="btn close" aria-hidden="true">Close</button>
+						        </div>
+	    					</div>
+						</div>',
+						$filename."_".$linkLabel,
+						$filename."_".$linkLabel,
+						$linkLabel,
+						$linkURL
+					);
+				}
+			}
+		}
+
+		return $iFrameOutput;
 	}
 
 	/**
