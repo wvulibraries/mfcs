@@ -113,7 +113,7 @@ try {
 	// If locked, warn, allow to steal
 	// We only need to check for locks on edits, not new objects
 	if (!isnull($engine->cleanGet['MYSQL']['objectID'])) {
-
+		localvars::add('objectID', $engine->cleanGet['MYSQL']['objectID']);
 		if (isset($engine->cleanGet['MYSQL']['unlock']) && $engine->cleanGet['MYSQL']['unlock'] == "unlock") {
 			log::insert("Data Entry: Object: Unlocked Object",$engine->cleanGet['MYSQL']['objectID']);
 			objects::unlock($engine->cleanGet['MYSQL']['objectID']);
@@ -146,6 +146,7 @@ try {
 			throw new Exception("Error building files preview.");
 		}
 		localvars::add("filesViewer",$filesViewer);
+		localvars::add("objectID", $engine->cleanGet['MYSQL']['objectID']);
 
 		//////////
 		// Children Tab Stuff
@@ -177,9 +178,6 @@ if (forms::validID()) {
 
 		localvars::add("form",$builtForm);
 		localvars::add("leftnav",navigation::buildProjectNavigation($engine->cleanGet['MYSQL']['formID']));
-
-		localvars::add("objectID",$engine->cleanGet['MYSQL']['objectID']);
-
 		//////////
 		// Project Tab Stuff
 		$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
@@ -268,6 +266,7 @@ $engine->eTemplate("include","header");
 					</div>
 
 					<?php if(!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
+
 						<div class="tab-pane" id="files">
 							<a href="/dataView/allfiles.php?objectID={local var="objectID"}">Download All Files (Zip)</a><br />
 							<!-- <a href="/dataView/allfiles.php?id=$engine->cleanGet['MYSQL']['objectID']&amp;type=tar">Download All Files (tar)</a> -->
