@@ -12,13 +12,7 @@ class duplicates {
 		}
 
 		// wipe the old dupe information
-		$sql       = sprintf("DELETE FROM `dupeMatching` WHERE `formID`='%s' AND `objectID`='%s'",
-			mfcs::$engine->openDB->escape($formID),
-			mfcs::$engine->openDB->escape($objectID)
-			);
-		$sqlResult = mfcs::$engine->openDB->query($sql);
-
-		if (!$sqlResult['result']) {
+		if (!self::delete($objectID,$formID)) {
 			mfcs::$engine->openDB->transRollback();
 			mfcs::$engine->openDB->transEnd();
 			errorHandle::newError(__METHOD__."() - removing from duplicate table: ".$sqlResult['error'], errorHandle::DEBUG);
@@ -99,6 +93,22 @@ class duplicates {
 		else {
 			return FALSE;
 		}
+	}
+
+	public static function delete($objectID,$formID=NULL) {
+
+		$sql       = sprintf("DELETE FROM `dupeMatching` WHERE `objectID`='%s'%s",
+			mfcs::$engine->openDB->escape($objectID),
+			isnull($formID)?"":sprintf("AND `formID`='%s'",mfcs::$engine->openDB->escape($formID))
+			);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		return TRUE;
 	}
 	
 }

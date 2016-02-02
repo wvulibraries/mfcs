@@ -1315,17 +1315,12 @@ class forms {
 					return FALSE;
 				}
 
-				$sql       = sprintf("DELETE FROM `dupeMatching` WHERE `objectID`='%s'",
-					$objectID
-					);
-				$sqlResult = $engine->openDB->query($sql);
-
-				if (!$sqlResult['result']) {
+				// delete from duplicates table
+				if (!duplicates::delete($objectID)) {
 					$engine->openDB->transRollback();
 					$engine->openDB->transEnd();
 
 					errorHandle::errorMsg("Error deleting objects.");
-					errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 					return FALSE;
 				}
 
