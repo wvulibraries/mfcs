@@ -1702,7 +1702,7 @@ footer{
 #objectComparator {
   float: left;
   width: 100%;
-  background: #eee;
+  background:1px solid #ccc;
   padding: 20px;
 }
 
@@ -1730,7 +1730,7 @@ footer{
 
   .fieldName, .fieldValue{
     padding:10px;
-    background:#ccc;
+    background:#eee;
   }
 
   .fieldName {
@@ -1739,5 +1739,17 @@ footer{
 
   .fieldValue {
     background:#fff;
+  }
+
+  .diffCurrent {
+     border-color:#9ABEAA;
+    .fieldName { background:rgba(#9ABEAA,.4); }
+    .fieldValue { background:rgba(#9ABEAA,.2); }
+  }
+
+  .diffRevision {
+    border-color:#ED8B00;
+    .fieldName { background:rgba(#ED8B00,.4); }
+    .fieldValue { background:rgba(#ED8B00,.2); }
   }
 }
