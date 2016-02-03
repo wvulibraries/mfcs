@@ -145,13 +145,8 @@ try {
 		if (($filesViewer = files::buildFilesPreview($engine->cleanGet['MYSQL']['objectID'])) === FALSE) {
 			throw new Exception("Error building files preview.");
 		}
-
-		if (($modals = files::buildModals($engine->cleanGet['MYSQL']['objectID'])) === FALSE) {
-			throw new Exception("Error building Modals for file preview.");
-		}
 		localvars::add("filesViewer",$filesViewer);
 		localvars::add("objectID", $engine->cleanGet['MYSQL']['objectID']);
-		localvars::add('iFrame', $modals);
 
 		//////////
 		// Children Tab Stuff
@@ -353,8 +348,23 @@ $engine->eTemplate("include","header");
 	</div>
 </section>
 
-
-{local var="iFrame"}
+<!-- Modal Preview -->
+<div class="modal imagePreviewModal" id="modal" tabindex="-1" role="dialog" aria-labelledby="preview modal" aria-hidden="true">
+	<div class="modalContainer">
+	    <div class="modal-header">
+	        <button type="button" class="close" aria-hidden="true">×</button>
+	        <h3>File Preview</h3>
+	    </div>
+			<div class="modal-body">
+	 		<div class="video-container">
+	     		<iframe src="" frameborder="0" id="iFrameTarget"></iframe>
+	     	</div>
+	  	</div>
+	    <div class="modal-footer">
+	        <button class="btn close" aria-hidden="true">Close</button>
+	    </div>
+	</div>
+</div>
 
 <!-- @TODO : scripts should be moved out of this file -->
 <script type="text/javascript">
@@ -370,7 +380,6 @@ $(window).on("beforeunload", function() {
 			error: function(jqXHR,error,exception) {
 			},
 			async:   true
-
 		});
 	}
 });

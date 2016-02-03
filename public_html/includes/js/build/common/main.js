@@ -481,8 +481,6 @@ function removeFromList(id) {
     }
 }
 
-var filePrevModal;
-
 // Document Ready
 // ===================================================================
 $(function(){
@@ -504,16 +502,20 @@ $(function(){
     // ====================================================
 
     $('.fileModalPreview').find('a').click( function(){
-        filePrevModal = $(this).data('target');
+        var targetURL = $(this).data('url');
 
-        $('#'+filePrevModal).addClass('show');
+        console.log(targetURL);
+
+        $('#iFrameTarget').attr('src', targetURL);
+
+        $('.imagePreviewModal').addClass('show');
         $('.bgCloak').show();
         $('body').addClass('filePreviewModalLives');
     });
 });
 
 function closeModal(){
-    $('#'+filePrevModal).removeClass('show').hide();
+    $('.imagePreviewModal').removeClass('show').hide();
     $('.bgCloak').hide();
 }
 
