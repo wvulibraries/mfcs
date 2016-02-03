@@ -225,7 +225,6 @@ class files {
 				continue;
 			}
 
-
 			$processedFiles = self::processObjectFiles($assetsID,$fieldOptions);
 
 			if(!$processedFiles){
@@ -1032,6 +1031,7 @@ class files {
 
 			// This conditional needs updated when different conversion options are added or removed.
 			// If the file has no processing to do, don't do any ...
+			// @TODO - NEEDS TO BE DYNAMIC
 			if (!isset($options['convert']) && !isset($options['thumbnail']) && !isset($options['ocr'])
 				 && !isset($options['convertAudio']) && !isset($options['convertAudio']) && !isset($options['videothumbnail']) ) {
 				return $return;
