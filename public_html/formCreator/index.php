@@ -740,33 +740,32 @@ $audioFileTypes = array();
 
 // more options can be added later, its not a great idea to go above or below 128 though
 $bitrates    = array(
-	'128'        => '128kbs - Low',
-	'160'		 => '160kbs - Average ',
-	'192'		 => '192kbs - Above Average',
-	'256'        => '256kbs - Recommended',
-	'320'		 => '320kbs - High',
+	'128' => '128kbs - Low',
+	'160' => '160kbs - Average ',
+	'192' => '192kbs - Above Average',
+	'256' => '256kbs - Recommended',
+	'320' => '320kbs - High',
 );
 
 $audioTypes  = array(
-	'aac'        => 'Advanced Audio Coding',
-	'mp3'        => 'MP3 - Audio Layer 3',
-	'oga'        => 'Open Container Audio',
-	'wav'        => 'Wav Sound File'
+	'aac' => 'Advanced Audio Coding',
+	'mp3' => 'MP3 - Audio Layer 3',
+	'oga' => 'Open Container Audio',
+	'wav' => 'Wav Sound File'
 );
 
 $videoTypes  = array(
-	'3gp'        => 'Mobile Video Format',
-	'h264'       => 'H264 Raw Format',
-	'mp4'        => 'MP4 Video Format',
-	'oog'        => 'Open Container Format',
-	'wmv'        => 'Windows Media Video',
+	'3gp'  => 'Mobile Video Format',
+	'h264' => 'H264 Raw Format',
+	'mp4'  => 'MP4 Video Format',
+	'wmv'  => 'Windows Media Video',
 );
 
 $videoThumbs = array(
-	'bmp'        => 'Bitmap',
-	'gif'        => 'Gif',
-	'jpeg'       => 'Jpeg',
-	'png'        => 'Png'
+	'bmp' => 'Bitmap',
+	'gif' => 'Gif',
+	'jpg' => 'Jpg',
+	'png' => 'Png'
 );
 
 try {
