@@ -67,9 +67,9 @@ function submitMetadataModal() {
         if ($(this).attr("name") == "insertForm") {
             data = data + "&submitForm=Submit"
         }
-        else if ($(this).attr("name") == "updateForm") {
-            data = data + "&updateEdit=Update";
-        }
+        // else if ($(this).attr("name") == "updateForm") {
+        //     data = data + "&updateEdit=Update";
+        // }
 
         $.ajax({
             type: "POST",
