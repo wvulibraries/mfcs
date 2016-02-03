@@ -1185,7 +1185,7 @@ class files {
 						$width,
 						$height
 					);
-					$conversionOptions['aspect'] = $options['aspectRatio'];
+					//$conversionOptions['aspect'] = $options['aspectRatio'];
 				}
 				else {
 					// height width set for original files aspect ratio
