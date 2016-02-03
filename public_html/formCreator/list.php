@@ -28,16 +28,15 @@ $engine->eTemplate("include","header");
 	<header class="page-header">
 		<h1>Select a Form</h1>
 	</header>
-	<nav id="breadcrumbs">
-		<ul class="breadcrumb">
-			<li><a href="{local var="siteRoot"}">Home</a></li>
-			<li><a href="{local var="siteRoot"}/formCreator/list.php">List Forms</a></li>
-		</ul>
-	</nav>
+
+	<ul class="breadcrumbs">
+		<li><a href="{local var="siteRoot"}">Home</a></li>
+		<li><a href="{local var="siteRoot"}/formCreator/list.php">List Forms</a></li>
+	</ul>
 
 	{local var="results"}
 
-	<div class="container-fluid">
+	<div>
 		{local var="accordionList"}
 	</div>
 

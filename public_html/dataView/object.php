@@ -63,7 +63,7 @@ try {
 		$user   = users::get($object['createdBy']);
 		localvars::add("createdByUsername",$user['username']);
 	}
-	
+
 	localvars::add("createdOnDate",date('D, d M Y H:i',$object['createTime']));
 
 	if (is_empty($object['modifiedBy'])) {
@@ -126,7 +126,9 @@ $engine->eTemplate("include","header");
 
 	<div class="container-fluid">
 		<div class="span3">
-			{local var="leftnav"}
+			<ul class="menu">
+				{local var="leftnav"}
+			</ul>
 		</div>
 
 		<div class="span9">
@@ -141,20 +143,21 @@ $engine->eTemplate("include","header");
 					<li><a data-toggle="tab" href="#metadata">Metadata</a></li>
 					<li><a data-toggle="tab" href="#files" id="filesTab">Files</a></li>
 					<li><a data-toggle="tab" href="#project">Project</a></li>
-					<li><a data-toggle="tab" href="#children">Children</a></li>
+					<!-- <li><a data-toggle="tab" href="#children">Children</a></li> -->
 				</ul>
 
 				<div class="tab-content">
 					<div class="tab-pane" id="metadata">
 						{local var="form"}
 
-						
+
 						<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
 							<p>Created by: {local var="createdByUsername"} on {local var="createdOnDate"}</p>
 							<p>Modified by: {local var="modifiedByUsername"} on {local var="modifiedOnDate"}</p>
 						<?php } ?>
 					</div>
 					<div class="tab-pane" id="files">
+						<a href="/dataView/allfiles.php?objectID={local var="objectID"}"  class="btn btn-primary">Download All Files (Zip)</a><br><br>
 						{local var="filesViewer"}
 					</div>
 
@@ -168,9 +171,9 @@ $engine->eTemplate("include","header");
 						</form>
 					</div>
 
-					<div class="tab-pane" id="children">
+<!-- 					<div class="tab-pane" id="children">
 						{local var="childrenList"}
-					</div>
+					</div> -->
 				</div>
 			</div>
 			<?php } // Permissions ?>

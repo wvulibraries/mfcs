@@ -1,0 +1,30 @@
+// COLORS
+// ===========================================================================================
+$blue : #005EB8;
+$darkblue : #002855;
+$gold : #EAAA00;
+$gold-darken : darken($gold,10%);
+$lightgrey : #eee;
+$light-blue : #9BD3DD;
+$darkgrey : #ccc;
+
+// MIXINS
+// ===========================================================================================
+
+@mixin breakpoint($break) {
+  @if $break == tablet {
+        @media (min-width: 48em) { @content; }
+    }
+    @if $break == laptop {
+        @media (min-width: 60em) { @content; }
+    }
+    @if $break == desktop {
+        @media (min-width: 80em) { @content; }
+    }
+    @if $break == print {
+         @media print { @content; }
+    }
+    @else {
+      @media (min-width: $break) { @content; }
+    }
+}

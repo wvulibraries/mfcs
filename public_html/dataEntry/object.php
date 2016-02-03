@@ -61,26 +61,8 @@ try {
 
 	// Editor information
 	if (!isnull($engine->cleanGet['MYSQL']['objectID'])) {
-		$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
-		if (is_empty($object['createdBy'])) {
-			localvars::add("createdByUsername","Unavailable");
-		}
-		else {
-			$user   = users::get($object['createdBy']);
-			localvars::add("createdByUsername",$user['username']);
-		}
-
-		localvars::add("createdOnDate",date('D, d M Y H:i',$object['createTime']));
-		
-		if (is_empty($object['modifiedBy'])) {
-			localvars::add("modifiedByUsername","Unavailable");
-		}
-		else {
-			$user   = users::get($object['modifiedBy']);
-			localvars::add("modifiedByUsername",$user['username']);
-		}
-
-		localvars::add("modifiedOnDate",date('D, d M Y H:i',$object['modifiedTime']));
+		revisions::history_created($engine->cleanGet['MYSQL']['objectID']);
+		revisions::history_last_modified($engine->cleanGet['MYSQL']['objectID']);
 	}
 
 	//////////
@@ -93,7 +75,7 @@ try {
 	localvars::add("formName",$form['title']);
 	localvars::add("formID",$form['ID']);
 
-	log::insert("Data Entry: Object: View Page",0,$form['ID']);
+	log::insert("Data Entry: Object: View Page",$engine->cleanGet['MYSQL']['objectID'],$form['ID']);
 
 	// handle submission
 	if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
@@ -131,7 +113,7 @@ try {
 	// If locked, warn, allow to steal
 	// We only need to check for locks on edits, not new objects
 	if (!isnull($engine->cleanGet['MYSQL']['objectID'])) {
-
+		localvars::add('objectID', $engine->cleanGet['MYSQL']['objectID']);
 		if (isset($engine->cleanGet['MYSQL']['unlock']) && $engine->cleanGet['MYSQL']['unlock'] == "unlock") {
 			log::insert("Data Entry: Object: Unlocked Object",$engine->cleanGet['MYSQL']['objectID']);
 			objects::unlock($engine->cleanGet['MYSQL']['objectID']);
@@ -143,7 +125,7 @@ try {
 			die();
 		}
 
-		// If the object is locked and it is the lock ID that is set in Localvars, we assume that the form was just submitted and we are redisplaying. 
+		// If the object is locked and it is the lock ID that is set in Localvars, we assume that the form was just submitted and we are redisplaying.
 		if (objects::is_locked($engine->cleanGet['MYSQL']['objectID']) && objects::is_locked($engine->cleanGet['MYSQL']['objectID']) == localvars::get("lockID")) {
 			$locked = FALSE;
 		}
@@ -164,6 +146,7 @@ try {
 			throw new Exception("Error building files preview.");
 		}
 		localvars::add("filesViewer",$filesViewer);
+		localvars::add("objectID", $engine->cleanGet['MYSQL']['objectID']);
 
 		//////////
 		// Children Tab Stuff
@@ -195,9 +178,6 @@ if (forms::validID()) {
 
 		localvars::add("form",$builtForm);
 		localvars::add("leftnav",navigation::buildProjectNavigation($engine->cleanGet['MYSQL']['formID']));
-
-		localvars::add("objectID",$engine->cleanGet['MYSQL']['objectID']);
-
 		//////////
 		// Project Tab Stuff
 		$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
@@ -219,6 +199,7 @@ forms::checkFormInCurrentProjects($engine->cleanGet['MYSQL']['formID']);
 localvars::add("actionHeader",(isnull($engine->cleanGet['MYSQL']['objectID']))?"Add":"Edit");
 localvars::add("parentHeader",(isnull($parentObject))?"":"<h2>Adding Child to Parent '".$parentObject['data'][$form['objectTitleField']]."'</h2>");
 
+
 $engine->eTemplate("include","header");
 ?>
 
@@ -230,43 +211,47 @@ $engine->eTemplate("include","header");
 		{local var="parentHeader"}
 	</header>
 
-	<nav id="breadcrumbs">
-		<ul class="breadcrumb">
-			<li><a href="{local var="siteRoot"}">Home</a></li>
-			<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
-			<!-- FLoat Right -->
-			<?php if(mfcsPerms::isAdmin($engine->cleanGet['MYSQL']['formID'])){ ?>
+
+	<ul class="breadcrumbs">
+		<li><a href="{local var="siteRoot"}">Home</a></li>
+		<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
+
+		<!-- FLoat Right -->
+		<?php if(mfcsPerms::isAdmin($engine->cleanGet['MYSQL']['formID'])){ ?>
 			<li class="pull-right noDivider"><a href="{local var="siteRoot"}formCreator/index.php?id={local var="formID"}">Edit Form</a></li>
 			<?php
 			}
 			if (!isnull($engine->cleanGet['MYSQL']['objectID']) and $revisions->hasRevisions($engine->cleanGet['MYSQL']['objectID'])) { ?>
 				<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions/index.php?objectID={local var="objectID"}">Revisions</a></li>
-			<?php } ?>
-			<li class="pull-right noDivider"><a href="{phpself query="true"}&unlock=cancel">Cancel Edit &amp; Unlock object</a></li>
-			<li class="pull-right noDivider"><a href="/data/object/history/">History</a></li>
-		</ul>
-	</nav>
+		<?php } ?>
+		<li class="pull-right noDivider"><a href="{phpself query="true"}&unlock=cancel">Cancel Edit &amp; Unlock object</a></li>
+		<li class="pull-right noDivider"><a href="/data/object/history/?objectID={local var="objectID"}">History</a></li>
+	</ul>
 
 	<div class="container-fluid">
 		<div class="span3">
-			{local var="leftnav"}
+			<h2> Object Navigation </h2>
+			<ul class="objectNav">
+				{local var="leftnav"}
+			</ul>
 		</div>
 
 		<div class="span9">
+			<h2> Data Entry </h2>
 			<div class="row-fluid" id="results">
 				{local var="results"}
 			</div>
 
 			<?php if ($permissions === TRUE && $locked === FALSE) { ?>
 
-			<div class="row-fluid">
+			<div>
 				<ul class="nav nav-tabs">
 					<li><a data-toggle="tab" href="#metadata">Metadata</a></li>
 					<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
 						<li><a data-toggle="tab" href="#files" id="filesTab">Files</a></li>
 						<li><a data-toggle="tab" href="#project">Project</a></li>
 						<?php if(forms::isContainer($engine->cleanGet['MYSQL']['formID'])) { ?>
-							<li><a data-toggle="tab" href="#children">Children</a></li>
+							<!-- <li><a data-toggle="tab" href="#children">Children</a></li> -->
 						<?php } ?>
 					<?php } ?>
 				</ul>
@@ -281,7 +266,8 @@ $engine->eTemplate("include","header");
 						<?php } ?>
 					</div>
 
-					<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
+					<?php if(!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
+
 						<div class="tab-pane" id="files">
 							<a href="/dataView/allfiles.php?objectID={local var="objectID"}">Download All Files (Zip)</a><br />
 							<!-- <a href="/dataView/allfiles.php?id=$engine->cleanGet['MYSQL']['objectID']&amp;type=tar">Download All Files (tar)</a> -->
@@ -300,7 +286,7 @@ $engine->eTemplate("include","header");
 							</form>
 						</div>
 						<?php if(forms::isContainer($engine->cleanGet['MYSQL']['formID'])) { ?>
-							<div class="tab-pane" id="children">
+							<!-- <div class="tab-pane" id="children">
 
 								<div class="accordion" id="accordion2">
 									<div class="accordion-group">
@@ -317,15 +303,15 @@ $engine->eTemplate("include","header");
 											</div>
 										</div>
 									</div>
-								</div>
+								</div> -->
 
-								<section>
+								<!-- <section>
 									<header>
 										<h1>Children</h1>
 									</header>
 
 									{local var="childrenList"}
-								</section>
+								</section> -->
 							</div>
 						<?php } ?>
 					<?php } ?>
@@ -342,12 +328,12 @@ $engine->eTemplate("include","header");
 
 			<p>
 				This object is locked for editing. If you are the user that locked this file it is possible that you have
-			 	it open in another browser window, or closed the browser window where you were previously working on this 
+			 	it open in another browser window, or closed the browser window where you were previously working on this
 			 	object without clearing your lock.
 			</p>
 
 			<p>
-				If another user is listed as the locking user, please check with them before unlocking this object to edit it. 
+				If another user is listed as the locking user, please check with them before unlocking this object to edit it.
 			</p>
 
 			<p>
@@ -362,31 +348,30 @@ $engine->eTemplate("include","header");
 	</div>
 </section>
 
+<!-- Modal Preview -->
+<div class="modal imagePreviewModal" id="modal" tabindex="-1" role="dialog" aria-labelledby="preview modal" aria-hidden="true">
+	<div class="modalContainer">
+	    <div class="modal-header">
+	        <button type="button" class="close" aria-hidden="true">×</button>
+	        <h3>File Preview</h3>
+	    </div>
+			<div class="modal-body">
+	 		<div class="video-container">
+	     		<iframe src="" frameborder="0" id="iFrameTarget"></iframe>
+	     	</div>
+	  	</div>
+	    <div class="modal-footer">
+	        <button class="btn close" aria-hidden="true">Close</button>
+	    </div>
+	</div>
+</div>
+
 <!-- @TODO : scripts should be moved out of this file -->
 <script type="text/javascript">
-	$(function() {
-		// Show first tab on page load
-		$(".nav-tabs a:first").tab("show");
-
-		var $objectSubmitBtn = $('#objectSubmitBtn');
-		$objectSubmitBtn.closest('form').submit(function(){
-			var $objectSubmitProcessing = $('#objectSubmitProcessing');
-			if($objectSubmitProcessing.length){
-				$objectSubmitBtn.hide();
-				$objectSubmitProcessing.show();
-			}
-		});
-	});
-</script>
-
-<script type="text/javascript">
-
 inForm = false;
 $("form").submit(function(e){inForm = true;});
-
 $(window).on("beforeunload", function() {
 	if (!inForm) {
-
 		$.ajax({
 			url: "/includes/ajax/unlock.php?lockID="+{local var="lockID"},
 			dataType: "json",
@@ -395,12 +380,9 @@ $(window).on("beforeunload", function() {
 			error: function(jqXHR,error,exception) {
 			},
 			async:   true
-
 		});
-
 	}
 });
-
 </script>
 
 <?php

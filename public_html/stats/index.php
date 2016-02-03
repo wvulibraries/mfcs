@@ -12,12 +12,11 @@ localvars::add("statsList",$stats->showStatFiles());
 		<h1>System Stats</h1>
 	</header>
 
-	<nav id="breadcrumbs">
-		<ul class="breadcrumb">
-			<li><a href="{local var="siteRoot"}">Home</a></li>
-			<li><a href="{local var="siteRoot"}/stats/">Stats</a></li>
-		</ul>
-	</nav>
+	<ul class="breadcrumbs">
+		<li><a href="{local var="siteRoot"}">Home</a></li>
+		<li><a href="{local var="siteRoot"}/stats/">Stats</a></li>
+	</ul>
+
 
 	{local var="statsList"}
 

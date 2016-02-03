@@ -3,6 +3,9 @@ require("header.php");
 
 log::insert("Admin: View index Page");
 
+// I don't think this is a used page
+// @TODO REMOVE?
+
 //Permissions Access
 if(!mfcsPerms::evaluatePageAccess(3)){
 	header('Location: /index.php?permissionFalse');
@@ -13,14 +16,14 @@ $engine->eTemplate("include","header");
 
 <section>
 	<header class="page-header">
-		<h1>Administrator Actions</h1>
+		<h1 class="page-title">Admin Home</h1>
 	</header>
 
-	<nav id="breadcrumbs">
-		<ul class="breadcrumb">
-			<li><a href="{local var="siteRoot"}">Home</a></li>
-		</ul>
-	</nav>
+	<ul class="breadcrumbs">
+		<li><a href="{local var="siteRoot"}">Home</a></li>
+		<li><a href="{local var="siteRoot"}/admin/index.php">Admin Home</a></li>
+	</ul>
+
 
 	<ul class="pickList">
 		<li>

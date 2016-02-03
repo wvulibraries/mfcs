@@ -80,12 +80,11 @@ $engine->eTemplate("include","header");
 		<h1>Manage Users</h1>
 	</header>
 
-	<nav id="breadcrumbs">
-		<ul class="breadcrumb">
+	<ul class="breadcrumbs">
 		<li><a href="{local var="siteRoot"}">Home</a></li>
 		<li><a href="{local var="siteRoot"}/admin/">Admin</a></li>
-		</ul>
-	</nav>
+	</ul>
+
 
 	{local var="results"}
 
@@ -102,7 +101,9 @@ $engine->eTemplate("include","header");
 		<header>
 			<h2>Edit Users</h2>
 		</header>
-		{listObject display="editTable"}
+		<div class="table-responsive editUsersTable">
+			{listObject display="editTable"}
+		</div>
 	</section>
 </section>
 

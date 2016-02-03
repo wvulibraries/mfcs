@@ -1,11 +1,5 @@
-<ul class="pickList">
-	<li>
-		<a href="{phpself query="false"}?listType=all" class="btn">All Objects</a>
-	</li>
-	<li>
-		<a href="{phpself query="false"}?listType=selectForm" class="btn">Objects by Form</a>
-	</li>
-	<li>
-		<a href="{phpself query="false"}?listType=selectProject" class="btn">Objects by Project</a>
-	</li>
-</ul> 
+<div class="btn-group" role="group" aria-label="...">
+    <a href="{phpself query="false"}?listType=all" class="btn btn btn-primary">All Objects</a>
+    <a href="{phpself query="false"}?listType=selectForm" class="btn btn btn-primary">Objects by Form</a>
+    <a href="{phpself query="false"}?listType=selectProject" class="btn btn btn-primary">Objects by Project</a>
+</div>

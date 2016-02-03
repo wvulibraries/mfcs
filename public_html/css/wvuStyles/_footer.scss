@@ -1,0 +1,125 @@
+@import 'variables';
+
+/*********************************************************************
+    480px or less
+**********************************************************************/
+/* Footer */
+footer {
+	background-color: $primary-blue;
+	padding-bottom: 50px;
+    p {
+		font-size:  0.75em;
+		line-height: 150%;
+	}
+	a {
+		color: #fff;
+		text-decoration: none;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}
+.school-footer {
+	padding: 30px 0px 0px 0px;
+	color: #fff;
+	width: 100%;
+	.footerTitle {
+		font-size:1.5em;
+		font-weight: 300;
+		display: block;
+		color: #FC6;
+		&:hover {
+			text-decoration:none;
+		}
+	}
+
+}
+.wvu-footer {
+	margin: 10px 0px 30px 0px;
+	width: 100%;
+	.wvuFooterSites {
+		float: inherit;
+		text-align: center;
+		li {
+			display: inline-block;
+			margin: 0px;
+			padding: 0px;
+			a {
+				padding: 10px 0 0 0;
+				margin: 0 0.5em;
+				display: block;
+				font-size:  0.75em;
+				border-radius: 30px;
+				color: #fff;
+				text-decoration: none;
+				&:hover {
+					text-decoration: underline;
+				}
+			}
+		}
+	}
+	.wvuFooterSocial {
+		margin-top:30px;
+		float: inherit;
+		li {
+			display: inline;
+			padding: 0 2px;
+			.socmedia {
+				opacity: 1;
+				&:hover {
+					text-decoration: none;
+					opacity: 0.75;
+				}
+				img {
+					width: 30px;
+					height: auto;
+				}
+			}
+		}
+	}
+}
+
+/*********************************************************************
+	768px to 1024px
+**********************************************************************/
+@media screen and (min-width: 768px) {
+/* Footer */
+	footer {
+		padding: 30px 0px;
+	}
+	.school-footer {
+		width: 50%;
+		float: left;
+		text-align: left;
+		padding: 0px;
+	}
+	.wvu-footer {
+		width: 50%;
+		float: left;
+		padding: 0px;
+		.wvuFooterSites {
+			float: right;
+			text-align: right;
+			li {
+				a {
+					padding: 10px 0 0 0;
+					margin-left: 1em;
+				}
+			}
+		}
+		.wvuFooterSocial {
+			float: right;
+		}
+	}
+}
+
+/*********************************************************************
+	1024px and up
+**********************************************************************/
+
+@media screen and (min-width: 1024px) {
+/* Footer */
+	.disclaimer {
+		white-space: nowrap;
+	}
+}

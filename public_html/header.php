@@ -41,15 +41,21 @@ $mfcsSearch = new mfcsSearch();
 // Load the user's current projects
 
 sessionSet('currentProject',users::loadProjects());
-
 recurseInsert("includes/functions.php","php");
 recurseInsert("includes/validator.php","php");
 
-$engine->eTemplate("load","distribution");
+$engine->eTemplate("load","mfcsTemplate");
 
+// setup localvars for meta tags
 localVars::add("siteRoot",mfcs::config("siteRoot"));
 localVars::add('pageTitle',mfcs::config("pageTitle"));
 localVars::add('pageHeader',mfcs::config("pageHeader"));
 
-$notificationEmails = array("mrbond@mail.wvu.edu"=>"Michael Bond");
+localVars::add("meta_authors", 'WVU Libraries Systems Office');
+localVars::add('meta_description', 'MFCS is a system built to store and archive digital projects, finding aids, and historical material entrusted to the library. This system allows us to keep secure data, achive the original, and make modifications for other technologies to use. The material ultimately ends up in a repository system such as Hydra, Islandora, or DLXS.');
+localVars::add('meta_keywords', 'Metadata, Storage, Solution, Form, Creation, System, WVU, West Virginia, Libraries, Finding Aids ');
+
+
+// JSON Object for Projects
+localVars::add('userCurrentProjectsJSON', json_encode(users::loadProjects()));
 ?>

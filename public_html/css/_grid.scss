@@ -1,0 +1,80 @@
+.row {
+  padding:0 15px;
+}
+
+// GRID
+// ===========================================================================================
+section {
+  clear: both;
+  padding: 0px;
+  margin: 0px;
+  background:#fff;
+}
+
+[class*="span"] {
+  margin: 1% 0 1% 0%;
+  width: 100%;
+  display: block;
+  float:left;
+
+  &:first-child { margin-left: 0; }
+  &:before,
+  &:after { content:""; display:table; }
+  &:after { clear:both;}
+  &{ zoom:1;}
+
+  @include breakpoint(tablet){
+    margin: 1% 0 1% 2%;
+  }
+}
+
+@include breakpoint(tablet){
+  .span12 {
+    width: 100%;
+  }
+
+  .span11{
+      width: 91.5%;
+  }
+  .span10 {
+      width: 83%;
+  }
+
+  .span9 {
+      width: 74.5%;
+  }
+
+  .span8 {
+      width: 66%;
+  }
+
+  .span7 {
+      width: 57.5%;
+  }
+
+  .span6 {
+      width: 49%;
+  }
+
+  .span5 {
+      width: 40.5%;
+  }
+
+  .span4{
+      width: 32%;
+  }
+
+  .span3 {
+      width: 23.5%;
+  }
+
+  .span2 {
+      width: 15%;
+  }
+
+  .span1 {
+      width: 6.5%;
+  }
+}
+
+.last{ margin-left:0;}

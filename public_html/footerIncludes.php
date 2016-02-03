@@ -23,27 +23,11 @@ $projectListHTML .= '</ul>';
 localvars::add('projectModalList', $projectListHTML);
 ?>
 {engine name="csrf"}
-<!-- Modal - Select Current Projects -->
-<div id="selectProjectsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-		<h3>Your current projects:</h3>
-	</div>
-	<div class="modal-body">{local var="projectModalList"}</div>
-	<div class="modal-footer">
-		<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-		<button class="btn btn-primary" onclick="saveSelectedProjects();">Save changes</button>
-	</div>
-</div>
 
-<div id="metadataModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="metadataEntryFormModal" aria-hidden="true">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-		<h3 id="metadataModalHeader"></h3>
-	</div>
-	<div class="modal-body" id="metadataModalBody"></div>
-	<div class="modal-footer">
-		<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-		<button class="btn btn-primary" onclick="submitMetadataModal();">Save changes</button>
-	</div>
+
+<div class="bindingData alert alert-info fade in">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+    <h2> Loading Data </h2>
+	<i class="fa fa-spinner fa-pulse fa-4x"></i>
+	<p> Please be patient while the data populates. This should only take a few seconds. </p>
 </div>

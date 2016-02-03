@@ -13,12 +13,10 @@ localvars::add("exportsList",$stats->showExportListing());
 		<h1>Exports</h1>
 	</header>
 
-	<nav id="breadcrumbs">
-		<ul class="breadcrumb">
-			<li><a href="{local var="siteRoot"}">Home</a></li>
-			<li><a href="{local var="siteRoot"}/exports/">Exports</a></li>
-		</ul>
-	</nav>
+	<ul class="breadcrumbs">
+			<li><a href="/">Home</a></li>
+			<li><a href="/exports"> Exports </a></li>
+	</ul>
 
 	{local var="exportsList"}
 

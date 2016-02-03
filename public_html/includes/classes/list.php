@@ -97,47 +97,61 @@ class listGenerator {
 		$engine   = EngineAPI::singleton();
 		$projects = projects::getProjects();
 
-		$output = '<ul class="pickList">';
+		$output = '<div class="list-group">';
 		foreach ($projects as $project) {
-			$output .= sprintf('<li><a href="list.php?listType=project&amp;projectID=%s" class="btn">%s</a></li>',
+			$output .= sprintf('<a href="list.php?listType=project&amp;projectID=%s" class="list-group-item">%s</a></li>',
 				$project['ID'],
 				$project['projectName']
 				);
 		}
-		$output .= '</ul>';
+		$output .= '</div>';
 
 		return $output;
 	}
 
 	public static function createFormSelectList() {
+		$engine = EngineAPI::singleton();
+		$forms  = forms::getForms(TRUE,TRUE);
+		$output = '';
+		$count  = 0;
 
-		$engine  = EngineAPI::singleton();
-		$forms   = forms::getForms(TRUE,TRUE);
-
-		$output = '<ul class="pickList">';
+		$i = 0;
 		foreach ($forms as $form) {
-
 			if ($form === FALSE) continue;
-
 			if (!mfcsPerms::isViewer($form['ID'])) continue;
+			$i++;
 
-			$output .= sprintf('<div class="btn-group" style="display: block; margin: 5px;">
-				<a href="list.php?listType=form&amp;formID=%s" class="btn" style="width: 400px;">%s</a>
-				<button class="btn dropdown-toggle" data-toggle="dropdown">
-				<span class="caret"></span>
-				</button>
-				<ul class="dropdown-menu" style="width: 450px;">
-				<li><a href="list.php?listType=formShelfList&amp;formID=%s" style="width: 400px; text-align: right;">Shelf List</a></li>
-				<li><a href="list.php?listType=formThumbnailView&amp;formID=%s" style="width: 400px; text-align: right;">Thumbnail View</a></li>
-				</ul>
-				</div>',
+			// create the panel
+			$panel = sprintf('<div class="listForm panel panel-default span6">
+									<div class="panel-heading">
+										<span>
+											<a href="list.php?listType=form&amp;formID=%s"> %s
+											</a>
+										</span>
+										<i class="expandShelfList fa fa-plus-square-o"></i>
+									</div>
+									<div class="panel-body shelfList">
+										<a href="list.php?listType=formShelfList&amp;formID=%s">Shelf List</a> <br/>
+                                        <a href="list.php?listType=formThumbnailView&amp;formID=%s" style="width: 400px; text-align: right;">Thumbnail View</a>
+									</div>
+								</div>',
 				$form['ID'],
 				forms::title($form['ID']),
 				$form['ID'],
 				$form['ID']
-				);
+			);
+
+			//iterate for every 2 elements wrap in a row
+			if($i == 1){
+				$output .= "<div class='row'>";
+				$output .= $panel;
+			}
+			if($i == 2){
+				$output .= $panel;
+				$output .= "</div>";
+				$i = 0;
+			}
 		}
-		$output .= '</ul>';
 
 		return($output);
 
@@ -262,9 +276,9 @@ class listGenerator {
 
 		$data = array();
 		foreach ($objects as $object) {
-			
+
 			$tmp    = array($object['idno'],self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("view",$object['ID']),date("Y-m-d h:ia",$object['createTime']),date("Y-m-d h:ia",$object['modifiedTime'])); //,self::genLinkURLs("revisions",$object['ID'])
-			$data[] = $tmp; 
+			$data[] = $tmp;
 
 		}
 
@@ -332,7 +346,7 @@ class listGenerator {
 			$tableHTML .= sprintf('<p><span class="paginationJumpLabel">Records per page:</span> %s</p>',
 				$pagination->recordsPerPageDropdown()
 				);
-			$tableHTML .= sprintf('<p><form id="jumpToIDNOForm"><span class="paginationJumpLabel">Jump to IDNO:</span> <input type="text" name="jumpToIDNO" id="jumpToIDNO" data-formid="%s" value="" /></form></p>', 
+			$tableHTML .= sprintf('<p><form id="jumpToIDNOForm"><span class="paginationJumpLabel">Jump to IDNO:</span> <input type="text" name="jumpToIDNO" id="jumpToIDNO" data-formid="%s" value="" /></form></p>',
 				(isnull($formID))?"":htmlSanitize($formID)
 				);
 
@@ -419,10 +433,19 @@ class listGenerator {
 		}
 
 		if ($entry === FALSE) {
-			return sprintf('<a href="index.php?id=%s">%s</a>',
-				htmlSanitize($form['ID']),
-				forms::title($form['ID'])
+			if($metadata === FALSE){
+				return sprintf('<a href="index.php?id=%s" class="%s">%s<p>%s</p></a>',
+					htmlSanitize($form['ID']),
+					(is_empty(forms::description($form['ID'])) ? '' : 'hasDescription'),
+					forms::title($form['ID']),
+					(is_empty(forms::description($form['ID'])) ? '' : forms::description($form['ID']))
 				);
+			} else {
+				return sprintf('<a href="index.php?id=%s">%s</a>',
+					htmlSanitize($form['ID']),
+					forms::title($form['ID'])
+				);
+			}
 		}
 		else {
 			return sprintf('<a href="%sdataEntry/%s.php?formID=%s">%s</a>',
@@ -430,9 +453,8 @@ class listGenerator {
 				($metadata === TRUE)?"metadata":"object",
 				htmlSanitize($form['ID']),
 				forms::title($form['ID'])
-				);
+			);
 		}
-
 	}
 
 	// if entry is TRUE, the links will go to the data entry pages, otherwise form creator
@@ -463,18 +485,18 @@ class listGenerator {
 				return FALSE;
 			}
 
-			$output .= '<div class="accordion-group">';
-			$output .= '<div class="accordion-heading" style="padding: 5px;">';
+			$output .= '<div class="accordion-group panel panel-default">';
+			$output .= '<div class="accordion-heading panel-heading" style="padding: 10px;">';
 			$output .= '<div>';
 			$output .= self::generateAccordionFormList_links($form,$entry);
 			if(sizeof(forms::getObjectFormMetaForms($form['ID']))){
-				$output .= sprintf('<a class="pull-right metadataListAccordionToggle" data-toggle="collapse" data-parent="#formListAccordion" href="#collapse%s">Show Metadata Forms</a>',
+				$output .= sprintf('<a class="pull-right metadataListAccordionToggle" data-toggle="collapse" data-parent="#formListAccordion" href="#collapse%s"><i class="fa fa-plus-square-o"></i> Metadata Forms</a>',
 					++$count);
 			}
 			$output .= '</div>';
 			$output .= "</div>"; // heading
 			$output .= sprintf('<div id="collapse%s" class="accordion-body collapse">', $count);
-			$output .= '<div class="accordion-inner">';
+			$output .= '<div class="accordion-inner panel-body">';
 
 			$output .= '<ul>';
 			foreach ($metedataForms as $I=>$metadataForm) {
@@ -484,7 +506,8 @@ class listGenerator {
 				}
 
 				$output .= '<li>';
-				if (($output .= self::generateAccordionFormList_links($metadataForm,$entry,($entry===TRUE)?TRUE:FALSE)) === FALSE) {
+				// these are metadata forms the end should be true.
+				if (($output .= self::generateAccordionFormList_links($metadataForm,$entry,TRUE)) === FALSE) {
 					return FALSE;
 				}
 				$output .= '</li>';
@@ -498,7 +521,7 @@ class listGenerator {
 		$output .= "</div>";
 
 		if (count($metaForms) > 0) {
-			$output .= '<h1>Unassigned Metadata Forms</h1>';
+			$output .= '<div class="unassignedForms"> <h1>Unassigned Metadata Forms</h1>';
 			$output .= "<ul>";
 			foreach ($metaForms as $metadataForm) {
 
@@ -511,7 +534,7 @@ class listGenerator {
 				}
 				$output .= '</li>';
 			}
-			$output .= "</ul>";
+			$output .= "</ul> </div>";
 		}
 
 		return $output;
@@ -631,11 +654,35 @@ class listGenerator {
 			}
 
 		}
-
 		return self::createTable($data);
-
 		return;
+	}
 
+	public static function getMetadataStandards($id = null){
+		$engine = EngineAPI::singleton();
+
+		if (!isnull($id)){
+			$sql = sprintf("SELECT * FROM `metadataStandards` WHERE `formID`=%s",
+				$engine->openDB->escape($id)
+			);
+		}
+		else {
+			$sql = "SELECT * FROM `metadataStandards`";
+		}
+
+		$sqlResult = $engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - getting all objects for form: ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		$objects = array();
+		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+			$objects[$row['typeID']] = $row['type'];
+		}
+
+		return $objects;
 	}
 
 }

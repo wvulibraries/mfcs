@@ -225,7 +225,6 @@ class files {
 				continue;
 			}
 
-
 			$processedFiles = self::processObjectFiles($assetsID,$fieldOptions);
 
 			if(!$processedFiles){
@@ -279,30 +278,33 @@ class files {
 		// Get the file's source
 		if(!isset($fileData)) $fileData = file_get_contents($filename);
 
+		// List of Video Mime types
+		$videoMimeTypes = array( 'application/mp4', 'application/ogg', 'video/3gpp', 'video/3gpp2', 'video/flv', 'video/h264', 'video/mp4', 'video/mpeg', 'video/mpeg-2', 'video/mpeg4', 'video/ogg', 'video/ogm', 'video/quicktime', 'video/avi');
+
+		$audioMimeTypes  = array('audio/acc', 'audio/mp4', 'audio/mp3', 'audio/mp2', 'audio/mpeg', 'audio/oog', 'audio/midi', 'audio/wav', 'audio/x-ms-wma','audio/webm');
+
+
+		$imageMimeTypes = array('image/jpeg', 'image/gif', 'image/png', 'image/bmp', 'image/tiff', 'image/x-icon');
+
+		$pdfMimeTypes   = array('application/pdf');
+
 		// Figure out what to do with the data
 		switch(trim(strtolower($mimeType))){
 			case 'image/tiff':
 				self::printImage($filename,$mimeType);
-				break;
+			break;
 
-			case 'image/gif':
-			case 'image/jpeg':
-			case 'image/png':
-			case 'text/css':
-			case 'text/csv':
-			case 'text/html':
-			case 'text/javascript':
-			case 'text/plain':
-			case 'text/xml':
-			case 'application/javascript':
-			case 'application/pdf':
+			case in_array($mimeType, $imageMimeTypes):
+			case in_array($mimeType, $pdfMimeTypes):
+			case in_array($mimeType, $audioMimeTypes):
+			case in_array($mimeType, $videoMimeTypes):
 				ini_set('memory_limit',-1);
 				header("Content-type: $mimeType");
 				die(file_get_contents($filename));
-				break;
+			break;
 
 			default:
-				echo '[No preview available - Unknown file type]';
+				echo '[No preview available - Unknown file type please download the file]';
 				break;
 		}
 	}
@@ -323,6 +325,13 @@ class files {
 		$fi = new finfo(FILEINFO_MIME);
 		list($mimeType,$mimeEncoding) = explode(';', $fi->file($filepath));
 		return $mimeType;
+	}
+
+	// Chris Jester-Young's combined with php.net's and a precision argument
+	public function formatBytes($size, $precision = 1){
+    	$base = log($size, 1024);
+   	 	$suffixes = array('', 'KB', 'MB', 'GB', 'TB');
+    	return round(pow(1024, $base - floor($base)), $precision) . " " . $suffixes[floor($base)];
 	}
 
 	public static function buildFilesPreview($objectID,$fieldName=NULL){
@@ -349,22 +358,54 @@ class files {
 		foreach($fields as $field){
 
 			if($field['type'] != 'file') continue;
-
-			// If there's nothing uploaded for the field, no need to continue
 			if(empty($object['data'][ $field['name'] ])) continue;
 
 			// Figure out some needed vars for later
 			$fileDataArray = $object['data'][$field['name']];
 			$assetsID      = $fileDataArray['uuid'];
-			$fileLIs = array();
-
+			$fileLIs       = array();
 
 			uasort($fileDataArray['files']['archive'],function($a,$b) { return strnatcasecmp($a['name'],$b['name']); });
 
 			foreach($fileDataArray['files']['archive'] as $fileID => $file){
 				$_filename = pathinfo($file['name']);
 				$filename  = $_filename['filename'];
+				$icon      = "";
 				$links     = array();
+				$type 	   = explode('/', $file['type']);
+
+				$fi            = new finfo();
+				$filePathFull  = '/home/mfcs.lib.wvu.edu/data/archives/mfcs/'.$file['path'].DIRECTORY_SEPARATOR.$file['name'];
+				$filesize      = filesize($filePathFull);
+				$extraFileInfo = $fi->file($filePathFull);
+				$filesize      = self::formatBytes($filesize);
+
+				// Choose an Icon for the type of data
+				switch ($type[0]) {
+					case 'image':
+						$icon = '<i class="fa fa-file-image-o"></i>';
+						break;
+					case 'video':
+						$icon = '<i class="fa fa-file-video-o"></i>';
+						break;
+					case 'audio':
+						$icon = '<i class="fa fa-file-sound-o"></i>';
+						break;
+					case 'text':
+						$icon = '<i class="fa fa-file-text-o"></i>';
+						break;
+					case 'application':
+						if($type[1] == 'pdf'){
+							$icon = '<i class="fa fa-file-pdf-o"></i>';
+						} else {
+							$icon = '<i class="fa fa-file-o"></i>';
+						}
+						break;
+					default:
+						$icon = '<i class="fa fa-file-o"></i>';
+						break;
+				}
+
 
 				$links['Original'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
 					localvars::get('siteRoot'),
@@ -409,45 +450,83 @@ class files {
 						$field['name'],
 						'combinedThumb');
 				}
+				if(str2bool($field['convertAudio'])){
+					$links['Converted Audio'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
+						localvars::get('siteRoot'),
+						$objectID,
+						$field['name'],
+						'audio');
+				}
+				if(str2bool($field['convertVideo'])){
+					$links['Converted Video'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
+						localvars::get('siteRoot'),
+						$objectID,
+						$field['name'],
+						'video');
+				}
+				if(str2bool($field['videothumbnail'])){
+					$numVideoThumbs = $field['videoThumbFrames'];
 
+					for($i = 0; $i < $numVideoThumbs; $i++){
+						$filename = $file['name'];
+						$filename = explode(".", $filename);
+						$filename = $filename[0];
+
+						if(!$i == 0){
+							$filename = $filename."_".$i;
+						}
+
+						$links["Thumbnail_".$i] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s&name=%s',
+							localvars::get('siteRoot'),
+							$objectID,
+							$field['name'],
+							'thumbnails',
+							$filename
+						);
+					}
+				}
 
 				$previewLinks  = array();
 				$downloadLinks = array();
+				$iFrameOutput;
 				foreach($links as $linkLabel => $linkURL){
-					$previewLinks[]  = sprintf('<li><a tabindex="-1" href="javascript:;" onclick="previewFile(this,\'%s\')">%s</a></li>', $linkURL, $linkLabel);
+					// Build Links
+					$previewLinks[]  = sprintf('<li><a tabindex="-1" href="javascript:void(0);" data-target="modal" data-url="%s">%s</a></li>', $linkURL, $linkLabel);
 					$downloadLinks[] = sprintf('<li><a tabindex="-1" href="%s&download=1">%s</a></li>',$linkURL, $linkLabel);
 				}
 
 				// Build the preview dropdown HTML
 				$previewDropdown  = '<div class="btn-group">';
-				$previewDropdown .= '	<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">';
+				$previewDropdown .= '	<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">';
 				$previewDropdown .= '		Preview <span class="caret"></span>';
 				$previewDropdown .= '	</a>';
-				$previewDropdown .= sprintf('<ul class="dropdown-menu">%s</ul>', implode('', $previewLinks));
+				$previewDropdown .= sprintf('<ul class="dropdown-menu fileModalPreview">%s</ul>', implode('', $previewLinks));
 				$previewDropdown .= '</div>';
 
 				// Build the download dropbox HTML
 				$downloadDropdown  = '<div class="btn-group">';
-				$downloadDropdown .= '	<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">';
+				$downloadDropdown .= '	<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">';
 				$downloadDropdown .= '		Download <span class="caret"></span>';
 				$downloadDropdown .= '	</a>';
 				$downloadDropdown .= sprintf('<ul class="dropdown-menu">%s</ul>', implode('', $downloadLinks));
 				$downloadDropdown .= '</div>';
 
-				$fileLIs[] = sprintf('<li><div class="filename">%s</div><!-- TODO <button class="btn">Field Details</button> -->%s%s</li>',
+
+				$fileLIs[] = sprintf('<li><span class="filename span6">%s %s <span class="filesize">  %s </span></span><span class="dropdowns span6"> %s %s </span></li>',
+					$icon,
 					$file['name'],
+					$filesize,
 					$previewDropdown,
-					$downloadDropdown);
+					$downloadDropdown
+				);
 			}
 
-			$output .= sprintf('<div class="filePreviewField"><header>%s</header><ul class="filePreviews">%s</ul></div>', $field['label'], implode('', $fileLIs));
+
+			$output .= sprintf('<div class="filePreviewField"><header><i class="fa fa-folder-open"></i> %s</header><ul class="filePreviews">%s</ul></div>', $field['label'], implode('', $fileLIs));
+
+			// $output .= $iFrameOutput;
+
 		}
-
-		// Include the filePreview Modal, and the CSS and JavaScript links
-		$output .= '<div id="filePreviewModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3></h3></div><div class="modal-body"><iframe class="filePreview"></iframe></div><div class="modal-footer"><a class="btn previewDownloadLink">Download File</a><a class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</a></div></div>';
-		$output .= sprintf('<link href="%sincludes/css/filePreview.css" rel="stylesheet">', localvars::get('siteRoot'));
-		$output .= sprintf('<script src="%sincludes/js/filePreview.js"></script>', localvars::get('siteRoot'));
-
 		return $output;
 	}
 
@@ -800,7 +879,7 @@ class files {
 				errorHandle::newError(__METHOD__."() - couldn't create fixity entry.", errorHandle::DEBUG);
 				// @todo : we need a script that periodically checks to make sure all files are in
 				// filesChecks table ... I don't think we want to return FALSE here on failure because some files
-				// have already been moved ... 
+				// have already been moved ...
 			}
 		}
 
@@ -812,19 +891,19 @@ class files {
 		return $return;
 	}
 
-	// Take a location and put it into the 
+	// Take a location and put it into the
 	private static function fixityInsert($location) {
 
 		$sql       = sprintf("INSERT INTO `filesChecks` (`location`) VALUES('%s')",
 			mfcs::$engine->openDB->escape($location)
 			);
 		$sqlResult = mfcs::$engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-		
+
 		return TRUE;
 
 	}
@@ -899,6 +978,7 @@ class files {
 						$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 						$_filename    = pathinfo($originalFile);
 						$filename     = $_filename['filename'];
+
 
 						$baseFilename = $tmpDir.DIRECTORY_SEPARATOR.$filename;
 
@@ -998,6 +1078,7 @@ class files {
 
 			// This conditional needs updated when different conversion options are added or removed.
 			// If the file has no processing to do, don't do any ...
+			// @TODO - NEEDS TO BE DYNAMIC
 			if (!isset($options['convert']) && !isset($options['thumbnail']) && !isset($options['ocr'])
 				 && !isset($options['convertAudio']) && !isset($options['convertAudio']) && !isset($options['videothumbnail']) ) {
 				return $return;
@@ -1076,7 +1157,7 @@ class files {
 				// Video Thumbnails
 				if (isset($options['videothumbnail']) && str2bool($options['videothumbnail'])) {
 					$createThumbs =  self::createVideoThumbs($assetsID, $filename, $originalFile, $options);
-					if($createThumbs['errors']){
+					if($createThumbs['errors'] === TRUE){
 						throw new Exception('Failed to create video thumbnails');
 					}
 					else {
@@ -1103,8 +1184,15 @@ class files {
 			$originalFileData = $ffmpeg->getMetadata();
 
 			// video options
-			$savePath = self::getSaveDir($assetsID,'video');
-			$format   = ".".$options['videoFormat'];
+			$savePath        = self::getSaveDir($assetsID,'video');
+			$format          = ".".$options['videoFormat'];
+			$previewFormat   = ".mp4";
+			$previewPath     = self::getSaveDir($assetsID,'preview');
+			$fullPreviewPath = $previewPath.$name.$previewFormat;
+
+			// Create a Preview
+			// Makes a simple mp4 to use
+			$ffmpeg->convert($fullPreviewPath, array(), array());
 
 			// bitrate conversions
 			$bitrate = (isset($options['videobitRate']) ? floor(($options['videobitRate'] * 1024)) : number_format(256 * 1024, 2));
@@ -1112,11 +1200,13 @@ class files {
 
 			// return stuff
 			$returnArray = array(
-				'name'    => $name.$format,
-				'path'    => $savePath,
-				'format'  => $format,
-				'options' => $conversionOptions,
-				'info'    => $ffmpeg->returnInformation()
+				'name'              => $name.$format,
+				'path'              => $savePath,
+				'previewPath'       => $fullPreviewPath,
+				'format'            => $format,
+				'options'           => $conversionOptions,
+				'info'              => $ffmpeg->returnInformation(),
+				'originialFileData' => $originalFileData,
 			);
 
 			// Valid File?
@@ -1142,7 +1232,7 @@ class files {
 						$width,
 						$height
 					);
-					$conversionOptions['aspect'] = $options['aspectRatio'];
+					//$conversionOptions['aspect'] = $options['aspectRatio'];
 				}
 				else {
 					// height width set for original files aspect ratio
@@ -1245,6 +1335,12 @@ class files {
 			$savePath = self::getSaveDir($assetsID,'audio');
 			$format   = $options['audioFormat'];
 
+			// Make a Preview File for in Browser
+			$previewFormat   = ".mp3";
+			$previewPath     = self::getSaveDir($assetsID,'preview');
+			$fullPreviewPath = $previewPath.$name.$previewFormat;
+			$ffmpeg->convert($fullPreviewPath, array(), array());
+
 			if(!is_dir($savePath)){
 				throw new Exception("Directory is not setup");
 				return FALSE;
@@ -1257,12 +1353,13 @@ class files {
 		}
 
 		$returnArray = array(
-			'name'    => $name.".".$format,
-			'path'    => $savePath,
-			'format'  => $format,
-			'options' => $conversionOptions,
-			'info'    => $ffmpeg->returnInformation(),
-			'errors'  => '',
+			'name'        => $name.".".$format,
+			'path'        => $savePath,
+			'format'      => $format,
+			'options'     => $conversionOptions,
+			'info'        => $ffmpeg->returnInformation(),
+			'errors'      => '',
+			'previewPath' => $fullPreviewPath,
 		);
 
 		return $returnArray;

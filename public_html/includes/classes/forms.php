@@ -51,6 +51,7 @@ class forms {
 			$engine->openDB->escape($formID),
 			($productionOnly === TRUE)?" AND `production`='1'":""
 		);
+
 		$sqlResult = $engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
@@ -144,7 +145,16 @@ class forms {
 		}
 
 		return htmlSanitize($form_title);
+	}
 
+	public static function description($formID){
+		$form = self::get($formID);
+
+		if($form === FALSE) {
+			return FALSE;
+		}
+
+		return htmlSanitize(isnull($form['description']) ? '' : $form['description']);
 	}
 
 	public static function getObjectTitleField($formID) {
@@ -247,21 +257,37 @@ class forms {
 
 	}
 
-	public static function checkFormInProject($projectID,$formID) {
+	public static function formHasProjects($formID){
+		if(validate::integer($formID)){
+			$engine    = EngineAPI::singleton();
+			$sql       = sprintf("SELECT count(*) FROM forms_projects WHERE formID = %s",  $formID);
+			$sqlResult = $engine->openDB->query($sql);
 
+			if (!$sqlResult['result']) {
+				errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+				return FALSE;
+			}
+
+			$result = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+			return $result['count(*)'];
+		} else {
+			return FALSE;
+		}
+	}
+
+
+	public static function checkFormInProject($projectID,$formID) {
 		$projectForms = projects::getForms($projectID);
-		if (in_array($formID, projects::getForms($projectID))) {
+
+		if (in_array($formID, $projectForms)) {
 			return TRUE;
 		}
 
 		foreach ($projectForms as $projectFormID) {
-
 			$metadataForms = self::getObjectFormMetaForms($projectFormID);
-
 			if (isset($metadataForms[$formID])) {
 				return TRUE;
 			}
-
 		}
 
 		return FALSE;
@@ -269,16 +295,25 @@ class forms {
 	}
 
 	public static function checkFormInCurrentProjects($formID) {
+		$formsProjectCount = self::formHasProjects($formID);
+
+		if(validate::integer($formsProjectCount) && $formsProjectCount == 0){
+			return TRUE;
+		}
 
 		foreach (sessionGet('currentProject') as $projectID=>$project) {
-
 			if (self::checkFormInProject($projectID,$formID) === TRUE) {
 				return TRUE;
 			}
-
 		}
 
-		localVars::add("projectWarning",'<div class="alert">This form is not associated with one of your current projects</div>');
+		$formWarning = '<div class="formAlert alert alert-warning alert-dismissible" role="alert">
+  							<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  							<strong>Warning!</strong>
+  							<p> This form is not associated with any of your current projects. This message will close in 15 seconds. </p>
+						</div>';
+
+		localVars::add("projectWarning",$formWarning);
 
 		return FALSE;
 	}
@@ -591,7 +626,7 @@ class forms {
 
 			// build the actual input box
 
-			$output .= '<div class="">';
+			$output .= '<div class="formCreator dataEntry">';
 
 
 			// Handle disabled on insert form
@@ -618,11 +653,12 @@ class forms {
 			}
 
 			if ($field['type'] == "textarea" || $field['type'] == "wysiwyg") {
-				$output .= sprintf('<textarea name="%s" placeholder="%s" id="%s" class="%s" %s %s %s %s>%s</textarea>',
+				$output .= sprintf('<textarea name="%s" placeholder="%s" id="%s" class="%s %s" %s %s %s %s>%s</textarea>',
 					htmlSanitize($field['name']),
 					htmlSanitize($field['placeholder']),
 					htmlSanitize($field['id']),
 					htmlSanitize($field['class']),
+					($field['type'] == "wysiwyg" ? "wysiwyg" : ""),
 					(!isempty($field['style']))?'style="'.htmlSanitize($field['style']).'"':"",
 					//true/false type attributes
 					(strtoupper($field['required']) == "TRUE")?"required":"",
@@ -724,7 +760,7 @@ class forms {
 			// 			(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
 			// 			htmlSanitize($field['name'])
 			// 		);
-					
+
 			// 		$output .= sprintf("<script charset=\"utf-8\">
 			// 				$(function() {
 			// 					$('#%s')
@@ -773,7 +809,7 @@ class forms {
 			// 						});
 			// 					// $('#%s').select2( 'val', '%s' );
 			// 				});
-							
+
 			// 			</script>",
 			// 			htmlSanitize($field['name']),
 			// 			htmlSanitize($field['choicesForm']),
@@ -851,6 +887,7 @@ class forms {
 											},
 											results: function(data, page) {
 												var more = (page * data.pageSize) < data.total;
+												console.log(data);
 
 												return {
 													results: data.options,
@@ -923,27 +960,30 @@ class forms {
 				);
 			}
 
-			// Output field's help (if needed)
 			if(isset($field['help']) && $field['help']){
+
 				list($helpType,$helpValue) = explode('|', $field['help'], 2);
+				$helpType = trim($helpType);
+
 				switch($helpType){
 					case 'text':
-						$output .= sprintf(' <a href="javascript:;" rel="tooltip" class="icon-question-sign" data-placement="right" data-title="%s"></a>', $helpValue);
+						$output .= sprintf(' <a class="creatorFormHelp" href="javascript:;" rel="popover" data-placement="right" data-content="%s"> <i class="fa fa-question-circle"></i> </a>', $helpValue);
 						break;
 					case 'html':
-						$output .= sprintf(' <a href="javascript:;" rel="popover" class="icon-question-sign" data-html="true" data-placement="right" data-trigger="hover" data-content="%s"></a>', $helpValue);
+						$output .= sprintf(' <a class="creatorFormHelp" href="javascript:;" rel="popover" data-html="true" data-placement="right" data-trigger="hover" data-content="%s"><i class="fa fa-question-circle"></i></a>', $helpValue);
 						break;
 					case 'web':
-						$output .= sprintf(' <a href="javascript:;" title="Click for help" class="icon-question-sign" onclick="$(\'#helpModal_%s\').modal(\'show\');"></a>', $field['id']);
-						$output .= sprintf('<div id="helpModal_%s" rel="modal" class="modal hide fade" data-show="false">', $field['id']);
-						$output .= '	<div class="modal-header">';
-						$output .= '		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>';
-						$output .= '		<h3 id="myModalLabel">Field Help</h3>';
-						$output .= '	</div>';
-						$output .= '	<div class="modal-body">';
-						$output .= sprintf('		<iframe src="%s" seamless="seamless" style="width: 100%%; height: 100%%;"></iframe>', $helpValue);
-						$output .= '	</div>';
-						$output .= '</div>';
+						$output .= sprintf(' <a class="creatorFormHelp" href="%s" target="_blank" style="target-new: tab;"> <i class="fa fa-question-circle"></i> </a>', $helpValue);
+						// $output .= sprintf(' <a href="javascript:;" title="Click for help" class="icon-question-sign" onclick="$(\'#helpModal_%s\').modal(\'show\');"></a>', $field['id']);
+						// $output .= sprintf('<div id="helpModal_%s" rel="modal" class="modal hide fade" data-show="false">', $field['id']);
+						// $output .= '	<div class="modal-header">';
+						// $output .= '		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>';
+						// $output .= '		<h3 id="myModalLabel">Field Help</h3>';
+						// $output .= '	</div>';
+						// $output .= '	<div class="modal-body">';
+						// $output .= sprintf('		<iframe src="%s" seamless="seamless" style="width: 100%%; height: 100%%;"></iframe>', $helpValue);
+						// $output .= '	</div>';
+						// $output .= '</div>';
 						break;
 				}
 			}
@@ -970,7 +1010,11 @@ class forms {
 		}
 
 		if(isset($formHasFiles) and $formHasFiles){
-			$output .= '<div class="alert alert-block" id="objectSubmitProcessing"><strong>Processing Files</strong><br>Please Wait...</div>';
+			$output .= '<div class="alert alert-info" id="objectSubmitProcessing">
+							<strong>Processing Files</strong>
+
+							<br>Please Wait... <i class="fa fa-refresh fa-spin fa-2x"></i>
+						</div>';
 		}
 
 		$output .= "</form>";

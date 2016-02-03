@@ -83,7 +83,10 @@ if ($sqlResult['result']) {
 			$i = new Imagick();
 			$i->readImageBlob($row['data']);
 
-			$tmp .= sprintf('<li><a href="?id=%s">%s<br><img src="data:image/%s;base64,%s"></a></li>',
+			$tmp .= sprintf('<li><a href="?id=%s">
+									<div class="imgOwner"> %s </div> <br/>
+									<div class="watermark"> <img src="data:image/%s;base64,%s"> </div>
+							  </a></li>',
 				htmlSanitize($row['ID']),
 				htmlSanitize($row['name']),
 				strtolower($i->getImageFormat()),
@@ -102,7 +105,7 @@ if ($sqlResult['result']) {
 
 if (!isnull($ID)) {
 	localVars::add("headerText","Update Watermark");
-	localVars::add("submitBtn",'<button type="submit" name="update" class="btn">Update</button><button type="submit" name="delete" class="btn">Delete</button>');
+	localVars::add("submitBtn",'<button type="submit" name="update" class="btn btn-primary">Update Watermark</button><button type="submit" name="delete" class="btn btn-danger">Delete Watermark</button>');
 
 	$sql = sprintf("SELECT * FROM `watermarks` WHERE ID='%s' LIMIT 1",
 		$engine->openDB->escape($ID)
@@ -117,7 +120,7 @@ if (!isnull($ID)) {
 
 }
 else {
-	localVars::add("submitBtn",'<button type="submit" name="insert" class="btn">Insert</button>');
+	localVars::add("submitBtn",'<button type="submit" name="insert" class="btn btn-primary">Insert Watermark</button>');
 	localVars::add("headerText","Add Watermark");
 }
 
@@ -130,15 +133,13 @@ $engine->eTemplate("include","header");
 
 <section>
 	<header class="page-header">
-		<h1>Manage Watermarks</h1>
+		<h1 class="page-title">Manage Watermarks</h1>
 	</header>
 
-	<nav id="breadcrumbs">
-		<ul class="breadcrumb">
-			<li><a href="{local var="siteRoot"}">Home</a></li>
-			<li><a href="{local var="siteRoot"}/admin/">Admin</a></li>
-		</ul>
-	</nav>
+	<ul class="breadcrumbs">
+		<li><a href="{local var="siteRoot"}">Home</a></li>
+		<li><a href="{local var="siteRoot"}/admin/index.php">Admin Home</a></li>
+	</ul>
 
 	{local var="results"}
 
@@ -147,7 +148,7 @@ $engine->eTemplate("include","header");
 			<h2>{local var="headerText"}</h2>
 		</header>
 
-		<form action="{phpself query="true"}" method="post" class="form-horizontal" enctype="multipart/form-data">
+		<form action="{phpself query="true"}" method="post" class="form-horizontal watermarkForm" enctype="multipart/form-data">
 			{engine name="csrf"}
 			<input type="hidden" name="ID" value="{local var="employeeID"}" />
 
@@ -174,9 +175,11 @@ $engine->eTemplate("include","header");
 	<section>
 		<header>
 			<h2>Edit Watermarks</h2>
+			<p> Click on the watermark to edit it or name to edit it. </p>
 		</header>
-
-		{local var="existingWatermarks"}
+		<ul class="watermarks">
+			{local var="existingWatermarks"}
+		</ul>
 	</section>
 </section>
 
