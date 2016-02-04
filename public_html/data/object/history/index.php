@@ -36,7 +36,7 @@ try {
 	revisions::history_last_modified($engine->cleanGet['MYSQL']['objectID']);
 
 	$history = revisions::history_revision_history($engine->cleanGet['MYSQL']['objectID']);
-	
+
 
 	$revision_history = "<ul>";
 	foreach ($history as $edit) {
@@ -67,17 +67,15 @@ $engine->eTemplate("include","header");
 		<h1>Object History -- </h1>
 	</header>
 
-	<nav id="breadcrumbs">
-		<ul class="breadcrumb">
-			<li><a href="{local var="siteRoot"}">Home</a></li>
-			<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
-			<li><a href="{local var="siteRoot"}dataEntry/object.php?objectID={local var="objectID"}">Object Edit Form</a></li>
-			<!-- FLoat Right -->
-			<?php if (!isnull($engine->cleanGet['MYSQL']['objectID']) and $revisions->hasRevisions($engine->cleanGet['MYSQL']['objectID'])) { ?>
-				<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions/index.php?objectID={local var="objectID"}">Revisions</a></li>
-			<?php } ?>
-		</ul>
-	</nav>
+	<ul class="breadcrumbs">
+		<li><a href="{local var="siteRoot"}">Home</a></li>
+		<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
+		<li><a href="{local var="siteRoot"}dataEntry/object.php?objectID={local var="objectID"}">Object Edit Form</a></li>
+		<!-- FLoat Right -->
+		<?php if (!isnull($engine->cleanGet['MYSQL']['objectID']) and $revisions->hasRevisions($engine->cleanGet['MYSQL']['objectID'])) { ?>
+			<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions/index.php?objectID={local var="objectID"}">Revisions</a></li>
+		<?php } ?>
+	</ul>
 
 	<div id="history_current">
 

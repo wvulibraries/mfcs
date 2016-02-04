@@ -85,13 +85,12 @@ $engine->eTemplate("include","header");
 		<h1>{local var="formName"}</h1>
 	</header>
 
-	<nav id="breadcrumbs">
-		<ul class="breadcrumb">
-			<li><a href="{local var="siteRoot"}">Home</a></li>
-			<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
-			<li><a href="{local var="siteRoot"}dataEntry/metadata.php?formID={local var="formID"}">{local var="formName"}</a></li>
-		</ul>
-	</nav>
+	<ul class="breadcrumbs">
+		<li><a href="{local var="siteRoot"}">Home</a></li>
+		<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
+		<li><a href="{local var="siteRoot"}dataEntry/metadata.php?formID={local var="formID"}">{local var="formName"}</a></li>
+	</ul>
+
 
 	{local var="results"}
 
