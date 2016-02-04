@@ -1805,20 +1805,6 @@ footer{
     height: 100%;
 }
 
-.dashboardContainer {
-  width:100%;
-  float: left;
-  border:1px solid #eee;
-  padding:20px;
-  margin-right:2%;
-  margin-bottom:20px;
-  &:last-of-type { margin-right:0;}
-  h2 {margin:0; padding: 20px 0; border-bottom:1px solid #eee}
-  p {float:left; width:100%; border-bottom:1px solid #eee;}
-  strong, span {font-size:14px; padding:5px 0; float:left; width:70%; }
-  span {  background:#eee; border:1px solid #ccc; width:30%; padding:5px; top:50%; position:relative;}
-}
-
 .leftContainerDash, .rightContainerDash{
   float:left;
   margin-right:2%;
@@ -1831,17 +1817,19 @@ footer{
     margin-right:2%;
     margin-bottom:20px;
     &:last-of-type { margin-right:0;}
-    h2 {margin:0 0 20px; padding:0 0 20px;}
-    p {float:left; width:100%; border-bottom:1px solid #eee;}
-    strong, span {font-size:14px; padding:5px 0; float:left; width:70%; }
-    span {  background:#eee; border:1px solid #ccc; width:30%; padding:5px; top:50%; position:relative;}
+    h2 {margin:0 0 20px; padding:0 0 20px; border-bottom:1px solid #eee;}
+    p {float:left; width:100%; padding:10px 0; border-bottom:1px dotted #eee;
+      &:last-child{ border:0; }
+    }
+    strong, span {font-size:14px; padding:5px 0; float:left; width:70%; color:#777; }
+    span {  background:#eee; border:1px solid #ccc; width:30%; padding:5px; top:50%; position:relative;  text-align:right;}
   }
 }
 
 .leftContainerDash {
   width:60%;
   .dashboardContainer{
-    height:600px;
+    height:434px;
   }
 }
 
