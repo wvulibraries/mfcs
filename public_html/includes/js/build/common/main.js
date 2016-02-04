@@ -515,7 +515,7 @@ $(function(){
 });
 
 function closeModal(){
-    $('.imagePreviewModal').removeClass('show').hide();
+    $('.modal').removeClass('show').hide();
     $('.bgCloak').hide();
 }
 
