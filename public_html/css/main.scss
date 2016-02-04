@@ -73,8 +73,9 @@ form[name="updateForm"]{
     z-index:999;
     width:39.5%;
     max-width:520px;
-    top:80px;
+    top:53px;
     height:100%;
+    padding:20px 0;
 
     #widthContstrain {
       overflow-y: auto;
@@ -1084,6 +1085,8 @@ li.alert-error {
     ul {@extend .pagination;}
 }
 
+.currentpage{ background-color:rgba($blue,.2) !important; color:#000 !important; font-weight:bold;}
+
 .staticListNav {
   text-align:right;
 }
@@ -1616,7 +1619,12 @@ input[type=submit] {
 #formCreator, #projects, #navigation, #permissions, #deleteForm {
   input[type=submit] {
     width:100% !important;
+    margin-left:0;
   }
+}
+
+#formSettings_formContainer_container {
+  padding:20px;
 }
 
 .tooltip-inner { min-width: 200px; max-width:300px;
