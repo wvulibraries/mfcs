@@ -679,6 +679,7 @@ input{
     &:hover,&:active,&:focus {
       background:$darkblue;
       color:#fff;
+      border:0;
     }
   }
 
@@ -979,6 +980,8 @@ li.alert-error {
     margin:0 0 20px;
 
   }
+
+  div { padding:20px;}
 
   .well{
     background:rgba(#A2AAAD,.1);
@@ -1606,7 +1609,7 @@ $fileColor: lighten(#333F48,60%);
 input[type=submit] {
   width:100%;
   @include breakpoint(tablet){
-    width:25% !important; float:unset;
+    width:25% !important; float:unset; margin-left:74%;
   }
 }
 

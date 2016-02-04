@@ -27,6 +27,7 @@
             <li><a href="/admin/users/"><i class="fa fa-angle-double-right"></i> Users</a></li>
             <li><a href="/admin/watermarks/"> <i class="fa fa-angle-double-right"></i> Watermarks</a></li>
             <li><a href="/admin/metadataSchema/"> <i class="fa fa-angle-double-right"></i> Metadata Schemas </a></li>
+            <li><a href="/dashboard"> <i class="fa fa-angle-double-right"></i> Dashboard Statistics </a></li>
         </div>
 
          <div>
