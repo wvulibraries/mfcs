@@ -145,6 +145,7 @@ try {
 		if (($filesViewer = files::buildFilesPreview($engine->cleanGet['MYSQL']['objectID'])) === FALSE) {
 			throw new Exception("Error building files preview.");
 		}
+
 		localvars::add("filesViewer",$filesViewer);
 		localvars::add("objectID", $engine->cleanGet['MYSQL']['objectID']);
 

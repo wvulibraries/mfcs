@@ -33,34 +33,56 @@ $engine->eTemplate("include","header");
 		<h1>Dashboard</h1>
 	</header>
 
-	<nav id="breadcrumbs">
-		<ul class="breadcrumb">
-			<li><a href="{local var="siteRoot"}">Home</a></li>
-		</ul>
-	</nav>
+	<ul class="breadcrumbs">
+		<li><a href="{local var="siteRoot"}">Home</a></li>
+	</ul>
 
-	<div class="dashboard_container">
-		<h2>System Counts</h2>
-		<p>Total Objects in system: {local var="objects_total"}</p>
-		<p>Total Metadata Objects: {local var="metadata_total"}</p>
-		<p>Total Object Forms: {local var="forms_object_total"}</p>
-		<p>Object Forms in Production: {local var="forms_production"}</p>
-		<p>Total Metadata Forms: {local var="metadate_form_total"}</p>
+	<div class="leftContainerDash">
+		<div class="dashboardContainer">
+			<h2> System Counts </h2>
+			<p>
+				<strong class="fileItem">Total Objects in system: </strong>
+				<span class="fileCount">{local var="objects_total"}</span>
+			</p>
+			<p>
+				<strong class="fileItem">Total Metadata Objects: </strong>
+				<span class="fileCount">{local var="metadata_total"}</span>
+			</p>
+			<p>
+				<strong class="fileItem">Total Object Forms: </strong>
+				<span class="fileCount">{local var="forms_object_total"}</span>
+			</p>
+			<p>
+				<strong class="fileItem">Object Forms in Production: </strong>
+				<span class="fileCount">{local var="forms_production"}</span>
+			</p>
+			<p>
+				<strong class="fileItem">Total Metadata Forms: </strong>
+				<span class="fileCount">{local var="metadate_form_total"}</span>
+			</p>
+		</div>
 	</div>
 
-	<div class="dashboard_container">
-		<h2>Fixity Information</h2>
-
-		<p>Files with failed fixity: {local var="failed_fixity"}</p>
-		<p>Files without Checksum: {local var="no_checksum"}</p>
+	<div class="rightContainerDash">
+		<div class="dashboardContainer">
+			<h2>Fixity Information</h2>
+			<p>
+				<strong class="fileItem"> Files with failed fixity: </strong>
+				<span class="fileCount"> {local var="failed_fixity"}</span>
+			</p>
+			<p>
+				<strong class="fileItem">Files without Checksum: </strong>
+				<span class="fileCount">{local var="no_checksum"} </span>
+			</p>
+		</div>
+		<div class="dashboardContainer">
+			<h2>Virus Information</h2>
+			<p>
+				<strong class="fileItem"> Current Virus Count: </strong>
+				<span class="fileCount"> {local var="virus_count"}</span>
+			</p>
+		</div>
 	</div>
-
-	<div class="dashboard_container">
-		<h2>Virus Information</h2>
-
-		<p>Current Virus Count: {local var="virus_count"}</p>
-	</div>
-
 </section>
 
 <?php
