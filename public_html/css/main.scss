@@ -1041,7 +1041,8 @@ li.alert-error {
   overflow-y:auto;
   right:0;
 
-  a:visited { color:$light-blue; text-decoration:underline !important;}
+  a {color:$gold}
+  a:visited { color:$gold; text-decoration:underline !important;}
   a:hover,a:active { color:$gold; }
 
   .close {
