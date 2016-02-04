@@ -33,7 +33,6 @@ $engine->eTemplate("include","header");
 			<li><a href="/">Home</a></li>
 			<li></li>
 	</ul>
-</section>
 
 <section class="aboutMFCS">
 	<div class="widthContainer">
@@ -86,6 +85,8 @@ $engine->eTemplate("include","header");
 	<ul>
 		{local var="projectList"}
 	</ul>
+</section>
+
 </section>
 
 
