@@ -34,7 +34,7 @@ try {
 	}
 
 	// handle submission
-	if (isset($engine->cleanGet['MYSQL']['confirm']) && 
+	if (isset($engine->cleanGet['MYSQL']['confirm']) &&
 		$engine->cleanGet['MYSQL']['confirm'] == $engine->cleanGet['MYSQL']['objectID']) {
 
 		$deleted = objects::delete($engine->cleanGet['MYSQL']['objectID'],$engine->cleanGet['MYSQL']['formID']);
@@ -42,14 +42,14 @@ try {
 	}
 	else {
 		// @todo: This should really be in the object class, but since i'm back porting to production
-		// i'm trying to avoid modifying the classes as much as possible. 
+		// i'm trying to avoid modifying the classes as much as possible.
 		$object_title_field = forms::getObjectTitleField($engine->cleanGet['MYSQL']['formID']);
 		$object             = objects::get($engine->cleanGet['MYSQL']['objectID']);
 
 		localvars::add("metadata_title",$object['data'][$object_title_field]);
 
 	}
-	
+
 	localvars::add("form_title", forms::title($engine->cleanGet['MYSQL']['formID']));
 	localvars::add("formID",$engine->cleanGet['MYSQL']['formID']);
 	localvars::add("objectID",$engine->cleanGet['MYSQL']['objectID']);
@@ -73,19 +73,18 @@ $engine->eTemplate("include","header");
 		<h1>Delete from {local var="form_title"}</h1>
 	</header>
 
-	<nav id="breadcrumbs">
-		<ul class="breadcrumb">
-			<li><a href="{local var="siteRoot"}">Home</a></li>
-			<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
-			<li><a href="{local var="siteRoot"}dataEntry/metadata.php?formID={local var="formID"}">{local var="form_title"}</a></li>
-			<?php if ($deleted === FALSE) { ?>
-				<li><a href="{local var="siteRoot"}data/metadata/edit/?objectID={local var="objectID"}">Edit Object</a></li>
-			<?php } ?>
-		</ul>
-	</nav>
+	<ul class="breadcrumbs">
+		<li><a href="{local var="siteRoot"}">Home</a></li>
+		<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
+		<li><a href="{local var="siteRoot"}dataEntry/metadata.php?formID={local var="formID"}">{local var="form_title"}</a></li>
+		<?php if ($deleted === FALSE) { ?>
+			<li><a href="{local var="siteRoot"}data/metadata/edit/?objectID={local var="objectID"}">Edit Object</a></li>
+		<?php } ?>
+	</ul>
+
 
 	{local var="results"}
-	
+
 
 	<div class="row-fluid">
 		<?php if ($permissions === TRUE && $deleted === FALSE) { ?>
@@ -97,7 +96,7 @@ $engine->eTemplate("include","header");
 			<a href="{local var="siteRoot"}dataView/list.php?listType=metadataObjects&formID={local var="formID"}&objectID={local var="objectID"}">Linked Objects</a>
 		</p>
 
-		<a href="{local var="php_self"}?objectID={local var="objectID"}&confirm={local var="objectID"}">Confirm Delete</a> &nbsp; 
+		<a href="{local var="php_self"}?objectID={local var="objectID"}&confirm={local var="objectID"}">Confirm Delete</a> &nbsp;
 		<a href="{local var="siteRoot"}/data/metadata/edit/?objectID={local var="objectID"}">Cancel</a>
 
 		<?php } else { ?>
@@ -107,7 +106,7 @@ $engine->eTemplate("include","header");
 		<?php } ?>
 	</div>
 
-	
+
 </section>
 
 
