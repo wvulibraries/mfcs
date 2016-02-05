@@ -22,7 +22,7 @@ http://www.youtube.com/watch?v=9JB00pXZWWw
 
 ### Features
 
-[https://github.com/wvulibraries/mfcs/wiki/Features](Features Wiki Page)
+[Features Wiki Page](https://github.com/wvulibraries/mfcs/wiki/Features)
 
 ## Form Builder
 
