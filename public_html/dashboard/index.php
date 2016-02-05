@@ -24,6 +24,39 @@ foreach ($counts as $type=>$sql) {
 	localvars::add($type,$row["COUNT(*)"]);
 }
 
+$sql       = sprintf("SELECT `value` FROM `system_information` WHERE `name`='file_types'");
+$sqlResult = $engine->openDB->query($sql);
+
+if (!$sqlResult['result']) {
+	errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+	errorHandle::errorMsg("Unable to get File Types");
+}
+
+$row        = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+$file_types = decodeFields($row['value']);
+
+$file_types_list = "";
+foreach ($file_types["types"] as $type=>$count) {
+	$file_types_list .= sprintf('<p><strong class="fileItem">%s:</strong><span class="fileCount">%s</span></p>',
+		(is_empty($type))?"[No File Extension]":htmlSanitize($type),
+		htmlSanitize($count)
+		);
+}
+
+$files_type_list_by_form = "";
+foreach ($file_types['forms'] as $formID=>$types) {
+
+	$files_type_list_by_form .= sprintf('<h3>%s</h3>',forms::title($formID));
+	foreach ($types['types'] as $type=>$count) {
+		$files_type_list_by_form .= sprintf('<p><strong class="fileItem">%s:</strong><span class="fileCount">%s</span></p>',
+			(is_empty($type))?"[No File Extension]":htmlSanitize($type),
+			htmlSanitize($count)
+			);
+	}
+}
+
+localvars::add("files_type_list",        $file_types_list);
+localvars::add("files_type_list_by_form",$files_type_list_by_form);
 $engine->eTemplate("include","header");
 
 ?>
@@ -81,6 +114,20 @@ $engine->eTemplate("include","header");
 				<strong class="fileItem"> Current Virus Count: </strong>
 				<span class="fileCount"> {local var="virus_count"}</span>
 			</p>
+		</div>
+	</div>
+
+	<div class="leftContainerDash">
+		<div class="dashboardContainer">
+			<h2>File Types Counts, by Form</h2>
+			{local var="files_type_list_by_form"}
+		</div>
+	</div>
+
+	<div class="rightContainerDash">
+		<div class="dashboardContainer">
+			<h2>File Types Total Counts</h2>
+			{local var="files_type_list"}
 		</div>
 	</div>
 </section>
