@@ -22,25 +22,7 @@ http://www.youtube.com/watch?v=9JB00pXZWWw
 
 ### Features
 
-1. Form Builder
-1. Metadata Entry Forms
-	* Drag and Drop uploading of digital files
-	* Revision Control
-	* Controlled Vocabulary
-1. Form Level Permissions
-	* View Only
-	* Editor
-	* Administrators
-1. System level permissions
-	* Student
-	* Staff
-	* Librarian
-	* Systems Administrator
-1. Watermark Management
-1. Object Searching
-1. Statistics
-1. exporting to any digital project system
-1. Many more ... 
+[https://github.com/wvulibraries/mfcs/wiki/Features](Features Wiki Page)
 
 ## Form Builder
 
