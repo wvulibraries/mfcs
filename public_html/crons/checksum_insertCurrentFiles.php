@@ -78,8 +78,9 @@ function getFiles($object) {
 							$file['name']
 							);
 
-						$sql       = sprintf("INSERT INTO `filesChecks` (`location`) VALUES('%s')",
-							mfcs::$engine->openDB->escape($location)
+						$sql       = sprintf("INSERT INTO `filesChecks` (`location`,`objectID`) VALUES('%s','%s')",
+							mfcs::$engine->openDB->escape($location),
+							mfcs::$engine->openDB->escape($object['ID'])
 							);
 						$sqlResult = mfcs::$engine->openDB->query($sql);
 
