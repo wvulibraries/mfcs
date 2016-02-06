@@ -49,6 +49,7 @@ $engine->eTemplate("load","mfcsTemplate");
 // setup localvars for meta tags
 localVars::add("siteRoot",mfcs::config("siteRoot"));
 localVars::add('pageTitle',mfcs::config("pageTitle"));
+localVars::add('pageTitleMobile',mfcs::config("pageTitleMobile"));
 localVars::add('pageHeader',mfcs::config("pageHeader"));
 
 localVars::add("meta_authors", 'WVU Libraries Systems Office');

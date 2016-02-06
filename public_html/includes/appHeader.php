@@ -7,8 +7,8 @@
         <div class="site-title">
             <h1>
                 <a href="/">
-                    <span class="desktop"> Metadata Form Creation System </span>
-                    <span class="mobile"> MFCS </span>
+                    <span class="desktop"> {local var="pageTitle"} </span>
+                    <span class="mobile"> {local var="pageTitleMobile"} </span>
                 </a>
             </h1>
         </div>
