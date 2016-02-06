@@ -51,7 +51,7 @@ class mfcs {
 		self::$mfcsRoot = realpath(__DIR__.'/../..');
 
 		// Load config file
-		if(is_null($configFile)) $configFile = self::$mfcsRoot.'/config.ini';
+		if(is_null($configFile)) $configFile = self::$mfcsRoot.'/../config.ini';
 		if(is_readable($configFile)){
 			self::$config = parse_ini_file($configFile);
 		}
