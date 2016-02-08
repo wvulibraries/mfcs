@@ -1,4 +1,5 @@
 var defaultModalBody;
+
 // Document Ready
 // ===================================================================
 $(function(){
@@ -37,6 +38,9 @@ function metadataModal(event){
     var formID        = $(this).attr('data-formid');
     var url           = siteRoot+'dataEntry/metadata.php?formID='+formID+'&ajax=true';
 
+    $("#metadataModal form").data(formID);
+
+
     $.ajax({
         type: "GET",
         url: url,
@@ -61,8 +65,10 @@ function submitMetadataModal() {
     var metadataFormID = 0;
     var insertForm = $('#metadataModalBody form[name="insertForm"]');
 
+    $('#metadataModalBody section').prepend(' <div class="successMessage">Please wait while your change is processed.  Once processed this window will close. </div>');
+
     data           = insertForm.serialize() + "&submitForm=Submit";
-    metadataFormID = insertForm.data("choicesform");
+    metadataFormID = insertForm.data("formid");
 
     $.ajax({
         type: "POST",
@@ -76,11 +82,15 @@ function submitMetadataModal() {
         error: function(jqXHR,error,exception) {
             console.log("An Error has occurred: "+error);
             $("#metadataModalBody").html("An Error has occurred: "+error);
-        }
+        },
+        complete: function(){
+            console.log('completed');
+            $("#metadataModalBody").html();
+            $('.cancelButton').trigger('click');
+        },
     });
 
-    $('.cancelButton').trigger('click');
-    //handler_displayMetadataFormModal(metadataFormID);
+
 }
 
 
