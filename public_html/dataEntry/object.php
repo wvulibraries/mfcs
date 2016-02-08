@@ -77,7 +77,16 @@ try {
 
 	log::insert("Data Entry: Object: View Page",$engine->cleanGet['MYSQL']['objectID'],$form['ID']);
 
-	// handle submission
+	// handle submissions
+	if (isset($engine->cleanPost['MYSQL']['checksum_submit'])) {
+		if (($uploaded_checksums = checksum::parse_uploaded_checksums($_FILES["checksum"]['tmp_name'])) === FALSE) {
+			throw new Exception("checksum file is not valid.");
+		}
+		if (checksum::apply_checksum_to_files($engine->cleanGet['MYSQL']['objectID'],$uploaded_checksums) === FALSE) {
+			throw new Exception("Error importing checksums");
+		}
+	}
+
 	if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 		if (forms::submit($engine->cleanGet['MYSQL']['formID']) === FALSE) {
 			throw new Exception("Error Submitting Form.");
@@ -271,9 +280,16 @@ $engine->eTemplate("include","header");
 
 						<div class="tab-pane" id="files">
 							<a href="/dataView/allfiles.php?objectID={local var="objectID"}">Download All Files (Zip)</a><br />
-							<!-- <a href="/dataView/allfiles.php?id=$engine->cleanGet['MYSQL']['objectID']&amp;type=tar">Download All Files (tar)</a> -->
 							<br /><br />
 							{local var="filesViewer"}
+							<br /><br />
+							<form action="{phpself query="true"}" method="post" enctype='multipart/form-data'>
+								{engine name="csrf"}
+								<input type="hidden" name="lockID" value="{local var="lockID"}" />
+								<label for="checksum_upload">Upload checksums file.</label>
+								<input type="file" name="checksum" id="checksum_upload">
+								<input type="submit" name="checksum_submit" />
+							</form>
 						</div>
 						<div class="tab-pane" id="project">
 							<h2>Change Project Membership</h2>
