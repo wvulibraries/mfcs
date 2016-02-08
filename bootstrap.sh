@@ -23,8 +23,6 @@ yum -y install \
 	emacs emacs-common emacs-nox git \
 	http://www.webmin.com/download/rpm/webmin-current.rpm
 
-rpm -Uhv http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
-
 
 mv /etc/httpd/conf.d/mod_security.conf /etc/httpd/conf.d/mod_security.conf.bak
 /etc/init.d/httpd start
@@ -134,8 +132,12 @@ ln -s /usr/local/bin/tesseract /usr/bin/
 ln -s /usr/local/bin/hocr2pdf /usr/bin/
 
 ## Video Dependencies
+rpm -Uvh http://download.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+rpm -Uhv http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
+yum -y install --nogpgcheck http://download1.rpmfusion.org/free/el/updates/6/i386/rpmfusion-free-release-6-1.noarch.rpm http://download1.rpmfusion.org/nonfree/el/updates/6/i386/rpmfusion-nonfree-release-6-1.noarch.rpm
+
 yum -y install mplayer
-yum -y install ffmpeg-devel ffmpeg
+yum -y install ffmpeg-devel ffmpeg ffmpeg-libs
 
 ## ClamAV
 yum -y install clamav clamav-db clamav-devel
