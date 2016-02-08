@@ -16,10 +16,10 @@ $(function(){
 
     $('#metadataModal').bind('keypress keydown keyup', function(e){
         if(e.keyCode == 13) { e.preventDefault(); }
+        if(e.keyCode == 27) { $('.cancelButton').trigger('click'); }
     });
 
     $('.wysiwyg').removeClass('wysiwyg').parent().addClass('wysiwyg');
-
     $('.bgCloak').click(closeModal);
 });
 
@@ -59,36 +59,28 @@ function metadataModal(event){
 
 function submitMetadataModal() {
     var metadataFormID = 0;
-    $("#metadataModalBody form").each(function() {
+    var insertForm = $('#metadataModalBody form[name="insertForm"]');
 
-        data           = $(this).serialize();
-        metadataFormID = $(this).data("choicesform");
+    data           = insertForm.serialize() + "&submitForm=Submit";
+    metadataFormID = insertForm.data("choicesform");
 
-        if ($(this).attr("name") == "insertForm") {
-            data = data + "&submitForm=Submit"
+    $.ajax({
+        type: "POST",
+        url: insertForm.attr("action")+"&ajax=true",
+        dataType: "html",
+        data: data,
+        async:   false,
+        success: function(responseData) {
+            console.log(responseData);
+        },
+        error: function(jqXHR,error,exception) {
+            console.log("An Error has occurred: "+error);
+            $("#metadataModalBody").html("An Error has occurred: "+error);
         }
-        // else if ($(this).attr("name") == "updateForm") {
-        //     data = data + "&updateEdit=Update";
-        // }
-
-        $.ajax({
-            type: "POST",
-            url: $(this).attr("action")+"&ajax=true",
-            dataType: "html",
-            data: data,
-            async:   false,
-            success: function(responseData) {
-                console.log(responseData);
-            },
-            error: function(jqXHR,error,exception) {
-                console.log("An Error has occurred: "+error);
-                $("#metadataModalBody").html("An Error has occurred: "+error);
-            }
-        });
     });
 
-    $('#metadataModal').modal('hide');
-    handler_displayMetadataFormModal(metadataFormID);
+    $('.cancelButton').trigger('click');
+    //handler_displayMetadataFormModal(metadataFormID);
 }
 
 
