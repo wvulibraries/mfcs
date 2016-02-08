@@ -58,6 +58,12 @@ class mfcsPerms {
 		return self::getCount($formID,$username,mfcs::AUTH_VIEW) || self::isEditor($formID,$username);
 	}
 
+	public static function isActive($username = NULL){
+		if(isnull($username)) $username = sessionGet('username');
+		$user = users::get($username);
+		return ($user['active'] == 1 ? TRUE : FALSE);
+	}
+
 	public static function add($userID,$formID,$type) {
 		$sql = sprintf("INSERT INTO `permissions` (userID,formID,type) VALUES('%s','%s','%s')",
 			mfcs::$engine->openDB->escape($userID),
@@ -88,13 +94,13 @@ class mfcsPerms {
 
 
 	private static function evaluateUserBits($username){
-		if(self::hasAdminAccess($username)){
+		if(self::hasAdminAccess($username) && self::isActive($username)){
 			return 3;
 		}
-		elseif(self::hasEditorAccess($username)){
+		elseif(self::hasEditorAccess($username) && self::isActive($username)){
 			return 2;
 		}
-		elseif(self::hasUserAccess($username)) {
+		elseif(self::hasUserAccess($username) && self::isActive($username)) {
 			return 1;
 		}
 		else {
