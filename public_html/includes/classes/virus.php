@@ -132,6 +132,7 @@ class virus {
 				if (self::scan_file($row['ID'],sprintf("%s/%s/%s",mfcs::config('archivalPathMFCS'),$file['path'],$file['name'])) === FALSE) {
 					// Virus Found
 					self::set_virus_state($row['ID'],'3');
+					log::insert("virus",$object['ID'],$object['formID'],sprintf("%s/%s/%s",mfcs::config('archivalPathMFCS'),$file['path'],$file['name']));
 
 				}
 				else {
