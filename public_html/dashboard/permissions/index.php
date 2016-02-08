@@ -16,6 +16,23 @@ foreach ($metadata_forms as $form) {
 }
 localvars::add("metadata_form_permissions",$form_block);
 
+$active_users   = "<ul>";
+$inactive_users = "<ul>";
+foreach (users::getUsers() as $user) {
+
+	if (strtolower($user['status']) == 'inactive') {
+		$inactive_users .= sprintf("<li>%s, %s -- %s</li>",$user['lastname'],$user['firstname'],$user['username']);
+	}
+	else {
+		$active_users .= sprintf("<li>%s, %s -- %s</li>",$user['lastname'],$user['firstname'],$user['username']);
+	}
+
+}
+$active_users   .= "</ul>";
+$inactive_users .= "</ul>";
+
+localvars::add("active_users",$active_users);
+localvars::add("inactive_users",$inactive_users);
 
 function build_permissions_html($form) {
 	$permissions = mfcsPerms::permissions_for_form($form['ID']);
@@ -33,8 +50,10 @@ function build_permissions_html($form) {
 			$user = users::get($username);
 			$inactive_user = (strtolower($user['status']) == "inactive")?TRUE:FALSE;
 
-			$form_block   .= sprintf('<li>%s%s%s</li>',
+			$form_block   .= sprintf('<li>%s%s, %s -- %s%s</li>',
 				($inactive_user)?'<span class="inactive_user">':"",
+				$user['lastname'],
+				$user['firstname'],
 				$username,
 				($inactive_user)?'</span>':""
 				);
@@ -61,14 +80,24 @@ $engine->eTemplate("include","header");
 		<li><a href="{local var="siteRoot"}">Home</a></li>
 	</ul>
 
+<div id="current_users">
+	<h2>All active users in MFCS</h2>
+	{local var="active_users"}
+</div>
+
+<div id="current_users">
+	<h2>All inactive users in MFCS</h2>
+	{local var="inactive_users"}
+</div>
+
 <div id="object_forms_permissions">
 	<h2>Object Forms</h2>
-{local var="object_form_permissions"}
+	{local var="object_form_permissions"}
 </div>
 
 <div id="metadata_forms_permissions">
 	<h2>Metadata Forms</h2>
-{local var="metadata_form_permissions"}
+	{local var="metadata_form_permissions"}
 </div>
 
 
