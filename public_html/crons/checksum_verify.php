@@ -58,6 +58,8 @@ while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 		}
 
 		notification::notifyAdmins("Checksum failure", $filePath);
+		log::insert("fixity",$row['ID'],0,$filePath);
+
 	}
 
 }

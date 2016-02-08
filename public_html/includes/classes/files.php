@@ -875,7 +875,7 @@ class files {
 				);
 
 			// Insert into filesChecks table (fixity)
-			if (!self::fixityInsert(self::getSaveDir($assetsID,'archive',FALSE).DIRECTORY_SEPARATOR.$cleanedFilename)) {
+			if (!self::fixityInsert(self::getSaveDir($assetsID,'archive',FALSE).DIRECTORY_SEPARATOR.$cleanedFilename,$objectID)) {
 				errorHandle::newError(__METHOD__."() - couldn't create fixity entry.", errorHandle::DEBUG);
 				// @todo : we need a script that periodically checks to make sure all files are in
 				// filesChecks table ... I don't think we want to return FALSE here on failure because some files
@@ -892,10 +892,11 @@ class files {
 	}
 
 	// Take a location and put it into the
-	private static function fixityInsert($location) {
+	private static function fixityInsert($location,$objectID) {
 
-		$sql       = sprintf("INSERT INTO `filesChecks` (`location`) VALUES('%s')",
-			mfcs::$engine->openDB->escape($location)
+		$sql       = sprintf("INSERT INTO `filesChecks` (`location`,`ObjectID`) VALUES('%s','%s')",
+			mfcs::$engine->openDB->escape($location),
+			mfcs::$engine->openDB->escape($objectID)
 			);
 		$sqlResult = mfcs::$engine->openDB->query($sql);
 
