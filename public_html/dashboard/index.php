@@ -55,6 +55,9 @@ foreach ($file_types['forms'] as $formID=>$types) {
 	}
 }
 
+localvars::add("drive_size",sprintf("%10.2fGB",system_information::drive_size()));
+localvars::add("free_space",sprintf("%10.2fGB",system_information::free_space()));
+localvars::add("archives_usage",sprintf("%10.2fGB",system_information::archives_usage()));
 localvars::add("files_type_list",        $file_types_list);
 localvars::add("files_type_list_by_form",$files_type_list_by_form);
 $engine->eTemplate("include","header");
@@ -117,17 +120,38 @@ $engine->eTemplate("include","header");
 		</div>
 	</div>
 
-	<div class="leftContainerDash">
+<!-- 	<div class="leftContainerDash">
 		<div class="dashboardContainer">
 			<h2>File Types Counts, by Form</h2>
 			{local var="files_type_list_by_form"}
 		</div>
-	</div>
+	</div> -->
 
 	<div class="rightContainerDash">
 		<div class="dashboardContainer">
 			<h2>File Types Total Counts</h2>
 			{local var="files_type_list"}
+		</div>
+	</div>
+
+	<div class="rightContainerDash">
+		<div class="dashboardContainer">
+			<h2>Drive Space Information</h2>
+			<p>
+				<strong class="fileItem">Archives Usage: </strong>
+				<span class="fileCount"> {local var="archives_usage"}</span>
+			</p>
+			<p>
+				<strong class="fileItem">Drive Size/Free Space: </strong>
+				<span class="fileCount">{local var="drive_size"}/{local var="free_space"} </span>
+			</p>
+		</div>
+		<div class="dashboardContainer">
+			<h2>Virus Information</h2>
+			<p>
+				<strong class="fileItem"> Current Virus Count: </strong>
+				<span class="fileCount"> {local var="virus_count"}</span>
+			</p>
 		</div>
 	</div>
 </section>
