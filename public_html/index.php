@@ -40,7 +40,7 @@ $engine->eTemplate("include","header");
 			<img src="images/mfcsData.png" alt="mfcs holding a data icon" />
 		</div>
 		<div class="text">
-			<p> MFCS is a system built to store and archive digital projects, finding aids, and historical material entrusted to the library.  This system allows us to keep secure data, achive the original, and make modifications for other technologies to use.  The material ultimately ends up in a repository system such as Hydra, Islandora, or DLXS. </p>
+			<p> MFCS is a system built to store and archive digital projects, finding aids, and historical material entrusted to the library.  This system allows us to keep secure data, archive the original, and make modifications for other technologies to use.  The material ultimately ends up in a repository system such as Hydra, Islandora, or DLXS. </p>
 		</div>
 	</div>
 </section>
