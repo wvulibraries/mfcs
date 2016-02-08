@@ -129,6 +129,29 @@ class mfcsPerms {
 		return $permissions;
 
 	}
+
+	// converts permission type integer to human readable
+	public static function type_is($type) {
+
+		switch ($type) {
+			case mfcs::AUTH_VIEW:
+				return "View";
+				break;
+			case mfcs::AUTH_ENTRY:
+				return "Edit";
+				break;
+			case mfcs::AUTH_ADMIN:
+				return "Form Admin";
+				break;
+			default:
+				return "Error";
+				break;
+		}
+
+		return "Error!";
+
+	}
+
 }
 
 ?>
