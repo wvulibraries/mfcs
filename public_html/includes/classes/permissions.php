@@ -101,6 +101,34 @@ class mfcsPerms {
 			return 0;
 		}
 	}
+
+	// takes valid formID
+	// returns array of users. permission => array of usernames
+	public static function permissions_for_form($formID) {
+
+		$sql       = sprintf("select `users`.`username` as `username`, `permissions`.`type` as `type` FROM `permissions` LEFT JOIN `users` on `users`.`ID`=`permissions`.`userID` WHERE `formID`='%s'",
+			mfcs::$engine->openDB->escape($formID)
+			);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+		$permissions = array();
+
+		while($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+
+			if (!isset($permissions[$row['type']])) $permissions[$row['type']] = array();
+
+			$permissions[$row['type']][] = $row['username'];
+
+		}
+
+		return $permissions;
+
+	}
 }
 
 ?>
