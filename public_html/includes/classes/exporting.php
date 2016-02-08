@@ -4,7 +4,7 @@ class exporting {
 
 	private $exportDirs = array();
 
-	private $skipDirs   = array(".","..","index.php","lost+found");
+	private $skipDirs   = array(".","..","index.php","lost+found",".DS_Store");
 
 	public function __construct($dir) {
 
