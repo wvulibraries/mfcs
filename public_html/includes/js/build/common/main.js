@@ -336,6 +336,7 @@ function handler_displayMetadataFormModal(formID) {
 
 
 var defaultModalBody;
+
 // Document Ready
 // ===================================================================
 $(function(){
@@ -353,10 +354,10 @@ $(function(){
 
     $('#metadataModal').bind('keypress keydown keyup', function(e){
         if(e.keyCode == 13) { e.preventDefault(); }
+        if(e.keyCode == 27) { $('.cancelButton').trigger('click'); }
     });
 
     $('.wysiwyg').removeClass('wysiwyg').parent().addClass('wysiwyg');
-
     $('.bgCloak').click(closeModal);
 });
 
@@ -373,6 +374,9 @@ function metadataModal(event){
     var dataFieldName = $(this).attr("data-fieldname");
     var formID        = $(this).attr('data-formid');
     var url           = siteRoot+'dataEntry/metadata.php?formID='+formID+'&ajax=true';
+
+    $("#metadataModal form").data(formID);
+
 
     $.ajax({
         type: "GET",
@@ -396,36 +400,34 @@ function metadataModal(event){
 
 function submitMetadataModal() {
     var metadataFormID = 0;
-    $("#metadataModalBody form").each(function() {
+    var insertForm = $('#metadataModalBody form[name="insertForm"]');
 
-        data           = $(this).serialize();
-        metadataFormID = $(this).data("choicesform");
+    $('#metadataModalBody section').prepend(' <div class="successMessage">Please wait while your change is processed.  Once processed this window will close. </div>');
 
-        if ($(this).attr("name") == "insertForm") {
-            data = data + "&submitForm=Submit"
-        }
-        // else if ($(this).attr("name") == "updateForm") {
-        //     data = data + "&updateEdit=Update";
-        // }
+    data           = insertForm.serialize() + "&submitForm=Submit";
+    metadataFormID = insertForm.data("formid");
 
-        $.ajax({
-            type: "POST",
-            url: $(this).attr("action")+"&ajax=true",
-            dataType: "html",
-            data: data,
-            async:   false,
-            success: function(responseData) {
-                console.log(responseData);
-            },
-            error: function(jqXHR,error,exception) {
-                console.log("An Error has occurred: "+error);
-                $("#metadataModalBody").html("An Error has occurred: "+error);
-            }
-        });
+    $.ajax({
+        type: "POST",
+        url: insertForm.attr("action")+"&ajax=true",
+        dataType: "html",
+        data: data,
+        async:   false,
+        success: function(responseData) {
+            console.log(responseData);
+        },
+        error: function(jqXHR,error,exception) {
+            console.log("An Error has occurred: "+error);
+            $("#metadataModalBody").html("An Error has occurred: "+error);
+        },
+        complete: function(){
+            console.log('completed');
+            $("#metadataModalBody").html();
+            $('.cancelButton').trigger('click');
+        },
     });
 
-    $('#metadataModal').modal('hide');
-    handler_displayMetadataFormModal(metadataFormID);
+
 }
 
 
@@ -517,6 +519,7 @@ $(function(){
 function closeModal(){
     $('.modal').removeClass('show').hide();
     $('.bgCloak').hide();
+    $('html,body').removeClass('modalBlockScroll');
 }
 
 
