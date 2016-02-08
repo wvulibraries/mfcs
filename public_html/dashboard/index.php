@@ -120,12 +120,12 @@ $engine->eTemplate("include","header");
 		</div>
 	</div>
 
-<!-- 	<div class="leftContainerDash">
+	<div class="leftContainerDash">
 		<div class="dashboardContainer">
 			<h2>File Types Counts, by Form</h2>
 			{local var="files_type_list_by_form"}
 		</div>
-	</div> -->
+	</div>
 
 	<div class="rightContainerDash">
 		<div class="dashboardContainer">
