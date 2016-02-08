@@ -519,6 +519,7 @@ $(function(){
 function closeModal(){
     $('.modal').removeClass('show').hide();
     $('.bgCloak').hide();
+    $('html,body').removeClass('modalBlockScroll');
 }
 
 
