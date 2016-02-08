@@ -20,7 +20,7 @@ $active_users   = "<ul>";
 $inactive_users = "<ul>";
 foreach (users::getUsers() as $user) {
 
-	if (strtolower($user['status']) == 'inactive') {
+	if (!mfcsPerms::isActive($user['username'])) {
 		$inactive_users .= sprintf("<li>%s, %s -- %s</li>",$user['lastname'],$user['firstname'],$user['username']);
 	}
 	else {
@@ -48,14 +48,13 @@ function build_permissions_html($form) {
 			if (is_empty($username)) continue;
 
 			$user = users::get($username);
-			$inactive_user = (strtolower($user['status']) == "inactive")?TRUE:FALSE;
 
 			$form_block   .= sprintf('<li>%s%s, %s -- %s%s</li>',
-				($inactive_user)?'<span class="inactive_user">':"",
+				(!mfcsPerms::isActive($username))?'<span class="inactive_user">':"",
 				$user['lastname'],
 				$user['firstname'],
 				$username,
-				($inactive_user)?'</span>':""
+				(!mfcsPerms::isActive($username))?'</span>':""
 				);
 		}
 
