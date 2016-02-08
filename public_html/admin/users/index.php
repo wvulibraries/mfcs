@@ -31,7 +31,14 @@ function defineList($tableName) {
 
 	$l->addField(array(
 		"field"    => "isStudent",
-		"label"    => "Student?",
+		"label"    => "Is the User a Student?",
+		"dupes"    => TRUE,
+		"type"     => "yesNo"
+		));
+
+	$l->addField(array(
+		"field"    => "active",
+		"label"    => "Is the User Active? No will deny permissions to the user.",
 		"dupes"    => TRUE,
 		"type"     => "yesNo"
 		));
