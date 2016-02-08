@@ -78,6 +78,7 @@ $engine->eTemplate("include","header");
 
 	<ul class="breadcrumbs">
 		<li><a href="{local var="siteRoot"}">Home</a></li>
+		<li><a href="{local var="siteRoot"}dashboard">Dashboard</a></li>
 	</ul>
 
 <div id="current_users">
