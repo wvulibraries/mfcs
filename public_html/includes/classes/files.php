@@ -7,6 +7,7 @@
 class files {
 
 	private static $insertFieldNames = array();
+	private static $fixity_files     = array();
 
 	private static function printImage($filename,$mimeType) {
 		$tmpName = tempnam(mfcs::config('mfcstmp'), 'mfcs').".jpeg";
@@ -82,6 +83,16 @@ class files {
 
 		if (!validate::integer($state)) {
 			return FALSE;
+		}
+
+		// Insert into filesChecks table (fixity)
+		foreach (self::$fixity_files as $location) {
+			if (!self::fixityInsert($location,$objID)) {
+				errorHandle::newError(__METHOD__."() - couldn't create fixity entry.", errorHandle::DEBUG);
+				// @todo : we need a script that periodically checks to make sure all files are in
+				// filesChecks table ... I don't think we want to return FALSE here on failure because some files
+				// have already been moved ...
+			}
 		}
 
 		// @TODO returns true if no insert fields are set. should imply that there are
@@ -874,13 +885,7 @@ class files {
 				'errors' => '',
 				);
 
-			// Insert into filesChecks table (fixity)
-			if (!self::fixityInsert(self::getSaveDir($assetsID,'archive',FALSE).DIRECTORY_SEPARATOR.$cleanedFilename,$objectID)) {
-				errorHandle::newError(__METHOD__."() - couldn't create fixity entry.", errorHandle::DEBUG);
-				// @todo : we need a script that periodically checks to make sure all files are in
-				// filesChecks table ... I don't think we want to return FALSE here on failure because some files
-				// have already been moved ...
-			}
+			array_push(self::$fixity_files, self::getSaveDir($assetsID,'archive',FALSE).DIRECTORY_SEPARATOR.$cleanedFilename);
 		}
 
 		// Remove the uploads directory (now that we're done with it) and lock-down the originals dir
