@@ -285,7 +285,7 @@ table {
   display:none;
 }
 
-.menuModal, .imagePreviewModal {
+#metadataModal, .menuModal, .imagePreviewModal {
   width:60%;
   height:60%;
   margin:10% 20%;
@@ -309,6 +309,7 @@ table {
     position:absolute;
     width:100%;
     bottom:0;
+   // height:100px;
   }
 
   .modal-body {
