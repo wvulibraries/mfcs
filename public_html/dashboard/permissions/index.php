@@ -66,6 +66,8 @@ function build_permissions_html($form) {
 	return $form_block;
 }
 
+log::insert("Dashboard: Permissions Audit");
+
 $engine->eTemplate("include","header");
 
 ?>

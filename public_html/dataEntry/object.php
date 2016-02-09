@@ -79,6 +79,7 @@ try {
 
 	// handle submissions
 	if (isset($engine->cleanPost['MYSQL']['checksum_submit'])) {
+		log::insert("Data Entry: Object: Checksum Submission",$engine->cleanGet['MYSQL']['objectID'],$form['ID']);
 		if (($uploaded_checksums = checksum::parse_uploaded_checksums($_FILES["checksum"]['tmp_name'])) === FALSE) {
 			throw new Exception("checksum file is not valid.");
 		}

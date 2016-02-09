@@ -26,6 +26,8 @@ if (is_empty($fixity_info)) {
 
 localvars::add("fixity_info", $fixity_info);
 
+log::insert("Dashboard: Fixity Audit");
+
 $engine->eTemplate("include","header");
 
 ?>

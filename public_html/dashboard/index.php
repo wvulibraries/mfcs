@@ -61,6 +61,9 @@ localvars::add("free_space",sprintf("%10.2fGB",system_information::free_space())
 localvars::add("archives_usage",sprintf("%10.2fGB",system_information::archives_usage()));
 localvars::add("files_type_list",        $file_types_list);
 localvars::add("files_type_list_by_form",$files_type_list_by_form);
+
+log::insert("Dashboard: View");
+
 $engine->eTemplate("include","header");
 
 ?>

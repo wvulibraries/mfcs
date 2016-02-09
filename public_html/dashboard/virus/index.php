@@ -26,6 +26,8 @@ if (is_empty($virus_info)) {
 
 localvars::add("virus_info", $virus_info);
 
+log::insert("Dashboard: Virus Audit");
+
 $engine->eTemplate("include","header");
 
 ?>
