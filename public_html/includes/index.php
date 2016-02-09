@@ -3,6 +3,7 @@
 require_once "classes/mfcs.php";
 
 require_once "classes/checks.php";
+require_once "classes/checksum.php";
 require_once "classes/duplicates.php";
 require_once "classes/exporting.php";
 require_once "classes/files.php";

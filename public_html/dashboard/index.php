@@ -7,8 +7,9 @@ $counts = array(
 "forms_object_total"  => sprintf("SELECT COUNT(*) FROM `forms` WHERE `metadata`='0'"),
 "metadate_form_total" => sprintf("SELECT COUNT(*) FROM `forms` WHERE `metadata`='1'"),
 "forms_production"    => sprintf("SELECT COUNT(*) FROM `forms` WHERE `metadata`='0' AND `production`='1'"),
-"failed_fixity"       => sprintf("SELECT COUNT(*) FROM `filesChecks` WHERE `pass`='0'"),
+"failed_fixity"       => sprintf("SELECT COUNT(*) FROM `filesChecks` WHERE `pass`='0' AND `lastChecked` IS NOT null"),
 "no_checksum"         => sprintf("SELECT COUNT(*) FROM `filesChecks` WHERE `checksum` is null"),
+"user_provided_check" => sprintf("SELECT COUNT(*) FROM `filesChecks` WHERE `userProvided`='1'"),
 "virus_count"         => sprintf("SELECT COUNT(*) FROM `virusChecks` WHERE `state`='3'")
 );
 
@@ -109,6 +110,10 @@ $engine->eTemplate("include","header");
 			<p>
 				<strong class="fileItem">Files without Checksum: </strong>
 				<span class="fileCount">{local var="no_checksum"} </span>
+			</p>
+			<p>
+				<strong class="fileItem">User Provided Checksums: </strong>
+				<span class="fileCount">{local var="user_provided_check"} </span>
 			</p>
 		</div>
 		<div class="dashboardContainer">

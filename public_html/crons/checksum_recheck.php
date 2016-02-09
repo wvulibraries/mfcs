@@ -14,7 +14,7 @@ if (!isCLI()) {
 // Turn off EngineAPI template engine
 $engine->obCallback = FALSE;
 
-$sql       = sprintf("SELECT * FROM `filesChecks` WHERE `pass`='0'");
+$sql       = sprintf("SELECT * FROM `filesChecks` WHERE `pass`='0' AND `lastChecked` IS NULL");
 $sqlResult = mfcs::$engine->openDB->query($sql);
 
 if (!$sqlResult['result']) {

@@ -14,7 +14,7 @@ if (!isCLI()) {
 // Turn off EngineAPI template engine
 $engine->obCallback = FALSE;
 
-$sql       = sprintf("SELECT * FROM `filesChecks` WHERE `lastChecked` IS NOT NULL");
+$sql       = sprintf("SELECT * FROM `filesChecks` WHERE `checksum` IS NOT NULL");
 $sqlResult = mfcs::$engine->openDB->query($sql);
 
 if (!$sqlResult['result']) {
@@ -60,6 +60,18 @@ while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 		notification::notifyAdmins("Checksum failure", $filePath);
 		log::insert("fixity",$row['ID'],0,$filePath);
 
+	}
+	else {
+		// passes
+		$sql       = sprintf("UPDATE `filesChecks` set `lastChecked`='%s', `pass`='1' WHERE `ID`='%s' LIMIT 1",
+			time(),
+			$row['ID']
+			);
+		$sqlResult_insert = $engine->openDB->query($sql);
+
+		if (!$sqlResult_insert['result']) {
+			notification::notifyAdmins("MFCS Database Update Failure", "Failed to set checksum pass check to 0");
+		}
 	}
 
 }
