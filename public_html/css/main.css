@@ -7210,6 +7210,15 @@ html, body {
   height: 100%;
   background: #eee; }
 
+.checksum_not_checked {
+  color: #76710c; }
+
+.checksum_fail {
+  color: red; }
+
+.checksum_pass {
+  color: green; }
+
 h1 {
   font-size: 180%; }
 
@@ -7823,7 +7832,7 @@ input {
   input[type=radio] {
     width: 30px; }
   input[type=text], input[type=file] {
-    border: 1px solid #d4d4d4; }
+    border: 1px solid #d5d5d5; }
   input[type=submit] {
     padding: 15px 50px;
     background: #005EB8;
@@ -7859,7 +7868,7 @@ textarea {
   outline: 0;
   margin-bottom: 20px;
   min-height: 150px;
-  border: 1px solid #d4d4d4; }
+  border: 1px solid #d5d5d5; }
 
 .uploadFiles, .fineUploader {
   display: block;

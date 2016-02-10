@@ -30,6 +30,18 @@ html, body {
   background:#eee;
 }
 
+.checksum_not_checked { 
+color: #76710c;
+}
+
+.checksum_fail {
+  color: red;
+}
+
+.checksum_pass {
+  color: green;
+}
+
 h1 { font-size:180%; }
 h2 { font-size:135%; }
 h3,h4,h5 { font-size:125%; }

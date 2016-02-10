@@ -391,6 +391,27 @@ class files {
 				$extraFileInfo = $fi->file($filePathFull);
 				$filesize      = self::formatBytes($filesize);
 
+				$sql       = sprintf("SELECT `checksum`, `pass`, `lastChecked` FROM `filesChecks` WHERE `location`='%s'",$file['path'].DIRECTORY_SEPARATOR.$file['name']);
+				$sqlResult_cs = mfcs::$engine->openDB->query($sql);
+				
+				if (!$sqlResult_cs['result']) {
+					errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+					return FALSE;
+				}
+				
+				$row_cs   = mysql_fetch_array($sqlResult_cs['result'],  MYSQL_ASSOC);
+				$checksum = (isnull($row_cs['checksum']))?"Not Available":$row_cs['checksum'];
+				if (isnull($row_cs['lastChecked'])) {
+					$checksum_pass_class = "checksum_not_checked";
+				}
+				else if ($row_cs['pass'] == "0") {
+					$checksum_pass_class = "checksum_fail";
+				}
+				else {
+					$checksum_pass_class = "checksum_pass";
+				}
+
+
 				// Choose an Icon for the type of data
 				switch ($type[0]) {
 					case 'image':
@@ -523,12 +544,14 @@ class files {
 				$downloadDropdown .= '</div>';
 
 
-				$fileLIs[] = sprintf('<li><span class="filename span6">%s %s <span class="filesize">  %s </span></span><span class="dropdowns span6"> %s %s </span></li>',
+				$fileLIs[] = sprintf('<li><span class="filename span6">%s %s <span class="filesize">  %s </span></span><span class="dropdowns span6"> %s %s </span><br /><span class="file_checksum %s">Checksum: %s</span></li>',
 					$icon,
 					$file['name'],
 					$filesize,
 					$previewDropdown,
-					$downloadDropdown
+					$downloadDropdown,
+					$checksum_pass_class,
+					$checksum
 				);
 			}
 
