@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Base PRE Setup
-
 GITDIR="/tmp/git"
 ENGINEAPIGIT="https://github.com/wvulibraries/engineAPI.git"
 ENGINEBRANCH="engineAPI-3.x"
@@ -92,6 +91,9 @@ do
 	mysql -u root mfcs < "$f"
 done
 
+# Daves Migration Script
+# sh /vagrant/SQLFiles/runMigrations.sh
+
 #install 3rd Party dependencies
 cd /vagrant/serverConfiguration/3rdParty
 rpm -Uvh --force --quiet remi-release-6*.rpm epel-release-6*.rpm
@@ -132,12 +134,22 @@ ln -s /usr/local/bin/tesseract /usr/bin/
 ln -s /usr/local/bin/hocr2pdf /usr/bin/
 
 ## Video Dependencies
-rpm -Uvh http://download.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
-rpm -Uhv http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
-yum -y install --nogpgcheck http://download1.rpmfusion.org/free/el/updates/6/i386/rpmfusion-free-release-6-1.noarch.rpm http://download1.rpmfusion.org/nonfree/el/updates/6/i386/rpmfusion-nonfree-release-6-1.noarch.rpm
+## FFMPEG COMPILE INSTALL
+echo "Installing FFMPEG Dependencies"
+yum -y install autoconf automake cmake freetype-devel gcc gcc-c++ git libtool make mercurial nasm pkgconfig zlib-devel
 
-yum -y install mplayer
-yum -y install ffmpeg-devel ffmpeg ffmpeg-libs
+cd /tmp
+mkdir ffmpeg
+
+echo "Extracing FFMPEG"
+tar -xvf /vagrant/serverConfiguration/3rdParty/ffmpeg-2.6.8.tar.xz --directory /tmp/ffmpeg/
+cd /tmp/ffmpeg/ffmpeg-2.8.6-64bit-static
+cp ffmpeg /usr/local/bin/
+cp ffmpeg-10bit /usr/local/bin/
+cp ffprobe /usr/local/bin/
+cp ffserver /usr/local/bin/
+cp qt-faststart /usr/local/bin/
+echo "Completed install"
 
 ## ClamAV
 yum -y install clamav clamav-db clamav-devel
