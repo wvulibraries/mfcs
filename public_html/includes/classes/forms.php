@@ -1060,18 +1060,6 @@ class forms {
 		$objects = objects::getAllObjectsForForm($formID);
 		$objects = objects::sort($objects,$form['objectTitleField']);
 
-		// If the data is too large, setup pagination
-		if (sizeof($objects) > mfcs::config("metadataPageCount")) {
-			$pagination               = new pagination(sizeof($objects));
-			$pagination->itemsPerPage = mfcs::config("metadataPageCount");
-			$pagination->currentPage  = isset(mfcs::$engine->cleanGet['MYSQL'][ $pagination->urlVar ])
-				? mfcs::$engine->cleanGet['MYSQL'][ $pagination->urlVar ]
-				: 1;
-
-			$startPos = $pagination->itemsPerPage*($pagination->currentPage-1);
-			$objects  = array_slice($objects, $startPos, $pagination->itemsPerPage);
-		}
-
 		if (count($objects) > 0) {
 
 			// @todo -- we are modifying this so that we can scale. Large forms 
@@ -1140,11 +1128,6 @@ class forms {
 			$table->headers($headers);
 
 			$output = "";
-
-			// Add in pagination bar
-			if (isset($pagination)) {
-				$output .= $pagination->nav_bar();
-			}
 
 			$output .= sprintf('<form action="%s?formID=%s" method="%s" name="updateForm" data-formid="%s">',
 				$_SERVER['PHP_SELF'],
