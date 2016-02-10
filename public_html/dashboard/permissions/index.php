@@ -18,21 +18,43 @@ localvars::add("metadata_form_permissions",$form_block);
 
 $active_users   = "<ul>";
 $inactive_users = "<ul>";
+$admin_users    = "<ul>";
+$student_users  = "<ul>";
 foreach (users::getUsers() as $user) {
 
 	if (!mfcsPerms::isActive($user['username'])) {
-		$inactive_users .= sprintf("<li>%s, %s -- %s</li>",$user['lastname'],$user['firstname'],$user['username']);
+		$inactive_users .= format_user_display($user);
 	}
 	else {
-		$active_users .= sprintf("<li>%s, %s -- %s</li>",$user['lastname'],$user['firstname'],$user['username']);
+		$active_users   .= format_user_display($user);
 	}
-
+	if (strtolower($user['status']) == "admin") {
+		$admin_users    .= format_user_display($user);
+	}
+	if (strtolower($user['isStudent']) == "1") {
+		$student_users  .= format_user_display($user);
+	}
 }
 $active_users   .= "</ul>";
 $inactive_users .= "</ul>";
+$admin_users    .= "</ul>";
+$student_users  .= "</ul>";
 
-localvars::add("active_users",$active_users);
-localvars::add("inactive_users",$inactive_users);
+localvars::add("active_users",   $active_users);
+localvars::add("inactive_users", $inactive_users);
+localvars::add("admin_users",    $admin_users);
+localvars::add("student_users",  $student_users);
+
+function format_user_display($user) {
+
+	return sprintf("<li>%s%s, %s -- %s%s</li>",
+		(!mfcsPerms::isActive($user['username']))?'<span class="inactive_user">':"",
+		$user['lastname'],
+		$user['firstname'],
+		$user['username'],
+		(!mfcsPerms::isActive($user['username']))?'</span>':""
+		);
+}
 
 function build_permissions_html($form) {
 	$permissions = mfcsPerms::permissions_for_form($form['ID']);
@@ -47,15 +69,8 @@ function build_permissions_html($form) {
 		foreach ($usernames as $username) {
 			if (is_empty($username)) continue;
 
-			$user = users::get($username);
-
-			$form_block   .= sprintf('<li>%s%s, %s -- %s%s</li>',
-				(!mfcsPerms::isActive($username))?'<span class="inactive_user">':"",
-				$user['lastname'],
-				$user['firstname'],
-				$username,
-				(!mfcsPerms::isActive($username))?'</span>':""
-				);
+			$user          = users::get($username);
+			$form_block   .= format_user_display($user);
 		}
 
 		$form_block .= '</ul>';
@@ -90,6 +105,17 @@ $engine->eTemplate("include","header");
 <div id="current_users">
 	<h2>All inactive users in MFCS</h2>
 	{local var="inactive_users"}
+</div>
+
+<div id="student_users">
+	<h2>Student Users</h2>
+	{local var="student_users"}
+</div>
+
+<div id="admin_users">
+	<h2>Administrator Users</h2>
+	<p>Administrators have access to all forms and data in the system</p>
+	{local var="admin_users"}
 </div>
 
 <div id="object_forms_permissions">
