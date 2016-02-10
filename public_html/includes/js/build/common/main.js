@@ -193,7 +193,13 @@ $(function(){
 
     $(document).keyup(function(e) {
          if (e.keyCode == 27) { // escape key maps to keycode `27`
-           $('.main-nav').hide('slide', {direction:'right'});
+            $('.main-nav').hide('slide', {direction:'right'});
+
+            if($('.modal').hasClass('show')){
+                $('.bgCloak').hide();
+                $('html,body').removeClass('modalBlockScroll');
+                $('.modal').removeClass('show').hide();
+            }
         }
     });
 

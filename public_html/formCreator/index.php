@@ -843,6 +843,46 @@ $engine->eTemplate("include","header");
 	</div>
 </section>
 
+
+<!-- Modals ===================================================================  -->
+
+ <div id="defaultValueVariables" class="modal" rel="modal" data-show="false">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>Available variables for default value</h3>
+    </div>
+    <div class="modal-body">
+    	<div class="content">
+	        <b>User</b>
+	        <ul style="list-style: none;">
+	            <li><b>%userid%</b><br>The user id for the currently logged in user. (<i>Example: <?php echo forms::applyFieldVariables('%userid%') ?></i>)</li>
+	            <li><b>%username%</b><br>The username for the currently logged in user. (<i>Example: <?php echo forms::applyFieldVariables('%username%') ?></i>)</li>
+	            <li><b>%firstname%</b><br>The first name for the currently logged in user. (<i>Example: <?php echo forms::applyFieldVariables('%firstname%') ?></i>)</li>
+	            <li><b>%lastname%</b><br>The last name for the currently logged in user. (<i>Example: <?php echo forms::applyFieldVariables('%lastname%') ?></i>)</li>
+	        </ul>
+	        <hr>
+	        <b>Static Date/Time</b>
+	        <ul style="list-style: none;">
+	            <li><b>%date%</b><br>The current date as MM/DD/YYYY. (<i>Example: <?php echo forms::applyFieldVariables('%date%') ?></i>)</li>
+	            <li><b>%time%</b><br>The current time as HH:MM:SS. (<i>Example: <?php echo forms::applyFieldVariables('%time%') ?></i>)</li>
+	            <li><b>%time12%</b><br>The current 12-hr time. (<i>Example: <?php echo forms::applyFieldVariables('%time12%') ?></i>)</li>
+	            <li><b>%time24%</b><br>The current 24-hr time. (<i>Example: <?php echo forms::applyFieldVariables('%time24%') ?></i>)</li>
+	            <li><b>%timestamp%</b><br>The current UNIX system timestamp. (<i>Example: <?php echo forms::applyFieldVariables('%timestamp%') ?></i>)</li>
+	        </ul>
+	        <hr>
+	        <b>Custom Date/Time</b>
+	        <ul style="list-style: none;">
+	            <li>
+	                <b>%date(FORMAT)%</b><br>
+	                You can specify a custom format when creating dates and times where FORMAT is a PHP <a href="http://us2.php.net/manual/en/function.date.php" target="_blank">date()</a> format string.
+	                <br>
+	                <b><i>Example:</i></b> %date(l, m j Y)% becomes <?php echo forms::applyFieldVariables('%date(l, F j Y)%') ?>
+	            </li>
+	        </ul>
+	    </div>
+    </div>
+</div>
+
 <div class="modal fade formType" id="formTypeSelector">
 	<div class="modal-header">
 		<h3>What type of form will this be?</h3>

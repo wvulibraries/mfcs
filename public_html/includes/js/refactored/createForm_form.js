@@ -22,6 +22,14 @@ $(function(){
 	modalBindings();
 	applyFormPreview();
 
+	if($('#fieldVariablesLink').length !== 0){
+		$('#fieldVariablesLink').click(function(){
+			$('#defaultValueVariables').fadeIn().addClass('show');
+    		$('.bgCloak').show();
+    		$('html,body').addClass('modalBlockScroll');
+		});
+	}
+
 	// Blank all panes when changing tabs
 	fieldTab.on("click", "a", function() {
 		$('li', formPreview).removeClass("well activeField");
@@ -36,14 +44,12 @@ $(function(){
     });
 
     // Get panel to scroll with the user after 700px
-    if($(window).width() >= 768){
+    if($(window).width() >= 768 && ($('#leftPanel').length !== 0)){
 		var stickyEl = $('#leftPanel');
 		var elTop = stickyEl.offset().top - 150;
 		stickyEl.wrapInner( "<div id='leftPanelFixed'><div id='widthContstrain'></div></div>");
 		var mainHeight = $('.main').height();
 		var windowHeight = $(window).height();
-
-		console.log(mainHeight + " - " + windowHeight);
 
 		if(mainHeight > windowHeight){
 		    $(window).scroll(function() {
