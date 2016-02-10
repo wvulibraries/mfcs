@@ -17,3 +17,5 @@ public_html/includes/css/base.css.map
 SQLFiles/runMigrations.sh
 SQLFiles/setMaxPacket.sql
 node_modules
+public_html/testVids.php
+testVids
