@@ -405,7 +405,7 @@ function showFieldSettings(fullID) {
 
 				case 'wysiwyg':
 					$("#fieldSettings_container_placeholder").hide();
-					$("#fieldSettings_container_value").hide();
+					$("#fieldSettings_container_value").show();
 					break;
 
 				case 'file':
