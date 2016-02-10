@@ -3,9 +3,11 @@
 class mfcsPerms {
 
 	private static function getCount($formID,$username,$type) {
-		$sql = sprintf("SELECT COUNT(permissions.ID) FROM permissions LEFT JOIN users on users.ID=permissions.userID WHERE permissions.formID='%s' AND users.username='%s'",
+		$sql = sprintf("SELECT COUNT(permissions.ID) FROM permissions LEFT JOIN users on users.ID=permissions.userID WHERE permissions.formID='%s' AND users.username='%s' AND permissions.type='%s'",
             mfcs::$engine->openDB->escape($formID),
-            mfcs::$engine->openDB->escape($username));
+            mfcs::$engine->openDB->escape($username),
+            mfcs::$engine->openDB->escape($type)
+            );
     	$sqlResult = mfcs::$engine->openDB->query($sql);
 
     	if (!$sqlResult['result']) {
