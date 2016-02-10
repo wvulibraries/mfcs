@@ -55,7 +55,7 @@ $engine->eTemplate("include","header");
 
 <section>
     <header class="page-header">
-        <h1>Manage Projects</h1>
+        <h1>Manage Metadata Schemas</h1>
     </header>
 
     <ul class="breadcrumbs">
