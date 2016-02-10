@@ -47,14 +47,14 @@ class valid {
 			if (!mfcsPerms::isActive()) return "Account is not active.";
 
 			switch (strtolower($test['authtype'])) {
-				case "viewer":
-					if (mfcsPerms::isViewer($engine->cleanGet['MYSQL']['formID']) === FALSE) return "Viewer Permission Denied";
+				case "admin":
+					if (mfcsPerms::isAdmin($engine->cleanGet['MYSQL']['formID'])  === FALSE) return "Admin Permission Denied";
 					break;
 				case "editor":
 					if (mfcsPerms::isEditor($engine->cleanGet['MYSQL']['formID']) === FALSE) return "Edit Permission Denied";
 					break;
-				case "admin":
-					if (mfcsPerms::isAdmin($engine->cleanGet['MYSQL']['formID'])  === FALSE) return "Admin Permission Denied";
+				case "viewer":
+					if (mfcsPerms::isViewer($engine->cleanGet['MYSQL']['formID']) === FALSE) return "Viewer Permission Denied";
 					break;
 				default:
 					return "Permission Denied. (Fallback)";
