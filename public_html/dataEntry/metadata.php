@@ -13,41 +13,17 @@ else {
 	$ajax = FALSE;
 }
 
-$permissions      = TRUE;
+$permissions = TRUE;
 
 try {
 
-	if (objects::validID() === FALSE) {
-		throw new Exception("ObjectID Provided is invalid.");
-	}
-
-	if (forms::validID() === FALSE) {
-		throw new Exception("No Form ID Provided.");
-	}
-
-	if (mfcsPerms::isAdmin($engine->cleanGet['MYSQL']['formID']) === FALSE) {
+	if (($validate_return = valid::validate(array("metedata"=>true,"authtype"=>"editor","productionReady"=>true))) !== TRUE) {
 		$permissions = FALSE;
-		throw new Exception("Permission Denied to view objects created with this form.");
+		throw new Exception($validate_return);
 	}
 
-	$form = forms::get($engine->cleanGet['MYSQL']['formID']);
-	if ($form === FALSE) {
+	if (($form = forms::get($engine->cleanGet['MYSQL']['formID'])) === FALSE) {
 		throw new Exception("Error retrieving form.");
-	}
-
-	if (forms::isProductionReady($engine->cleanGet['MYSQL']['formID']) === FALSE) {
-		$permissions = FALSE;
-		throw new Exception("Form is not production ready.");
-	}
-
-	if (forms::isMetadataForm($engine->cleanGet['MYSQL']['formID']) === FALSE) {
-		throw new Exception("Object form provided (Metadata forms only).");
-	}
-
-	// if an object ID is provided make sure the object is from this form
-	if (isset($engine->cleanGet['MYSQL']['objectID'])
-		&& !checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
-		throw new Exception("Object not from this form");
 	}
 
 	localvars::add("formName",$form['title']);

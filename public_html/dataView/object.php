@@ -10,29 +10,9 @@ $permissions      = TRUE;
 
 try {
 
-	// If we have an objectID and no formID, lookup the formID from the object and set it back into the GET
-	if(isset($engine->cleanGet['MYSQL']['objectID']) and !isset($engine->cleanGet['MYSQL']['formID'])){
-		$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
-		http::setGet('formID', $object['formID']);
-	}
-
-	// Object ID Validation
-	if (objects::validID(TRUE) === FALSE) {
-		throw new Exception("ObjectID Provided is invalid.");
-	}
-
-	if (forms::validID() === FALSE) {
-		throw new Exception("No Form ID Provided.");
-	}
-
-	if (mfcsPerms::isViewer($engine->cleanGet['MYSQL']['formID']) === FALSE) {
+	if (($validate_return = valid::validate(array("metedata"=>false,"authtype"=>"viewer","productionReady"=>true))) !== TRUE) {
 		$permissions = FALSE;
-		throw new Exception("Permission Denied to view objects created with this form.");
-	}
-
-	if (!objects::checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
-		errorHandle::newError("Object not from this form.", errorHandle::DEBUG);
-		throw new Exception("Object not from this form");
+		throw new Exception($validate_return);
 	}
 
 	log::insert("Data View: Object",$engine->cleanGet['MYSQL']['objectID'],$engine->cleanGet['MYSQL']['formID']);

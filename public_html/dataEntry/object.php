@@ -19,6 +19,7 @@ try {
 	$error = FALSE;
 
 	if (($validate_return = valid::validate(array("metedata"=>false,"authtype"=>"editor","productionReady"=>true))) !== TRUE) {
+		$permissions = FALSE;
 		throw new Exception($validate_return);
 	}
 

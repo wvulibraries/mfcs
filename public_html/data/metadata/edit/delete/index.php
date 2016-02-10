@@ -6,31 +6,9 @@ $deleted     = FALSE;
 
 try {
 
-	if (objects::validID(TRUE) === FALSE) {
-		throw new Exception("ObjectID Provided is invalid or missing.");
-	}
-
-	if (forms::validID() === FALSE) {
-		throw new Exception("No Form ID Provided.");
-	}
-
-	if (forms::isMetadataForm($engine->cleanGet['MYSQL']['formID']) === FALSE) {
-		throw new Exception("Object form provided (Metadata forms only).");
-	}
-
-	if (mfcsPerms::isEditor($engine->cleanGet['MYSQL']['formID']) === FALSE) {
+	if (($validate_return = valid::validate(array("objectID_required"=>true, "metedata"=>true,"authtype"=>"editor","productionReady"=>true))) !== TRUE) {
 		$permissions = FALSE;
-		throw new Exception("Permission Denied to view objects created with this form.");
-	}
-
-	if (forms::isProductionReady($engine->cleanGet['MYSQL']['formID']) === FALSE) {
-		$permissions = FALSE;
-		throw new Exception("Form is not production ready.");
-	}
-
-	// if an object ID is provided make sure the object is from this form
-	if (!objects::checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) {
-		throw new Exception("Object not from this form");
+		throw new Exception($validate_return);
 	}
 
 	// handle submission

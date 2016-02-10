@@ -1002,7 +1002,7 @@ class forms {
 
 		// Display a delete link on updates to metadate forms
 		if (!isnull($objectID) && self::isMetadataForm($formID)) {
-			$output .= sprintf('<a href="%sdata/metadata/edit/delete/?objectID=%s&formID=%s">Delete</a>',
+			$output .= sprintf('<a href="%sdata/metadata/edit/delete/?objectID=%s&formID=%s" id="delete_metadata_link">Delete</a>',
 				localvars::get('siteRoot'),
 				$objectID,
 				$formID
