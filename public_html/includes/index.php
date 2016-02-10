@@ -22,6 +22,7 @@ require_once "classes/stats.php";
 require_once "classes/system_information.php";
 require_once "classes/users.php";
 require_once "classes/FFMPEG.php";
+require_once "classes/valid.php";
 require_once "classes/videoStream.php";
 require_once "classes/virus.php";
 
