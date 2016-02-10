@@ -8206,7 +8206,8 @@ li.alert-error {
       display: block;
       width: 100%;
       font-size: 14px;
-      border-bottom: 1px solid #333; }
+      line-height: 0;
+      /*border-bottom:1px solid #333; Mike told me to remove it!*/ }
     .main-nav ul a {
       display: block;
       padding: 5px; }
