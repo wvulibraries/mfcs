@@ -1830,6 +1830,24 @@ class forms {
 		return $data;
 	}
 
+	// form is an already retrieved object. 
+	// @TODO, can we just do this in the "get" method? or will that break something?
+	// unit testing fail. 
+	public static function associate_fields($form) {
+
+		$temp = array();
+		foreach ($form['fields'] as $field) {
+
+			$temp[$field['name']] = $field;
+
+		}
+
+		$form['fields'] = $temp;
+
+		return $form;
+
+	}
+
 }
 
 ?>
