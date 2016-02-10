@@ -1848,3 +1848,73 @@ footer{
   float:left;
   margin-right:0;
 }
+
+// Tim's Hacks
+// =============================================================================
+
+#delete_metadata_link {
+  background: #fff;
+  color: #333;
+  display: inline-block;
+  border: 1px solid #d4d4d4;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857;
+  border-radius: 4px;
+  text-decoration: none;
+  .fa-trash {
+    padding: 0 5px 0 0;
+  }
+  &:hover {
+    background: #005EB8;
+    border: 1px solid #005EB8;
+    color: #fff;
+  }
+}
+.delete_metadata_confirm {
+  background: #fff;
+  color: #333;
+  display: inline-block;
+  border: 1px solid #d4d4d4;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857;
+  border-radius: 4px;
+  text-decoration: none; 
+  &:hover {
+    background: green;
+    border: 1px solid green;
+    color: #fff;
+    text-decoration: none; 
+  }
+  .fa {
+    padding: 0 5px 0 0;
+  } 
+}
+.delete_metadata_cancel {
+  background: #fff;
+  color: #333;
+  display: inline-block;
+  border: 1px solid #d4d4d4;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857;
+  border-radius: 4px;
+  text-decoration: none;  
+  &:hover {
+    background: red;
+    border: 1px solid red;
+    color: #fff;
+    text-decoration: none; 
+  }
+  .fa {
+    padding: 0 5px 0 0;
+  }
+}
+.delete_warning {
+  background: #fdfcbe;
+  display: block;
+  padding: 20px;
+  border-radius: 4px;
+  margin: 0 0 20px 0;
+}

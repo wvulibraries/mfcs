@@ -67,15 +67,17 @@ $engine->eTemplate("include","header");
 	<div class="row-fluid">
 		<?php if ($permissions === TRUE && $deleted === FALSE) { ?>
 
-		<p>Do you really want to delete the Metadata Object: <strong>{local var="metadata_title"}</strong></p>
+		<span class="delete_warning">
+			<p>Do you really want to delete the Metadata Object: <strong>{local var="metadata_title"}</strong></p>
 
-		<p>
-			Have you confirmed that this metadata item is not linked to an object?
-			<a href="{local var="siteRoot"}dataView/list.php?listType=metadataObjects&formID={local var="formID"}&objectID={local var="objectID"}">Linked Objects</a>
-		</p>
+			<p>
+				Have you confirmed that this metadata item is not linked to an object?
+				<a href="{local var="siteRoot"}dataView/list.php?listType=metadataObjects&formID={local var="formID"}&objectID={local var="objectID"}">Linked Objects</a>
+			</p>
+		</span>
 
-		<a href="{local var="php_self"}?objectID={local var="objectID"}&confirm={local var="objectID"}">Confirm Delete</a> &nbsp;
-		<a href="{local var="siteRoot"}/data/metadata/edit/?objectID={local var="objectID"}">Cancel</a>
+		<a class="delete_metadata_confirm" href="{local var="php_self"}?objectID={local var="objectID"}&confirm={local var="objectID"}"><i class="fa fa-trash"></i>Confirm Delete</a> &nbsp;
+		<a class="delete_metadata_cancel" href="{local var="siteRoot"}/data/metadata/edit/?objectID={local var="objectID"}"><i class="fa fa-times"></i>Cancel</a>
 
 		<?php } else { ?>
 
