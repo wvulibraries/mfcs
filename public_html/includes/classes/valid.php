@@ -10,8 +10,11 @@ class valid {
 	// $productionReady = boolean, default TRUE (if formID is also true), Form is production ready
 	// $objectID_required = boolean, default: FALSE, if true require that ObjectID is provided.
 	// $object_in_form = boolean, default: TRUE, if true object must be part of the form. Requires objectID in queryString $engine->cleanGet['MYSQL']['objectID']
+	// $parent_id = boolean, default: FALSE. If true, checks $engine->cleanGet['MYSQL']['parentID'] for a valid ObjectID
 	// )
 	public static function validate($test) {
+
+		$engine = mfcs::$engine;
 
 		// setup default values
 		if (!isset($test['objectID']))          $test['objectID']          = true;
@@ -21,18 +24,22 @@ class valid {
 		if (!isset($test['productionReady']))   $test['productionReady']   = ($test['formID'])?true:false;
 		if (!isset($test['objectID_required'])) $test['objectID_required'] = false;
 		if (!isset($test['object_in_form']))    $test['object_in_form']    = true;
+		if (!isset($test['parent_id']))         $test['parent_id']         = false;
 		
 		// validate options
-		if (!is_bool($test['objectID_required'])) return "Invalid 'objectID_required' provided".
+		if (!is_bool($test['objectID_required'])) return "Invalid 'objectID_required' provided";
 
 
-		if ($test['objectID']           && objects::validID($test['objectID_required']) === FALSE)                                                                                                      return "ObjectID Provided is invalid.";
-		if ($test['formID']             && forms::validID() === FALSE)                                                                                                                                  return "Invalid/No Form ID Provided.";
+		if ($test['objectID']           && objects::validID($test['objectID_required'])                  === FALSE)                                                                                     return "ObjectID Provided is invalid.";
+		if ($test['parent_id']          && obejcts::validID(TRUE,$engine->cleanGet['MYSQL']['parentID']) === FALSE)                                                                                     return "ParentID Provided is invalid.";
+		if ($test['formID']             && forms::validID()                                              === FALSE)                                                                                     return "Invalid/No Form ID Provided.";
 		if ($test['metadata'] === FALSE && forms::isMetadataForm($engine->cleanGet['MYSQL']['formID']))                                                                                                 return "Metadata form provided (Object forms only).";
 		if ($test['metadata'] === TRUE  && !forms::isMetadataForm($engine->cleanGet['MYSQL']['formID']))                                                                                                return "Object form provided (Metadata forms only).";
+		if ($test['productionReady']    && !isset($engine->cleanGet['MYSQL']['formID']))                                                                                                                return "No Form ID provided to test for Production Ready.";                             
 		if ($test['productionReady']    && isset($engine->cleanGet['MYSQL']['formID']) && forms::isProductionReady($engine->cleanGet['MYSQL']['formID']) === FALSE)                                     return "Form is not production ready.";
-		if ($test['productionReady']    && !isset($engine->cleanGet['MYSQL']['formID']))                                                                                                                return "No Form ID provided to test for Production Ready.";
-		if ($test['object_in_form']     && isnull($engine->cleanGet['MYSQL']['objectID']))                                                                                                              return "ObjectID not Provided to check in form.";
+		// I don't think this check is required, because if the ObjectID is 
+		// required it should be set and checked above.
+		//if ($test['object_in_form']     && isnull($engine->cleanGet['MYSQL']['objectID']))                                                                                                              return "ObjectID not Provided to check in form.";
 		if ($test['object_in_form']     && !isnull($engine->cleanGet['MYSQL']['objectID']) && !objects::checkObjectInForm($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'])) return "Object not from this form.";
 
 		if ($test['authtype']) {
