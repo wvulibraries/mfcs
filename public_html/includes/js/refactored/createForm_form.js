@@ -385,11 +385,18 @@ function showFieldSettings(fullID) {
 
 				case 'radio':
 				case 'checkbox':
+					$("#fieldSettings_container_choices").parent().show();
+					$("#fieldSettings_container_value").hide();
+					$("#fieldSettings_container_placeholder").hide();
+					$('#fieldSettings_choices_null').parent().css("visibility", "hidden");
+					break;
+
 				case 'select':
 				case 'multiselect':
 					$("#fieldSettings_container_choices").parent().show();
 					$("#fieldSettings_container_value").hide();
 					$("#fieldSettings_container_placeholder").hide();
+					$('#fieldSettings_choices_null').parent().css("visibility", "visible");
 					break;
 
 				case 'number':
