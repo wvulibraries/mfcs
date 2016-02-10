@@ -39,16 +39,16 @@ class listGenerator {
 	public static function createAllObjectList_new() {
 
 		$engine = mfcs::$engine;
-		
+
 		//@TODO this should go into the objects class
 		$sql       = sprintf("SELECT COUNT(*) FROM `objects` WHERE `metadata`='0'");
 		$sqlResult = $engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-		
+
 		$object_count = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 		//end TODO
 
@@ -82,7 +82,7 @@ class listGenerator {
 				date("Y-m-d h:ia",$object['modifiedTime']),
 				$object['ID'],
 				$object['idno']
-				); 
+				);
 
 
 			$data[] = $tmp;
@@ -125,8 +125,7 @@ class listGenerator {
 			$panel = sprintf('<div class="listForm panel panel-default span6">
 									<div class="panel-heading">
 										<span>
-											<a href="list.php?listType=form&amp;formID=%s"> %s
-											</a>
+											<a href="list.php?listType=form&amp;formID=%s"> %s </a>
 										</span>
 										<i class="expandShelfList fa fa-plus-square-o"></i>
 									</div>
@@ -160,7 +159,7 @@ class listGenerator {
 	public static function createFormObjectList($formID, $thumbnail=FALSE) {
 
 		$engine = mfcs::$engine;
-		
+
 		if (($form     = forms::get($formID)) === FALSE) {
 			return FALSE;
 		}
@@ -243,7 +242,7 @@ class listGenerator {
 
 		$userPaginationCount = users::user('pagination',25);
 		if($array_size > $userPaginationCount){
-			
+
 			$tableHTML  = $table->display($data);
 			$tableHTML .= $pagination->nav_bar();
 			$tableHTML .= sprintf('<p><span class="paginationJumpLabel">Jump to Page:</span> %s</p>',
@@ -252,7 +251,7 @@ class listGenerator {
 			$tableHTML .= sprintf('<p><span class="paginationJumpLabel">Records per page:</span> %s</p>',
 				$pagination->recordsPerPageDropdown()
 				);
-			$tableHTML .= sprintf('<p><form id="jumpToIDNOForm"><span class="paginationJumpLabel">Jump to IDNO:</span> <input type="text" name="jumpToIDNO" id="jumpToIDNO" data-formid="%s" value="" /></form></p>', 
+			$tableHTML .= sprintf('<p><form id="jumpToIDNOForm"><span class="paginationJumpLabel">Jump to IDNO:</span> <input type="text" name="jumpToIDNO" id="jumpToIDNO" data-formid="%s" value="" /></form></p>',
 				(isnull($formID))?"":htmlSanitize($formID)
 				);
 
@@ -434,11 +433,11 @@ class listGenerator {
 
 		if ($entry === FALSE) {
 			if($metadata === FALSE){
-				return sprintf('<a href="index.php?id=%s" class="%s">%s<p>%s</p></a>',
+				return sprintf('<a href="index.php?id=%s" class="%s">%s %s</a>',
 					htmlSanitize($form['ID']),
 					(is_empty(forms::description($form['ID'])) ? '' : 'hasDescription'),
 					forms::title($form['ID']),
-					(is_empty(forms::description($form['ID'])) ? '' : forms::description($form['ID']))
+					(is_empty(forms::description($form['ID'])) ? '' : '<p>'.forms::description($form['ID']).'</p>')
 				);
 			} else {
 				return sprintf('<a href="index.php?id=%s">%s</a>',
@@ -490,7 +489,8 @@ class listGenerator {
 			$output .= '<div>';
 			$output .= self::generateAccordionFormList_links($form,$entry);
 			if(sizeof(forms::getObjectFormMetaForms($form['ID']))){
-				$output .= sprintf('<a class="pull-right metadataListAccordionToggle" data-toggle="collapse" data-parent="#formListAccordion" href="#collapse%s"><i class="fa fa-plus-square-o"></i> Metadata Forms</a>',
+				$output .= sprintf('<a class="pull-right metadataListAccordionToggle" data-toggle="collapse" data-parent="#formListAccordion" href="#collapse%s">
+					<i class="fa fa-plus-square-o"></i> Metadata Forms</a>',
 					++$count);
 			}
 			$output .= '</div>';
