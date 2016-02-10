@@ -285,7 +285,7 @@ table {
   display:none;
 }
 
-#metadataModal, .menuModal, .imagePreviewModal {
+#metadataModal, #defaultValueVariables, .menuModal, .imagePreviewModal {
   width:60%;
   height:60%;
   margin:10% 20%;
@@ -322,6 +322,10 @@ table {
 
 #metadataModalBody {
   max-height:76%;
+}
+
+#defaultValueVariables .modal-body {
+  height:90%;
 }
 
 .imagePreviewModal .modal-body {
