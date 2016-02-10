@@ -6,21 +6,16 @@ if(!mfcsPerms::evaluatePageAccess(2)){
     header('Location: /index.php?permissionFalse');
 }
 
-$tableName = "metadataStandards";
+$tableName = "obsoleteFileTypes";
 
 function defineList($tableName) {
     // $engine = EngineAPI::singleton();
     $l = new listManagement($tableName);
 
     $l->addField(array(
-        "field"    => "type",
-        "label"    => "Metadata Standard Name",
-    ));
-
-    $l->addField(array(
-        "field"    => "typeID",
-        "label"    => "Metadata Standard Abbreviation",
-        "validate" => "alphaNoSpaces"
+        "field"    => "extension",
+        "label"    => "File Extension (no period)",
+        "validate" => "alphaNumericNoSpaces"
     ));
 
     $l->addField (array(
@@ -34,13 +29,13 @@ function defineList($tableName) {
 }
 
 if (isset($engine->cleanPost['MYSQL'][$tableName."_submit"])) {
-    log::insert("Admin: Add Metadata Standards");
+    log::insert("Admin: Add Obsolete File Type");
     $list = defineList($tableName);
     $list->insert();
 }
 
 if (isset($engine->cleanPost['MYSQL'][$tableName."_update"])) {
-    log::insert("Admin: Update Metadata Standards");
+    log::insert("Admin: Update Obsolete File Type");
     $list = defineList($tableName);
     $list->update();
 }
@@ -55,7 +50,7 @@ $engine->eTemplate("include","header");
 
 <section>
     <header class="page-header">
-        <h1>Manage Metadata Schemas</h1>
+        <h1>Manage Projects</h1>
     </header>
 
     <ul class="breadcrumbs">
@@ -68,7 +63,7 @@ $engine->eTemplate("include","header");
 
     <section>
         <header>
-            <h2>Add Metadata Standards</h2>
+            <h2>Add Obsolete File Type</h2>
         </header>
         {listObject display="insertForm"}
     </section>
@@ -78,7 +73,7 @@ $engine->eTemplate("include","header");
     <div class="metadataTables responsive-table">
         <section>
             <header>
-                <h2>Edit Metadata Standards</h2>
+                <h2>Edit Obsolete File Type</h2>
             </header>
             {listObject display="editTable"}
         </section>
