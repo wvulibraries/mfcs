@@ -1,6 +1,11 @@
 <?php
 include("../header.php");
 
+// Function needed for u sort
+function compareStrings($a, $b){
+	return strcmp(strtolower($a['text']), strtolower($b['text']));
+}
+
 //Permissions Access
 if(!mfcsPerms::evaluatePageAccess(1)){
 	header('Location: /index.php?permissionFalse');
@@ -27,7 +32,7 @@ try {
 
 	$search   = isset($engine->cleanGet['MYSQL']['q'])        ? $engine->cleanGet['MYSQL']['q']        : NULL;
 	$page     = isset($engine->cleanGet['MYSQL']['page'])     ? $engine->cleanGet['MYSQL']['page']     : 1;
-	$pageSize = isset($engine->cleanGet['MYSQL']['pageSize']) ? $engine->cleanGet['MYSQL']['pageSize'] : 1000;
+	$pageSize = isset($engine->cleanGet['MYSQL']['pageSize']) ? $engine->cleanGet['MYSQL']['pageSize'] : 2000;
 	$options  = array();
 
 	// limit by search and re-order by value
@@ -60,7 +65,7 @@ try {
 		);
 	}
 
-	sort($options);
+	usort($options, 'compareStrings');
 
 	for ($i = $page*$pageSize-$pageSize; $i < $page*$pageSize; $i++) {
 		if (!isset($options[$i])) {
