@@ -60,6 +60,9 @@ while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 		notification::notifyAdmins("Checksum failure", $filePath);
 		log::insert("fixity",$row['ID'],0,$filePath);
 
+		$object = objects::get($row['objectID']);
+		notification::notify_form_contacts($object['formID'], "[MFCS Notification] : Checksum failure", $filePath);
+
 	}
 	else {
 		// passes
@@ -70,7 +73,7 @@ while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 		$sqlResult_insert = $engine->openDB->query($sql);
 
 		if (!$sqlResult_insert['result']) {
-			notification::notifyAdmins("MFCS Database Update Failure", "Failed to set checksum pass check to 0");
+			notification::notifyAdmins("MFCS Database Update Failure", "Failed to set checksum pass check to 1");
 		}
 	}
 
