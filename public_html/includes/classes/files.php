@@ -386,7 +386,7 @@ class files {
 				$type 	   = explode('/', $file['type']);
 
 				$fi            = new finfo();
-				$filePathFull  = '/home/mfcs.lib.wvu.edu/data/archives/mfcs/'.$file['path'].DIRECTORY_SEPARATOR.$file['name'];
+				$filePathFull  = mfcs::config("archivalPathMFCS").$file['path'].DIRECTORY_SEPARATOR.$file['name'];
 				$filesize      = filesize($filePathFull);
 				$extraFileInfo = $fi->file($filePathFull);
 				$filesize      = self::formatBytes($filesize);
@@ -544,14 +544,15 @@ class files {
 				$downloadDropdown .= '</div>';
 
 
-				$fileLIs[] = sprintf('<li><span class="filename span6">%s %s <span class="filesize">  %s </span></span><span class="dropdowns span6"> %s %s </span><br /><span class="file_checksum %s">Checksum: %s</span></li>',
+				$fileLIs[] = sprintf('<li><span class="filename span6">%s %s </span><span class="dropdowns span6"> %s %s </span><br /><span class="filesize">File size:  %s </span><br /><span class="file_checksum %s">Checksum: %s</span><br /><span class="file_dir">Location: %s</span></li>',
 					$icon,
 					$file['name'],
-					$filesize,
 					$previewDropdown,
 					$downloadDropdown,
+					$filesize,
 					$checksum_pass_class,
-					$checksum
+					$checksum,
+					$file['path'].DIRECTORY_SEPARATOR.$file['name']
 				);
 			}
 

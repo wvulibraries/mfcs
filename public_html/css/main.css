@@ -7210,15 +7210,6 @@ html, body {
   height: 100%;
   background: #eee; }
 
-.checksum_not_checked {
-  color: #76710c; }
-
-.checksum_fail {
-  color: red; }
-
-.checksum_pass {
-  color: green; }
-
 h1 {
   font-size: 180%; }
 
@@ -8644,12 +8635,19 @@ strong {
       font-weight: bold;
       font-size: 14px;
       margin-top: 5px; }
-    .filePreviewField .filePreviews .filesize {
+    .filePreviewField .filePreviews .filesize, .filePreviewField .filePreviews .file_checksum, .filePreviewField .filePreviews .file_dir {
       font-size: 12px;
       font-weight: 200;
       letter-spacing: 1px;
-      font-style: oblique;
+      font-style: oblique; }
+    .filePreviewField .filePreviews .filesize, .filePreviewField .filePreviews .file_dir {
       color: gray; }
+    .filePreviewField .filePreviews .checksum_not_checked {
+      color: #76710c; }
+    .filePreviewField .filePreviews .checksum_fail {
+      color: red; }
+    .filePreviewField .filePreviews .checksum_pass {
+      color: green; }
     .filePreviewField .filePreviews i {
       margin-right: 10px; }
 

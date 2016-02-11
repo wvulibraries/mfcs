@@ -30,18 +30,6 @@ html, body {
   background:#eee;
 }
 
-.checksum_not_checked { 
-color: #76710c;
-}
-
-.checksum_fail {
-  color: red;
-}
-
-.checksum_pass {
-  color: green;
-}
-
 h1 { font-size:180%; }
 h2 { font-size:135%; }
 h3,h4,h5 { font-size:125%; }
@@ -1558,12 +1546,27 @@ $fileColor: lighten(#333F48,60%);
         margin-top:5px;
       }
 
-      .filesize {
+      .filesize, .file_checksum, .file_dir {
         font-size:12px;
         font-weight:200;
         letter-spacing:1px;
         font-style:oblique;
+      }
+
+      .filesize, .file_dir {
         color:lighten(#000,50%);
+      }
+
+      .checksum_not_checked { 
+        color: #76710c;
+      }
+
+      .checksum_fail {
+        color: red;
+      }
+
+      .checksum_pass {
+        color: green;
       }
 
       i { margin-right:10px; }
