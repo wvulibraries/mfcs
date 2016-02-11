@@ -9095,14 +9095,14 @@ footer {
 .dashboardContainer {
   height: auto; }
 
-#virus_holder {
+#virus_holder, #fixity_holder {
   background: #fdfcbe;
   display: block;
   padding: 20px;
   border-radius: 4px;
   margin: 0; }
 
-.virus_date, .virus_form_title, .virus_obj_idno, .virus_file {
+.virus_date, .virus_form_title, .virus_obj_idno, .virus_file, .fixity_date, .fixity_form_title, .fixity_obj_idno, .fixity_file {
   width: 100%;
   display: block;
   margin: 0 0 10px 0; }
