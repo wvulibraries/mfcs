@@ -219,14 +219,14 @@ class files {
 			// @TODO, i don't like how these are hard coded
 
 			// base options
-			$convert      = str2bool($fieldOptions['convert']);
-			$convertVideo = str2bool($fieldOptions['convertVideo']);
-			$convertAudio = str2bool($fieldOptions['convertAudio']);
+			$convert      = isset($fieldOptions['convert']) ? str2bool($fieldOptions['convert']) : false;
+			$convertVideo = isset($fieldOptions['convertVideo']) ? str2bool($fieldOptions['convertVideo']) : false;
+			$convertAudio = isset($fieldOptions['convertAudio']) ? str2bool($fieldOptions['convertAudio']) : false;
 
 			// other options
-			$combine      = str2bool($fieldOptions['combine']);
-			$ocr          = str2bool($fieldOptions['ocr']);
-			$thumbnail    = str2bool($fieldOptions['thumbnail']);
+			$combine      = isset($fieldOptions['combine']) ? str2bool($fieldOptions['combine']) : false;
+			$ocr          = isset($fieldOptions['ocr']) ? str2bool($fieldOptions['ocr']) : false;
+			$thumbnail    = isset($fieldOptions['thumbnail']) ? str2bool($fieldOptions['thumbnail']) : false;
 
 
 			// if no processing break the while loop
@@ -379,6 +379,7 @@ class files {
 			uasort($fileDataArray['files']['archive'],function($a,$b) { return strnatcasecmp($a['name'],$b['name']); });
 
 			foreach($fileDataArray['files']['archive'] as $fileID => $file){
+
 				$_filename = pathinfo($file['name']);
 				$filename  = $_filename['filename'];
 				$icon      = "";
@@ -393,12 +394,12 @@ class files {
 
 				$sql       = sprintf("SELECT `checksum`, `pass`, `lastChecked` FROM `filesChecks` WHERE `location`='%s'",$file['path'].DIRECTORY_SEPARATOR.$file['name']);
 				$sqlResult_cs = mfcs::$engine->openDB->query($sql);
-				
+
 				if (!$sqlResult_cs['result']) {
 					errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 					return FALSE;
 				}
-				
+
 				$row_cs   = mysql_fetch_array($sqlResult_cs['result'],  MYSQL_ASSOC);
 				$checksum = (isnull($row_cs['checksum']))?"Not Available":$row_cs['checksum'];
 				if (isnull($row_cs['lastChecked'])) {
@@ -522,6 +523,7 @@ class files {
 				$downloadLinks = array();
 				$iFrameOutput;
 				foreach($links as $linkLabel => $linkURL){
+
 					// Build Links
 					$previewLinks[]  = sprintf('<li><a tabindex="-1" href="javascript:void(0);" data-target="modal" data-url="%s">%s</a></li>', $linkURL, $linkLabel);
 					$downloadLinks[] = sprintf('<li><a tabindex="-1" href="%s&download=1">%s</a></li>',$linkURL, $linkLabel);
@@ -534,6 +536,7 @@ class files {
 				$previewDropdown .= '	</a>';
 				$previewDropdown .= sprintf('<ul class="dropdown-menu fileModalPreview">%s</ul>', implode('', $previewLinks));
 				$previewDropdown .= '</div>';
+
 
 				// Build the download dropbox HTML
 				$downloadDropdown  = '<div class="btn-group">';
@@ -822,7 +825,7 @@ class files {
 
 		$assetsDirectory = ($combined != FALSE)? "combine" : 'thumbs';
 
-		$thumbname = (($combined != FALSE)? "thumb" : $filename).'.'.strtolower($options['thumbnailFormat']);
+		$thumbname = (($combined != FALSE) ? "thumb" : $filename);
 		$savePath  = self::getSaveDir($assetsID,$assetsDirectory).$thumbname;
 
 		// Make a copy of the original
@@ -1115,9 +1118,10 @@ class files {
 			}
 
 			foreach ($originalFiles as $filename) {
-				$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
-				$_filename    = pathinfo($originalFile);
-				$filename     = $_filename['filename'];
+				$originalFile     = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
+				$_filename        = pathinfo($originalFile);
+				$filename         = $_filename['filename'];
+				$thumbnailCreated = false;
 
 				// Convert uploaded files into some ofhter size/format/etc
 				if (isset($options['convert']) && str2bool($options['convert'])) {
@@ -1136,6 +1140,7 @@ class files {
 						if (($return['thumbs'][] = self::createThumbnail($image,$filename,$options,$assetsID)) === FALSE) {
 							throw new Exception("Failed to create thumbnail: ".$filename);
 						}
+						$thumbnailCreated = true;
 					}
 
 					// Set the return array
@@ -1149,7 +1154,7 @@ class files {
 				}
 
 				// Create a thumbnail without any conversions
-				if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
+				if (isset($options['thumbnail']) && str2bool($options['thumbnail']) && ($thumbnailCreated === false)) {
 					if (($return['thumbs'][] = self::createThumbnail($originalFile,$filename,$options,$assetsID)) === FALSE) {
 						throw new Exception("Failed to create thumbnail: ".$filename);
 					}

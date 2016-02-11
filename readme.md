@@ -120,3 +120,5 @@ https://github.com/wvulibraries/engineAPI/tree/engineAPI-3.x
 
 See bootstrap.sh for up to date examples of installing all of the third party software. 
 
+# Grunt 
+With node installed and npm install in the root directory run the command ```npm install``` This will install the local node modules needed to watch your sass and js files.  Type grunt this will cause all files to update.  Build are final production files, and refactored are the files that you edit to make changes to the build files.  
