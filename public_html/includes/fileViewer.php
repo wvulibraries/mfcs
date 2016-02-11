@@ -27,7 +27,8 @@ try{
 	$fileArray = $object['data'][ $fieldName ];
 	$fileUUID  = $fileArray['uuid'];
 
-	if (FALSE === strpos($fileType,'combined')) {
+
+	if (FALSE === strpos($fileType,'combined')){
 		// Non-combined file
 		$fileID    = $engine->cleanGet['MYSQL']['fileID'];
 		$file      = $fileArray['files'][ $fileType ][ $fileID ];
@@ -78,10 +79,10 @@ try{
 		$fi = new finfo(FILEINFO_MIME_TYPE);
 		$mimeType = $fi->file($filepath);
 	}
-	// else {
-	// 	$fi = new finfo(FILEINFO_MIME);
-	// 	list($mimeType,$mimeEncoding) = explode(';', $fi->file($filepath));
-	// }
+	else {
+		$fi = new finfo(FILEINFO_MIME);
+		list($mimeType,$mimeEncoding) = explode(';', $fi->file($filepath));
+	}
 
 
 
