@@ -387,8 +387,9 @@ class files {
 				$type 	   = explode('/', $file['type']);
 
 				$fi            = new finfo();
-				$filePathFull  = mfcs::config("archivalPathMFCS").$file['path'].DIRECTORY_SEPARATOR.$file['name'];
+				$filePathFull  = mfcs::config("archivalPathMFCS").DIRECTORY_SEPARATOR.$file['path'].DIRECTORY_SEPARATOR.$file['name'];
 				$filesize      = filesize($filePathFull);
+
 				$extraFileInfo = $fi->file($filePathFull);
 				$filesize      = self::formatBytes($filesize);
 
