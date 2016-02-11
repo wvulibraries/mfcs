@@ -41,7 +41,7 @@ foreach ($obsoleteFileTypes as $extension) {
 
 		while($file = mysql_fetch_array($sqlResult2['result'],  MYSQL_ASSOC)) {
 			$object = objects::get($file['objectID']);
-			$files_type_list_by_form .= sprintf('<li><a href="/dataEntry/object.php?objectID=%s">Edit</a> <span class="filename">%s</span> from <span class="obsolete_form_name">%s</span></li>',
+			$files_type_list_by_form .= sprintf('<li><a href="/dataEntry/object.php?objectID=%s">Edit<i class="fa fa-edit"></i></a> <span class="filename">%s</span> from <span class="obsolete_form_name">%s</span></li>',
 				$file['objectID'],
 				basename($file['location']),
 				forms::title($object['formID'])

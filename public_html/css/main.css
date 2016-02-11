@@ -7823,7 +7823,7 @@ input {
   input[type=radio] {
     width: 30px; }
   input[type=text], input[type=file] {
-    border: 1px solid #d5d5d5; }
+    border: 1px solid #d4d4d4; }
   input[type=submit] {
     padding: 15px 50px;
     background: #005EB8;
@@ -7859,7 +7859,7 @@ textarea {
   outline: 0;
   margin-bottom: 20px;
   min-height: 150px;
-  border: 1px solid #d5d5d5; }
+  border: 1px solid #d4d4d4; }
 
 .uploadFiles, .fineUploader {
   display: block;
@@ -9067,5 +9067,20 @@ footer {
       margin: 0px 3% 20px 0; } }
   #metadata_forms_permissions > div:nth-child(odd), #object_forms_permissions > div:nth-child(odd) {
     margin-right: 0; }
+
+#obsolete_files_list {
+  background: #fdfcbe;
+  display: block;
+  padding: 20px;
+  border-radius: 4px;
+  margin: 0;
+  list-style-type: none; }
+  #obsolete_files_list li {
+    padding-bottom: 10px; }
+    #obsolete_files_list li .filename {
+      font-weight: bold;
+      padding: 0 0 0 10px; }
+    #obsolete_files_list li a .fa-edit {
+      padding: 0 0 0 5px; }
 
 /*# sourceMappingURL=main.css.map */
