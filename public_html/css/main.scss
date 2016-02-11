@@ -1698,9 +1698,7 @@ input[type=submit] {
 
 footer{
   width: 100%;
-  position: relative;
   float: left;
-  bottom: 0;
   left: 0;
   background: #eee;
   padding: 10px;
@@ -1862,7 +1860,7 @@ footer{
 .leftContainerDash {
   width:60%;
   .dashboardContainer{
-    height:434px;
+    
   }
 }
 
@@ -2033,4 +2031,7 @@ footer{
       }
     }
   }
+}
+.dashboardContainer {
+  height: auto;
 }
