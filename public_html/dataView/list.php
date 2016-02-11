@@ -4,6 +4,8 @@ include("../header.php");
 
 ini_set('memory_limit','-1');
 
+$display_list_toggle = FALSE;
+
 	if (!isset($engine->cleanGet['MYSQL'])) $engine->cleanGet['MYSQL'] = array("listType" => "");
 
 	// Setup the start of the breadcrumbs and pre-populate what we can
@@ -31,6 +33,9 @@ ini_set('memory_limit','-1');
 			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=selectProject">Select Project</a>', $siteRoot);
 			break;
 		case 'form':
+
+			$display_list_toggle = TRUE;
+
 			// $time_start = microtime(true);
 
 			$list = listGenerator::createFormObjectList($engine->cleanGet['MYSQL']['formID']);
@@ -46,6 +51,7 @@ ini_set('memory_limit','-1');
 			// print "</pre>";
 			break;
 		case'formShelfList':
+			$display_list_toggle = TRUE;
 			$list = listGenerator::createFormShelfList($engine->cleanGet['MYSQL']['formID']);
 			$form = forms::get($engine->cleanGet['MYSQL']['formID']);
 			localvars::add('subTitle',' - '.$form['title']);
@@ -53,6 +59,7 @@ ini_set('memory_limit','-1');
 			$breadCrumbs[] = sprintf('<a href="%sdataView/list.php?listType=form&formID=%s">%s</a>', $siteRoot, $form['ID'], $form['title']);
 			break;
 		case 'formThumbnailView':
+			$display_list_toggle = TRUE;
 		    $list = listGenerator::createFormObjectList($engine->cleanGet['MYSQL']['formID'],TRUE);
 		    $form = forms::get($engine->cleanGet['MYSQL']['formID']);
 		    localvars::add('subTitle',' - '.$form['title']);
@@ -77,6 +84,7 @@ ini_set('memory_limit','-1');
 	}
 
 	localvars::add("list",$list);
+	localvars::add("formID",$engine->cleanGet['MYSQL']['formID']);
 
 	// Make breadcrumbs
 	$crumbs = '';
@@ -99,6 +107,12 @@ $engine->eTemplate("include","header");
 	<ul class="breadcrumbs">
 		{local var="breadcrumbs"}
 	</ul>
+
+	<?php if ($display_list_toggle) { ?>
+			<a href="{local var="siteRoot"}dataView/list.php?listType=form&formID={local var="formID"}">L</a>
+			<a href="{local var="siteRoot"}dataView/list.php?listType=formThumbnailView&formID={local var="formID"}">T</a>
+			<a href="{local var="siteRoot"}dataView/list.php?listType=formShelfList&formID={local var="formID"}">S</a>
+	<?php } ?>
 
 	{local var="results"}
 

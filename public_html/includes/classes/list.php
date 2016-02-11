@@ -488,6 +488,16 @@ class listGenerator {
 			$output .= '<div class="accordion-heading panel-heading" style="padding: 10px;">';
 			$output .= '<div>';
 			$output .= self::generateAccordionFormList_links($form,$entry);
+
+			// paginated list
+			$output .= sprintf('<a href="%sdataView/list.php?listType=form&formID=%s">L</a>',mfcs::config("siteRoot"),$form['ID']);
+
+			// thumbnail list
+			$output .= sprintf('<a href="%sdataView/list.php?listType=formThumbnailView&formID=%s">T</a>',mfcs::config("siteRoot"),$form['ID']);
+
+			// shelf list
+			$output .= sprintf('<a href="%sdataView/list.php?listType=formShelfList&formID=%s">S</a>',mfcs::config("siteRoot"),$form['ID']);
+
 			if(sizeof(forms::getObjectFormMetaForms($form['ID']))){
 				$output .= sprintf('<a class="pull-right metadataListAccordionToggle" data-toggle="collapse" data-parent="#formListAccordion" href="#collapse%s">
 					<i class="fa fa-plus-square-o"></i> Metadata Forms</a>',
