@@ -30,6 +30,13 @@ function defineList($tableName) {
 		));
 
 	$l->addField(array(
+		"field"    => "email",
+		"label"    => "Email",
+		"dupes"    => TRUE,
+		"blank"    => TRUE
+		));
+
+	$l->addField(array(
 		"field"    => "isStudent",
 		"label"    => "Is the User a Student?",
 		"dupes"    => TRUE,
