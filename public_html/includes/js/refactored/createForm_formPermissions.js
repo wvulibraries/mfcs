@@ -37,6 +37,7 @@ function entrySubmit() {
 	selectAllOnSubmit("selectedEntryUsers");
 	selectAllOnSubmit("selectedViewUsers");
 	selectAllOnSubmit("selectedUsersAdmins");
+	selectAllOnSubmit("selectedContactUsers");
 
 	return true;
 }

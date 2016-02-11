@@ -9003,4 +9003,69 @@ footer {
   border-radius: 4px;
   margin: 0 0 20px 0; }
 
+#current_users, #student_users, #admin_users {
+  width: 33%;
+  float: left; }
+  #current_users h3, #student_users h3, #admin_users h3 {
+    display: block;
+    width: 90%;
+    border: 1px solid #d4d4d4;
+    background: #efefef;
+    padding: 10px 20px;
+    border-radius: 4px; }
+    #current_users h3 .fa, #student_users h3 .fa, #admin_users h3 .fa {
+      padding: 0 0 0 20px; }
+
+#user_divider {
+  margin: 40px 0 0 0;
+  height: auto;
+  display: block;
+  width: 100%;
+  clear: both;
+  float: left; }
+
+#object_forms_permissions, #metadata_forms_permissions {
+  width: 50%;
+  float: left; }
+  #object_forms_permissions h3, #metadata_forms_permissions h3 {
+    display: block;
+    width: 97%;
+    border: 1px solid #d4d4d4;
+    background: #efefef;
+    padding: 10px 20px;
+    border-radius: 4px; }
+    #object_forms_permissions h3 .fa, #metadata_forms_permissions h3 .fa {
+      padding: 0 0 0 20px; }
+  #object_forms_permissions ul, #metadata_forms_permissions ul {
+    margin: 0;
+    padding: 0 0 0 15px;
+    width: 90%; }
+
+#metadata_forms_permissions > div, #object_forms_permissions > div {
+  float: left;
+  margin: 0px 0 20px 0;
+  width: 97%;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  padding: 10px 4% 20px 4%; }
+  #metadata_forms_permissions > div h4, #object_forms_permissions > div h4 {
+    width: 100%;
+    color: #337ab7;
+    padding: 10px 0;
+    border-bottom: 1px solid #d4d4d4;
+    margin: 0 0 20px 0; }
+  #metadata_forms_permissions > div h5, #object_forms_permissions > div h5 {
+    font-weight: bold;
+    font-size: 115%; }
+  @media (min-width: 80em) {
+    #metadata_forms_permissions > div, #object_forms_permissions > div {
+      width: 47%;
+      margin: 0px 3% 20px 0; } }
+  @media (min-width: desktop) {
+    #metadata_forms_permissions > div, #object_forms_permissions > div {
+      width: 47%;
+      margin: 0px 3% 20px 0; } }
+  #metadata_forms_permissions > div:nth-child(odd), #object_forms_permissions > div:nth-child(odd) {
+    margin-right: 0; }
+
 /*# sourceMappingURL=main.css.map */

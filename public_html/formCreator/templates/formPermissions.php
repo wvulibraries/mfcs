@@ -20,6 +20,7 @@
                     <th>Data Entry Users</th>
                     <th>Data View Users</th>
                     <th>Administrators</th>
+                    <th>Contacts</th>
                 </tr>
                 <tr>
                     <td>
@@ -54,6 +55,17 @@
                         </select>
                         <br />
                         <input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedUsersAdmins', this.form.selectedUsersAdmins)" />
+                    </td>
+                    <td>
+                     <select name="selectedContactUsers[]" id="selectedContactUsers" size="5" multiple="multiple">
+                            {local var="selectedUsersContact"}
+                        </select>
+                        <br />
+                        <select name="availableContactUsers" id="availableContactUsers" onchange="addItemToID('selectedContactUsers', this.options[this.selectedIndex])">
+                            {local var="availableUsersList"}
+                        </select>
+                        <br />
+                        <input type="button" name="deleteSelected" value="Remove Selected" onclick="removeItemFromID('selectedContactUsers', this.form.selectedContactUsers)" />
                     </td>
                 </tr>
             </table>
