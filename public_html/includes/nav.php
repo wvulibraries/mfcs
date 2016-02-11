@@ -12,8 +12,7 @@
 
         <div>
             <li> <h3> Data Entry </h3> </li>
-            <li><a href="{local var="siteRoot"}dataEntry/selectForm.php"><i class="fa fa-angle-double-right"></i> Create</a></li>
-            <li><a href="{local var="siteRoot"}dataView/list.php?listType=selectForm"><i class="fa fa-angle-double-right"></i> List</a></li>
+            <li><a href="{local var="siteRoot"}dataEntry/selectForm.php"><i class="fa fa-angle-double-right"></i> Create &amp; Edit</a></li>
             <li><a href="{local var="siteRoot"}dataView/search.php"><i class="fa fa-angle-double-right"></i> Search</a></li>
             <li><a href="{local var="siteRoot"}exporting/"><i class="fa fa-angle-double-right"></i> Exporting</a></li>
         </div>
