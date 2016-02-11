@@ -1934,3 +1934,76 @@ footer{
   border-radius: 4px;
   margin: 0 0 20px 0;
 }
+#current_users, #student_users, #admin_users {
+  width: 33%;
+  float: left;
+   h3 {
+    display: block;
+    width: 90%;
+    border: 1px solid #d4d4d4;
+    background: #efefef;
+    padding: 10px 20px;
+    border-radius: 4px;
+    .fa {
+      padding: 0 0 0 20px;
+    }
+  }
+}
+#user_divider {
+  margin:  40px 0 0 0;
+  height: auto;
+  display: block;
+  width: 100%;
+  clear: both;
+  float: left;
+}
+#object_forms_permissions, #metadata_forms_permissions {
+  width: 50%;
+  float: left;
+  h3 {
+    display: block;
+    width: 97%;
+    border: 1px solid #d4d4d4;
+    background: #efefef;
+    padding: 10px 20px;
+    border-radius: 4px;
+    .fa {
+      padding: 0 0 0 20px;
+    }
+  }
+  ul {
+    margin: 0;
+    padding: 0 0 0 15px;
+    width: 90%;
+  }
+}
+#metadata_forms_permissions > div, #object_forms_permissions > div {
+  // width: 100%;
+  float: left;
+  // @include breakpoint(desktop){
+  //   width: 50%;
+  // }
+  h4 {
+    width: 100%;
+    color: #337ab7;
+    padding: 10px 0;
+    border-bottom: 1px solid #d4d4d4;
+    margin: 0 0 20px 0;
+  }
+  h5 {
+    font-weight: bold;
+    font-size: 115%;
+  }
+  margin: 0px 0 20px 0;
+  width: 97%;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  padding: 10px 4% 20px 4%;
+  @include breakpoint(desktop){
+    width: 47%;
+    margin: 0px 3% 20px 0;
+  }    
+  &:nth-child(odd) {
+    margin-right: 0;
+  }
+}
