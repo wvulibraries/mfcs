@@ -14,7 +14,7 @@ if (!isCLI()) {
 // Turn off EngineAPI template engine
 $engine->obCallback = FALSE;
 
-$sql       = sprintf("SELECT * FROM `filesChecks` WHERE `pass`='0' AND `lastChecked` IS NULL");
+$sql       = sprintf("SELECT * FROM `filesChecks` WHERE `pass`='0' AND `lastChecked` IS NOT NULL");
 $sqlResult = mfcs::$engine->openDB->query($sql);
 
 if (!$sqlResult['result']) {
@@ -38,7 +38,11 @@ while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 	if (!file_exists($filePath)) {
 		$fileMissingCount++;
 
-		notification::notifyAdmins("File missing", $filePath);
+		notification::notifyAdmins("[MFCS Notification] : File missing", $filePath);
+
+		$object = objects::get($row['objectID']);
+		notification::notify_form_contacts($object['formID'], "[MFCS Notification] : File missing", $filePath);
+
 		continue;
 	}
 
@@ -57,7 +61,10 @@ while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 			notification::notifyAdmins("MFCS Database Update Failure", "Failed to set checksum pass check to 1");
 		}
 
-		notification::notifyAdmins("Checksum Reset Successful", $filePath);
+		notification::notifyAdmins("[MFCS Notification] : Checksum Reset Successful", $filePath);
+
+		$object = objects::get($row['objectID']);
+		notification::notify_form_contacts($object['formID'], "[MFCS Notification] : Checksum Reset Successful", $filePath);
 	}
 
 }

@@ -160,7 +160,10 @@ class virus {
 		}
 		
 		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-			notification::notifyAdmins("Virus Found.", "ObjectID: ".$row['objectID']);
+			notification::notifyAdmins("[MFCS Notification] : Virus Found.", "ObjectID: ".$row['objectID']);
+
+			$object = objects::get($row['objectID']);
+			notification::notify_form_contacts($object['formID'], "[MFCS Notification] : Virus Found", $filePath);
 		}
 
 	}

@@ -33,6 +33,28 @@ class notification {
 
 	}
 
+	public static function notify_form_contacts($formID, $subject, $message) {
+
+		$sql       = sprintf("SELECT `email`, `firstname`, `lastname` FROM `users` LEFT JOIN `permissions` ON `permissions`.`userID`=`users`.`ID` WHERE `permissions`.`formID`='%s' AND `permissions`.`type`='%s'",
+			mfcs::$engine->openDB->escape($formID),
+			mfcs::AUTH_CONTACT
+			);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+		$contact_emails = array();
+		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+			$contact_emails[$row['email']] = sprintf("%s %s",$row["firstname"],$row['lastname']);
+		}
+
+		return (count($contact_emails) > 0)?self::email($contact_emails,$subject,$message):TRUE;
+
+	}
+
 }
 
 ?>
