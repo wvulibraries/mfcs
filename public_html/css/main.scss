@@ -20,7 +20,7 @@
 }
 
 html {
-  box-sizing: border-box;
+  box-sizing: border-box; 
 }
 
 body { min-width:420px; }
@@ -1858,14 +1858,14 @@ footer{
 }
 
 .leftContainerDash {
-  width:60%;
+  width:49%;
   .dashboardContainer{
     
   }
 }
 
 .rightContainerDash {
-  width:38%;
+  width:49%;
   float:left;
   margin-right:0;
 }
@@ -2033,5 +2033,5 @@ footer{
   }
 }
 .dashboardContainer {
-  height: auto;
+  height: auto; 
 }
