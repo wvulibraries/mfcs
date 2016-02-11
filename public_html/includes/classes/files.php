@@ -448,7 +448,7 @@ class files {
 					$fileID,
 					'archive');
 
-				if(str2bool($field['convert'])){
+				if(isset($field['convert']) && str2bool($field['convert'])){
 					$links['Converted'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
 						localvars::get('siteRoot'),
 						$objectID,
@@ -456,7 +456,7 @@ class files {
 						$fileID,
 						'processed');
 				}
-				if(str2bool($field['thumbnail'])){
+				if(isset($field['thumbnail']) && str2bool($field['thumbnail'])){
 					$links['Thumbnail'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
 						localvars::get('siteRoot'),
 						$objectID,
@@ -464,7 +464,7 @@ class files {
 						$fileID,
 						'thumbs');
 				}
-				if(str2bool($field['ocr'])){
+				if(isset($field['ocr']) && str2bool($field['ocr'])){
 					$links['OCR'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
 						localvars::get('siteRoot'),
 						$objectID,
@@ -472,7 +472,7 @@ class files {
 						$fileID,
 						'ocr');
 				}
-				if(str2bool($field['combine'])){
+				if(isset($field['combine']) && str2bool($field['combine'])){
 					$links['Combined PDF'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
 						localvars::get('siteRoot'),
 						$objectID,
@@ -484,21 +484,21 @@ class files {
 						$field['name'],
 						'combinedThumb');
 				}
-				if(str2bool($field['convertAudio'])){
+				if(isset($field['convertAudio']) && str2bool($field['convertAudio'])){
 					$links['Converted Audio'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
 						localvars::get('siteRoot'),
 						$objectID,
 						$field['name'],
 						'audio');
 				}
-				if(str2bool($field['convertVideo'])){
+				if(isset($field['convertVideo']) && str2bool($field['convertVideo'])){
 					$links['Converted Video'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
 						localvars::get('siteRoot'),
 						$objectID,
 						$field['name'],
 						'video');
 				}
-				if(str2bool($field['videothumbnail'])){
+				if(isset($field['videothumbnail']) && str2bool($field['videothumbnail'])){
 					$numVideoThumbs = $field['videoThumbFrames'];
 
 					for($i = 0; $i < $numVideoThumbs; $i++){
