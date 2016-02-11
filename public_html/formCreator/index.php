@@ -208,12 +208,14 @@ if (isset($engine->cleanPost['MYSQL']['submitPermissions'])) {
 			throw new Exception("MySQL Error - Wipe Permissions ({$sqlResult['error']} -- $sql)");
 		}
 
-		$tmp = array("selectedViewUsers"   => mfcs::AUTH_VIEW,
-			         "selectedEntryUsers"  => mfcs::AUTH_ENTRY,
-			         "selectedUsersAdmins" => mfcs::AUTH_ADMIN
+		$tmp = array("selectedViewUsers"    => mfcs::AUTH_VIEW,
+			         "selectedEntryUsers"   => mfcs::AUTH_ENTRY,
+			         "selectedUsersAdmins"  => mfcs::AUTH_ADMIN,
+			         "selectedContactUsers" => mfcs::AUTH_CONTACT
 			         );
 
 		foreach ($tmp as $I => $K) {
+
 			if (!isset($engine->cleanPost['MYSQL'][$I]) || !is_array($engine->cleanPost['MYSQL'][$I])) continue;
 
 			foreach ($engine->cleanPost['MYSQL'][$I] as $userID) {
@@ -702,9 +704,10 @@ if (!isnull($formID)) {
 }
 
 // Build the list of users for the form permissions select boxes
-$selectedEntryUsers  = "";
-$selectedViewUsers   = "";
-$selectedUsersAdmins = "";
+$selectedEntryUsers   = "";
+$selectedViewUsers    = "";
+$selectedUsersAdmins  = "";
+$selectedUsersContact = "";
 
 if (isset($engine->cleanGet['MYSQL']['id']) && !isempty($engine->cleanGet['MYSQL']['id'])) {
 
@@ -722,13 +725,16 @@ if (isset($engine->cleanGet['MYSQL']['id']) && !isempty($engine->cleanGet['MYSQL
 			htmlSanitize($row['username']));
 		switch($row['type']){
 			case mfcs::AUTH_VIEW:
-				$selectedViewUsers .= $optionHTML;
+				$selectedViewUsers    .= $optionHTML;
 				break;
 			case mfcs::AUTH_ENTRY:
-				$selectedEntryUsers .= $optionHTML;
+				$selectedEntryUsers   .= $optionHTML;
 				break;
 			case mfcs::AUTH_ADMIN:
-				$selectedUsersAdmins .= $optionHTML;
+				$selectedUsersAdmins  .= $optionHTML;
+				break;
+			case mfcs::AUTH_CONTACT:
+				$selectedUsersContact .= $optionHTML;
 				break;
 		}
 	}
@@ -779,16 +785,17 @@ try {
 }
 
 
-// Render Stuff
-localvars::add('bitRates', renderToOptions($bitrates));
+// Render Stuff 
+localvars::add('bitRates',     renderToOptions($bitrates));
 localvars::add('audioOptions', renderToOptions($audioTypes));
-localvars::add('videoTypes', renderToOptions($videoTypes));
-localvars::add('videoThumbs', renderToOptions($videoThumbs));
+localvars::add('videoTypes',   renderToOptions($videoTypes));
+localvars::add('videoThumbs',  renderToOptions($videoThumbs));
 
 
-localvars::add("selectedEntryUsers",$selectedEntryUsers);
-localvars::add("selectedViewUsers",$selectedViewUsers);
-localvars::add("selectedUsersAdmins",$selectedUsersAdmins);
+localvars::add("selectedEntryUsers",  $selectedEntryUsers);
+localvars::add("selectedViewUsers",   $selectedViewUsers);
+localvars::add("selectedUsersAdmins", $selectedUsersAdmins);
+localvars::add("selectedUsersContact",$selectedUsersContact);
 localVars::add("results",displayMessages());
 
 $selectedProjects = forms::getProjects(isset($engine->cleanGet['MYSQL']['id']) ? $engine->cleanGet['MYSQL']['id'] : 0);
