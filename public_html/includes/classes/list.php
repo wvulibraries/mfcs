@@ -490,13 +490,13 @@ class listGenerator {
 			$output .= self::generateAccordionFormList_links($form,$entry);
 
 			// paginated list
-			$output .= sprintf('<a href="%sdataView/list.php?listType=form&formID=%s">L</a>',mfcs::config("siteRoot"),$form['ID']);
+			$output .= sprintf('<a href="%sdataView/list.php?listType=form&formID=%s"><i class="fa fa-list-ol"></i></a>',mfcs::config("siteRoot"),$form['ID']);
 
 			// thumbnail list
-			$output .= sprintf('<a href="%sdataView/list.php?listType=formThumbnailView&formID=%s">T</a>',mfcs::config("siteRoot"),$form['ID']);
+			$output .= sprintf('<a href="%sdataView/list.php?listType=formThumbnailView&formID=%s"><i class="fa fa-picture-o"></i></a>',mfcs::config("siteRoot"),$form['ID']);
 
 			// shelf list
-			$output .= sprintf('<a href="%sdataView/list.php?listType=formShelfList&formID=%s">S</a>',mfcs::config("siteRoot"),$form['ID']);
+			$output .= sprintf('<a href="%sdataView/list.php?listType=formShelfList&formID=%s"><i class="fa fa-list"></i></a>',mfcs::config("siteRoot"),$form['ID']);
 
 			if(sizeof(forms::getObjectFormMetaForms($form['ID']))){
 				$output .= sprintf('<a class="pull-right metadataListAccordionToggle" data-toggle="collapse" data-parent="#formListAccordion" href="#collapse%s">

@@ -109,9 +109,11 @@ $engine->eTemplate("include","header");
 	</ul>
 
 	<?php if ($display_list_toggle) { ?>
-			<a href="{local var="siteRoot"}dataView/list.php?listType=form&formID={local var="formID"}">L</a>
-			<a href="{local var="siteRoot"}dataView/list.php?listType=formThumbnailView&formID={local var="formID"}">T</a>
-			<a href="{local var="siteRoot"}dataView/list.php?listType=formShelfList&formID={local var="formID"}">S</a>
+		<div class="listToggles btn-group button-group pull-right">
+			<a class="btn btn-primary" href="{local var="siteRoot"}dataView/list.php?listType=form&formID={local var="formID"}"><i class="fa fa-list-ol"></i></a>
+			<a class="btn btn-primary" href="{local var="siteRoot"}dataView/list.php?listType=formThumbnailView&formID={local var="formID"}"><i class="fa fa-picture-o"></i></a>
+			<a class="btn btn-primary" href="{local var="siteRoot"}dataView/list.php?listType=formShelfList&formID={local var="formID"}"><i class="fa fa-list"></i></a>
+		</div>
 	<?php } ?>
 
 	{local var="results"}
