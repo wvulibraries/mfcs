@@ -151,6 +151,7 @@ cp ffserver /usr/local/bin/
 cp qt-faststart /usr/local/bin/
 echo "Completed install"
 
+
 ## ClamAV
 yum -y install clamav clamav-db clamav-devel
 # tar -zxf /vagrant/serverConfiguration/3rdParty/php-clamav_0.15.8.tar.gz --directory=/tmp
