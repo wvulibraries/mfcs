@@ -246,8 +246,8 @@ $engine->eTemplate("include","header");
 						{local var="form"}
 
 						<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
-							<p>Created by: {local var="createdByUsername"} on {local var="createdOnDate"}</p>
-							<p>Modified by: {local var="modifiedByUsername"} on {local var="modifiedOnDate"}</p>
+							<p><b>Created by:</b> <em>{local var="createdByUsername"} on {local var="createdOnDate"}</em></p>
+							<p><b>Modified by:</b> <em>{local var="modifiedByUsername"} on {local var="modifiedOnDate"}</em></p>
 						<?php } ?>
 					</div>
 

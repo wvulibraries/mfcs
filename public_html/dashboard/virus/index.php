@@ -12,7 +12,7 @@ $virus_info = "";
 while($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 	$object = objects::get($row['objectID']);
 
-	$virus_info = sprintf('<p><span class="virus_date">Date: %s</span> -- <span class="virus_form_title">Form: %s</span> -- <span class="virus_obj_idno">Object IDNO: %s</span> -- <span class="virus_file">File: %s</span></p>',
+	$virus_info = sprintf('<div id="virus_holder"><span class="virus_date"><b>Date:</b> %s</span>  <span class="virus_form_title"><b>Form:</b> %s</span>  <span class="virus_obj_idno"><b>Object IDNO:</b> %s</span>  <span class="virus_file"><b>File:</b> %s</span></div>',
 		date("Y-m-d H:i",$row['date']),
 		forms::title($row['formID']),
 		$object['idno'],

@@ -12,7 +12,7 @@ $fixity_info = "";
 while($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 	$object = objects::get($row['objectID']);
 
-	$fixity_info = sprintf('<p><span class="fixity_date">Date: %s</span> -- <span class="fixity_form_title">Form: %s</span> -- <span class="fixity_obj_idno">Object IDNO: %s</span> -- <span class="fixity_file">File: %s</span></p>',
+	$fixity_info = sprintf('<div id="fixity_holder"><span class="fixity_date"><b>Date:</b> %s</span>  <span class="fixity_form_title"><b>Form:</b> %s</span>  <span class="fixity_obj_idno"><b>Object IDNO:</b> %s</span>  <span class="fixity_file"><b>File:</b> %s</span></div>',
 		date("Y-m-d H:i",$row['date']),
 		forms::title($object['formID']),
 		$object['idno'],

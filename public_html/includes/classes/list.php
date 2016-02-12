@@ -489,20 +489,23 @@ class listGenerator {
 			$output .= '<div>';
 			$output .= self::generateAccordionFormList_links($form,$entry);
 
-			// paginated list
-			$output .= sprintf('<a href="%sdataView/list.php?listType=form&formID=%s"><i class="fa fa-list-ol"></i></a>',mfcs::config("siteRoot"),$form['ID']);
-
-			// thumbnail list
-			$output .= sprintf('<a href="%sdataView/list.php?listType=formThumbnailView&formID=%s"><i class="fa fa-picture-o"></i></a>',mfcs::config("siteRoot"),$form['ID']);
-
-			// shelf list
-			$output .= sprintf('<a href="%sdataView/list.php?listType=formShelfList&formID=%s"><i class="fa fa-list"></i></a>',mfcs::config("siteRoot"),$form['ID']);
-
 			if(sizeof(forms::getObjectFormMetaForms($form['ID']))){
 				$output .= sprintf('<a class="pull-right metadataListAccordionToggle" data-toggle="collapse" data-parent="#formListAccordion" href="#collapse%s">
 					<i class="fa fa-plus-square-o"></i> Metadata Forms</a>',
 					++$count);
 			}
+
+			// shelf list
+			$output .= sprintf('<a class="icon-item" href="%sdataView/list.php?listType=formShelfList&formID=%s"><i class="fa fa-list"></i></a>',mfcs::config("siteRoot"),$form['ID']);
+
+			// thumbnail list
+			$output .= sprintf('<a class="icon-item" href="%sdataView/list.php?listType=formThumbnailView&formID=%s"><i class="fa fa-picture-o"></i></a>',mfcs::config("siteRoot"),$form['ID']);
+
+
+			// paginated list
+			$output .= sprintf('<a class="icon-item" href="%sdataView/list.php?listType=form&formID=%s"><i class="fa fa-list-ol"></i></a>',mfcs::config("siteRoot"),$form['ID']);
+
+
 			$output .= '</div>';
 			$output .= "</div>"; // heading
 			$output .= sprintf('<div id="collapse%s" class="accordion-body collapse">', $count);

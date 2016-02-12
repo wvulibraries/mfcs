@@ -81,9 +81,8 @@ $engine->eTemplate("include","header");
 
 		<h2>Current Information</h2>
 
-		<p>Created by:  {local var="createdByUsername"}  on {local var="createdOnDate"}</p>
-
-		<p>Last Modified by: {local var="modifiedByUsername"} on {local var="modifiedOnDate"}</p>
+		<p><b>Created by:</b> <em>{local var="createdByUsername"} on {local var="createdOnDate"}</em></p>
+							<p><b>Modified by:</b> <em>{local var="modifiedByUsername"} on {local var="modifiedOnDate"}</em></p>
 
 	</div>
 

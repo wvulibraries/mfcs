@@ -20,7 +20,7 @@
 }
 
 html {
-  box-sizing: border-box;
+  box-sizing: border-box; 
 }
 
 body { min-width:420px; }
@@ -585,6 +585,13 @@ table {
 
 iframe { width:100%; height:auto;}
 
+.icon-item{
+    @extend .pull-right;
+    border-left: 1px solid #ccc;
+    padding: 10px 20px;
+    margin-top: -10px;
+}
+
 // Form Warning
 // ===========================================================================================
 .formAlert{
@@ -1081,7 +1088,7 @@ li.alert-error {
         width:100%;
         font-size:14px;
         line-height: 0;
-        /*border-bottom:1px solid #333; Mike told me to remove it!*/ 
+        /*border-bottom:1px solid #333; Mike told me to remove it!*/
       }
 
       a { display:block; padding:5px;}
@@ -1557,7 +1564,7 @@ $fileColor: lighten(#333F48,60%);
         color:lighten(#000,50%);
       }
 
-      .checksum_not_checked { 
+      .checksum_not_checked {
         color: #76710c;
       }
 
@@ -1691,9 +1698,7 @@ input[type=submit] {
 
 footer{
   width: 100%;
-  position: relative;
   float: left;
-  bottom: 0;
   left: 0;
   background: #eee;
   padding: 10px;
@@ -1853,14 +1858,14 @@ footer{
 }
 
 .leftContainerDash {
-  width:60%;
+  width:49%;
   .dashboardContainer{
-    height:434px;
+    
   }
 }
 
 .rightContainerDash {
-  width:38%;
+  width:49%;
   float:left;
   margin-right:0;
 }
@@ -1896,16 +1901,16 @@ footer{
   font-size: 14px;
   line-height: 1.42857;
   border-radius: 4px;
-  text-decoration: none; 
+  text-decoration: none;
   &:hover {
     background: green;
     border: 1px solid green;
     color: #fff;
-    text-decoration: none; 
+    text-decoration: none;
   }
   .fa {
     padding: 0 5px 0 0;
-  } 
+  }
 }
 .delete_metadata_cancel {
   background: #fff;
@@ -1916,12 +1921,12 @@ footer{
   font-size: 14px;
   line-height: 1.42857;
   border-radius: 4px;
-  text-decoration: none;  
+  text-decoration: none;
   &:hover {
     background: red;
     border: 1px solid red;
     color: #fff;
-    text-decoration: none; 
+    text-decoration: none;
   }
   .fa {
     padding: 0 5px 0 0;
@@ -2002,8 +2007,43 @@ footer{
   @include breakpoint(desktop){
     width: 47%;
     margin: 0px 3% 20px 0;
-  }    
+  }
   &:nth-child(odd) {
     margin-right: 0;
   }
+}
+#obsolete_files_list {
+  background: #fdfcbe;
+  display: block;
+  padding: 20px;
+  border-radius: 4px;
+  margin: 0;
+  list-style-type: none;
+  li {
+    padding-bottom: 10px;
+    .filename {
+      font-weight: bold;
+      padding: 0 0 0 10px;
+    }
+    a {
+      .fa-edit {
+        padding: 0 0 0 5px;
+      }
+    }
+  }
+}
+.dashboardContainer {
+  height: auto; 
+}
+#virus_holder, #fixity_holder {
+  background: #fdfcbe;
+  display: block;
+  padding: 20px;
+  border-radius: 4px;
+  margin: 0;
+}
+.virus_date, .virus_form_title, .virus_obj_idno, .virus_file, .fixity_date, .fixity_form_title, .fixity_obj_idno, .fixity_file {
+  width: 100%;
+  display: block;
+  margin: 0 0 10px 0;
 }
