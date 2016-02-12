@@ -532,10 +532,8 @@ function showFieldSettings(fullID) {
 				var element  = $("."+dataObj);
 				if($(this).is(':checked') || $(this).value){
 					element.show();
-					console.log('element show');
 				} else {
 					element.hide();
-					console.log('element hide');
 				}
 
 				if(dataObj == 'convert' && (!$(this).is(':checked') || !$(this).value)){
@@ -561,7 +559,6 @@ function fieldSettingsBindings(){
 	formPreview.on("click", "li", function(event) {
 		event.stopPropagation();
 		if($(event.target).is('.icon-remove')){
-			console.log($(this));
 			removeFormPreviewItem($(event.target));
 		} else {
 			var id = $(this).data('id');
@@ -706,7 +703,6 @@ function setOriginalValues(){
 	}
 
 	if(bindObj == 'choicesField'){
-		console.log(value);
 		$('#fieldSettings_choices_formSelect').change();
 		$('#fieldSettings_choices_fieldSelect').val(value).change();
 	}
@@ -841,11 +837,9 @@ function formatHelpForHiddenField(hiddenForm){
 
 	if(type == 'text' || type == 'html'){
 		value = $('#fieldSettings_help_textarea').val().sanitizeInput().unEscapeHtml();
-		console.log(value);
 	}
 	else {
 		value = $('#fieldSettings_help_url').val();
-		console.log(value);
 		if(validateURL(value)){
 			$('#fieldSettings_help_url').removeClass('has-error');
 		} else {
@@ -1029,7 +1023,6 @@ function modalBindings() {
 			$("#formSettings_formMetadata").prop("checked", true).change();
 			$("#formTypeSelector").modal("hide").hide().removeClass('in');
 
-			console.log('click');
 		})
 		.on("click", "button:contains('Object')", function() {
 			var fieldAdd                         = $('#fieldAdd');
