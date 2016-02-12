@@ -38,6 +38,7 @@
         <div>
             <li> <h3> System Information </h3> </li>
             <li><a href="{local var="siteRoot"}dashboard/"><i class="fa fa-angle-double-right"></i> Dashboard</a></li>
+            <li><a href="{local var="siteRoot"}dashboard/"><i class="fa fa-angle-double-right"></i> Duplicates</a></li>
             <li><a href="{local var="siteRoot"}dashboard/permissions/"><i class="fa fa-angle-double-right"></i> Permissions Audit</a></li>
             <li><a href="{local var="siteRoot"}dashboard/fixity/"> <i class="fa fa-angle-double-right"></i> Fixity History</a></li>
             <li><a href="{local var="siteRoot"}dashboard/obsolete/"> <i class="fa fa-angle-double-right"></i> Obsolete Files</a></li>
