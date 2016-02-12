@@ -43,26 +43,21 @@ try {
 		}
 
 		// If a search term was entered
-		if (!is_empty($search)) {
+		if(!is_empty($search)) {
 			$search = strtolower($search);
+			$val    = strtolower($option['value']);
 
-			// Check if search string exists in value
-			if (FALSE === strpos(strtolower($option['value']), $search)) {
-				// Try again by removing diacritics
-				$value = str_replace(array("ä", "ö", "ü", "ß"), array("ae", "oe", "ue", "ss"), $option['value']);
-				$value = iconv('UTF-8', 'US-ASCII//TRANSLIT', $value);
-
-				// Still no match found, skip
-				if (FALSE === strpos(strtolower($value), $search)) {
-					continue;
-				}
+			if(strpos($val, $search) === false) {
+				continue;
 			}
 		}
 
-		$options[] = array(
-			'text' => $option['value'], // first element controls sorting
+		$optionValues = array(
+			'text' => $option['value'],
 			'id'   => $option['objectID'],
 		);
+
+		array_push($options,$optionValues);
 	}
 
 	usort($options, 'compareStrings');
