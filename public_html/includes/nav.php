@@ -15,6 +15,7 @@
             <li><a href="{local var="siteRoot"}dataEntry/selectForm.php"><i class="fa fa-angle-double-right"></i> Create &amp; Edit</a></li>
             <li><a href="{local var="siteRoot"}dataView/search.php"><i class="fa fa-angle-double-right"></i> Search</a></li>
             <li><a href="{local var="siteRoot"}exporting/"><i class="fa fa-angle-double-right"></i> Exporting</a></li>
+            <li><a href="{local var="siteRoot"}stats/"> <i class="fa fa-angle-double-right"></i> Statistics </a></li>
         </div>
 
         <div>
@@ -43,7 +44,7 @@
             <li><a href="{local var="siteRoot"}dashboard/fixity/"> <i class="fa fa-angle-double-right"></i> Fixity History</a></li>
             <li><a href="{local var="siteRoot"}dashboard/obsolete/"> <i class="fa fa-angle-double-right"></i> Obsolete Files</a></li>
             <li><a href="{local var="siteRoot"}dashboard/virus/"> <i class="fa fa-angle-double-right"></i> Virus History </a></li>
-            <li><a href="{local var="siteRoot"}stats/"> <i class="fa fa-angle-double-right"></i> Statistics </a></li>
+            
         </div>
 
         </div>
