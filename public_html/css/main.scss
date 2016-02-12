@@ -20,7 +20,7 @@
 }
 
 html {
-  box-sizing: border-box; 
+  box-sizing: border-box;
 }
 
 body { min-width:420px; }
@@ -963,6 +963,9 @@ li.alert-error {
   position:relative;
   input, select { width:100%; margin-bottom: 20px;}
   .creatorFormHelp { position:absolute; top:40%; left:-20px; }
+
+  position: relative;
+  margin: 20px 0 40px;
 }
 
 #metadata {
@@ -1860,7 +1863,7 @@ footer{
 .leftContainerDash {
   width:49%;
   .dashboardContainer{
-    
+
   }
 }
 
@@ -2033,7 +2036,7 @@ footer{
   }
 }
 .dashboardContainer {
-  height: auto; 
+  height: auto;
 }
 #virus_holder, #fixity_holder {
   background: #fdfcbe;
