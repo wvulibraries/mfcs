@@ -37,7 +37,7 @@
         </div>
 
         <div>
-            <li> <h3> System Information </h3> </li>
+            <li> <h3> Dashboard </h3> </li>
             <li><a href="{local var="siteRoot"}dashboard/"><i class="fa fa-angle-double-right"></i> Dashboard</a></li>
             <li><a href="{local var="siteRoot"}dashboard/"><i class="fa fa-angle-double-right"></i> Duplicates</a></li>
             <li><a href="{local var="siteRoot"}dashboard/permissions/"><i class="fa fa-angle-double-right"></i> Permissions Audit</a></li>

@@ -39,8 +39,18 @@ localvars::add("metaInformation",$metaInformation);
 
 $engine->eTemplate("include","header");
 ?>
+<section>
+<header class="page-header">
+  <h1>Stats for PEC</h1>
+  
+  </header>
 
-<h1>Stats for PEC</h1>
+        <nav id="breadcrumbs">
+                <ul class="breadcrumb">
+                        <li><a href="{local var="siteRoot"}">Home</a></li>
+                        <li><a href="/dataEntry/object.php?formID=2">Back to PEC Form</a></li>
+                </ul>
+        </nav>
 
 <table id="statsTable" width="600">
 
@@ -94,7 +104,7 @@ $engine->eTemplate("include","header");
 <h1>Metadata Form Stats</h1>
 
 {local var="metaInformation"}
-
+</section>
 
 <?php
 $engine->eTemplate("include","footer");
