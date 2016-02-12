@@ -67,7 +67,7 @@ $(function(){
 			connectToSortable: "#formCreator ul.sortable",
 			helper: "clone",
 			revert: "invalid"})
-		.click(function() {
+		.click(function(event) {
 			event.preventDefault();
 			$(this).clone().appendTo(formPreview);
 			addNewField($("li:last",formPreview));
@@ -1027,7 +1027,9 @@ function modalBindings() {
 			// Select Metadata form
 			$('.nav-tabs li:nth-child(3) a').click();
 			$("#formSettings_formMetadata").prop("checked", true).change();
-			$("#formTypeSelector").modal("hide");
+			$("#formTypeSelector").modal("hide").hide().removeClass('in');
+
+			console.log('click');
 		})
 		.on("click", "button:contains('Object')", function() {
 			var fieldAdd                         = $('#fieldAdd');
@@ -1060,7 +1062,7 @@ function modalBindings() {
 			$("#formSettings_formMetadata").removeAttr("checked").change();
 
 			// Hide modal
-			$("#formTypeSelector").modal("hide");
+			$("#formTypeSelector").modal("hide").hide().removeClass('in');
 
 			// trigger keyup for title change
 			$("#formSettings_formTitle");
