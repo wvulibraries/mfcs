@@ -212,22 +212,23 @@ function applyFormPreview(){
 		var label          = $(this).find('.fieldLabels');
 		var controls       = $(this).find('.controls').children();
 		var settings       = $(this).next();
+		var previewID      = $(this).parent().data('id');
 
-		var placeholder    = settings.find($('input[name^="placeholder"]')).val();
-		var type           = settings.find($('input[name^="type"]')).val();
-		var name           = settings.find($('input[name^="name"]')).val();
-		var style          = settings.find($('input[name^="style"]')).val();
-		var labelValue     = settings.find($('input[name^="label"]')).val();
-		var id             = settings.find($('input[name^="id"]')).val();
-		var someClass      = settings.find($('input[name^="class"]')).val();
-		var value          = settings.find($('input[name^="value"]')).val();
+		var placeholder    = $('#placeholder_'+previewID).val();
+		var type           = $('#type_'+previewID).val();
+		var name           = $('#name_'+previewID).val();
+		var style          = $('#style_'+previewID).val();
+		var labelValue     = $('#label_'+previewID).val();
+		var id             = $('#id_'+previewID).val();
+		var someClass      = $('#class_'+previewID).val();
+		var value          = $('#value_'+previewID).val();
 
-		var disabled       = settings.find($('input[name^="disabled"')).val();
-		var readonly       = settings.find($('input[name^="readonly"')).val();
-		var hidden         = settings.find($('input[name^="hidden"]')).val();
+		var disabled       = $('#disabled_'+previewID).val();
+		var readonly       = $('#readonly_'+previewID).val();
+		var hidden         = $('#hidden_'+previewID).val();
 
-		var choices        = settings.find($('input[name^="choicesOptions"]')).val();
-		var choicesType    = settings.find($('input[name^="choicesType"]')).val();
+		var choices        = $('#choices_'+previewID).val();
+		var choicesType    = $('#choicesType_'+previewID).val();
 
 		controls.attr({
 			'placeholder' : placeholder,
@@ -250,7 +251,7 @@ function applyFormPreview(){
 			controls.val(value);
 		}
 
-		label.html(labelValue)
+		label.html(labelValue);
 	});
 }
 
