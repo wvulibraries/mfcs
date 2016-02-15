@@ -1,5 +1,10 @@
 <?php
 
+function get_select_by($id,$field) {
+  $object = objects::get($id);
+  return($object['data'][$field]);
+}
+
 function renderToOptions($option){
 	$returnValue = "";
 	foreach($option as $key => $value){
