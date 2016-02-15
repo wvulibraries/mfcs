@@ -187,12 +187,43 @@ class objects {
 		return $objects;
 	}
 
-	public static function getAllObjectsForProject($projectID) {
+	public static function getAllObjectsForProject($projectID, $sortField=NULL,$metadata=TRUE,$range=NULL) {
 
 		$engine = EngineAPI::singleton();
 
-		$sql       = sprintf("SELECT `objects`.* FROM `objects` LEFT JOIN `objectProjects` ON `objectProjects`.`objectID`=`objects`.`ID` WHERE `objectProjects`.`projectID`='%s' ORDER BY LENGTH(`idno`), `idno`",
-			$engine->openDB->escape($projectID)
+		if (!isnull($sortField)) {
+			// $sortField = sprintf(" ORDER BY `objects`.`ID`, LENGTH(%s), %s",
+			$sortField = sprintf(" ORDER BY LENGTH(%s), %s",
+				$sortField,
+				$sortField
+				);
+		}
+		else {
+			// $sortField = " ORDER BY `objects`.`ID`";
+			$sortField = "ORDER BY LENGTH(`idno`), `idno`";
+		} 
+
+ 		// If a range is provided, and the range is an array, and the first 2 indexes are valid integers
+ 		// and start is >= 0, and length is greater than 0
+		if (!isnull($range)              && 
+			is_array($range)             && 
+			validate::integer($range[0]) && 
+			validate::integer($range[1]) &&
+			$range[0] >= 0               &&
+			$range[1] > 0
+			) {
+
+			$range_clause = sprintf(" LIMIT %s,%s",$range[0],$range[1]);
+
+		}
+		else {
+			$range_clause = "";
+		}
+
+		$sql       = sprintf("SELECT `objects`.* FROM `objects` LEFT JOIN `objectProjects` ON `objectProjects`.`objectID`=`objects`.`ID` WHERE `objectProjects`.`projectID`='%s' %s%s",
+			$engine->openDB->escape($projectID),
+			$sortField,
+			$range_clause
 			);
 		$sqlResult = $engine->openDB->query($sql);
 
@@ -203,7 +234,7 @@ class objects {
 
 		$objects = array();
 		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-			$objects[] = self::buildObject($row,TRUE);
+			$objects[] = self::buildObject($row,TRUE,$metadata);
 		}
 
 		return $objects;
