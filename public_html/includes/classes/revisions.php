@@ -37,8 +37,14 @@ class revisions {
 
 					$fileLIs = array();
 
-					foreach($data[$name]['files']['archive'] as $file){
-						$fileLIs[] = sprintf('%s', $file['name']);
+					foreach($data[$name]['files']['archive'] as $index=>$file){
+						$fileLIs[] = sprintf('<li><a href="%sincludes/fileViewer.php?type=archive&objectID=%s&field=%s&fileID=%s" target="_blank">%s</a></li>', 
+							mfcs::config("siteRoot"),
+							$object['ID'],
+							$name,
+							$index,
+							$file['name']
+							);
 					}
 
 					$output .= sprintf('<div class="objectField">
