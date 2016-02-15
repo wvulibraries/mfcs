@@ -99,7 +99,8 @@ class listGenerator {
 
 		$output = '<div class="list-group">';
 		foreach ($projects as $project) {
-			$output .= sprintf('<a href="list.php?listType=project&amp;projectID=%s" class="list-group-item">%s</a></li>',
+			$output .= sprintf('<a href="%sdata/list/projects/?listType=project&amp;projectID=%s" class="list-group-item">%s</a></li>',
+				mfcs::config("siteRoot"),
 				$project['ID'],
 				$project['projectName']
 				);
