@@ -746,11 +746,19 @@ $audioFileTypes = array();
 
 // more options can be added later, its not a great idea to go above or below 128 though
 $bitrates    = array(
-	'128' => '128kbs - Low',
-	'160' => '160kbs - Average ',
-	'192' => '192kbs - Above Average',
-	'256' => '256kbs - Recommended',
-	'320' => '320kbs - High',
+	'32' => '32kbs - Low (speeches)',
+	'64' => '64kbs - Low (fast-streaming)',
+	'128' => '128kbs - Recommended (most usable range)',
+	'192' => '192kbs - High Quality',
+	'256' => '256kbs - Best Quality',
+);
+
+$videoBitrates    = array(
+	'700' => '700kbs - Low Quality',
+	'1200' => '1200kbs',
+	'2400' => '2400kbs - Youtube Quality',
+	'5000' => '5000kbs - Streaming HD Quality',
+	'12000' => '12000kbs - HDTV Quality',
 );
 
 $audioTypes  = array(
@@ -785,11 +793,12 @@ try {
 }
 
 
-// Render Stuff 
-localvars::add('bitRates',     renderToOptions($bitrates));
-localvars::add('audioOptions', renderToOptions($audioTypes));
-localvars::add('videoTypes',   renderToOptions($videoTypes));
-localvars::add('videoThumbs',  renderToOptions($videoThumbs));
+// Render Stuff
+localvars::add('bitRates',      renderToOptions($bitrates));
+localvars::add('videoBitrates', renderToOptions($videoBitrates));
+localvars::add('audioOptions',  renderToOptions($audioTypes));
+localvars::add('videoTypes',    renderToOptions($videoTypes));
+localvars::add('videoThumbs',   renderToOptions($videoThumbs));
 
 
 localvars::add("selectedEntryUsers",  $selectedEntryUsers);

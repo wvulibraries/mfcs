@@ -348,7 +348,7 @@
                     </label>
                     <select class="videobitRate" data-bindModel="videobitRate">
                             <option value="">  Select a BitRate  </option>
-                            {local var="bitRates"}
+                            {local var="videoBitrates"}
                     </select>
                 </div>
 
