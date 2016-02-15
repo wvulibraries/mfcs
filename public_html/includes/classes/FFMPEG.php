@@ -556,7 +556,7 @@ class FFmpeg{
         }
     }
 
-    public function getMetadata($file = null){
+    private function getFileStreams($file = null){
 
         if(isnull($file)) $file = $this->inputFile;
 
@@ -564,5 +564,43 @@ class FFmpeg{
         $metadata = shell_exec($command);
 
         return $metadata;
+    }
+
+    public function getMetadata(){
+        // get return values form file streams
+        $info      = json_decode($this->getFileStreams(), true);
+
+        // Setup Information for Uploaded Video By streams
+        $videoStream = $info["streams"][0];
+        $audioStream = $info["streams"][1];
+
+        // Combine Streams into Used Information for Video
+        $videoParams = array();
+
+        $videoParams['width']           = $videoStream['width'];
+        $videoParams['height']          = $videoStream['height'];
+        $videoParams['frameRate']       = $videoStream['r_frame_rate'];
+        $videoParams['videoBitRate']    = $videoStream['bit_rate'];
+        $videoParams['duration']        = $videoStream['duration'];
+
+        $videoParams['audioSamplerate'] = $audioStream['sample_rate'];
+        $videoParams['audioBitRate']    = $audioStream['bit_rate'];
+        $videoParams['maxBitRate']      = $audioStream['max_bit_rate'];
+
+        // return it
+        return $videoParams;
+    }
+
+    public static function aspectRatioCalc($origWidth, $origHeight, $targetWidth = null, $targetHeight = null){
+        $findingWidth = (isnull($targetWidth) ? true : false);
+        $ratio = $origWidth / $origHeight;
+
+        if($findingWidth){
+            $targetWidth  = floor($targetHeight * $ratio);
+            return $targetWidth;
+        } else {
+            $targetHeight = floor($targetWidth / $ratio);
+            return $targetHeight;
+        }
     }
 }
