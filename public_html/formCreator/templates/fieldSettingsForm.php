@@ -403,7 +403,7 @@
                     <input type="number" class="input-block-level" id="fieldSettings_file_video_width" name="fieldSettings_file_video_width" min="0"  data-bindModel="videoWidth"/>
                 </span>
                 </div>
-                <div class="" id="fieldSettings_file_video_aspect">
+                <!-- <div class="" id="fieldSettings_file_video_aspect">
                     <span class="span12">
                         <label for="fieldSettings_file_video_aspectRatio"> Aspect Ratio </label>
                             <select class="videoAspectRatio span12 last" data-bindModel="aspectRatio">
@@ -412,7 +412,11 @@
                                 <option value="16:9"> Wide Screen - 16:9        </option>
                             </select>
                     </span>
-                </div>
+
+                    <div class=" formatSettingsHelp alert alert-warning span12">
+                        <p> Modifying the aspect ratio may force your video to an un-recommended size.  Only modify if you know what your doing </p>
+                    </div>
+                </div> -->
             </div>
         </div>
     </div>

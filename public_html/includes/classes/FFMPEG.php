@@ -12,6 +12,7 @@ class FFmpeg{
     private $as     =   array(
         'b'         =>  'bitrate',
         'r'         =>  'frameRate',
+        'b:v'       =>  'videoBitrate',
         'fs'        =>  'fileSizeLimit',
         'f'         =>  'forceFormat',
         'force'     =>  'forceFormat',
@@ -285,6 +286,18 @@ class FFmpeg{
     public function bitrate( $b )
     {
         return $this->set('b',$b,false);
+    }
+
+    /**
+    *   @param  string  $bv  set bitrate (in bits/s)
+    *   @return object
+    *   @access public
+    *   @example    $ffmpeg->bitrate(bitrate in kbs);
+
+    */
+    public function videoBitrate($bv)
+    {
+        return $this->set('b:v',$bv,false);
     }
     /**
     *   @param  string  $r  Set frame rate (Hz value, fraction or abbreviation).
@@ -591,9 +604,8 @@ class FFmpeg{
         return $videoParams;
     }
 
-    public static function aspectRatioCalc($origWidth, $origHeight, $targetWidth = null, $targetHeight = null){
+    public static function aspectRatioCalc($ratio, $origWidth, $origHeight, $targetWidth = null, $targetHeight = null){
         $findingWidth = (isnull($targetWidth) ? true : false);
-        $ratio = $origWidth / $origHeight;
 
         if($findingWidth){
             $targetWidth  = floor($targetHeight * $ratio);

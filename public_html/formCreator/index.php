@@ -762,21 +762,21 @@ $videoBitrates    = array(
 );
 
 $audioTypes  = array(
-	'aac' => 'Advanced Audio Coding',
-	'mp3' => 'MP3 - Audio Layer 3',
-	'oga' => 'Open Container Audio',
-	'wav' => 'Wav Sound File'
+	'mp3' => 'MP3',
+	'ogg' => 'OGG',
+	'wav' => 'WAV'
 );
 
 $videoTypes  = array(
-	'3gp'  => 'Mobile Video Format',
-	'h264' => 'H264 Raw Format',
-	'mp4'  => 'MP4 Video Format',
-	'wmv'  => 'Windows Media Video',
+	'avi'  => 'AVI',
+	'mov'  => 'MOV',
+	'mp4'  => 'MP4',
+	'3gp'  => '3GP',
+	'webm' => 'WEBM',
+	'ogv'  => 'OGV'
 );
 
 $videoThumbs = array(
-	'bmp' => 'Bitmap',
 	'gif' => 'Gif',
 	'jpg' => 'Jpg',
 	'png' => 'Png'
