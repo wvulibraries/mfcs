@@ -14,7 +14,7 @@
             <li> <h3> Data Entry </h3> </li>
             <li><a href="{local var="siteRoot"}dataEntry/selectForm.php"><i class="fa fa-angle-double-right"></i> Create &amp; Edit</a></li>
             <li><a href="{local var="siteRoot"}dataView/search.php"><i class="fa fa-angle-double-right"></i> Search</a></li>
-            <li><a href="{local var="siteRoot"}exporting/"><i class="fa fa-angle-double-right"></i> Exporting</a></li>
+            <li><a href="{local var="siteRoot"}exports/"><i class="fa fa-angle-double-right"></i> Exporting</a></li>
             <li><a href="{local var="siteRoot"}data/list/projects/"><i class="fa fa-angle-double-right"></i> Projects List</a></li>
             <li><a href="{local var="siteRoot"}stats/"> <i class="fa fa-angle-double-right"></i> Statistics </a></li>
         </div>
@@ -29,6 +29,7 @@
         <div>
             <li> <h3> Administration </h3> </li>
             <!-- <li><a href="/admin/fileReProcessing/">File Re-Processing</a></li> -->
+            <li><a href="{local var="siteRoot"}admin/export_dates/"> <i class="fa fa-angle-double-right"></i> Export Dates </a></li>
             <li><a href="{local var="siteRoot"}admin/metadataSchema/"> <i class="fa fa-angle-double-right"></i> Metadata Schemas </a></li>
             <li><a href="{local var="siteRoot"}admin/obsoleteFileTypes/"> <i class="fa fa-angle-double-right"></i> Obsolete File Types </a></li>
             <li><a href="{local var="siteRoot"}admin/projects/"><i class="fa fa-angle-double-right"></i> Projects</a></li>
