@@ -10,6 +10,16 @@ class revisions {
 
 		$output = '';
 		$data   = is_array($object['data']) ? $object['data'] : decodeFields($object['data']);
+		$form   = forms::get($object['formID']);
+
+		$select_field_info = array();
+		foreach ($form['fields'] as $field) {
+			if ($field['type'] != "select" && $field['type'] != "multiselect") continue;
+			if (isset($field['choicesType']) && strtolower($field['choicesType']) != "form") continue;
+			
+			$select_field_info[$field['name']] = $field['choicesField'];
+			
+		}
 
 		foreach ($fields as $field) {
 
@@ -60,6 +70,45 @@ class revisions {
 						sizeof($fileLIs)>1 ? 's' : '',
 						implode('',$fileLIs)
 						);
+				break;
+
+				case 'multiselect':
+
+				if (is_array($data[$name])) {
+					$multiselect_list = "<ul>";
+					foreach ($data[$name] as $metadataID) {
+						$multiselect_list .= sprintf("<li>%s</li>",(array_key_exists($name, $select_field_info))? get_select_by($metadataID,$select_field_info[$name]):"Missing Field");
+					}
+					$multiselect_list .= "</ul>";
+				}
+				else {
+					$multiselect_list = "";
+				}
+
+				$output .= sprintf('<div class="objectField">
+											<div class="fieldName">%s</div>
+											<div class="fieldValue">%s</div>
+											<!--<aside><button class="btn btn-mini" type="button">Show Diff</button></aside>-->
+										</div>',
+						$label,
+						$multiselect_list
+						);
+
+				break;
+
+				case 'select':
+
+				$display_value = (array_key_exists($name, $select_field_info))? get_select_by($data[$name],$select_field_info[$name]):$data[$name];
+
+				$output .= sprintf('<div class="objectField">
+											<div class="fieldName">%s</div>
+											<div class="fieldValue">%s</div>
+											<!--<aside><button class="btn btn-mini" type="button">Show Diff</button></aside>-->
+										</div>',
+						$label,
+						$display_value
+						);
+
 				break;
 
 				default:
