@@ -1,6 +1,6 @@
 <?php
 require_once "../header.php";
-
+ 
 $counts = array(
 "objects_total"       => sprintf("SELECT COUNT(*) FROM `objects` WHERE `metadata`='0'"),
 "metadata_total"      => sprintf("SELECT COUNT(*) FROM `objects` WHERE `metadata`='1'"),
@@ -75,6 +75,7 @@ $engine->eTemplate("include","header");
 
 	<ul class="breadcrumbs">
 		<li><a href="{local var="siteRoot"}">Home</a></li>
+		<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Dashboard"> <i class="fa fa-book"></i> Documentation</a></li>
 	</ul>
 
 	<div class="leftContainerDash">

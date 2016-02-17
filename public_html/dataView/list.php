@@ -12,7 +12,7 @@ $display_list_toggle = FALSE;
 	$siteRoot = localvars::get('siteRoot');
 	$breadCrumbs = array(
 		sprintf('<a href="%s">Home</a>', $siteRoot),
-		sprintf('<a href="%s/dataEntry/selectForm.php">Objects</a>', $siteRoot)
+		sprintf('<a href="%sdataEntry/selectForm.php">Objects</a>', $siteRoot)
 	);
 
 	log::insert("Data View: List",0,(isset($engine->cleanGet['MYSQL']['formID']))?$engine->cleanGet['MYSQL']['formID']:0,$engine->cleanGet['MYSQL']['listType']);

@@ -176,6 +176,22 @@ class projects {
 
 	}
 
+	public static function title($projectID) {
+
+		$sql       = sprintf("SELECT `projectName` from `projects` WHERE `ID`='%s' LIMIT 1",mfcs::$engine->openDB->escape($projectID));
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+		
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+		
+		$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+		return (isset($row['projectName']))?$row['projectName']:"Project Not Found";
+
+	}
+
 }
 
 ?>
