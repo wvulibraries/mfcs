@@ -373,6 +373,11 @@ class objects {
 	// we are assuming that all data is valid at this point
 	public static function create($formID,$data,$metadata,$parentID=0,$modifiedTime=NULL,$createTime=NULL) {
 
+		if (checks::is_ok("readonly")) {
+			errorHandle::errorMsg("MFCS is currently in Read Only Mode.");
+			return FALSE;
+		}
+
 		if (!is_array($data)) {
 			errorHandle::newError(__METHOD__."() - : data is not array", errorHandle::DEBUG);
 			return FALSE;
@@ -550,6 +555,11 @@ class objects {
 	}
 
 	public static function update($objectID,$formID,$data,$metadata,$parentID=0,$modifiedTime=NULL) {
+
+		if (checks::is_ok("readonly")) {
+			errorHandle::errorMsg("MFCS is currently in Read Only Mode.");
+			return FALSE;
+		}
 
 		if (!is_array($data)) {
 			errorHandle::newError(__METHOD__."() - : data is not array", errorHandle::DEBUG);
