@@ -1,6 +1,6 @@
 <?php
 require_once "../header.php";
-
+ 
 $counts = array(
 "objects_total"       => sprintf("SELECT COUNT(*) FROM `objects` WHERE `metadata`='0'"),
 "metadata_total"      => sprintf("SELECT COUNT(*) FROM `objects` WHERE `metadata`='1'"),
