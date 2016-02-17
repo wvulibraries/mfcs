@@ -25,17 +25,9 @@ $engine->eTemplate("include","header");
 	</ul>
 
 
-	<ul class="pickList">
-		<li>
-			<a href="projects/" class="btn">Projects</a>
-		</li>
-		<li>
-			<a href="users/" class="btn">Users</a>
-		</li>
-		<li>
-			<a href="watermarks/" class="btn">Watermarks</a>
-		</li>
-	</ul>
+	<p>
+		Please select an option from the Navigation Menu.
+	</p>
 </section>
 
 <?php

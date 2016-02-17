@@ -32,6 +32,7 @@ $engine->eTemplate("include","header");
 	<ul class="breadcrumbs">
 		<li><a href="{local var="siteRoot"}">Home</a></li>
 		<li><a href="{local var="siteRoot"}/admin/">Admin</a></li>
+		<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Read-Only-Mode"> <i class="fa fa-book"></i> Documentation</a></li>
 	</ul>
 
 	{local var="results"}

@@ -76,14 +76,10 @@ $engine->eTemplate("include","header");
     <ul class="breadcrumbs">
         <li><a href="{local var="siteRoot"}">Home</a></li>
         <li><a href="{local var="siteRoot"}/admin/">Admin</a></li>
+        <li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Export-Date-Management"> <i class="fa fa-book"></i> Documentation</a></li>
     </ul>
 
     {local var="results"}
-
-    <p>
-        Before using this page, please read the documentation:<br />
-        <a href="https://github.com/wvulibraries/mfcs/wiki/Export-Date-Management">https://github.com/wvulibraries/mfcs/wiki/Export-Date-Management</a>
-    </p>
 
     <div class="metadataTables responsive-table">
         <section>

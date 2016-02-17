@@ -74,6 +74,7 @@ $engine->eTemplate("include","header");
 		<!-- FLoat Right -->
 		<?php if (!isnull($engine->cleanGet['MYSQL']['objectID']) and $revisions->hasRevisions($engine->cleanGet['MYSQL']['objectID'])) { ?>
 			<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/revisions/index.php?objectID={local var="objectID"}">Revisions</a></li>
+			<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Object-History"> <i class="fa fa-book"></i> Documentation</a></li>
 		<?php } ?>
 	</ul>
 
