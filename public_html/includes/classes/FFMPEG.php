@@ -2,6 +2,7 @@
 class FFmpeg{
 
     public $inputFile;
+    public $commandReturn;
 
     private $STD = ' 2<&1';
 
@@ -465,23 +466,18 @@ class FFmpeg{
     *   @param  string  $append
     *   @access public
     */
-    public function ready( $append = null )
-    {
-        /**
-        *   Check if command is empty
-        */
-        if( empty( $this->command ) )
-        {
+    public function ready($append = null){
+        if(empty($this->command)){
             $this->output();
-        }
-        if(empty( $this->command ))
-        {
             trigger_error("Cannot execute a blank command",E_USER_ERROR);
             return false;
         }else{
-            return exec( $this->command . $append );
+            exec($this->command . $append, $output, $return_int);
+            var_dump($return_int);
+            return $return_int;
         }
     }
+
     /**
     *   @return object
     *   @param  string  ffmpeg
@@ -570,8 +566,7 @@ class FFmpeg{
     }
 
     private function getFileStreams($file = null){
-
-        if(isnull($file)) $file = $this->inputFile;
+        if(is_null($file)) $file = $this->inputFile;
 
         $command  = "$this->ffprobe -v quiet -print_format json -show_format -show_streams $file";
         $metadata = shell_exec($command);
@@ -589,7 +584,7 @@ class FFmpeg{
 
         // Combine Streams into Used Information for Video
         $videoParams = array();
-
+        $videoParams['rotation']        = isset($videoStream['tags']['rotate']) ? $videoStream['tags']['rotate'] : 0;
         $videoParams['width']           = $videoStream['width'];
         $videoParams['height']          = $videoStream['height'];
         $videoParams['frameRate']       = $videoStream['r_frame_rate'];
@@ -598,7 +593,7 @@ class FFmpeg{
 
         $videoParams['audioSamplerate'] = $audioStream['sample_rate'];
         $videoParams['audioBitRate']    = $audioStream['bit_rate'];
-        $videoParams['maxBitRate']      = $audioStream['max_bit_rate'];
+        $videoParams['maxBitRate']      = isset($audioStream['max_bit_rate']) ? $audioStream['max_bit_rate'] : null;
 
         // return it
         return $videoParams;
