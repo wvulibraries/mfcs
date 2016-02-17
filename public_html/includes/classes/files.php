@@ -1321,62 +1321,69 @@ class files {
         } catch (Exception $e) {
             errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
             errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::DEBUG);
-            return = array(
+            return array(
                 'errors' => $e->getMessage(),
             );
         }
 
-        return = array(
-            'success' => "Successful Conversion";
+        return array(
+    		'success' => "Successful Conversion"
         );
 	}
 
 	public static function createVideoThumbs($assetsID, $name, $originalFile, $options){
 		try{
-			$ffmpeg             = new FFMPEG($originalFile);
-			$originalFileData   = $ffmpeg->getMetadata();
+            $ffmpeg        = new FFmpeg();
+            $inputFile     = $ffmpeg->input($originalFile);
+            $uploadedVideo = $ffmpeg->getMetadata();
 
-			// create thumbnails
-			$numberOfThumbnails = $options['videoThumbFrames'];
-			$thumbHeight        = $options['videoThumbHeight'];
-			$thumbWidth         = $options['videoThumbWidth'];
-			$thumbFormat        = $options['videoFormatThumb'];
-			$path               = self::getSaveDir($assetsID,'thumbnails');
 
-			$returnArray = array(
-				'name'    => $name,
-				'path'    => $path,
-				'format'  => $thumbFormat,
-				'options' => array(
-							'height' => $thumbHeight,
-							'width'  => $thumbWidth,
-						 ),
-				'info'    => $ffmpeg->returnInformation(),
-			);
+            // Removes Error Logs and sets strict file conversions
+            // ----------------------------------------------------------------------
+            $ffmpeg->set('-strict', '-2');
+            $ffmpeg->logLevel('quiet');
 
-			// path exsists
-			if(!is_dir($path)){
-				throw new Exception("Thumbnail directory is not setup.");
-			}
+            // Get Thumbnail Information
+            // ----------------------------------------------------------------------
+            $numberOfThumbnails = $options['videoThumbFrames'];
+            $thumbSize          = $options['videoThumbWidth']."x".$options['videoThumbHeight'];
+            $thumbFormat        = $options['videoFormatThumb'];
+            $path               = self::getSaveDir($assetsID,'thumbnails');
 
-			// valid
-			if(!$ffmpeg->isValid() && !$ffmpeg->isVideo()){
-				throw new Exception("File is not valid, or the video file was not a video. Can't create thumbs");
-			}
+            // Create number to use as intervals for time caputers
+            // ----------------------------------------------------------------------
+            $timeOfCap          = floor($uploadedVideo['duration'] / $numberOfThumbnails);
 
-			// get thumbnails
-			$ffmpeg->getThumbnails($numberOfThumbnails, $path, $name, $thumbHeight, $thumbWidth, $thumbFormat);
+            if(!is_dir($path)){
+                throw new Exception("Thumbnail directory is not setup.");
+            }
 
-		} catch (Exception $e) {
-			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
-			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::DEBUG);
-			$returnArray['errors'] = TRUE;
-			return $returnArray;
-		}
+            // Loop through and save file information
+            // ----------------------------------------------------------------------
+            for($i = 0; $i < $numberOfThumbnails; $i++){
+                $thumbName = $name."_$i";
+                $time = $timeOfCap * $i;
 
-		$returnArray['errors'] = FALSE;
-		return $returnArray;
-	}
+                if($time == 0){
+                    $time = 1; // need to start at frame 1
+                }
+
+                $ffmpeg->thumb($thumbSize, $time)->output($path.$thumbName.$thumbFormat);
+                $ffmpeg->ready();
+
+                if($conversion !== 0){
+                    throw new Exception('Couldn not make thumbs: ' . $ffmpeg->command);
+                }
+            }
+        } catch (Exception $e) {
+            errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
+            errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::DEBUG);
+
+            return array('errors' => $e->getMessage());
+        }
+
+        return array('errors' => false, 'success' => "Successful Conversion");
+    }
 
 	public static function convertAudio($assetsID, $name, $originalFile, $options){
 		try{
