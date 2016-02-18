@@ -16,10 +16,11 @@ foreach ($metadata_forms as $form) {
 }
 localvars::add("metadata_form_permissions",$form_block);
 
-$active_users   = "<ul>";
-$inactive_users = "<ul>";
-$admin_users    = "<ul>";
-$student_users  = "<ul>";
+$active_users      = "<ul>";
+$inactive_users    = "<ul>";
+$admin_users       = "<ul>";
+$student_users     = "<ul>";
+$formCreator_users = "<ul>";
 foreach (users::getUsers() as $user) {
 
 	if (!mfcsPerms::isActive($user['username'])) {
@@ -28,22 +29,27 @@ foreach (users::getUsers() as $user) {
 	else {
 		$active_users   .= format_user_display($user);
 	}
-	if (strtolower($user['status']) == "admin") {
+	if (strtolower($user['status']) == "admin" && mfcsPerms::isActive($user['username'])) {
 		$admin_users    .= format_user_display($user);
 	}
-	if (strtolower($user['isStudent']) == "1") {
+	if ($user['isStudent'] == "1") {
 		$student_users  .= format_user_display($user);
 	}
+	if ($user['formCreator'] == "1") {
+		$formCreator_users .= format_user_display($user);
+	}
 }
-$active_users   .= "</ul>";
-$inactive_users .= "</ul>";
-$admin_users    .= "</ul>";
-$student_users  .= "</ul>";
+$active_users      .= "</ul>";
+$inactive_users    .= "</ul>";
+$admin_users       .= "</ul>";
+$student_users     .= "</ul>";
+$formCreator_users .= "</ul>";
 
-localvars::add("active_users",   $active_users);
-localvars::add("inactive_users", $inactive_users);
-localvars::add("admin_users",    $admin_users);
-localvars::add("student_users",  $student_users);
+localvars::add("active_users",      $active_users);
+localvars::add("inactive_users",    $inactive_users);
+localvars::add("admin_users",       $admin_users);
+localvars::add("student_users",     $student_users);
+localvars::add("formCreator_users", $formCreator_users);
 
 function format_user_display($user) {
 
@@ -115,8 +121,13 @@ $engine->eTemplate("include","header");
 
 <div id="admin_users">
 	<h3>Administrator Users</h3>
-	<p><em>* Administrators have access to all forms and data in the system</em></p>
+	<p><em>* Administrators have access to all forms and data in the system. Inactive administrators not listed</em></p>
 	{local var="admin_users"}
+</div>
+
+<div id="formCreator_users">
+	<h3>Form Creator Users</h3>
+	{local var="formCreator_users"}
 </div>
 
 <!-- Removed to organize similar content
