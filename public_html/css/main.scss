@@ -1732,11 +1732,18 @@ footer{
 .editUsersTable {
   table {
     @extend .table; @extend .table-striped;
-    td:first-child,td:nth-of-type(2),td:nth-of-type(3),th:first-child,th:nth-of-type(2),th:nth-of-type(3){
-      width:170px;
+
+
+    td:nth-of-type(5), td:nth-of-type(6), td:nth-of-type(8){
+      width:80px;
     }
-    td:nth-of-type(4),td:nth-of-type(5){
-      width:170px;
+
+    td:nth-of-type(7){
+      width:100px;
+    }
+
+    th:nth-of-type(9), td:nth-of-type(9){
+      width:60px !important;
     }
 
     td input {
