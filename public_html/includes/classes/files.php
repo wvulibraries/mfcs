@@ -1172,13 +1172,12 @@ class files {
 				// Convert Audio
 				if (isset($options['convertAudio']) && str2bool($options['convertAudio'])) {
 					$convertAudio =  self::convertAudio($assetsID, $filename, $originalFile, $options);
-					if(!$convertAudio){
-						throw new Exception('Failed to convert audio');
+					if(isset($convertAudio['error'])){
+						throw new Exception('Failed to convert audio:'.$convertAudio['errror']);
 					} else {
 						$return['audio'][] = $convertAudio;
 					}
 				}
-
 
 				// Convert Video
 				if (isset($options['convertVideo']) && str2bool($options['convertVideo'])) {
@@ -1193,15 +1192,14 @@ class files {
 				// Video Thumbnails
 				if (isset($options['videothumbnail']) && str2bool($options['videothumbnail'])) {
 					$createThumbs =  self::createVideoThumbs($assetsID, $filename, $originalFile, $options);
-					if($createThumbs['errors'] === TRUE){
+					if(isset($createThumbs['errors'])){
 						throw new Exception('Failed to create video thumbnails');
 					}
 					else {
 						$return['videoThumbs'][] = $createThumbs;
 					}
 				}
-
-			} // Foreach File
+			}
 
 		} // Catch All Try
 		catch (Exception $e) {
@@ -1369,10 +1367,10 @@ class files {
                 }
 
                 $ffmpeg->thumb($thumbSize, $time)->output($path.$thumbName.$thumbFormat);
-                $ffmpeg->ready();
+                $conversion = $ffmpeg->ready();
 
                 if($conversion !== 0){
-                    throw new Exception('Couldn not make thumbs: ' . $ffmpeg->command);
+                    throw new Exception('Could not make thumbs: ' . $ffmpeg->command);
                 }
             }
         } catch (Exception $e) {
@@ -1382,59 +1380,63 @@ class files {
             return array('errors' => $e->getMessage());
         }
 
-        return array('errors' => false, 'success' => "Successful Conversion");
+        return array('success' => "Successful Conversion");
     }
 
 	public static function convertAudio($assetsID, $name, $originalFile, $options){
-		try{
-			$ffmpeg            = new FFMPEG($originalFile);
+        try{
+            $ffmpeg       = new FFmpeg();
+            $inputFile    = $ffmpeg->input($originalFile);
+            $uploadedData = $ffmpeg->getMetadata();
 
-			// Valid File?
-			if(!$ffmpeg->isValid() && !$ffmpeg->isAudio()){
-				throw new Exception("File is not valid, or the audio is not long enough.");
-				return FALSE;
-			}
+            // Formatting and Path
+            // ----------------------------------------------------------------------
+            $format   = $options['audioFormat'];
+            $savePath = self::getSaveDir($assetsID,'audio');
 
-			// Conversion Options
-			// Also changes the Kbs to Bytes
-			$bitrate = (isset($options['bitRate']) ? floor(($options['bitRate'] * 1024)) : number_format(256 * 1024, 2));
+            // Removes Error Logs and sets strict file conversions
+            // ----------------------------------------------------------------------
+            $ffmpeg->set('-strict', '-2');
+            $ffmpeg->logLevel('debug');
 
-			$conversionOptions = array(
-				"ab"  => $bitrate,
-				"vol" => "256",
-			);
+            // Set Audio Type for ogg files
+            // ogg doesn't use bitrate they use quality level
+            if($format == '.ogg'){
+                 $ffmpeg->set('-acodec', 'libvorbis');
+                 $ffmpeg->set('-qscale:a', '5');
+            } else {
+            	// Other File types do use them
+                if(isset($uploadedData['maxBitRate']) && !is_null($uploadedData['maxBitRate'])){
+                	$maxBitRate = $uploadedData['maxBitRate'];
+                }
 
-			$savePath = self::getSaveDir($assetsID,'audio');
-			$format   = $options['audioFormat'];
+                $bitrate = isset($options['bitRate']) ? floor(($options['bitRate'] * 1024)) : $uploadedData['audioBitRate'];
 
-			// Make a Preview File for in Browser
-			$previewFormat   = ".mp3";
-			$previewPath     = self::getSaveDir($assetsID,'preview');
-			$fullPreviewPath = $previewPath.$name.$previewFormat;
-			$ffmpeg->convert($fullPreviewPath, array(), array());
+                if(isset($maxBitRate) && $bitrate > $maxBitRate){
+                    $bitrate = $maxBitRate;
+                }
 
-			if(!is_dir($savePath)){
-				throw new Exception("Directory is not setup");
-				return FALSE;
-			}
+                $ffmpeg->audioBitrate($bitrate); // set bitrate
+                $ffmpeg->set('vol', 265); // set volume
+            }
 
-			$ffmpeg->convert($savePath.$name.".".$format, array(), $conversionOptions); // convert to flash
+            if(!is_dir($savePath)){
+                throw new Exception("Directory is not setup");
+            }
 
-		} catch (Exception $e) {
-			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
-		}
+            $ffmpeg->output($savePath.$name.$format);
+            $conversion = $ffmpeg->ready();
 
-		$returnArray = array(
-			'name'        => $name.".".$format,
-			'path'        => $savePath,
-			'format'      => $format,
-			'options'     => $conversionOptions,
-			'info'        => $ffmpeg->returnInformation(),
-			'errors'      => '',
-			'previewPath' => $fullPreviewPath,
-		);
+            if($conversion !== 0){
+                throw new Exception('Could not convert audio: ' . $ffmpeg->command);
+            }
 
-		return $returnArray;
+        } catch (Exception $e) {
+            errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
+            return array('errors' => $e->getMessage());
+        }
+
+        return array('success' => "Successful Conversion");
 	}
 
 
