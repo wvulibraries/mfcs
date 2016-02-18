@@ -1184,7 +1184,7 @@ class files {
 				if (isset($options['convertVideo']) && str2bool($options['convertVideo'])) {
 					$convertVideo =  self::convertVideo($assetsID, $filename, $originalFile, $options);
 					if($convertVideo['errors']){
-						throw new Exception("VideoFail:  ".$convertVideo['errorMessage']);
+						throw new Exception($convertVideo['errors']);
 					} else {
 						$return['video'][] = $convertVideo;
 					}
@@ -1215,139 +1215,175 @@ class files {
 
 
 	public static function convertVideo($assetsID, $name, $originalFile, $options){
-		try{
-			$ffmpeg           = new FFMPEG($originalFile);
-			$originalFileData = $ffmpeg->getMetadata();
+		try {
+            $ffmpeg        = new FFmpeg();
+            $inputFile     = $ffmpeg->input($originalFile);
+            $uploadedVideo = $ffmpeg->getMetadata();
 
-			// video options
-			$savePath        = self::getSaveDir($assetsID,'video');
-			$format          = ".".$options['videoFormat'];
-			$previewFormat   = ".mp4";
-			$previewPath     = self::getSaveDir($assetsID,'preview');
-			$fullPreviewPath = $previewPath.$name.$previewFormat;
+            // set some default values that are needed for good conversions
+            // most conversions will not be able to go past a certain sample rate
+            $defaultFrameRate    = "24";
+            $resolutionMaxWidth  = "1920";
+            $resolutionMaxHeight = "1080";
 
-			// Create a Preview
-			// Makes a simple mp4 to use
-			$ffmpeg->convert($fullPreviewPath, array(), array());
+            // Get Option Info For Saving
+            // ----------------------------------------------------------------------
+			$savePath = self::getSaveDir($assetsID,'video');
+			$format   = ".".$options['videoFormat'];
 
-			// bitrate conversions
-			$bitrate = (isset($options['videobitRate']) ? floor(($options['videobitRate'] * 1024)) : number_format(256 * 1024, 2));
-			$conversionOptions['ab'] = $bitrate;
+            // Set Defaults Needed for Good Conversions
+            // ----------------------------------------------------------------------
+            $ffmpeg->frameRate($defaultFrameRate);
+            $ffmpeg->set('-strict', '-2');
+            $ffmpeg->logLevel('quiet');
 
-			// return stuff
-			$returnArray = array(
-				'name'              => $name.$format,
-				'path'              => $savePath,
-				'previewPath'       => $fullPreviewPath,
-				'format'            => $format,
-				'options'           => $conversionOptions,
-				'info'              => $ffmpeg->returnInformation(),
-				'originialFileData' => $originalFileData,
-			);
+            // Aspect Ratio
+            // @TODO Need to figure out the process for converting videos to a
+            // certain aspect ratio that may not be in that aspect ratio with
+            // bars added in places that need bars
+            // ---------------------------------------------------------------------
+            if(isset($options['aspectRatio']) && !is_empty($options['aspectRatio'])){
+                $aspectRatio = explode(":", $options['aspectRatio']);
+                $numAspectRatio = $aspectRatio[0] / $aspectRatio[1];
+            } else {
+                $numAspectRatio = $uploadedVideo['width'] / $uploadedVideo['height'];
+            }
 
-			// Valid File?
-			if(!$ffmpeg->isValid() && !$ffmpeg->isVideo()){
-				throw new Exception("File is not valid, or the video file was not a video. Can't Convert Video.");
-			}
+            // Check and Modify the Size
+            // Helps to Make sure that Max Res is not exceeded
+            // ----------------------------------------------------------------------
+            // use defaults
+            if((!isset($options['videoWidth']) && !isset($options['videoHeight'])) || (is_empty($options['videoWidth']) && is_empty($options['videoHeight']))){
+                 $videoWidth  = $uploadedVideo['width'];
+                 $videoHeight = $uploadedVideo['height'];
+            }
 
-			// path exsists
-			if(!is_dir($savePath)){
-				throw new Exception("Directory is not setup");
-			}
+            // use width and find height
+            if(isset($options['videoWidth']) && !is_empty($options['videoWidth']) && !isset($options['videoHeight'])){
+                $videoWidth  = ($options['videoWidth'] <= $resolutionMaxWidth ? $options['videoWidth'] : $resolutionMaxWidth);
+                $videoHeight =  FFmpeg::aspectRatioCalc($numAspectRatio, $uploadedVideo['width'], $uploadedVideo['height'], $options['videoWidth']);
+            }
+            // use height and find width
+            else if(!isset($options['videoWidth']) && isset($options['videoHeight']) && !is_empty($options['videoHeight'])){
+                $videoHeight = ($options['videoHeight'] <= $resolutionMaxHeight ? $options['videoHeight'] : $resolutionMaxHeight);
+                $videoWidth  = FFmpeg::aspectRatioCalc($numAspectRatio, $uploadedVideo['width'], $uploadedVideo['height'], null, $options['videoHeight']);
+            }
+            // if both are set, unset the video height and use the width so that video retains aspect ratio
+            // check to see if they put portriat or landscape heights
+            else {
+                if($options['videoWidth'] < $options['videoHeight']){
+                    $options['videoWidth'] = $options['videoHeight'];
+                }
+                $videoWidth  = ($options['videoWidth'] <= $resolutionMaxWidth ? $options['videoWidth'] : $resolutionMaxWidth);
+                $videoHeight =  FFmpeg::aspectRatioCalc( $numAspectRatio, $uploadedVideo['width'], $uploadedVideo['height'], $options['videoWidth']);
+            }
+
+            $ffmpeg->size($videoWidth."x".$videoHeight);
+
+            // This rotates the video if it is vertical for the output settings
+            // this sets the metadata of the video to rotate 90 and play the vertical video
+            if($uploadedVideo['rotation'] == 90){
+                $ffmpeg->set('-metadata:s:v', 'rotate="90"');
+                $ffmpeg->transpose(0);
+            }
+
+            // BitRates of Video
+            // ----------------------------------------------------------------------
+            if(isset($options['videobitRate']) && !is_empty($options['videobitRate'])){
+                $bitrate = floor(($options['videobitRate'] * 1024));
+                if($bitrate > floatval($uploadedVideo['videoBitRate'])){
+                    $bitrate = floatval($uploadedVideo['videoBitRate']);
+                }
+            } else {
+                $bitrate = $uploadedVideo['videoBitRate'];
+            }
+
+            // Make sure its not null
+            if($bitrate !== null){
+                $ffmpeg->videoBitrate($bitrate);
+            }
 
 
-			// Catch all for not allowing bad aspect ratios
-			// Setup the variables for video size based on aspect ratio and such
-			if(isset($options['videoHeight']) && isset($options['videoWidth'])){
-				if(isset($options['aspectRatio']) && !isnull($options['aspectRatio'])){
-					// force the aspect ratio in the height by using the width
-					$aspectRatio = explode(":", $options['aspectRatio']);
-					$width = $options['videoWidth'];
-					$height = floor(($width/$aspectRatio[0]) * $aspectRatio[1]);
-					$videoSize = sprintf("%sx%s",
-						$width,
-						$height
-					);
-					//$conversionOptions['aspect'] = $options['aspectRatio'];
-				}
-				else {
-					// height width set for original files aspect ratio
-					if(isset($originalFileData['width']) && isset($originalFileData['height'])){
-						$ratio     = $originalFileData['width'] / $originalFileData['height'];
-						$videoSize = sprintf("%sx%s",
-							$options['videoWidth'],
-							floor($options['videoWidth'] / $ratio)
-						);
-					}
-				}
-				// add to conversion options
-				$conversionOptions['s'] = $videoSize;
-			}
-			// conversion options
-			$conversion = $ffmpeg->convert($savePath.$name.$format, array(), $conversionOptions);
+            if(!is_dir($savePath)){
+                throw new Exception("Can not save file because directory doesn't exsist");
+            }
 
-		} catch (Exception $e) {
-			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
-			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::DEBUG);
+            // Where does this go?
+            $ffmpeg->output($savePath.$name.$format);
 
-			//setup return errors
-			$returnArray['options']      = $conversionOptions;
-			$returnArray['errors']       = TRUE;
-			$returnArray['errorMessage'] = $e->getMessage();
-			return $returnArray;
-		}
+            // Make it Happen
+            $conversion = $ffmpeg->ready();
 
-		// return errors for no expections
-		$returnArray['errors'] = FALSE;
-		return $returnArray;
+            if($conversion !== 0){
+                throw new Exception('There was a problem with the video conversion check ffmpeg command: ' . $ffmpeg->command);
+            }
+
+        } catch (Exception $e) {
+            errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
+            errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::DEBUG);
+            return array(
+                'errors' => $e->getMessage(),
+            );
+        }
+
+        return array(
+    		'success' => "Successful Conversion"
+        );
 	}
 
 	public static function createVideoThumbs($assetsID, $name, $originalFile, $options){
 		try{
-			$ffmpeg             = new FFMPEG($originalFile);
-			$originalFileData   = $ffmpeg->getMetadata();
+            $ffmpeg        = new FFmpeg();
+            $inputFile     = $ffmpeg->input($originalFile);
+            $uploadedVideo = $ffmpeg->getMetadata();
 
-			// create thumbnails
-			$numberOfThumbnails = $options['videoThumbFrames'];
-			$thumbHeight        = $options['videoThumbHeight'];
-			$thumbWidth         = $options['videoThumbWidth'];
-			$thumbFormat        = $options['videoFormatThumb'];
-			$path               = self::getSaveDir($assetsID,'thumbnails');
 
-			$returnArray = array(
-				'name'    => $name,
-				'path'    => $path,
-				'format'  => $thumbFormat,
-				'options' => array(
-							'height' => $thumbHeight,
-							'width'  => $thumbWidth,
-						 ),
-				'info'    => $ffmpeg->returnInformation(),
-			);
+            // Removes Error Logs and sets strict file conversions
+            // ----------------------------------------------------------------------
+            $ffmpeg->set('-strict', '-2');
+            $ffmpeg->logLevel('quiet');
 
-			// path exsists
-			if(!is_dir($path)){
-				throw new Exception("Thumbnail directory is not setup.");
-			}
+            // Get Thumbnail Information
+            // ----------------------------------------------------------------------
+            $numberOfThumbnails = $options['videoThumbFrames'];
+            $thumbSize          = $options['videoThumbWidth']."x".$options['videoThumbHeight'];
+            $thumbFormat        = $options['videoFormatThumb'];
+            $path               = self::getSaveDir($assetsID,'thumbnails');
 
-			// valid
-			if(!$ffmpeg->isValid() && !$ffmpeg->isVideo()){
-				throw new Exception("File is not valid, or the video file was not a video. Can't create thumbs");
-			}
+            // Create number to use as intervals for time caputers
+            // ----------------------------------------------------------------------
+            $timeOfCap          = floor($uploadedVideo['duration'] / $numberOfThumbnails);
 
-			// get thumbnails
-			$ffmpeg->getThumbnails($numberOfThumbnails, $path, $name, $thumbHeight, $thumbWidth, $thumbFormat);
+            if(!is_dir($path)){
+                throw new Exception("Thumbnail directory is not setup.");
+            }
 
-		} catch (Exception $e) {
-			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
-			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::DEBUG);
-			$returnArray['errors'] = TRUE;
-			return $returnArray;
-		}
+            // Loop through and save file information
+            // ----------------------------------------------------------------------
+            for($i = 0; $i < $numberOfThumbnails; $i++){
+                $thumbName = $name."_$i";
+                $time = $timeOfCap * $i;
 
-		$returnArray['errors'] = FALSE;
-		return $returnArray;
-	}
+                if($time == 0){
+                    $time = 1; // need to start at frame 1
+                }
+
+                $ffmpeg->thumb($thumbSize, $time)->output($path.$thumbName.$thumbFormat);
+                $ffmpeg->ready();
+
+                if($conversion !== 0){
+                    throw new Exception('Couldn not make thumbs: ' . $ffmpeg->command);
+                }
+            }
+        } catch (Exception $e) {
+            errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
+            errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::DEBUG);
+
+            return array('errors' => $e->getMessage());
+        }
+
+        return array('errors' => false, 'success' => "Successful Conversion");
+    }
 
 	public static function convertAudio($assetsID, $name, $originalFile, $options){
 		try{
