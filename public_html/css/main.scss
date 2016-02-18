@@ -111,6 +111,7 @@ form[name="updateForm"]{
 
 table {
   width:100%;
+  //border:1px solid #ccc;
   th,td { padding:10px; }
   th { text-align:center; }
 }
@@ -1732,6 +1733,7 @@ footer{
 .editUsersTable {
   table {
     @extend .table; @extend .table-striped;
+    border:1px solid #ccc;
 
 
     td:nth-of-type(5), td:nth-of-type(6), td:nth-of-type(8){
@@ -1756,6 +1758,7 @@ footer{
 .projectsEditTable, .metadataTables {
   table {
     @extend .table; @extend .table-striped;
+    border:1px solid #ccc;
     td input {
       margin:0;
     }
