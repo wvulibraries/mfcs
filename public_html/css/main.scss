@@ -1949,7 +1949,7 @@ footer{
   border-radius: 4px;
   margin: 0 0 20px 0;
 }
-#current_users, #student_users, #admin_users {
+#current_users, #student_users, #admin_users, #formCreator_users {
   width: 33%;
   float: left;
    h3 {
@@ -1963,7 +1963,15 @@ footer{
       padding: 0 0 0 20px;
     }
   }
+
+  em { display:block; @extend .alert; @extend .alert-warning; width:90%;}
 }
+
+.inactive_user{
+  color:#aaa;
+  text-decoration: line-through;
+}
+
 #user_divider {
   margin:  40px 0 0 0;
   height: auto;
