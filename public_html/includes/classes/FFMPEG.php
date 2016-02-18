@@ -578,25 +578,39 @@ class FFmpeg{
         // get return values form file streams
         $info      = json_decode($this->getFileStreams(), true);
 
-        // Setup Information for Uploaded Video By streams
-        $videoStream = $info["streams"][0];
-        $audioStream = $info["streams"][1];
+        // there should at least be one codec type and one stream
+        if(isset($info['streams'][0]['codec_type'])){
+            $type = $info['streams'][0]['codec_type'];
+        }
 
-        // Combine Streams into Used Information for Video
-        $videoParams = array();
-        $videoParams['rotation']        = isset($videoStream['tags']['rotate']) ? $videoStream['tags']['rotate'] : 0;
-        $videoParams['width']           = $videoStream['width'];
-        $videoParams['height']          = $videoStream['height'];
-        $videoParams['frameRate']       = $videoStream['r_frame_rate'];
-        $videoParams['videoBitRate']    = $videoStream['bit_rate'];
-        $videoParams['duration']        = $videoStream['duration'];
+        // if it is audio use the first stream
+        if(strtolower($type) == 'audio'){
+            $audioStream = $info["streams"][0];
+            $fileParams['duration']        = $audioStream['duration'];
+            $fileParams['audioSamplerate'] = $audioStream['sample_rate'];
+            $fileParams['audioBitRate']    = $audioStream['bit_rate'];
+            $fileParams['maxBitRate']      = isset($audioStream['max_bit_rate']) ? $audioStream['max_bit_rate'] : null;
+        } else {
+            // Setup Information for Uploaded Video By streams
+            $videoStream = $info["streams"][0];
+            $audioStream = $info["streams"][1];
 
-        $videoParams['audioSamplerate'] = $audioStream['sample_rate'];
-        $videoParams['audioBitRate']    = $audioStream['bit_rate'];
-        $videoParams['maxBitRate']      = isset($audioStream['max_bit_rate']) ? $audioStream['max_bit_rate'] : null;
+            // Combine Streams into Used Information for Video
+            $fileParams = array();
+            $fileParams['rotation']        = isset($videoStream['tags']['rotate']) ? $videoStream['tags']['rotate'] : 0;
+            $fileParams['width']           = $videoStream['width'];
+            $fileParams['height']          = $videoStream['height'];
+            $fileParams['frameRate']       = $videoStream['r_frame_rate'];
+            $fileParams['videoBitRate']    = $videoStream['bit_rate'];
+            $fileParams['duration']        = $videoStream['duration'];
+
+            $fileParams['audioSamplerate'] = $audioStream['sample_rate'];
+            $fileParams['audioBitRate']    = $audioStream['bit_rate'];
+            $fileParams['maxBitRate']      = isset($audioStream['max_bit_rate']) ? $audioStream['max_bit_rate'] : null;
+        }
 
         // return it
-        return $videoParams;
+        return $fileParams;
     }
 
     public static function aspectRatioCalc($ratio, $origWidth, $origHeight, $targetWidth = null, $targetHeight = null){
