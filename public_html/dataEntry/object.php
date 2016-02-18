@@ -211,7 +211,12 @@ $engine->eTemplate("include","header");
 		<?php } ?>
 		<li class="pull-right noDivider"><a href="{phpself query="true"}&unlock=cancel">Cancel Edit &amp; Unlock object</a></li>
 		<li class="pull-right noDivider"><a href="/data/object/history/?objectID={local var="objectID"}">History</a></li>
+		<?php if ($locked === TRUE) { ?>
+		<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Object-Locking"> <i class="fa fa-book"></i> Documentation</a></li>
+		<?php } else { ?>
 		<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Entering-Metadata"> <i class="fa fa-book"></i> Documentation</a></li>
+		<?php } ?>
+
 	</ul>
 
 	<div class="container-fluid">
