@@ -38,10 +38,10 @@ $engine->eTemplate("include","header");
 	{local var="results"}
 
 	<section>
-		<p>System is currently in {local var="mode"} mode.
+		<div class="systemMessage {local var="mode"}"> <p> System is currently in {local var="mode"} mode. </p></div>
 	</section>
 
-	<a href="{local var="phpself"}?toggle=true">Toggle</a>
+	<a href="{local var="phpself"}?toggle=true" class="toggleSystem btn btn-primary">Toggle</a>
 </section>
 
 <?php
