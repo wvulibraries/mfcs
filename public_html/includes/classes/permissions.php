@@ -66,6 +66,12 @@ class mfcsPerms {
 		return ($user['active'] == 1 ? TRUE : FALSE);
 	}
 
+	public static function isFormCreator($username = NULL){
+		if(isnull($username)) $username = sessionGet('username');
+		$user = users::get($username);
+		return ($user['formCreator'] == 1 ? TRUE : FALSE) || self::isAdmin(0,$username);
+	}
+
 	public static function add($userID,$formID,$type) {
 		$sql = sprintf("INSERT INTO `permissions` (userID,formID,type) VALUES('%s','%s','%s')",
 			mfcs::$engine->openDB->escape($userID),

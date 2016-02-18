@@ -1,14 +1,14 @@
 <?php
 require("engineInclude.php");
 
-if(!isCLI()) recurseInsert("acl.php","php");
-
 recurseInsert("dbTableList.php","php");
 $engine->dbConnect("database","mfcs",TRUE);
 
 // Load the mfcs class
 require_once "includes/index.php";
 mfcs::singleton();
+
+if(!isCLI()) recurseInsert("acl.php","php");
 
 // Quick and dirty Checks check
 // @TODO this needs to be more formalized in a class to easily include other checks as well

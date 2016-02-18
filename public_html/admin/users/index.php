@@ -45,7 +45,7 @@ function defineList($tableName) {
 
 	$l->addField(array(
 		"field"    => "active",
-		"label"    => "Is the User Active? No will deny permissions to the user.",
+		"label"    => "Is the User Active?",
 		"dupes"    => TRUE,
 		"type"     => "yesNo"
 		));
@@ -60,6 +60,13 @@ function defineList($tableName) {
 			array("value"=>"User","label"=>"User","selected"=>TRUE),
 			array("value"=>"Admin","label"=>"Admin")
 			)
+		));
+
+	$l->addField(array(
+		"field"    => "formCreator",
+		"label"    => "Form Creator",
+		"dupes"    => TRUE,
+		"type"     => "yesNo"
 		));
 
 	return $l;
