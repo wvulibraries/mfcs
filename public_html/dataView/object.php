@@ -17,6 +17,8 @@ try {
 
 	log::insert("Data View: Object",$engine->cleanGet['MYSQL']['objectID'],$engine->cleanGet['MYSQL']['formID']);
 
+	localvars::add("objectID",$engine->cleanGet['MYSQL']['objectID']);
+
 	//////////
 	// Metadata Tab Stuff
 	$form = forms::get($engine->cleanGet['MYSQL']['formID']);
@@ -103,6 +105,17 @@ $engine->eTemplate("include","header");
 	<header class="page-header">
 		<h1>View Object</h1>
 	</header>
+
+	<ul class="breadcrumbs">
+		<li><a href="{local var="siteRoot"}">Home</a></li>
+		<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
+
+		<!-- FLoat Right -->
+		<?php if(mfcsPerms::isEditor($engine->cleanGet['MYSQL']['formID'])){ ?>
+			<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/object.php?objectID={local var="objectID"}">Edit Object</a></li>
+		<?php } ?>
+		<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Object-Viewing"> <i class="fa fa-book"></i> Documentation</a></li>
+	</ul>
 
 	<div class="container-fluid">
 		<div class="span3">
