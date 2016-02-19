@@ -21,6 +21,7 @@ $display_list_toggle = FALSE;
 	switch($engine->cleanGet['MYSQL']['listType']) {
 		case 'metadataObjects':
 			$list = listGenerator::metadataObjects($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
+			$breadCrumbs[] = '<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Subject-Headings"> <i class="fa fa-book"></i> Documentation</a></li>';
 			break;
 		case 'selectForm':
 			$list = listGenerator::createFormSelectList();

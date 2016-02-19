@@ -110,6 +110,7 @@ $engine->eTemplate("include","header");
 			<li><a href="{local var="siteRoot"}">Home</a></li>
 			<li><a href="{local var="siteRoot"}/dataEntry/selectForm.php">Select a Form</a></li>
 			<li class="pull-right"><a href="{local var="siteRoot"}/formCreator/index.php?id={local var="formID"}">Edit Form</a></li>
+			<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Subject-Headings"> <i class="fa fa-book"></i> Documentation</a></li>
 		</ul>
 	</nav>
 
