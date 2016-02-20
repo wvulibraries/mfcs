@@ -174,6 +174,24 @@ $engine->eTemplate("include","header");
 	</div>
 </section>
 
+<!-- Modal Preview -->
+<div class="modal imagePreviewModal" id="modal" tabindex="-1" role="dialog" aria-labelledby="preview modal" aria-hidden="true">
+	<div class="modalContainer">
+	    <div class="modal-header">
+	        <button type="button" class="close" aria-hidden="true">×</button>
+	        <h3>File Preview</h3>
+	    </div>
+			<div class="modal-body">
+	 		<div class="video-container">
+	     		<iframe src="" frameborder="0" id="iFrameTarget"></iframe>
+	     	</div>
+	  	</div>
+	    <div class="modal-footer">
+	        <button class="btn close" aria-hidden="true">Close</button>
+	    </div>
+	</div>
+</div>
+
 <script type="text/javascript">
 	$(function() {
 		// Show first tab on page load
