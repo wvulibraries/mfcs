@@ -15,7 +15,13 @@ $breadCrumbs = array(
 	);
 
 // Process search Submission
-if (isset($engine->cleanPost['MYSQL']['search'])) {
+if (isset($engine->cleanGet['MYSQL']['reset'])) {
+	sessionDelete("searchQuery");
+	sessionDelete('searchPOST');
+	sessionDelete("lastSearchForm");
+	header("Location: ".$_SERVER['PHP_SELF']);
+}
+else if (isset($engine->cleanPost['MYSQL']['search'])) {
 	try {
 		if(isnull($engine->cleanPost['MYSQL']['formList'])){
 			throw new Exception("No form selected.");
@@ -49,7 +55,7 @@ else if (!is_empty(sessionGet('searchQuery'))) {
 
 	log::insert("Data View: Search: get saved search");
 
-	$searchQuery = sessionGET('searchQuery');
+	$searchQuery = sessionGet('searchQuery');
 
 	try {
 		$results = mfcsSearch::search($searchQuery);
@@ -113,6 +119,8 @@ $engine->eTemplate("include","header");
 
 	<ul class="breadcrumbs">
 			{local var="breadcrumbs"}
+			<li class="pull-right noDivider"><a href="{local var="siteRoot"}data/search/?reset=reset">Reset Search</a></li>
+			<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Searching"> <i class="fa fa-book"></i> Documentation</a></li>
 	</ul>
 
 	{local var="results"}

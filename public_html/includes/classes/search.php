@@ -29,6 +29,9 @@ class mfcsSearch {
 			case "formList":
 				$output = mfcsSearch::formListing();
 				break;
+			case "formFieldList":
+				$output = mfcsSearch::formFieldListing();
+				break;
 			default:
 			    $output = "Error: name function '".$attPairs['name']."' not found.";
 		}
@@ -51,7 +54,23 @@ class mfcsSearch {
 		return $output;
 	}
 
+	public static function formFieldListing($formID = NULL) {
+
+		$old_formID = sessionGet("lastSearchForm");
+		if (validate::integer($old_formID)) $formID = $old_formID;
+
+		if (isnull($formID)) {
+			return '<option value="idno">IDNO</option>
+			<optgroup label="Form Fields">
+			</optgroup>';
+		}
+
+		return mfcsSearch::formFieldOptions($formID);
+
+	}
+
 	public static function formFieldOptions($formID) {
+
 		$form = forms::get($formID);
 
 		$output = '<option value="idno">IDNO</option><optgroup label="Form Fields">';
