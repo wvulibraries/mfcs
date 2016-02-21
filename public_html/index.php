@@ -61,7 +61,7 @@ $engine->eTemplate("include","header");
 					</p> <br>
 					<div class="actionButton">
 						<a href="/dataEntry/selectForm.php" class="btn btn-primary"> Create &amp; Edit Objects </a>
-						<a href="/dataView/search.php" class="btn btn-primary"> Search </a>
+						<a href="/data/search/" class="btn btn-primary"> Search </a>
 					</div>
 				</div>
 			</span>

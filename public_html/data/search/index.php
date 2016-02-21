@@ -1,6 +1,6 @@
 <?php
 
-include("../header.php");
+include("../../header.php");
 
 //Permissions Access
 if(!mfcsPerms::evaluatePageAccess(2)){
@@ -11,7 +11,7 @@ if(!mfcsPerms::evaluatePageAccess(2)){
 $siteRoot = localvars::get('siteRoot');
 $breadCrumbs = array(
 	sprintf('<a href="%s">Home</a>', $siteRoot),
-	sprintf('<a href="%s/dataView/Search.php">Search Objects</a>', $siteRoot)
+	sprintf('<a href="%sdata/search/">Search Objects</a>', $siteRoot)
 	);
 
 // Process search Submission
