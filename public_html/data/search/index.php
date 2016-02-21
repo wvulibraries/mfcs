@@ -19,7 +19,6 @@ if (isset($engine->cleanGet['MYSQL']['reset'])) {
 	sessionDelete("searchQuery");
 	sessionDelete('searchPOST');
 	sessionDelete("lastSearchForm");
-	header("Location: ".$_SERVER['PHP_SELF']);
 }
 else if (isset($engine->cleanPost['MYSQL']['search'])) {
 	try {
