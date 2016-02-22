@@ -54,6 +54,8 @@ class mfcsSearch {
 				);
 		}
 
+		$output .= '<option value="mfcs_anyform">Any Form</option>';
+
 		return $output;
 	}
 
@@ -95,8 +97,8 @@ class mfcsSearch {
 	// post is expected to be mysql sanitized
 	public static function search($post) {
 
-		// If no form was selected
 		if (isempty($post['formList'])) {
+			// If no form was selected
 			return FALSE;
 		}
 
@@ -126,6 +128,20 @@ class mfcsSearch {
 		else {
 			$date_clause = "";
 		}
+
+		// build form query
+		// mfcs_anyform
+		if ($post['formList'] == "mfcs_anyform") {
+			// If no form was selected
+			$form_query = "";
+		}
+		else {
+			$form_query = sprintf("AND %s='%s'",
+				($post['fieldList'] == "idno")?"`formID`":"`objectsData`.`formID`",
+				$post['formList']
+				);
+		}
+
 
 		// build query
 		$queryString = ($post['fieldList'] == "idno")?sprintf("LOWER(`%s`)", $post['fieldList']):"`objectsData`.`value`";
@@ -165,22 +181,35 @@ class mfcsSearch {
 		// IDNO search. Easy PEasy from the objcets table
 		if ($post['fieldList'] == "idno") {
 
-			$sql = sprintf("SELECT * FROM `objects` WHERE %s AND `formID`='%s' %s ORDER BY LENGTH(idno), `idno`",
+			$sql = sprintf("SELECT * FROM `objects` WHERE %s %s %s ORDER BY LENGTH(idno), `idno`",
 					$queryString,
-					$post['formList'],
+					$form_query,
 					$date_clause
 					);
 
 		}
 		else {
 
-			$sql = sprintf("SELECT `objects`.* FROM `objects` LEFT JOIN `objectsData` ON `objectsData`.`objectID`=`objects`.`ID` WHERE `objectsData`.`formID`='%s' %s AND %s %s ORDER BY LENGTH(idno), `idno`",
-				$post['formList'],
-				$query_field,
+			$sql = sprintf("SELECT `objects`.* FROM `objects` LEFT JOIN `objectsData` ON `objectsData`.`objectID`=`objects`.`ID` LEFT JOIN `forms` on `forms`.ID=`objects`.`formID` WHERE `forms`.`metadata`='0' AND %s %s %s %s ORDER BY LENGTH(objects.idno), `objects`.`idno`",
 				$queryString,
+				$query_field,
+				$form_query,
 				$date_clause
 				);
 
+		}
+
+
+		if ($post['formList'] == "mfcs_anyform") {
+
+			$objects = array();
+			foreach (objects::getObjectsForSQL($sql) as $object) {
+				
+				if (mfcsPerms::isViewer($object['formID'])) $objects[] = $object;
+
+			}
+
+			return $objects;
 		}
 
 		return objects::getObjectsForSQL($sql);
