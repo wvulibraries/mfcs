@@ -44,6 +44,9 @@ class mfcsSearch {
 
 		$output = '<option value="NULL">-- Select a Form --</option>';
 		foreach ($forms as $form) {
+
+			if (mfcsPerms::isViewer($form['ID']) === FALSE) continue;
+
 			$output .= sprintf('<option value="%s" %s>%s</option>',
 				$form['ID'],
 				($form['ID'] == sessionGet("lastSearchForm"))?"selected":"",
