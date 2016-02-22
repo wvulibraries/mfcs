@@ -62,13 +62,14 @@ class mfcsSearch {
 		$old_formID = sessionGet("lastSearchForm");
 		if (validate::integer($old_formID)) $formID = $old_formID;
 
+		$options  = '<option value="idno">IDNO</option>';
+		$options .= '<option value="mfcs_keyword">Any Field</option>';
+
 		if (isnull($formID)) {
-			return '<option value="idno">IDNO</option>
-			<optgroup label="Form Fields">
-			</optgroup>';
+			return $options;
 		}
 
-		return mfcsSearch::formFieldOptions($formID);
+		return $options . mfcsSearch::formFieldOptions($formID);
 
 	}
 
@@ -76,7 +77,7 @@ class mfcsSearch {
 
 		$form = forms::get($formID);
 
-		$output = '<option value="idno">IDNO</option><optgroup label="Form Fields">';
+		$output = '<optgroup label="Form Fields">';
 		foreach ($form['fields'] as $field) {
 
 			if (isset($field['choicesType'])) continue;
@@ -92,10 +93,9 @@ class mfcsSearch {
 	}
 
 	// post is expected to be mysql sanitized
-	// 
-	// @TODO ... this search function needs a lot of work. Its awful. 
 	public static function search($post) {
 
+		// If no form was selected
 		if (isempty($post['formList'])) {
 			return FALSE;
 		}
@@ -103,104 +103,88 @@ class mfcsSearch {
 		// Save the post for later use (like pagination pages)
 		sessionSet('searchPOST', $post);
 
-		if (!isempty($post['startDate']) && !isempty($post['endDate'])) {
-			$date = TRUE;
-
-			// @tODO build where clause for date here
-		}
-		else {
-			$date = FALSE;
-		}
-
-		// build query for idno searches
-		if ($post['fieldList'] == "idno" && preg_match('/^\\\\"(.+?)\\\\"/',trim($post['query']),$matches)) {
-			$queryString = sprintf("LOWER(`idno`)='%s'",
-				strtolower($matches[1])
+		// build date clause
+		if (!isempty($post['startDate']) && isempty($post['endDate'])) {
+			// start provided, but no end
+			$date_clause = sprintf("AND `createTime` >= '%s'",
+				strtotime($post['startDate'])
 				);
 		}
-		else if ($post['fieldList'] == "idno" && preg_match('/^(.+?)\*$/',trim($post['query']),$matches)) {
-			$queryString = sprintf("LOWER(`idno`) LIKE '%s%%'",
-				strtolower($matches[1])
+		else if (isempty($post['startDate']) && !isempty($post['endDate'])) {
+			// end provided, but no start
+			$date_clause = sprintf("AND `createTime` <= '%s'",
+				strtotime($post['endDate'])
 				);
 		}
-		else if ($post['fieldList'] == "idno" && preg_match('/^\*(.+?)$/',trim($post['query']),$matches)) {
-			$queryString = sprintf("LOWER(`idno`) LIKE '%%%s'",
-				strtolower($matches[1])
+		else if (!isempty($post['startDate']) && !isempty($post['endDate'])) {
+			// both start and end provided
+			$date_clause = sprintf("AND `createTime` >= '%s' AND `createTime` <= '%s'",
+				strtotime($post['startDate']),
+				strtotime($post['endDate'])
 				);
 		}
 		else {
-			$queryString = sprintf("LOWER(`idno`) LIKE '%%%s%%'",
+			$date_clause = "";
+		}
+
+		// build query
+		$queryString = ($post['fieldList'] == "idno")?sprintf("LOWER(`%s`)", $post['fieldList']):"`objectsData`.`value`";
+
+		if (preg_match('/^\\\\"(.+?)\\\\"/',trim($post['query']),$matches)) {
+			// Qouted string, exact match
+			$queryString .= sprintf("='%s'",
+				strtolower($matches[1])
+				);
+		}
+		else if (preg_match('/^(.+?)\*$/',trim($post['query']),$matches)) {
+			// wild card at the end
+			$queryString .= sprintf(" LIKE '%s%%'",
+				strtolower($matches[1])
+				);
+		}
+		else if (preg_match('/^\*(.+?)$/',trim($post['query']),$matches)) {
+			// wild card at the beginning
+			$queryString .= sprintf(" LIKE '%%%s'",
+				strtolower($matches[1])
+				);
+		}
+		else {
+			// normal keyword (search anywhere)
+			$queryString .= sprintf(" LIKE '%%%s%%'",
 				strtolower($post['query'])
 				);
 		}
 
-		// if idno search, build mysql here and search
-		if ($post['fieldList'] == "idno" && $date === TRUE) {
-			$sql = sprintf("SELECT * FROM `objects` WHERE `idno` LIKE '%%%s%%' AND `formID`='%s' AND `createTime` >= '%s' AND `createTime` <= '%s' ORDER BY LENGTH(idno), `idno`",
-					$post['query'],
+		if ($post['fieldList'] == "mfcs_keyword") {
+			$query_field = "";
+		}
+		else {
+			$query_field = sprintf("AND `objectsData`.`fieldName`='%s'",$post['fieldList']);
+		}
+
+		// IDNO search. Easy PEasy from the objcets table
+		if ($post['fieldList'] == "idno") {
+
+			$sql = sprintf("SELECT * FROM `objects` WHERE %s AND `formID`='%s' %s ORDER BY LENGTH(idno), `idno`",
+					$queryString,
 					$post['formList'],
-					strtotime($post['startDate']),
-					strtotime($post['endDate'])
+					$date_clause
 					);
 
-			$objects = objects::getObjectsForSQL($sql);
 		}
-		else if ($post['fieldList'] == "idno") {
-			$sql = sprintf("SELECT * FROM `objects` WHERE %s AND `formID`='%s' ORDER BY LENGTH(idno), `idno`",
-				$queryString,
-				$post['formList']
-				);
-			$objects = objects::getObjectsForSQL($sql);
-
-		}
-		// else if there is a date range, build a date range search to get 
-		else if ($date === TRUE) {
-
-			$sql = sprintf("SELECT * FROM `objects` WHERE AND `formID`='%s' AND `createTime` >= '%s' AND `createTime` <= '%s' ORDER BY LENGTH(idno), `idno`",
-				$post['formList'],
-				strtotime($post['startDate']),
-				strtotime($post['endDate'])
-				);
-			
-			$objects = objects::getObjectsForSQL($sql);
-		}
-		// else, get everything to perform search. 
 		else {
-			$objects = objects::getAllObjectsForForm($post['formList'],"idno",TRUE);
-		}
 
-		$results = array();
-		foreach ($objects as $object) {
-
-			// check that the item is in the date range, if a date range is specified.
-			// if ($date === TRUE && ($object['createTime'] < strtotime($post['startDate']) || $object['createTime'] > strtotime($post['endDate']))) {
-			// 	continue;
-			// }
-
-			$found = FALSE;
-
-			if (!isempty($post['query']) ) { 
-
-				if ($post['fieldList'] == "idno") {
-					$found = TRUE;	
-				}
-				else if (isset($object['data'][$post['fieldList']]) && stripos($object['data'][$post['fieldList']],$post['query']) !== FALSE) {
-					$found = TRUE;	
-				}
-			}
-			// If the query is empty we assume that everything should be returned. 
-			// it has already been filtered by date at this point.
-			else if (is_empty($post['query'])) {
-				$found = TRUE;
-			}
-
-			if ($found === TRUE) {
-				$results[$object['ID']] = $object;
-			}
+			$sql = sprintf("SELECT `objects`.* FROM `objects` LEFT JOIN `objectsData` ON `objectsData`.`objectID`=`objects`.`ID` WHERE `objectsData`.`formID`='%s' %s AND %s %s ORDER BY LENGTH(idno), `idno`",
+				$post['formList'],
+				$query_field,
+				$queryString,
+				$date_clause
+				);
 
 		}
 
-		return($results);
+		return objects::getObjectsForSQL($sql);
+
 	}
 
 }

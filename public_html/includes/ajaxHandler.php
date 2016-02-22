@@ -20,7 +20,7 @@ if(isset($engine->cleanGet['MYSQL']['ajax'])){
 				die($result);
 				break;
 			case 'searchFormFields':
-				die(mfcsSearch::formFieldOptions($engine->cleanGet["MYSQL"]['formID']));
+				die(mfcsSearch::formFieldListing($engine->cleanGet["MYSQL"]['formID']));
 				break;
 			case 'paginationPerPage':
 				$result = users::setField('pagination',$engine->cleanGet["MYSQL"]['perPage']);
