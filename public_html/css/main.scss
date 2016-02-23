@@ -31,7 +31,7 @@ html, body {
 }
 
 h1 { font-size:180%; }
-h2 { font-size:135%; }
+h2 { font-size:135%; margin:0 0 20px; }
 h3,h4,h5 { font-size:125%; }
 
 section {
@@ -39,6 +39,10 @@ section {
     width:100%;
     margin:0;
     padding:0 20px;
+}
+
+.container, .container-fluid {
+  float:left;
 }
 
 form[name="updateForm"]{
@@ -969,11 +973,11 @@ li.alert-error {
 
 .formCreator.dataEntry {
   position:relative;
-  input, select { width:100%; margin-bottom: 20px;}
+  input, select { width:100%; margin-bottom: 0px;}
   .creatorFormHelp { position:absolute; top:40%; left:-20px; }
 
   position: relative;
-  margin: 20px 0 40px;
+  margin: 20px 0 0px;
 }
 
 #metadata {
@@ -1654,7 +1658,7 @@ $fileColor: lighten(#333F48,60%);
   list-style:none;
   margin:0;
   padding:0;
-  li { padding:10px; border-bottom:1px solid darken($lightgrey,5%); float:left; display:block; width:100%; }
+  li { padding:10px 0 0 10px; border-bottom:1px solid darken($lightgrey,5%); float:left; display:block; width:100%; }
   ul li:last-child{ border-bottom:0;}
   ul { padding:0; margin:0;}
   ul li { margin-bottom:0; border-bottom:1px solid #eee;}
