@@ -1,12 +1,6 @@
 <form action="{phpself query="false"}" method="post" class="searchForm">
 	{engine name="csrf"}
 
-	<h2> <i class="fa fa-search"></i> Search </h2>
-
-	<div class="">
-
-	</div>
-
 	<div class="searchBlock form-group well">
 		<h3>Select a form to search</h3>
 		<select name="formList" id="searchFormSelect">
@@ -27,10 +21,9 @@
 	</div>
 
 	<div class="dates form-group well">
-		<h3> Filter By Dates </h3>
 		<div class="start">
 			<label for="startDate">Start Date</label>
-			<input type="date" name="startDate" />
+			<input type="date" name="startDate" class="dateField"/>
 		</div>
 		<div class="end">
 			<label for="endDate">End Date</label>
@@ -39,7 +32,11 @@
 	</div>
 
 	<div class="search">
-		<input type="submit" name="search" value="search" />
+		<input type="submit" name="search" value="search" class="dateField"/>
 	</div>
 
 </form>
+
+<script>
+	$('.dateField').datepicker({});
+</script>

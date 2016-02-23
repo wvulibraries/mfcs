@@ -113,7 +113,7 @@ $engine->eTemplate("include","header");
 
 <section>
 	<header class="page-header">
-		<h1 class="page-title">List Objects {local var="subTitle"}</h1>
+		<h1 class="page-title"> <i class="fa fa-search"></i> Search </h1>
 	</header>
 
 	<ul class="breadcrumbs">

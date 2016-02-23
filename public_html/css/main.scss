@@ -988,28 +988,19 @@ li.alert-error {
   max-width:100%;
   margin:15px auto;
   background:#fff;
-  border:1px solid lighten(#A2AAAD,10%);
   padding:20px;
   box-shadow: rgba(0,0,0,0.3) 0px 1px 16px -1px;
   text-align:center;
-
-  @include breakpoint(tablet){
-    padding-bottom: 90px;
-  }
-
-  @include breakpoint(laptop){
-    padding-bottom:70px;
-  }
 
   h2 {
     display:block;
     color:#A2AAAD;
     font-size:200%;
-    margin:0 0 20px;
+    margin:0;
 
   }
 
-  div { padding:20px;}
+  div { padding:10px;}
 
   .well{
     background:rgba(#A2AAAD,.1);
@@ -1020,34 +1011,50 @@ li.alert-error {
     height:42px;
   }
 
-  h3 {
-    margin:0 0 20px;
+  h3,label {
+    margin:0 0 5px;
     padding:0;
+    font-size:14px;
     text-transform:uppercase;
     color: #A2AAAD;
+    font-weight:300;
+    line-height: 1;
   }
 
   @include breakpoint(laptop){
     text-align:left;
 
-    .searchBlock,.keywordBlock  {
-      width:49%;
-      input{margin:0;}
+    input, select {margin:0; height:35px !important;}
+
+    .searchBlock,.keywordBlock,.dates  {
+      width:25%;
       display:inline-block;
+      min-width:218px;
     }
-    .start,.end { width:49%; display:inline-block;}
-    .end {  margin-left:1.5%;}
+
+    .dates {
+      width:36%;
+      margin-left:1.5%;
+      min-width:309px;
+    }
+
+    .start {margin-right:10px;}
+    .start,.end { width:47%; display:inline-block; padding:0;}
 
     .keywordBlock{
-       margin-left:1.5%;
-      .keyword { width:54% !important; display:inline-block;}
-      select.form-control { width:41% !important; display:inline-block;}
+      width:35%;
+      display:inline-block;
+      margin-left:1.5%;
+      min-width:300px;
+      .keyword { width:60% !important; display:inline-block;}
+      select.form-control { width:33% !important; display:inline-block;}
     }
 
-    .search input {
-      margin:0;
+    .search{
+      padding:0;
+      //text-align:right;
+      input {height:auto !important; margin:0;}
     }
-
   }
 }
 
@@ -2080,4 +2087,128 @@ footer{
   margin:20px 0;
   &.Write { @extend .alert;  @extend .alert-success;}
   &.Read { @extend .alert;  @extend .alert-danger;}
+}
+
+
+// Date Picker Styles
+.ui-datepicker-header {
+    background: #9BD3DD;
+    font-weight: bold;
+    line-height: 1.6;
+    min-height: 34px;
+    color: #fff;
+    margin: 0 0 5px;
+    font-size: 16px;
+}
+
+.ui-datepicker {
+  display: block;
+  text-align: center;
+  font-family: "Helvetica";
+  color: #666;
+  background: #fff;
+  box-shadow: 0 0 8px #ccc;
+  margin:5px 0 0 10px;
+  border:2px solid $light-blue;
+}
+
+.date-block{
+  text-align: center;
+  background: #D54;
+  font-family: "Helvetica";
+  font-size: 18px;
+  padding: 10px;
+
+}
+
+.date-day{
+  font-size: 24pt;
+}
+.date-date{
+  font-size: 48pt;
+}
+
+.ui-datepicker-prev, .ui-datepicker-next {
+    display: inline-block;
+    font-family: FontAwesome;
+    width: 35px;
+    height: 32px;
+    text-align: center;
+    cursor: pointer;
+    background-color:none;
+    background-repeat: no-repeat;
+    position: relative;
+    color: transparent !important;
+}
+.ui-datepicker-prev {
+    float: left;
+    background-position: center -30px;
+}
+.ui-datepicker-next {
+    float: right;
+    background-position: center 0px;
+}
+
+.ui-datepicker-prev:before, .ui-datepicker-next:before {
+  content: "\f053";
+  display: block;
+  color: rgba(0,0,0,.3) !important;
+  padding-top:4px;
+}
+
+.ui-datepicker-next:before {
+  content: "\f054";
+}
+
+.ui-datepicker-year{
+  font-weight: normal;
+}
+
+.ui-datepicker-title{
+  padding-top:4px;
+  letter-spacing: 1px;
+  color:#666;
+}
+
+.ui-datepicker-calendar {
+  border-collapse:collapse;
+  width: 100%;
+  text-align: center;
+  background: #FAFAFA;
+  font-family: "Helvetica";
+  td, th { padding:0;}
+}
+.ui-datepicker td a{
+  text-decoration: none;
+}
+.ui-datepicker td a, .ui-datepicker td span{
+  display: block;
+  width: 100%;
+  font-size: 12px;
+  padding: 10px;
+  color: $blue;
+  display:block;
+}
+
+.ui-datepicker td span{
+  color: #BBB;
+}
+
+.ui-datepicker .ui-state-active {
+  background: #EEE;
+}
+.ui-datepicker .ui-state-highlight {
+  color: #666;
+  font-weight:bold;
+  border: 1px solid rgba($light-blue, 0.5);
+}
+
+
+.ui-datepicker td.past {
+  color:#ccc;
+}
+
+.ui-datepicker a:hover {
+  background: darken($light-blue, 20%);
+  color: #FFF;
 }
