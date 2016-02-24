@@ -418,7 +418,7 @@ function submitMetadataModal() {
         url: insertForm.attr("action")+"&ajax=true",
         dataType: "html",
         data: data,
-        async:   false,
+        async:   true,
         success: function(responseData) {
             console.log(responseData);
         },
