@@ -34,6 +34,7 @@
             <li><a href="{local var="siteRoot"}admin/obsoleteFileTypes/"> <i class="fa fa-angle-double-right"></i> Obsolete File Types </a></li>
             <li><a href="{local var="siteRoot"}admin/projects/"><i class="fa fa-angle-double-right"></i> Projects</a></li>
             <li><a href="{local var="siteRoot"}admin/readonly/"><i class="fa fa-angle-double-right"></i> Read Only</a></li>
+            <li><a href="{local var="siteRoot"}admin/reprocess/"><i class="fa fa-angle-double-right"></i> Reprocess</a></li>
             <li><a href="{local var="siteRoot"}admin/users/"><i class="fa fa-angle-double-right"></i> Users</a></li>
             <li><a href="{local var="siteRoot"}admin/watermarks/"> <i class="fa fa-angle-double-right"></i> Watermarks</a></li>
             
