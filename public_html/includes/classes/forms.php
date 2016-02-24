@@ -390,11 +390,24 @@ class forms {
 	public static function getFields($formID) {
 		if (($form = self::get($formID)) === FALSE) {
 			return FALSE;
-		}else{
+		}
+		else {
 			return $form['fields'];
 		}
 	}
 
+	public static function get_file_fields($formID) {
+		if (($fields = self::getFields($formID)) === FALSE) {
+			return FALSE;
+		}
+
+		$file_fields = array();
+		foreach ($fields as $field) {
+			if ($field['type'] == "file") $file_fields[] = $field;
+		}
+
+		return $file_fields;
+	}
 
 	public static function getFieldChoices($field) {
 
