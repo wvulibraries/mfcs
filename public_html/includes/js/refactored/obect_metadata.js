@@ -91,7 +91,7 @@ function submitMetadataModal() {
 function closeModal(event){
     event.preventDefault();
     $('#metadataModal').fadeOut().addClass('hide');
-    $('#metadataModalBody').html(defaultModalBody);
+    $('#metadataModalBody').empty();
     $('.bgCloak').hide();
     $('html,body').removeClass('modalBlockScroll');
 }
