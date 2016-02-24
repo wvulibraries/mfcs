@@ -138,6 +138,25 @@ class files {
 
 	}
 
+	public static function insert_into_processing_table($objectID,$fieldname,$state=1) {
+
+		$sql = sprintf("INSERT INTO `objectProcessing` (`objectID`,`fieldName`,`state`, `timestamp`) VALUES('%s','%s','%s','%s')",
+				mfcs::$engine->openDB->escape($objectID),
+				mfcs::$engine->openDB->escape($fieldname),
+				mfcs::$engine->openDB->escape($state),
+				time()
+				);
+			$sqlResult = mfcs::$engine->openDB->query($sql);
+
+			if (!$sqlResult['result']) {
+				errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+				return FALSE;
+			}
+
+			return TRUE;
+
+	}
+
 	private static function setProcessingState($rowID,$state) {
 
 		$sql       = sprintf("UPDATE `objectProcessing` SET `state`='%s' WHERE `ID`='%s'",
