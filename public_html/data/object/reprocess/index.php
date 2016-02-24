@@ -11,11 +11,12 @@ try {
 		throw new Exception($validate_return);
 	}
 
+	$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
+
 	// handle submission
 	if (isset($engine->cleanGet['MYSQL']['confirm']) &&
 		$engine->cleanGet['MYSQL']['confirm'] == $engine->cleanGet['MYSQL']['objectID']) {
 
-		$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
 		$fields = forms::get_file_fields($object['formID']);
 
 		log::insert("Object: Insert Object for Reprocessing",$engine->cleanGet['MYSQL']['objectID'],$object['formID']);
@@ -41,6 +42,7 @@ try {
 		$confirmed = TRUE;
 	}
 
+	localvars::add("object_idno",$object['idno']);
 	localvars::add("objectID",$engine->cleanGet['MYSQL']['objectID']);
 	localvars::add("php_self",$_SERVER['PHP_SELF']); // i should back-port the php_Self module to engine 3 (or upgrade MFCS to engine 4)
 
@@ -75,6 +77,8 @@ $engine->eTemplate("include","header");
 
 	<div class="row-fluid">
 		<?php if ($permissions === TRUE && $confirmed === FALSE) { ?>
+
+		<h2>Object IDNO: {local var="object_idno"}</h2>
 
 		<span class="delete_warning">
 			<p>You most likely DO NOT want to do this.</p>
