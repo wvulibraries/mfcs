@@ -119,7 +119,7 @@ $engine->eTemplate("include","header");
 	<ul class="breadcrumbs">
 			{local var="breadcrumbs"}
 			<li class="pull-right noDivider"><a href="{local var="siteRoot"}data/search/?reset=reset">Reset Search</a></li>
-			<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Searching"> <i class="fa fa-book"></i> Documentation</a></li>
+			<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Searching" target="_blank"> <i class="fa fa-book"></i> Documentation</a></li>
 	</ul>
 
 	{local var="results"}

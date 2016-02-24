@@ -68,7 +68,7 @@ $engine->eTemplate("include","header");
 		<li><a href="{local var="siteRoot"}">Home</a></li>
 		<li><a href="{local var="siteRoot"}dataEntry/selectForm.php">Select a Form</a></li>
 		<li><a href="{local var="siteRoot"}dataEntry/metadata.php?formID={local var="formID"}">{local var="formName"}</a></li>
-		<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Find-Duplicates"> <i class="fa fa-book"></i> Documentation</a></li>
+		<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Find-Duplicates" target="_blank"> <i class="fa fa-book"></i> Documentation</a></li>
 	</ul>
 
 

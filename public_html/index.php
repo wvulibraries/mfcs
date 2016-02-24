@@ -21,7 +21,7 @@ $engine->eTemplate("include","header");
 	<ul class="breadcrumbs">
 			<li><a href="/">Home</a></li>
 			<li></li>
-			<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki"> <i class="fa fa-book"></i> Documentation</a></li>
+			<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki" target="_blank"> <i class="fa fa-book"></i> Documentation</a></li>
 	</ul>
 
 	<?php if($permission_denied) { ?>

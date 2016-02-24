@@ -101,7 +101,7 @@ $engine->eTemplate("include","header");
 	<ul class="breadcrumbs">
 		<li><a href="{local var="siteRoot"}">Home</a></li>
 		<li><a href="{local var="siteRoot"}dashboard">Dashboard</a></li>
-		<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Permissions"> <i class="fa fa-book"></i> Documentation</a></li>
+		<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Permissions" target="_blank"> <i class="fa fa-book"></i> Documentation</a></li>
 	</ul>
 
 <h2 style="font-size: 150%; border-bottom: 1px solid #d4d4d4; padding: 0 0 10px 0;">User Permissions</h2>

@@ -114,7 +114,7 @@ $engine->eTemplate("include","header");
 		<?php if(mfcsPerms::isEditor($engine->cleanGet['MYSQL']['formID'])){ ?>
 			<li class="pull-right noDivider"><a href="{local var="siteRoot"}dataEntry/object.php?objectID={local var="objectID"}">Edit Object</a></li>
 		<?php } ?>
-		<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Object-Viewing"> <i class="fa fa-book"></i> Documentation</a></li>
+		<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Object-Viewing" target="_blank"> <i class="fa fa-book"></i> Documentation</a></li>
 	</ul>
 
 	<div class="container-fluid">
