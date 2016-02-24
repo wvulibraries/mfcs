@@ -889,6 +889,7 @@ class forms {
 											url: 'retrieveOptions.php',
 											dataType: 'json',
 											quietMillis: 300,
+											async: true,
 											data: function(term, page) {
 												return {
 													q: term,
@@ -1075,10 +1076,10 @@ class forms {
 
 		if (count($objects) > 0) {
 
-			// @todo -- we are modifying this so that we can scale. Large forms 
+			// @todo -- we are modifying this so that we can scale. Large forms
 			// are timing out because browsers are having difficulty submitting
-			// 15,000 input fields. 
-			// 
+			// 15,000 input fields.
+			//
 			// We are penalizing smaller forms to make larger forms work. it would
 			// be nice to allow smaller forms to be able to use the edit table.
 
@@ -1843,9 +1844,9 @@ class forms {
 		return $data;
 	}
 
-	// form is an already retrieved object. 
+	// form is an already retrieved object.
 	// @TODO, can we just do this in the "get" method? or will that break something?
-	// unit testing fail. 
+	// unit testing fail.
 	public static function associate_fields($form) {
 
 		$temp = array();

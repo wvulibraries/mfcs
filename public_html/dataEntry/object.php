@@ -379,7 +379,7 @@ $("form").submit(function(e){inForm = true;});
 $(window).on("beforeunload", function() {
 	if (!inForm) {
 		$.ajax({
-			url: "/includes/ajax/unlock.php?lockID="+{local var="lockID"},
+			url: "/includes/ajax/unlock.php?lockID={local var="lockID"}",
 			dataType: "json",
 			success: function(responseData) {
 			},

@@ -13,6 +13,8 @@ else {
 	$ajax = FALSE;
 }
 
+$ajaxSubmit = ($ajax && isset($engine->cleanGet['MYSQL']['submitForm']) ? true : false);
+
 $permissions = TRUE;
 
 try {
@@ -118,8 +120,11 @@ if (!$ajax) {
 
 	<div class="row-fluid">
 		{local var="form"}
-		<hr>
-		{local var="metadataEditTable"}
+
+		<?php if(!$ajaxSubmit){ ?>
+			<hr>
+			{local var="metadataEditTable"}
+		<?php } ?>
 	</div>
 
 	<?php } ?>

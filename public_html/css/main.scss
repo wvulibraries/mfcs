@@ -43,6 +43,7 @@ section {
 
 .container, .container-fluid {
   float:left;
+  width:100%;
 }
 
 form[name="updateForm"]{
@@ -310,23 +311,33 @@ table {
     padding:0;
   }
 
+  .modal-header {
+    position:absolute;
+    width:100%;
+    top:0;
+    height:50px;
+  }
+
   .modal-footer {
     position:absolute;
     width:100%;
     bottom:0;
-   // height:100px;
+    height:64px;
+    background: #fff;
   }
 
-  .modal-body {
+  .modal-body, .modalbody {
     padding:20px;
-    height:50%;
+    height:100%;
     overflow:auto;
+    position:relative;
     ul { list-style:none; margin:0; padding:0; }
   }
 }
 
 #metadataModalBody {
-  max-height:76%;
+  margin:50px 0 0;
+  height:100%;
 }
 
 #defaultValueVariables .modal-body {
