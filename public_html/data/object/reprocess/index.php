@@ -14,8 +14,11 @@ try {
 	// handle submission
 	if (isset($engine->cleanGet['MYSQL']['confirm']) &&
 		$engine->cleanGet['MYSQL']['confirm'] == $engine->cleanGet['MYSQL']['objectID']) {
+
 		$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
 		$fields = forms::get_file_fields($object['formID']);
+
+		log::insert("Object: Insert Object for Reprocessing",$engine->cleanGet['MYSQL']['objectID'],$object['formID']);
 
 		// start transactions
 		if (mfcs::$engine->openDB->transBegin("objects") !== TRUE) {
@@ -33,6 +36,8 @@ try {
 		mfcs::$engine->openDB->transCommit();
 		mfcs::$engine->openDB->transEnd();
 
+		errorHandle::successMsg("Object Inserted for Reprocessing");
+
 		$confirmed = TRUE;
 	}
 
@@ -45,7 +50,7 @@ catch(Exception $e) {
 	errorHandle::errorMsg($e->getMessage());
 }
 
-log::insert("Data Entry: Metadata: Delete Page",$engine->cleanGet['MYSQL']['objectID'],$engine->cleanGet['MYSQL']['formID']);
+log::insert("Object: View Object Reprocess page",$engine->cleanGet['MYSQL']['objectID']);
 
 localVars::add("results",displayMessages());
 
@@ -89,8 +94,6 @@ $engine->eTemplate("include","header");
 		<a class="delete_metadata_confirm" href="{local var="php_self"}?objectID={local var="objectID"}&confirm={local var="objectID"}"><i class="fa fa-arrow-circle-o-right"></i>Confirm Reprocessing</a> &nbsp;
 
 		<?php } else { ?>
-
-		<p>Object inserted for Reprocessing.</p>
 
 		<a href="{local var="siteRoot"}dataEntry/object.php?objectID={local var="objectID"}">Return to Object Editing page</a>
 
