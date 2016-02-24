@@ -70,6 +70,9 @@ try {
 
 		log::insert("Data Entry: Object: Successful Submission",localvars::get("newObjectID"),$form['ID']);
 
+		header(sprintf("Location: %sdataEntry/object.php?objectID=%s",localvars::get("siteRoot"),localvars::get("newObjectID")));
+		die();
+
 	}
 	else if (isset($engine->cleanPost['MYSQL']['updateForm'])) {
 		if (forms::submit($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']) === FALSE) {
@@ -77,6 +80,10 @@ try {
 		}
 
 		log::insert("Data Entry: Object: Successful update",$engine->cleanGet['MYSQL']['objectID'],$form['ID']);
+
+		objects::unlock($engine->cleanGet['MYSQL']['objectID']);
+		header(sprintf("Location: %sdataEntry/object.php?objectID=%s",localvars::get("siteRoot"),$engine->cleanGet['MYSQL']['objectID']));
+		die();
 	}
 	else if (isset($engine->cleanPost['MYSQL']['projectForm'])) {
 
