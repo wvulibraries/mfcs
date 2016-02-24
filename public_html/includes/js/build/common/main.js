@@ -400,7 +400,7 @@ function metadataModal(event){
         },
         error: function(jqXHR,error,exception) {
             $('#metadataModalBody').html("An Error has occurred: "+error);
-        }
+        },
     });
 }
 
@@ -410,30 +410,24 @@ function submitMetadataModal() {
 
     $('#metadataModalBody section').prepend(' <div class="successMessage">Please wait while your change is processed.  Once processed this window will close. </div>');
 
-    data           = insertForm.serialize() + "&submitForm=Submit";
+    data           = insertForm.serialize() + "&ajax=true&submitForm=Submit";
     metadataFormID = insertForm.data("formid");
+    var requestURL = insertForm.attr('action');
 
     $.ajax({
         type: "POST",
-        url: insertForm.attr("action")+"&ajax=true",
-        dataType: "html",
+        url: requestURL,
         data: data,
-        async:   true,
+        async: false,
         success: function(responseData) {
-            console.log(responseData);
         },
         error: function(jqXHR,error,exception) {
-            console.log("An Error has occurred: "+error);
             $("#metadataModalBody").html("An Error has occurred: "+error);
-        },
-        complete: function(){
-            console.log('completed');
-            $("#metadataModalBody").html();
-            $('.cancelButton').trigger('click');
-        },
+        }
+    }).done(function() {
+        $("#metadataModalBody").empty();
+        $("#metadataModal").find($('button.close')).trigger('click');
     });
-
-
 }
 
 
