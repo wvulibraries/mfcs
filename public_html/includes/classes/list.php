@@ -36,23 +36,29 @@ class listGenerator {
 	}
 
 	//@TODO this needs to completely replace the above function, after search is overhauled
-	public static function createAllObjectList_new() {
+	public static function createAllObjectList_new($provided_objects=NULL) {
 
 		$engine = mfcs::$engine;
 
-		//@TODO this should go into the objects class
-		$sql       = sprintf("SELECT COUNT(*) FROM `objects` WHERE `metadata`='0'");
-		$sqlResult = $engine->openDB->query($sql);
+		if (isnull($provided_objects)) {
+			//@TODO this should go into the objects class
+			$sql       = sprintf("SELECT COUNT(*) FROM `objects` WHERE `metadata`='0'");
+			$sqlResult = $engine->openDB->query($sql);
 
-		if (!$sqlResult['result']) {
-			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
-			return FALSE;
+			if (!$sqlResult['result']) {
+				errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+				return FALSE;
+			}
+
+			$object_count = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+			//end TODO
+			
+			$data_size                = $object_count["COUNT(*)"];
 		}
-
-		$object_count = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
-		//end TODO
-
-		$data_size                = $object_count["COUNT(*)"];
+		else {
+			$data_size = count($provided_objects);
+		}
+		
 
 		$userPaginationCount      = users::user('pagination',25); // how many items to display in the table
 		$pagination               = new pagination($data_size);
@@ -61,7 +67,13 @@ class listGenerator {
 									? $engine->cleanGet['MYSQL'][ $pagination->urlVar ]
 									: 1;
 		$startPos                 = $userPaginationCount*($pagination->currentPage-1);
-		$objects                  = objects::getObjects($startPos,$userPaginationCount,FALSE);
+
+		if (isnull($provided_objects)) {
+			$objects                  = objects::getObjects($startPos,$userPaginationCount,FALSE);
+		}
+		else {
+			$objects = array_slice($provided_objects, $startPos, $userPaginationCount);
+		}
 
 
 		$excludeFields = array("idno","file");

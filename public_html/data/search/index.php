@@ -34,6 +34,8 @@ else if (isset($engine->cleanPost['MYSQL']['search'])) {
 		sessionSet("searchResults","");
 		sessionSet("searchQuery", $engine->cleanPost['MYSQL']);
 
+		if (isset($engine->cleanPost['MYSQL']['thumbnail'])) sessionSet("searchThumbs",$engine->cleanPost['MYSQL']['thumbnail']);
+
 		log::insert("Data View: Search: Search",0,0,$engine->cleanPost['MYSQL']['query']);
 
 		header('Location: '.$_SERVER['PHP_SELF']);
@@ -83,7 +85,12 @@ else{
 	sessionDelete('searchPOST');
 }
 
-if(isset($results)) localvars::add("objectTable",listGenerator::createAllObjectList(0,50,NULL,$results));
+if (sessionGet("searchThumbs") == "true") {
+	if(isset($results)) localvars::add("objectTable",listGenerator::createAllObjectList_new($results));	
+}
+else {
+	if(isset($results)) localvars::add("objectTable",listGenerator::createAllObjectList(0,50,NULL,$results));
+}
 
 
 // build the search interface, we do this regardless of
