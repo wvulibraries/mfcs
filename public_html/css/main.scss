@@ -1041,7 +1041,7 @@ li.alert-error {
 
     input, select {margin:0; height:35px !important;}
 
-    .searchBlock,.keywordBlock,.dates  {
+    .searchBlock,.keywordBlock,.dates, .thumbs{
       width:25%;
       display:inline-block;
       min-width:218px;
@@ -1067,8 +1067,10 @@ li.alert-error {
 
     .search{
       padding:0;
+      width:74%;
+      display:inline-block;
       //text-align:right;
-      input {height:auto !important; margin:0;}
+      input {height:auto !important; margin:0; width:40% !important;}
     }
   }
 }
