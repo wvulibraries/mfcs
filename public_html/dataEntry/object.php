@@ -33,6 +33,13 @@ try {
 	}
 	/* End Parent Object 'Stuff' */
 
+	// do we have a previous successful submission that needs displayed?
+	$previous_submission = sessionGet("mfcs_previous_submission_result");
+	if (!is_empty($previous_submission)) {
+		errorHandle::successMsg($previous_submission);
+	}
+	sessionDelete("mfcs_previous_submission_result");
+
 	// Editor information
 	if (!isnull($engine->cleanGet['MYSQL']['objectID'])) {
 		revisions::history_created($engine->cleanGet['MYSQL']['objectID']);
@@ -70,6 +77,7 @@ try {
 
 		log::insert("Data Entry: Object: Successful Submission",localvars::get("newObjectID"),$form['ID']);
 
+		sessionset("mfcs_previous_submission_result","Object Created Successfully.");
 		header(sprintf("Location: %sdataEntry/object.php?objectID=%s",localvars::get("siteRoot"),localvars::get("newObjectID")));
 		die();
 
@@ -81,6 +89,7 @@ try {
 
 		log::insert("Data Entry: Object: Successful update",$engine->cleanGet['MYSQL']['objectID'],$form['ID']);
 
+		sessionset("mfcs_previous_submission_result","Object Updated Successfully.");
 		objects::unlock($engine->cleanGet['MYSQL']['objectID']);
 		header(sprintf("Location: %sdataEntry/object.php?objectID=%s",localvars::get("siteRoot"),$engine->cleanGet['MYSQL']['objectID']));
 		die();
