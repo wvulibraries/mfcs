@@ -1,5 +1,6 @@
 <?php
     localvars::add('siteRoot', "/");
+    localvars::add("csrf",$_SESSION['CSRF']);
 ?>
 
 <nav class="main-nav">
@@ -55,7 +56,7 @@
 
          <div>
             <li> <h3> Logout </h3> </li>
-            <li><a href="https://mfcsdev.lib.wvu.edu/engineIncludes/logout.php?csrf=d648314d45bbce117f76bdcdb0810aa0"> <i class="fa fa-user-times"></i> Logout</a></li>
+            <li><a href="{local var="siteRoot"}logout/?csrf={local var="csrf"}"> <i class="fa fa-user-times"></i> Logout</a></li>
         </div>
     </ul>
 </nav>
