@@ -190,7 +190,7 @@ class mfcsSearch {
 		}
 		else {
 
-			$sql = sprintf("SELECT `objects`.* FROM `objects` LEFT JOIN `objectsData` ON `objectsData`.`objectID`=`objects`.`ID` LEFT JOIN `forms` on `forms`.ID=`objects`.`formID` WHERE `forms`.`metadata`='0' AND %s %s %s %s ORDER BY LENGTH(objects.idno), `objects`.`idno`",
+			$sql = sprintf("SELECT `objects`.* FROM `objects` LEFT JOIN `objectsData` ON `objectsData`.`objectID`=`objects`.`ID` LEFT JOIN `forms` on `forms`.ID=`objects`.`formID` WHERE `forms`.`metadata`='0' AND %s %s %s %s GROUP BY `objects`.`idno` ORDER BY LENGTH(objects.idno), `objects`.`idno`",
 				$queryString,
 				$query_field,
 				$form_query,
