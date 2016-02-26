@@ -328,20 +328,26 @@ table {
 
   .modal-body, .modalbody {
     padding:20px;
-    height:100%;
     overflow:auto;
     position:relative;
+    top:50px;
+    height: -webkit-calc(100% - (50px + 64px));
+    height:    -moz-calc(100% - (50px + 64px));
+    height:         calc(100% - (50px + 64px));
     ul { list-style:none; margin:0; padding:0; }
   }
 }
 
 #metadataModalBody {
-  margin:50px 0 0;
-  height:100%;
+  height: -webkit-calc(100% - (50px + 64px));
+  height:    -moz-calc(100% - (50px + 64px));
+  height:         calc(100% - (50px + 64px));
 }
 
 #defaultValueVariables .modal-body {
-  height:90%;
+  height: -webkit-calc(100% - (50px + 64px));
+  height:    -moz-calc(100% - (50px + 64px));
+  height:         calc(100% - (50px + 64px));
 }
 
 .imagePreviewModal .modal-body {
