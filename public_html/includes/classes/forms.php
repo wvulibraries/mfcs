@@ -834,19 +834,26 @@ class forms {
 			// }
 			else if ($field['type'] == 'multiselect') {
 
+
 				$output .= '<div class="multiSelectContainer">';
 				$output .= sprintf('<select name="%s[]" id="%s" size="5" multiple="multiple">',
 					htmlSanitize($field['name']),
-					htmlSanitize($field['name'])
+					htmlSanitize(str_replace("/","_",$field['name']))
 				);
 
 				if (isset($object['data'][$field['name']]) && is_array($object['data'][$field['name']])) {
+
 					foreach ($object['data'][$field['name']] as $selectedItem) {
-						$tmpObj  = objects::get($selectedItem);
+						$tmpObj  = objects::get($selectedItem, true);
 						$output .= sprintf('<option value="%s">%s</option>',
 							htmlSanitize($selectedItem),
 							htmlSanitize($tmpObj['data'][$field['choicesField']])
 						);
+
+						// if the temp object is false then we have a problem
+						// if($tmpObj === false){
+						// 	errorHandle::newError("Can't get Object for Metadata Object", errorHandle::DEBUG);
+						// }
 					}
 				}
 
@@ -858,20 +865,20 @@ class forms {
 					}
 
 					$output .= sprintf('<select name="%s_available" id="%s_available" data-type="%s" data-formid="%s" data-fieldname="%s" %s onchange="addItemToID(\'%s\', this.options[this.selectedIndex]);">%s</select>',
-						htmlSanitize($field['name']),
+						htmlSanitize(str_replace("/","_",$field['name'])),
 						htmlSanitize($field['name']),
 						$field['type'],
 						$formID,
 						htmlSanitize($field['name']),
 						(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
-						htmlSanitize($field['name']),
+						htmlSanitize(str_replace("/","_",$field['name'])),
 						self::drawFieldChoices($field,$fieldChoices)
 					);
 				}
 				else {
 					$output .= sprintf('<input type="hidden" name="%s_available" id="%s_available" data-type="%s" data-formid="%s" data-fieldname="%s" %s>',
 						htmlSanitize($field['name']),
-						htmlSanitize($field['name']),
+						htmlSanitize(str_replace("/","_",$field['name'])),
 						$field['type'],
 						$formID,
 						htmlSanitize($field['name']),
@@ -901,8 +908,6 @@ class forms {
 											},
 											results: function(data, page) {
 												var more = (page * data.pageSize) < data.total;
-												console.log(data);
-
 												return {
 													results: data.options,
 													more: more
@@ -912,19 +917,21 @@ class forms {
 									})
 									.on('select2-selecting', function(e) {
 										addToID('%s', e.val, e.choice.text);
+										console.log(%s);
 									});
 							});
 						</script>",
-						htmlSanitize($field['name']),
+						htmlSanitize(str_replace("/","_",$field['name'])),
 						htmlSanitize($field['choicesForm']),
 						htmlSanitize($field['choicesField']),
-						htmlSanitize($field['name'])
+						htmlSanitize(str_replace("/","_",$field['name'])),
+						htmlSanitize(str_replace("/","_",$field['name']))
 					);
 				}
 
 				$output .= "<br />";
 				$output .= sprintf('<button type="button" onclick="removeFromList(\'%s\')" class="btn">Remove Selected</button>',
-					htmlSanitize($field['name'])
+					htmlSanitize(htmlSanitize(str_replace("/","_",$field['name'])))
 					);
 
 				$output .= "</div>";
