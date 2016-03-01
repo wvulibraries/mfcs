@@ -5,6 +5,16 @@ function get_select_by($id,$field) {
   return($object['data'][$field]);
 }
 
+function get_multiselect_by($ids,$field) {
+  $return = array();
+
+  foreach ((array)$ids as $id) {
+      $return[] = get_select_by($id,$field);
+  }
+
+  return $return;
+}
+
 function renderToOptions($option){
 	$returnValue = "";
 	foreach($option as $key => $value){
@@ -167,10 +177,10 @@ function json_format($json) {
       $i += $copyLen - 1;      // correct for the for(;;) loop
       continue;
     }
-    
+
     // Grab the next character in the string
     $char = substr($json, $i, 1);
-    
+
     // Are we inside a quoted string encountering an escape sequence?
     if (!$outOfQuotes && $prevChar === '\\') {
       // Add the escaped character to the result string and ignore it for the string enter/exit detection:
