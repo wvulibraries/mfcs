@@ -17,7 +17,7 @@ class objects {
 				return TRUE;
 
 			}
- 
+
 		}
 		else if (!isset($engine->cleanGet['MYSQL']['objectID']) && $required === FALSE) {
 			$engine->cleanGet['MYSQL']['objectID'] = NULL;
@@ -32,7 +32,7 @@ class objects {
 	}
 
 	public static function get($objectID=NULL,$ignoreCache=FALSE) {
-  
+
 		if (isnull($objectID)) {
 			return self::getObjects();
 		}
@@ -112,7 +112,7 @@ class objects {
 			return FALSE;
 		}
 
-		$engine = EngineAPI::singleton(); 
+		$engine = EngineAPI::singleton();
 
 		$sql       = sprintf("SELECT * FROM `objects` WHERE `parentID`='%s'",
 			$engine->openDB->escape($objectID)
@@ -132,7 +132,7 @@ class objects {
 		return($children);
 	}
 
-	// $range is an array. $range[0] is the start, $range[1], is the length. 
+	// $range is an array. $range[0] is the start, $range[1], is the length.
 	// Applies LIMIT $start,$length to SQL query
 	public static function getAllObjectsForForm($formID,$sortField=NULL,$metadata=TRUE,$range=NULL) {
 		$engine = EngineAPI::singleton();
@@ -147,13 +147,13 @@ class objects {
 		else {
 			// $sortField = " ORDER BY `objects`.`ID`";
 			$sortField = " ORDER BY `objects`.`ID`";
-		} 
- 
+		}
+
  		// If a range is provided, and the range is an array, and the first 2 indexes are valid integers
  		// and start is >= 0, and length is greater than 0
-		if (!isnull($range)              && 
-			is_array($range)             && 
-			validate::integer($range[0]) && 
+		if (!isnull($range)              &&
+			is_array($range)             &&
+			validate::integer($range[0]) &&
 			validate::integer($range[1]) &&
 			$range[0] >= 0               &&
 			$range[1] > 0
@@ -181,7 +181,7 @@ class objects {
 
 		$objects = array();
 		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-			$objects[] = self::buildObject($row,TRUE,$metadata);  
+			$objects[] = self::buildObject($row,TRUE,$metadata);
 		}
 
 		return $objects;
@@ -201,13 +201,13 @@ class objects {
 		else {
 			// $sortField = " ORDER BY `objects`.`ID`";
 			$sortField = "ORDER BY LENGTH(`idno`), `idno`";
-		} 
+		}
 
  		// If a range is provided, and the range is an array, and the first 2 indexes are valid integers
  		// and start is >= 0, and length is greater than 0
-		if (!isnull($range)              && 
-			is_array($range)             && 
-			validate::integer($range[0]) && 
+		if (!isnull($range)              &&
+			is_array($range)             &&
+			validate::integer($range[0]) &&
 			validate::integer($range[1]) &&
 			$range[0] >= 0               &&
 			$range[1] > 0
@@ -241,23 +241,23 @@ class objects {
 
 	}
 
-	// $sql is a complete sql statement, already sanitized. 
+	// $sql is a complete sql statement, already sanitized.
 	public static function getObjectsForSQL($sql,$metadata=TRUE) {
 
 		$sqlResult = mfcs::$engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-		
+
 		$objects = array();
 		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 			$objects[] = self::buildObject($row,TRUE,$metadata);
 		}
 
 		return $objects;
-		
+
 	}
 
 	public static function buildObject($row,$ignoreCache=FALSE,$metadata=TRUE) {
@@ -289,7 +289,7 @@ class objects {
 			if (($row['data'] = decodeFields($row['data'])) === FALSE) {
 				errorHandle::errorMsg("Error retrieving object.");
 				return FALSE;
-			} 
+			}
 
 			// **** objectsData table method for getting data
 			// if (($row['data'] = self::retrieveObjectData($row['ID'])) === FALSE) {
@@ -298,7 +298,7 @@ class objects {
 			// }
 
 			// **** objectsData, single query
-			// $object = $row[0]; 
+			// $object = $row[0];
 			// $data = array();
 			// foreach ($row as $fragment) {
 			// 	$data[$fragment['fieldName']] = ($fragment['encoded'] == "1")?decodeFields($fragment['value']):$fragment['value'];
@@ -322,10 +322,10 @@ class objects {
 	// objects is an array of objects
 	// sorts based on the title field defined for the form that created the objects
 	// objects are assumed to be from the same form
-	// 
-	//  if $sortField is blank, will sort on the title field. sortField overrides that. must be a valid 
+	//
+	//  if $sortField is blank, will sort on the title field. sortField overrides that. must be a valid
 	//  field in the data index
-	
+
 	public static function sort($objects,$sortField=NULL) {
 
 		if (isnull($sortField)) {
@@ -333,7 +333,7 @@ class objects {
 			$sortField = forms::getObjectTitleField($formID);
 		}
 
-		$tmp = Array(); 
+		$tmp = Array();
 
 		foreach($objects as &$object) {
 
@@ -341,14 +341,14 @@ class objects {
 				$tmp[] = &$object['idno'];
 			}
 			else {
-				$tmp[] = strtolower(&$object['data'][$sortField]); 
+				$tmp[] = strtolower(&$object['data'][$sortField]);
 			}
 		}
 
 		// @TODO after we can stop supporting 5.3 we should use the natural
 		// sort flag to this (first available in 5.4) ... remove the strtolower
 		// when switching to nat sort
-		array_multisort($tmp, $objects); 
+		array_multisort($tmp, $objects);
 
 		return $objects;
 
@@ -395,7 +395,7 @@ class objects {
 			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
 			return FALSE;
 		}
-		
+
 		// Insert into the database
 		$sql       = sprintf("INSERT INTO `objects` (parentID,formID,data,metadata,modifiedTime,createTime,modifiedBy,createdBy) VALUES('%s','%s','%s','%s','%s','%s','%s','%s')",
 			isset(mfcs::$engine->cleanPost['MYSQL']['parentID'])?mfcs::$engine->cleanPost['MYSQL']['parentID']:"0",
@@ -417,7 +417,7 @@ class objects {
 			errorHandle::newError(__METHOD__."() - ".$sql." -- ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-		
+
 		// Set the new object ID in a local variable
 		$objectID = $sqlResult['id'];
 		localvars::add("newObjectID",$objectID);
@@ -430,8 +430,8 @@ class objects {
 			errorHandle::newError(__METHOD__."() - inserting objects", errorHandle::DEBUG);
 			return FALSE;
 		}
-		
-	
+
+
 		// if it is an object form (not a metadata form)
 		// do the IDNO stuff
 		if ($form['metadata'] == "0") {
@@ -441,7 +441,7 @@ class objects {
 				errorHandle::newError(__METHOD__."() - no IDNO field for object form.", errorHandle::DEBUG);
 				return FALSE;
 			}
-		
+
 			// if the idno is managed by the system get a new idno
 			if ($idnoInfo['managedBy'] == "system") {
 				$idno = mfcs::$engine->openDB->escape(mfcs::getIDNO($formID));
@@ -610,7 +610,7 @@ class objects {
 			(isnull($modifiedTime))?time():$modifiedTime,
 			mfcs::$engine->openDB->escape(users::user('ID')),
 			mfcs::$engine->openDB->escape($objectID)
-			); 
+			);
 
 		$sqlResult = mfcs::$engine->openDB->query($sql);
 
@@ -620,7 +620,7 @@ class objects {
 
 			errorHandle::newError(__METHOD__."() - ".$sql." -- ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
-		}		
+		}
 
 		// Insert into the new data table
 		if (self::insertObjectData($objectID,$data,$formID) === FALSE) {
@@ -695,10 +695,10 @@ class objects {
 		return TRUE;
 	}
 
-	// $metadata needs to be an associative array that contains key value pairs that 
-	// match what a cleanPost would give. Data is expected to be RAW, will be sanitized 
+	// $metadata needs to be an associative array that contains key value pairs that
+	// match what a cleanPost would give. Data is expected to be RAW, will be sanitized
 	// when it gets put into place.
-	// 
+	//
 	// puts all the needed stuff into $cleanPost, then submits it using forms::submit
 	public static function add($formID,$metadata,$objectID = NULL) {
 
@@ -717,7 +717,7 @@ class objects {
 			http::setPost($I,$V);
 		}
 
-		// submit to forms::submit 
+		// submit to forms::submit
 		return forms::submit($formID,$objectID,TRUE);
 
 	}
@@ -768,7 +768,7 @@ class objects {
 			$engine->openDB->escape($objectID)
 			);
 		$sqlResult = $engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
@@ -787,12 +787,12 @@ class objects {
 			$engine->openDB->escape($projectID)
 			);
 		$sqlResult = $engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-		
+
 		return TRUE;
 
 	}
@@ -805,7 +805,7 @@ class objects {
 
 		$engine = EngineAPI::singleton();
 
-		// check locks. 
+		// check locks.
 		if (!locks::check_for_update($objectID,"object")) {
 			return FALSE;
 		}
@@ -821,7 +821,7 @@ class objects {
 			throw new Exception("Error removing all projects from Object.");
 		}
 
-		foreach ($projects as $projectID) { 
+		foreach ($projects as $projectID) {
 			if (self::addProject($objectID,$projectID) === FALSE) {
 				$engine->openDB->transRollback();
 				$engine->openDB->transEnd();
@@ -844,14 +844,14 @@ class objects {
 			mfcs::$engine->openDB->escape($objectID)
 			);
 		$sqlResult = mfcs::$engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
 
 		$data = array();
-	
+
 		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 			$data[$row['fieldName']] = ($row['encoded'] == "1")?decodeFields($row['value']):$row['value'];
 		}
@@ -922,9 +922,9 @@ class objects {
 	}
 
 	/**
-	 * Checks to see if an object is already being edited. 
+	 * Checks to see if an object is already being edited.
 	 * @param  INT $objectID objectID of object to check lock status of
-	 * @return BOOL  TRUE if object is locked, false otherwise. 
+	 * @return BOOL  TRUE if object is locked, false otherwise.
 	 */
 	public static function is_locked($objectID) {
 
@@ -935,7 +935,7 @@ class objects {
 	/**
 	 * Lock the current file
 	 * @param  INT $objectID ID of object to Lock
-	 * @return mixed           BOOL false if lock fails, otherwise lock ID. 
+	 * @return mixed           BOOL false if lock fails, otherwise lock ID.
 	 */
 	public static function lock($objectID) {
 
@@ -987,7 +987,7 @@ class objects {
 			mfcs::$engine->openDB->escape($formID)
 			);
 		$sqlResult = mfcs::$engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			mfcs::$engine->openDB->transRollback();
 			mfcs::$engine->openDB->transEnd();
@@ -996,12 +996,26 @@ class objects {
 			return FALSE;
 		}
 
+		$sql       = sprintf("DELETE FROM `objectsData` WHERE `objectID`='%s'",
+			mfcs::$engine->openDB->escape($objectID)
+			);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
+
+			errorHandle::errorMsg("Error deleting objects. Objects Data table.");
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
 		// end transactions
 		mfcs::$engine->openDB->transCommit();
 		mfcs::$engine->openDB->transEnd();
 
 		errorHandle::successMsg("Item successfully Deleted.");
-		
+
 		return TRUE;
 
 	}

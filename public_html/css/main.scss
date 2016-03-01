@@ -328,20 +328,26 @@ table {
 
   .modal-body, .modalbody {
     padding:20px;
-    height:100%;
     overflow:auto;
     position:relative;
+    top:50px;
+    height: -webkit-calc(100% - (50px + 64px));
+    height:    -moz-calc(100% - (50px + 64px));
+    height:         calc(100% - (50px + 64px));
     ul { list-style:none; margin:0; padding:0; }
   }
 }
 
 #metadataModalBody {
-  margin:50px 0 0;
-  height:100%;
+  height: -webkit-calc(100% - (50px + 64px));
+  height:    -moz-calc(100% - (50px + 64px));
+  height:         calc(100% - (50px + 64px));
 }
 
 #defaultValueVariables .modal-body {
-  height:90%;
+  height: -webkit-calc(100% - (50px + 64px));
+  height:    -moz-calc(100% - (50px + 64px));
+  height:         calc(100% - (50px + 64px));
 }
 
 .imagePreviewModal .modal-body {
@@ -485,7 +491,7 @@ table {
 // ===========================================================================================
 .panel-heading {
   position:relative;
-  height: 60px;
+  height: 40px;
 
   p {
     font-size: 12px;
@@ -506,14 +512,14 @@ table {
     display:inline-block;
     width:50%;
     @include breakpoint(tablet){
-      width:70%;
+      width:50%;
     }
   }
 
   .metadataListAccordionToggle{
     color:#333;
     border-left:1px solid #ccc;
-    height:60px;
+    height:40px;
     padding:10px 20px;
     margin-top:-10px;
     &:hover,&:active, &:focus { border-bottom:0; color:#333; text-decoration:none;}
@@ -540,19 +546,21 @@ table {
 
 .panelHasDescription.panel-heading{
 
-  @include breakpoint(tablet){
-    height: 70px;
+  p { display:none;}
 
-    .metadataListAccordionToggle{
-      height:70px;
-      padding:25px 20px;
-    }
-  }
+  // @include breakpoint(tablet){
+  //   height: 70px;
 
-  @include breakpoint(laptop){
-    height:60px;
-    .metadataListAccordionToggle{ height:60px; padding:20px 20px; }
-  }
+  //   .metadataListAccordionToggle{
+  //     height:70px;
+  //     padding:25px 20px;
+  //   }
+  // }
+
+  // @include breakpoint(laptop){
+  //   height:60px;
+  //   .metadataListAccordionToggle{ height:60px; padding:20px 20px; }
+  // }
 }
 
 #formListAccordion{
