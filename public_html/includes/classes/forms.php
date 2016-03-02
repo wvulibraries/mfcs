@@ -1856,17 +1856,27 @@ class forms {
 	// unit testing fail.
 	public static function associate_fields($form) {
 
-		$temp = array();
-		foreach ($form['fields'] as $field) {
-
-			$temp[$field['name']] = $field;
-
-		}
-
-		$form['fields'] = $temp;
+		$form['fields'] = self::rebuild_form_fields($form['fields']);
 
 		return $form;
 
+	}
+
+	// This returns an array with the same fields, in the same order, but with the
+	// field name as the index to the field.
+	public static function rebuild_form_fields($fields) {
+
+		if (!is_array($fields)) {
+			return false;
+		}
+
+		$new_fields = array();
+
+		foreach ($fields as $field) {
+			$new_fields[$field['name']] = $field;
+		}
+
+		return $new_fields;
 	}
 
 }
