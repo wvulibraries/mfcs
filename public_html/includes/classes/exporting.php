@@ -55,11 +55,11 @@ class exporting {
 
 	}
 
-	public static function determine_metadataStandard($field) {
+	public static function determine_metadataStandard($field,$target_schema) {
 
 		$items = array_map("trim",explode(":",$field['metadataStandard']));
 
-		if (is_empty($items[0]) || is_empty($items[1]) || $items[0] != "DC") {
+		if (is_empty($items[0]) || is_empty($items[1]) || $items[0] != $target_schema) {
 			return false;
 		}
 
