@@ -57,6 +57,8 @@ class exporting {
 
 	public static function determine_metadataStandard($field,$target_schema) {
 
+		if (!isset($field['metadataStandard'])) return array();
+
 		$items = array_map("trim",explode(":",$field['metadataStandard']));
 
 		if (is_empty($items[0]) || is_empty($items[1]) || $items[0] != $target_schema) {
@@ -115,7 +117,7 @@ class exporting {
 			$data = sprintf("%s %s",$dc_fields[$field_name]["options"]["append"],$data);
 		}
 
-		if (class_exists("cleanup")) $data = cleanup::clean($data);
+		if (class_exists("cleanup",false)) $data = cleanup::clean($data);
 
 		return $data;
 
