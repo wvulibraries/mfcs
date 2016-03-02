@@ -28,5 +28,6 @@ require_once "classes/virus.php";
 
 require_once "class.tesseract_ocr.php";
 
+if (file_exists("classes/cleanup_mapping.php")) require_once "classes/cleanup_mapping.php"; 
 
 ?>
