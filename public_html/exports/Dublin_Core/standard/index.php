@@ -76,7 +76,8 @@ try {
       if (strtolower($form_fields[$name]["publicRelease"]) == "false") continue;
 
       // if the data schema options are set to discard, don't do anything with it.
-      if (isset($dc_fields[$name]['options']['discard']) && $dc_fields[$name]['options']['discard'] == "true") continue;
+      // if "nocombine" is set in the query string, discard is ignored
+      if (!isset($engine->cleanGet['MYSQL']['nocombine']) && isset($dc_fields[$name]['options']['discard']) && $dc_fields[$name]['options']['discard'] == "true") continue;
 
       if (isset($dc_fields[$name])) {
 
@@ -96,7 +97,7 @@ try {
         else {
 
           // Handle Combines
-          if (isset($dc_fields[$name]["options"]["combine"])) {
+          if (isset($dc_fields[$name]["options"]["combine"]) && !isset($engine->cleanGet['MYSQL']['nocombine'])) {
 
             $temp_data = array();
             foreach ($dc_fields[$name]["options"]["combine"] as $combine_field) {
