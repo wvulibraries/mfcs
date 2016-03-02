@@ -115,6 +115,8 @@ class exporting {
 			$data = sprintf("%s %s",$dc_fields[$field_name]["options"]["append"],$data);
 		}
 
+		if (class_exists("cleanup")) $data = cleanup::clean($data);
+
 		return $data;
 
 	}
