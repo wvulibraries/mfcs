@@ -17,9 +17,13 @@ try {
   $dc_fields = array();
   foreach ($form['fields'] as $field) {
     if (($return = exporting::determine_metadataStandard($field,"DC")) !== false) {
-      $dc_fields[$field['name']] = $return;
+      if (count($return) > 0) $dc_fields[$field['name']] = $return;
     }
 
+  }
+
+  if (count($dc_fields) == 0) {
+    die("Form doesn't have Dublin Core fields defined");
   }
 
   $time = time();
