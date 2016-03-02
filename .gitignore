@@ -4,19 +4,15 @@
 /public_html/javascript/distribution
 sessionLogin.php
 *mfcs.sql*
-<<<<<<< HEAD
 SQLFiles/dump
 public_html/includes/.sass-cache
-=======
 3.1
 SQLFiles/mfcs.2014.12.13.post.sql
 SQLFiles/dump
 .sass-cache
->>>>>>> origin/master
 public_html/includes/css/base.css.map
 SQLFiles/runMigrations.sh
 SQLFiles/setMaxPacket.sql
 node_modules
 public_html/testVids.php
 testVids
-exports
