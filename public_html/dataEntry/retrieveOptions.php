@@ -30,7 +30,8 @@ try {
 		throw new Exception("Missing Field Name.");
 	}
 
-	$search   = isset($engine->cleanGet['MYSQL']['q'])        ? $engine->cleanGet['MYSQL']['q']        : NULL;
+	// search has to be raw, so that things like apostrophe's aren't escaped
+	$search   = isset($engine->cleanGet['RAW']['q'])          ? $engine->cleanGet['RAW']['q']        : NULL;
 	$page     = isset($engine->cleanGet['MYSQL']['page'])     ? $engine->cleanGet['MYSQL']['page']     : 1;
 	$pageSize = isset($engine->cleanGet['MYSQL']['pageSize']) ? $engine->cleanGet['MYSQL']['pageSize'] : 2000;
 	$options  = array();
