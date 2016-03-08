@@ -56,8 +56,6 @@ try {
 	localvars::add("formName",$form['title']);
 	localvars::add("formID",$form['ID']);
 
-	log::insert("Data Entry: Object: View Page",$engine->cleanGet['MYSQL']['objectID'],$form['ID']);
-
 	// handle submissions
 	if (isset($engine->cleanPost['MYSQL']['checksum_submit'])) {
 		log::insert("Data Entry: Object: Checksum Submission",$engine->cleanGet['MYSQL']['objectID'],$form['ID']);
@@ -200,6 +198,7 @@ forms::checkFormInCurrentProjects($engine->cleanGet['MYSQL']['formID']);
 localvars::add("actionHeader",(isnull($engine->cleanGet['MYSQL']['objectID']))?"Add":"Edit");
 localvars::add("parentHeader",(isnull($parentObject))?"":"<h2>Adding Child to Parent '".$parentObject['data'][$form['objectTitleField']]."'</h2>");
 
+log::insert("Data Entry: Object: View Page",$engine->cleanGet['MYSQL']['objectID'],$form['ID']);
 
 $engine->eTemplate("include","header");
 ?>
