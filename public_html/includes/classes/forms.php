@@ -687,23 +687,24 @@ class forms {
 					$output .= sprintf('<script type="text/javascript" src="%sincludes/js/CKEditor/ckeditor.js"></script>',
 						localvars::get("siteRoot")
 					);
-					$output .= '<script type="text/javascript">';
-					$output .= sprintf('if (CKEDITOR.instances["%s"]) { CKEDITOR.remove(CKEDITOR.instances["%s"]); }',
+					$output .= '<script type="text/javascript">$(function(){';
+					$output .= sprintf('if (CKEDITOR.instances["%s"]){ CKEDITOR.remove(CKEDITOR.instances["%s"]); }',
 						htmlSanitize($field['id']),
 						htmlSanitize($field['id'])
 					);
-					$output .= sprintf('CKEDITOR.replace("%s");',
+					$output .= sprintf(' CKEDITOR.replace("%s"); ',
 						htmlSanitize($field['id'])
 					);
 
 					$output .= 'htmlParser = "";';
-					$output .= 'if (CKEDITOR.instances["'.$field['name'].'"].dataProcessor) {';
-					$output .= sprintf('    htmlParser = CKEDITOR.instances["%s"].dataProcessor.htmlFilter;',
+					$output .= '';
+					$output .= sprintf('if(CKEDITOR.instances["%s"].dataProcessor){ CKEDITOR.instances["%s"].dataProcessor.htmlFilter;}',
+						$field['name'],
 						htmlSanitize($field['id'])
 					);
-					$output .= '}';
 
-					$output .= '</script>';
+					$output .= '});</script>';
+
 				}
 
 			}
@@ -1056,7 +1057,6 @@ class forms {
 	}
 
 	private static function getFieldValue($field,$object) {
-
 		$field['value'] = convertString($field['value']);
 
 		if (self::hasFieldVariables($field['value'])) {
@@ -1066,7 +1066,6 @@ class forms {
 		return isset($object['data'][$field['name']])
 			? htmlSanitize(convertString($object['data'][$field['name']]))
 			: htmlSanitize(self::applyFieldVariables($field['value']));
-
 	}
 
 	// @TODO it doesnt look like the edit table is honoring form creator choices on

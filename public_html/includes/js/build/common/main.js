@@ -228,7 +228,7 @@ $(function(){
 
     // Navigation Tabs
     if($('.nav-tabs').length){
-        $(".nav-tabs a:first").tab("show");
+        $(".nav-tabs a").first().tab("show");
     }
 
     // add required to fields
