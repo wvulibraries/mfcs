@@ -52,13 +52,13 @@ class listGenerator {
 
 			$object_count = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 			//end TODO
-			
+
 			$data_size                = $object_count["COUNT(*)"];
 		}
 		else {
 			$data_size = count($provided_objects);
 		}
-		
+
 
 		$userPaginationCount      = users::user('pagination',25); // how many items to display in the table
 		$pagination               = new pagination($data_size);
@@ -118,6 +118,24 @@ class listGenerator {
 				);
 		}
 		$output .= '</div>';
+
+		return $output;
+	}
+
+	public static function createFormDropDownList(){
+		$engine = EngineAPI::singleton();
+		$forms  = forms::getForms(TRUE,TRUE);
+		$output = '<div class="selectForm"><select><option value> Select A Form </option>';
+
+		foreach ($forms as $form) {
+			if($form ===  FALSE || !mfcsPerms::isViewer($form['ID'])) continue;
+			$output .= sprintf('<option value="%s"> %s </option>',
+				$form['ID'],
+				forms::title($form['ID'])
+			);
+		}
+
+		$output .= '</select></div>';
 
 		return $output;
 	}
