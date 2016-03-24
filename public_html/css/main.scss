@@ -2237,3 +2237,16 @@ footer{
   background: darken($light-blue, 20%);
   color: #FFF;
 }
+
+
+.batchUpload{
+  .group {
+      border:1px solid darken($lightgrey,5%);
+      padding:20px;
+      margin-bottom:20px;
+      display:block;
+      float:left;
+      width:100%;
+      background: lighten($lightgrey,3%);
+  }
+}
