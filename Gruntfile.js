@@ -1,12 +1,5 @@
 module.exports = function(grunt) {
-
-  var jsPath  = '';
-  var cssPath = '';
-
-  // Configure Grunt
   grunt.initConfig({
-
-    // base configure
     pkg: grunt.file.readJSON('package.json'),
 
     // SASS
@@ -21,23 +14,11 @@ module.exports = function(grunt) {
       }
     },
 
-    // // js concat
-    // concat: {
-    //   dist: {
-    //     src: [
-    //       'public_html/includes/js/libs/jquery*.js',
-    //       'public_html/includes/js/libs/bootstrap.js',
-    //       'public_html/includes/js/refactored/*.js',
-    //     ],
-    //     dest: 'public_html/includes/js/build/production.js',
-    //   }
-    // },
-
     // js concat
     concat: {
       dist: {
         files:[
-            // Creates all the public libraries jquery/bootstrap/etc
+            // Libs
             { src: [
                 'public_html/includes/js/libs/jquery*.js',
                 'public_html/includes/js/libs/bootstrap.js',
@@ -46,28 +27,39 @@ module.exports = function(grunt) {
             },
             // CreatesForm JS
             { src:[
-                'public_html/includes/js/refactored/createForm_form.js',
-                'public_html/includes/js/refactored/createForm_formPermissions.js',
-                'public_html/includes/js/refactored/createForm_NavigationCreator.js',
-                'public_html/includes/js/refactored/fineUploaderInit.js'
+                'public_html/includes/js/develop/createForm_form.js',
+                'public_html/includes/js/develop/createForm_formPermissions.js',
+                'public_html/includes/js/develop/createForm_NavigationCreator.js',
+                'public_html/includes/js/develop/fineUploaderInit.js'
               ],
               dest: 'public_html/includes/js/build/formBuilder/formBuilder.js',
             },
             // App Wide JS
             { src:[
-                'public_html/includes/js/refactored/currentProjects.js',
-                'public_html/includes/js/refactored/filePreview.js',
-                'public_html/includes/js/refactored/commonAppJS.js',
-                'public_html/includes/js/refactored/obect_metadata.js',
-                'public_html/includes/js/refactored/object_dataEntry.js',
-                'public_html/includes/js/refactored/selectForm_dataEntry.js',
-                'public_html/includes/js/refactored/fineUploaderInit.js'
+                'public_html/includes/js/develop/currentProjects.js',
+                'public_html/includes/js/develop/filePreview.js',
+                'public_html/includes/js/develop/commonAppJS.js',
               ],
               dest: 'public_html/includes/js/build/common/main.js'
             },
+             // DataEntry/View/Etc
+            { src:[
+                'public_html/includes/js/develop/obect_metadata.js',
+                'public_html/includes/js/develop/object_dataEntry.js',
+                'public_html/includes/js/develop/selectForm_dataEntry.js',
+                'public_html/includes/js/develop/fineUploaderInit.js'
+              ],
+              dest: 'public_html/includes/js/build/object/object.js'
+            },
+            // Batch Upload
+            { src:[
+                'public_html/includes/js/develop/batchUpload.js',
+              ],
+              dest: 'public_html/includes/js/build/batchUpload/batchUpload.js'
+            },
             // Revisions Page
             { src:[
-                'public_html/includes/js/refactored/revisions.js',
+                'public_html/includes/js/develop/revisions.js',
               ],
               dest: 'public_html/includes/js/build/revision/revisions.js'
             }
@@ -104,7 +96,7 @@ module.exports = function(grunt) {
         livereload: true,
       },
       scripts: {
-        files: ['public_html/includes/js/refactored/*.js'],
+        files: ['public_html/includes/js/develop/*.js'],
         tasks: ['concat', 'uglify'],
       },
       css: {
