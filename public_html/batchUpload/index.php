@@ -9,7 +9,7 @@ if(!mfcsPerms::evaluatePageAccess(1)){
 }
 
 // Batch Uploading Logs
-// log::insert("BatchUpload",0,0, "Batch upload screen was loaded.");
+log::insert("BatchUpload",0,0, "Batch upload screen was loaded.");
 
 // Setup Form lists
 localVars::add("formList", listGenerator::createFormDropDownList());
@@ -33,9 +33,11 @@ localVars::add("formList", listGenerator::createFormDropDownList());
     </ul>
 
     <div class="row-fluid batchUpload">
-        <div class="span6">
+        <form action="/batchUpload/processUpload" method="post">
+
+        <div class="span4">
             <h2> Upload Here </h2>
-            <div class="selectFormContainer group control-group">
+            <div id="selectFormID" class="selectFormContainer group control-group">
                 <label> Select Form to Upload To </label>
                 {local var="formList"}
             </div>
@@ -43,8 +45,8 @@ localVars::add("formList", listGenerator::createFormDropDownList());
             <h3> Metadata From Filename? </h3>
             <div class="selectFormContainer group control-group">
                 <label for="regExBool"> <input type="checkbox" name="regExBool" id="regExBool" value="value"/> Use RegEx to parse filename? </label>
-                <br>
                 <div class="toggleRegEx hide">
+                    <br>
                     <div class="alert alert-warning"><p> Please read all documentation before attempting to use the regular expressions to parse filenames.  All file names must be similar or the metadata will not be correct. </p> </div>
 
                     <label for="exampleFileName"> Example File Name </label>
@@ -59,67 +61,50 @@ localVars::add("formList", listGenerator::createFormDropDownList());
                     <div class="regExPreview pull-left"></div>
                 </div>
             </div>
+
+
+            <div id="batchUploadFiles" class="uploadFiles" style="display: inline-block;">
+                <div class="fineUploader" style="display: inline-block;">
+                    <div class="qq-uploader">
+                        <div class="qq-upload-drop-area" style="display: none;">
+                            <div class="uploadText">
+                                <i class="fa fa-dropbox fa-4x"></i><br>
+                                <br>
+                                Drop Files Here
+                            </div>
+                        </div>
+                        <div class="qq-upload-button" style="position: relative; overflow: hidden; direction: ltr;">
+                            <div>
+                                <div class="uploadText">
+                                    <i class="fa fa-upload fa-4x"></i><br>
+                                    Drag or Click Here<br>
+                                    To Upload Files
+                                </div>
+                            </div>
+                            <input name="file" style="position: absolute; right: 0px; top: 0px; font-family: Arial; font-size: 118px; margin: 0px; padding: 0px; cursor: pointer; opacity: 0;" type="file" />
+                        </div>
+                        <span class="qq-drop-processing">
+                            <span>Processing files...</span>
+                            <span class="qq-drop-processing-spinner"></span>
+                        </span>
+
+                        <ul class="qq-upload-list"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <input type="submit" class="btn pull-left batchSubmit"/>
         </div>
 
-        <div class="span6">
+        <div class="span8 batchUploadScreen">
             <h2> Form Preview </h2>
-            <p> Modify Me </p>
+            <!-- Preview will appear here -->
+            <div id="batchFormPreview"> </div>
         </div>
+
+        </form>
     </div>
 </section>
-
-<script>
-    $('#regExBool').change(function(){
-        if ($(this).is(':checked')) {
-            $('.toggleRegEx').removeClass('hide');
-        } else {
-            $('.toggleRegEx').addClass('hide');
-        }
-    });
-
-    $('.previewRegEx').click(function(){
-        var filename = $('#exampleFileName').val();
-        var regEx    = $('#regEx').val();
-
-        $('.regExPreview').html('');
-
-        $.ajax({
-            dataType: 'json',
-            url:'/batchUpload/regExTester',
-            data: { filename: filename, regex: regEx },
-            success:function(){
-                console.log('success');
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log(textStatus + ': ' + errorThrown);
-            },
-            complete:function(data){
-                var jsonData = data.responseJSON;
-                jsonData.shift();
-
-                var html = "<h2> Regular Expression Preview </h2>";
-
-                html += "<p> The following is a preview of the regular expressions that will be used in parsing your file name.  Use the variables in the form preview to setup the data automatically. </p>";
-
-                html += "<p><strong> Example Filename : </strong>" + filename + "</p>";
-                html += "<p><strong> RegEx Given : </strong>" + regEx + "</p>";
-
-                html += "<em><srong> Variable </strong> = Value</em>";
-
-                for(var i = 0; i < jsonData.length; i++){
-                   console.log(jsonData);
-                   html += "<p>";
-                   html += "<strong>{" + i + "}</strong> = " + jsonData[i].toString();
-                   html += "</p>";
-                }
-
-                $('.regExPreview').html(html);
-            }
-       });
-
-    });
-
-</script>
 
 <?php
 $engine->eTemplate("include","footer");
