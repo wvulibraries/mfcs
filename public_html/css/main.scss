@@ -698,6 +698,7 @@ input{
     cursor: not-allowed;
     opacity:.6;
     background:$lightgrey;
+    border: 1px solid #ccc;
     &:focus { border: 1px solid #ccc;}
   }
 
@@ -1922,7 +1923,7 @@ footer{
   margin-right:0;
 }
 
-// Tim's Hacks
+// Tim's
 // =============================================================================
 
 #delete_metadata_link {
@@ -2115,7 +2116,9 @@ footer{
 }
 
 
-// Date Picker Styles
+
+// Date pickers Stylings
+// =============================================================================
 .ui-datepicker-header {
     background: #9BD3DD;
     font-weight: bold;
@@ -2238,7 +2241,8 @@ footer{
   color: #FFF;
 }
 
-
+// Batch Upload
+// =============================================================================
 .batchUpload{
   .group {
       border:1px solid darken($lightgrey,5%);
@@ -2248,5 +2252,32 @@ footer{
       float:left;
       width:100%;
       background: lighten($lightgrey,3%);
+  }
+}
+
+.batchUploadScreen {
+  padding:0 20px;
+
+  h2 {
+    padding-bottom:20px;
+    border-bottom:1px solid darken($lightgrey,5%);
+  }
+
+  blockquote {
+    font-size:14px;
+    letter-spacing:1px;
+    color:#666;
+    border:none;
+    font-style: italic;
+    padding:10px 5px;
+  }
+}
+
+input[type=submit].batchSubmit {
+  margin:0 !important;
+
+  @include breakpoint(tablet){
+    margin-top:20px !important;
+    width: 100% !important;
   }
 }
