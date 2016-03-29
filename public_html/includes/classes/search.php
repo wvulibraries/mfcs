@@ -6,23 +6,20 @@ class mfcsSearch {
 	private $pattern = "/\{mfcsSearch\s+(.+?)\}/";
 	private $function = "mfcsSearch::templateMatches";
 
-	function __construct() {		
+	function __construct() {
 		mfcs::$engine->defTempPattern($this->pattern,$this->function,$this);
 	}
 
 	public static function buildInterface() {
-
-		$searchInterface = file_get_contents("../../includes/templates/searchInterfaceTemplate.html");
-
-		return ($searchInterface);
-
+		$root = $_SERVER["DOCUMENT_ROOT"];
+		return file_get_contents($root."/includes/templates/searchInterfaceTemplate.html");
 	}
 
 
 	public static function templateMatches($matches) {
 		$search   = mfcs::$engine->retTempObj("mfcsSearch");
 		$attPairs = attPairs($matches[1]);
-		
+
 		$output = "Error in mfcsSearch";
 
 		switch($attPairs['name']) {
@@ -204,7 +201,7 @@ class mfcsSearch {
 
 			$objects = array();
 			foreach (objects::getObjectsForSQL($sql) as $object) {
-				
+
 				if (mfcsPerms::isViewer($object['formID'])) $objects[] = $object;
 
 			}
