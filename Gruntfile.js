@@ -54,6 +54,7 @@ module.exports = function(grunt) {
             // Batch Upload
             { src:[
                 'public_html/includes/js/develop/batchUpload.js',
+                'public_html/includes/js/develop/helperFunctions.js',
               ],
               dest: 'public_html/includes/js/build/batchUpload/batchUpload.js'
             },
@@ -62,7 +63,13 @@ module.exports = function(grunt) {
                 'public_html/includes/js/develop/revisions.js',
               ],
               dest: 'public_html/includes/js/build/revision/revisions.js'
-            }
+            },
+            // Batch Upload
+            { src:[
+                'public_html/includes/js/develop/moveObjects.js',
+              ],
+              dest: 'public_html/includes/js/build/batchUpload/moveObjects.js'
+            },
         ]
       }
     },
