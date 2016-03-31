@@ -1,6 +1,6 @@
 <?php
 // header
-include("../header.php");
+include("../../../header.php");
 $engine->eTemplate("include","header");
 
 //Permissions Access

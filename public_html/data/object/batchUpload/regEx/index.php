@@ -1,6 +1,6 @@
 <?php
 // header
-include("../../header.php");
+include("../../../../header.php");
 
 if(isset($engine->cleanGet['MYSQL']['regex']) && isset($engine->cleanGet['MYSQL']['filename'])){
     $regEx = stripslashes($engine->cleanGet['MYSQL']['regex']);
