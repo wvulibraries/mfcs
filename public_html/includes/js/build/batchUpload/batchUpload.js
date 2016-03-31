@@ -19,7 +19,7 @@ $(function(){
     	} else {
     		$.ajax({
     			dataType:'json',
-    			url:'http://localhost:8080/api/1.0/get/form/spec/',
+    			url:'/api/1.0/get/form/spec/',
     			data:{id: ID},
 
     			success:function(){
@@ -217,9 +217,6 @@ function fineUploaderBatch(uploadData){
     $('.fineUploader').parent().addClass('uploadFiles');
     $('.qq-upload-drop-area').html('<div class="uploadText"> <i class="fa fa-dropbox fa-4x"></i> <br><br> Drop Files Here </div>');
 }
-
-
-
 
 // ===================================================================
 // ===================================================================
@@ -519,3 +516,11 @@ function fineUploaderBatch(uploadData){
 
         return utftext;
       }
+
+
+// Is Blank
+// tests to see if the string is null, nan, undefined or empty
+// returns bool true or false
+function isBlank(str) {
+    return (!str || /^\s*$/.test(str));
+}
