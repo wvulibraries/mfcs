@@ -3,9 +3,7 @@
 class listGenerator {
 
 	public static function createInitialSelectList() {
-
 		return file_get_contents("includes/listTemplates/initialSelectList.php");
-
 	}
 
 	public static function createAllObjectList($start=0,$length=50,$orderBy=NULL,$objects=NULL) {
@@ -729,6 +727,40 @@ class listGenerator {
 		return $objects;
 	}
 
+
+	public static function moveObjectListResults($objects, $thumbs = false) {
+
+		$engine = mfcs::$engine;
+
+		// if no results display no results
+		if (isnull($objects)) {
+			return "<div class='no-results'> <p> There were no results generated to move to the form, please refine your search and try again. </p> </div>";
+		}
+
+
+		$thumbHeaders   = array("","Creation Date","Modified Date","System IDNO","Form IDNO", "Thumbnail");
+		$noThumbHeaders = array("","Creation Date","Modified Date","System IDNO","Form IDNO");
+		$headers        = ($thumbs == true ? $thumbHeaders : $noThumbHeaders);
+
+		$data    = array();
+		foreach ($objects as $object) {
+			$tmp = array(
+				sprintf('<input type="checkbox" class="moveObjectCheckbox" value="%s" />', $object['ID']),
+				date("Y-m-d h:ia",$object['createTime']),
+				date("Y-m-d h:ia",$object['modifiedTime']),
+				$object['ID'],
+				$object['idno'],
+			);
+
+			if($thumbs == true){
+				array_push($tmp, sprintf('<img src="%s" />', files::buildThumbnailURL($object['ID'])));
+			}
+
+			$data[] = $tmp;
+		}
+
+		return sprintf('<h2> Select Objects to Move </h2> <div id="objectsContainer" class="objectsTable">%s</div>', self::createTable_new($data,$headers,$data_size,false));
+	}
 }
 
 ?>
