@@ -18,6 +18,9 @@
             <li><a href="{local var="siteRoot"}exports/"><i class="fa fa-angle-double-right"></i> Exporting</a></li>
             <li><a href="{local var="siteRoot"}data/list/projects/"><i class="fa fa-angle-double-right"></i> Projects List</a></li>
             <li><a href="{local var="siteRoot"}stats/"> <i class="fa fa-angle-double-right"></i> Statistics </a></li>
+
+            <li><a href="{local var="siteRoot"}batchUpload/"> <i class="fa fa-angle-double-right"></i> Batch Upload </a></li>
+            <li><a href="{local var="siteRoot"}data/object/move/"> <i class="fa fa-angle-double-right"></i> Move Objects </a></li>
         </div>
 
         <div>
@@ -38,7 +41,7 @@
             <li><a href="{local var="siteRoot"}admin/reprocess/"><i class="fa fa-angle-double-right"></i> Reprocess</a></li>
             <li><a href="{local var="siteRoot"}admin/users/"><i class="fa fa-angle-double-right"></i> Users</a></li>
             <li><a href="{local var="siteRoot"}admin/watermarks/"> <i class="fa fa-angle-double-right"></i> Watermarks</a></li>
-            
+
         </div>
 
         <div>
@@ -49,7 +52,7 @@
             <li><a href="{local var="siteRoot"}dashboard/fixity/"> <i class="fa fa-angle-double-right"></i> Fixity History</a></li>
             <li><a href="{local var="siteRoot"}dashboard/obsolete/"> <i class="fa fa-angle-double-right"></i> Obsolete Files</a></li>
             <li><a href="{local var="siteRoot"}dashboard/virus/"> <i class="fa fa-angle-double-right"></i> Virus History </a></li>
-            
+
         </div>
 
         </div>
