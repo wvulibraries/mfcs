@@ -98,7 +98,7 @@ $(function(){
 
     	$.ajax({
     		dataType: 'json',
-    		url:'/batchUpload/regEx',
+    		url:'/data/object/batchUpload/regEx',
     		data: { filename: filename, regex: regEx },
     		success:function(){
     			console.log('success');
