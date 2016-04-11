@@ -23,7 +23,7 @@ localVars::add("formList", listGenerator::createFormDropDownList());
 
     <ul class="breadcrumbs">
         <li><a href="{local var="siteRoot"}">Home</a></li>
-        <li><a href="{local var="siteRoot"}/batchUpload/">Batch Upload</a></li>
+        <li><a href="{local var="siteRoot"}/data/object/batchUpload/">Batch Upload</a></li>
 
         <li class="pull-right noDivider">
             <a href="#batchUploadDocumentation" target="_blank">
