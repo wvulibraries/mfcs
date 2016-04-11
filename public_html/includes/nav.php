@@ -19,7 +19,7 @@
             <li><a href="{local var="siteRoot"}data/list/projects/"><i class="fa fa-angle-double-right"></i> Projects List</a></li>
             <li><a href="{local var="siteRoot"}stats/"> <i class="fa fa-angle-double-right"></i> Statistics </a></li>
 
-            <li><a href="{local var="siteRoot"}batchUpload/"> <i class="fa fa-angle-double-right"></i> Batch Upload </a></li>
+            <li><a href="{local var="siteRoot"}data/object/batchUpload/"> <i class="fa fa-angle-double-right"></i> Batch Upload </a></li>
             <li><a href="{local var="siteRoot"}data/object/move/"> <i class="fa fa-angle-double-right"></i> Move Objects </a></li>
         </div>
 
@@ -63,6 +63,3 @@
         </div>
     </ul>
 </nav>
-
-
-
