@@ -34,8 +34,6 @@
 	 <!-- Project Specific Head Includes -->
 		<?php recurseInsert("headerIncludes.php","php") ?>
 
-     <!-- pageSpecific elements and js without overridding the main headerIncludes -->
-        <?php recurseInsert('pageHeadElms.php',"php") ?>
 </head>
 
 <body>
@@ -45,4 +43,3 @@
 
  <!-- Navigation -->
     <?php recurseInsert("includes/nav.php","php") ?>
-
