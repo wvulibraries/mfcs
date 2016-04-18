@@ -108,6 +108,7 @@ form[name="updateForm"]{
 .main {
   margin-top:120px;
   padding-bottom:60px;
+  background:#fff;
 
   @include breakpoint(tablet){
    margin-top:55px;

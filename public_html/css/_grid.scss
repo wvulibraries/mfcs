@@ -8,7 +8,7 @@ section {
   clear: both;
   padding: 0px;
   margin: 0px;
-  background:#fff;
+  //background:#fff;
 }
 
 %clearfix:after {
@@ -28,7 +28,9 @@ $grid-spacing:3%;
 }
 
 [class^="span"] {
+    width:100%;
     float:left;
+    margin-bottom:$grid-spacing;
     margin-right:$grid-spacing;
     -webkit-box-sizing:border-box;
     -moz-box-sizing:border-box;
