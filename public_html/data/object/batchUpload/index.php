@@ -33,7 +33,8 @@ localVars::add("formList", listGenerator::createFormDropDownList());
     </ul>
 
     <div class="row-fluid batchUpload">
-        <form action="/batchUpload/processUpload" method="post">
+        <form action="/data/object/batchUpload/process/" method="post">
+          {engine name="csrf"}
 
         <div class="span4">
             <h2> Upload Here </h2>
