@@ -11,70 +11,48 @@ section {
   background:#fff;
 }
 
-[class*="span"] {
-  margin: 1% 0 1% 0%;
-  width: 100%;
-  display: block;
-  float:left;
+%clearfix:after {
+    display:block;
+    clear:both;
+    content:'';
+}
 
-  &:first-child { margin-left: 0; }
-  &:before,
-  &:after { content:""; display:table; }
-  &:after { clear:both;}
-  &{ zoom:1;}
+$grid-spacing:3%;
 
-  @include breakpoint(tablet){
-    margin: 1% 0 1% 2%;
-  }
+.row {
+    @extend %clearfix;
+
+    & + & {
+        margin-top:$grid-spacing;
+    }
+}
+
+[class^="span"] {
+    float:left;
+    margin-right:$grid-spacing;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+
+    &:last-child {
+        margin-right:0%;
+    }
 }
 
 @include breakpoint(tablet){
-  .span12 {
-    width: 100%;
-  }
+  .span1   { width:(100% / 12) - ($grid-spacing * 11 / 12); }
+  .span2   { width:(100% / 6) - ($grid-spacing * 10 / 12); }
+  .span3   { width:(100% / 4) - ($grid-spacing * 9 / 12); }
+  .span4   { width:(100% / 3) - ($grid-spacing * 8 / 12); }
+  .span5   { width:(100% / 2.4) - ($grid-spacing * 7 / 12); }
+  .span6   { width:(100% / 2) - ($grid-spacing * 6 / 12); }
+  .span7   { width:(100% / 1.714285714285714) - ($grid-spacing * 5 / 12); }
+  .span8   { width:(100% / 1.5) - ($grid-spacing * 4 / 12); }
+  .span9   { width:(100% / 1.333333333333333) - ($grid-spacing * 3 / 12); }
+  .span10  { width:(100% / 1.2) - ($grid-spacing * 2 / 12); }
+  .span11  { width:(100% / 1.090909090909091) - ($grid-spacing * 1 / 12); }
+  .span12  { width:100%; }
 
-  .span11{
-      width: 91.5%;
-  }
-  .span10 {
-      width: 83%;
-  }
-
-  .span9 {
-      width: 74.5%;
-  }
-
-  .span8 {
-      width: 66%;
-  }
-
-  .span7 {
-      width: 57.5%;
-  }
-
-  .span6 {
-      width: 49%;
-  }
-
-  .span5 {
-      width: 40.5%;
-  }
-
-  .span4{
-      width: 32%;
-  }
-
-  .span3 {
-      width: 23.5%;
-  }
-
-  .span2 {
-      width: 15%;
-  }
-
-  .span1 {
-      width: 6.5%;
-  }
 }
 
-.last{ margin-left:0;}
+.last{ margin-left:0 !important;}
