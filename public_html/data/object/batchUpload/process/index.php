@@ -16,28 +16,85 @@ print "<pre>";
 var_dump($engine->cleanPost['MYSQL']);
 print "</pre>";
 
+try {
+    // make sure files are set
+    if(isset($engine->cleanPost['MYSQL'])){
 
-// get file ID and Path
-if(isset($engine->cleanPost['MYSQL']['FileUploadBox'])){
+        // get the form id
+        if(isset($engine->cleanPost['MYSQL']['selectedFormID'])){
+            $formID = $engine->cleanPost['MYSQL']['selectedFormID'];
 
-    $fileUploadID    = $engine->cleanPost['MYSQL']['FileUploadBox'];
-    $uploadDirectory = "/home/mfcs.lib.wvu.edu/data/working/uploads/$fileUploadID/";
+            if(isnull($formID) || is_empty($formID)){
+                throw new Exception('The form id is null or empty, we can not process a batch upload without an id');
+            }
+        }
 
-    // loop through directory to get file information
-    $directory       = new DirectoryIterator($uploadDirectory);
+        // Extract Form Fields for the selected Form
+        $formPost = array_intersect_key($engine->cleanPost['MYSQL'], array_flip(preg_grep('/^form_/', array_keys($engine->cleanPost['MYSQL']))));
 
-    foreach ($directory as $file) {
-        if($file->isFile() && !$file->isDot()){
-            print "<pre>";
-            var_dump($file->getFilename() . "\n");
-            print "</pre>";
+        // This exception may not be needed, but could be a good test case
+        if(isnull($formPost) || is_empty($formPost)){
+            throw new Exception('There are no form Fields associated with data, we need something such as IDNO');
+        }
 
-            print "<pre>";
-            var_dump($file->getSize() . "\n");
-            print "</pre>";
+        //  File upload information adn upload directory
+        if(isset($engine->cleanPost['MYSQL']['FileUploadBox'])){
+            $fileUploadID    = $engine->cleanPost['MYSQL']['FileUploadBox'];
+            $uploadDirectory = "/home/mfcs.lib.wvu.edu/data/working/uploads/$fileUploadID/";
+        } else {
+            throw new Exception('There is no file directory, something went wrong with the file upload or the page has been accessed another way');
+        }
+
+        // loop through directory to get file information
+        $directory       = new DirectoryIterator($uploadDirectory);
+
+        foreach ($directory as $file) {
+            // valid legit file and not a hidden system file 
+            if($file->isFile() && !$file->isDot()){
+                $filename = $file->getFilename();
+                $filesize = $file->getSize();
+                $filetype = mime_content_type($file->getPathname());
+
+                print "<pre>";
+                var_dump($filename);
+                print "</pre>";
+
+
+                print "<pre>";
+                var_dump($filesize);
+                print "</pre>";
+
+
+
+                print "<pre>";
+                var_dump($filetype);
+                print "</pre>";
+
+
+                //objects::create($formID,$data,0);
+            }
         }
     }
+
+
+} catch (Exception $e) {
+    errorHandle::newError("Batch Upload Processing - :".$e, errorHandle::DEBUG);
 }
+
+
+// $testArray =  array(
+//     "selectedFormID"  => 68,
+//     "exampleFileName" => '',
+//     "regEx"           => '',
+//     "file"            => '',
+//     "FileUploadBox"   => "43ded3c9fa068f041d1402531781650b",
+//     "form_idno"       => "%%fileName%%",
+//     "form_title"      => "%%fileName%%__%%filesize%%__%%filetype%%"
+// );
+//
+// function stringVariables($input){
+//     return preg_replace('')
+// }
 
 // insert the file into a new object
 
