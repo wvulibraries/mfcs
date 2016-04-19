@@ -123,7 +123,7 @@ class listGenerator {
 	public static function createFormDropDownList(){
 		$engine = EngineAPI::singleton();
 		$forms  = forms::getForms(TRUE,TRUE);
-		$output = '<div class="selectForm"><select><option value> Select A Form </option>';
+		$output = '<div class="selectForm"> <select name="selectedFormID" id="selectedFormID"> <option value> Select A Form </option>';
 
 		foreach ($forms as $form) {
 			if($form ===  FALSE || !mfcsPerms::isViewer($form['ID'])) continue;
