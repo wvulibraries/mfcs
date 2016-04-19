@@ -54,17 +54,35 @@ $(function(){
     						uploadField = { fieldName: fieldValues.name, fileTypes: fieldValues.allowedExtensions}
                             fineUploaderBatch(uploadField);
     					}
+                        else if(fieldValues.name === "idno"){
+                            html += '<label for="form_'+fieldName+'">'+fieldValues.label+'</label>';
+
+        					// Build Input Element from Data
+        					inputElm = '<input list="formDropList" name="form_'+fieldName+'" id="form_'+fieldName+'" ';
+
+        					if(fieldValues.managedBy === "system"){
+                                inputElm += ' placeholder="'+fieldValues.idnoFormat+'"';
+        						inputElm += ' readonly="readonly" disabled="disabled" class="disabled"';
+        					}
+
+                            inputElm += "value='"+fieldValues.value+"'/>";
+                            html += inputElm;
+
+                            console.log('idno');
+                        }
                         else {
         					html += "<label for='form_"+fieldName+"'>"+fieldValues.label+"</label>";
 
         					// Build Input Element from Data
-        					inputElm = "<input list='formDropList' name='form_"+fieldName+"' id='form_"+fieldName+"'placeholder='"+fieldValues.placeholder+"'";
+        					inputElm = "<input list='formDropList' name='form_"+fieldName+" ' id='form_"+fieldName+"' placeholder='"+fieldValues.placeholder+" '";
 
         					if(fieldValues.readonly == "true" || fieldValues.disabled == "true"){
-        						inputElm += 'readonly="readonly" disabled="disabled" class="disabled"';
+        						inputElm += 'readonly="readonly" disabled="disabled" class="disabled" ';
         					}
 
-        					inputElm += "value='"+fieldValues.value+"'/>";
+                            console.log(fieldValues);
+
+        					inputElm += 'value="'+fieldValues.value+'"/>';
         					html += inputElm;
                         }
     				});
@@ -217,6 +235,7 @@ function fineUploaderBatch(uploadData){
     $('.fineUploader').parent().addClass('uploadFiles');
     $('.qq-upload-drop-area').html('<div class="uploadText"> <i class="fa fa-dropbox fa-4x"></i> <br><br> Drop Files Here </div>');
 }
+
 
 // ===================================================================
 // ===================================================================
