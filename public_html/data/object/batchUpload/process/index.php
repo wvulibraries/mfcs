@@ -49,29 +49,15 @@ try {
         $directory       = new DirectoryIterator($uploadDirectory);
 
         foreach ($directory as $file) {
-            // valid legit file and not a hidden system file 
+            // valid legit file and not a hidden system file
             if($file->isFile() && !$file->isDot()){
-                $filename = $file->getFilename();
-                $filesize = $file->getSize();
-                $filetype = mime_content_type($file->getPathname());
-
-                print "<pre>";
-                var_dump($filename);
-                print "</pre>";
+                $fileinfo = array(
+                    'filename' => $file->getFilename(),
+                    'filesize' => $file->getSize(),
+                    'filetype' => mime_content_type($file->getPathname())
+                );
 
 
-                print "<pre>";
-                var_dump($filesize);
-                print "</pre>";
-
-
-
-                print "<pre>";
-                var_dump($filetype);
-                print "</pre>";
-
-
-                //objects::create($formID,$data,0);
             }
         }
     }
@@ -79,6 +65,10 @@ try {
 
 } catch (Exception $e) {
     errorHandle::newError("Batch Upload Processing - :".$e, errorHandle::DEBUG);
+}
+
+function formatStringVariables($formFields, $fileinfo, $regEX = null){ 
+
 }
 
 
