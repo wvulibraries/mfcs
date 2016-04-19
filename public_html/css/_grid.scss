@@ -1,7 +1,3 @@
-.row {
-  padding:0 15px;
-}
-
 // GRID
 // ===========================================================================================
 section {
@@ -11,50 +7,43 @@ section {
   //background:#fff;
 }
 
-%clearfix:after {
+@mixin createGrid($grid-cols : 12, $grid-spacing : 1.5%, $className : "span"){
+  %clearfix:after {
     display:block;
     clear:both;
     content:'';
-}
+  }
 
-$grid-spacing:3%;
-
-.row {
+ .row {
     @extend %clearfix;
-
-    & + & {
-        margin-top:$grid-spacing;
-    }
-}
-
-[class^="span"] {
+    //float:left;
+    margin:0;
     width:100%;
-    float:left;
-    margin-bottom:$grid-spacing;
-    margin-right:$grid-spacing;
-    -webkit-box-sizing:border-box;
-    -moz-box-sizing:border-box;
-    box-sizing:border-box;
+  }
 
-    &:last-child {
-        margin-right:0%;
-    }
+  %gridElm{
+      width:100%;
+      float:left;
+      margin-right:$grid-spacing;
+      -webkit-box-sizing:border-box;
+      -moz-box-sizing:border-box;
+      box-sizing:border-box;
+
+      &:last-child {
+          margin-right:0%;
+      }
+
+      &.last{ margin-left:0 !important;}
+  }
+
+  @for $i from 1 through $grid-cols {
+    .#{$className}#{$i} {
+       @extend %gridElm;
+        @include breakpoint(tablet){
+          width:  (100% / $grid-cols * $i) - $grid-spacing;
+       }
+     }
+  }
 }
 
-@include breakpoint(tablet){
-  .span1   { width:(100% / 12) - ($grid-spacing * 11 / 12); }
-  .span2   { width:(100% / 6) - ($grid-spacing * 10 / 12); }
-  .span3   { width:(100% / 4) - ($grid-spacing * 9 / 12); }
-  .span4   { width:(100% / 3) - ($grid-spacing * 8 / 12); }
-  .span5   { width:(100% / 2.4) - ($grid-spacing * 7 / 12); }
-  .span6   { width:(100% / 2) - ($grid-spacing * 6 / 12); }
-  .span7   { width:(100% / 1.714285714285714) - ($grid-spacing * 5 / 12); }
-  .span8   { width:(100% / 1.5) - ($grid-spacing * 4 / 12); }
-  .span9   { width:(100% / 1.333333333333333) - ($grid-spacing * 3 / 12); }
-  .span10  { width:(100% / 1.2) - ($grid-spacing * 2 / 12); }
-  .span11  { width:(100% / 1.090909090909091) - ($grid-spacing * 1 / 12); }
-  .span12  { width:100%; }
-
-}
-
-.last{ margin-left:0 !important;}
+@include createGrid();
