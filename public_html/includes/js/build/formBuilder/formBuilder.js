@@ -664,10 +664,10 @@ function setOriginalValues(){
 	if(bindObj == 'managedBy'){
 		if(value == 'system'){
 			$("#fieldSettings_idno_managedBy").next().show();
-			$("#fieldSettings_options_readonly").prop({checked:true, disabled:true});
+			$("#fieldSettings_options_readonly").prop({checked:true, disabled:true}).change();
 		} else {
 			$("#fieldSettings_idno_managedBy").next().hide();
-			$("#fieldSettings_options_readonly").prop({checked:false, disabled:true});
+			$("#fieldSettings_options_readonly").prop({checked:false, disabled:true}).change();
 		}
 	}
 
