@@ -48,16 +48,39 @@ try {
         // loop through directory to get file information
         $directory       = new DirectoryIterator($uploadDirectory);
 
-        foreach ($directory as $file) {
-            // valid legit file and not a hidden system file
-            if($file->isFile() && !$file->isDot()){
-                $fileinfo = array(
-                    'filename' => $file->getFilename(),
-                    'filesize' => $file->getSize(),
-                    'filetype' => mime_content_type($file->getPathname())
-                );
+        if(!isnull($directory)){
+            foreach ($directory as $file) {
+                // valid legit file and not a hidden system file
+                if($file->isFile() && !$file->isDot()){
+                    $fileinfo = array(
+                        'filename' => $file->getFilename(),
+                        'filesize' => $file->getSize(),
+                        'filetype' => mime_content_type($file->getPathname())
+                    );
+
+                    if(!isnull($formPost) || !is_empty($formPost)){
+                        // replace the formPost with the Filenames and Other Values
+                        $formPost = preg_replace('/\%\%filename\%\%/i', $fileinfo['filename'], $formPost);
+                        $formPost = preg_replace('/\%\%filesize\%\%/i', $fileinfo['filesize'], $formPost);
+                        $formPost = preg_replace('/\%\%mimetype\%\%/i', $fileinfo['filetype'], $formPost);
+                    }
 
 
+                    print "<pre>";
+                    var_dump($formPost);
+                    print "</pre>";
+
+
+        			// if (objects::create($formID,$values,0) === FALSE) {
+        			// 	$engine->openDB->transRollback();
+        			// 	$engine->openDB->transEnd();
+        			// 	errorHandle::newError(__METHOD__."() - Error inserting new object.", errorHandle::DEBUG);
+        			// 	return FALSE;
+        			// }
+
+        			// Grab the objectID of the new object
+        			$objectID = localvars::get("newObjectID");
+                }
             }
         }
     }
@@ -66,25 +89,6 @@ try {
 } catch (Exception $e) {
     errorHandle::newError("Batch Upload Processing - :".$e, errorHandle::DEBUG);
 }
-
-function formatStringVariables($formFields, $fileinfo, $regEX = null){ 
-
-}
-
-
-// $testArray =  array(
-//     "selectedFormID"  => 68,
-//     "exampleFileName" => '',
-//     "regEx"           => '',
-//     "file"            => '',
-//     "FileUploadBox"   => "43ded3c9fa068f041d1402531781650b",
-//     "form_idno"       => "%%fileName%%",
-//     "form_title"      => "%%fileName%%__%%filesize%%__%%filetype%%"
-// );
-//
-// function stringVariables($input){
-//     return preg_replace('')
-// }
 
 // insert the file into a new object
 
