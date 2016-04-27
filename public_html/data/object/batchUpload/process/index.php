@@ -21,12 +21,8 @@ try {
     if(isset($engine->cleanPost['MYSQL'])){
 
         // get the form id
-        if(isset($engine->cleanPost['MYSQL']['selectedFormID'])){
-            $formID = $engine->cleanPost['MYSQL']['selectedFormID'];
-
-            if(isnull($formID) || is_empty($formID)){
-                throw new Exception('The form id is null or empty, we can not process a batch upload without an id');
-            }
+        if(!isset($engine->cleanPost['MYSQL']['selectedFormID']) || !($form = forms::get($engine->cleanPost['MYSQL']['selectedFormID']))){
+          throw new Exception('The form id is null or empty, we can not process a batch upload without an id');
         }
 
         // Extract Form Fields for the selected Form
