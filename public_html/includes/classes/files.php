@@ -1343,7 +1343,7 @@ class files {
             );
         }
 
-		$return['video'][] = array(
+		$return = array(
 			'name'   => $name.'.'.$format,
 			'path'   => self::getSaveDir($assetsID,'video',FALSE),
 			'size'   => filesize(self::getSaveDir($assetsID,'video').$name.$format),
@@ -1394,7 +1394,7 @@ class files {
                 $ffmpeg->thumb($thumbSize, $time)->output($path.$thumbName.$thumbFormat);
                 $conversion = $ffmpeg->ready();
 
-				$return['videoThumbs'][] = array(
+				$return[] = array(
 					'name'   => $name.'.'.$format,
 					'path'   => self::getSaveDir($assetsID,'videoThumbs',FALSE),
 					'size'   => filesize(self::getSaveDir($assetsID,'videoThumbs').$thumbName.$thumbFormat),
@@ -1469,7 +1469,7 @@ class files {
             return array('errors' => $e->getMessage());
         }
 
-		$return['audio'][] = array(
+		$return = array(
 			'name'   => $name.'.'.$format,
 			'path'   => self::getSaveDir($assetsID,'audio',FALSE),
 			'size'   => filesize(self::getSaveDir($assetsID,'audio').$name.'.'.$format),
