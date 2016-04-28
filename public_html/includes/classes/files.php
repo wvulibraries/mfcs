@@ -504,17 +504,19 @@ class files {
 						'combinedThumb');
 				}
 				if(isset($field['convertAudio']) && str2bool($field['convertAudio'])){
-					$links['Converted Audio'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
+					$links['Converted Audio'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
 						localvars::get('siteRoot'),
 						$objectID,
 						$field['name'],
+						$fileID,
 						'audio');
 				}
 				if(isset($field['convertVideo']) && str2bool($field['convertVideo'])){
-					$links['Converted Video'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
+					$links['Converted Video'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
 						localvars::get('siteRoot'),
 						$objectID,
 						$field['name'],
+						$fileID,
 						'video');
 				}
 				if(isset($field['videothumbnail']) && str2bool($field['videothumbnail'])){
