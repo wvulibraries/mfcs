@@ -1443,7 +1443,7 @@ class files {
                 throw new Exception("Directory is not setup");
             }
 
-            $ffmpeg->output($savePath.$name.$format);
+            $ffmpeg->output($savePath.$name.".".$format);
             $conversion = $ffmpeg->ready();
 
             if($conversion !== 0){
