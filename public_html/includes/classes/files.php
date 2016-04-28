@@ -504,17 +504,19 @@ class files {
 						'combinedThumb');
 				}
 				if(isset($field['convertAudio']) && str2bool($field['convertAudio'])){
-					$links['Converted Audio'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
+					$links['Converted Audio'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
 						localvars::get('siteRoot'),
 						$objectID,
 						$field['name'],
+						$fileID,
 						'audio');
 				}
 				if(isset($field['convertVideo']) && str2bool($field['convertVideo'])){
-					$links['Converted Video'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
+					$links['Converted Video'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
 						localvars::get('siteRoot'),
 						$objectID,
 						$field['name'],
+						$fileID,
 						'video');
 				}
 				if(isset($field['videothumbnail']) && str2bool($field['videothumbnail'])){
@@ -1343,9 +1345,15 @@ class files {
             );
         }
 
-        return array(
-    		'success' => "Successful Conversion"
-        );
+		$return = array(
+			'name'   => $name.'.'.$format,
+			'path'   => self::getSaveDir($assetsID,'video',FALSE),
+			'size'   => filesize(self::getSaveDir($assetsID,'video').$name.$format),
+			'type'   => self::getMimeType(self::getSaveDir($assetsID,'video').$name.$format),
+			'errors' => '',
+		);
+
+        return $return;
 	}
 
 	public static function createVideoThumbs($assetsID, $name, $originalFile, $options){
@@ -1388,6 +1396,14 @@ class files {
                 $ffmpeg->thumb($thumbSize, $time)->output($path.$thumbName.$thumbFormat);
                 $conversion = $ffmpeg->ready();
 
+				$return[] = array(
+					'name'   => $name.'.'.$format,
+					'path'   => self::getSaveDir($assetsID,'videoThumbs',FALSE),
+					'size'   => filesize(self::getSaveDir($assetsID,'videoThumbs').$thumbName.$thumbFormat),
+					'type'   => self::getMimeType(self::getSaveDir($assetsID,'videoThumbs').$thumbName.$thumbFormat),
+					'errors' => '',
+				);
+
                 if($conversion !== 0){
                     throw new Exception('Could not make thumbs: ' . $ffmpeg->command);
                 }
@@ -1399,7 +1415,7 @@ class files {
             return array('errors' => $e->getMessage());
         }
 
-        return array('success' => "Successful Conversion");
+        return $return;
     }
 
 	public static function convertAudio($assetsID, $name, $originalFile, $options){
@@ -1420,7 +1436,7 @@ class files {
 
             // Set Audio Type for ogg files
             // ogg doesn't use bitrate they use quality level
-            if($format == '.ogg'){
+            if($format == 'ogg'){
                  $ffmpeg->set('-acodec', 'libvorbis');
                  $ffmpeg->set('-qscale:a', '5');
             } else {
@@ -1443,7 +1459,7 @@ class files {
                 throw new Exception("Directory is not setup");
             }
 
-            $ffmpeg->output($savePath.$name.$format);
+            $ffmpeg->output($savePath.$name.".".$format);
             $conversion = $ffmpeg->ready();
 
             if($conversion !== 0){
@@ -1455,7 +1471,15 @@ class files {
             return array('errors' => $e->getMessage());
         }
 
-        return array('success' => "Successful Conversion");
+		$return = array(
+			'name'   => $name.'.'.$format,
+			'path'   => self::getSaveDir($assetsID,'audio',FALSE),
+			'size'   => filesize(self::getSaveDir($assetsID,'audio').$name.'.'.$format),
+			'type'   => self::getMimeType(self::getSaveDir($assetsID,'audio').$name.'.'.$format),
+			'errors' => '',
+		);
+
+        return $return;
 	}
 
 
@@ -1473,7 +1497,7 @@ class files {
 			'size'   => filesize(self::getSaveDir($assetsID,'ocr').$filename.'.txt'),
 			'type'   => self::getMimeType(self::getSaveDir($assetsID,'ocr').$filename.'.txt'),
 			'errors' => '',
-			);
+		);
 	}
 
 	public static function convertImage($image,$options,$assetsID,$filename) {
