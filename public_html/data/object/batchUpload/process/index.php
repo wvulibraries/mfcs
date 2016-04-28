@@ -33,10 +33,13 @@ try {
             throw new Exception('There are no form Fields associated with data, we need something such as IDNO');
         }
 
-        //  File upload information adn upload directory
-        if(isset($engine->cleanPost['MYSQL']['FileUploadBox'])){
-            $fileUploadID    = $engine->cleanPost['MYSQL']['FileUploadBox'];
-            $uploadDirectory = "/home/mfcs.lib.wvu.edu/data/working/uploads/$fileUploadID/";
+        //  File upload information and upload directory
+        if(isset($engine->cleanPost['MYSQL']['batch_upload_id'])){
+            $fileUploadID    = $engine->cleanPost['MYSQL']['batch_upload_id'];
+            $uploadDirectory = sprintf("%s/%s/",
+                                       mfcs::config("uploadPath"),
+                                       escapeshellarg($engine->cleanPost['MYSQL']['batch_upload_id'])
+                                     );
         } else {
             throw new Exception('There is no file directory, something went wrong with the file upload or the page has been accessed another way');
         }

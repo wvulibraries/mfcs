@@ -186,7 +186,7 @@ function fineUploaderBatch(uploadData){
             'data-upload_id': uploadID,
         });
 
-        $('#batchUploadFiles').append('<input type="hidden" name="'+uploadData.fieldName+'" value="'+ uploadID+'"/>');
+        $('#batchUploadFiles').append('<input type="hidden" name="batch_upload_id" value="'+ uploadID+'"/>');
 
         $div.fineUploader({
             request: {
