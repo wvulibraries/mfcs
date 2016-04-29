@@ -1146,8 +1146,18 @@ li.alert-error {
 }
 
 .pagination_bar {
-    text-align: center;
-    ul {@extend .pagination;}
+    ul {@extend .pagination; margin:20px 0 0; padding:0;}
+    ul > li { float:left;
+      a { padding:12px 20px;}
+    }
+
+    .page-spacer {
+      position: relative;
+      float: left; // Collapse white-space
+      padding:12px;
+      border: 1px solid #ddd;
+      margin-left: -1px;
+    }
 }
 
 .currentpage{ background-color:rgba($blue,.2) !important; color:#000 !important; font-weight:bold;}

@@ -273,14 +273,14 @@ class listGenerator {
 		if($array_size > $userPaginationCount){
 
 			$tableHTML  = $table->display($data);
-			$tableHTML .= $pagination->nav_bar();
-			$tableHTML .= sprintf('<div class="span4"> <span class="paginationJumpLabel">Jump to Page:</span> %s</div>',
+			$tableHTML .= sprintf('<div class="span6"> %s </div>', $pagination->nav_bar());
+			$tableHTML .= sprintf('<div class="span2"> <span class="paginationJumpLabel">Jump to Page:</span> %s</div>',
 				$pagination->dropdown()
 				);
-			$tableHTML .= sprintf('<div class="span4"><span class="paginationJumpLabel">Records per page:</span> %s</div>',
+			$tableHTML .= sprintf('<div class="span2"><span class="paginationJumpLabel">Records per page:</span> %s</div>',
 				$pagination->recordsPerPageDropdown()
 				);
-			$tableHTML .= sprintf('<div class="span4"><form id="jumpToIDNOForm"><span class="paginationJumpLabel">Jump to IDNO:</span> <input type="text" name="jumpToIDNO" id="jumpToIDNO" data-formid="%s" value="" /></form></div>',
+			$tableHTML .= sprintf('<div class="span2"><form id="jumpToIDNOForm"><span class="paginationJumpLabel">Jump to IDNO:</span> <input type="text" name="jumpToIDNO" id="jumpToIDNO" data-formid="%s" value="" /></form></div>',
 				(isnull($formID))?"":htmlSanitize($formID)
 				);
 

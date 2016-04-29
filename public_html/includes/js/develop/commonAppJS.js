@@ -78,6 +78,15 @@ $(function(){
 
     // add required to fields
     $('.requiredField').append("<span> * </span>");
+
+    // do some pagination stuff
+    if($('.pagination_bar').length){
+        $('.pagination_bar').find('li').each(function(){
+            if(!$(this).has("a").length){
+                $(this).addClass('page-spacer');
+            }
+        });
+    }
 });
 
 function resizeElms(elms){
