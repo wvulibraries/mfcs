@@ -88,7 +88,7 @@ function resizeElms(elms){
 // Helper Functions
 // ===================================================================
 
-function handler_jumpToIDNO() {
+function handler_jumpToIDNO(event) {
     event.preventDefault();
     event.stopImmediatePropagation();
 
@@ -114,7 +114,7 @@ function select_metadataMultiSelects() {
     $('.multiSelectContainer option').prop('selected', 'selected');
 }
 
-function handler_jumpToPage() {
+function handler_jumpToPage(event) {
     event.preventDefault();
     event.stopImmediatePropagation();
 
@@ -124,7 +124,7 @@ function handler_jumpToPage() {
     window.location.href=url;
 }
 
-function handler_setPaginationPerPage() {
+function handler_setPaginationPerPage(event) {
     event.preventDefault();
     event.stopImmediatePropagation();
 
@@ -143,7 +143,7 @@ function handler_setPaginationPerPage() {
     });
 }
 
-function handler_setupSearchFormFields() {
+function handler_setupSearchFormFields(event) {
     event.preventDefault();
     event.stopImmediatePropagation();
 
@@ -183,5 +183,3 @@ function handler_displayMetadataFormModal(formID) {
     });
 
 }
-
-
