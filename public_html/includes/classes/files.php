@@ -946,7 +946,9 @@ class files {
 	}
 
 	// Take a location and put it into the
-	private static function fixityInsert($location,$objectID) {
+	// @TODO this should be set back to private once batch upload processing
+	// gets cleaned up
+	public static function fixityInsert($location,$objectID) {
 
 		$sql       = sprintf("INSERT INTO `filesChecks` (`location`,`ObjectID`) VALUES('%s','%s')",
 			mfcs::$engine->openDB->escape($location),

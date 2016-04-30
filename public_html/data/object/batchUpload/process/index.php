@@ -3,6 +3,8 @@
 include("../../../../header.php");
 //$engine->eTemplate("include","header");
 
+$error = "";
+
 //Permissions Access
 if(!mfcsPerms::evaluatePageAccess(1)){
   header('Location: /index.php?permissionFalse');
@@ -75,25 +77,34 @@ try {
   // index will be file name
   $form_data = array();
 
-  if(!isnull($directory)){
-    foreach ($directory as $file) {
+  if(!isnull($directory)) { // If directory is not null open
+    foreach ($directory as $file) { // for each file open
       // valid legit file and not a hidden system file
-      if($file->isFile() && !$file->isDot()){
+      if($file->isFile() && !$file->isDot()){ // is file open
         $fileinfo = array(
           'filename' => $file->getFilename(),
           'filesize' => $file->getSize(),
-          'filetype' => mime_content_type($file->getPathname())
+          'filetype' => mime_content_type($file->getPathname()),
+          'path'     => $file->getPathname()
         );
+
+        print "<pre>";
+        var_dump($fileinfo);
+        print "</pre>";
 
         $form_data[$fileinfo['filename']] = array();
 
-        if(!isnull($formPost) || !is_empty($formPost)){
+        if(!isnull($formPost) || !is_empty($formPost)) { // form post open
           // replace the formPost with the Filenames and Other Values
 
           $matches = array();
           if (!is_empty($engine->cleanPost['RAW']['regEx'])) {
             preg_match_all($engine->cleanPost['RAW']['regEx'],$fileinfo['filename'],$matches);
           }
+
+          print "<pre>";
+          var_dump($matches);
+          print "</pre>";
 
           foreach ($formPost as $I=>$V) {
 
@@ -105,16 +116,12 @@ try {
 
             // handle regular expression matches
             foreach ($matches as $match_no=>$match) {
-              $pattern = sprintf('/\{%s\}/i',$match_no);
-              $form_data[$fileinfo['filename']][$I] = preg_replace($pattern, $match[0], $V);
-            } //X
+              $pattern = sprintf('/\{%s\}/',$match_no);
+              $form_data[$fileinfo['filename']][$I] = preg_replace($pattern, $match[0], $form_data[$fileinfo['filename']][$I]);
+            }
 
-          } //X
-        } //x
-
-        print "<pre>";
-        var_dump($form_data);
-        print "</pre>";
+          }
+        } // form post close
 
         // build $data, which is the data array passed to the object::create method
         // We are calling the object::create method directly to avoid validation checks.
@@ -133,24 +140,53 @@ try {
         // Process uploaded files
         $uploadID = $engine->cleanPost['MYSQL']["batch_upload_id"];
 
-        // Process the uploads and put them into their archival locations
-        if (($tmpArray = files::processObjectUploads(NULL, $uploadID)) === FALSE) {
-          throw new Exception('Getting UUID');
+        // Process the files
+        // this is the $tmpArray returned from filess:processObjectUploads()
+        // That method works on all the files and returns them as a single array
+        // we need to do each file individually.
+        // @TODO: this needs to be put into method(s) and processObjectUploads()
+        // needs to be refactored
+
+        // Generate new assets UUID and make the directory (this should be done quickly to prevent race-conditions
+    		$assetsID          = files::newAssetsUUID();
+
+        $tmpArray = array();
+        if (($originalsFilepath = files::getSaveDir($assetsID,'archive')) === FALSE) {
+          throw new Exception('Error creating save directory: '.$assetsID);
         }
+
+        $tmpArray['uuid'] = $assetsID;
+
+        // Clean the filename
+        $cleanedFilename = preg_replace('/[^a-z0-9-_\.]/i','',$fileinfo['filename']);
+        $newFilename = $originalsFilepath.DIRECTORY_SEPARATOR.$cleanedFilename;
+
+        // Move the uploaded files into their new home and make the new file read-only
+        if (@rename($fileinfo['path'], $newFilename) === FALSE) {
+          errorHandle::newError(__METHOD__."() - renaming files: $uploadBase/$filename", errorHandle::DEBUG);
+          return FALSE;
+        }
+        chmod($newFilename, 0444);
+
+        $tmpArray['files']['archive'][] = array(
+  				'name'   => $cleanedFilename,
+  				'path'   => files::getSaveDir($assetsID,'archive',FALSE),
+  				'size'   => filesize($newFilename),
+  				'type'   => files::getMimeType($newFilename),
+  				'errors' => '',
+  				);
+
+        // Lock down the originals directory
+        chmod($originalsFilepath, 0555);
+
+        // end copy
 
         if ($tmpArray !== TRUE) {
 
           // didn't generate a proper uuid for the items, rollback
           if (!isset($tmpArray['uuid'])) {
-            $engine->openDB->transRollback();
-            $engine->openDB->transEnd();
             throw new Exception('No UUID');
           }
-
-          // ads this field to the files object
-          // we can't do inserts yet because we don't have the objectID on
-          // new objects
-          files::addProcessingField($file_upload_field_name);
 
           // Set to background processing
           $backgroundProcessing[$file_upload_field_name] = TRUE;
@@ -159,38 +195,69 @@ try {
 
           // end files data array
 
-          print "data: <pre>";
-          var_dump($data);
-          print "</pre>";
+          if (($result = mfcs::$engine->openDB->transBegin("objects")) !== TRUE) {
+            throw new Exception("unable to start database transactions", 1);
+          }
 
-          // if (objects::create($formID,$values,0) === FALSE) {
-          // 	$engine->openDB->transRollback();
-          // 	$engine->openDB->transEnd();
-          // 	errorHandle::newError(__METHOD__."() - Error inserting new object.", errorHandle::DEBUG);
-          // 	return FALSE;
-          // }
+          if (objects::create($form['ID'],$data,0) === FALSE) {
+            $engine->openDB->transRollback();
+            $engine->openDB->transEnd();
+
+            throw new Exception("Error inserting new object.", 1);
+
+          } // create opbject close
 
           // Grab the objectID of the new object
           $objectID = localvars::get("newObjectID");
 
           // Now that we have a valid objectID, we insert into the processing table
-          // if (files::insertIntoProcessingTable($objectID) === FALSE) {
-          //     $engine->openDB->transRollback();
-          //     $engine->openDB->transEnd();
-          //
-          //     errorHandle::newError(__METHOD__."() - Processing Table", errorHandle::DEBUG);
-          //
-          //     return FALSE;
-          // }
+          if (!files::fixityInsert($tmpArray['path'],$objectID)) {
+            errorHandle::newError(__METHOD__."() - couldn't create fixity entry.", errorHandle::DEBUG);
+          }
 
-        }
-      }
-    }
+          $sql       = sprintf("INSERT INTO `objectProcessing` (`objectID`,`fieldName`,`state`, `timestamp`) VALUES('%s','%s','1','%s')",
+            mfcs::$engine->openDB->escape($objectID),
+            mfcs::$engine->openDB->escape($file_upload_field_name),
+            time()
+            );
+          $sqlResult = mfcs::$engine->openDB->query($sql);
+
+          if (!$sqlResult['result']) {
+            errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+            // Logging the error here, but we don't want to undo the whole database at this point.
+          }
+
+        } // If we have the tmpArray close
+
+        // end transactions
+        $engine->openDB->transCommit();
+        $engine->openDB->transEnd();
+
+      } // is file close
+    } // for each file close
+  } // If directory is not null close
+  else {
+    throw new Exception("No files uploaded (or directory not created)", 1);
   }
 }
+
+
+
+// all the files should be removed from the upload directory now, so delete
+rmdir($uploadDirectory);
+
+errorHandle::successMsg("Successfully created records.");
+
 }
 catch (Exception $e) {
-  errorHandle::newError("Batch Upload Processing - :".$e, errorHandle::DEBUG);
+
+  // what happens if we aren't in a transaction?
+  $engine->openDB->transRollback();
+  $engine->openDB->transEnd();
+
+  $error = sprintf("Batch Upload Processing - %s",$e);
+  errorHandle::newError($error, errorHandle::DEBUG);
+  errorHandle::errorMsg($error);
 }
 
 localVars::add("results",displayMessages());
