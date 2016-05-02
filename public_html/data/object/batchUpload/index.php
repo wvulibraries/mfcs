@@ -8,6 +8,9 @@ if(!mfcsPerms::evaluatePageAccess(1)){
     header('Location: /index.php?permissionFalse');
 }
 
+$fileDirectorySelector_options = files::get_upload_directories();
+localvars::add("fileDirectorySelector_options",$fileDirectorySelector_options);
+
 // Batch Uploading Logs
 log::insert("BatchUpload",0,0, "Batch upload screen was loaded.");
 
@@ -92,6 +95,13 @@ localVars::add("formList", listGenerator::createFormDropDownList());
                         <ul class="qq-upload-list"></ul>
                     </div>
                 </div>
+            </div>
+
+            <div id="fileDirectorySelector">
+              <select name="fileDirectorySelector">
+                <option value="">-- Select Directory --</option>
+                {local var="fileDirectorySelector_options"}
+              </select>
             </div>
 
             <input type="submit" class="btn pull-left batchSubmit"/>

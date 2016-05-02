@@ -13,11 +13,6 @@ if(!mfcsPerms::evaluatePageAccess(1)){
 // Batch Uploading Logs
 log::insert("BatchUpload",0,0, "Processing upload");
 
-
-print "<pre>";
-var_dump($engine->cleanPost['MYSQL']);
-print "</pre>";
-
 try {
   // make sure files are set
   if(isset($engine->cleanPost['MYSQL'])) {
@@ -60,15 +55,15 @@ try {
     }
 
     //  File upload information and upload directory
-    if(isset($engine->cleanPost['MYSQL']['batch_upload_id'])){
-      $uploadDirectory = sprintf("%s/%s/",
-      mfcs::config("uploadPath"),
-      $engine->cleanPost['MYSQL']['batch_upload_id']
-    );
-  }
-  else {
-    throw new Exception('There is no file directory, something went wrong with the file upload or the page has been accessed another way');
-  }
+    if (isset($engine->cleanPost['MYSQL']['fileDirectorySelector']) && !is_empty($engine->cleanPost['MYSQL']['fileDirectorySelector'])) {
+      $uploadDirectory = sprintf("%s/%s",mfcs::config('ftpUploadDirectory'),$engine->cleanPost['MYSQL']['fileDirectorySelector']);
+    }
+    else if(isset($engine->cleanPost['MYSQL']['batch_upload_id'])){
+      $uploadDirectory = sprintf("%s/%s/", mfcs::config("uploadPath"), $engine->cleanPost['MYSQL']['batch_upload_id']);
+    }
+    else {
+      throw new Exception('There is no file directory, something went wrong with the file upload or the page has been accessed another way');
+    }
 
   // loop through directory to get file information
   $directory       = new DirectoryIterator($uploadDirectory);
@@ -88,10 +83,6 @@ try {
           'path'     => $file->getPathname()
         );
 
-        print "<pre>";
-        var_dump($fileinfo);
-        print "</pre>";
-
         $form_data[$fileinfo['filename']] = array();
 
         if(!isnull($formPost) || !is_empty($formPost)) { // form post open
@@ -101,10 +92,6 @@ try {
           if (!is_empty($engine->cleanPost['RAW']['regEx'])) {
             preg_match_all($engine->cleanPost['RAW']['regEx'],$fileinfo['filename'],$matches);
           }
-
-          print "<pre>";
-          var_dump($matches);
-          print "</pre>";
 
           foreach ($formPost as $I=>$V) {
 
@@ -163,7 +150,7 @@ try {
 
         // Move the uploaded files into their new home and make the new file read-only
         if (@rename($fileinfo['path'], $newFilename) === FALSE) {
-          errorHandle::newError(__METHOD__."() - renaming files: $uploadBase/$filename", errorHandle::DEBUG);
+          errorHandle::newError(__METHOD__."() - renaming files: $uploadDirectory/$filename", errorHandle::DEBUG);
           return FALSE;
         }
         chmod($newFilename, 0444);
