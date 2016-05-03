@@ -132,6 +132,27 @@ class objects {
 		return($children);
 	}
 
+	public static function get_form_id($objectID) {
+
+		$sql       = sprintf("SELECT `formID` FROM `objects` WHERE `ID`='%s' LIMIT 1",
+												mfcs::$engine->openDB->escape($objectID));
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return false;
+		}
+
+		if ($sqlResult['numrows'] != 1) {
+			return FALSE;
+		}
+
+		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+		return $row['formID'];
+
+	}
+
 	// $range is an array. $range[0] is the start, $range[1], is the length.
 	// Applies LIMIT $start,$length to SQL query
 	public static function getAllObjectsForForm($formID,$sortField=NULL,$metadata=TRUE,$range=NULL) {
