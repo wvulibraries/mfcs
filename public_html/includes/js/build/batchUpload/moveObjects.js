@@ -48,7 +48,7 @@ $(function(){
 
            $.ajax({
                 dataType:'json',
-                url:'/data/object/move/completeMove/',
+                url:siteRoot+'data/object/move/process/',
                 data:{
                     objects: objects,
                     formID: moveObjectsToForm
