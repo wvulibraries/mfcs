@@ -21,10 +21,6 @@ else if (isset($engine->cleanPost['MYSQL']['search'])) {
             throw new Exception("No form selected.");
         }
 
-        if (isempty($engine->cleanPost['MYSQL']['query']) && (isempty($engine->cleanPost['MYSQL']['startDate']) || isempty($engine->cleanPost['MYSQL']['endDate']))) {
-            throw new Exception("No Query Provided.");
-        }
-
         sessionSet("lastSearchForm",$engine->cleanPost['HTML']['formList']);
         sessionSet("searchResults","");
         sessionSet("searchQuery", $engine->cleanPost['MYSQL']);
@@ -50,7 +46,6 @@ else if (!is_empty(sessionGet('searchResults'))) {
 else if (!is_empty(sessionGet('searchQuery'))) {
 
     log::insert("Data View: Search: get saved search");
-
     $searchQuery = sessionGet('searchQuery');
 
     try {
