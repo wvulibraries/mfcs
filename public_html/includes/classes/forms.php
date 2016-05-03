@@ -1641,16 +1641,7 @@ class forms {
 			foreach ($form2['fields'] as $field2) {
 				if (
 					$field['type']            == $field2['type']            &&
-					$field['name']            == $field2['name']            &&
-					$field['required']        == $field2['required']        &&
-					$field['duplicates']      == $field2['duplicates']      &&
-					$field['validation']      == $field2['validation']      &&
-					$field['validationRegex'] == $field2['validationRegex'] &&
-					$field['min']             == $field2['min']             &&
-					$field['max']             == $field2['max']             &&
-					$field['step']            == $field2['step']            &&
-					$field['format']          == $field2['format']
-
+					$field['name']            == $field2['name']
 					) {
 
 					array_push($compatibleFields,$field);
