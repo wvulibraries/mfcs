@@ -2,6 +2,7 @@
 $(function(){
     var moveObjectsToForm;
     var selectedItemsArray = [];
+    var lastSearchForm = $('.searchedFormId').data('formid');
 
     // Watch the Objects to see if they have been checked
     $('.moveObjectCheckbox').change(function(){
@@ -35,6 +36,29 @@ $(function(){
     $('.selectForm select').change(function(){
        moveObjectsToForm = $(this).val();
     });
+
+    if(isInt(lastSearchForm)){
+      $.ajax({
+           dataType:'html',
+           type: 'get',
+           url:'/data/object/move/getCompatibleForms.php',
+           data:{ formID: lastSearchForm },
+
+           success:function(){
+               console.log('success');
+           },
+
+           error: function (jqXHR, textStatus, errorThrown) {
+               console.log(textStatus + ': ' + errorThrown);
+           },
+
+           complete:function(data){
+              $('.compatibleForms').html(data.responseText);
+              $('#performMove').removeClass('hidden');
+           },
+       });
+    }
+
 
     $('#performMove').submit(function(e){
         e.preventDefault();
@@ -70,3 +94,11 @@ $(function(){
 
     });
 });
+
+function isInt(value) {
+  if (isNaN(value)) {
+    return false;
+  }
+  var x = parseFloat(value);
+  return (x | 0) === x;
+}

@@ -77,7 +77,7 @@ $searchThumbs = str2bool(sessionGet("searchThumbs"));
 
 if(isset($results)){
     localvars::add('objectTable', listGenerator::moveObjectListResults($results, $searchThumbs));
-    localvars::add('moveToForm', listGenerator::createFormDropDownList());
+    localvars::add('lastFormID', sessionGet("lastSearchForm"));
 }
 
 // build the search interface, we do this regardless of
@@ -97,7 +97,6 @@ catch(Exception $e) {
 
 
 $engine->eTemplate("include","header");
-
 ?>
 
 <section>
@@ -124,7 +123,6 @@ $engine->eTemplate("include","header");
 
     <div class="row-fluid">
         <h2> Search Objects </h2>
-
         {local var="searchInterface"}
         {local var="objectTable"}
 
@@ -135,12 +133,13 @@ $engine->eTemplate("include","header");
         <br><br><br>
     </div>
 
-    <div class="row-fluid">
-        <form id="performMove">
-            <h2>Move Objects to Form </h2>
-            {local var="moveToForm"}
-            <input id="selectedObjectIDs" type="hidden" name="selectedObjectIDs" value="" />
+    <div class="searchedFormId" data-formID="{local var="lastFormID"}"></div>
 
+    <div class="row-fluid">
+        <form id="performMove"  class="hidden">
+            <h2>Move Objects to Form </h2>
+            <div class="compatibleForms"> </div>
+            <input id="selectedObjectIDs" type="hidden" name="selectedObjectIDs" value="" />
             <input type="submit" class="btn pull-right submit"/>
         </form>
     </div>
