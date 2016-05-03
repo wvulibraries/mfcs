@@ -1,1 +1,0 @@
-<script type="text/javascript" src="{local var="siteRoot"}includes/js/build/batchUpload/moveObjects.js"></script>
