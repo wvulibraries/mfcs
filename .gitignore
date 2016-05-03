@@ -16,3 +16,4 @@ SQLFiles/setMaxPacket.sql
 node_modules
 public_html/testVids.php
 testVids
+debug.txt
