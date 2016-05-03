@@ -198,7 +198,7 @@ try {
           $objectID = localvars::get("newObjectID");
 
           // Now that we have a valid objectID, we insert into the processing table
-          if (!files::fixityInsert($tmpArray['path'],$objectID)) {
+          if (!files::fixityInsert($tmpArray['files']['archive'][0]['path'],$objectID)) {
             errorHandle::newError(__METHOD__."() - couldn't create fixity entry.", errorHandle::DEBUG);
           }
 
