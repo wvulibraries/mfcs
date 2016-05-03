@@ -32,11 +32,6 @@ $(function(){
         $('.moveObjectCheckbox').prop('checked', false).change();
     });
 
-    // get SelectForm Info
-    $('.selectForm select').change(function(){
-       moveObjectsToForm = $(this).val();
-    });
-
     if(isInt(lastSearchForm)){
       $.ajax({
            dataType:'html',
@@ -55,6 +50,11 @@ $(function(){
            complete:function(data){
               $('.compatibleForms').html(data.responseText);
               $('#performMove').removeClass('hidden');
+
+              // get SelectForm Info
+              $('.selectForm select').change(function(){
+                 moveObjectsToForm = $(this).val();
+              });
            },
        });
     }
@@ -70,9 +70,12 @@ $(function(){
         } else {
            var objects = selectedItemsArray.join();
 
+           var sentData = {objects: objects, formID: moveObjectsToForm};
+           console.log(sentData);
+
            $.ajax({
                 dataType:'json',
-                url:'/data/object/move/completeMove/',
+                url:'/data/object/move/process/',
                 data:{
                     objects: objects,
                     formID: moveObjectsToForm
