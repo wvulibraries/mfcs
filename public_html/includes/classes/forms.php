@@ -371,6 +371,16 @@ class forms {
 		return $form['idno'];
 	}
 
+	public static function IDNO_is_managed($formID) {
+		$idno_info = self::getFormIDInfo($formID);
+
+		if ($idno_info['managedBy'] == "system") {
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+
 	public static function getField($formID,$fieldName) {
 
 		if (($form = self::get($formID)) === FALSE) {
