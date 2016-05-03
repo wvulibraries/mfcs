@@ -1626,6 +1626,13 @@ class forms {
 
 	public static function formsAreCompatible($form1,$form2) {
 
+		// if intefers are passed in, grab the forms.
+		if (is_numeric($form1)) $form1 = self::get($form1);
+		if (is_numeric($form2)) $form2 = self::get($form2);
+
+		// if we don't have forms, return false;
+		if (!is_array($form1) || !is_array($form2)) return FALSE;
+
 		if (count($form1['fields']) != count($form2['fields'])) return FALSE;
 
 		//@TODO there has to be a better way of doing this
