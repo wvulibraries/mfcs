@@ -1658,7 +1658,7 @@ class forms {
 			return FALSE;
 		}
 
-		$allForms = self::getMetadataForms(TRUE);
+		$allForms = self::getForms(NULL,TRUE);
 		$forms    = array();
 
 		foreach ($allForms as $fid=>$f) {

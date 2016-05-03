@@ -120,9 +120,15 @@ class listGenerator {
 		return $output;
 	}
 
-	public static function createFormDropDownList(){
+	public static function createFormDropDownList($compatible_with=NULL){
 		$engine = EngineAPI::singleton();
-		$forms  = forms::getForms(TRUE,TRUE);
+
+		if (!isnull($compatible_with) && forms::get($compatible_with)) {
+			$forms  = forms::compatibleForms($compatible_with);
+		}
+		else {
+			$forms  = forms::getForms(TRUE,TRUE);
+		}
 		$output = '<div class="selectForm"> <select name="selectedFormID" id="selectedFormID"> <option value> Select A Form </option>';
 
 		foreach ($forms as $form) {
