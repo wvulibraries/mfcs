@@ -166,6 +166,21 @@ class objects {
 
 	}
 
+	public static function get_idno($objectID) {
+
+		$sql       = sprintf("SELECT `idno` FROM `objects` WHERE `ID`='%s'",mfcs::$engine->openDB->escape($objectID));
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if ($sqlResult['numrows'] != 1) {
+			return FALSE;
+		}
+
+		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+		return $row['idno'];
+
+	}
+
 	// $range is an array. $range[0] is the start, $range[1], is the length.
 	// Applies LIMIT $start,$length to SQL query
 	public static function getAllObjectsForForm($formID,$sortField=NULL,$metadata=TRUE,$range=NULL) {
