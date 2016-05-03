@@ -765,7 +765,7 @@ class listGenerator {
 			$data[] = $tmp;
 		}
 
-		return sprintf('<h2> Select Objects to Move </h2> <div id="objectsContainer" class="objectsTable">%s</div>', self::createTable_new($data,$headers,$data_size,false));
+		return sprintf('<h2> Select Objects to Move </h2> <div id="objectsContainer" class="objectsTable">%s</div>', self::createTable_new($data,$headers,0,false));
 	}
 }
 
