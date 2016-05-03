@@ -36,7 +36,7 @@ $(function(){
       $.ajax({
            dataType:'html',
            type: 'get',
-           url:'/data/object/move/getCompatibleForms.php',
+           url:siteRoot+'data/object/move/getCompatibleForms.php',
            data:{ formID: lastSearchForm },
 
            success:function(){
@@ -74,7 +74,7 @@ $(function(){
            $.ajax({
                 dataType:'json',
                 type:'post',
-                url:'/data/object/move/process/',
+                url:siteRoot+'data/object/move/process/',
                 data:{
                     objects: selectedItemsArray,
                     formID: moveObjectsToForm,
