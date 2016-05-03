@@ -68,29 +68,26 @@ $(function(){
             $('.submit').removeClass('disabled').attr('readonly', false);
             return false;
         } else {
-           var objects = selectedItemsArray.join();
-
-           var sentData = {objects: objects, formID: moveObjectsToForm};
+           var csrf = $("input[name='engineCSRFCheck']").val();
+           var sentData = {objects: selectedItemsArray, formID: moveObjectsToForm, engineCSRFCheck: csrf};
            console.log(sentData);
-
            $.ajax({
                 dataType:'json',
+                type:'post',
                 url:'/data/object/move/process/',
                 data:{
-                    objects: objects,
-                    formID: moveObjectsToForm
+                    objects: selectedItemsArray,
+                    formID: moveObjectsToForm,
+                    engineCSRFCheck: csrf
                 },
-
                 success:function(){
                     console.log('success');
                 },
-
-                error: function (jqXHR, textStatus, errorThrown) {
+                error: function(jqXHR, textStatus, errorThrown){
                     console.log(textStatus + ': ' + errorThrown);
                 },
-
                 complete:function(data){
-                    console.log(data);
+                    console.log(data.responseText);
                 },
             });
         }

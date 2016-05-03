@@ -138,6 +138,11 @@ $engine->eTemplate("include","header");
     <div class="row-fluid">
         <form id="performMove"  class="hidden">
             <h2>Move Objects to Form </h2>
+
+            <div class="csrfCheck">
+                {engine name="csrf"}
+            </div>
+
             <div class="compatibleForms"> </div>
             <input id="selectedObjectIDs" type="hidden" name="selectedObjectIDs" value="" />
             <input type="submit" class="btn pull-right submit"/>

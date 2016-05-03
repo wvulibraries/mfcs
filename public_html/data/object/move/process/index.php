@@ -5,7 +5,7 @@ include("../../../../header.php");
 
 // Mikes Crazy Backend Data Here
 
-if(isset($engine->cleanGet['MYSQL']['objects']) && isset($engine->cleanGet['MYSQL']['formID'])){
+if(isset($engine->cleanPost['MYSQL']['objects']) && isset($engine->cleanPost['MYSQL']['formID'])){
     $result = "Yay we got the data";
 } else {
     $result = "No Data";
