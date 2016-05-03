@@ -30,7 +30,6 @@ module.exports = function(grunt) {
                 'public_html/includes/js/develop/createForm_form.js',
                 'public_html/includes/js/develop/createForm_formPermissions.js',
                 'public_html/includes/js/develop/createForm_NavigationCreator.js',
-                'public_html/includes/js/develop/fineUploaderInit.js'
               ],
               dest: 'public_html/includes/js/build/formBuilder/formBuilder.js',
             },
