@@ -29,7 +29,7 @@ localVars::add("formList", listGenerator::createFormDropDownList());
         <li><a href="{local var="siteRoot"}/data/object/batchUpload/">Batch Upload</a></li>
 
         <li class="pull-right noDivider">
-            <a href="#batchUploadDocumentation" target="_blank">
+            <a href="https://github.com/wvulibraries/mfcs/wiki/Batch-Uploading" target="_blank">
                 <i class="fa fa-book"></i> Documentation
             </a>
         </li>
