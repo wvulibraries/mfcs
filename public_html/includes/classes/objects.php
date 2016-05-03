@@ -181,6 +181,8 @@ class objects {
 
 	}
 
+	// NOTE!!!! this method does not ensure compatible. It ijust moves the objects
+	// compatible forms are the respncibility of the calling function.
 	public static function move($objectID,$formID) {
 
 		$sql       = sprintf("UPDATE `objects` SET `formID`='%s' WHERE `ID`='%s' LIMIT 1",
