@@ -153,6 +153,19 @@ class objects {
 
 	}
 
+	public static function idno_is_unique($idno) {
+
+		$sql       = sprintf("SELECT * FROM `objects` WHERE `idno`='%s'",mfcs::$engine->openDB->escape($idno));
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if ($sqlResult['numrows'] > 1) {
+			return FALSE;
+		}
+
+		return TRUE;
+
+	}
+
 	// $range is an array. $range[0] is the start, $range[1], is the length.
 	// Applies LIMIT $start,$length to SQL query
 	public static function getAllObjectsForForm($formID,$sortField=NULL,$metadata=TRUE,$range=NULL) {
