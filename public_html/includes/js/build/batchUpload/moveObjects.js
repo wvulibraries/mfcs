@@ -87,7 +87,12 @@ $(function(){
                     console.log(textStatus + ': ' + errorThrown);
                 },
                 complete:function(data){
-                    console.log(data.responseText);
+                    var json = data.responseJSON;
+
+                    if(json.hasOwnProperty('message')){
+                        var errorMessage = generateAlertHTML(json.message, 'danger');
+                        $('#feedback').append(errorMessage);
+                    }
                 },
             });
         }
@@ -101,6 +106,14 @@ function isInt(value) {
   }
   var x = parseFloat(value);
   return (x | 0) === x;
+}
+
+function generateAlertHTML(message,type){
+    html = '<div class="alert alert-' + type + ' alert-dismissible" role="alert">';
+    html += '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
+    html += '<div class="error-message">'+ message +'</div></div>';
+
+    return html;
 }
 
 

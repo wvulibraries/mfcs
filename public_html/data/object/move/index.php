@@ -121,6 +121,8 @@ $engine->eTemplate("include","header");
         <strong>Error!</strong> <p> Please check to be sure that you have selected objects to move and that you have selected a form that will be receiving these objects.  </p>
     </div>
 
+    <div id="feedback"> </div>
+    
     <div class="row-fluid">
         <h2> Search Objects </h2>
         {local var="searchInterface"}
