@@ -95,24 +95,26 @@ $(function() {
                 complete: function(data) {
                     var json = data.responseJSON;
 
+                    console.log(json);
+
                     if (json.hasOwnProperty('message')) {
                         var errorMessage = generateAlertHTML(json.message, 'danger');
                         $('#feedback').append(errorMessage);
                     }
 
-                    if (json.hasOwnProperty('errors')) {
+                    if (json.hasOwnProperty('errors') && !$.isEmptyObject(json.errors)) {
                         var messages = "";
                         $.each(json.errors, function() {
-                            messages = this.objectID + " : " + this.message + "</br>";
+                            messages += this.objectID + " : " + this.message + "</br>";
                         });
                         var errors = generateAlertHTML(messages, 'danger');
                         $('#feedback').append(errors);
                     }
 
-                    if (json.hasOwnProperty('success')) {
+                    if (json.hasOwnProperty('success') && !$.isEmptyObject(json.success)) {
                         var successMessages = "";
                         $.each(json.success, function() {
-                            successMessages = this.objectID + " : " + this.message;
+                            successMessages += this.objectID + " : " + this.message;
                         });
                         var success = generateAlertHTML(successMessages, 'success');
                         $('#feedback').append(success);
