@@ -158,7 +158,7 @@ class objects {
 		$sql       = sprintf("SELECT * FROM `objects` WHERE `idno`='%s'",mfcs::$engine->openDB->escape($idno));
 		$sqlResult = mfcs::$engine->openDB->query($sql);
 
-		if ($sqlResult['numrows'] > 1) {
+		if ($sqlResult['numrows'] > 0) {
 			return FALSE;
 		}
 
