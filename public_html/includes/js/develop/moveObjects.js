@@ -61,6 +61,39 @@ $(function() {
         });
     }
 
+    // get feedback
+    if(sessionStorage.getItem('feedback') != null){
+        var json = JSON.parse(sessionStorage.getItem('feedback'));
+
+        if (json.hasOwnProperty('message')) {
+            var errorMessage = generateAlertHTML(json.message, 'danger');
+            $('#feedback').append(errorMessage);
+        }
+
+        if (json.hasOwnProperty('errors') && !$.isEmptyObject(json.errors)) {
+            var messages = "";
+            $.each(json.errors, function() {
+                messages += this.objectID + " : " + this.message + "</br>";
+            });
+            var errors = generateAlertHTML(messages, 'danger');
+            $('#feedback').append(errors);
+        }
+
+        if (json.hasOwnProperty('success') && !$.isEmptyObject(json.success)) {
+            var successMessages = "";
+
+            $.each(json.success, function() {
+                successMessages += this.objectID + " : has been successfully moved. </br>" ;
+            });
+
+            var success = generateAlertHTML(successMessages, 'success');
+
+            $('#feedback').append(success);
+        }
+
+        sessionStorage.removeItem('feedback');
+    }
+
 
     $('#performMove').submit(function(e) {
         e.preventDefault();
@@ -95,34 +128,12 @@ $(function() {
                 complete: function(data) {
                     var json = data.responseJSON;
 
-                    console.log(json);
-
-                    if (json.hasOwnProperty('message')) {
-                        var errorMessage = generateAlertHTML(json.message, 'danger');
-                        $('#feedback').append(errorMessage);
-                    }
-
-                    if (json.hasOwnProperty('errors') && !$.isEmptyObject(json.errors)) {
-                        var messages = "";
-                        $.each(json.errors, function() {
-                            messages += this.objectID + " : " + this.message + "</br>";
-                        });
-                        var errors = generateAlertHTML(messages, 'danger');
-                        $('#feedback').append(errors);
-                    }
-
-                    if (json.hasOwnProperty('success') && !$.isEmptyObject(json.success)) {
-                        var successMessages = "";
-                        $.each(json.success, function() {
-                            successMessages += this.objectID + " : " + this.message;
-                        });
-                        var success = generateAlertHTML(successMessages, 'success');
-                        $('#feedback').append(success);
-                    }
+                    // set to session
+                    sessionStorage.setItem('feedback', JSON.stringify(json));
+                    $('input[name=search]').click();
                 },
             });
         }
-
     });
 });
 
