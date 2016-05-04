@@ -199,7 +199,7 @@ try {
               }
 
               $data['idno'] = $new_idno;
-              $changed_idnos[] = $data['idno'];
+              $changed_idnos[$data['idno']] = TRUE;
             }
 
             http::setPost("idno",$data['idno']);
@@ -238,6 +238,8 @@ try {
             // Logging the error here, but we don't want to undo the whole database at this point.
           }
 
+          if (isset($changed_idnos[$data['idno']])) $changed_idnos[$data['idno']] = $objectID;
+
         } // If we have the tmpArray close
 
         // end transactions
@@ -261,8 +263,8 @@ errorHandle::successMsg("Successfully created records.");
 
 if (count($changed_idnos) > 0) {
   $changed_idno_list = '<ul id="changed_idnos">';
-  foreach ($changed_idnos as $idno) {
-    $changed_idno_list .= sprintf('<a href="#">%s</a>',$idno);
+  foreach ($changed_idnos as $idno=>$objectID) {
+    $changed_idno_list .= sprintf('<a href="%sdataEntry/object.php?objectID=%s">%s</a>',mfcs::config("siteRoot"),$objectID,$idno);
   }
   $changed_idno_list .= "</ul>";
 
