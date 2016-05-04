@@ -52,10 +52,6 @@ try {
       throw new Exception('There are no form Fields associated with data, we need something such as IDNO');
     }
 
-    if (isset($formPost['form_idno']) && is_empty($formPost['form_idno'])) {
-      throw new Exception('IDNO has been left blank.');
-    }
-
     //  File upload information and upload directory
     if (isset($engine->cleanPost['MYSQL']['fileDirectorySelector']) && !is_empty($engine->cleanPost['MYSQL']['fileDirectorySelector'])) {
       $uploadDirectory = sprintf("%s/%s",mfcs::config('ftpUploadDirectory'),$engine->cleanPost['MYSQL']['fileDirectorySelector']);
@@ -183,6 +179,11 @@ try {
 
           // If the form has a user managed IDNO number,
           if (!forms::IDNO_is_managed($form['ID'])) {
+
+            // if the IDNO is empty, set it to the current filename
+            if (is_empty($data['idno'])) {
+              $data['idno'] = $fileinfo['filename'];
+            }
 
             // check if it is unique
             if (!objects::idno_is_unique($data['idno'])) {
