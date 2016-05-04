@@ -970,10 +970,21 @@ class forms {
 				if ($field['type'] == "idno") {
 					$field['type'] = "text";
 					if (isset($object) && !isset($object['data'][$field['name']])) $object['data'][$field['name']] = $object['idno'];
+
+					// the IDNO is managed by the user. It shouldn't be set to read only
+					if (isset($field['managedBy']) && strtolower($field['managedBy']) != "system") {
+						$field['readonly'] = "false";
+					}
+					else {
+						// just in case ...
+						$field['readonly'] = "true";
+					}
+
 				}
 
 				// get the field value, if the object exists
 				$fieldValue = self::getFieldValue($field,(isset($object))?$object:NULL);
+
 
 				$output .= sprintf('<input type="%s" name="%s" value="%s" placeholder="%s" %s id="%s" class="%s" %s %s %s %s />',
 					htmlSanitize($field['type']),
