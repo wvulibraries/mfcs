@@ -13,6 +13,8 @@ if(!mfcsPerms::evaluatePageAccess(1)){
 // Batch Uploading Logs
 log::insert("BatchUpload",0,0, "Processing upload");
 
+$changed_idnos = array();
+
 try {
   // make sure files are set
   if(isset($engine->cleanPost['MYSQL'])) {
@@ -29,7 +31,7 @@ try {
     // $file_upload_field_name is the name of the last upload field in the form
     $file_upload_field_name = "";
     foreach ($form['fields'] as $field) {
-      if ($field['type'] != "textarea" && $field['type'] != "text") {
+      if ($field['type'] != "textarea" && $field['type'] != "text" && $field['type'] != "idno") {
         if ($field['type'] == "file") $file_upload_field_name = $field['name'];
         unset($formPost['form_'.$field['name']."_"]);
       }
@@ -114,18 +116,15 @@ try {
         // We are calling the object::create method directly to avoid validation checks.
         $data = array();
         foreach ($form['fields'] as $field) {
-          if ($field['type'] != "textarea" && $field['type'] != "text") continue;
+          if ($field['type'] != "textarea" && $field['type'] != "text" && $field['type'] != 'idno') continue;
 
           $form_data_name = sprintf("form_%s%s",$field['name'],($field['name'] == "idno")?"":"_");
 
-          $data[$field['name']] = $form_data[$fileinfo['filename']]['form_'.$field['name'].'_'];
+          $data[$field['name']] = $form_data[$fileinfo['filename']][$form_data_name];
 
         }
 
         // Add the files data array.
-
-        // Process uploaded files
-        $uploadID = $engine->cleanPost['MYSQL']["batch_upload_id"];
 
         // Process the files
         // this is the $tmpArray returned from filess:processObjectUploads()
@@ -182,6 +181,30 @@ try {
 
           // end files data array
 
+          // If the form has a user managed IDNO number,
+          if (!forms::IDNO_is_managed($form['ID'])) {
+
+            // check if it is unique
+            if (!objects::idno_is_unique($data['idno'])) {
+
+              $original_idno = $data['idno'];
+              while (1) {
+
+                // if it is not unique, add _time() to it.
+                $new_idno = sprintf("%s_%s",$original_idno,time());
+
+                // recheck it. wash, rinse repeat.
+                if (objects::idno_is_unique($new_idno)) break;
+              }
+
+              $data['idno'] = $new_idno;
+              $changed_idnos[] = $data['idno'];
+            }
+
+            http::setPost("idno",$data['idno']);
+
+          }
+
           if (($result = mfcs::$engine->openDB->transBegin("objects")) !== TRUE) {
             throw new Exception("unable to start database transactions", 1);
           }
@@ -235,6 +258,16 @@ rmdir($uploadDirectory);
 
 errorHandle::successMsg("Successfully created records.");
 
+if (count($changed_idnos) > 0) {
+  $changed_idno_list = '<ul id="changed_idnos">';
+  foreach ($changed_idnos as $idno) {
+    $changed_idno_list .= sprintf('<a href="#">%s</a>',$idno);
+  }
+  $changed_idno_list .= "</ul>";
+
+  localvars::add("changed_idno_list",$changed_idno_list);
+}
+
 }
 catch (Exception $e) {
 
@@ -270,8 +303,14 @@ $engine->eTemplate("include","header");
 
   {local var="results"}
 
+<hr />
 
-  {local var="list"}
+  <p>
+    The following list, if any, is a list of IDNO's that had to be modified on import
+    because of a conflict. Please see the documentation for more information.
+  </p>
+
+  {local var="changed_idno_list"}
 
 
 </section>
