@@ -95,28 +95,26 @@ $(function() {
                 complete: function(data) {
                     var json = data.responseJSON;
 
-                    console.log(json);
-
                     if (json.hasOwnProperty('message')) {
                         var errorMessage = generateAlertHTML(json.message, 'danger');
                         $('#feedback').append(errorMessage);
                     }
 
                     if (json.hasOwnProperty('errors')) {
-                        var errors = "";
+                        var messages = "";
                         $.each(json.errors, function() {
-                            var messages = this.objectID + " : " + this.message;
-                            errors += generateAlertHTML(messages, 'danger');
+                            messages = this.objectID + " : " + this.message + "</br>";
                         });
+                        var errors = generateAlertHTML(messages, 'danger');
                         $('#feedback').append(errors);
                     }
 
                     if (json.hasOwnProperty('success')) {
-                        var success = "";
-                        $.each(json.errors, function() {
-                            var successMessages = this.objectID + " : " + this.message;
-                            success += generateAlertHTML(successMessages, 'success');
+                        var successMessages = "";
+                        $.each(json.success, function() {
+                            successMessages = this.objectID + " : " + this.message;
                         });
+                        var success = generateAlertHTML(successMessages, 'success');
                         $('#feedback').append(success);
                     }
                 },
