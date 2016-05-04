@@ -36,11 +36,6 @@ try {
         continue;
       }
 
-      if (!objects::idno_is_unique($object_idno)) {
-        $error_objects[] = array( "objectID" => $objectID, "message" => "IDNO Conflict.");
-        continue;
-      }
-
   		if (($trans_result = mfcs::$engine->openDB->transBegin("objects")) !== TRUE) {
   			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
   			throw new Exception("Unable to start transations", 1);
