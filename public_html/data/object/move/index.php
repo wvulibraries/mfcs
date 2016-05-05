@@ -107,10 +107,10 @@ $engine->eTemplate("include","header");
 
     <ul class="breadcrumbs">
         <li><a href="{local var="siteRoot"}">Home</a></li>
-        <li><a href="{local var="siteRoot"}/moveObjects/"> Move Objects </a></li>
+        <li><a href="{local var="siteRoot"}data/object/move/"> Move Objects </a></li>
 
         <li class="pull-right noDivider">
-            <a href="#batchUploadDocumentation" target="_blank">
+            <a href="https://github.com/wvulibraries/mfcs/wiki/Moving-Objects" target="_blank">
                 <i class="fa fa-book"></i> Documentation
             </a>
         </li>
@@ -122,7 +122,7 @@ $engine->eTemplate("include","header");
     </div>
 
     <div id="feedback"> </div>
-    
+
     <div class="row-fluid">
         <h2> Search Objects </h2>
         {local var="searchInterface"}
