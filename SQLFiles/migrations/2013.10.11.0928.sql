@@ -1,1 +1,0 @@
-ALTER TABLE  `mfcs`.`dupeMatching` ADD INDEX  `dupeMatching` (  `formID` ,  `field` ,  `value` ( 100 ) );

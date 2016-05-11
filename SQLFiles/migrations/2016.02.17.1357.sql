@@ -1,1 +1,0 @@
-ALTER TABLE `filesChecks` ADD COLUMN `userProvided` tinyint(1) unsigned NOT NULL DEFAULT '0';

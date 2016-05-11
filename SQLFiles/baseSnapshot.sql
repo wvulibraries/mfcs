@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.1.67, for redhat-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.1.73, for redhat-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: mfcs
 -- ------------------------------------------------------
--- Server version	5.1.67
+-- Server version	5.1.73-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -16,28 +16,19 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `containers`
+-- Table structure for table `checks`
 --
 
-DROP TABLE IF EXISTS `containers`;
+DROP TABLE IF EXISTS `checks`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `containers` (
+CREATE TABLE `checks` (
   `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `containerName` varchar(50) NOT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `container` (`containerName`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(100) DEFAULT NULL,
+  `value` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `containers`
---
-
-LOCK TABLES `containers` WRITE;
-/*!40000 ALTER TABLE `containers` DISABLE KEYS */;
-/*!40000 ALTER TABLE `containers` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `dupeMatching`
@@ -51,20 +42,52 @@ CREATE TABLE `dupeMatching` (
   `formID` int(10) unsigned DEFAULT NULL,
   `projectID` int(10) unsigned DEFAULT NULL,
   `objectID` int(10) unsigned DEFAULT NULL,
-  `field` varchar(50) DEFAULT NULL,
-  `value` text,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `field` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `value` text CHARACTER SET utf8 COLLATE utf8_bin,
+  PRIMARY KEY (`ID`),
+  KEY `dupeMatching` (`formID`,`field`,`value`(100))
+) ENGINE=InnoDB AUTO_INCREMENT=2488545 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `dupeMatching`
+-- Table structure for table `exports`
 --
 
-LOCK TABLES `dupeMatching` WRITE;
-/*!40000 ALTER TABLE `dupeMatching` DISABLE KEYS */;
-/*!40000 ALTER TABLE `dupeMatching` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `exports`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `exports` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `formID` int(10) unsigned DEFAULT NULL,
+  `projectID` int(10) unsigned DEFAULT NULL,
+  `objectID` int(10) unsigned DEFAULT NULL,
+  `date` int(11) unsigned DEFAULT NULL,
+  `info1` varchar(200) DEFAULT NULL,
+  `info2` text,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=109 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `filesChecks`
+--
+
+DROP TABLE IF EXISTS `filesChecks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `filesChecks` (
+  `ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `location` varchar(1000) NOT NULL,
+  `checksum` varchar(33) DEFAULT NULL,
+  `lastChecked` int(20) unsigned DEFAULT NULL,
+  `pass` tinyint(1) unsigned DEFAULT '0',
+  `objectID` bigint(20) unsigned NOT NULL,
+  `userProvided` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`),
+  KEY `location` (`location`(255)),
+  KEY `objectID` (`objectID`)
+) ENGINE=InnoDB AUTO_INCREMENT=82114 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `forms`
@@ -85,20 +108,85 @@ CREATE TABLE `forms` (
   `submitButton` varchar(20) DEFAULT 'Submit',
   `updateButton` varchar(20) DEFAULT 'Update',
   `count` int(11) NOT NULL DEFAULT '0',
+  `displayTitle` varchar(50) DEFAULT NULL,
   `objectTitleField` varchar(50) DEFAULT 'title',
-  `navigation` varchar(2000) DEFAULT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+  `navigation` mediumtext,
+  `linkTitle` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `title` (`title`),
+  UNIQUE KEY `linkTitle` (`linkTitle`)
+) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `forms`
+-- Table structure for table `forms_projects`
 --
 
-LOCK TABLES `forms` WRITE;
-/*!40000 ALTER TABLE `forms` DISABLE KEYS */;
-/*!40000 ALTER TABLE `forms` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `forms_projects`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `forms_projects` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `formID` int(10) unsigned NOT NULL,
+  `projectID` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `formID` (`formID`,`projectID`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1 COMMENT='many to many link for projects and forms';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `locks`
+--
+
+DROP TABLE IF EXISTS `locks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `locks` (
+  `ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `type` varchar(25) NOT NULL,
+  `typeID` bigint(20) unsigned NOT NULL,
+  `user` int(20) unsigned NOT NULL,
+  `date` int(20) unsigned NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `type` (`type`),
+  KEY `typeID` (`typeID`)
+) ENGINE=InnoDB AUTO_INCREMENT=10183 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `logs`
+--
+
+DROP TABLE IF EXISTS `logs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `logs` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(100) DEFAULT NULL,
+  `ip` varchar(15) DEFAULT NULL,
+  `action` varchar(100) DEFAULT NULL,
+  `objectID` int(10) unsigned DEFAULT '0',
+  `formID` int(10) unsigned DEFAULT '0',
+  `info` varchar(1000) DEFAULT NULL,
+  `date` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=133016 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `metadataStandards`
+--
+
+DROP TABLE IF EXISTS `metadataStandards`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `metadataStandards` (
+  `ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `type` varchar(100) NOT NULL,
+  `typeID` varchar(20) NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `objectMetadataLinks`
@@ -116,13 +204,22 @@ CREATE TABLE `objectMetadataLinks` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `objectMetadataLinks`
+-- Table structure for table `objectProcessing`
 --
 
-LOCK TABLES `objectMetadataLinks` WRITE;
-/*!40000 ALTER TABLE `objectMetadataLinks` DISABLE KEYS */;
-/*!40000 ALTER TABLE `objectMetadataLinks` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `objectProcessing`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `objectProcessing` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `objectID` bigint(20) unsigned NOT NULL,
+  `fieldName` varchar(100) NOT NULL,
+  `state` tinyint(1) unsigned DEFAULT '1',
+  `timestamp` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `objectID` (`objectID`)
+) ENGINE=InnoDB AUTO_INCREMENT=4693 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `objectProjects`
@@ -135,43 +232,9 @@ CREATE TABLE `objectProjects` (
   `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `objectID` int(10) unsigned DEFAULT NULL,
   `projectID` int(10) unsigned DEFAULT NULL,
-  `projectNumber` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9416 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `objectProjects`
---
-
-LOCK TABLES `objectProjects` WRITE;
-/*!40000 ALTER TABLE `objectProjects` DISABLE KEYS */;
-/*!40000 ALTER TABLE `objectProjects` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `objectTypes`
---
-
-DROP TABLE IF EXISTS `objectTypes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `objectTypes` (
-  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `objectType` varchar(50) NOT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `objectType` (`objectType`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `objectTypes`
---
-
-LOCK TABLES `objectTypes` WRITE;
-/*!40000 ALTER TABLE `objectTypes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `objectTypes` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `objects`
@@ -185,22 +248,54 @@ CREATE TABLE `objects` (
   `parentID` int(10) unsigned DEFAULT NULL,
   `formID` int(10) unsigned DEFAULT NULL,
   `defaultProject` int(10) unsigned DEFAULT NULL,
-  `data` text,
+  `data` longtext CHARACTER SET utf8 COLLATE utf8_bin,
   `metadata` tinyint(4) DEFAULT NULL,
-  `idno` varchar(20) DEFAULT NULL,
+  `idno` varchar(100) DEFAULT NULL,
   `modifiedTime` int(11) unsigned DEFAULT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `createTime` int(10) unsigned NOT NULL,
+  `modifiedBy` varchar(100) DEFAULT NULL,
+  `createdBy` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `idno_2` (`idno`),
+  KEY `formID` (`formID`),
+  KEY `idno` (`idno`),
+  KEY `modifiedTime` (`modifiedTime`)
+) ENGINE=InnoDB AUTO_INCREMENT=149833 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `objects`
+-- Table structure for table `objectsData`
 --
 
-LOCK TABLES `objects` WRITE;
-/*!40000 ALTER TABLE `objects` DISABLE KEYS */;
-/*!40000 ALTER TABLE `objects` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `objectsData`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `objectsData` (
+  `ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `formID` int(10) unsigned NOT NULL,
+  `objectID` int(10) unsigned NOT NULL,
+  `fieldName` varchar(100) NOT NULL,
+  `value` text,
+  `encoded` tinyint(1) unsigned DEFAULT '0',
+  PRIMARY KEY (`ID`),
+  KEY `objectID` (`objectID`),
+  KEY `formID` (`formID`)
+) ENGINE=InnoDB AUTO_INCREMENT=8586852 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `obsoleteFileTypes`
+--
+
+DROP TABLE IF EXISTS `obsoleteFileTypes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `obsoleteFileTypes` (
+  `ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `extension` varchar(100) NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `permissions`
@@ -215,17 +310,8 @@ CREATE TABLE `permissions` (
   `userID` int(10) unsigned DEFAULT NULL,
   `type` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1839 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `permissions`
---
-
-LOCK TABLES `permissions` WRITE;
-/*!40000 ALTER TABLE `permissions` DISABLE KEYS */;
-/*!40000 ALTER TABLE `permissions` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `projects`
@@ -236,22 +322,15 @@ DROP TABLE IF EXISTS `projects`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `projects` (
   `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `projectName` varchar(50) DEFAULT NULL,
+  `projectName` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `projectID` varchar(10) DEFAULT NULL,
   `forms` varchar(1000) DEFAULT NULL,
   `groupings` varchar(1000) CHARACTER SET utf8 DEFAULT NULL,
   `numbering` varchar(20) DEFAULT '#',
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `projectID` (`projectID`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `projects`
---
-
-LOCK TABLES `projects` WRITE;
-/*!40000 ALTER TABLE `projects` DISABLE KEYS */;
-/*!40000 ALTER TABLE `projects` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `revisions`
@@ -268,18 +347,26 @@ CREATE TABLE `revisions` (
   `metadata` text,
   `digitalObjects` blob,
   `relatedData` text,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`ID`),
+  KEY `primaryID` (`primaryID`),
+  KEY `secondaryID` (`secondaryID`)
+) ENGINE=InnoDB AUTO_INCREMENT=81193 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `revisions`
+-- Table structure for table `system_information`
 --
 
-LOCK TABLES `revisions` WRITE;
-/*!40000 ALTER TABLE `revisions` DISABLE KEYS */;
-/*!40000 ALTER TABLE `revisions` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `system_information`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `system_information` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) DEFAULT NULL,
+  `value` longtext CHARACTER SET utf8 COLLATE utf8_bin,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `users`
@@ -295,19 +382,13 @@ CREATE TABLE `users` (
   `username` varchar(25) DEFAULT NULL,
   `status` varchar(25) DEFAULT NULL,
   `pagination` int(11) NOT NULL DEFAULT '25',
+  `isStudent` tinyint(1) NOT NULL DEFAULT '0',
+  `active` tinyint(1) DEFAULT '0',
+  `email` varchar(100) DEFAULT NULL,
+  `formCreator` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `users`
---
-
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Vagrant','Default','vagrant',NULL,25);
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `users_projects`
@@ -322,17 +403,25 @@ CREATE TABLE `users_projects` (
   `projectID` int(10) unsigned NOT NULL,
   PRIMARY KEY (`UD`),
   KEY `userID` (`userID`,`projectID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='many-many link for a user''s current projects';
+) ENGINE=MyISAM AUTO_INCREMENT=25 DEFAULT CHARSET=latin1 COMMENT='many-many link for a user''s current projects';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `users_projects`
+-- Table structure for table `virusChecks`
 --
 
-LOCK TABLES `users_projects` WRITE;
-/*!40000 ALTER TABLE `users_projects` DISABLE KEYS */;
-/*!40000 ALTER TABLE `users_projects` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `virusChecks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `virusChecks` (
+  `ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `objectID` bigint(20) unsigned NOT NULL,
+  `fieldName` varchar(100) NOT NULL,
+  `state` tinyint(1) unsigned DEFAULT '1',
+  `timestamp` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=1736 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `watermarks`
@@ -344,23 +433,14 @@ DROP TABLE IF EXISTS `watermarks`;
 CREATE TABLE `watermarks` (
   `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
-  `data` blob NOT NULL,
+  `data` longblob NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `watermarks`
---
-
-LOCK TABLES `watermarks` WRITE;
-/*!40000 ALTER TABLE `watermarks` DISABLE KEYS */;
-/*!40000 ALTER TABLE `watermarks` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping routines for database 'mfcs'
+-- Dumping events for database 'mfcs'
 --
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -372,4 +452,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-04-23 14:43:13
+-- Dump completed on 2016-05-11  7:42:30

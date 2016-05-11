@@ -1,1 +1,0 @@
-ALTER TABLE  `watermarks` CHANGE  `data`  `data` LONGBLOB NOT NULL

@@ -1,1 +1,0 @@
-ALTER TABLE `objects` CHANGE COLUMN `idno` `idno` VARCHAR(100);
