@@ -97,22 +97,6 @@ function resizeElms(elms){
 // Helper Functions
 // ===================================================================
 
-function addItemToID(id, item) {
-    var theSelect = document.getElementById(id);
-
-    if (item.value == "null") {
-        return;
-    }
-
-    for (i = theSelect.length - 1; i >= 0; i--) {
-        if (theSelect.options[i].value == item.value) {
-            return;
-        }
-    }
-
-    theSelect.options[theSelect.length] = new Option(item.text, item.value);
-}
-
 function handler_jumpToIDNO(event) {
     event.preventDefault();
     event.stopImmediatePropagation();
