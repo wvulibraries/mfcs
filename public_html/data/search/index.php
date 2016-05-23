@@ -3,7 +3,7 @@
 include("../../header.php");
 
 //Permissions Access
-if(!mfcsPerms::evaluatePageAccess(2)){
+if(!mfcsPerms::evaluatePageAccess(1)){
 	header('Location: /index.php?permissionFalse');
 }
 
@@ -86,7 +86,7 @@ else{
 }
 
 if (sessionGet("searchThumbs") == "true") {
-	if(isset($results)) localvars::add("objectTable",listGenerator::createAllObjectList_new($results));	
+	if(isset($results)) localvars::add("objectTable",listGenerator::createAllObjectList_new($results));
 }
 else {
 	if(isset($results)) localvars::add("objectTable",listGenerator::createAllObjectList(0,50,NULL,$results));
