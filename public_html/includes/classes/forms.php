@@ -371,6 +371,16 @@ class forms {
 		return $form['idno'];
 	}
 
+	public static function IDNO_is_managed($formID) {
+		$idno_info = self::getFormIDInfo($formID);
+
+		if ($idno_info['managedBy'] == "system") {
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+
 	public static function getField($formID,$fieldName) {
 
 		if (($form = self::get($formID)) === FALSE) {
@@ -960,10 +970,21 @@ class forms {
 				if ($field['type'] == "idno") {
 					$field['type'] = "text";
 					if (isset($object) && !isset($object['data'][$field['name']])) $object['data'][$field['name']] = $object['idno'];
+
+					// the IDNO is managed by the user. It shouldn't be set to read only
+					if (isset($field['managedBy']) && strtolower($field['managedBy']) != "system") {
+						$field['readonly'] = "false";
+					}
+					else {
+						// just in case ...
+						$field['readonly'] = "true";
+					}
+
 				}
 
 				// get the field value, if the object exists
 				$fieldValue = self::getFieldValue($field,(isset($object))?$object:NULL);
+
 
 				$output .= sprintf('<input type="%s" name="%s" value="%s" placeholder="%s" %s id="%s" class="%s" %s %s %s %s />',
 					htmlSanitize($field['type']),
@@ -1616,6 +1637,13 @@ class forms {
 
 	public static function formsAreCompatible($form1,$form2) {
 
+		// if intefers are passed in, grab the forms.
+		if (is_numeric($form1)) $form1 = self::get($form1);
+		if (is_numeric($form2)) $form2 = self::get($form2);
+
+		// if we don't have forms, return false;
+		if (!is_array($form1) || !is_array($form2)) return FALSE;
+
 		if (count($form1['fields']) != count($form2['fields'])) return FALSE;
 
 		//@TODO there has to be a better way of doing this
@@ -1624,16 +1652,7 @@ class forms {
 			foreach ($form2['fields'] as $field2) {
 				if (
 					$field['type']            == $field2['type']            &&
-					$field['name']            == $field2['name']            &&
-					$field['required']        == $field2['required']        &&
-					$field['duplicates']      == $field2['duplicates']      &&
-					$field['validation']      == $field2['validation']      &&
-					$field['validationRegex'] == $field2['validationRegex'] &&
-					$field['min']             == $field2['min']             &&
-					$field['max']             == $field2['max']             &&
-					$field['step']            == $field2['step']            &&
-					$field['format']          == $field2['format']
-
+					$field['name']            == $field2['name']
 					) {
 
 					array_push($compatibleFields,$field);
@@ -1658,7 +1677,7 @@ class forms {
 			return FALSE;
 		}
 
-		$allForms = self::getMetadataForms(TRUE);
+		$allForms = self::getForms(NULL,TRUE);
 		$forms    = array();
 
 		foreach ($allForms as $fid=>$f) {

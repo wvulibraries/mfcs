@@ -22,6 +22,8 @@ class duplicates {
 		//insert data
 		foreach ($data as $name=>$raw) {
 
+			if (is_array($raw)) continue;
+
 			if (!isset(mfcs::$engine->cleanPost['MYSQL'][$name]) || isempty(mfcs::$engine->cleanPost['MYSQL'][$name])) {
 				if (!isempty($raw)) {
 					http::setPost($name,$raw);
@@ -110,7 +112,7 @@ class duplicates {
 
 		return TRUE;
 	}
-	
+
 }
 
 ?>

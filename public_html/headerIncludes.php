@@ -11,10 +11,12 @@
 <?php
 // Pages that need fine uploader
 $path = parse_url(localVars::get("siteRoot"),PHP_URL_PATH);
+
 $fineuploader = array(
 	$path."dataEntry/object.php",
 	$path."dataView/object.php",
-	);
+    $path."/data/object/batchUpload/"
+);
 ?>
 
 <script>

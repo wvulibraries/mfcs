@@ -946,7 +946,9 @@ class files {
 	}
 
 	// Take a location and put it into the
-	private static function fixityInsert($location,$objectID) {
+	// @TODO this should be set back to private once batch upload processing
+	// gets cleaned up
+	public static function fixityInsert($location,$objectID) {
 
 		$sql       = sprintf("INSERT INTO `filesChecks` (`location`,`ObjectID`) VALUES('%s','%s')",
 			mfcs::$engine->openDB->escape($location),
@@ -1566,5 +1568,20 @@ class files {
 		return rmdir($tmpDir);
 	}
 
+	public static function get_upload_directories() {
+
+		$return = "";
+
+		$upload_dirs = scandir(mfcs::config('ftpUploadDirectory'));
+		foreach ($upload_dirs as $directory) {
+			if (!is_dir(mfcs::config('ftpUploadDirectory')."/".$directory) || preg_match("/^\./",$directory)) continue;
+
+			$return .= sprintf('<option value="%s">%s</option>',$directory,$directory);
+
+		}
+
+		return $return;
+
+	}
 
 }

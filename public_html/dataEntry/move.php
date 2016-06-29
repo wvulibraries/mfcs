@@ -63,6 +63,7 @@ try {
 		}
 
 		// @TODO this logic shouldn't be here
+		// @TODO objects::move() now exists. this section needs updated to use it. 
 		$sql       = sprintf("UPDATE `objects` SET `formID`='%s' WHERE `ID`='%s' AND `formID`='%s' LIMIT 1",
 			$engine->cleanPost['MYSQL']['form'],
 			$engine->openDB->escape($engine->cleanPost['MYSQL']['objectID']),

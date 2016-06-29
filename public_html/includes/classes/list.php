@@ -3,9 +3,7 @@
 class listGenerator {
 
 	public static function createInitialSelectList() {
-
 		return file_get_contents("includes/listTemplates/initialSelectList.php");
-
 	}
 
 	public static function createAllObjectList($start=0,$length=50,$orderBy=NULL,$objects=NULL) {
@@ -52,13 +50,13 @@ class listGenerator {
 
 			$object_count = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 			//end TODO
-			
+
 			$data_size                = $object_count["COUNT(*)"];
 		}
 		else {
 			$data_size = count($provided_objects);
 		}
-		
+
 
 		$userPaginationCount      = users::user('pagination',25); // how many items to display in the table
 		$pagination               = new pagination($data_size);
@@ -118,6 +116,30 @@ class listGenerator {
 				);
 		}
 		$output .= '</div>';
+
+		return $output;
+	}
+
+	public static function createFormDropDownList($compatible_with=NULL){
+		$engine = EngineAPI::singleton();
+
+		if (!isnull($compatible_with) && forms::get($compatible_with)) {
+			$forms  = forms::compatibleForms($compatible_with);
+		}
+		else {
+			$forms  = forms::getForms(TRUE,TRUE);
+		}
+		$output = '<div class="selectForm"> <select name="selectedFormID" id="selectedFormID"> <option value> Select A Form </option>';
+
+		foreach ($forms as $form) {
+			if($form ===  FALSE || !mfcsPerms::isViewer($form['ID'])) continue;
+			$output .= sprintf('<option value="%s"> %s </option>',
+				$form['ID'],
+				forms::title($form['ID'])
+			);
+		}
+
+		$output .= '</select></div>';
 
 		return $output;
 	}
@@ -257,14 +279,14 @@ class listGenerator {
 		if($array_size > $userPaginationCount){
 
 			$tableHTML  = $table->display($data);
-			$tableHTML .= $pagination->nav_bar();
-			$tableHTML .= sprintf('<p><span class="paginationJumpLabel">Jump to Page:</span> %s</p>',
+			$tableHTML .= sprintf('<div class="span6"> %s </div>', $pagination->nav_bar());
+			$tableHTML .= sprintf('<div class="span2"> <span class="paginationJumpLabel">Jump to Page:</span> %s</div>',
 				$pagination->dropdown()
 				);
-			$tableHTML .= sprintf('<p><span class="paginationJumpLabel">Records per page:</span> %s</p>',
+			$tableHTML .= sprintf('<div class="span2"><span class="paginationJumpLabel">Records per page:</span> %s</div>',
 				$pagination->recordsPerPageDropdown()
 				);
-			$tableHTML .= sprintf('<p><form id="jumpToIDNOForm"><span class="paginationJumpLabel">Jump to IDNO:</span> <input type="text" name="jumpToIDNO" id="jumpToIDNO" data-formid="%s" value="" /></form></p>',
+			$tableHTML .= sprintf('<div class="span2"><form id="jumpToIDNOForm"><span class="paginationJumpLabel">Jump to IDNO:</span> <input type="text" name="jumpToIDNO" id="jumpToIDNO" data-formid="%s" value="" /></form></div>',
 				(isnull($formID))?"":htmlSanitize($formID)
 				);
 
@@ -711,6 +733,40 @@ class listGenerator {
 		return $objects;
 	}
 
+
+	public static function moveObjectListResults($objects, $thumbs = false) {
+
+		$engine = mfcs::$engine;
+
+		// if no results display no results
+		if (isnull($objects)) {
+			return "<div class='no-results'> <p> There were no results generated to move to the form, please refine your search and try again. </p> </div>";
+		}
+
+
+		$thumbHeaders   = array("","Creation Date","Modified Date","System IDNO","Form IDNO", "Thumbnail");
+		$noThumbHeaders = array("","Creation Date","Modified Date","System IDNO","Form IDNO");
+		$headers        = ($thumbs == true ? $thumbHeaders : $noThumbHeaders);
+
+		$data    = array();
+		foreach ($objects as $object) {
+			$tmp = array(
+				sprintf('<input type="checkbox" class="moveObjectCheckbox" value="%s" />', $object['ID']),
+				date("Y-m-d h:ia",$object['createTime']),
+				date("Y-m-d h:ia",$object['modifiedTime']),
+				$object['ID'],
+				$object['idno'],
+			);
+
+			if($thumbs == true){
+				array_push($tmp, sprintf('<img src="%s" />', files::buildThumbnailURL($object['ID'])));
+			}
+
+			$data[] = $tmp;
+		}
+
+		return sprintf('<h2> Select Objects to Move </h2> <div id="objectsContainer" class="objectsTable">%s</div>', self::createTable_new($data,$headers,0,false));
+	}
 }
 
 ?>

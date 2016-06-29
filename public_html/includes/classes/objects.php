@@ -132,6 +132,74 @@ class objects {
 		return($children);
 	}
 
+	public static function get_form_id($objectID) {
+
+		$sql       = sprintf("SELECT `formID` FROM `objects` WHERE `ID`='%s' LIMIT 1",
+												mfcs::$engine->openDB->escape($objectID));
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return false;
+		}
+
+		if ($sqlResult['numrows'] != 1) {
+			return FALSE;
+		}
+
+		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+		return $row['formID'];
+
+	}
+
+	public static function idno_is_unique($idno) {
+
+		$sql       = sprintf("SELECT * FROM `objects` WHERE `idno`='%s'",mfcs::$engine->openDB->escape($idno));
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if ($sqlResult['numrows'] > 0) {
+			return FALSE;
+		}
+
+		return TRUE;
+
+	}
+
+	public static function get_idno($objectID) {
+
+		$sql       = sprintf("SELECT `idno` FROM `objects` WHERE `ID`='%s'",mfcs::$engine->openDB->escape($objectID));
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if ($sqlResult['numrows'] != 1) {
+			return FALSE;
+		}
+
+		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+		return $row['idno'];
+
+	}
+
+	// NOTE!!!! this method does not ensure compatible. It ijust moves the objects
+	// compatible forms are the respncibility of the calling function.
+	public static function move($objectID,$formID) {
+
+		$sql       = sprintf("UPDATE `objects` SET `formID`='%s' WHERE `ID`='%s' LIMIT 1",
+			mfcs::$engine->openDB->escape($formID),
+			mfcs::$engine->openDB->escape($objectID)
+			);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		return TRUE;
+
+	}
+
 	// $range is an array. $range[0] is the start, $range[1], is the length.
 	// Applies LIMIT $start,$length to SQL query
 	public static function getAllObjectsForForm($formID,$sortField=NULL,$metadata=TRUE,$range=NULL) {
