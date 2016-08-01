@@ -13,7 +13,7 @@ Vagrant.configure(API_VERSION) do |config|
 			vb.customize ["modifyvm", :id, "--cpus", "4"]
 		end
 
-		config.vm.box = "centos6.4"
+		config.vm.box = "centos6.4_new"
 		config.vm.box_url = "https://vagrant.lib.wvu.edu/centos6.4_new.box"
 
 		config.vm.network :forwarded_port, guest: 80, host: 8080
