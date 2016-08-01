@@ -14,7 +14,7 @@ Vagrant.configure(API_VERSION) do |config|
 		end
 
 		config.vm.box = "centos6.4"
-		config.vm.box_url = "http://vagrant.lib.wvu.edu/centos6.4.box"
+		config.vm.box_url = "https://vagrant.lib.wvu.edu/centos6.4_new.box"
 
 		config.vm.network :forwarded_port, guest: 80, host: 8080
 		config.vm.network :forwarded_port, guest: 10000, host: 10000
@@ -28,5 +28,4 @@ Vagrant.configure(API_VERSION) do |config|
 		config.cache.scope = :box # or :machine
 	end
 	
-	config.ssh.insert_key = false
 end
