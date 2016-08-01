@@ -20,10 +20,13 @@ Vagrant.configure(API_VERSION) do |config|
 		config.vm.network :forwarded_port, guest: 10000, host: 10000
 
 		config.vm.provision "shell", path: "bootstrap.sh"
+	
 	end
 
 	if Vagrant.has_plugin?("vagrant-cachier")
 		# Configure cached packages to be shared between instances of the same base box.
 		config.cache.scope = :box # or :machine
 	end
+	
+	config.ssh.insert_key = false
 end
