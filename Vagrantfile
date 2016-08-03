@@ -13,19 +13,19 @@ Vagrant.configure(API_VERSION) do |config|
 			vb.customize ["modifyvm", :id, "--cpus", "4"]
 		end
 
-		config.vm.box = "thagler/centos-64"
-		config.vm.box_url = "https://vagrant.lib.wvu.edu/centos64-x86_64-20131030.box"
+		config.vm.box = "centos6.4"
+		config.vm.box_url = "http://vagrant.lib.wvu.edu/centos6.4.box"
 
 		config.vm.network :forwarded_port, guest: 80, host: 8080
 		config.vm.network :forwarded_port, guest: 10000, host: 10000
 
 		config.vm.provision "shell", path: "bootstrap.sh"
-	
+
 	end
 
 	if Vagrant.has_plugin?("vagrant-cachier")
 		# Configure cached packages to be shared between instances of the same base box.
 		config.cache.scope = :box # or :machine
 	end
-	
+
 end
