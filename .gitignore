@@ -1,4 +1,5 @@
-/serverConfiguration/serverLogs/
+/serverConfiguration/serverLogs/*
+access_logs
 /.vagrant/
 /public_html/engineIncludes
 /public_html/javascript/distribution
