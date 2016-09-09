@@ -19,3 +19,4 @@ public_html/testVids.php
 testVids
 debug.txt
 SQLFiles/mfcs_updatedDB.sql
+.DS_Store
