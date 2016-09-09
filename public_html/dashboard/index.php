@@ -1,6 +1,6 @@
 <?php
 require_once "../header.php";
- 
+
 $counts = array(
 "objects_total"       => sprintf("SELECT COUNT(*) FROM `objects` WHERE `metadata`='0'"),
 "metadata_total"      => sprintf("SELECT COUNT(*) FROM `objects` WHERE `metadata`='1'"),
@@ -153,13 +153,6 @@ $engine->eTemplate("include","header");
 			<p>
 				<strong class="fileItem">Drive Size/Free Space: </strong>
 				<span class="fileCount">{local var="drive_size"}/{local var="free_space"} </span>
-			</p>
-		</div>
-		<div class="dashboardContainer">
-			<h2>Virus Information</h2>
-			<p>
-				<strong class="fileItem"> Current Virus Count: </strong>
-				<span class="fileCount"> {local var="virus_count"}</span>
 			</p>
 		</div>
 	</div>
