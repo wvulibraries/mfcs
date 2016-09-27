@@ -2,7 +2,7 @@
 include("../../../../header.php");
 
 
-// we don't need engine's display handling here. 
+// we don't need engine's display handling here.
 $engine->obCallback = FALSE;
 
 try {
@@ -13,7 +13,7 @@ try {
 
 	$json = array();
 	foreach ($forms as $form) {
-		$object_count = count(objects::getAllObjectsForForm($form['ID']));
+		$objects_count = forms::countInForm($form['ID']);
 		$json[] = array("ID" => $form['ID'], "title" => $form['title'], "displayTitle" => $form['displayTitle'], "description" => $form['description'],"object_count"=>$object_count);
 	}
 
@@ -31,4 +31,3 @@ catch(Exception $e) {
 exit;
 
 ?>
-	

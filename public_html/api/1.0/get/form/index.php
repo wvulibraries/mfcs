@@ -12,7 +12,7 @@ try {
 	}
 
 	$json = array();
-	$object_count = count(objects::getAllObjectsForForm($form['ID']));
+	$object_count = forms::countInForm($engine->cleanGet['MYSQL']['id']);
 	$json[] = array("ID" => $form['ID'], "title" => $form['title'], "displayTitle" => $form['displayTitle'], "description" => $form['description'],"object_count"=>$object_count);
 
 	$json = json_encode($json);
