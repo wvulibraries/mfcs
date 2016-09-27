@@ -1,3 +1,4 @@
-returns json of all the objects for a form. 
+returns json for a single form
 
-querystring expects ID to be integer of the form we are getting objects from
+query string:
+* id : id of the form we are getting.
