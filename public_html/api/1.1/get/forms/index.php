@@ -14,6 +14,7 @@ try {
 	$json = array();
 	foreach ($forms as $form) {
 		$objects_count = forms::countInForm($form['ID']);
+		// TODO we need to include a last modified date here
 		$json[] = array("ID" => $form['ID'], "title" => $form['title'], "displayTitle" => $form['displayTitle'], "description" => $form['description'],"object_count"=>$object_count);
 	}
 
