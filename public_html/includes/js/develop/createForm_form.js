@@ -945,11 +945,11 @@ function formSettingsBindings() {
 			if (idnoType.length === 0) {
 				$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
 				fieldAdd.find("li:contains('ID Number')").hide();
-				fieldAdd.find("li:contains('Paragraph Text')").hide();
+				//fieldAdd.find("li:contains('Paragraph Text')").hide();
 				fieldAdd.find("li:contains('Radio')").hide();
 				fieldAdd.find("li:contains('Checkboxes')").hide();
-				fieldAdd.find("li:contains('Dropdown')").hide();
-				fieldAdd.find("li:contains('Multi-Select')").hide();
+				//fieldAdd.find("li:contains('Dropdown')").hide();
+				//fieldAdd.find("li:contains('Multi-Select')").hide();
 				fieldAdd.find("li:contains('File Upload')").hide();
 				fieldAdd.find("li:contains('WYSIWYG')").hide();
 				fieldAdd.find("li:contains('Field Set')").parent().hide().prev().hide();
@@ -959,11 +959,11 @@ function formSettingsBindings() {
 					idnoType.parent().parent().remove();
 					$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
 					fieldAdd.find("li:contains('ID Number')").hide();
-					fieldAdd.find("li:contains('Paragraph Text')").hide();
+					//fieldAdd.find("li:contains('Paragraph Text')").hide();
 					fieldAdd.find("li:contains('Radio')").hide();
 					fieldAdd.find("li:contains('Checkboxes')").hide();
-					fieldAdd.find("li:contains('Dropdown')").hide();
-					fieldAdd.find("li:contains('Multi-Select')").hide();
+					//fieldAdd.find("li:contains('Dropdown')").hide();
+					//fieldAdd.find("li:contains('Multi-Select')").hide();
 					fieldAdd.find("li:contains('File Upload')").hide();
 					fieldAdd.find("li:contains('WYSIWYG')").hide();
 					fieldAdd.find("li:contains('Field Set')").parent().hide().prev().hide();
