@@ -16,8 +16,8 @@ $(function(){
 	var testStart = performance.now();
 
 	// helper functions
-    sortableForm();
-    fieldSettingsBindings();
+  sortableForm();
+  fieldSettingsBindings();
 	formSettingsBindings();
 	modalBindings();
 	applyFormPreview();
@@ -1107,6 +1107,7 @@ function addNewField(item) {
 var numIDNOs = 0; // global only associated with this function keeps track of total
 function newFieldPreview(id,type,vals) {
 	var output = "";
+	var choices, defaultChoice;
 	// sets default values for new fields if they are currently undefined
 	if (vals === undefined) {
 		vals = {};
@@ -1153,8 +1154,8 @@ function newFieldPreview(id,type,vals) {
 			case 'Radio':
 			case 'radio':
 				if(vals.choicesOptions){
-					var choices = vals.choicesOptions;
-					var defaultChoice = vals.choicesDefault;
+					choices = vals.choicesOptions;
+					defaultChoice = vals.choicesDefault;
 					choices = choices.split('%,%');
 
 					$.each(choices, function( index, value ) {
@@ -1173,8 +1174,8 @@ function newFieldPreview(id,type,vals) {
 			case 'Checkboxes':
 			case 'checkbox':
 				if(vals.choicesOptions){
-					var choices = vals.choicesOptions;
-					var defaultChoice = vals.choicesDefault;
+					choices = vals.choicesOptions;
+					defaultChoice = vals.choicesDefault;
 					choices = choices.split('%,%');
 
 					$.each(choices, function( index, value ) {
@@ -1193,8 +1194,8 @@ function newFieldPreview(id,type,vals) {
 			case 'Dropdown':
 			case 'select':
 				if(vals.choicesType == 'manual'){
-					var choices = vals.choicesOptions;
-					var defaultChoice = vals.choicesDefault;
+					choices = vals.choicesOptions;
+					defaultChoice = vals.choicesDefault;
 					choices = choices.split('%,%');
 
 					output += '<select>';
@@ -1244,8 +1245,8 @@ function newFieldPreview(id,type,vals) {
 			case 'Multi-Select':
 			case 'multiselect':
 				if(vals.choicesType == 'manual'){
-					var choices = vals.choicesOptions;
-					var defaultChoice = vals.choicesDefault;
+					choices = vals.choicesOptions;
+					defaultChoice = vals.choicesDefault;
 					choices = choices.split('%,%');
 
 					output += '<select multiple></select><br><select class="selectPreview">';
@@ -1282,6 +1283,7 @@ function newFieldPreview(id,type,vals) {
 
 function newFieldValues(id,type,vals) {
 	var output = "";
+	var textHiddenFields;
 
 	// sets default values for new fields if they are currently undefined
 	if (vals === undefined) {
@@ -1316,13 +1318,13 @@ function newFieldValues(id,type,vals) {
 			break;
 
 		case 'text':
-            var textHiddenFields = ['externalUpdateForm', 'externalUpdateField', 'min', 'max', 'step', 'format'];
+            textHiddenFields = ['externalUpdateForm', 'externalUpdateField', 'min', 'max', 'step', 'format'];
             output += createHiddenFields(textHiddenFields, id, vals);
 			break;
 
 		case 'textarea':
 		case 'number':
-            var textHiddenFields = ['min', 'max', 'step', 'format'];
+            textHiddenFields = ['min', 'max', 'step', 'format'];
             output += createHiddenFields(textHiddenFields, id, vals);
 			break;
 
@@ -1367,26 +1369,20 @@ function determineValidation(type){
         case 'Number':
         case 'number':
             return "integer";
-            break;
         case 'Email':
         case 'email':
             return "emailAddr";
-            break;
         case 'Phone':
         case 'tel':
             return "phoneNumber";
-            break;
         case 'Date':
         case 'date':
             return "date";
-            break;
         case 'Website':
         case 'url':
             return "url";
-            break;
         default:
             return;
-            break;
     }
 }
 
@@ -1394,86 +1390,69 @@ function determineType(type){ switch(type) {
         case 'ID Number':
         case 'idno':
             return 'idno';
-            break;
 
         case 'Single Line Text':
         case 'text':
             return 'text';
-            break;
 
         case 'Paragraph Text':
         case 'textarea':
             return 'textarea';
-            break;
 
         case 'Radio':
         case 'radio':
             return 'radio';
-            break;
 
         case 'Checkboxes':
         case 'checkbox':
             return 'checkbox';
-            break;
 
         case 'Dropdown':
         case 'select':
             return 'select';
-            break;
 
         case 'Number':
         case 'number':
             return 'number';
-            break;
 
         case 'Email':
         case 'email':
             return 'email';
-            break;
 
         case 'Phone':
         case 'tel':
             return 'tel';
-            break;
 
         case 'Date':
         case 'date':
             return 'date';
-            break;
 
         case 'Time':
         case 'time':
             return 'time';
-            break;
 
         case 'Website':
         case 'url':
             return 'url';
-            break;
 
         case 'Multi-Select':
         case 'multiselect':
             return 'multiselect';
-            break;
 
         case 'WYSIWYG':
         case 'wysiwyg':
             return 'wysiwyg';
-            break;
 
         case 'File Upload':
         case 'file':
             return 'file';
-            break;
 
         case 'Field Set':
         case 'fieldset':
             return 'fieldset';
-            break;
 
         default:
             return;
-            break;
     }
 }
 
@@ -1673,17 +1652,19 @@ function modifyChoiceBinding(){
 		}
 	}
 
+	var target;
+
 	if(targetType == 'multiselect'){
-		var target = targetFormPreview.find($('.controls')).find($('select'));
+		target = targetFormPreview.find($('.controls')).find($('select'));
 		target.html(output);
 	}
 	else if(targetType == 'checkbox' || targetType == 'radio') {
-		var target = targetFormPreview.find($('.controls'));
+		target = targetFormPreview.find($('.controls'));
 		target.find($('label')).remove();
 		target.append(output);
 	}
 	else if(targetType == 'select'){
-		var target = targetFormPreview.find($('.controls')).find($('select'));
+		target = targetFormPreview.find($('.controls')).find($('select'));
 		target.html(output);
 	}
 
@@ -1797,7 +1778,7 @@ String.prototype.removeHTML = function(){
                  .replace(/'/g, '&apos;')
                  .replace(/\//g, '');
     return string;
-}
+};
 
 // Test Functions
 // ====================================================================
