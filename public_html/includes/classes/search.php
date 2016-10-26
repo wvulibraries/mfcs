@@ -172,7 +172,7 @@ class mfcsSearch {
 		else {
 					$queryString = "";
 		}
-		
+
 		if ($post['fieldList'] == "mfcs_keyword") {
 			$query_field = "";
 		}
@@ -193,17 +193,15 @@ class mfcsSearch {
 
 		}
 		else {
+			$conditionals = array();
+			$conditionals[] = $queryString;
+			if (!isempty($query_field)) $conditionals[] = $query_field;
+			if (!isempty($form_query)) $condditionals[] = $form_query;
+			if (!isempty($date_clause)) $conditionals[] = $date_clause;
 
-			$sql = sprintf("SELECT `objects`.* FROM `objects` LEFT JOIN `objectsData` ON `objectsData`.`objectID`=`objects`.`ID` LEFT JOIN `forms` on `forms`.ID=`objects`.`formID` WHERE `forms`.`metadata`='0' AND %s %s %s %s %s %s %s GROUP BY `objects`.`idno` ORDER BY LENGTH(objects.idno), `objects`.`idno`",
-				$queryString,
-				(!is_empty($queryString) && !is_empty($query_field))?"AND":"",
-				$query_field,
-				(!is_empty($query_field) && !is_empty($form_query))?"AND":"",
-				$form_query,
-				(!is_empty($form_query) && !is_empty($date_clause))?"AND":"",
-				$date_clause
+			$sql = sprintf("SELECT `objects`.* FROM `objects` LEFT JOIN `objectsData` ON `objectsData`.`objectID`=`objects`.`ID` LEFT JOIN `forms` on `forms`.ID=`objects`.`formID` WHERE `forms`.`metadata`='0' AND %s GROUP BY `objects`.`idno` ORDER BY LENGTH(`objects`.`idno`), `objects`.`idno`",
+				implode("AND", $conditionals)
 				);
-
 		}
 
 		if ($post['formList'] == "mfcs_anyform") {
