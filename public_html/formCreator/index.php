@@ -115,7 +115,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			// Blank linkTable on object forms
 			$form['linkTitle'] = '';
 		}
-		
+
 		// Update forms table
 		$sql = sprintf("UPDATE `forms`
 						SET `title`='%s',
@@ -161,7 +161,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	}
 	else {
 		// Insert into forms table
-		$sql = sprintf("INSERT INTO `forms` (title, description, fields, idno, submitButton, updateButton, container, production, metadata, exportPublic, exportOAI, count, displayTitle, objectTitleField, linkTitle) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',%s)",
+		$sql = sprintf("INSERT INTO `forms` (title, description, fields, idno, submitButton, updateButton, container, production, metadata, exportPublic, exportOAI, count, displayTitle, objectTitleField, linkTitle) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',%s)",
 			$engine->openDB->escape($form['formTitle']),
 			isset($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
 			encodeFields($fields),
