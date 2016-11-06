@@ -123,6 +123,21 @@ class exporting {
 
 	}
 
+	public static function generateControlFile($project_name, $timestamp, $export_type, $digital_items_count, $record_count) {
+		if (($template = file_get_contents(mfcs::config("exportControlTemplate"))) === FALSE) {
+			print "Error opening Export Control Template.";
+			exit;
+		}
+
+		$template = preg_replace("/{{ project_name }}/", $project_name, $template);
+		$template = preg_replace("/{{ timestamp }}/", $timestamp, $template);
+		$template = preg_replace("/{{ export_type }}/", $export_type, $template);
+		$template = preg_replace("/{{ digital_items_count }}/", $digital_items_count, $template);
+		$template = preg_replace("/{{ record_count }}/",$record_count, $template);
+
+		return $template;
+	}
+
 }
 
 ?>
