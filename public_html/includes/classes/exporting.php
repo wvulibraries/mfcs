@@ -138,6 +138,20 @@ class exporting {
 		return $template;
 	}
 
+	public static function setExportDate($form,$timestamp) {
+		$sql       = sprintf("INSERT INTO `exports` (`formID`,`date`) VALUES('%s','%s')",
+			mfcs::$engine->openDB->escape($form_id),
+			mfcs::$engine->openDB->escape($timestamp)
+		);
+		$sqlResult = $engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return false;
+		}
+		return true;
+	}
+
 }
 
 ?>
