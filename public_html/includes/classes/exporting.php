@@ -15,12 +15,12 @@ class exporting {
 		$dir = opendir($dir); // open the cwd..also do an err check.
 		while(false != ($file = readdir($dir))) {
 			if(!in_array($file,$this->skipDirs)) {
-                $this->exportDirs[] = array('file' => $file, 'name' => str_replace("_"," ",basename($file,".php")));
-            }
-        }
-        closedir($dir);
+				$this->exportDirs[] = array('file' => $file, 'name' => str_replace("_"," ",basename($file,".php")));
+			}
+		}
+		closedir($dir);
 
-        sort($this->exportDirs);
+		sort($this->exportDirs);
 
 	}
 
@@ -123,6 +123,31 @@ class exporting {
 
 	}
 
+	public static function createExportDirectories($project_name, $export_path, $time_stamp, $export_directories) {
+
+		$directories = array();
+
+		$directories["base_dir"] = sprintf("%s/%s",$project_name,$export_path);
+		$directories["export_base_dir"] = sprintf("%s/export",$directories["base_dir"]);
+		$directories["control_dir"] = sprintf("%s/control/mfcs",$directories["base_dir"]);
+		$directories["export_control_file"] = sprintf("%s/%s.yaml",$directories["control_dir"],$time_stamp);
+
+		$directories["filesExportBaseDir"] = sprintf("%s/%s",$directories["export_base_dir"],$time_stamp);
+		if (!mkdir($directories["filesExportBaseDir"])) {
+			errorHandle::newError(__METHOD__."() - export base.", errorHandle::DEBUG);
+			return false;
+		}
+
+		foreach ($export_directories as $export_directory) {
+				if (!mkdir(sprintf("%s/%s",$directories["filesExportBaseDir"],$export_directory))) {
+					errorHandle::newError(__METHOD__."() - Error creating ".$export_directory, errorHandle::DEBUG);
+					return false;
+				}
+		}
+
+		return $directories;
+	}
+
 	public static function generateControlFile($project_name, $timestamp, $export_type, $digital_items_count, $record_count) {
 		if (($template = file_get_contents(mfcs::config("exportControlTemplate"))) === FALSE) {
 			print "Error opening Export Control Template.";
@@ -138,6 +163,17 @@ class exporting {
 		return $template;
 	}
 
+	public static function writeControlFile($filename,$project_name, $timestamp, $export_type, $digital_items_count, $record_count) {
+		if (!$file = fopen($filename,"w")) {
+			errorHandle::newError(__METHOD__."() - Error creating file", errorHandle::DEBUG);
+			return false;
+		}
+		fwrite($file, exporting::generateControlFile($project_name, $timestamp, $export_type, $digital_items_count, $record_count));
+		fclose($file);
+
+		return true;
+	}
+
 	public static function setExportDate($form_id,$timestamp) {
 		$sql       = sprintf("INSERT INTO `exports` (`formID`,`date`) VALUES('%s','%s')",
 			mfcs::$engine->openDB->escape($form_id),
@@ -150,6 +186,21 @@ class exporting {
 			return false;
 		}
 		return true;
+	}
+
+	public static function getExportDate($form_id) {
+		$sql       = sprintf("SELECT MAX(`date`) FROM exports WHERE `formID`='%s'",
+		mfcs::$engine->openDB->escape($form_id));
+		$sqlResult = $engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return false;
+		}
+
+		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+		return (isnull($row['MAX(`date`)']))?0:$row['MAX(`date`)'];
 	}
 
 }
