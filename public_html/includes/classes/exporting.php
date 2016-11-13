@@ -134,7 +134,7 @@ class exporting {
 
 		$directories["filesExportBaseDir"] = sprintf("%s/%s",$directories["export_base_dir"],$time_stamp);
 		if (!mkdir($directories["filesExportBaseDir"])) {
-			errorHandle::newError(__METHOD__."() - export base.", errorHandle::DEBUG);
+			errorHandle::newError(__METHOD__."() - export base: ".$directories["filesExportBaseDir"], errorHandle::DEBUG);
 			return false;
 		}
 
