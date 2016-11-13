@@ -139,10 +139,16 @@ class exporting {
 		}
 
 		foreach ($export_directories as $export_directory) {
-				if (!mkdir(sprintf("%s/%s",$directories["filesExportBaseDir"],$export_directory))) {
-					errorHandle::newError(__METHOD__."() - Error creating ".$export_directory, errorHandle::DEBUG);
-					return false;
-				}
+			if (array_key_exists($export_directory, $directories)) {
+				errorHandle::newError(__METHOD__."() - duplicate directory: ".$export_directory, errorHandle::DEBUG);
+				return false;
+			}
+			
+			$directories[$export_directory] = sprintf("%s/%s",$directories["filesExportBaseDir"],$export_directory);
+			if (!mkdir($directories[$export_directory])) {
+				errorHandle::newError(__METHOD__."() - Error creating: ".$directories[$export_directory], errorHandle::DEBUG);
+				return false;
+			}
 		}
 
 		return $directories;
@@ -191,7 +197,7 @@ class exporting {
 	public static function getExportDate($form_id) {
 		$sql       = sprintf("SELECT MAX(`date`) FROM exports WHERE `formID`='%s'",
 		mfcs::$engine->openDB->escape($form_id));
-		$sqlResult = $engine->openDB->query($sql);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
