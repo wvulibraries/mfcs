@@ -127,7 +127,7 @@ class exporting {
 
 		$directories = array();
 
-		$directories["base_dir"] = sprintf("%s/%s",$project_name,$export_path);
+		$directories["base_dir"] = sprintf("%s/%s",$export_path,$project_name);
 		$directories["export_base_dir"] = sprintf("%s/export",$directories["base_dir"]);
 		$directories["control_dir"] = sprintf("%s/control/mfcs",$directories["base_dir"]);
 		$directories["export_control_file"] = sprintf("%s/%s.yaml",$directories["control_dir"],$time_stamp);
