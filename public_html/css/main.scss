@@ -1368,6 +1368,10 @@ a.list-group-item {
   }
 }
 
+#formPreview {
+  .controls select { margin-bottom:20px; }
+}
+
 .ui-sortable-helper{
   background:none !important;
   &:before {
