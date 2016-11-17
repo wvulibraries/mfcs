@@ -1,0 +1,12 @@
+---
+  project_name: {{ project_name }}
+  time_stamp: {{ timestamp }}
+  # Export Type can be
+  # 1. update : metadata for all objects, but not all digital items
+  # 1. update_full : both metadata and digital items for all objects
+  # 1. full : Same as update_full, but we assume that there is no data loaded
+  #           This would be for an intial load
+  # 1. partial : metadata update for some items and/or some digital objects
+  export_type: {{ export_type }}
+  digital_items_count: {{ digital_items_count }}
+  record_count: {{ record_count }}
