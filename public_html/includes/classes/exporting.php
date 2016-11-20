@@ -214,7 +214,7 @@ class exporting {
 	public static function convert_email_array_to_yaml_list($contact_emails) {
 		$ret = "\n";
 		foreach ($contact_emails as $email=>$name) {
-			$ret .= sprintf("\t- %s",$email);
+			$ret .= sprintf("    - %s\n",$email);
 		}
 		return $ret;
 	}
