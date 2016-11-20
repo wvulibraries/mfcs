@@ -199,7 +199,7 @@ class exporting {
 			exit;
 		}
 
-		$contact_emails = convert_email_array_to_yaml_list($contact_emails);
+		$contact_emails = self::convert_email_array_to_yaml_list($contact_emails);
 
 		$template = preg_replace("/{{ project_name }}/", $project_name, $template);
 		$template = preg_replace("/{{ timestamp }}/", $timestamp, $template);
@@ -231,12 +231,12 @@ class exporting {
 	 *
 	 * @return boolean true on success, false otherwise
 	 */
-	public static function writeControlFile($filename, $project_name, $timestamp, $export_type, $digital_items_count, $record_count) {
+	public static function writeControlFile($filename, $project_name, $timestamp, $export_type, $digital_items_count, $record_count, $contact_emails) {
 		if (!$file = fopen($filename,"w")) {
 			errorHandle::newError(__METHOD__."() - Error creating file", errorHandle::DEBUG);
 			return false;
 		}
-		fwrite($file, exporting::generateControlFile($project_name, $timestamp, $export_type, $digital_items_count, $record_count));
+		fwrite($file, exporting::generateControlFile($project_name, $timestamp, $export_type, $digital_items_count, $record_count, $contact_emails));
 		fclose($file);
 
 		return true;
