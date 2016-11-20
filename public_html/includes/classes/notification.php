@@ -72,7 +72,7 @@ class notification {
 
 		$sql       = sprintf("SELECT `users`.`email` as `email` FROM `users` LEFT JOIN `permissions` on `permissions`.`userID`=`users`.`ID` WHERE `permissions`.`type`=4 AND `permissions`.`formID`='%s'",
 		mfcs::$engine->openDB->escape($form_id));
-		$sqlResult = $engine->openDB->query($sql);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
