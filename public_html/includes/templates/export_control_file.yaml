@@ -10,5 +10,5 @@
   export_type: {{ export_type }}
   digital_items_count: {{ digital_items_count }}
   record_count: {{ record_count }}
-  # a yaml collection to contact when the import does not succeed
+  # a yaml collection of email addresses to contact on success or failure
   contact_emails: {{ contact_emails }}
