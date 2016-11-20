@@ -189,22 +189,34 @@ class exporting {
 	* @param string $export_type See comments in export_control_file.yaml for valid values
 	* @param int $digital_items_count the count of how many digital items are present
 	* @param int $record_count the count of how many records are exported
+	* @param array $contact_emails a list of emails what should be contacted on success or failure of import
 	*
 	* @return string template file with variable replacements.
   */
-	public static function generateControlFile($project_name, $timestamp, $export_type, $digital_items_count, $record_count) {
+	public static function generateControlFile($project_name, $timestamp, $export_type, $digital_items_count, $record_count, $contact_emails) {
 		if (($template = file_get_contents(mfcs::config("exportControlTemplate"))) === FALSE) {
 			print "Error opening Export Control Template.";
 			exit;
 		}
+
+		$contact_emails = convert_email_array_to_yaml_list($contact_emails);
 
 		$template = preg_replace("/{{ project_name }}/", $project_name, $template);
 		$template = preg_replace("/{{ timestamp }}/", $timestamp, $template);
 		$template = preg_replace("/{{ export_type }}/", $export_type, $template);
 		$template = preg_replace("/{{ digital_items_count }}/", $digital_items_count, $template);
 		$template = preg_replace("/{{ record_count }}/",$record_count, $template);
+		$template = preg_replace("/{{ contact_emails }}/",$contact_emails,$template);
 
 		return $template;
+	}
+
+	public static function convert_email_array_to_yaml_list($contact_emails) {
+		$ret = "\n";
+		foreach ($contact_emails as $email=>$name) {
+			$ret .= sprintf("\t- %s",$email);
+		}
+		return $ret;
 	}
 
 	/**
