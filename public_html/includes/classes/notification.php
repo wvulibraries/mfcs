@@ -70,7 +70,7 @@ class notification {
 	public static function get_notification_emails($form_id) {
 		global $notificationEmails;
 
-		$sql       = sprintf("SELECT `users`.`email` as `email` FROM `users` LEFT JOIN `permissions` on `permissions`.`userID`=`users`.`ID` WHERE `permissions`.`type`=4 AND `permissions`.`formID`='%s'",
+		$sql       = sprintf("SELECT `users`.`email` as `email`, `users`.`firstname` as firstname, `users`.`lastname` as `lastname` FROM `users` LEFT JOIN `permissions` on `permissions`.`userID`=`users`.`ID` WHERE `permissions`.`type`=4 AND `permissions`.`formID`='%s'",
 		mfcs::$engine->openDB->escape($form_id));
 		$sqlResult = mfcs::$engine->openDB->query($sql);
 
@@ -80,7 +80,7 @@ class notification {
 		}
 
 		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-			$notificationEmails[$row['email']] = $row['email'];
+			$notificationEmails[$row['email']] = sprintf("%s %s",$row['firstname'],$row['lastname']);
 		}
 
 		return $notificationEmails;
