@@ -16,6 +16,7 @@ localvars::add("exportsList",$stats->showExportListing());
 	<ul class="breadcrumbs">
 			<li><a href="/">Home</a></li>
 			<li><a href="/exports"> Exports </a></li>
+			<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Exporting" target="_blank"> <i class="fa fa-book"></i> Documentation</a></li>
 	</ul>
 
 	{local var="exportsList"}
