@@ -40,12 +40,12 @@ class notification {
 			mfcs::AUTH_CONTACT
 			);
 		$sqlResult = mfcs::$engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-		
+
 		$contact_emails = array();
 		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 			$contact_emails[$row['email']] = sprintf("%s %s",$row["firstname"],$row['lastname']);
@@ -53,6 +53,37 @@ class notification {
 
 		return (count($contact_emails) > 0)?self::email($contact_emails,$subject,$message):TRUE;
 
+	}
+
+	/**
+	 * Get an array of email addresses for the form id that should be contacted on events.
+	 *
+	 * For information on adding contacts to a form see this wiki page:
+	 * https://github.com/wvulibraries/mfcs/wiki/Form-Permissions
+	 *
+	 * For information on adding global contacts see:
+	 * https://github.com/wvulibraries/mfcs/wiki/Installation
+	 *
+	 * @param integer $form_id valid form id
+	 * @return array of emails defined in the contact permissions for the form PLUS the global contacts.
+	 */
+	public static function get_notification_emails($form_id) {
+		global $notificationEmails;
+
+		$sql       = sprintf("SELECT `users`.`email` as `email`, `users`.`firstname` as firstname, `users`.`lastname` as `lastname` FROM `users` LEFT JOIN `permissions` on `permissions`.`userID`=`users`.`ID` WHERE `permissions`.`type`=4 AND `permissions`.`formID`='%s'",
+		mfcs::$engine->openDB->escape($form_id));
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return false;
+		}
+
+		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+			$notificationEmails[$row['email']] = sprintf("%s %s",$row['firstname'],$row['lastname']);
+		}
+
+		return $notificationEmails;
 	}
 
 }
