@@ -127,6 +127,8 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 							`container`='%s',
 							`production`='%s',
 							`metadata`='%s',
+							`exportPublic`='%s',
+							`exportOAI`='%s',
 							%s
 							`displayTitle`='%s',
 							`objectTitleField`='%s',
@@ -141,6 +143,8 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			$engine->openDB->escape($form['formContainer']),      // container=
 			$engine->openDB->escape($form['formProduction']),     // production=
 			$engine->openDB->escape($form['formMetadata']),       // metadata=
+			$engine->openDB->escape($form['exportPublic']),
+			$engine->openDB->escape($form['exportOAI']),
 			$countSql,                                            // count=
 			(is_empty($engine->openDB->escape($form['objectDisplayTitle'])) ? $engine->openDB->escape($form['formTitle']) : $engine->openDB->escape($form['objectDisplayTitle'])),
 			// displayTitle
@@ -157,7 +161,7 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 	}
 	else {
 		// Insert into forms table
-		$sql = sprintf("INSERT INTO `forms` (title, description, fields, idno, submitButton, updateButton, container, production, metadata, count, displayTitle, objectTitleField, linkTitle) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',%s)",
+		$sql = sprintf("INSERT INTO `forms` (title, description, fields, idno, submitButton, updateButton, container, production, metadata, exportPublic, exportOAI, count, displayTitle, objectTitleField, linkTitle) VALUES ('%s',%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',%s)",
 			$engine->openDB->escape($form['formTitle']),
 			isset($form['formDescription']) ? "'".$engine->openDB->escape($form['formDescription'])."'" : "NULL",
 			encodeFields($fields),
@@ -167,6 +171,8 @@ if (isset($engine->cleanPost['MYSQL']['submitForm'])) {
 			$engine->openDB->escape($form['formContainer']),
 			$engine->openDB->escape($form['formProduction']),
 			$engine->openDB->escape($form['formMetadata']),
+			$engine->openDB->escape($form['exportPublic']),
+			$engine->openDB->escape($form['exportOAI']),
 			$engine->openDB->escape($count),
 			(is_empty($engine->openDB->escape($form['objectDisplayTitle'])) ? $engine->openDB->escape($form['formTitle']) : $engine->openDB->escape($form['objectDisplayTitle'])),
 			$engine->openDB->escape($form['objectTitleField']),
@@ -353,6 +359,8 @@ if (!isnull($formID) && $formCreationError === FALSE) {
 		localVars::add("formContainer",   ($form['container'] == '1')  ? "checked" : "");
 		localVars::add("formProduction",  ($form['production'] == '1') ? "checked" : "");
 		localVars::add("formMetadata",    ($form['metadata'] == '1')   ? "checked" : "");
+		localVars::add("exportPublic",    ($form['exportPublic'] == '1')   ? "checked" : "");
+		localVars::add("exportOAI",       ($form['exportOAI'] == '1')   ? "checked" : "");
 
 		if (is_empty($form['fields'])) {
 			$form['fields'] = array();
@@ -463,6 +471,8 @@ else if($formCreationError === TRUE){
 		localVars::add("formContainer",   ($form['formContainer'] == '1')  ? "checked" : "");
 		localVars::add("formProduction",  ($form['formProduction'] == '1') ? "checked" : "");
 		localVars::add("formMetadata",    ($form['formMetadata'] == '1')   ? "checked" : "");
+		localVars::add("exportPublic",    ($form['exportPublic'] == '1')   ? "checked" : "");
+		localVars::add("exportOAI",       ($form['exportOAI'] == '1')   ? "checked" : "");
 
 		if (is_empty($form['fields'])) {
 			$form['fields'] = array();
