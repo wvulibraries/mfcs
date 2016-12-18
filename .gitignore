@@ -1,4 +1,4 @@
-/serverConfiguration/serverLogs/*
+serverConfiguration/serverlogs/
 access_logs
 /.vagrant/
 /public_html/engineIncludes
