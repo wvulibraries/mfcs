@@ -133,16 +133,24 @@
                     {local var="formsOptions"}
                 </select>
 
-                <label for="fieldSettings_choices_fieldSelect">
-                    Select a Field
-                </label>
-                <select class="input-block-level" id="fieldSettings_choices_fieldSelect" name="fieldSettings_choices_fieldSelect" data-bindModel="choicesField">
-                </select>
+                <div class="fieldsContainer hidden">
+                  <label for="fieldSettings_choices_fieldSelect">
+                      Select a Field
+                  </label>
+
+                  <select class="input-block-level" id="fieldSettings_choices_fieldSelect" name="fieldSettings_choices_fieldSelect" data-bindModel="choicesField">
+                  </select>
+
+                  <button type="button" name="addAdditionalLinkedFields" id="choicesExtraFields_button" class="extraFieldsBtn"> Add Additional Field Options </button>
+
+                  <div class="additionalFieldContainer"></div>
+                </div>
 
                 <label for="fieldSettings_choices_fieldDefault">
                     Default Value
                 </label>
                 <input type="text" id="fieldSettings_choices_fieldDefault" name="fieldSettings_choices_fieldDefault" data-bindModel="choicesFieldDefault">
+
             </div>
             <span class="help-block hidden"></span>
         </div>
@@ -687,8 +695,3 @@
         </div>
     </div>
 </div>
-
-
-
-
-

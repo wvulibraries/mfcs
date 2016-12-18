@@ -2,6 +2,7 @@
 // ===================================================================
 var globalFieldID;
 var choicesFields = {};
+var choicesFieldsCount = {};
 var idnoValues = {}; // global
 
 // Document Ready
@@ -16,11 +17,16 @@ $(function(){
 	var testStart = performance.now();
 
 	// helper functions
-    sortableForm();
-    fieldSettingsBindings();
+  sortableForm();
+  fieldSettingsBindings();
 	formSettingsBindings();
 	modalBindings();
 	applyFormPreview();
+
+	$('body').on('click', '#choicesExtraFields_button', addExtraFields);
+	$('body').on('click', '.deleteAdditionalField', function(){
+		$(this).parent().remove();
+	});
 
 	if($('#fieldVariablesLink').length !== 0){
 		$('#fieldVariablesLink').click(function(){
@@ -114,7 +120,7 @@ $(function(){
 		$(":input[name=form]", this).val(JSON.stringify(obj));
 
 		// Create a multidimentional object to store field info
-		var obj = {};
+		obj = {};
 		$(".fieldValues :input").each(function() {
 			var field = $(this).prop("name").split("_");
 
@@ -133,10 +139,10 @@ $(function(){
 
 		// Remove fieldsets from submission
 		for (var i in obj) {
-			if (obj[i]['type'] == 'fieldset' || obj[i]['type'] == 'Field Set') {
+			if (obj[i].type == 'fieldset' || obj[i].type == 'Field Set') {
 				delete obj[i];
 			}
-		};
+		}
 
 		// Convert object to JSON and add it to a hidden form field
 		$(":input[name=fields]", this).val(JSON.stringify(obj));
@@ -146,7 +152,7 @@ $(function(){
 	$('#fieldTab li:nth-child(3)').find('a').click();
 
 	// Unassigned forms empty?
-	if($('.unassignedForms li').length == 0){
+	if($('.unassignedForms li').length === 0){
 		$('.unassignedForms').hide();
 	} else {
 		$('.unassignedForms').show();
@@ -501,32 +507,9 @@ function showFieldSettings(fullID) {
 				$('#fieldVariablesLink').hide();
 			}
 
-			// Ajax Stuff that still needed
-			$("#fieldSettings_externalUpdate_formSelect").change(function() {
-				var val             = $(this).val();
+			// bind functionality of form
+			enableChoiceFunctionality();
 
-				if (choicesFields[val] === undefined) {
-					choicesFields[val] = '';
-
-					$.ajax({
-						url: "../includes/getFormFields.php",
-						async: false
-					}).always(function(data) {
-						var obj = JSON.parse(data);
-
-						$.each(obj, function(I, field) {
-							var options = '';
-							$.each(field, function(i, f) {
-								options += '<option value="'+f.name+'">'+f.label+'</option>';
-							});
-							choicesFields[I] = options;
-						});
-					});
-				}
-
-				$("#externalUpdateForm_"+id).val(val).change();
-				$("#fieldSettings_externalUpdate_fieldSelect").html(choicesFields[val]).change();
-			});
 
 			$('.uxOptions').find('input').change(function(){
 				var dataObj = $(this).data('bindmodel');
@@ -542,9 +525,6 @@ function showFieldSettings(fullID) {
 					$('#fieldSettings_file_convert_border').prop('checked', false).change();
 				}
 			});
-
-			// bind functionality of form
-			enableChoiceFunctionality();
 		}
 	}
 }
@@ -622,7 +602,7 @@ function setOriginalValues(){
 	if( bindObj == 'help'){
 		var helpType = value.split("|")[0];
 		var help     = value.split("|")[1];
-		var value    = (help === undefined ? "" : help);
+		value    = (help === undefined ? "" : help);
 		$(this).val(helpType + "|" + help);
 
 		$("#fieldSettings_help_textarea").val(value.unEscapeHtml()).hide();
@@ -672,7 +652,7 @@ function setOriginalValues(){
 	}
 
 	if(bindObj == 'hidden'){
-		if(value == true){
+		if(value === true || value === "true"){
 			formPreview.css('opacity', '.5');
 		}
 		else{
@@ -689,7 +669,7 @@ function setOriginalValues(){
 	}
 
 	if(bindObj == 'choicesForm'){
-		if(value == "null" || value == undefined){
+		if(value == "null" || value === undefined){
 			// remove options add errors
 			$('select[data-bindmodel="choicesField"]').addClass('has-error').html('');
 			$('#fieldSettings_choices_formSelect').addClass('has-error');
@@ -739,7 +719,7 @@ function bindToHiddenForm(){
 		}
 
 		if(inputObj == 'hidden'){
-			if(value == true){
+			if(value === true || value === "true"){
 				formPreview.css('opacity', '.5');
 			}
 			else{
@@ -805,6 +785,16 @@ function bindToHiddenForm(){
 
 		if(inputObj == 'helpText' || inputObj == 'helpURL'){
 			$('#fieldSettings_help_type').change(); // pass the buck to help type
+		}
+
+		if(inputObj == 'choicesExtraFields'){
+			var tempValues = [];
+
+			$('.extraFields').each(function(){
+					tempValues.push(this.value);
+			});
+
+			console.log(tempValues.join('%,%'));
 		}
 
 		if(inputObj == 'helpType'){
@@ -880,7 +870,7 @@ function formatHelpForHiddenField(hiddenForm){
 
 function evaluateSpace(value, input){
 	if(checkForSpaces(value)){
-		input.addClass('has-error testy');
+		input.addClass('has-error');
 		$('.noSpacesAlert').show();
 		$('input[type=submit]').addClass('disabled').attr('disabled', true);
 	}
@@ -945,11 +935,11 @@ function formSettingsBindings() {
 			if (idnoType.length === 0) {
 				$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
 				fieldAdd.find("li:contains('ID Number')").hide();
-				fieldAdd.find("li:contains('Paragraph Text')").hide();
+				//fieldAdd.find("li:contains('Paragraph Text')").hide();
 				fieldAdd.find("li:contains('Radio')").hide();
 				fieldAdd.find("li:contains('Checkboxes')").hide();
-				fieldAdd.find("li:contains('Dropdown')").hide();
-				fieldAdd.find("li:contains('Multi-Select')").hide();
+				//fieldAdd.find("li:contains('Dropdown')").hide();
+				//fieldAdd.find("li:contains('Multi-Select')").hide();
 				fieldAdd.find("li:contains('File Upload')").hide();
 				fieldAdd.find("li:contains('WYSIWYG')").hide();
 				fieldAdd.find("li:contains('Field Set')").parent().hide().prev().hide();
@@ -959,11 +949,11 @@ function formSettingsBindings() {
 					idnoType.parent().parent().remove();
 					$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
 					fieldAdd.find("li:contains('ID Number')").hide();
-					fieldAdd.find("li:contains('Paragraph Text')").hide();
+					//fieldAdd.find("li:contains('Paragraph Text')").hide();
 					fieldAdd.find("li:contains('Radio')").hide();
 					fieldAdd.find("li:contains('Checkboxes')").hide();
-					fieldAdd.find("li:contains('Dropdown')").hide();
-					fieldAdd.find("li:contains('Multi-Select')").hide();
+					//fieldAdd.find("li:contains('Dropdown')").hide();
+					//fieldAdd.find("li:contains('Multi-Select')").hide();
 					fieldAdd.find("li:contains('File Upload')").hide();
 					fieldAdd.find("li:contains('WYSIWYG')").hide();
 					fieldAdd.find("li:contains('Field Set')").parent().hide().prev().hide();
@@ -1107,6 +1097,7 @@ function addNewField(item) {
 var numIDNOs = 0; // global only associated with this function keeps track of total
 function newFieldPreview(id,type,vals) {
 	var output = "";
+	var choices, defaultChoice;
 	// sets default values for new fields if they are currently undefined
 	if (vals === undefined) {
 		vals = {};
@@ -1153,8 +1144,8 @@ function newFieldPreview(id,type,vals) {
 			case 'Radio':
 			case 'radio':
 				if(vals.choicesOptions){
-					var choices = vals.choicesOptions;
-					var defaultChoice = vals.choicesDefault;
+					choices = vals.choicesOptions;
+					defaultChoice = vals.choicesDefault;
 					choices = choices.split('%,%');
 
 					$.each(choices, function( index, value ) {
@@ -1173,8 +1164,8 @@ function newFieldPreview(id,type,vals) {
 			case 'Checkboxes':
 			case 'checkbox':
 				if(vals.choicesOptions){
-					var choices = vals.choicesOptions;
-					var defaultChoice = vals.choicesDefault;
+					choices = vals.choicesOptions;
+					defaultChoice = vals.choicesDefault;
 					choices = choices.split('%,%');
 
 					$.each(choices, function( index, value ) {
@@ -1193,8 +1184,8 @@ function newFieldPreview(id,type,vals) {
 			case 'Dropdown':
 			case 'select':
 				if(vals.choicesType == 'manual'){
-					var choices = vals.choicesOptions;
-					var defaultChoice = vals.choicesDefault;
+					choices = vals.choicesOptions;
+					defaultChoice = vals.choicesDefault;
 					choices = choices.split('%,%');
 
 					output += '<select>';
@@ -1244,8 +1235,8 @@ function newFieldPreview(id,type,vals) {
 			case 'Multi-Select':
 			case 'multiselect':
 				if(vals.choicesType == 'manual'){
-					var choices = vals.choicesOptions;
-					var defaultChoice = vals.choicesDefault;
+					choices = vals.choicesOptions;
+					defaultChoice = vals.choicesDefault;
 					choices = choices.split('%,%');
 
 					output += '<select multiple></select><br><select class="selectPreview">';
@@ -1282,6 +1273,7 @@ function newFieldPreview(id,type,vals) {
 
 function newFieldValues(id,type,vals) {
 	var output = "";
+	var textHiddenFields;
 
 	// sets default values for new fields if they are currently undefined
 	if (vals === undefined) {
@@ -1316,13 +1308,13 @@ function newFieldValues(id,type,vals) {
 			break;
 
 		case 'text':
-            var textHiddenFields = ['externalUpdateForm', 'externalUpdateField', 'min', 'max', 'step', 'format'];
+            textHiddenFields = ['externalUpdateForm', 'externalUpdateField', 'min', 'max', 'step', 'format'];
             output += createHiddenFields(textHiddenFields, id, vals);
 			break;
 
 		case 'textarea':
 		case 'number':
-            var textHiddenFields = ['min', 'max', 'step', 'format'];
+            textHiddenFields = ['min', 'max', 'step', 'format'];
             output += createHiddenFields(textHiddenFields, id, vals);
 			break;
 
@@ -1330,7 +1322,7 @@ function newFieldValues(id,type,vals) {
 		case 'checkbox':
 		case 'select':
 		case 'multiselect':
-            var choiceHiddenFields = ['choicesType', 'choicesNull', 'choicesDefault', 'choicesForm', 'choicesField', 'choicesFieldDefault'];
+            var choiceHiddenFields = ['choicesType', 'choicesNull', 'choicesDefault', 'choicesForm', 'choicesField', 'choicesFieldDefault', 'choicesExtraFields', 'objectMetadataLinks'];
             output += createHiddenFields(choiceHiddenFields, id, vals);
 			output += '<input type="hidden" id="choicesOptions_'+id+'" name="choicesOptions_'+id+'" data-bind="choicesOptions" value="'+((vals.choicesOptions !== undefined)?vals.choicesOptions:'First Choice%,%Second Choice')+'">';
 			break;
@@ -1367,26 +1359,20 @@ function determineValidation(type){
         case 'Number':
         case 'number':
             return "integer";
-            break;
         case 'Email':
         case 'email':
             return "emailAddr";
-            break;
         case 'Phone':
         case 'tel':
             return "phoneNumber";
-            break;
         case 'Date':
         case 'date':
             return "date";
-            break;
         case 'Website':
         case 'url':
             return "url";
-            break;
         default:
             return;
-            break;
     }
 }
 
@@ -1394,86 +1380,69 @@ function determineType(type){ switch(type) {
         case 'ID Number':
         case 'idno':
             return 'idno';
-            break;
 
         case 'Single Line Text':
         case 'text':
             return 'text';
-            break;
 
         case 'Paragraph Text':
         case 'textarea':
             return 'textarea';
-            break;
 
         case 'Radio':
         case 'radio':
             return 'radio';
-            break;
 
         case 'Checkboxes':
         case 'checkbox':
             return 'checkbox';
-            break;
 
         case 'Dropdown':
         case 'select':
             return 'select';
-            break;
 
         case 'Number':
         case 'number':
             return 'number';
-            break;
 
         case 'Email':
         case 'email':
             return 'email';
-            break;
 
         case 'Phone':
         case 'tel':
             return 'tel';
-            break;
 
         case 'Date':
         case 'date':
             return 'date';
-            break;
 
         case 'Time':
         case 'time':
             return 'time';
-            break;
 
         case 'Website':
         case 'url':
             return 'url';
-            break;
 
         case 'Multi-Select':
         case 'multiselect':
             return 'multiselect';
-            break;
 
         case 'WYSIWYG':
         case 'wysiwyg':
             return 'wysiwyg';
-            break;
 
         case 'File Upload':
         case 'file':
             return 'file';
-            break;
 
         case 'Field Set':
         case 'fieldset':
             return 'fieldset';
-            break;
 
         default:
             return;
-            break;
     }
 }
 
@@ -1600,40 +1569,78 @@ function enableChoiceFunctionality(){
 		}
 	});
 
-	$("#fieldSettings_choices_formSelect").change(function(){
-		var val             = $(this).val();
+	$("#fieldSettings_choices_formSelect").change(enableChoicesFormSelect).change();
+}
 
-		if(val == "null"){
-			// remove options add errors
-			$('select[data-bindmodel="choicesField"]').addClass('has-error').html('');
-			$('#fieldSettings_choices_formSelect').addClass('has-error');
-		} else{
-			$('select[data-bindmodel="choicesField"]').removeClass('has-error');
-			$('#fieldSettings_choices_formSelect').removeClass('has-error');
-		}
+function enableChoicesFormSelect(){
+	var val = $(this).val();
 
-		if (choicesFields[val] === undefined) {
-			var options;
-			choicesFields[null] = options;
+	if(val == "null"){
+		// remove options add errors
+		$('select[data-bindmodel="choicesField"]').addClass('has-error').html('');
+		$('select[data-bindmodel="choicesField"]').parent().addClass('hidden');
+		$('#fieldSettings_choices_formSelect').addClass('has-error');
+	} else{
+		$('select[data-bindmodel="choicesField"]').removeClass('has-error');
+		$('#fieldSettings_choices_formSelect').removeClass('has-error');
+		$('select[data-bindmodel="choicesField"]').parent().removeClass('hidden');
+	}
 
-			$.ajax({
-				url: "../includes/getFormFields.php",
-				async: false
-			}).always(function(data) {
-				var obj = JSON.parse(data);
 
-				$.each(obj, function(I, field) {
-					options = "<option value> Select A Field</option>";
-					$.each(field, function(i, f) {
-						options += '<option value="'+f.name+'">'+f.label+'</option>';
-					});
-					choicesFields[I] = options;
+	if (choicesFields[val] === undefined) {
+		var options;
+		choicesFields[null] = options;
+
+		$.ajax({
+			url: "../includes/getFormFields.php",
+			async: false
+		}).always(function(data) {
+			var obj = JSON.parse(data);
+			$.each(obj, function(I, field) {
+				options = "<option value> Select A Field </option>";
+				$.each(field, function(i, f) {
+					options += '<option value="'+f.name+'">'+f.label+'</option>';
 				});
+				choicesFields[I] = options;
+				choicesFieldsCount[I] = field.length;
 			});
-		}
+		});
+	}
 
-		$("#fieldSettings_choices_fieldSelect").html(choicesFields[val]);
-	});
+	if(choicesFieldsCount[val] > 1){
+		$('#choicesExtraFields_button').show();
+	} else {
+		$('#choicesExtraFields_button').hide();
+	}
+
+	$("#fieldSettings_choices_fieldSelect").html(choicesFields[val]);
+}
+
+function addExtraFields(){
+	var val = $('#fieldSettings_choices_formSelect').val();
+
+	// number of total fields we can keep
+	var numberOfCurrentFields = $('.extraField_dynamicContainer').length;
+	var numberOfTotalFields = choicesFieldsCount[val] - 1;
+
+	// Create the HTML to add
+	var extraField = '<div class="extraField_dynamicContainer"> <select class="extraFields" id="fieldSettings_choices_extraFields" name="fieldSettings_choices_extraFields" data-bindmodel="choicesExtraFields">';
+		  extraField += choicesFields[val];
+			extraField += "</select>";
+			extraField += '<button type="button" name="button" name="deleteAdditionalField" class="deleteAdditionalField"><span class="icon-remove"></span></button>';
+
+	// see if we have enough fields or need to keep adding
+	if(numberOfCurrentFields < numberOfTotalFields){
+		$('.additionalFieldContainer').append(extraField);
+	}
+
+	// Undo Bindings
+	$("#formPreview").find('[data-bind]').unbind('change', setOriginalValues);
+	$('#fieldSettings_form').find("[data-bindmodel]").unbind('change keyup', bindToHiddenForm);
+
+	// redo bindings
+	fieldSettingsBindings();
+	formSettingsBindings();
 }
 
 function modifyChoiceBinding(){
@@ -1673,17 +1680,19 @@ function modifyChoiceBinding(){
 		}
 	}
 
+	var target;
+
 	if(targetType == 'multiselect'){
-		var target = targetFormPreview.find($('.controls')).find($('select'));
+		target = targetFormPreview.find($('.controls')).find($('select'));
 		target.html(output);
 	}
 	else if(targetType == 'checkbox' || targetType == 'radio') {
-		var target = targetFormPreview.find($('.controls'));
+		target = targetFormPreview.find($('.controls'));
 		target.find($('label')).remove();
 		target.append(output);
 	}
 	else if(targetType == 'select'){
-		var target = targetFormPreview.find($('.controls')).find($('select'));
+		target = targetFormPreview.find($('.controls')).find($('select'));
 		target.html(output);
 	}
 
@@ -1797,7 +1806,7 @@ String.prototype.removeHTML = function(){
                  .replace(/'/g, '&apos;')
                  .replace(/\//g, '');
     return string;
-}
+};
 
 // Test Functions
 // ====================================================================
