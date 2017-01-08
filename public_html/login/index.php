@@ -63,7 +63,7 @@ if (isset($engine->cleanPost['HTML']['loginSubmit'])) {
 }
 
 ?>
-
+<!-- nagios check -->
 <html>
 <head>
 	<title>MFCS Login</title>
