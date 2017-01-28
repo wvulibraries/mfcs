@@ -1531,8 +1531,9 @@ function addMetadataStandard(val){
 	}
 
 	var options    = metadataSchema;
-	var identifier = val.split(' : ')[1];
-	var standard   = val.split(' : ')[0];
+	val = val.replace(/\s+/g, '');
+	var identifier = val.split(':')[1];
+	var standard   = val.split(':')[0];
 
 	if(typeof identifier === 'undefined'){
 		identifier = '';
@@ -1723,7 +1724,7 @@ function metadataBinding(){
 
 	$(this).parent().parent().find($('input[type=text]')).each(function(index){
 		var select = $(this).prev('select').val();
-		value = select + " : " + $(this).val();
+		value = select + ":" + $(this).val();
 		valueObject[index] = value;
 	});
 
