@@ -1137,7 +1137,15 @@ class forms {
 						);
 
 				foreach ($form['fields'] as $field) {
-					$temp[] = sprintf('<input type="%s" style="%s" name="%s_%s" value="%s" readonly />',
+          // checking if type is text then we will use textarea instead of an input
+					if ($field['type'] === 'text') {
+						$typechoice = '<textarea type="%s" style="%s" name="%s_%s" readonly>%s</textarea>';
+					}
+					else {
+						$typechoice = '<input type="%s" style="%s" name="%s_%s" value="%s" readonly />';
+					}
+
+					$temp[] = sprintf($typechoice,
 						$field['type'],
 						$field['style'],
 						$field['name'],
