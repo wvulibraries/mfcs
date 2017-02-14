@@ -59,7 +59,7 @@ try {
 		}
 
 		$files           = implode(" ",$files);
-		$destinationFile = sprintf("%s/%s.%s",(mfcs::config('mfcsDownloadAllDir'),time(),$type);
+		$destinationFile = sprintf("%s/%s.%s",mfcs::config('mfcsDownloadAllDir'),time(),$type);
 
 		if ($type == "zip") {
 			$cmdLine = sprintf("zip -j %s %s",$destinationFile,$files);
