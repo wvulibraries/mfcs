@@ -66,6 +66,26 @@ class objects {
 		return $object;
 	}
 
+	public static function getByIDNO($idno,$ignoreCache=FALSE) {
+
+		$sql       = sprintf("SELECT `ID` FROM `objects` WHERE `idno`='%s'",
+			mfcs::$engine->openDB->escape($idno)
+		);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return false;
+		}
+
+		if ($sqlResult['numrows'] == 0) return false;
+
+		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+		return self::get($row['ID'],$ignoreCache);
+
+	}
+
 	public static function getObjects($start=0,$length=NULL,$metadata=TRUE) {
 
 		if (!validate::integer($start)) {
