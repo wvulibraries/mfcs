@@ -201,6 +201,46 @@ class objects {
 
 	}
 
+	public static function setUrl($objectID, $url) {
+		$sql       = sprintf("DELETE FROM `objectUrls` WHERE `objectID`='%s' LIMIT 1",
+			mfcs::$engine->openDB->escape($objectID)
+		);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - Deleting URL: ".$sqlResult['error'], errorHandle::DEBUG);
+			return false;
+		}
+
+		$sql       = sprintf("INSERT INTO `objectUrls` (`objectID`,`url`) VALUES('%s','%s')",
+			mfcs::$engine->openDB->escape($objectID),
+			mfcs::$engine->openDB->escape($url)
+		);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - Inserting URL: ".$sqlResult['error'], errorHandle::DEBUG);
+			return false;
+		}
+
+		return true;
+	}
+
+	public static function getUrl($objectID) {
+		$sql       = sprintf("SELECT `url` FROM `objectUrls` WHERE `objectID`='%s'",
+			mfcs::$engine->openDB->escape($objectID)
+		);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return false;
+		}
+
+		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+		return $row['url'];
+	}
+
 	// NOTE!!!! this method does not ensure compatible. It ijust moves the objects
 	// compatible forms are the respncibility of the calling function.
 	public static function move($objectID,$formID) {
