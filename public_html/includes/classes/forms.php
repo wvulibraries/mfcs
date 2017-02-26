@@ -1,5 +1,10 @@
 <?php
 
+// @TODO this file should be broken up. It is currently handling two distinct functions
+// 1. building and taking web form submissions
+// 1. handling everything about a "form"
+// A place holder file has been created, called web_forms.php to support the refactoring
+
 class forms {
 
 	// @TODO this needs to be expanded to include callbacks for the replacement text as well.
