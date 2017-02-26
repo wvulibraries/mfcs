@@ -3,24 +3,22 @@
 class objects {
 
 	public static function validID($required = FALSE,$objectID=NULL) {
-		$engine = EngineAPI::singleton();
-
 		// Validates $objectID if it is passed in
 		if (!isnull($objectID) && validate::integer($objectID)) {
 			return TRUE;
 		}
 		// Handles validation from query string
-		else if (isset($engine->cleanGet['MYSQL']['objectID'])) {
-			if (!is_empty($engine->cleanGet['MYSQL']['objectID'])
-				&& validate::integer($engine->cleanGet['MYSQL']['objectID'])) {
+		else if (isset(mfcs::$engine->cleanGet['MYSQL']['objectID'])) {
+			if (!is_empty(mfcs::$engine->cleanGet['MYSQL']['objectID'])
+				&& validate::integer(mfcs::$engine->cleanGet['MYSQL']['objectID'])) {
 
 				return TRUE;
 
 			}
 
 		}
-		else if (!isset($engine->cleanGet['MYSQL']['objectID']) && $required === FALSE) {
-			$engine->cleanGet['MYSQL']['objectID'] = NULL;
+		else if (!isset(mfcs::$engine->cleanGet['MYSQL']['objectID']) && $required === FALSE) {
+			mfcs::$engine->cleanGet['MYSQL']['objectID'] = NULL;
 			return TRUE;
 		}
 		else {
@@ -47,12 +45,10 @@ class objects {
 			}
 		}
 
-		$engine = EngineAPI::singleton();
-
 		$sql       = sprintf("SELECT * FROM `objects` WHERE `ID`='%s'",
-			$engine->openDB->escape($objectID)
+			mfcs::$engine->openDB->escape($objectID)
 			);
-		$sqlResult = $engine->openDB->query($sql);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - ", errorHandle::DEBUG);
@@ -100,18 +96,16 @@ class objects {
 			return(FALSE);
 		}
 
-		$engine = EngineAPI::singleton();
-
 		if (!isnull($length)) {
-			$start  = $engine->openDB->escape($start);
-			$length = $engine->openDB->escape($length);
+			$start  = mfcs::$engine->openDB->escape($start);
+			$length = mfcs::$engine->openDB->escape($length);
 		}
 
 		$sql       = sprintf("SELECT * FROM `objects` %s %s",
 			($metadata === FALSE)?"WHERE `metadata`='0'":"",
 			(!isnull($length))?sprintf("LIMIT %s,%s",$start,$length):""
 			);
-		$sqlResult = $engine->openDB->query($sql);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
@@ -132,12 +126,10 @@ class objects {
 			return FALSE;
 		}
 
-		$engine = EngineAPI::singleton();
-
 		$sql       = sprintf("SELECT * FROM `objects` WHERE `parentID`='%s'",
-			$engine->openDB->escape($objectID)
+			mfcs::$engine->openDB->escape($objectID)
 		);
-		$sqlResult = $engine->openDB->query($sql);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
@@ -263,8 +255,6 @@ class objects {
 	// $range is an array. $range[0] is the start, $range[1], is the length.
 	// Applies LIMIT $start,$length to SQL query
 	public static function getAllObjectsForForm($formID,$sortField=NULL,$metadata=TRUE,$range=NULL) {
-		$engine = EngineAPI::singleton();
-
 		if (!isnull($sortField)) {
 			// $sortField = sprintf(" ORDER BY `objects`.`ID`, LENGTH(%s), %s",
 			$sortField = sprintf(" ORDER BY LENGTH(%s), %s",
@@ -295,12 +285,12 @@ class objects {
 		}
 
 		$sql       = sprintf("SELECT * FROM `objects` WHERE `formID`='%s'%s%s",
-			$engine->openDB->escape($formID),
+			mfcs::$engine->openDB->escape($formID),
 			$sortField,
 			$range_clause
 			);
 
-		$sqlResult = $engine->openDB->query($sql);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - getting all objects for form: ".$sqlResult['error'], errorHandle::DEBUG);
@@ -316,8 +306,6 @@ class objects {
 	}
 
 	public static function getAllObjectsForProject($projectID, $sortField=NULL,$metadata=TRUE,$range=NULL) {
-
-		$engine = EngineAPI::singleton();
 
 		if (!isnull($sortField)) {
 			// $sortField = sprintf(" ORDER BY `objects`.`ID`, LENGTH(%s), %s",
@@ -349,11 +337,11 @@ class objects {
 		}
 
 		$sql       = sprintf("SELECT `objects`.* FROM `objects` LEFT JOIN `objectProjects` ON `objectProjects`.`objectID`=`objects`.`ID` WHERE `objectProjects`.`projectID`='%s' %s%s",
-			$engine->openDB->escape($projectID),
+			mfcs::$engine->openDB->escape($projectID),
 			$sortField,
 			$range_clause
 			);
-		$sqlResult = $engine->openDB->query($sql);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - getting all objects for form: ".$sqlResult['error'], errorHandle::DEBUG);
@@ -868,13 +856,12 @@ class objects {
 	 * @author Scott Blake
 	 **/
 	public static function getProjects($objectID) {
-		$engine = EngineAPI::singleton();
 		$return = array();
 
 		$sql = sprintf("SELECT `projectID` FROM `objectProjects` WHERE objectID='%s'",
-			$engine->openDB->escape($objectID)
+			mfcs::$engine->openDB->escape($objectID)
 			);
-		$sqlResult = $engine->openDB->query($sql);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
@@ -889,13 +876,10 @@ class objects {
 	}
 
 	public static function deleteAllProjects($objectID) {
-
-		$engine = EngineAPI::singleton();
-
 		$sql       = sprintf("DELETE FROM `objectProjects` WHERE `objectID`='%s'",
-			$engine->openDB->escape($objectID)
+			mfcs::$engine->openDB->escape($objectID)
 			);
-		$sqlResult = $engine->openDB->query($sql);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
@@ -907,14 +891,11 @@ class objects {
 	}
 
 	public static function addProject($objectID,$projectID) {
-
-		$engine = EngineAPI::singleton();
-
 		$sql       = sprintf("INSERT INTO `objectProjects` (`objectID`,`projectID`) VALUES('%s','%s')",
-			$engine->openDB->escape($objectID),
-			$engine->openDB->escape($projectID)
+			mfcs::$engine->openDB->escape($objectID),
+			mfcs::$engine->openDB->escape($projectID)
 			);
-		$sqlResult = $engine->openDB->query($sql);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
@@ -931,43 +912,38 @@ class objects {
 			return FALSE;
 		}
 
-		$engine = EngineAPI::singleton();
-
 		// check locks.
 		if (!locks::check_for_update($objectID,"object")) {
 			return FALSE;
 		}
 
-		if ($engine->openDB->transBegin("objectProjects") !== TRUE) {
+		if (mfcs::$engine->openDB->transBegin("objectProjects") !== TRUE) {
 			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
 			return FALSE;
 		}
 
 		if (self::deleteAllProjects($objectID) === FALSE) {
-			$engine->openDB->transRollback();
-			$engine->openDB->transEnd();
+			mfcs::$engine->openDB->transRollback();
+			mfcs::$engine->openDB->transEnd();
 			throw new Exception("Error removing all projects from Object.");
 		}
 
 		foreach ($projects as $projectID) {
 			if (self::addProject($objectID,$projectID) === FALSE) {
-				$engine->openDB->transRollback();
-				$engine->openDB->transEnd();
+				mfcs::$engine->openDB->transRollback();
+				mfcs::$engine->openDB->transEnd();
 				return FALSE;
 			}
 		}
 
-		$engine->openDB->transCommit();
-		$engine->openDB->transEnd();
+		mfcs::$engine->openDB->transCommit();
+		mfcs::$engine->openDB->transEnd();
 
 		return TRUE;
 
 	}
 
 	public static function retrieveObjectData($objectID) {
-
-
-
 		$sql       = sprintf("SELECT * FROM `objectsData` WHERE `objectID`='%s'",
 			mfcs::$engine->openDB->escape($objectID)
 			);
