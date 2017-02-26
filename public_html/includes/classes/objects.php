@@ -82,7 +82,7 @@ class objects {
 
 	}
 
-	public static function getObjects($start=0,$length=NULL,$metadata=TRUE) {
+	public static function getObjects($start=0,$length=NULL,$metadata=TRUE,$ignoreCache=false) {
 
 		if (!validate::integer($start)) {
 			errorHandle::newError(__METHOD__."() - start point not an integer", errorHandle::DEBUG);
@@ -114,7 +114,7 @@ class objects {
 
 		$objects = array();
 		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-			$objects[] = self::buildObject($row);
+			$objects[] = self::buildObject($row,$ignoreCache);
 		}
 
 		return $objects;
