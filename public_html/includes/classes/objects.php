@@ -1124,6 +1124,22 @@ class objects {
 
 	}
 
+	public static function countObjects($metadata=true) {
+			$sql       = sprintf("SELECT COUNT(*) FROM `objects`%s",
+				$metadata ? "" : " WHERE `metadata`=0"
+			);
+			$sqlResult = mfcs::$engine->openDB->query($sql);
+
+			if (!$sqlResult['result']) {
+				errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+				return false;
+			}
+
+			$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+
+			return $row["COUNT(*)"];
+	}
+
 }
 
 ?>
