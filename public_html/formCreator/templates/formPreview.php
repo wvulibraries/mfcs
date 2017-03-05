@@ -146,6 +146,8 @@
                                     <li><label class="checkbox" for="formSettings_formMetadata"><input type="checkbox" id="formSettings_formMetadata" name="formSettings_formMetadata" {local var="formMetadata"}> Metadata Form</label></li>
                                     <li><label class="checkbox" for="formSettings_exportPublic"><input type="checkbox" id="formSettings_exportPublic" name="formSettings_exportPublic" {local var="exportPublic"}> Export To Public</label></li>
                                     <li><label class="checkbox" for="formSettings_exportOAI"><input type="checkbox" id="formSettings_exportOAI" name="formSettings_exportOAI" {local var="exportOAI"}> OAI-PMH Export</label></li>
+                                    <li><label class="checkbox" for="formSettings_objPublicReleaseShow"><input type="checkbox" id="formSettings_objPublicReleaseShow" name="formSettings_objPublicReleaseShow" {local var="objPublicReleaseShow"}> Display Public Release</label></li>
+                                    <li><label class="checkbox" for="formSettings_objPublicReleaseDefaultTrue"><input type="checkbox" id="formSettings_objPublicReleaseDefaultTrue" name="formSettings_objPublicReleaseDefaultTrue" {local var="objPublicReleaseDefaultTrue"}> Public Release Default "Yes"</label></li>
                                 </ul>
                                 <span class="help-block hidden"></span>
                             </div>

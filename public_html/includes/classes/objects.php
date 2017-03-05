@@ -487,7 +487,7 @@ class objects {
 
 	// creates a new object and puts it in the database
 	// we are assuming that all data is valid at this point
-	public static function create($formID,$data,$metadata,$parentID=0,$modifiedTime=NULL,$createTime=NULL) {
+	public static function create($formID,$data,$metadata,$parentID=0,$modifiedTime=NULL,$createTime=NULL,$publicReleaseObj=0) {
 
 		if (checks::is_ok("readonly")) {
 			errorHandle::errorMsg("MFCS is currently in Read Only Mode.");
@@ -513,7 +513,7 @@ class objects {
 		}
 
 		// Insert into the database
-		$sql       = sprintf("INSERT INTO `objects` (parentID,formID,data,metadata,modifiedTime,createTime,modifiedBy,createdBy) VALUES('%s','%s','%s','%s','%s','%s','%s','%s')",
+		$sql       = sprintf("INSERT INTO `objects` (parentID,formID,data,metadata,modifiedTime,createTime,modifiedBy,createdBy,publicRelease) VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s')",
 			isset(mfcs::$engine->cleanPost['MYSQL']['parentID'])?mfcs::$engine->cleanPost['MYSQL']['parentID']:"0",
 			mfcs::$engine->openDB->escape($formID),
 			encodeFields($data),
@@ -521,7 +521,8 @@ class objects {
 			time(),
 			time(),
 			mfcs::$engine->openDB->escape(users::user('ID')),
-			mfcs::$engine->openDB->escape(users::user('ID'))
+			mfcs::$engine->openDB->escape(users::user('ID')),
+			$publicReleaseObj == 1 ? 1 : 0
 			);
 
 		$sqlResult = mfcs::$engine->openDB->query($sql);
@@ -670,7 +671,9 @@ class objects {
 
 	}
 
-	public static function update($objectID,$formID,$data,$metadata,$parentID=0,$modifiedTime=NULL) {
+	public static function update($objectID,$formID,$data,$metadata,$parentID=0,$modifiedTime=NULL,$publicReleaseObj=0) {
+
+		errorHandle::newError(__METHOD__."() - update:".$publicReleaseObj, errorHandle::DEBUG);
 
 		if (checks::is_ok("readonly")) {
 			errorHandle::errorMsg("MFCS is currently in Read Only Mode.");
@@ -718,13 +721,14 @@ class objects {
 		}
 
 		// insert new version
-		$sql = sprintf("UPDATE `objects` SET `parentID`='%s', `data`='%s', `formID`='%s', `metadata`='%s', `modifiedTime`='%s', `modifiedBy`='%s' WHERE `ID`='%s'",
+		$sql = sprintf("UPDATE `objects` SET `parentID`='%s', `data`='%s', `formID`='%s', `metadata`='%s', `modifiedTime`='%s', `modifiedBy`='%s', `publicRelease`='%s' WHERE `ID`='%s'",
 			isset(mfcs::$engine->cleanPost['MYSQL']['parentID'])?mfcs::$engine->cleanPost['MYSQL']['parentID']:mfcs::$engine->openDB->escape($parentID),
 			encodeFields($data),
 			mfcs::$engine->openDB->escape($formID),
 			mfcs::$engine->openDB->escape($metadata),
 			(isnull($modifiedTime))?time():$modifiedTime,
 			mfcs::$engine->openDB->escape(users::user('ID')),
+			$publicReleaseObj == 1 ? 1 : 0,
 			mfcs::$engine->openDB->escape($objectID)
 			);
 
