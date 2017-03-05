@@ -327,6 +327,7 @@ function showFieldSettings(fullID) {
 			var fieldSettings_options_displayTable = $("#fieldSettings_options_displayTable");
 			var fieldSettings_options_readonly     = $("#fieldSettings_options_readonly");
 			var fieldSettings_options_disabled     = $("#fieldSettings_options_disabled");
+			var fieldSettings_options_oaiRelease = $("#fieldSettings_options_oaiRelease");
 
 			if (type == 'idno') {
 				fieldSettings_name.prop("readonly", true).val("idno").keyup();
@@ -350,6 +351,10 @@ function showFieldSettings(fullID) {
 					checked:  false,
 					disabled: true,
 				}).change();
+				fieldSettings_options_oaiRelease.prop({
+					checked:  true,
+					disabled: true,
+				}).change();
 			}
 			else if (type == 'file') {
 				fieldSettings_options_displayTable.removeAttr("checked").change().prop("disabled", true);
@@ -361,6 +366,7 @@ function showFieldSettings(fullID) {
 				fieldSettings_options_readonly.removeAttr("disabled");
 				fieldSettings_options_disabled.removeAttr("disabled");
 				fieldSettings_options_displayTable.removeAttr("disabled");
+				fieldSettings_options_oaiRelease.removeAttr("disabled");
 			}
 
 			// Show optional fields
@@ -1300,7 +1306,7 @@ function newFieldValues(id,type,vals) {
     vals.type = determineType(type);
     type = vals.type;
 
-    var defaultHiddenFormFields = ['name','position', 'type', 'label', 'value', 'placeholder', 'id', 'class', 'style', 'helpType', 'required', 'duplicates', 'readonly', 'disabled', 'disabledInsert', 'disabledUpdate', 'publicRelease', 'sortable', 'searchable', 'displayTable', 'hidden', 'validation', 'validationRegex', 'access', 'fieldset', 'metadataStandard' ];
+    var defaultHiddenFormFields = ['name','position', 'type', 'label', 'value', 'placeholder', 'id', 'class', 'style', 'helpType', 'required', 'duplicates', 'readonly', 'disabled', 'disabledInsert', 'disabledUpdate', 'publicRelease', 'oaiRelease', 'sortable', 'searchable', 'displayTable', 'hidden', 'validation', 'validationRegex', 'access', 'fieldset', 'metadataStandard' ];
 
     output += createHiddenFields(defaultHiddenFormFields, id, vals);
 
