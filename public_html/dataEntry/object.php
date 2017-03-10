@@ -137,6 +137,12 @@ try {
 		}
 	}
 
+	// build the items for Public Urls
+	// @TODO; there are too many redundant isnull checks. can they be consolidated?
+	if(!isnull($engine->cleanGet['MYSQL']['objectID'])) {
+		localvars::add('publicUrls',sprintf('<li><a href="%1$s">%1$s</a></li>',objects::getUrl($engine->cleanGet['MYSQL']['objectID'])));
+	}
+
 	// build the files list for displaying
 	if(isset($engine->cleanGet['MYSQL']['objectID'])){
 
@@ -257,6 +263,7 @@ $engine->eTemplate("include","header");
 					<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
 						<li><a data-toggle="tab" href="#files" id="filesTab">Files</a></li>
 						<li><a data-toggle="tab" href="#project">Project</a></li>
+						<li><a data-toggle="tab" href="#publicUrls">Public Urls</a></li>
 						<?php if(forms::isContainer($engine->cleanGet['MYSQL']['formID'])) { ?>
 							<!-- <li><a data-toggle="tab" href="#children">Children</a></li> -->
 						<?php } ?>
@@ -298,6 +305,12 @@ $engine->eTemplate("include","header");
 							{engine name="csrf"}
 							<input type="submit" class="btn btn-primary" name="projectForm">
 							</form>
+						</div>
+						<div class="tab-pane" id="publicUrls">
+							<h2>Public Urls</h2>
+							<ul>
+								{local var="publicUrls"}
+							</ul>
 						</div>
 						<?php if(forms::isContainer($engine->cleanGet['MYSQL']['formID'])) { ?>
 							<!-- <div class="tab-pane" id="children">
