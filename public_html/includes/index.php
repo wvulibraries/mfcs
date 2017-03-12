@@ -19,6 +19,7 @@ require_once "classes/projects.php";
 require_once "classes/revisions.php";
 require_once "classes/search.php";
 require_once "classes/stats.php";
+require_once "classes/string_utils.php";
 require_once "classes/system_information.php";
 require_once "classes/users.php";
 require_once "classes/FFMPEG.php";
@@ -28,6 +29,6 @@ require_once "classes/virus.php";
 
 require_once "class.tesseract_ocr.php";
 
-if (file_exists(__DIR__."/classes/cleanup_mapping.php")) require_once "classes/cleanup_mapping.php"; 
+if (file_exists(__DIR__."/classes/cleanup_mapping.php")) require_once "classes/cleanup_mapping.php";
 
 ?>
