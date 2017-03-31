@@ -616,7 +616,7 @@ class forms {
 				);
 		}
 
-		if ($form['objPublicReleaseShow'] == 1) {
+		if ($form['objPublicReleaseShow'] == 1 && $form['metadata'] === 0) {
 			$objPublicReleaseDefaultTrueYes = forms::publicReleaseObjSelect($objectID,$object,$form);
 			$output .= '<label form="publicReleaseObj">Release to Public:</label>';
 			$output .= '<select name="publicReleaseObj" id="publicReleaseObj">';
