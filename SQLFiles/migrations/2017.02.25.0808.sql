@@ -4,4 +4,4 @@ CREATE TABLE `objectUrls` (
   `url` varchar(767) NOT NULL,
   PRIMARY KEY (`objectID`),
   UNIQUE KEY `url` (`url`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
