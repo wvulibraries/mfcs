@@ -200,7 +200,7 @@ class projects {
     $sqlResult = mfcs::$engine->openDB->query($sql);
 
     if (!$sqlResult['result']) {
-      errorHandle::newError(__METHOD__."() - getting all object IDNOs for project: ".$engine->cleanGet['MYSQL']['id'], errorHandle::DEBUG);
+      errorHandle::newError(__METHOD__."() - getting all object IDNOs for project: ".mfcs::$engine->cleanGet['MYSQL']['id'], errorHandle::DEBUG);
       return FALSE;
     }
 
