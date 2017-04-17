@@ -3,13 +3,8 @@
 class projects {
 
 	public static function validID($id) {
-
-		if (!validate::integer($id)) {
-			return FALSE;
-		}
-
+    if (!validate::integer($id)) return FALSE;
 		return TRUE;
-
 	}
 
 	/**
@@ -194,7 +189,7 @@ class projects {
 
   public static function get_project_idnos($projectID) {
 
-    $sql = sprintf("select `objects.idno` from `objectProjects` left join `objects` on `objects`.`ID`=`objectProjects`.`objectId` WHERE `objects`.`metadata`='0' AND `objectProjects`.`projectId`=%",
+    $sql = sprintf("select `objects.idno` from `objectProjects` left join `objects` on `objects`.`ID`=`objectProjects`.`objectId` WHERE `objects`.`metadata`='0' AND `objectProjects`.`projectId`=%s",
         mfcs::$engine->openDB->escape($projectID)
     );
     $sqlResult = mfcs::$engine->openDB->query($sql);

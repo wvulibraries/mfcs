@@ -8,13 +8,13 @@ set_time_limit(0);
 $engine->obCallback = FALSE;
 
 try {
-
 	if (!projects::validID($engine->cleanGet['MYSQL']['id'])) throw new Exception("Invalid Project ID.");
+  if (!projects::get($engine->cleanGet['MYSQL']['id'])) throw new Exception("Project doesn't exist.");
   if (($project_idnos = projects::get_project_idnos($engine->cleanGet['MYSQL']['id'])) === false) {
     throw new Exception("Unable to retrieve IDNOs");
   }
 
-	$json = json_encode($idnos);
+	$json = json_encode($project_idnos);
 	print (isset($engine->cleanGet['HTML']['prettyPrint']))?json_format($json):$json;
 
 	exit;
