@@ -3,13 +3,8 @@
 class projects {
 
 	public static function validID($id) {
-
-		if (!validate::integer($id)) {
-			return FALSE;
-		}
-
+    if (!validate::integer($id)) return FALSE;
 		return TRUE;
-
 	}
 
 	/**
@@ -180,17 +175,36 @@ class projects {
 
 		$sql       = sprintf("SELECT `projectName` from `projects` WHERE `ID`='%s' LIMIT 1",mfcs::$engine->openDB->escape($projectID));
 		$sqlResult = mfcs::$engine->openDB->query($sql);
-		
+
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-		
+
 		$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
 		return (isset($row['projectName']))?$row['projectName']:"Project Not Found";
 
 	}
+
+  public static function get_project_idnos($projectID) {
+
+    $sql = sprintf("select `objects`.`idno` from `objectProjects` left join `objects` on `objects`.`ID`=`objectProjects`.`objectId` WHERE `objects`.`metadata`='0' AND `objectProjects`.`projectId`='%s'",
+        mfcs::$engine->openDB->escape($projectID)
+    );
+    $sqlResult = mfcs::$engine->openDB->query($sql);
+
+    if (!$sqlResult['result']) {
+      errorHandle::newError(__METHOD__."() - getting all object IDNOs for project: ".$projectID, errorHandle::DEBUG);
+      return FALSE;
+    }
+
+    $idnos = array();
+    while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+      $idnos[] = $row['idno'];
+    }
+    return ($idnos);
+  }
 
 }
 
