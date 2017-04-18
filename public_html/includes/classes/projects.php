@@ -189,13 +189,13 @@ class projects {
 
   public static function get_project_idnos($projectID) {
 
-    $sql = sprintf("select `objects.idno` from `objectProjects` left join `objects` on `objects`.`ID`=`objectProjects`.`objectId` WHERE `objects`.`metadata`='0' AND `objectProjects`.`projectId`=%s",
+    $sql = sprintf("select `objects`.`idno` from `objectProjects` left join `objects` on `objects`.`ID`=`objectProjects`.`objectId` WHERE `objects`.`metadata`='0' AND `objectProjects`.`projectId`='%s'",
         mfcs::$engine->openDB->escape($projectID)
     );
     $sqlResult = mfcs::$engine->openDB->query($sql);
 
     if (!$sqlResult['result']) {
-      errorHandle::newError(__METHOD__."() - getting all object IDNOs for project: ".mfcs::$engine->cleanGet['MYSQL']['id'], errorHandle::DEBUG);
+      errorHandle::newError(__METHOD__."() - getting all object IDNOs for project: ".$projectID, errorHandle::DEBUG);
       return FALSE;
     }
 
