@@ -13,7 +13,7 @@ try {
 
 	$projects_array = array();
 	foreach ($projects as $project) {
-		$projects_arrayjson[] = array("ID" => $project['ID'], "title" => $project['projectName'], "shortTitle" => $project['projectID']);
+		$projects_array[] = array("ID" => $project['ID'], "title" => $project['projectName'], "shortTitle" => $project['projectID']);
 	}
 
 	$json = json_encode($projects_array);
