@@ -2,7 +2,7 @@
 include("../../../../header.php");
 
 
-// we don't need engine's display handling here. 
+// we don't need engine's display handling here.
 $engine->obCallback = FALSE;
 
 try {
@@ -11,12 +11,12 @@ try {
 		throw new Exception("error getting forms.");
 	}
 
-	$json = array();
+	$projects_array = array();
 	foreach ($projects as $project) {
-		$json[] = array("ID" => $project['ID'], "title" => $project['projectName'], "shortTitle" => $project['projectID']);
+		$projects_array[] = array("ID" => $project['ID'], "title" => $project['projectName'], "shortTitle" => $project['projectID']);
 	}
 
-	$json = json_encode($objects);
+	$json = json_encode($projects_array);
 	print (isset($engine->cleanGet['HTML']['prettyPrint']))?json_format($json):$json;
 
 	exit;
@@ -30,4 +30,3 @@ catch(Exception $e) {
 exit;
 
 ?>
-	
