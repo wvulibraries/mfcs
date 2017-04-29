@@ -1086,7 +1086,7 @@ function addNewField(item) {
 	// Display settings for new field
 	$("#formPreview_"+newID).click();
 
-	if ($("#formSettings_formMetadata").not(":checked")) {
+	if (!$("#formSettings_formMetadata").is(":checked")) {
 		// Enable/disable Production Form setting based on whether an idno field exists
 		if ($("#formPreview").find("input[name^=type_][value=idno]").length === 0) {
 			$("#formSettings_formProduction").prop({
