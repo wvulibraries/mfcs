@@ -1,6 +1,3 @@
 <?php
-
-// standard engine acl file
-// recommend limiting by IP address
-
+include mfcs::config("api_acl");
 ?>

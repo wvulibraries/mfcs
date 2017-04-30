@@ -12,7 +12,7 @@ class system_information {
 
 
 	public static function archives_usage() {
-		return (self::drive_size() - self::free_space())/1073741824;
+		return (self::drive_size() - self::free_space());
 	}
 
 }

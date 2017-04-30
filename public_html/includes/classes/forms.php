@@ -1,5 +1,10 @@
 <?php
 
+// @TODO this file should be broken up. It is currently handling two distinct functions
+// 1. building and taking web form submissions
+// 1. handling everything about a "form"
+// A place holder file has been created, called web_forms.php to support the refactoring
+
 class forms {
 
 	// @TODO this needs to be expanded to include callbacks for the replacement text as well.
@@ -547,6 +552,16 @@ class forms {
 
 	}
 
+	private static function publicReleaseObjSelect($objectID, $object, $form) {
+		if(!isnull($objectID)) {
+			if ($object['publicRelease'] == "0") return false;
+		}
+		else if ($form['objPublicReleaseDefaultTrue'] == "0") {
+			return false;
+		}
+		return true;
+	}
+
 	public static function build($formID,$objectID = NULL,$error=FALSE) {
 
 		$engine = EngineAPI::singleton();
@@ -601,9 +616,14 @@ class forms {
 				);
 		}
 
-		// $output .= sprintf('<header><h1>%s</h1><h2>%s</h2></header>',
-		// 	htmlSanitize($form['title']),
-		// 	htmlSanitize($form['description']));
+		if ($form['objPublicReleaseShow'] == 1 && $form['metadata'] == 0) {
+			$objPublicReleaseDefaultTrueYes = forms::publicReleaseObjSelect($objectID,$object,$form);
+			$output .= '<label form="publicReleaseObj">Release to Public:</label>';
+			$output .= '<select name="publicReleaseObj" id="publicReleaseObj">';
+			$output .= sprintf('<option value="yes" %s>Yes</option>', $objPublicReleaseDefaultTrueYes ? "selected" : "");
+			$output .= sprintf('<option value="no" %s>No</option>', !$objPublicReleaseDefaultTrueYes ? "selected" : "");
+			$output .= '</select>';
+		}
 
 		$currentFieldset = "";
 
@@ -1137,12 +1157,19 @@ class forms {
 						);
 
 				foreach ($form['fields'] as $field) {
+
+          $field_value = (isset($objects[$I]['data'][$field['name']]))?htmlSanitize($objects[$I]['data'][$field['name']]):"";
+          if ($field['type'] == "select" && !is_empty($field_value)) {
+            $field_object = objects::get($field_value);
+            $field_value = $field_object['data'][$field['choicesField']];
+          }
+
 					$temp[] = sprintf('<input type="%s" style="%s" name="%s_%s" value="%s" readonly />',
 						$field['type'],
 						$field['style'],
 						$field['name'],
 						$objects[$I]['ID'],
-						(isset($objects[$I]['data'][$field['name']]))?htmlSanitize($objects[$I]['data'][$field['name']]):""
+						$field_value
 					);
 				}
 
@@ -1466,6 +1493,10 @@ class forms {
 
 		$values = array();
 
+		if (isset($engine->cleanPost['RAW']['publicReleaseObj'])) {
+			$publicReleaseObj = strtolower($engine->cleanPost['RAW']['publicReleaseObj']) == "no" ? 0 : 1;
+		}
+
 		// go through all the fields, get their values
 		foreach ($fields as $field) {
 
@@ -1562,7 +1593,7 @@ class forms {
 
 		if ($newObject === TRUE) {
 
-			if (objects::create($formID,$values,$form['metadata'],isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0") === FALSE) {
+			if (objects::create($formID,$values,$form['metadata'],isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",null,null,$publicReleaseObj) === FALSE) {
 				$engine->openDB->transRollback();
 				$engine->openDB->transEnd();
 
@@ -1578,7 +1609,7 @@ class forms {
 		}
 		else {
 
-			if (objects::update($objectID,$formID,$values,$form['metadata'],isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0") === FALSE) {
+			if (objects::update($objectID,$formID,$values,$form['metadata'],isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",null,$publicReleaseObj) === FALSE) {
 				$engine->openDB->transRollback();
 				$engine->openDB->transEnd();
 

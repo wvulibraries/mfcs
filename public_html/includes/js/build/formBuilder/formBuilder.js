@@ -327,6 +327,7 @@ function showFieldSettings(fullID) {
 			var fieldSettings_options_displayTable = $("#fieldSettings_options_displayTable");
 			var fieldSettings_options_readonly     = $("#fieldSettings_options_readonly");
 			var fieldSettings_options_disabled     = $("#fieldSettings_options_disabled");
+			var fieldSettings_options_oaiRelease = $("#fieldSettings_options_oaiRelease");
 
 			if (type == 'idno') {
 				fieldSettings_name.prop("readonly", true).val("idno").keyup();
@@ -350,6 +351,10 @@ function showFieldSettings(fullID) {
 					checked:  false,
 					disabled: true,
 				}).change();
+				fieldSettings_options_oaiRelease.prop({
+					checked:  true,
+					disabled: true,
+				}).change();
 			}
 			else if (type == 'file') {
 				fieldSettings_options_displayTable.removeAttr("checked").change().prop("disabled", true);
@@ -361,6 +366,7 @@ function showFieldSettings(fullID) {
 				fieldSettings_options_readonly.removeAttr("disabled");
 				fieldSettings_options_disabled.removeAttr("disabled");
 				fieldSettings_options_displayTable.removeAttr("disabled");
+				fieldSettings_options_oaiRelease.removeAttr("disabled");
 			}
 
 			// Show optional fields
@@ -945,11 +951,8 @@ function formSettingsBindings() {
 			if (idnoType.length === 0) {
 				$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
 				fieldAdd.find("li:contains('ID Number')").hide();
-				fieldAdd.find("li:contains('Paragraph Text')").hide();
 				fieldAdd.find("li:contains('Radio')").hide();
 				fieldAdd.find("li:contains('Checkboxes')").hide();
-				fieldAdd.find("li:contains('Dropdown')").hide();
-				fieldAdd.find("li:contains('Multi-Select')").hide();
 				fieldAdd.find("li:contains('File Upload')").hide();
 				fieldAdd.find("li:contains('WYSIWYG')").hide();
 				fieldAdd.find("li:contains('Field Set')").parent().hide().prev().hide();
@@ -959,11 +962,8 @@ function formSettingsBindings() {
 					idnoType.parent().parent().remove();
 					$("#formSettings_formProduction").removeAttr("disabled").removeAttr("title");
 					fieldAdd.find("li:contains('ID Number')").hide();
-					fieldAdd.find("li:contains('Paragraph Text')").hide();
 					fieldAdd.find("li:contains('Radio')").hide();
 					fieldAdd.find("li:contains('Checkboxes')").hide();
-					fieldAdd.find("li:contains('Dropdown')").hide();
-					fieldAdd.find("li:contains('Multi-Select')").hide();
 					fieldAdd.find("li:contains('File Upload')").hide();
 					fieldAdd.find("li:contains('WYSIWYG')").hide();
 					fieldAdd.find("li:contains('Field Set')").parent().hide().prev().hide();
@@ -977,11 +977,8 @@ function formSettingsBindings() {
 			$("#formSettings_linkTitle_container").hide();
 
 			fieldAdd.find("li:contains('ID Number')").show();
-			fieldAdd.find("li:contains('Paragraph Text')").show();
 			fieldAdd.find("li:contains('Radio')").show();
 			fieldAdd.find("li:contains('Checkboxes')").show();
-			fieldAdd.find("li:contains('Dropdown')").show();
-			fieldAdd.find("li:contains('Multi-Select')").show();
 			fieldAdd.find("li:contains('File Upload')").show();
 			fieldAdd.find("li:contains('WYSIWYG')").show();
 			fieldAdd.find("li:contains('Field Set')").parent().show().prev().show();
@@ -1089,11 +1086,11 @@ function addNewField(item) {
 	// Display settings for new field
 	$("#formPreview_"+newID).click();
 
-	if ($("#formSettings_formMetadata").not(":checked")) {
+	if (!$("#formSettings_formMetadata").is(":checked")) {
 		// Enable/disable Production Form setting based on whether an idno field exists
 		if ($("#formPreview").find("input[name^=type_][value=idno]").length === 0) {
 			$("#formSettings_formProduction").prop({
-				checked:  false,
+				checked:  false, // this one?
 				disabled: true,
 				title:    "This form needs an ID Number field.",
 			});
@@ -1300,7 +1297,7 @@ function newFieldValues(id,type,vals) {
     vals.type = determineType(type);
     type = vals.type;
 
-    var defaultHiddenFormFields = ['name','position', 'type', 'label', 'value', 'placeholder', 'id', 'class', 'style', 'helpType', 'required', 'duplicates', 'readonly', 'disabled', 'disabledInsert', 'disabledUpdate', 'publicRelease', 'sortable', 'searchable', 'displayTable', 'hidden', 'validation', 'validationRegex', 'access', 'fieldset', 'metadataStandard' ];
+    var defaultHiddenFormFields = ['name','position', 'type', 'label', 'value', 'placeholder', 'id', 'class', 'style', 'helpType', 'required', 'duplicates', 'readonly', 'disabled', 'disabledInsert', 'disabledUpdate', 'publicRelease', 'oaiRelease', 'sortable', 'searchable', 'displayTable', 'hidden', 'validation', 'validationRegex', 'access', 'fieldset', 'metadataStandard' ];
 
     output += createHiddenFields(defaultHiddenFormFields, id, vals);
 

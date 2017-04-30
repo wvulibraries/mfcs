@@ -645,6 +645,12 @@
                 </li>
                 <li>
                     <label class="checkbox">
+                        <input type="checkbox" id="fieldSettings_options_oaiRelease" name="fieldSettings_options_oaiRelease" data-bindModel="oaiRelease"> OAI Release
+                        <i class="fa fa-question-circle" rel="tooltip"  data-placement="top" data-title="OAI Application will cache this field."></i>
+                    </label>
+                </li>
+                <li>
+                    <label class="checkbox">
                         <input type="checkbox" id="fieldSettings_options_sortable" name="fieldSettings_options_sortable" data-bindModel="sortable"> Sortable
                         <i class="fa fa-question-circle" rel="tooltip"  data-placement="top" data-title="Field is Sortable in list table in MFCS."></i>
                     </label>
@@ -687,8 +693,3 @@
         </div>
     </div>
 </div>
-
-
-
-
-

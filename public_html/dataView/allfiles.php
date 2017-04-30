@@ -41,6 +41,8 @@ try {
 	}
 
 	//determine the field name
+	// FIXME: this will only grab the LAST file field, if a form has Multiple
+	// file fields this will not download all of the files.
 	$field_name = "";
 	$form = forms::get($object['formID']);
 	foreach ($form['fields'] as $field) {
@@ -53,13 +55,11 @@ try {
 		$files = array();
 
 		foreach ($object['data'][$field_name]['files']['archive'] as $file) {
-
-			$files[] = sprintf("%s",$file['name']);
-
+			$files[] = $file['name'];
 		}
 
 		$files           = implode(" ",$files);
-		$destinationFile = sys_get_temp_dir()."/".time().".".$type;
+		$destinationFile = sprintf("%s/%s.%s",mfcs::config('mfcsDownloadAllDir'),time(),$type);
 
 		if ($type == "zip") {
 			$cmdLine = sprintf("zip -j %s %s",$destinationFile,$files);
@@ -86,31 +86,12 @@ try {
 		header("Cache-Control: public");
 		header("Content-Description: File Transfer");
 		header("Content-type: application/zip");
-		header("Content-Disposition: attachment; filename=\"".$object['idno'].".".$type."\"");
+		header(sprintf('Content-Disposition: attachment; filename="%s.%s"',$object['idno'],$type));
 		header("Content-Transfer-Encoding: binary");
-		header("Content-Length: ".filesize($destinationFile));
-		ob_end_clean(); 
+		header(sprintf("Content-Length: %s",filesize($destinationFile)));
 		@readfile($destinationFile);
 
-
-		// header(sprintf("Content-Disposition: attachment; filename='%s.%s'",
-		// 	$object['idno'],
-		// 	$type
-		// 	)
-		// );
-		// header("Content-Type: application/octet-stream");
-
-		// ob_end_clean(); 
-		// flush(); 
-
-		// print file_get_contents($destinationFile);
-
 		unlink($destinationFile);
-
-		// print "<pre>";
-		// var_dump($cmdLine);
-		// print "</pre>";
-
 	}
 	else {
 		throw new Exception("No digital Files");
