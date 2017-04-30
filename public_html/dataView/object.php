@@ -75,6 +75,27 @@ try {
 	// Project Tab Stuff
 	//////////
 
+  	// build the items for Public Urls
+	// @TODO; there are too many redundant isnull checks. can they be consolidated?
+	if(!isnull($engine->cleanGet['MYSQL']['objectID'])) {
+    $oai_url = sprintf("%s?verb=GetRecord&identifier=%s&metadataPrefix=oai_dc", mfcs::config("oai_url"), objects::getIDNOForObjectID($engine->cleanGet['MYSQL']['objectID']));
+    $local_urls = sprintf('<li><a href="%1$s">%1$s</a></li>',objects::getUrl($engine->cleanGet['MYSQL']['objectID']));
+    $local_urls .= sprintf('<li><a href="%s">OAI</a>', $oai_url);
+		localvars::add('publicUrls',$local_urls);
+
+    $oai_output = file_get_contents($oai_url);
+    if ($oai_output) {
+      $doc = new DomDocument('1.0');
+      $doc->preserveWhiteSpace = false;
+      $doc->formatOutput = true;
+      $doc->loadXML($oai_output);
+      $oai_output = htmlSanitize($doc->saveXML());
+    } else {
+      $oai_output = "OAI Record not available in OAI Application";
+    }
+    localvars::add('oaiOutput', $oai_output);
+	}
+
 	//////////
 	// Children Tab Stuff
 	if (($formList = listGenerator::generateFormSelectList($engine->cleanGet['MYSQL']['objectID'])) === FALSE) {
@@ -136,6 +157,7 @@ $engine->eTemplate("include","header");
 					<li><a data-toggle="tab" href="#metadata">Metadata</a></li>
 					<li><a data-toggle="tab" href="#files" id="filesTab">Files</a></li>
 					<li><a data-toggle="tab" href="#project">Project</a></li>
+          <li><a data-toggle="tab" href="#publicUrls">Public Urls &amp; OAI</a></li>
 					<!-- <li><a data-toggle="tab" href="#children">Children</a></li> -->
 				</ul>
 
@@ -162,8 +184,18 @@ $engine->eTemplate("include","header");
 							{engine name="csrf"}
 							<input type="submit" class="btn btn-primary" name="projectForm">
 						</form>
-					</div>
-
+          </div>
+          <div class="tab-pane" id="publicUrls">
+            <h2>Public Urls &amp; OAI</h2>
+            <p>Note: If the public URL has not been registered with MFCS yet, the first item may be blank.</p>
+            <ul>
+              {local var="publicUrls"}
+            </ul>
+            <p>OAI Record:</p>
+            <pre>
+              {local var="oaiOutput"}
+            </pre>
+          </div>
 <!-- 					<div class="tab-pane" id="children">
 						{local var="childrenList"}
 					</div> -->
