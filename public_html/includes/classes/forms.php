@@ -1157,12 +1157,19 @@ class forms {
 						);
 
 				foreach ($form['fields'] as $field) {
+
+          $field_value = (isset($objects[$I]['data'][$field['name']]))?htmlSanitize($objects[$I]['data'][$field['name']]):"";
+          if ($field['type'] == "select" && !is_empty($field_value)) {
+            $field_object = objects::get($field_value);
+            $field_value = $field_object['data'][$field['choicesField']];
+          }
+
 					$temp[] = sprintf('<input type="%s" style="%s" name="%s_%s" value="%s" readonly />',
 						$field['type'],
 						$field['style'],
 						$field['name'],
 						$objects[$I]['ID'],
-						(isset($objects[$I]['data'][$field['name']]))?htmlSanitize($objects[$I]['data'][$field['name']]):""
+						$field_value
 					);
 				}
 
