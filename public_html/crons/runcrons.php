@@ -6,9 +6,7 @@ session_save_path('/tmp');
 ini_set('memory_limit',-1);
 set_time_limit(0);
 
-require("../public_html/header.php");
-
-$cronsPath = '/vagrant/public_html/crons';
+require("../header.php");
 
 if (!isCLI()) {
 	print "Must be run from the command line.";
@@ -26,36 +24,32 @@ if (!$sqlResult['result']) {
 	return FALSE;
 }
 
-if ($sqlResult['numrows'] == "0") die("Nothing to do.\n");
+if ($sqlResult['numrows'] == "0") die($today . " Nothing to do.\n");
 
 while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
   $runjob = false;
 
-  // verify scheduled job exists in the $cronsPath
-	if (!file_exists($cronsPath . '/'  . $row['name']) && !$row['active'] == '1') {
-    notification::notifyAdmins("MFCS Scheduler Run Failure", "Scheduled Cron Job is missing");
+  // verify scheduled job exists
+	if (!file_exists($row['name'])) {
+    notification::notifyAdmins("MFCS Scheduler Run Failure", $row['name'] , "Scheduled Cron Job is missing");
 	}
-  else{
+  elseif ($row['active'] == '1') {
     if ($row['runnow'] == '1') {
       $runjob = true;
     }
     else {
       $minuteset = ( ($row['minute'] == date("i")) || ($row['minute'] == '*') );
-      $hourset = (($row['hour'] == date("G")) || ($row['hour'] == '*'));
-      $dayofmonthset = (($row['dayofmonth'] == date("n")) || ($row['dayofmonth'] == '*'));
-      $monthset = (($row['month'] == date("n")) || ($row['month'] == '*'));
-      $dayofweekset = (($row['dayofweek'] == date("w")) || ($row['dayofweek'] == '*'));
-
-      if ($minuteset && $hourset && $dayofmonthset && $monthset && $dayofweekset) {
-        $runjob = true;
-      }
+      $hourset = ( ($row['hour'] == date("G")) || ($row['hour'] == '*') );
+      $dayofmonthset = ( ($row['dayofmonth'] == date("n")) || ($row['dayofmonth'] == '*') );
+      $monthset = ( ($row['month'] == date("n")) || ($row['month'] == '*') );
+      $dayofweekset = ( ($row['dayofweek'] == date("w")) || ($row['dayofweek'] == '*') );
+      $runjob = ($minuteset && $hourset && $dayofmonthset && $monthset && $dayofweekset);
     }
   }
 
-  if ($runjob && file_exists($cronsPath . '/'  . $row['name'])) {
-
-    include($cronsPath . '/'  . $row['name']);
+  if ($runjob) {
+    shell_exec("/usr/bin/php " . $row['name']);
 
     // update last run
 		$sql       = sprintf("UPDATE `scheduler` set `runnow`='%s', `lastrun`='%s' WHERE `ID`='%s' LIMIT 1",
@@ -66,7 +60,7 @@ while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 		$sqlResult_insert = $engine->openDB->query($sql);
 
 		if (!$sqlResult_insert['result']) {
-			notification::notifyAdmins("MFCS Database Update Failure", "Failed to set checksum pass check to 1");
+			notification::notifyAdmins("MFCS Database Update Failure", "Failed to set runnow to 0 and lastrun to current time", $row['name']);
 		}
   }
 

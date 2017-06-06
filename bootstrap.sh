@@ -174,12 +174,13 @@ yum -y install clamav clamav-db clamav-devel
 /sbin/service httpd restart
 
 touch /vagrant/serverConfiguration/serverlogs/cron_log
-ln -s /var/log/cron /vagrant/serverConfiguration/serverlogs/cron_log
+# ln -s /var/log/cron /vagrant/serverConfiguration/serverlogs/cron_log
 
 # Adds a crontab entry to "php runcrons.php" then runs every 5 minutes
 
 # Cron expression
-cron="*/5 * * * * /usr/bin/php /vagrant/public_html/crons/runcrons.php"
+# cron="*/5 * * * * /usr/bin/php /vagrant/public_html/crons/runcrons.php"
+cron="* * * * * cd /vagrant/public_html/crons && /usr/bin/php runcrons.php >> /vagrant/serverConfiguration/serverlogs/cron_log 2>&1"
     # │ │ │ │ │
     # │ │ │ │ │
     # │ │ │ │ └───── day of week (0 - 6) (0 to 6 are Sunday to Saturday, or use names; 7 is Sunday, the same as 0)
