@@ -10,7 +10,7 @@ if(!mfcsPerms::evaluatePageAccess(3)){
 
 $tableName = "scheduler";
 $cronsPath = "/vagrant/public_html/crons";
-$s			= new scheduler($cronsPath);
+$scheduler = new scheduler($cronsPath);
 
 include("../../includes/formDefinitions/form_scheduler.php");
 
@@ -18,7 +18,7 @@ if (isset($engine->cleanPost['MYSQL'][$tableName."_submit"])) {
 
 	log::insert("Admin: Insert New Cron Job");
 
-	$list = defineList($s, $tableName);
+	$list = defineList($scheduler, $tableName);
 	$list->insert();
 }
 
@@ -26,11 +26,11 @@ if (isset($engine->cleanPost['MYSQL'][$tableName."_update"])) {
 
 	log::insert("Admin: Update Cron Job");
 
-	$list = defineList($s, $tableName);
+	$list = defineList($scheduler, $tableName);
 	$list->update();
 }
 
-$list = defineList($s, $tableName);
+$list = defineList($scheduler, $tableName);
 
 localVars::add("results",displayMessages());
 
@@ -47,7 +47,7 @@ $engine->eTemplate("include","header");
 	<ul class="breadcrumbs">
 		<li><a href="{local var="siteRoot"}">Home</a></li>
 		<li><a href="{local var="siteRoot"}/admin/">Admin</a></li>
-		<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Scheduler" target="_blank"> <i class="fa fa-book"></i> Documentation</a></li>
+		<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Scheduler" target="_blank"> <span class="fa fa-book"></span> Documentation</a></li>
 	</ul>
 
 	{local var="results"}

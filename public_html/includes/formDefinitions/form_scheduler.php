@@ -1,78 +1,78 @@
 <?php
 
-function defineList($s, $tableName) {
-	$l      = new listManagement($tableName);
+function defineList($scheduler, $tableName) {
+	$listitem = new listManagement($tableName);
 
-	$l->addField(array(
+	$listitem->addField(array(
 		"field"    => "name",
 		"label"    => "Name",
 		"type"     => "select",
 		"dupes"    => TRUE,
-		"options"  => $s->getCronsArray()
+		"options"  => $scheduler->getCronsArray()
 		));
 
-	$l->addField(array(
+	$listitem->addField(array(
 		"field"    => "minute",
 		"label"    => "Minute",
 		"type"     => "select",
 		"dupes"    => TRUE,
-		"options"  => $s->minuteSelect()
+		"options"  => $scheduler->minuteSelect()
 		));
 
-	$l->addField(array(
+	$listitem->addField(array(
 		"field"    => "hour",
 		"label"    => "Hour",
 		"type"     => "select",
 		"dupes"    => TRUE,
-		"options"  => $s->createSelect(0, 23)
+		"options"  => $scheduler->createSelect(0, 23)
 		));
 
-	$l->addField(array(
+	$listitem->addField(array(
 		"field"    => "dayofmonth",
 		"label"    => "Day of the Month",
 		"type"     => "select",
 		"dupes"    => TRUE,
-		"options"  => $s->createSelect(1, 31)
+		"options"  => $scheduler->createSelect(1, 31)
 		));
 
-	$l->addField(array(
+	$listitem->addField(array(
 		"field"    => "month",
 		"label"    => "Month",
 		"type"     => "select",
 		"dupes"    => TRUE,
-		"options"  => $s->monthSelect()
+		"options"  => $scheduler->monthSelect()
 		));
 
-	$l->addField(array(
+	$listitem->addField(array(
 		"field"    => "dayofweek",
 		"label"    => "Day of the Week",
 		"type"     => "select",
 		"dupes"    => TRUE,
-		"options"  => $s->weekdaySelect()
+		"options"  => $scheduler->weekdaySelect()
 		));
 
-	$l->addField(array(
+	$listitem->addField(array(
 		"field"    => "runnow",
 		"label"    => "Run Task after Saving?",
 		"dupes"    => TRUE,
 		"type"     => "yesNo"
 		));
 
-	$l->addField(array(
+	$listitem->addField(array(
 		"field"    => "active",
 		"label"    => "Is the Task Active?",
 		"dupes"    => TRUE,
 		"type"     => "yesNo"
 		));
 
-	$l->addField(array(
+	$listitem->addField(array(
 		"field"    => "lastrun",
 		"label"    => "Last Run Time",
 		"disabled" => TRUE,
-		"blank" 	 => TRUE, 
+		"blank" 	 => TRUE,
 		));
 
-	return $l;
+	return $listitem;
 }
 
 ?>

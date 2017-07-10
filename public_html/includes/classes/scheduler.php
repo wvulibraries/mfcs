@@ -72,6 +72,31 @@ class scheduler {
 
   }
 
+  public function timetorun($job){
+    $minuteset = ( ($job['minute'] == date("i")) || ($job['minute'] == '*') );
+    $hourset = ( ($job['hour'] == date("G")) || ($job['hour'] == '*') );
+    $dayofmonthset = ( ($job['dayofmonth'] == date("n")) || ($job['dayofmonth'] == '*') );
+    $monthset = ( ($job['month'] == date("n")) || ($job['month'] == '*') );
+    $dayofweekset = ( ($job['dayofweek'] == date("w")) || ($job['dayofweek'] == '*') );
+    return ($minuteset && $hourset && $dayofmonthset && $monthset && $dayofweekset);
+  }
+
+  public function runjob($job){
+    shell_exec("/usr/bin/php " . $job['name']);
+
+    // update last run
+    $sql       = sprintf("UPDATE `scheduler` set `runnow`='%s', `lastrun`='%s' WHERE `ID`='%s' LIMIT 1",
+      0,
+      time(),
+      $job['ID']
+      );
+    $sqlResult_insert = mfcs::$engine->openDB->query($sql);
+
+    if (!$sqlResult_insert['result']) {
+      notification::notifyAdmins("MFCS Database Update Failure", "Failed to set runnow to 0 and lastrun to current time", $job['name']);
+    }
+  }
+
 }
 
 ?>
