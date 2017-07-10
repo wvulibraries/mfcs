@@ -9,8 +9,7 @@ if(!mfcsPerms::evaluatePageAccess(3)){
 }
 
 $tableName = "scheduler";
-$cronsPath = "/vagrant/public_html/crons";
-$scheduler = new scheduler($cronsPath);
+$scheduler = new scheduler("../../crons");
 
 include("../../includes/formDefinitions/form_scheduler.php");
 
