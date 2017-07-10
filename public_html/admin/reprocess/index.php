@@ -112,7 +112,7 @@ $engine->eTemplate("include","header");
 	<ul class="breadcrumbs">
 		<li><a href="{local var="siteRoot"}">Home</a></li>
 		<li><a href="{local var="siteRoot"}admin/index.php">Admin Home</a></li>
-		<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Reprocessing" target="_blank"> <i class="fa fa-book"></i> Documentation</a></li>
+		<li class="pull-right noDivider"><a href="https://github.com/wvulibraries/mfcs/wiki/Reprocessing" target="_blank"> <span class="fa fa-book"></span> Documentation</a></li>
 	</ul>
 
 
