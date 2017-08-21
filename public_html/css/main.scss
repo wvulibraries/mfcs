@@ -118,9 +118,23 @@ form[name="updateForm"]{
 
 table {
   width:100%;
-  //border:1px solid #ccc;
-  th,td { padding:10px; }
-  th { text-align:center; }
+  th, td { text-align:center; vertical-align: middle;}
+  td > input { margin-bottom:0; }
+}
+
+// TABLE FIXES FOR ANNA 
+// ===========================================================================================
+.tableObject th, .tableObject td{ 
+    width:100%;
+    padding:5px;
+    white-space: nowrap;
+    text-align: center;
+    &:first-of-type, &:nth-of-type(3), &:nth-of-type(4){ 
+      width: 4%;
+      padding:5px;
+      white-space: nowrap;
+      text-align: center;
+    }
 }
 
 
