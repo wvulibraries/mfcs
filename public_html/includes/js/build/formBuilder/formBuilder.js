@@ -1090,7 +1090,7 @@ function addNewField(item) {
 		// Enable/disable Production Form setting based on whether an idno field exists
 		if ($("#formPreview").find("input[name^=type_][value=idno]").length === 0) {
 			$("#formSettings_formProduction").prop({
-				checked:  false, // this one?
+				checked:  false,
 				disabled: true,
 				title:    "This form needs an ID Number field.",
 			});
