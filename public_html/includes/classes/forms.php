@@ -1006,7 +1006,7 @@ class forms {
 				$fieldValue = self::getFieldValue($field,(isset($object))?$object:NULL);
 
 
-				$output .= sprintf('<input type="%s" name="%s" value="%s" placeholder="%s" %s id="%s" class="%s" %s %s %s %s />',
+				$output .= sprintf('<input type="%s" name="%s" value="%s" placeholder="%s" %s id="%s" class="%s" %s %s %s />',
 					htmlSanitize($field['type']),
 					htmlSanitize($field['name']),
 					$fieldValue,
@@ -1015,7 +1015,7 @@ class forms {
 					($field['type'] == "number")?(buildNumberAttributes($field)):"",
 					htmlSanitize($field['id']),
 					htmlSanitize($field['class']),
-					(!isempty($field['style']))?'style="'.htmlSanitize($field['style']).'"':"",
+					// (!isempty($field['style']))?'style="'.htmlSanitize($field['style']).'"':"",
 					//true/false type attributes
 					(strtoupper($field['required']) == "TRUE")?"required":"",
 					(strtoupper($field['readonly']) == "TRUE")?"readonly":"",
@@ -1189,10 +1189,10 @@ class forms {
 			}
 
 
-
+			$formName = preg_replace('/\s+/', '', $form["title"]);
 			$table          = new tableObject("array");
 			$table->summary = "Object Listing";
-			$table->class   = "tableObject table table-striped table-bordered";
+			$table->class   = "tableObject table table-striped table-bordered {$formName}";
 			$table->headers($headers);
 
 			$output = "";
