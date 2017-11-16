@@ -116,30 +116,6 @@ form[name="updateForm"]{
   }
 }
 
-
-table { 
-  width:100%; 
-  th,td { padding:10px; } 
-  th { text-align:center; } 
-  th, td { text-align:center; vertical-align: middle;} 
-  td > input { margin-bottom:0; } 
-} 
- 
-// TABLE FIXES FOR ANNA  
-// =========================================================================================== 
-.tableObject th, .tableObject td{  
-    width:100%; 
-    padding:5px; 
-    white-space: nowrap; 
-    text-align: center; 
-    &:first-of-type, &:nth-of-type(3), &:nth-of-type(4){  
-      width: 4%; 
-      padding:5px; 
-      white-space: nowrap; 
-      text-align: center; 
-    } 
-} 
-
 // ICON FIXES
 // ===========================================================================================
 .icon-question-sign {
@@ -565,20 +541,6 @@ table {
 .panelHasDescription.panel-heading{
 
   p { display:none;}
-
-  // @include breakpoint(tablet){
-  //   height: 70px;
-
-  //   .metadataListAccordionToggle{
-  //     height:70px;
-  //     padding:25px 20px;
-  //   }
-  // }
-
-  // @include breakpoint(laptop){
-  //   height:60px;
-  //   .metadataListAccordionToggle{ height:60px; padding:20px 20px; }
-  // }
 }
 
 #formListAccordion{
@@ -1799,40 +1761,40 @@ footer{
   padding:10px;
 }
 
-.editUsersTable {
-  table {
-    @extend .table; @extend .table-striped;
-    border:1px solid #ccc;
+// .editUsersTable {
+//   table {
+//     @extend .table; @extend .table-striped;
+//     border:1px solid #ccc;
 
 
-    td:nth-of-type(5), td:nth-of-type(6), td:nth-of-type(8){
-      width:80px;
-    }
+//     td:nth-of-type(5), td:nth-of-type(6), td:nth-of-type(8){
+//       width:80px;
+//     }
 
-    td:nth-of-type(7){
-      width:100px;
-    }
+//     td:nth-of-type(7){
+//       width:100px;
+//     }
 
-    th:nth-of-type(9), td:nth-of-type(9){
-      width:60px !important;
-    }
+//     th:nth-of-type(9), td:nth-of-type(9){
+//       width:60px !important;
+//     }
 
-    td input {
-      margin:0;
-    }
+//     td input {
+//       margin:0;
+//     }
 
-  }
-}
+//   }
+// }
 
-.projectsEditTable, .metadataTables {
-  table {
-    @extend .table; @extend .table-striped;
-    border:1px solid #ccc;
-    td input {
-      margin:0;
-    }
-  }
-}
+// .projectsEditTable, .metadataTables {
+//   table {
+//     @extend .table; @extend .table-striped;
+//     border:1px solid #ccc;
+//     td input {
+//       margin:0;
+//     }
+//   }
+// }
 
 // Revisions
 // ===============================================
@@ -2326,3 +2288,36 @@ input[type=submit].batchSubmit {
 }
 
 .thumbs { margin-bottom:0; }
+
+
+// Table Adjustments
+// =============================================================================
+
+table {
+  table-layout: auto !important;
+  tr, th, td, thead th, tbody td, tfoot td, tfoot th {
+    width: auto !important;
+    white-space:nowrap;
+  }
+}
+
+.tableObject { 
+  td input { 
+    margin-bottom:0; 
+  }
+  td { 
+    width: auto !important;
+    white-space:normal;
+  }
+  th {
+    width: auto !important;
+    white-space:normal;
+  }
+
+  #_header_Edit, #_header_Move{ 
+    width:50px !important; 
+  }
+  #_header_Search{
+    width:100px !important; 
+  }
+}
