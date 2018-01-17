@@ -1495,6 +1495,9 @@ class forms {
 
 		if (isset($engine->cleanPost['RAW']['publicReleaseObj'])) {
 			$publicReleaseObj = strtolower($engine->cleanPost['RAW']['publicReleaseObj']) == "no" ? 0 : 1;
+		} else { 
+			// create the public release object as a default
+			$publicReleaseObj = 1;
 		}
 
 		// go through all the fields, get their values
@@ -1929,5 +1932,4 @@ class forms {
 	}
 
 }
-
 ?>
