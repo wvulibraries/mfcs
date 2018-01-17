@@ -1003,6 +1003,13 @@ class files {
 			if ($filename[0] == '.') {
 				unset($originalFiles[$I]);
 			}
+			if(empty($filename)){ 
+				unset($originalFiles[$I]); 
+			}
+		}
+
+		if(empty($originalFiles)){
+			return TRUE; 
 		}
 
 		// Needed to put the files in the right order for processing
