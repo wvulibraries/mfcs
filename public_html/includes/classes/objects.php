@@ -402,7 +402,7 @@ class objects {
 		if ($metadata !== FALSE) {
 
 			// **** Original way of getting data
-			if (($row['data'] = decodeFields($row['data'])) === FALSE) {
+			if (($row['data'] = unserialize(base64_decode($row['data']))) === FALSE) {
 				errorHandle::errorMsg("Error retrieving object.");
 				return FALSE;
 			}
@@ -417,7 +417,7 @@ class objects {
 			// $object = $row[0];
 			// $data = array();
 			// foreach ($row as $fragment) {
-			// 	$data[$fragment['fieldName']] = ($fragment['encoded'] == "1")?decodeFields($fragment['value']):$fragment['value'];
+			// 	$data[$fragment['fieldName']] = ($fragment['encoded'] == "1")?unserialize(base64_decode($fragment['value'])):$fragment['value'];
 			// }
 			// $object['data'] = $data;
 			// unset($object['fieldName']);
@@ -961,7 +961,7 @@ class objects {
 		$data = array();
 
 		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
-			$data[$row['fieldName']] = ($row['encoded'] == "1")?decodeFields($row['value']):$row['value'];
+			$data[$row['fieldName']] = ($row['encoded'] == "1")?unserialize(base64_decode($row['value'])):$row['value'];
 		}
 
 		return($data);

@@ -71,19 +71,19 @@ class forms {
 
 		$form           = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
-		if (($form['fields'] = decodeFields($form['fields'])) === FALSE) {
+		if (($form['fields'] = unserialize(base64_decode($form['fields']))) === FALSE) {
 			errorHandle::newError(__METHOD__."() - fields", errorHandle::DEBUG);
 			errorHandle::errorMsg("Error retrieving form.");
 			return FALSE;
 		}
 
-		if (($form['idno'] = decodeFields($form['idno'])) === FALSE) {
+		if (($form['idno'] = unserialize(base64_decode($form['idno']))) === FALSE) {
 			errorHandle::newError(__METHOD__."() - idno", errorHandle::DEBUG);
 			errorHandle::errorMsg("Error retrieving form.");
 			return FALSE;
 		}
 
-		if (!isempty($form['navigation']) && ($form['navigation'] = decodeFields($form['navigation'])) === FALSE) {
+		if (!isempty($form['navigation']) && ($form['navigation'] = unserialize(base64_decode($form['navigation']))) === FALSE) {
 			errorHandle::newError(__METHOD__."() - navigation!", errorHandle::DEBUG);
 			errorHandle::errorMsg("Error retrieving form.");
 			return FALSE;
@@ -1495,6 +1495,9 @@ class forms {
 
 		if (isset($engine->cleanPost['RAW']['publicReleaseObj'])) {
 			$publicReleaseObj = strtolower($engine->cleanPost['RAW']['publicReleaseObj']) == "no" ? 0 : 1;
+		} else { 
+			// create the public release object as a default
+			$publicReleaseObj = 1;
 		}
 
 		// go through all the fields, get their values
@@ -1892,7 +1895,7 @@ class forms {
 			}
 
 			if ($row['encoded'] == "1") {
-				$row['value'] = decodeFields($row['value']);
+				$row['value'] = unserialize(base64_decode($row['value']));
 			}
 			$data[] = $row;
 		}
@@ -1929,5 +1932,4 @@ class forms {
 	}
 
 }
-
 ?>
