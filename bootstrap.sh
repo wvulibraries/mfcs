@@ -19,9 +19,9 @@ yum -y install \
 	mod_auth_kerb mod_auth_mysql mod_authz_ldap mod_evasive mod_perl mod_security mod_ssl mod_wsgi \
 	php php-devel php-bcmath php-cli php-common php-gd php-ldap php-mbstring php-mcrypt php-mysql \
 	php-odbc php-pdo php-pear php-pear-Benchmark php-pecl-apc php-pecl-imagick php-pecl-memcache php-soap php-xml php-xmlrpc \
-	emacs emacs-common emacs-nox git \
-	http://www.webmin.com/download/rpm/webmin-current.rpm
+	emacs emacs-common emacs-nox git
 
+yum -y update
 
 mv /etc/httpd/conf.d/mod_security.conf /etc/httpd/conf.d/mod_security.conf.bak
 /etc/init.d/httpd start
