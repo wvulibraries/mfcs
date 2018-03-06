@@ -457,7 +457,7 @@ class objects {
 				$tmp[] = &$object['idno'];
 			}
 			else {
-				$tmp[] = strtolower(&$object['data'][$sortField]);
+				$tmp[] = strtolower($object['data'][$sortField]);
 			}
 		}
 
