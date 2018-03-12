@@ -62,6 +62,8 @@ localVars::add('userCurrentProjectsJSON', json_encode(users::loadProjects()));
 
 $notificationEmails = array(
 	"djdavis@mail.wvu.edu" => "David Davis", 
-	"jetapia@mail.wvu.edu" => "Jessica Tapia"
+	"jetapia@mail.wvu.edu" => "Jessica Tapia",
+	"steve.giessler@mail.wvu.edu" => "Steve Giessler", 
+	"tam0013@mail.wvu.edu" => "Tracy McCormick"
 );
 ?>
