@@ -83,13 +83,23 @@ mysql -u root EngineAPI < /tmp/git/engineAPI/sql/EngineAPI.sql
 # application Post Setup
 
 mysql -u root < /vagrant/SQLFiles/setup.sql
+
 mysql -u root mfcs < /vagrant/SQLFiles/baseSnapshot.sql
 
-for f in $SQLFILES
-do
-	echo "Processing $f ..."
-	mysql -u root mfcs < "$f"
-done
+# for f in $SQLFILES
+# do
+# 	echo "Processing $f ..."
+# 	mysql -u root mfcs < "$f"
+# done
+
+#first value is size in megabytes to load main database
+mysql -u root -Bse "set global max_allowed_packet=1024*1024*1024"; #first value is size in megabytes
+mysql -u root mfcs < /vagrant/SQLFiles/mfcs.sql
+mysql -u root mfcs < /vagrant/SQLFiles/migrations/2016.07.26.0945.sql
+mysql -u root mfcs < /vagrant/SQLFiles/migrations/2017.02.25.0808.sql
+mysql -u root mfcs < /vagrant/SQLFiles/migrations/2017.02.25.0905.sql
+mysql -u root mfcs < /vagrant/SQLFiles/migrations/2017.02.27.1852.sql
+mysql -u root mfcs < /vagrant/SQLFiles/migrations/2017.05.31.0942.sql
 
 # Daves Migration Script
 # sh /vagrant/SQLFiles/runMigrations.sh
@@ -163,3 +173,38 @@ yum -y install clamav clamav-db clamav-devel
 
 /sbin/service httpd restart
 
+touch /vagrant/serverConfiguration/serverlogs/cron_log
+# ln -s /var/log/cron /vagrant/serverConfiguration/serverlogs/cron_log
+
+# Adds a crontab entry to "php runcrons.php" then runs every 5 minutes
+
+# Cron expression
+# cron="*/5 * * * * /usr/bin/php /vagrant/public_html/crons/runcrons.php"
+cron="* * * * * cd /vagrant/public_html/crons && /usr/bin/php runcrons.php >> /vagrant/serverConfiguration/serverlogs/cron_log 2>&1"
+    # │ │ │ │ │
+    # │ │ │ │ │
+    # │ │ │ │ └───── day of week (0 - 6) (0 to 6 are Sunday to Saturday, or use names; 7 is Sunday, the same as 0)
+    # │ │ │ └────────── month (1 - 12)
+    # │ │ └─────────────── day of month (1 - 31)
+    # │ └──────────────────── hour (0 - 23)
+    # └───────────────────────── min (0 - 59)
+
+# Escape all the asterisks so we can grep for it
+cron_escaped=$(echo "$cron" | sed s/\*/\\\\*/g)
+
+# Check if cron job already in crontab
+crontab -l | grep "${cronescaped}"
+if [[ $? -eq 0 ]] ;
+  then
+    echo "Crontab already exists. Exiting..."
+    exit
+  else
+    # Write out current crontab into temp file
+    crontab -l > mycron
+    # Append new cron into cron file
+    echo "$cron" >> mycron
+    # Install new cron file
+    crontab mycron
+    # Remove temp file
+    rm mycron
+fi

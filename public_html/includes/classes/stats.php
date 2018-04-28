@@ -1,7 +1,7 @@
 <?php
 
 class mfcsStats {
-	
+
 	private $statFiles = array();
 
 	public function __construct($dir) {
@@ -14,13 +14,10 @@ class mfcsStats {
 		while(false != ($file = readdir($dir))) {
 			if(($file != ".") && ($file != "..") && ($file != "index.php")) {
                 $this->statFiles[] = array('file' => $file, 'name' => str_replace("_"," ",basename($file,".php")));
-            }   
+            }
         }
         closedir($dir);
-
-  
 	}
-
 
 	public function showStatFiles() {
 
