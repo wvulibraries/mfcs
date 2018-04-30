@@ -14,28 +14,32 @@ if (!isCLI()) {
 // Turn off EngineAPI template engine
 $engine->obCallback = FALSE;
 
-$count = 0;
-while (TRUE) {
 
-	$sql       = sprintf("SELECT * FROM `objectProcessing` WHERE `state`='1' LIMIT 1");
+# Count how many items we need to iterate through.  
+$sqlCount = sprintf("SELECT COUNT(*) AS `processing` FROM `objectProcessing` WHERE `state`='1' ");
+$countQuery = mfcs::$engine->openDB->query($sqlCount); 
+$result = mysql_fetch_array($countQuery['result'],  MYSQL_ASSOC);
+
+# set the count variable as int
+$count = (int) $result['processing'];
+
+while($count > 0) {
+	# grab one at a time that is a valid state 
+	$sql = sprintf("SELECT * FROM `objectProcessing` WHERE `state`='1' LIMIT 1");
 	$sqlResult = mfcs::$engine->openDB->query($sql);
 
+	# if there is nothing break it. 
 	if (!$sqlResult['result']) {
 		errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
-		// we break here, instead of continue so that we don't get stuck in an infinate loop.
 		break;
 	}
+
 
 	if ($sqlResult['numrows'] == "0") break;
 
 	$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
-
 	files::process($row['objectID'],$row['fieldName']);
-	
-	// safety. we don't have any projects that are more than 50000 items currently
-	// @TODO pull this dynamically from the system. get a best guess max processing
-	if ($count++ > 50000) break;
-
+	$count--; 
 }
 
 files::deleteOldProcessingJobs();
