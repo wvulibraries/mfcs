@@ -5,6 +5,8 @@ recurseInsert("dbTableList.php","php");
 $engine->dbConnect("database","mfcs",TRUE);
 
 // Load the mfcs class
+recurseInsert("includes/validator.php","php");
+recurseInsert("includes/functions.php","php");
 require_once "includes/index.php";
 mfcs::singleton();
 
@@ -41,8 +43,6 @@ $mfcsSearch = new mfcsSearch();
 // Load the user's current projects
 
 sessionSet('currentProject',users::loadProjects());
-recurseInsert("includes/functions.php","php");
-recurseInsert("includes/validator.php","php");
 
 $engine->eTemplate("load","mfcsTemplate");
 

@@ -304,18 +304,14 @@ class files {
 				list($mimeType,$mimeEncoding) = explode(';', $fi->file($filename));
 			}
 		}
-
+		
 		// Get the file's source
 		if(!isset($fileData)) $fileData = file_get_contents($filename);
 
 		// List of Video Mime types
 		$videoMimeTypes = array( 'application/mp4', 'application/ogg', 'video/3gpp', 'video/3gpp2', 'video/flv', 'video/h264', 'video/mp4', 'video/mpeg', 'video/mpeg-2', 'video/mpeg4', 'video/ogg', 'video/ogm', 'video/quicktime', 'video/avi');
-
 		$audioMimeTypes  = array('audio/acc', 'audio/mp4', 'audio/mp3', 'audio/mp2', 'audio/mpeg', 'audio/oog', 'audio/midi', 'audio/wav', 'audio/x-ms-wma','audio/webm');
-
-
 		$imageMimeTypes = array('image/jpeg', 'image/gif', 'image/png', 'image/bmp', 'image/tiff', 'image/x-icon');
-
 		$pdfMimeTypes   = array('application/pdf');
 
 		// Figure out what to do with the data
@@ -753,17 +749,16 @@ class files {
 		$imageHeight = $image->getImageHeight();
 
 		// Store offset values to set watermark away from borders
-		if (isset($options['border']) && str2bool($options['border'])) {
-			$widthOffset  = isset($options['borderWidth'])  ? $options['borderWidth']  : 0;
-			$heightOffset = isset($options['borderHeight']) ? $options['borderHeight'] : 0;
-		}
+		$widthOffset  = isset($options['borderWidth'])  ? $options['borderWidth']  : 0;
+		$heightOffset = isset($options['borderHeight']) ? $options['borderHeight'] : 0;
+		
 
 		// Resize the watermark
 		$watermark->scaleImage(
 			($imageWidth  - $widthOffset  * 2) / 1.5, // 75% of the image width minus borders
 			($imageHeight - $heightOffset * 2) / 1.5, // 75% of the image height minus borders
 			TRUE
-			);
+		);
 
 		// Store watermark dimensions
 		$watermarkWidth  = $watermark->getImageWidth();

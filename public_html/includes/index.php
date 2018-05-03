@@ -1,7 +1,10 @@
-<?php
+<?php 
 
+# import all functions 
+require_once "functions.php";
+
+# import all classes 
 require_once "classes/mfcs.php";
-
 require_once "classes/checks.php";
 require_once "classes/checksum.php";
 require_once "classes/duplicates.php";
