@@ -799,8 +799,8 @@ class files {
 		}
 
 		$image->setImageColorspace( $watermark->getImageColorspace() ); 
-		
-		if ($image->compositeImage($watermark, $watermark->getImageCompose(), $x, $y) === FALSE) {
+
+		if ($image->compositeImage($watermark, (int)$watermark->getImageCompose(), (int)$x, (int)$y) === FALSE) {
 			errorHandle::errorMsg("Failed to create watermark");
 			errorHandle::newError("Failed to create watermark");
 		}
