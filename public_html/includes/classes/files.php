@@ -739,6 +739,7 @@ class files {
 	 * @return Imagick
 	 **/
 	public static function addWatermark($image, $options) {
+
 		// Get watermark image data
 		$watermarkBlob = self::getWatermarkBlob($options['watermarkImage']);
 		$watermark     = new Imagick();
@@ -751,7 +752,6 @@ class files {
 		// Store offset values to set watermark away from borders
 		$widthOffset  = isset($options['borderWidth'])  ? $options['borderWidth']  : 0;
 		$heightOffset = isset($options['borderHeight']) ? $options['borderHeight'] : 0;
-		
 
 		// Resize the watermark
 		$watermark->scaleImage(
@@ -798,10 +798,14 @@ class files {
 				break;
 		}
 
-		if ($image->compositeImage($watermark, Imagick::COMPOSITE_OVER, $x, $y) === FALSE) {
+		$image->setImageColorspace( $watermark->getImageColorspace() ); 
+		
+		if ($image->compositeImage($watermark, $watermark->getImageCompose(), $x, $y) === FALSE) {
 			errorHandle::errorMsg("Failed to create watermark");
 			errorHandle::newError("Failed to create watermark");
 		}
+
+		$image->flattenImages(); 
 
 		return $image;
 	}
@@ -1543,7 +1547,13 @@ class files {
 		}
 
 		// Store image
-		if ($image->writeImage(self::getSaveDir($assetsID,'processed').$filename.'.'.strtolower($image->getImageFormat())) === FALSE) {
+		$convertedImagePath = sprintf('%s%s.%s', 
+			self::getSaveDir($assetsID,'processed'), 
+			$filename, 
+			strtolower($image->getImageFormat())
+		);
+		
+		if ($image->writeImage($convertedImagePath) === FALSE) {
 			return FALSE;
 		}
 
