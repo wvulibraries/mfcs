@@ -852,6 +852,10 @@ class files {
 		// Make a copy of the original
 		$thumb = $image->clone();
 
+		// Fix Transparency Issues 
+		$thumb->setImageBackgroundColor('#ffffff');
+		$thumb = $thumb->flattenImages();
+
 		// Set the Width
 		if (isset($options['thumbnailWidth'])) {
 			$width = $options['thumbnailWidth'];
