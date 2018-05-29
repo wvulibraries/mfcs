@@ -81,18 +81,29 @@ mysql -u root < /tmp/git/engineAPI/sql/vagrantSetup.sql
 mysql -u root EngineAPI < /tmp/git/engineAPI/sql/EngineAPI.sql
 
 # application Post Setup
-
 mysql -u root < /vagrant/SQLFiles/setup.sql
 mysql -u root mfcs < /vagrant/SQLFiles/baseSnapshot.sql
 
-for f in $SQLFILES
-do
-	echo "Processing $f ..."
-	mysql -u root mfcs < "$f"
-done
-
-# Daves Migration Script
-# sh /vagrant/SQLFiles/runMigrations.sh
+# if backup exists import that and do selected migrations
+# I was using a older backup and additional migrations needed
+# to be run. if using a more current backup the migrations may
+# not be required.
+if [ -e /vagrant/SQLFiles/mfcs.sql ]
+then
+  #first value is size in megabytes to load main database
+  mysql -u root -Bse "set global max_allowed_packet=1024*1024*1024"; #first value is size in megabytes
+  mysql -u root mfcs < /vagrant/SQLFiles/mfcs.sql
+  mysql -u root mfcs < /vagrant/SQLFiles/migrations/2016.07.26.0945.sql
+  mysql -u root mfcs < /vagrant/SQLFiles/migrations/2017.02.25.0808.sql
+  mysql -u root mfcs < /vagrant/SQLFiles/migrations/2017.02.25.0905.sql
+  mysql -u root mfcs < /vagrant/SQLFiles/migrations/2017.07.27.1852.sql
+else
+  for f in $SQLFILES
+  do
+  	echo "Processing $f ..."
+  	mysql -u root mfcs < "$f"
+  done
+fi
 
 #install 3rd Party dependencies
 cd /vagrant/serverConfiguration/3rdParty
@@ -162,4 +173,3 @@ yum -y install clamav clamav-db clamav-devel
 # cp modules/clamav.so $PHPMODULES
 
 /sbin/service httpd restart
-
