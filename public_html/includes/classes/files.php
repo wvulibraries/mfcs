@@ -838,10 +838,14 @@ class files {
 
 		if ($originalFile instanceof Imagick) {
 			$image = $originalFile;
-		}
-		else {
-			$image        = new Imagick();
-			$image->readImage($originalFile);
+		} else {
+			$image = new Imagick();
+			if(substr($originalFile, -4) == '.pdf') { 
+				$image->readImage($originalFile."[0]");
+				$filename = $filename.'.jpg';
+			} else { 
+				$image->readImage($originalFile);
+			}
 		}
 
 		$assetsDirectory = ($combined != FALSE)? "combine" : 'thumbs';
@@ -853,7 +857,12 @@ class files {
 		$thumb = $image->clone();
 
 		// Fix Transparency Issues 
-		$thumb->setImageBackgroundColor('#ffffff');
+		if(substr($originalFile, -4) == '.pdf') { 
+			$thumb->setImageBackgroundColor('#ffffff');
+			$thumb->setImageFormat('JPG');
+		}
+
+		# fix transparency 
 		$thumb = $thumb->flattenImages();
 
 		// Set the Width
@@ -1161,7 +1170,12 @@ class files {
 				if (isset($options['convert']) && str2bool($options['convert'])) {
 					// we create the Imagick object here so that we can pass it to thumbnail creation
 					$image = new Imagick();
-					$image->readImage($originalFile);
+
+					if(substr($originalFile, -4) == '.pdf'){ 
+						$image->readImage($originalFile."[0]");
+					} else 	{ 
+						$image->readImage($originalFile);
+					}
 					// Convert it
 					if (($image = self::convertImage($image,$options,$assetsID,$filename)) === FALSE) {
 						throw new Exception("Failed to create processed image: ".$originalFile);
