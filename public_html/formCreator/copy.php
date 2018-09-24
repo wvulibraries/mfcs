@@ -11,7 +11,7 @@ if(!mfcsPerms::evaluatePageAccess(2)){
 try {
 	// Get list of forms for choices dropdown
 	if (($objectForms = forms::getObjectForms()) === FALSE) {
-		throw new Exception("Errer retreiving metadata forms");
+		throw new Exception("Error retreiving metadata forms");
 	}
 
 	if (is_array($objectForms)) {
