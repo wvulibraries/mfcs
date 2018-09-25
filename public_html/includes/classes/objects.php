@@ -823,7 +823,7 @@ class objects {
 	public static function add($formID,$metadata,$objectID = NULL) {
 
 		if (!is_array($metadata)) {
-			errorHandle::newError(__METHOD__."() - : metedata is not array", errorHandle::DEBUG);
+			errorHandle::newError(__METHOD__."() - : metadata is not array", errorHandle::DEBUG);
 			return FALSE;
 		}
 
@@ -845,7 +845,7 @@ class objects {
 	public static function update_external($formID,$metadata,$objectID) {
 
 		if (!is_array($metadata)) {
-			errorHandle::newError(__METHOD__."() - : metedata is not array", errorHandle::DEBUG);
+			errorHandle::newError(__METHOD__."() - : metadata is not array", errorHandle::DEBUG);
 			return FALSE;
 		}
 
