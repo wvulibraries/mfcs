@@ -7,7 +7,7 @@
 <script type="text/javascript" src="{local var="siteRoot"}includes/js/build/libs/libs.js"></script>
 <script type="text/javascript" src="{local var="siteRoot"}includes/js/build/common/main.js"></script>
 <script type="text/javascript" src="{local var="siteRoot"}includes/js/build/object/object.js"></script>
-
+<script type="text/javascript" src="{local var="siteRoot"}includes/js/build/revision/revisions.js"></script>
 
 <?php
 // Pages that need fine uploader
