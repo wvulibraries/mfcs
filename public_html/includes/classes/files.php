@@ -266,12 +266,11 @@ class files {
 			$files['files']                    = array_merge($files['files'],$processedFiles);
 			$object['data'][$row['fieldName']] = $files;
 
-			$return = objects::update($objectID,$object['formID'],$object['data'],$object['metadata'],$object['parentID']);
+			$return = objects::update($objectID,$object['formID'],$object['data'],$object['metadata'],$object['parentID'],NULL,$object['publicRelease']);
 
 			// @TODO this return value isn't descriptive enough. It can fail and still
 			// return a valid array. we likely need to return an array with an error
 			// code as well as the array to save to the data
-
 
 			if (!$return) {
 				$setRowValue = 3;
@@ -304,7 +303,7 @@ class files {
 				list($mimeType,$mimeEncoding) = explode(';', $fi->file($filename));
 			}
 		}
-		
+
 		// Get the file's source
 		if(!isset($fileData)) $fileData = file_get_contents($filename);
 
@@ -798,14 +797,14 @@ class files {
 				break;
 		}
 
-		$image->setImageColorspace( $watermark->getImageColorspace() ); 
+		$image->setImageColorspace( $watermark->getImageColorspace() );
 
 		if ($image->compositeImage($watermark, (int)$watermark->getImageCompose(), (int)$x, (int)$y) === FALSE) {
 			errorHandle::errorMsg("Failed to create watermark");
 			errorHandle::newError("Failed to create watermark");
 		}
 
-		$image->flattenImages(); 
+		$image->flattenImages();
 
 		return $image;
 	}
@@ -840,10 +839,10 @@ class files {
 			$image = $originalFile;
 		} else {
 			$image = new Imagick();
-			if(substr($originalFile, -4) == '.pdf') { 
+			if(substr($originalFile, -4) == '.pdf') {
 				$image->readImage($originalFile."[0]");
 				$filename = $filename.'.jpg';
-			} else { 
+			} else {
 				$image->readImage($originalFile);
 			}
 		}
@@ -856,13 +855,13 @@ class files {
 		// Make a copy of the original
 		$thumb = $image->clone();
 
-		// Fix Transparency Issues 
-		if(substr($originalFile, -4) == '.pdf') { 
+		// Fix Transparency Issues
+		if(substr($originalFile, -4) == '.pdf') {
 			$thumb->setImageBackgroundColor('#ffffff');
 			$thumb->setImageFormat('JPG');
 		}
 
-		# fix transparency 
+		# fix transparency
 		$thumb = $thumb->flattenImages();
 
 		// Set the Width
@@ -1015,13 +1014,13 @@ class files {
 			if ($filename[0] == '.') {
 				unset($originalFiles[$I]);
 			}
-			if(empty($filename)){ 
-				unset($originalFiles[$I]); 
+			if(empty($filename)){
+				unset($originalFiles[$I]);
 			}
 		}
 
 		if(empty($originalFiles)){
-			return TRUE; 
+			return TRUE;
 		}
 
 		// Needed to put the files in the right order for processing
@@ -1171,9 +1170,9 @@ class files {
 					// we create the Imagick object here so that we can pass it to thumbnail creation
 					$image = new Imagick();
 
-					if(substr($originalFile, -4) == '.pdf'){ 
+					if(substr($originalFile, -4) == '.pdf'){
 						$image->readImage($originalFile."[0]");
-					} else 	{ 
+					} else 	{
 						$image->readImage($originalFile);
 					}
 					// Convert it
@@ -1565,12 +1564,12 @@ class files {
 		}
 
 		// Store image
-		$convertedImagePath = sprintf('%s%s.%s', 
-			self::getSaveDir($assetsID,'processed'), 
-			$filename, 
+		$convertedImagePath = sprintf('%s%s.%s',
+			self::getSaveDir($assetsID,'processed'),
+			$filename,
 			strtolower($image->getImageFormat())
 		);
-		
+
 		if ($image->writeImage($convertedImagePath) === FALSE) {
 			return FALSE;
 		}
