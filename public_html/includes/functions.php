@@ -38,12 +38,10 @@ function displayMessages() {
 }
 
 function encodeFields($fields) {
-
 	return base64_encode(serialize($fields));
 }
 
 function decodeFields($fields) {
-
 	return unserialize(base64_decode($fields));
 }
 
@@ -53,7 +51,6 @@ function sortFieldsByPosition($a,$b) {
 
 
 function buildNumberAttributes($field) {
-
 	$output = "";
 	if (!isempty($field["format"]) && $field['format'] == 'value') {
 		$output .= (!isempty($field["min"])) ?' min="'.$field['min'].'"'  :"";
@@ -83,7 +80,6 @@ function get_heading_by_id($id,$title) {
 }
 
 function link_select_to_objects($object) {
-
 	$form = forms::get($object['formID']);
 
 	foreach ($form['fields'] as $field) {
