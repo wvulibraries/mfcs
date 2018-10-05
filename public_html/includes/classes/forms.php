@@ -1377,7 +1377,7 @@ class forms {
 				// Check to see if the objects data has changed. if it has, update it.
 				if (encodeFields($values) != $object['data']) {
 
-					if (objects::update($object['ID'],$formID,$values,$form['metadata']) === FALSE) {
+					if (objects::update($object['ID'],$formID,$values,$form['metadata'],$object['parentID'],null,$object['publicRelease']) === FALSE) {
 						$engine->openDB->transRollback();
 						$engine->openDB->transEnd();
 
@@ -1495,7 +1495,7 @@ class forms {
 
 		if (isset($engine->cleanPost['RAW']['publicReleaseObj'])) {
 			$publicReleaseObj = strtolower($engine->cleanPost['RAW']['publicReleaseObj']) == "no" ? 0 : 1;
-		} else { 
+		} else {
 			// create the public release object as a default
 			$publicReleaseObj = 1;
 		}
