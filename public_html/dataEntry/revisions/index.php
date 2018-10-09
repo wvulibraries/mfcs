@@ -35,7 +35,7 @@ try{
 			throw new Exception('Could not load revision.');
 		}
 
-		if (objects::update($engine->cleanGet['MYSQL']['objectID'],$revision['formID'],(decodeFields($revision['data'])),$revision['metadata'],$revision['parentID']) !== FALSE) {
+		if (objects::update($engine->cleanGet['MYSQL']['objectID'],$revision['formID'],(decodeFields($revision['data'])),$revision['metadata'],$revision['parentID'], NULL, $revision['publicRelease']) !== FALSE) {
 			// Reload the object - To refresh the data
 			$object = objects::get($objectID,TRUE);
 		}
