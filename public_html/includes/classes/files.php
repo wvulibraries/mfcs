@@ -1180,7 +1180,6 @@ class files {
 					}
 
 					$filename = $filename.'.'.strtolower($image->getImageFormat());
-					var_dump($filename);
 
 					// Create a thumbnail that includes converted options
 					if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
