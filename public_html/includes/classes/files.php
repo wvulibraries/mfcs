@@ -738,7 +738,6 @@ class files {
 	 * @return Imagick
 	 **/
 	public static function addWatermark($image, $options) {
-
 		// Get watermark image data
 		$watermarkBlob = self::getWatermarkBlob($options['watermarkImage']);
 		$watermark     = new Imagick();
@@ -803,8 +802,8 @@ class files {
 			errorHandle::errorMsg("Failed to create watermark");
 			errorHandle::newError("Failed to create watermark");
 		}
-
-		$image->flattenImages();
+		
+		$image = $image->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
 
 		return $image;
 	}
@@ -1181,6 +1180,7 @@ class files {
 					}
 
 					$filename = $filename.'.'.strtolower($image->getImageFormat());
+					var_dump($filename);
 
 					// Create a thumbnail that includes converted options
 					if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
@@ -1526,10 +1526,6 @@ class files {
 	}
 
 	public static function convertImage($image,$options,$assetsID,$filename) {
-
-		// Convert format?
-		if (!empty($options['convertFormat'])) $image->setImageFormat($options['convertFormat']);
-
 		// Change resolution
 		if (isset($options['convertResolution'])) {
 			$image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
@@ -1561,6 +1557,11 @@ class files {
 		// Add a watermark
 		if (isset($options['watermark']) && str2bool($options['watermark'])) {
 			$image = self::addWatermark($image, $options);
+		}
+
+		// Convert format?
+		if (!empty($options['convertFormat'])) {
+			$image->setImageFormat($options['convertFormat']);
 		}
 
 		// Store image
