@@ -803,9 +803,7 @@ class files {
 			errorHandle::newError("Failed to create watermark");
 		}
 		
-		$image = $image->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
-
-		return $image;
+		return $image->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
 	}
 
 	/**
@@ -860,8 +858,8 @@ class files {
 			$thumb->setImageFormat('JPG');
 		}
 
-		# fix transparency
-		$thumb = $thumb->flattenImages();
+		// fix transparency
+		$thumb = $thumb->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
 
 		// Set the Width
 		if (isset($options['thumbnailWidth'])) {
@@ -1525,6 +1523,15 @@ class files {
 	}
 
 	public static function convertImage($image,$options,$assetsID,$filename) {
+		// Build new composite version of image for processing if file is TIFF format
+		if ($image->getImageFormat() === 'TIFF') {
+			$composite = new Imagick();
+			$composite->newImage($image->getImageWidth(), $image->getImageHeight(), "white");
+			$composite->compositeimage($image, Imagick::COMPOSITE_OVER, 0, 0);
+			// Set new composite to $image for continued processing
+			$image = $composite;
+		}
+
 		// Change resolution
 		if (isset($options['convertResolution'])) {
 			$image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
