@@ -1524,7 +1524,7 @@ class files {
 
 	public static function convertImage($image,$options,$assetsID,$filename) {
 		// Build new composite version of image for processing if file is TIFF format
-		if ($image->getImageFormat() === 'TIFF') {
+		if (strtoupper($image->getImageFormat()) == 'TIFF') {
 			$composite = new Imagick();
 			$composite->newImage($image->getImageWidth(), $image->getImageHeight(), "white");
 			$composite->compositeimage($image, Imagick::COMPOSITE_OVER, 0, 0);
