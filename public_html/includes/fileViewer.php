@@ -88,7 +88,7 @@ try{
 
 	//Set the correct MIME-Type headers, and output the file's content
 	if (isset($engine->cleanGet['MYSQL']['download']) and str2bool($engine->cleanGet['MYSQL']['download'])) {
-		header(sprintf("Content-Disposition: attachment; filename='%s'",
+		header(sprintf("Content-Disposition: attachment; filename=%s",
 				isset($downloadFilename) ? $downloadFilename : basename($filepath))
 		);
 		header("Content-Type: application/octet-stream");
