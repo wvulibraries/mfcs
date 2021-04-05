@@ -1368,7 +1368,7 @@ class files {
         }
 
 		$return = array(
-			'name'   => $name.'.'.$format,
+			'name'   => $name.$format,
 			'path'   => self::getSaveDir($assetsID,'video',FALSE),
 			'size'   => filesize(self::getSaveDir($assetsID,'video').$name.$format),
 			'type'   => self::getMimeType(self::getSaveDir($assetsID,'video').$name.$format),
