@@ -61,7 +61,7 @@ localVars::add('meta_keywords', 'Metadata, Storage, Solution, Form, Creation, Sy
 localVars::add('userCurrentProjectsJSON', json_encode(users::loadProjects()));
 
 $notificationEmails = array(
-	"jetapia@mail.wvu.edu" => "Jessica Tapia",
+	"jessica.mcmillen@mail.wvu.edu" => "Jessica McMillen",
 	"steve.giessler@mail.wvu.edu" => "Steve Giessler", 
 	"tam0013@mail.wvu.edu" => "Tracy McCormick"
 );
