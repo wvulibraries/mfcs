@@ -1,0 +1,22 @@
+# Based on info found at
+# https://github.com/CodingItWrong/rails-docker-mac
+# https://github.com/alienfast/docker-rails/issues/4
+version: '2.1'
+services:
+  app:
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    extra_hosts:
+      - "database.lib.wvu.edu:172.17.0.1"
+      - "www.libraries.wvu.edu:127.0.0.1"
+    container_name: mfcs
+    volumes:
+      - .:/vagrant
+      - ./data:/home/mfcs.lib.wvu.edu/data
+      - ./mysql:/var/lib/mysql
+      - ./gitpulls:/tmp/git
+    env_file:
+        - './env/.env.mfcs' 
+    ports:
+      - "8080:80"

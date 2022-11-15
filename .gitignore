@@ -20,3 +20,6 @@ testVids
 debug.txt
 SQLFiles/mfcs_updatedDB.sql
 .DS_Store
+gitpulls/
+mysql/
+data/
