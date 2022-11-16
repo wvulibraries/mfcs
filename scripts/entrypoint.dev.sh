@@ -8,7 +8,7 @@ ENGINEAPIHOME="/home/engineAPI"
 
 SERVERURL="/home/mfcs.lib.wvu.edu"
 DOCUMENTROOT="public_html"
-SQLFILES="/vagrant/SQLFiles/migrations/*.sql"
+# SQLFILES="/vagrant/SQLFiles/migrations/*.sql"
 
 #this should match extension_dir from phpinfo()
 PHPMODULES="/usr/lib64/php/modules/"
@@ -26,11 +26,15 @@ cat yum-wof /etc/yum.repos.d/CentOS-Base.repo
 # yum -y update
 
 mv /etc/httpd/conf.d/mod_security.conf /etc/httpd/conf.d/mod_security.conf.bak
-/etc/init.d/httpd start
+# /etc/init.d/httpd start
 
 mkdir -p $GITDIR
 cd $GITDIR
 git clone -b $ENGINEBRANCH $ENGINEAPIGIT
+
+# remove exiting defaultPrivate.php and replace with our custom one
+rm $GITDIR/engineAPI/engine/engineAPI/3.1/config/defaultPrivate.php
+ln -s /vagrant/serverConfiguration/defaultPrivate.php $GITDIR/engineAPI/engine/engineAPI/3.1/config/defaultPrivate.php
 
 mkdir -p $SERVERURL/phpincludes/
 ln -s $GITDIR/engineAPI/engine/ $SERVERURL/phpincludes/
@@ -75,45 +79,9 @@ sudo cp $SERVERURL/phpincludes/engine/phpmailer/*.php /tmp/git/phpincludes/engin
 ln -s $SERVERURL $ENGINEAPIHOME
 ln -s /tmp/git/engineAPI/public_html/engineIncludes $SERVERURL/$DOCUMENTROOT/engineIncludes
 
-## Setup the EngineAPI Database
-
-/etc/init.d/mysqld start
-chkconfig mysqld on
-
-mysql -u root < /tmp/git/engineAPI/sql/vagrantSetup.sql
-mysql -u root EngineAPI < /tmp/git/engineAPI/sql/EngineAPI.sql
-
-# first value is size in megabytes to load main database
-mysql -u root -Bse "set global max_allowed_packet=1024*1024*1024"; #first value is size in megabytes
-
-# application Post Setup
-mysql -u root < /vagrant/SQLFiles/setup.sql
-
-# if backup exists import that and do selected migrations
-# I was using a older backup and additional migrations needed
-# to be run. if using a more current backup the migrations may
-# not be required.
-if [ -e /vagrant/SQLFiles/mfcs.sql ]
-then
-  mysql -u root mfcs < /vagrant/SQLFiles/mfcs.sql
-  mysql -u root mfcs < /vagrant/SQLFiles/migrations/2016.07.26.0945.sql
-else
-  echo "No backup found, skipping database import and running migrations"
-  mysql -u root mfcs < /vagrant/SQLFiles/baseSnapshot.sql
-  for f in $SQLFILES
-  do
-  	echo "Processing $f ..."
-  	mysql -u root mfcs < "$f"
-  done
-fi
-
 #install 3rd Party dependencies
 cd /vagrant/serverConfiguration/3rdParty
 rpm -Uvh --force --quiet remi-release-6*.rpm epel-release-6*.rpm
-
-# yum -y install \
-# 	ImageMagick php-pecl-imagick python-devel \
-# 	perl-ExtUtils-CBuilder.x86_64 perl-ExtUtils-Embed.x86_64 perl-ExtUtils-MakeMaker.x86_64 perl-ExtUtils-ParseXS.x86_64
 
 rm -f /etc/yum.repos.d/remi.repo
 ln -s /vagrant/serverConfiguration/remi.repo /etc/yum.repos.d/remi.repo
@@ -159,6 +127,6 @@ cp ffserver /usr/local/bin/
 cp qt-faststart /usr/local/bin/
 echo "Completed install"
 
-/sbin/service httpd restart
+/sbin/service httpd start
 
 tail -f /vagrant/serverConfiguration/serverlogs/error_log
