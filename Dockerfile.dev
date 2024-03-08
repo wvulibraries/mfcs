@@ -1,35 +1,79 @@
-# Webserver container for WVU Lib Engine API
-# Using Centos:latest base image
-# Version 1
+# # Webserver container for WVU Lib Engine API
+# # Using Centos:latest base image
+# # Version 1
 
-FROM trmccormick/centos6-mfcs
-USER root
+# FROM trmccormick/centos6-mfcs
+# USER root
+
+# WORKDIR /home/mfcs.lib.wvu.edu
+
+# ## Remove mysql server
+# RUN yum -y remove mysql-server
+
+# ## Install mysql client
+# RUN yum -y install mysql
+
+# ## Install required packages
+# RUN yum -y install ImageMagick php-pecl-imagick python-devel \
+# 	perl-ExtUtils-CBuilder.x86_64 perl-ExtUtils-Embed.x86_64 \
+#     perl-ExtUtils-MakeMaker.x86_64 perl-ExtUtils-ParseXS.x86_64 \
+#     libjpeg-devel libpng-devel libtiff-devel SDL-devel agg-devel
+
+# ## Install FFMPEG Dependencies
+# RUN yum -y install autoconf automake cmake freetype-devel gcc gcc-c++ \
+#     git libtool make mercurial nasm pkgconfig zlib-devel
+
+# ## ClamAV
+# RUN yum -y install clamav clamav-db clamav-devel
+
+# ADD . /vagrant
+
+# ADD ./scripts/entrypoint.dev.sh /usr/bin/
+# RUN chmod -v +x /usr/bin/entrypoint.dev.sh
+
+# # Start the service
+# ENTRYPOINT ["/usr/bin/entrypoint.dev.sh"]
+
+FROM php:8.2-apache
 
 WORKDIR /home/mfcs.lib.wvu.edu
+ADD ./public_html /home/mfcs.lib.wvu.edu/public_html
 
-## Remove mysql server
-RUN yum -y remove mysql-server
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \   
+    libldap2-dev \
+    default-mysql-client \
+    vim \
+    git
 
-## Install mysql client
-RUN yum -y install mysql
+# Install PHP extensions
+RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
+RUN docker-php-ext-install mysqli pdo pdo_mysql ldap
 
-## Install required packages
-RUN yum -y install ImageMagick php-pecl-imagick python-devel \
-	perl-ExtUtils-CBuilder.x86_64 perl-ExtUtils-Embed.x86_64 \
-    perl-ExtUtils-MakeMaker.x86_64 perl-ExtUtils-ParseXS.x86_64 \
-    libjpeg-devel libpng-devel libtiff-devel SDL-devel agg-devel
+# install composer
+# RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-## Install FFMPEG Dependencies
-RUN yum -y install autoconf automake cmake freetype-devel gcc gcc-c++ \
-    git libtool make mercurial nasm pkgconfig zlib-devel
+# Tesseract
+# -------------------------------------------------------------------------------------------------
+RUN apt-get install -y libleptonica-dev libtesseract-dev tesseract-ocr
+# ------------------------------------------------------------------------------------------------- 
+
+# FFMPEG Conversions
+# -------------------------------------------------------------------------------------------------
+RUN apt-get install -y cmake ffmpeg
+# -------------------------------------------------------------------------------------------------
 
 ## ClamAV
-RUN yum -y install clamav clamav-db clamav-devel
+# RUN apt-get -y install clamav clamav-db clamav-devel
 
-ADD . /vagrant
+# Update apache site for our custom location 
+COPY ./config/000-default.conf /etc/apache2/sites-available/000-default.conf
+
+EXPOSE 80
 
 ADD ./scripts/entrypoint.dev.sh /usr/bin/
 RUN chmod -v +x /usr/bin/entrypoint.dev.sh
 
 # Start the service
-ENTRYPOINT ["/usr/bin/entrypoint.dev.sh"]
+ENTRYPOINT ["bash", "/usr/bin/entrypoint.dev.sh"] 

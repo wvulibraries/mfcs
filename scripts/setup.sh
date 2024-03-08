@@ -1,29 +1,34 @@
 #!/bin/bash
-SQLFILES="/vagrant/SQLFiles/migrations/*.sql"
 
-# mysql -u root -h $DATABASE_HOST < /SQLFiles/configure-database.sql
+SERVERURL="/home/mfcs.lib.wvu.edu"
+SQLFILES="$SERVERURL/SQLFiles/migrations/*.sql"
+APP_ENV=${APP_ENV:-development}
 
-# import EngineAPI database
+if [ "$APP_ENV" = "production" ]; then
+    read -p "WARNING: You are about to overwrite the production database. Are you sure you want to continue? (y/n) " -r
+    echo
+
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "Aborting database overwrite."
+        exit 1
+    fi
+fi
+
+echo "Creating New EngineAPI database"
+
+import EngineAPI database
 mysql -u root -h $DATABASE_HOST EngineAPI < /tmp/git/engineAPI/sql/EngineAPI.sql
 
-# first value is size in megabytes to load main database
-# mysql -u root -h $DATABASE_HOST -Bse "set global max_allowed_packet=1024*1024*1024"; #first value is size in megabytes
-
-# if backup exists import that and do selected migrations
-# I was using a older backup and additional migrations needed
-# to be run. if using a more current backup the migrations may
-# not be required.
-if [ -e /vagrant/SQLFiles/mfcs.sql ]
+if [ -e $SERVERURL/SQLFiles/mfcs.sql ]
 then
-  mysql -u root -h $DATABASE_HOST mfcs < /vagrant/SQLFiles/mfcs.sql
-  mysql -u root -h $DATABASE_HOST mfcs < /vagrant/SQLFiles/migrations/2016.07.26.0945.sql
+  echo "Importing mfcs database backup"
+  mysql -u root -h $DATABASE_HOST mfcs < $SERVERURL/SQLFiles/mfcs.sql
 else
   echo "No backup found, skipping database import and running migrations"
-  mysql -u root -h $DATABASE_HOST mfcs < /vagrant/SQLFiles/baseSnapshot.sql
+  mysql -u root -h $DATABASE_HOST mfcs < $SERVERURL/SQLFiles/baseSnapshot.sql
   for f in $SQLFILES
   do
   	echo "Processing $f ..."
   	mysql -u root -h $DATABASE_HOST mfcs < "$f"
   done
 fi
-

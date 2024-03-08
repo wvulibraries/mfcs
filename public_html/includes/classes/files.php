@@ -3,59 +3,113 @@
 /**
  * Main MFCS object
  * @author David Gersting
+ * @modified Tracy A. McCormick
+ * @date 2024-03-07
+ * @notes - This file has been refactored using ChatGPT and has been untested
  */
 class files {
 
 	private static $insertFieldNames = array();
 	private static $fixity_files     = array();
 
-	private static function printImage($filename,$mimeType) {
-		$tmpName = tempnam(mfcs::config('mfcstmp'), 'mfcs').".jpeg";
-		shell_exec(sprintf('convert %s -quality 50 %s 2>&1',
+	/**
+	 * printImage
+	 * This function will convert an image file to a JPEG format
+	 * with reduced quality and embeds it in an HTML image tag
+	 *
+	 * @param string $filename
+	 * @param string $mimeType
+	 * @param string $qualty (optional) default 50
+	 * @return bool
+	 * 
+	 * Notes: This has been refactored using ChatGPT and has been untested
+	 * as of 3/7/2024.
+	 */
+	private static function printImage(string $filename, string $mimeType, int $quality = 50): bool {
+		// Validate and sanitize the filename for security
+		$filename = filter_var($filename, FILTER_SANITIZE_STRING);
+	
+		// Generate a temporary filename
+		$tmpName = tempnam(mfcs::config('mfcstmp'), 'mfcs') . ".jpeg";
+	
+		// Execute the 'convert' command with customizable quality
+		$command = escapeshellcmd(sprintf('convert %s -quality %d %s 2>&1',
 			escapeshellarg($filename),
+			$quality,
 			escapeshellarg($tmpName)));
-		printf('<html><img src="data:image/jpeg;base64,%s" /></html>',
-			base64_encode(file_get_contents($tmpName)));
+	
+		// Execute the 'convert' command and check for errors
+		$output = shell_exec($command);
+	
+		if ($output !== null) {
+			// Handle the error, log it, or throw an exception
+			error_log("Error executing convert command: $output");
+			return false;
+		}
+	
+		// Check if file_get_contents is successful
+		$fileContent = file_get_contents($tmpName);
+		if ($fileContent === false) {
+			// Handle the error, log it, or throw an exception
+			error_log("Error reading file content: $tmpName");
+			return false;
+		}
+	
+		// Embed image in HTML
+		printf('<html><img src="data:image/jpeg;base64,%s" /></html>', base64_encode($fileContent));
+	
+		// Delete the temporary file
 		unlink($tmpName);
-
-		return TRUE;
+	
+		return true;
 	}
 
-	public static function errorOldProcessingJobs() {
-
+	/**
+	 * errorOldProcessingJobs
+	 * 
+	 */
+	public static function errorOldProcessingJobs(): bool {
 		$oldDate = time() - 604800;
-
-		$sql       = sprintf("UPDATE `objectProcessing` SET `state`='3' WHERE `timestamp`<'%s'",
-			$oldDate
-			);
-		$sqlResult = mfcs::$engine->openDB->query($sql);
-
+		$formattedOldDate = date('Y-m-d H:i:s', $oldDate);
+	
+		$sql = "UPDATE `objectProcessing` SET `state`='3' WHERE `timestamp` < :oldDate";
+		$sqlResult = mfcs::$engine->openDB->query($sql, [':oldDate' => $formattedOldDate]);
+	
 		if (!$sqlResult['result']) {
-			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
-			return FALSE;
+			errorHandle::newError(__METHOD__ . "() - " . $sqlResult['error'], errorHandle::DEBUG);
+			return false;
 		}
-
-		return TRUE;
-
+	
+		return true;
 	}
 
+	/**
+	 * deleteOldProcessingJobs
+	 * 
+	 * @return bool
+	 */
 	public static function deleteOldProcessingJobs() {
-		$sql       = sprintf("DELETE FROM `objectProcessing` WHERE `state`='0'");
-		$sqlResult = mfcs::$engine->openDB->query($sql);
-
-		if (!$sqlResult['result']) {
-			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
-			return FALSE;
+		try {
+			$sql = "DELETE FROM `objectProcessing` WHERE `state`='0'";
+			$statement = mfcs::$engine->openDB->prepare($sql);
+			$statement->execute();
+	
+			return true;
+		} catch (PDOException $e) {
+			errorHandle::newError(__METHOD__ . "() - " . $e->getMessage(), errorHandle::DEBUG);
+			return false;
 		}
+	}	
 
-		return TRUE;
-	}
-
-	public static function addProcessingField($fieldname) {
-
-		self::$insertFieldNames[] = $fieldname;
-
-		return TRUE;
+	/**
+	 * addProcessingField
+	 * 
+	 * @param string $fieldname
+	 * @return bool
+	 */
+	public static function addProcessingField(string $fieldname): bool {
+		static::$insertFieldNames[] = $fieldname;
+		return true;
 	}
 
 	/**

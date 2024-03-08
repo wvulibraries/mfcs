@@ -9,8 +9,13 @@ services:
       - "www.libraries.wvu.edu:127.0.0.1"
     container_name: mfcs
     volumes:
-      - .:/vagrant
+      # - ./env/env.dev.auth:/etc/.env    
+      - ./config:/config    
+      - ./data/logs:/tmp/log      
+      - ./public_html:/home/mfcs.lib.wvu.edu/public_html
       - ./data:/home/mfcs.lib.wvu.edu/data
+      - ./serverConfiguration:/home/mfcs.lib.wvu.edu/serverConfiguration  
+      - ./SQLFiles:/home/mfcs.lib.wvu.edu/SQLFiles    
       - ./scripts:/home/mfcs.lib.wvu.edu/scripts
       - ./gitpulls:/tmp/git
     env_file:
@@ -26,7 +31,7 @@ services:
       timeout: 10s
       retries: 3
   db:
-    image: mysql:5.7.27
+    image: mysql:5.7
     container_name: db
     restart: on-failure
     ports:
