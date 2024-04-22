@@ -10,30 +10,39 @@ class forms {
 	// @TODO this needs to be expanded to include callbacks for the replacement text as well.
 	private static $fieldVariables = array('%userid%', '%username%', '%firstname%', '%lastname%', '%date%', '%time%', '%time12%', '%time24%', '%timestamp%');
 
-	function validID() {
+
+	/**
+	 * Returns boolean value of whether the formID is valid
+	 * Optimized using ChatGpt 3.5 suggestions
+	 * Date: 2024-04-18
+	 * Modified_by: Tracy A. McCormick
+	 * @return string         The value of the field
+	 */
+	public static function validID() {
 		$engine = EngineAPI::singleton();
-
-		if (!isset($engine->cleanGet['MYSQL']['formID'])
-			|| is_empty($engine->cleanGet['MYSQL']['formID'])
-			|| !validate::integer($engine->cleanGet['MYSQL']['formID'])) {
-
-			if (objects::validID($engine->cleanGet['MYSQL']['objectID'])) {
-				$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
-
-				if ($object === FALSE) {
-					return FALSE;
-				}
-
-				http::setGet('formID',$object['formID']);
-
-			}
-			else {
-				return FALSE;
-			}
+		
+		// Check if formID is already set and valid
+		if (isset($engine->cleanGet['MYSQL']['formID']) && !is_empty($engine->cleanGet['MYSQL']['formID']) && validate::integer($engine->cleanGet['MYSQL']['formID'])) {
+			return TRUE; // FormID is valid, no need to proceed further
 		}
-
-		return TRUE;
-
+	
+		$objectID = $engine->cleanGet['MYSQL']['objectID'];
+	
+		// Check if objectID is valid
+		if (!objects::validID($objectID)) {
+			return FALSE; // Invalid objectID
+		}
+	
+		// Get the object and set formID
+		$object = objects::get($objectID);
+		if ($object === FALSE) {
+			return FALSE; // Failed to retrieve object
+		}
+	
+		// Set formID in HTTP GET
+		http::setGet('formID', $object['formID']);
+		
+		return TRUE; // Validation passed
 	}
 
 	public static function get($formID=NULL,$productionOnly=FALSE) {
@@ -1595,6 +1604,12 @@ class forms {
 		}
 
 		if ($newObject === TRUE) {
+
+			// var_dump($formID);
+			// var_dump($values);
+			// var_dump($form['metadata']);
+			// var_dump(isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0");
+			// die();
 
 			if (objects::create($formID,$values,$form['metadata'],isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",null,null,$publicReleaseObj) === FALSE) {
 				$engine->openDB->transRollback();

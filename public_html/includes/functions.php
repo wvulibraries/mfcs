@@ -63,7 +63,7 @@ function buildNumberAttributes($field) {
 // TODO : I think this function can be safely removed.
 // if $increment is true it returns the NEXT number. if it is false it returns the current
 function getIDNO($formID,$projectID,$increment=TRUE) {
-	return mfcs::getIDNO($formID,$increment);
+return mfcs::getIDNO($formID,$increment);
 }
 
 // TODO remove this function. Be sure to check exports and migration scripts for usage

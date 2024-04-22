@@ -3,6 +3,8 @@
 /**
  * Main MFCS object
  * @author David Gersting
+ * @modified_by Tracy A. McCormick
+ * @modified_on 2024-04-19
  */
 class files {
 
@@ -180,59 +182,42 @@ class files {
 	// if $state is modified, processes everything with that state. valid states are 1 and 3 (2 are currently being processed. 0's are done and ready for deleting)
 	//
 	// if $returnArray is TRUE, only 1 fieldName will be processed. Returns a complete 'files' array
-	public static function process($objectID=NULL,$fieldname=NULL,$state=1,$returnArray=FALSE) {
-
-		if ((string)$state != "1" && (string)$state != "3") {
-			errorHandle::newError(__METHOD__."() - Invalid state provided: ".$state, errorHandle::DEBUG);
-			return FALSE;
+	public static function process($objectID = null, $fieldname = null, $state = 1, $returnArray = false)
+	{
+		if (!in_array($state, [1, 3])) {
+			errorHandle::newError(__METHOD__ . "() - Invalid state provided: $state", errorHandle::DEBUG);
+			return false;
 		}
-
-		// was a valid objectID provided
-		if (!isnull($objectID) && validate::integer($objectID)) {
-			$objectWhere = sprintf(" AND `objectID`='%s'",
-				mfcs::$engine->openDB->escape($objectID)
-				);
+	
+		if ($objectID !== null && !validate::integer($objectID)) {
+			errorHandle::newError(__METHOD__ . "() - Invalid Object ID: $objectID", errorHandle::DEBUG);
+			return false;
 		}
-		else if (!isnull($objectID) && !validate::integer($objectID)) {
-			errorHandle::newError(__METHOD__."() - Invalid Object ID: ".$objectID, errorHandle::DEBUG);
-			return FALSE;
+	
+		if ($fieldname !== null && !is_string($fieldname)) {
+			errorHandle::newError(__METHOD__ . "() - Invalid field name: $fieldname", errorHandle::DEBUG);
+			return false;
 		}
-		else {
-			$objectWhere = "";
-		}
-
-		// was a valid fieldname provided
-		if (!isnull($fieldname) && is_string($fieldname)) {
-			$fieldnameWhere = sprintf(" AND `fieldName`='%s'",
-				mfcs::$engine->openDB->escape($fieldname)
-				);
-		}
-		else {
-			$fieldnameWhere = "";
-		}
-
-		$sql       = sprintf("SELECT * FROM `objectProcessing` WHERE `objectProcessing`.`state`='%s'%s%s",
-			mfcs::$engine->openDB->escape($state),
-			$objectWhere,
-			$fieldnameWhere
-			);
-		$sqlResult = mfcs::$engine->openDB->query($sql);
+	
+		$objectWhere = $objectID !== null ? " AND `objectID` = '" . mfcs::$engine->openDB->escape($objectID) . "'" : "";
+		$fieldnameWhere = $fieldname !== null ? " AND `fieldName` = '" . mfcs::$engine->openDB->escape($fieldname) . "'" : "";
+	
+		$sql = "SELECT * FROM `objectProcessing` WHERE `objectProcessing`.`state` = '" . mfcs::$engine->openDB->escape($state) . "' $objectWhere $fieldnameWhere";
+		$sqlResult = mfcs::$engine->openDB->query($sql);	
 
 		// I'm not sure about database transactions here
 		// We are modifying the file system (exports). transaction rollbacks would
 		// have to be done on the file system as well.
 
 		while ($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+			// echo "Processing: " . $row['objectID'] . " - " . $row['fieldName'] . "\n";
 
-			// set the state of the row to 2
-			self::setProcessingState($row['ID'],2);
+			self::setProcessingState($row['ID'], 2);
 
-			// get the object, and ignore the cache since we are updating in a loop
-			$object   = objects::get($row['objectID'],TRUE);
-			$files    = $object['data'][$row['fieldName']];
+			$object = objects::get($row['objectID'], true);
+			$files = $object['data'][$row['fieldName']];
 			$assetsID = $files['uuid'];
-
-			$fieldOptions = forms::getField($object['formID'],$row['fieldName']);
+			$fieldOptions = forms::getField($object['formID'], $row['fieldName']);
 
 			// do we need to do any processing?
 			// @TODO, i don't like how these are hard coded
@@ -253,25 +238,24 @@ class files {
 			if (!$combine && !$convert && !$ocr && !$thumbnail && !$convertVideo && !$convertAudio && !$convertVideo) {
 				self::setProcessingState($row['ID'],0);
 				continue;
+			}			
+	
+			$processedFiles = self::processObjectFiles($assetsID, $fieldOptions);
+	
+			if (!$processedFiles) {
+				self::setProcessingState($row['ID'], 3);
+				return false;
 			}
-
-			$processedFiles = self::processObjectFiles($assetsID,$fieldOptions);
-
-			if(!$processedFiles){
-				$setRowValue = 3;
-				self::setProcessingState($row['ID'],$setRowValue);
-				return FALSE;
-			}
-
-			$files['files']                    = array_merge($files['files'],$processedFiles);
+	
+			$files['files'] = array_merge($files['files'], $processedFiles);
 			$object['data'][$row['fieldName']] = $files;
-
-			$return = objects::update($objectID,$object['formID'],$object['data'],$object['metadata'],$object['parentID'],NULL,$object['publicRelease']);
+	
+			$return = objects::update($objectID, $object['formID'], $object['data'], $object['metadata'], $object['parentID'], null, $object['publicRelease']);
 
 			// @TODO this return value isn't descriptive enough. It can fail and still
 			// return a valid array. we likely need to return an array with an error
-			// code as well as the array to save to the data
-
+			// code as well as the array to save to the data			
+	
 			if (!$return) {
 				$setRowValue = 3;
 			}
@@ -281,14 +265,13 @@ class files {
 
 			// Processing is done, set state to 0
 			self::setProcessingState($row['ID'],$setRowValue);
-
-			if ($returnArray === TRUE) {
+	
+			if ($returnArray) {
 				return $object['data'][$row['fieldName']];
 			}
-
 		}
 
-		return TRUE;
+		return true;
 
 	}
 
@@ -353,7 +336,7 @@ class files {
 	}
 
 	// Chris Jester-Young's combined with php.net's and a precision argument
-	public function formatBytes($size, $precision = 1){
+	public static function formatBytes($size, $precision = 1){
     	$base = log($size, 1024);
    	 	$suffixes = array('', 'KB', 'MB', 'GB', 'TB');
     	return round(pow(1024, $base - floor($base)), $precision) . " " . $suffixes[floor($base)];
@@ -993,42 +976,35 @@ class files {
 	public static function processObjectFiles($assetsID, $options) {
 		// Disable PHP's max execution time
 		set_time_limit(0);
-
-		$saveBase          = mfcs::config('convertedPath');
-		$originalsFilepath = self::getSaveDir($assetsID,'archive');
-		$originalFiles     = scandir($originalsFilepath);
-
+	
+		$saveBase = mfcs::config('convertedPath');
+		$originalsFilepath = self::getSaveDir($assetsID, 'archive');
+		$originalFiles = scandir($originalsFilepath);
+	
 		// Setup return array
-		$return = array(
-			'processed' => array(),
-			'combine'   => array(),
-			'thumbs'    => array(),
-			'ocr'       => array(),
-		);
-
+		$return = [
+			'processed' => [],
+			'combine' => [],
+			'thumbs' => [],
+			'ocr' => [],
+		];
+	
 		// Remove dot files from array
-		foreach ($originalFiles as $I => $filename) {
-			if ($filename[0] == '.') {
-				unset($originalFiles[$I]);
-			}
-			if(empty($filename)){
-				unset($originalFiles[$I]);
-			}
+		$originalFiles = array_filter($originalFiles, function ($filename) {
+			return $filename[0] != '.';
+		});
+	
+		if (empty($originalFiles)) {
+			return true;
 		}
-
-		if(empty($originalFiles)){
-			return TRUE;
-		}
-
-		// Needed to put the files in the right order for processing
-		if (natcasesort($originalFiles) === FALSE) {
-			return FALSE;
-		}
-
+	
+		// Sort files in natural order
+		natcasesort($originalFiles);
+	
 		try {
 			// If combine files is checked, read this image and add it to the combined object
 			if (isset($options['combine']) && str2bool($options['combine'])) {
-
+				
 				try {
 					$errors      = array();
 					$createThumb = TRUE;
@@ -1039,7 +1015,6 @@ class files {
 
 					// Ensure that the HOCR file is created
 					if (!self::createHOCR("$saveBase/hocr.cfg")) return FALSE;
-
 
 					$gsTemp = $tmpDir.DIRECTORY_SEPARATOR.uniqid();
 					touch($gsTemp);
@@ -1065,12 +1040,28 @@ class files {
 							$createThumb = FALSE;
 						}
 
-						// perform hOCR on the original uploaded file which gets stored in combined as an HTML file
-						$_exec = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
+						// Create a temporary jpg file of the original file
+						$_exec = shell_exec(sprintf('convert %s %s 2>&1',
 							escapeshellarg($originalFile), // input.ext
+							escapeshellarg($baseFilename.".jpg") // output.jpg
+							));
+
+						// perform hOCR on the temporary jpg file which gets stored in combined as an HTML file
+						$_exec = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
+							escapeshellarg($baseFilename.".jpg"), // input.ext
 							escapeshellarg($baseFilename), // output.html
 							escapeshellarg("$saveBase/hocr.cfg") // hocr config file
 							));
+
+						// remove the temporary jpg file
+						unlink($baseFilename.".jpg");
+
+						// perform hOCR on the original uploaded file which gets stored in combined as an HTML file
+						// $_exec = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
+						// 	escapeshellarg($originalFile), // input.ext
+						// 	escapeshellarg($baseFilename), // output.html
+						// 	escapeshellarg("$saveBase/hocr.cfg") // hocr config file
+						// 	));
 
 						// If a new-line char is in the output, assume it's an error
 						// Tesseract failed, let's normalize the image and try again
@@ -1082,13 +1073,23 @@ class files {
 							touch($baseFilename.".html");
 						}
 
-						// Create an OCR'd pdf of the file
-						$_exec = shell_exec(sprintf('hocr2pdf -i %s -s -o %s < %s 2>&1',
+						// Convert original image to a jpg
+						$_exec = shell_exec(sprintf('convert %s %s 2>&1',
 							escapeshellarg($originalFile), // input.ext
+							escapeshellarg($baseFilename.".jpg") // output.jpg
+							));
+
+						// Create an OCR'd pdf of the converted file
+						$_exec = shell_exec(sprintf('hocr2pdf -i %s -s -o %s < %s 2>&1',
+							escapeshellarg($baseFilename.".jpg"), // input.ext
 							escapeshellarg($baseFilename.".pdf"), // output.pdf
 							escapeshellarg($baseFilename.".html") // input.html
 							));
 
+						// remove the temporary jpg file
+						unlink($baseFilename.".jpg");
+
+						// If the output of hocr2pdf is not "Writing unmodified DCT buffer." then there was an error
 						if (trim($_exec) !== 'Writing unmodified DCT buffer.') {
 							if (strpos($_exec,'Warning:') !== FALSE) {
 								errorHandle::newError("hocr2pdf Warning: ".$_exec, errorHandle::DEBUG);
@@ -1106,19 +1107,17 @@ class files {
 						unlink($baseFilename.".html");
 					}
 
-
-
 					// Combine all PDF files in directory
 					$_exec = shell_exec(sprintf('gs -sDEVICE=pdfwrite -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=%s @%s 2>&1',
 						self::getSaveDir($assetsID,'combine')."combined.pdf",
 						$gsTemp
 					));
+
+					// If the output of gs is not empty, then there was an error
 					if (!is_empty($_exec)) {
 						errorHandle::errorMsg("Failed to combine PDFs into single PDF.");
 						throw new Exception("GhostScript Error: ".$_exec);
 					}
-
-
 
 					$return['combine'][] = array(
 						'name'   => 'combined.pdf',
@@ -1133,8 +1132,6 @@ class files {
 						errorHandle::errorMsg("Unable to clean up temporary directory: ".$tmpDir);
 						throw new Exception("Unable to clean up temporary directory: ".$tmpDir);
 					}
-
-
 				}
 				catch (Exception $e) {
 					// We need to delete our working dir
@@ -1155,7 +1152,7 @@ class files {
 				 && !isset($options['convertAudio']) && !isset($options['convertAudio']) && !isset($options['videothumbnail']) ) {
 				return $return;
 			}
-
+	
 			foreach ($originalFiles as $filename) {
 				$originalFile     = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
 				$_filename        = pathinfo($originalFile);
@@ -1196,8 +1193,8 @@ class files {
 						'errors' => '',
 					);
 				}
-
-				// Create a thumbnail without any conversions
+	
+			    // Create a thumbnail without any conversions
 				if (isset($options['thumbnail']) && str2bool($options['thumbnail']) && ($thumbnailCreated === false)) {
 					if (($return['thumbs'][] = self::createThumbnail($originalFile,$filename,$options,$assetsID)) === FALSE) {
 						throw new Exception("Failed to create thumbnail: ".$filename);
@@ -1249,11 +1246,10 @@ class files {
 			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
 			errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::DEBUG);
 			return FALSE;
-		}
-
+		} 
+		
 		return $return;
-	}
-
+	} 
 
 	public static function convertVideo($assetsID, $name, $originalFile, $options){
 		try {
@@ -1505,21 +1501,51 @@ class files {
 	}
 
 
-	public static function createOCRTextFile($originalFile,$assetsID,$filename) {
+	public static function createOCRTextFile($originalFile, $assetsID, $filename)
+	{
+		// set $baseFilename to the path of the original file
+		$baseFilename = pathinfo($originalFile, PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR . pathinfo($originalFile, PATHINFO_FILENAME);
 
-		$text = TesseractOCR::recognize($originalFile);
+		// New TesseractOCR object
+		$tesseract = new TesseractOCR();
 
-		if (file_put_contents(self::getSaveDir($assetsID,'ocr').DIRECTORY_SEPARATOR.$filename.'.txt', $text) === FALSE) {
-			return FALSE;
+		// Create a temporary jpg file of the original file
+		$_exec = shell_exec(sprintf('convert %s %s 2>&1',
+			escapeshellarg($originalFile), // input.ext
+			escapeshellarg($baseFilename.".jpg") // output.jpg
+			));
+	
+		try {
+			$text = $tesseract->recognize($baseFilename.".jpg");
+			
+			if (empty($text)) {
+				throw new Exception('OCR recognition returned empty text.');
+			}
+	
+			$saveDir = self::getSaveDir($assetsID, 'ocr');
+			$filePath = $saveDir . DIRECTORY_SEPARATOR . $filename . '.txt';
+			
+			if (file_put_contents($filePath, $text) === false) {
+				throw new Exception('Failed to write OCR text file.');
+			}
+	
+			$return['ocr'][] = [
+				'name'   => $filename . '.txt',
+				'path'   => self::getSaveDir($assetsID, 'ocr', false),
+				'size'   => filesize($filePath),
+				'type'   => self::getMimeType($filePath),
+				'errors' => '',
+			];
+
+			// remove the temporary jpg file
+			unlink($baseFilename.".jpg");
+	
+			return $return; // Assuming you want to return some data after successful operation
+		} catch (Exception $e) {
+			// Log or handle the error as per your application's requirements
+			error_log('OCR Text File Creation Error: ' . $e->getMessage());
+			return false;
 		}
-
-		$return['ocr'][] = array(
-			'name'   => $filename.'.txt',
-			'path'   => self::getSaveDir($assetsID,'ocr',FALSE),
-			'size'   => filesize(self::getSaveDir($assetsID,'ocr').$filename.'.txt'),
-			'type'   => self::getMimeType(self::getSaveDir($assetsID,'ocr').$filename.'.txt'),
-			'errors' => '',
-		);
 	}
 
 	public static function convertImage($image,$options,$assetsID,$filename) {
