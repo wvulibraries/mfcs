@@ -1529,13 +1529,13 @@ class files {
 				throw new Exception('Failed to write OCR text file.');
 			}
 	
-			$return['ocr'][] = [
-				'name'   => $filename . '.txt',
-				'path'   => self::getSaveDir($assetsID, 'ocr', false),
-				'size'   => filesize($filePath),
-				'type'   => self::getMimeType($filePath),
+			$return['ocr'][] = array(
+				'name'   => $filename.'.txt',
+				'path'   => self::getSaveDir($assetsID,'ocr',FALSE),
+				'size'   => filesize(self::getSaveDir($assetsID,'ocr').$filename.'.txt'),
+				'type'   => self::getMimeType(self::getSaveDir($assetsID,'ocr').$filename.'.txt'),
 				'errors' => '',
-			];
+			);
 
 			// remove the temporary jpg file
 			unlink($baseFilename.".jpg");
