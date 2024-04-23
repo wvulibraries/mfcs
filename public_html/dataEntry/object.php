@@ -14,6 +14,8 @@ $parentObject     = NULL;
 $permissions      = TRUE;
 $locked           = FALSE;
 
+$forms 			  = new forms;
+
 try {
 
 	$error = FALSE;
@@ -190,7 +192,7 @@ catch(Exception $e) {
 }
 
 // build the form for displaying
-if (forms::validID()) {
+if ($forms->validID()) {
 	try {
 		if (($builtForm = forms::build($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'],$error)) === FALSE) {
 			throw new Exception("Error building form.");

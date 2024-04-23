@@ -15,6 +15,8 @@ class valid {
 	public static function validate($test) {
 
 		$engine = mfcs::$engine;
+		$objects = new objects($engine);
+		$forms = new forms($engine);
 
 		// setup default values
 		if (!isset($test['objectID']))          $test['objectID']          = true;
@@ -30,11 +32,11 @@ class valid {
 		if (!is_bool($test['objectID_required'])) return "Invalid 'objectID_required' provided";
 
 
-		if ($test['objectID']           && objects::validID($test['objectID_required'])                  === FALSE)                                                                                     return "ObjectID Provided is invalid.";
-		if ($test['parent_id']          && obejcts::validID(TRUE,$engine->cleanGet['MYSQL']['parentID']) === FALSE)                                                                                     return "ParentID Provided is invalid.";
-		if ($test['formID']             && forms::validID()                                              === FALSE)                                                                                     return "Invalid/No Form ID Provided.";
-		if ($test['metadata'] === FALSE && forms::isMetadataForm($engine->cleanGet['MYSQL']['formID']))                                                                                                 return "Metadata form provided (Object forms only).";
-		if ($test['metadata'] === TRUE  && !forms::isMetadataForm($engine->cleanGet['MYSQL']['formID']))                                                                                                return "Object form provided (Metadata forms only).";
+		if ($test['objectID']           && $objects->validID($test['objectID_required'])                  === FALSE)                                                                                     return "ObjectID Provided is invalid.";
+		if ($test['parent_id']          && $objects->validID(TRUE,$engine->cleanGet['MYSQL']['parentID']) === FALSE)                                                                                     return "ParentID Provided is invalid.";
+		if ($test['formID']             && $forms->validID()                                              === FALSE)                                                                                     return "Invalid/No Form ID Provided.";
+		if ($test['metadata'] === FALSE && $forms->isMetadataForm($engine->cleanGet['MYSQL']['formID']))                                                                                                 return "Metadata form provided (Object forms only).";
+		if ($test['metadata'] === TRUE  && !$forms->isMetadataForm($engine->cleanGet['MYSQL']['formID']))                                                                                                return "Object form provided (Metadata forms only).";
 		if ($test['productionReady']    && !isset($engine->cleanGet['MYSQL']['formID']))                                                                                                                return "No Form ID provided to test for Production Ready.";                             
 		if ($test['productionReady']    && isset($engine->cleanGet['MYSQL']['formID']) && forms::isProductionReady($engine->cleanGet['MYSQL']['formID']) === FALSE)                                     return "Form is not production ready.";
 		// I don't think this check is required, because if the ObjectID is 
