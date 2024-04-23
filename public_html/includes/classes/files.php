@@ -982,12 +982,12 @@ class files {
 		$originalFiles = scandir($originalsFilepath);
 	
 		// Setup return array
-		$return = [
-			'processed' => [],
-			'combine' => [],
-			'thumbs' => [],
-			'ocr' => [],
-		];
+		$return = array(
+			'processed' => array(),
+			'combine'   => array(),
+			'thumbs'    => array(),
+			'ocr'       => array(),
+		);
 	
 		// Remove dot files from array
 		$originalFiles = array_filter($originalFiles, function ($filename) {
