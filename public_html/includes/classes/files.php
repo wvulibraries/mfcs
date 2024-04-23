@@ -184,9 +184,9 @@ class files {
 	// if $returnArray is TRUE, only 1 fieldName will be processed. Returns a complete 'files' array
 	public static function process($objectID = null, $fieldname = null, $state = 1, $returnArray = false)
 	{
-		if (!in_array($state, [1, 3])) {
-			errorHandle::newError(__METHOD__ . "() - Invalid state provided: $state", errorHandle::DEBUG);
-			return false;
+		if ((string)$state != "1" && (string)$state != "3") {
+			errorHandle::newError(__METHOD__."() - Invalid state provided: ".$state, errorHandle::DEBUG);
+			return FALSE;
 		}
 	
 		if ($objectID !== null && !validate::integer($objectID)) {
