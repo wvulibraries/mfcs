@@ -13,7 +13,7 @@ $webMimeTypes   = array('audio/mp4', 'audio/mp3', 'video/mp4', 'video/mpeg', 'vi
 
 try {
     // Check for required parameters
-    $requiredParams = ['objectID', 'field', 'type'];
+    $requiredParams = array('objectID', 'field', 'type');
     foreach ($requiredParams as $param) {
         if (!isset($engine->cleanGet['MYSQL'][$param])) {
             throw new Exception('Missing required parameter: ' . $param);
