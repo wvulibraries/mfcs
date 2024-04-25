@@ -1508,15 +1508,9 @@ class files {
 
 		// New TesseractOCR object
 		$tesseract = new TesseractOCR();
-
-		// Create a temporary jpg file of the original file
-		$_exec = shell_exec(sprintf('convert %s %s 2>&1',
-			escapeshellarg($originalFile), // input.ext
-			escapeshellarg($baseFilename.".jpg") // output.jpg
-			));
 	
 		try {
-			$text = $tesseract->recognize($baseFilename.".jpg");
+			$text = $tesseract->recognize($originalFile);
 			
 			if (empty($text)) {
 				throw new Exception('OCR recognition returned empty text.');
@@ -1536,9 +1530,6 @@ class files {
 				'type'   => self::getMimeType(self::getSaveDir($assetsID,'ocr').$filename.'.txt'),
 				'errors' => '',
 			);
-
-			// remove the temporary jpg file
-			unlink($baseFilename.".jpg");
 	
 			return $return; // Assuming you want to return some data after successful operation
 		} catch (Exception $e) {
