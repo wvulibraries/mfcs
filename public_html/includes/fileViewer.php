@@ -29,51 +29,52 @@ try {
     $object = objects::get($objectID);
     $fileArray = $object['data'][$field];
     $fileUUID = $fileArray['uuid'];
-    $fileID = $engine->cleanGet['MYSQL']['fileID'];
 
-	if (FALSE === strpos($fileType,'combined')){
-		// Non-combined file
-		$file      = $fileArray['files'][ $fileType ][ $fileID ];
-
-		if($fileType == 'video'){
-			$file = $fileArray['files']['video'][0];
-		}
-
-		$filepath  = ($fileType == 'archive' ?  files::getSaveDir($fileUUID,$fileType).DIRECTORY_SEPARATOR.$file['name'] : files::getSaveDir($fileUUID,$fileType).$file['name']);
-	}
-	else {
-		// Combined file
-		if ($fileType == 'combinedPDF') {
-			// Show the combined PDF
-			// Find the file that has an application mime type (like a PDF)
-			foreach ($fileArray['files']['combine'] as $file) {
-				if (FALSE !== strpos($file['type'], 'application/')) {
-					$filepath = files::getSaveDir($fileUUID,'combine').$file['name'];
-					break;
-				}
-			}
-		}
-		else {
-			// Show the combined PDF's thumbnail
-			// Find the file that has an image mime type
-			foreach ($fileArray['files']['combine'] as $file) {
-				if (FALSE !== strpos($file['type'], 'image/')) {
-					$filepath = files::getSaveDir($fileUUID,'combine').$file['name'];
-					break;
-				}
-			}
-		}
-	}
-
-	// Make sure the file exists
-	if (!file_exists($filepath)) throw new Exception('File not found! "'.$filepath.'"');
+    // Handle combined and non-combined files
+    if (strpos($fileType, 'combined') !== false) {
+        // Combined file
+        $combineFiles = $fileArray['files']['combine'];
+    
+        // Check if it's a combined PDF
+        if ($fileType == 'combinedPDF') {
+            $filterType = 'application/';
+        } else {
+            $filterType = 'image/';
+        }
+    
+        // Find the file that matches the filter type
+        foreach ($combineFiles as $file) {
+            if (strpos($file['type'], $filterType) !== false) {
+                $filepath = files::getSaveDir($fileUUID, 'combine') . $file['name'];
+                break;
+            }
+        }
+    } else {
+        // Non-combined file
+        $fileID = $engine->cleanGet['MYSQL']['fileID'];
+    
+        // Check if it's a video file
+        if ($fileType == 'video') {
+            $file = $fileArray['files']['video'][0];
+        } else {
+            $file = $fileArray['files'][$fileType][$fileID];
+        }
+    
+        // Set filepath based on file type
+        if ($fileType == 'archive') {
+            $filepath = files::getSaveDir($fileUUID, $fileType) . DIRECTORY_SEPARATOR . $file['name'];
+        } else {
+            $filepath = files::getSaveDir($fileUUID, $fileType) . $file['name'];
+        }
+    }
 
     // Check if file is OCR type and handle it
     if ($fileType == 'ocr') {
-        $ocrFile = $fileArray['files']['ocr'][$fileID]['name'];
+        $fileID = $engine->cleanGet['MYSQL']['fileID'];
+        $ocrFile = $fileArray['files']['ocr'][$fileID]["ocr"][0]['name'];
 
         if (!empty($ocrFile)) {
-            $filepath = ($fileType == 'ocr') ? files::getSaveDir($fileUUID, $fileType) . DIRECTORY_SEPARATOR . $file['name'] : files::getSaveDir($fileUUID, $fileType) . $ocrFile;
+            $filepath = ($fileType == 'archive') ? files::getSaveDir($fileUUID, $fileType) . DIRECTORY_SEPARATOR . $file['name'] : files::getSaveDir($fileUUID, $fileType) . $ocrFile;;
 
             if (file_exists($filepath)) {
                 downloadFile($filepath);
