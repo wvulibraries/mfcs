@@ -16,7 +16,7 @@ fi
 
 echo "Creating New EngineAPI database"
 
-import EngineAPI database
+# import EngineAPI database
 mysql -u root -h $DATABASE_HOST EngineAPI < /tmp/git/engineAPI/sql/EngineAPI.sql
 
 if [ -e $SERVERURL/SQLFiles/mfcs.sql ]
