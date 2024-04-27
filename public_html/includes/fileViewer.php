@@ -32,21 +32,40 @@ try {
 
     // Handle combined and non-combined files
     if (strpos($fileType, 'combined') !== false) {
-        $filepath = '';
+        // Combined file
+        $combineFiles = $fileArray['files']['combine'];
+    
+        // Check if it's a combined PDF
         if ($fileType == 'combinedPDF') {
-            $filepath = getCombinedFilePath($fileArray['files']['combine'], 'application/');
+            $filterType = 'application/';
         } else {
-            $filepath = getCombinedFilePath($fileArray['files']['combine'], 'image/');
+            $filterType = 'image/';
+        }
+    
+        // Find the file that matches the filter type
+        foreach ($combineFiles as $file) {
+            if (strpos($file['type'], $filterType) !== false) {
+                $filepath = files::getSaveDir($fileUUID, 'combine') . $file['name'];
+                break;
+            }
         }
     } else {
+        // Non-combined file
         $fileID = $engine->cleanGet['MYSQL']['fileID'];
-        $file = $fileArray['files'][$fileType][$fileID];
-
+    
+        // Check if it's a video file
         if ($fileType == 'video') {
             $file = $fileArray['files']['video'][0];
+        } else {
+            $file = $fileArray['files'][$fileType][$fileID];
         }
-
-        $filepath = ($fileType == 'archive') ? files::getSaveDir($fileUUID, $fileType) . DIRECTORY_SEPARATOR . $file['name'] : files::getSaveDir($fileUUID, $fileType) . $file['name'];
+    
+        // Set filepath based on file type
+        if ($fileType == 'archive') {
+            $filepath = files::getSaveDir($fileUUID, $fileType) . DIRECTORY_SEPARATOR . $file['name'];
+        } else {
+            $filepath = files::getSaveDir($fileUUID, $fileType) . $file['name'];
+        }
     }
 
     // Check if file is OCR type and handle it
@@ -89,15 +108,6 @@ try {
 } catch (Exception $e) {
     errorHandle::newError($e->getMessage(), errorHandle::DEBUG);
     die($e->getMessage());
-}
-
-function getCombinedFilePath($files, $type) {
-    foreach ($files as $file) {
-        if (strpos($file['type'], $type) !== false) {
-            return files::getSaveDir($fileUUID, 'combine') . $file['name'];
-        }
-    }
-    return '';
 }
 
 function downloadFile($filepath) {
