@@ -1,0 +1,1 @@
+ALTER TABLE `objectsData` MODIFY COLUMN `value` LONGTEXT;
