@@ -148,23 +148,6 @@ class files {
 
 	}
 
-	private static function setProcessingState($rowID,$state) {
-
-		$sql       = sprintf("UPDATE `objectProcessing` SET `state`='%s' WHERE `ID`='%s'",
-			mfcs::$engine->openDB->escape($state),
-			mfcs::$engine->openDB->escape($rowID)
-			);
-		$sqlResult = mfcs::$engine->openDB->query($sql);
-
-		if (!$sqlResult['result']) {
-			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
-			return FALSE;
-		}
-
-		return TRUE;
-
-	}
-
 	// if ObjectID is null, processes everything with a $state of 1
 	// if ObjectID is an integer, processes that objectID
 	//
@@ -613,14 +596,6 @@ class files {
 		return mfcs::config('uploadPath', mfcs::config('mfcstmp').DIRECTORY_SEPARATOR.'mfcs');
 	}
 
-	private static function assetsIDToPath($assetsID) {
-
-		$assetsID = str_replace('-',"",$assetsID);
-		$assetsID = str_split($assetsID);
-		return implode(DIRECTORY_SEPARATOR,$assetsID);
-
-	}
-
 	/**
 	 * Returns the path to the save directory for a given fileUUID
 	 *
@@ -864,23 +839,6 @@ class files {
 
 		return TRUE;
 
-	}
-
-	private static function createHOCR($path=NULL) {
-
-		if (isnull($path)) {
-			$path = mfcs::config('convertedPath').DIRECTORY_SEPARATOR."hocr.cfg";
-		}
-
-		// Create the hocr file (if needed)
-		if(!file_exists($path)){
-			if(!file_put_contents($path, 'tessedit_create_hocr 1')) {
-				errorHandle::newError("Failed to create hocr file.",errorHandle::HIGH);
-				return FALSE;
-			}
-		}
-
-		return TRUE;
 	}
 
 	public static function processObjectFiles($assetsID, $options) {
@@ -1396,6 +1354,44 @@ class files {
 	}
 
 	// private functions for class
+	private static function setProcessingState($rowID,$state) {
+
+		$sql       = sprintf("UPDATE `objectProcessing` SET `state`='%s' WHERE `ID`='%s'",
+			mfcs::$engine->openDB->escape($state),
+			mfcs::$engine->openDB->escape($rowID)
+			);
+		$sqlResult = mfcs::$engine->openDB->query($sql);
+
+		if (!$sqlResult['result']) {
+			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
+			return FALSE;
+		}
+
+		return TRUE;
+
+	}
+
+	private static function assetsIDToPath($assetsID) {
+		$assetsID = str_replace('-',"",$assetsID);
+		$assetsID = str_split($assetsID);
+		return implode(DIRECTORY_SEPARATOR,$assetsID);
+	}
+
+	private static function createHOCR($path=NULL) {
+		if (isnull($path)) {
+			$path = mfcs::config('convertedPath').DIRECTORY_SEPARATOR."hocr.cfg";
+		}
+
+		// Create the hocr file (if needed)
+		if(!file_exists($path)){
+			if(!file_put_contents($path, 'tessedit_create_hocr 1')) {
+				errorHandle::newError("Failed to create hocr file.",errorHandle::HIGH);
+				return FALSE;
+			}
+		}
+		return TRUE;
+	}
+
 	/**
 	 * Create and store a thumbnail of a given Imagick image object
 	 *
@@ -1474,8 +1470,6 @@ class files {
 			);
 	}
 
-
-
 	private static function shouldCombineFiles($options) {
 		if (isset($options['combine']) && str2bool($options['combine'])) {
 			return TRUE;
@@ -1513,7 +1507,7 @@ class files {
 				// Create a thumbnail of the first image
 				if ($createThumb === TRUE) {
 
-					if (($return['combine'][] = self::createThumbnail($originalFile,$filename,$options,$assetsID,TRUE)) === FALSE) {
+					if (($return[] = self::createThumbnail($originalFile,$filename,$options,$assetsID,TRUE)) === FALSE) {
 						throw new Exception("Failed to create thumbnail: ".$filename);
 					}
 
@@ -1600,7 +1594,7 @@ class files {
 				throw new Exception("GhostScript Error: ".$_exec);
 			}
 
-			$return['combine'][] = array(
+			$return[] = array(
 				'name'   => 'combined.pdf',
 				'path'   => self::getSaveDir($assetsID,'combine',FALSE),
 				'size'   => filesize(self::getSaveDir($assetsID,'combine').'combined.pdf'),
@@ -1613,6 +1607,8 @@ class files {
 				errorHandle::errorMsg("Unable to clean up temporary directory: ".$tmpDir);
 				throw new Exception("Unable to clean up temporary directory: ".$tmpDir);
 			}
+
+			return $return;
 		}
 		catch (Exception $e) {
 			// We need to delete our working dir
