@@ -859,6 +859,7 @@ class files {
 			'videoThumbs' => array()			
 		);
 	
+		// If there are no files to process, return true
 		if (empty($originalFiles)) {
 			return true;
 		}
@@ -871,24 +872,23 @@ class files {
 		mkdir($tmpDir,0777,TRUE);
 	
 		try {
-
 			// if conbine is checked or ocr is checked we will generate temporary jpg files that both
-			// combine and ocr can use
-			if (isset($options['combine']) && str2bool($options['combine']) || isset($options['ocr']) && str2bool($options['ocr'])) {
+			// combine and ocr can use. Previously this was being done in both functions.
+			if (self::shouldCombineFiles($options) || self::shouldCreateOCRFile($options)) {
 				self::convertTiffsToJPGs($originalFiles, $originalsFilepath, $tmpDir);
 			}
 
-			// If combine files is checked, read this image and add it to the combined object
-			if (isset($options['combine']) && str2bool($options['combine'])) {
-				$return['combine'] = self::combineFiles($originalFiles, $originalsFilepath, $assetsID, $tmpDir, $options);				
-			} // If Combine
+			// if combine is checked, combine the files into one pdf
+			if (self::shouldCombineFiles($options)) {
+				$return['combine'] = self::combineFiles($originalFiles, $originalsFilepath, $assetsID, $tmpDir, $options);
+			}
 
-			// if ocr is checked, read the image and create an OCR text file
-			if (isset($options['ocr']) && str2bool($options['ocr'])) {
+			// if ocr is checked, read the images and create an OCR text file for each
+			if (self::shouldCreateOCRFile($options)) {
 				$return['ocr'] = self::createOCRFiles($originalFiles, $originalsFilepath, $assetsID, $tmpDir, $options);
 			} // If OCR
 
-			// clear all and remove the temp directory
+			// clear all temporary jpg files and remove the temp directory
 			self::clearTempDir($tmpDir);
 
 			// This conditional needs updated when different conversion options are added or removed.
@@ -946,14 +946,6 @@ class files {
 						throw new Exception("Failed to create thumbnail: ".$filename);
 					}
 				}
-
-				// Create an OCR text file
-				// if (isset($options['ocr']) && str2bool($options['ocr'])) {
-				// 	if (($return['ocr'][] = self::createOCRTextFile($originalFile,$assetsID,$filename)) === FALSE) {
-				// 		errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
-				// 		throw new Exception("Failed to create OCR file for $filename");
-				// 	}
-				// }
 
 				// Convert Audio
 				if (isset($options['convertAudio']) && str2bool($options['convertAudio'])) {
@@ -1383,6 +1375,169 @@ class files {
 	}
 
 	// private functions for class
+	private static function shouldCreateOCRFile($options) {
+		return isset($options['ocr']) && str2bool($options['ocr']);
+	}
+
+	private static function shouldCombineFiles($options) {
+		return isset($options['combine']) && str2bool($options['combine']);
+	}
+
+	private static function combineFiles($originalFiles, $originalsFilepath, $assetsID, $tmpDir, $options) {
+		$saveBase = mfcs::config('convertedPath');
+
+		try {
+			$errors      = array();
+			$createThumb = TRUE;
+
+			// // Create us some temp working space
+			// $tmpDir = mfcs::config('mfcstmp').DIRECTORY_SEPARATOR.uniqid();
+			// mkdir($tmpDir,0777,TRUE);
+
+			// Ensure that the HOCR file is created
+			if (!self::createHOCR("$saveBase/hocr.cfg")) return FALSE;
+
+			$gsTemp = $tmpDir.DIRECTORY_SEPARATOR.uniqid();
+			touch($gsTemp);
+
+			foreach ($originalFiles as $filename) {
+
+				// Figure some stuff out about the file
+				$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
+				$_filename    = pathinfo($originalFile);
+				$filename     = $_filename['filename'];
+
+
+				$baseFilename = $tmpDir.DIRECTORY_SEPARATOR.$filename;
+
+				// Create a thumbnail of the first image
+				if ($createThumb === TRUE) {
+
+					if (($return[] = self::createThumbnail($originalFile,$filename,$options,$assetsID,TRUE)) === FALSE) {
+						throw new Exception("Failed to create thumbnail: ".$filename);
+					}
+
+					// Prevent making multiple thumbnails
+					$createThumb = FALSE;
+				}
+
+				// Create a temporary jpg file of the original file
+				// $_exec = shell_exec(sprintf('convert %s %s 2>&1',
+				// 	escapeshellarg($originalFile), // input.ext
+				// 	escapeshellarg($baseFilename.".jpg") // output.jpg
+				// 	));
+
+				// perform hOCR on the temporary jpg file which gets stored in combined as an HTML file
+				$_exec = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
+					escapeshellarg($baseFilename.".jpg"), // input.ext
+					escapeshellarg($baseFilename), // output.html
+					escapeshellarg("$saveBase/hocr.cfg") // hocr config file
+					));
+
+				// remove the temporary jpg file
+				// unlink($baseFilename.".jpg");
+
+				// perform hOCR on the original uploaded file which gets stored in combined as an HTML file
+				// $_exec = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
+				// 	escapeshellarg($originalFile), // input.ext
+				// 	escapeshellarg($baseFilename), // output.html
+				// 	escapeshellarg("$saveBase/hocr.cfg") // hocr config file
+				// 	));
+
+				// If a new-line char is in the output, assume it's an error
+				// Tesseract failed, let's normalize the image and try again
+				if (strpos(trim($_exec), "\n") !== FALSE) {
+					$errors[] = "Unable to process OCR for ".basename($originalFile).". Continuing&hellip;";
+					errorHandle::warningMsg("Unable to process OCR for ".basename($originalFile).". Continuing&hellip;");
+
+					// Ensure HTML file exists
+					touch($baseFilename.".html");
+				}
+
+				// Convert original image to a jpg
+				// $_exec = shell_exec(sprintf('convert %s %s 2>&1',
+				// 	escapeshellarg($originalFile), // input.ext
+				// 	escapeshellarg($baseFilename.".jpg") // output.jpg
+				// 	));
+
+				// Create an OCR'd pdf of the converted file
+				$_exec = shell_exec(sprintf('hocr2pdf -i %s -s -o %s < %s 2>&1',
+					escapeshellarg($baseFilename.".jpg"), // input.ext
+					escapeshellarg($baseFilename.".pdf"), // output.pdf
+					escapeshellarg($baseFilename.".html") // input.html
+					));
+
+				// remove the temporary jpg file
+				// unlink($baseFilename.".jpg");
+
+				// If the output of hocr2pdf is not "Writing unmodified DCT buffer." then there was an error
+				if (trim($_exec) !== 'Writing unmodified DCT buffer.') {
+					if (strpos($_exec,'Warning:') !== FALSE) {
+						errorHandle::newError("hocr2pdf Warning: ".$_exec, errorHandle::DEBUG);
+					}
+					else {
+						errorHandle::errorMsg("Failed to Create PDF: ".basename($filename,"jpg").".pdf");
+						throw new Exception("hocr2pdf Error: ".$_exec);
+					}
+				}
+
+				// Add this pdf to a temp file that will be read in by gs
+				file_put_contents($gsTemp, $baseFilename.".pdf".PHP_EOL, FILE_APPEND);
+
+				// We're done with this file, delete it
+				unlink($baseFilename.".html");
+			}
+
+			// Combine all PDF files in directory
+			$_exec = shell_exec(sprintf('gs -sDEVICE=pdfwrite -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=%s @%s 2>&1',
+				self::getSaveDir($assetsID,'combine')."combined.pdf",
+				$gsTemp
+			));
+
+			// If the output of gs is not empty, then there was an error
+			if (!is_empty($_exec)) {
+				errorHandle::errorMsg("Failed to combine PDFs into single PDF.");
+				throw new Exception("GhostScript Error: ".$_exec);
+			}
+
+			$return[] = array(
+				'name'   => 'combined.pdf',
+				'path'   => self::getSaveDir($assetsID,'combine',FALSE),
+				'size'   => filesize(self::getSaveDir($assetsID,'combine').'combined.pdf'),
+				'type'   => 'application/pdf',
+				'errors' => $errors,
+			);
+
+			// Lastly, we delete our temp working dir (always nice to cleanup after yourself)
+			// if (self::cleanupTempDirectory($tmpDir) === FALSE) {
+			// 	errorHandle::errorMsg("Unable to clean up temporary directory: ".$tmpDir);
+			// 	throw new Exception("Unable to clean up temporary directory: ".$tmpDir);
+			// }
+
+			// Remove all pdf files in the temp directory
+			$files = scandir($tmpDir);
+
+			// filter out any non-pdf files
+			foreach ($files as $file) {
+				if (substr($file, -4) == '.pdf') {
+					unlink($tmpDir.DIRECTORY_SEPARATOR.$file);
+				}
+			}
+
+			return $return;
+		}
+		catch (Exception $e) {
+			// We need to delete our working dir
+			if (isset($tmpDir) && is_dir($tmpDir)) {
+				if (self::cleanupTempDirectory($tmpDir) === FALSE) {
+					errorHandle::errorMsg("Unable to clean up temporary directory (in Exception): ".$tmpDir);
+				}
+			}
+			throw new Exception($e->getMessage(), $e->getCode(), $e);
+			return FALSE;
+		}
+	}	
+
 	private static function createOCRFiles($originalFiles, $originalsFilepath, $assetsID, $tmpDir, $options) {
 		$saveDir = self::getSaveDir($assetsID, 'ocr');
 		// clear out the directory ensure no previous files are left
@@ -1554,13 +1709,6 @@ class files {
 			);
 	}
 
-	private static function shouldCombineFiles($options) {
-		if (isset($options['combine']) && str2bool($options['combine'])) {
-			return TRUE;
-		}
-		return FALSE;
-	}
-
 	private static function clearTempDir($tmpDir) {
 		// Clear out the temp directory
 		$files = scandir($tmpDir);
@@ -1569,161 +1717,6 @@ class files {
 			unlink($tmpDir.DIRECTORY_SEPARATOR.$file);
 		}
 		rmdir($tmpDir);
-	}
-
-	private static function combineFiles($originalFiles, $originalsFilepath, $assetsID, $tmpDir, $options) {
-		$saveBase = mfcs::config('convertedPath');
-
-		try {
-			$errors      = array();
-			$createThumb = TRUE;
-
-			// // Create us some temp working space
-			// $tmpDir = mfcs::config('mfcstmp').DIRECTORY_SEPARATOR.uniqid();
-			// mkdir($tmpDir,0777,TRUE);
-
-			// Ensure that the HOCR file is created
-			if (!self::createHOCR("$saveBase/hocr.cfg")) return FALSE;
-
-			$gsTemp = $tmpDir.DIRECTORY_SEPARATOR.uniqid();
-			touch($gsTemp);
-
-			foreach ($originalFiles as $filename) {
-
-				// Figure some stuff out about the file
-				$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
-				$_filename    = pathinfo($originalFile);
-				$filename     = $_filename['filename'];
-
-
-				$baseFilename = $tmpDir.DIRECTORY_SEPARATOR.$filename;
-
-				// Create a thumbnail of the first image
-				if ($createThumb === TRUE) {
-
-					if (($return[] = self::createThumbnail($originalFile,$filename,$options,$assetsID,TRUE)) === FALSE) {
-						throw new Exception("Failed to create thumbnail: ".$filename);
-					}
-
-					// Prevent making multiple thumbnails
-					$createThumb = FALSE;
-				}
-
-				// Create a temporary jpg file of the original file
-				// $_exec = shell_exec(sprintf('convert %s %s 2>&1',
-				// 	escapeshellarg($originalFile), // input.ext
-				// 	escapeshellarg($baseFilename.".jpg") // output.jpg
-				// 	));
-
-				// perform hOCR on the temporary jpg file which gets stored in combined as an HTML file
-				$_exec = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
-					escapeshellarg($baseFilename.".jpg"), // input.ext
-					escapeshellarg($baseFilename), // output.html
-					escapeshellarg("$saveBase/hocr.cfg") // hocr config file
-					));
-
-				// remove the temporary jpg file
-				// unlink($baseFilename.".jpg");
-
-				// perform hOCR on the original uploaded file which gets stored in combined as an HTML file
-				// $_exec = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
-				// 	escapeshellarg($originalFile), // input.ext
-				// 	escapeshellarg($baseFilename), // output.html
-				// 	escapeshellarg("$saveBase/hocr.cfg") // hocr config file
-				// 	));
-
-				// If a new-line char is in the output, assume it's an error
-				// Tesseract failed, let's normalize the image and try again
-				if (strpos(trim($_exec), "\n") !== FALSE) {
-					$errors[] = "Unable to process OCR for ".basename($originalFile).". Continuing&hellip;";
-					errorHandle::warningMsg("Unable to process OCR for ".basename($originalFile).". Continuing&hellip;");
-
-					// Ensure HTML file exists
-					touch($baseFilename.".html");
-				}
-
-				// Convert original image to a jpg
-				// $_exec = shell_exec(sprintf('convert %s %s 2>&1',
-				// 	escapeshellarg($originalFile), // input.ext
-				// 	escapeshellarg($baseFilename.".jpg") // output.jpg
-				// 	));
-
-				// Create an OCR'd pdf of the converted file
-				$_exec = shell_exec(sprintf('hocr2pdf -i %s -s -o %s < %s 2>&1',
-					escapeshellarg($baseFilename.".jpg"), // input.ext
-					escapeshellarg($baseFilename.".pdf"), // output.pdf
-					escapeshellarg($baseFilename.".html") // input.html
-					));
-
-				// remove the temporary jpg file
-				// unlink($baseFilename.".jpg");
-
-				// If the output of hocr2pdf is not "Writing unmodified DCT buffer." then there was an error
-				if (trim($_exec) !== 'Writing unmodified DCT buffer.') {
-					if (strpos($_exec,'Warning:') !== FALSE) {
-						errorHandle::newError("hocr2pdf Warning: ".$_exec, errorHandle::DEBUG);
-					}
-					else {
-						errorHandle::errorMsg("Failed to Create PDF: ".basename($filename,"jpg").".pdf");
-						throw new Exception("hocr2pdf Error: ".$_exec);
-					}
-				}
-
-				// Add this pdf to a temp file that will be read in by gs
-				file_put_contents($gsTemp, $baseFilename.".pdf".PHP_EOL, FILE_APPEND);
-
-				// We're done with this file, delete it
-				unlink($baseFilename.".html");
-			}
-
-			// Combine all PDF files in directory
-			$_exec = shell_exec(sprintf('gs -sDEVICE=pdfwrite -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=%s @%s 2>&1',
-				self::getSaveDir($assetsID,'combine')."combined.pdf",
-				$gsTemp
-			));
-
-			// If the output of gs is not empty, then there was an error
-			if (!is_empty($_exec)) {
-				errorHandle::errorMsg("Failed to combine PDFs into single PDF.");
-				throw new Exception("GhostScript Error: ".$_exec);
-			}
-
-			$return[] = array(
-				'name'   => 'combined.pdf',
-				'path'   => self::getSaveDir($assetsID,'combine',FALSE),
-				'size'   => filesize(self::getSaveDir($assetsID,'combine').'combined.pdf'),
-				'type'   => 'application/pdf',
-				'errors' => $errors,
-			);
-
-			// Lastly, we delete our temp working dir (always nice to cleanup after yourself)
-			// if (self::cleanupTempDirectory($tmpDir) === FALSE) {
-			// 	errorHandle::errorMsg("Unable to clean up temporary directory: ".$tmpDir);
-			// 	throw new Exception("Unable to clean up temporary directory: ".$tmpDir);
-			// }
-
-			// Remove all pdf files in the temp directory
-			$files = scandir($tmpDir);
-
-			// filter out any non-pdf files
-			foreach ($files as $file) {
-				if (substr($file, -4) == '.pdf') {
-					unlink($tmpDir.DIRECTORY_SEPARATOR.$file);
-				}
-			}
-
-			return $return;
-		}
-		catch (Exception $e) {
-			// We need to delete our working dir
-			if (isset($tmpDir) && is_dir($tmpDir)) {
-				if (self::cleanupTempDirectory($tmpDir) === FALSE) {
-					errorHandle::errorMsg("Unable to clean up temporary directory (in Exception): ".$tmpDir);
-				}
-			}
-			throw new Exception($e->getMessage(), $e->getCode(), $e);
-			return FALSE;
-		}
 	}
 
 	private static function printImage($filename,$mimeType) {
