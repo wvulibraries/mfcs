@@ -865,12 +865,31 @@ class files {
 	
 		// Sort files in natural order
 		natcasesort($originalFiles);
+
+		// Create us some temp working space
+		$tmpDir = mfcs::config('mfcstmp').DIRECTORY_SEPARATOR.uniqid();
+		mkdir($tmpDir,0777,TRUE);
 	
 		try {
+
+			// if conbine is checked or ocr is checked we will generate temporary jpg files that both
+			// combine and ocr can use
+			if (isset($options['combine']) && str2bool($options['combine']) || isset($options['ocr']) && str2bool($options['ocr'])) {
+				self::convertTiffsToJPGs($originalFiles, $originalsFilepath, $tmpDir);
+			}
+
 			// If combine files is checked, read this image and add it to the combined object
 			if (isset($options['combine']) && str2bool($options['combine'])) {
-				$return['combine'] = self::combineFiles($originalFiles, $originalsFilepath, $assetsID, $options);				
+				$return['combine'] = self::combineFiles($originalFiles, $originalsFilepath, $assetsID, $tmpDir, $options);				
 			} // If Combine
+
+			// if ocr is checked, read the image and create an OCR text file
+			if (isset($options['ocr']) && str2bool($options['ocr'])) {
+				$return['ocr'] = self::createOCRFiles($originalFiles, $originalsFilepath, $assetsID, $tmpDir, $options);
+			} // If OCR
+
+			// clear all and remove the temp directory
+			self::clearTempDir($tmpDir);
 
 			// This conditional needs updated when different conversion options are added or removed.
 			// If the file has no processing to do, don't do any ...
@@ -929,12 +948,12 @@ class files {
 				}
 
 				// Create an OCR text file
-				if (isset($options['ocr']) && str2bool($options['ocr'])) {
-					if (($return['ocr'][] = self::createOCRTextFile($originalFile,$assetsID,$filename)) === FALSE) {
-						errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
-						throw new Exception("Failed to create OCR file for $filename");
-					}
-				}
+				// if (isset($options['ocr']) && str2bool($options['ocr'])) {
+				// 	if (($return['ocr'][] = self::createOCRTextFile($originalFile,$assetsID,$filename)) === FALSE) {
+				// 		errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
+				// 		throw new Exception("Failed to create OCR file for $filename");
+				// 	}
+				// }
 
 				// Convert Audio
 				if (isset($options['convertAudio']) && str2bool($options['convertAudio'])) {
@@ -1227,18 +1246,25 @@ class files {
         return $return;
 	}
 
-	public static function createOCRTextFile($originalFile, $assetsID, $filename){
+	// public static function createOCRTextFile($originalFile, $assetsID, $filename){
+	public static function createOCRTextFile($tmpDir, $assetsID, $filename){
+		// get the base filename
+		$basename = pathinfo($filename, PATHINFO_FILENAME);
+		
+		// set $baseFilename to the path of the temporary jpg file
+		$baseFilename = $tmpDir . DIRECTORY_SEPARATOR . $basename;
+
 		// set $baseFilename to the path of the original file
-		$baseFilename = pathinfo($originalFile, PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR . pathinfo($originalFile, PATHINFO_FILENAME);
+		// $baseFilename = pathinfo($originalFile, PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR . pathinfo($originalFile, PATHINFO_FILENAME);
 
 		// New TesseractOCR object
 		$tesseract = new TesseractOCR();
 
 		// Create a temporary jpg file of the original file
-		$_exec = shell_exec(sprintf('convert %s %s 2>&1',
-			escapeshellarg($originalFile), // input.ext
-			escapeshellarg($baseFilename.".jpg") // output.jpg
-			));
+		// $_exec = shell_exec(sprintf('convert %s %s 2>&1',
+		// 	escapeshellarg($originalFile), // input.ext
+		// 	escapeshellarg($baseFilename.".jpg") // output.jpg
+		// 	));
 	
 		try {
 			$text = $tesseract->recognize($baseFilename.".jpg");
@@ -1249,7 +1275,11 @@ class files {
 			}
 	
 			$saveDir = self::getSaveDir($assetsID, 'ocr');
-			$filePath = $saveDir . DIRECTORY_SEPARATOR . $filename . '.txt';
+
+			// get namename from $filename
+
+
+			$filePath = $saveDir . DIRECTORY_SEPARATOR . $basename . '.txt';
 			
 			if (file_put_contents($filePath, $text) === false) {
 
@@ -1257,15 +1287,15 @@ class files {
 			}
 	
 			$return['ocr'][] = array(
-				'name'   => $filename.'.txt',
+				'name'   => $basename.'.txt',
 				'path'   => self::getSaveDir($assetsID,'ocr',FALSE),
-				'size'   => filesize(self::getSaveDir($assetsID,'ocr').$filename.'.txt'),
-				'type'   => self::getMimeType(self::getSaveDir($assetsID,'ocr').$filename.'.txt'),
+				'size'   => filesize(self::getSaveDir($assetsID,'ocr').$basename.'.txt'),
+				'type'   => self::getMimeType(self::getSaveDir($assetsID,'ocr').$basename.'.txt'),
 				'errors' => '',
 			);
 
 			// remove the temporary jpg file
-			unlink($baseFilename.".jpg");
+			// unlink($baseFilename.".jpg");
 	
 			return $return; // Assuming you want to return some data after successful operation
 		} catch (Exception $e) {
@@ -1338,22 +1368,77 @@ class files {
 	}
 
 	public static function get_upload_directories() {
-
 		$return = "";
 
 		$upload_dirs = scandir(mfcs::config('ftpUploadDirectory'));
 		foreach ($upload_dirs as $directory) {
-			if (!is_dir(mfcs::config('ftpUploadDirectory')."/".$directory) || preg_match("/^\./",$directory)) continue;
+			if (!is_dir(mfcs::config('ftpUploadDirectory')."/".$directory) || preg_match("/^\./",$directory)) {
+				continue;
+			}
 
-			$return .= sprintf('<option value="%s">%s</option>',$directory,$directory);
-
+			$return .= sprintf('<option value="%s">%s</option>', $directory, $directory);
 		}
 
 		return $return;
-
 	}
 
 	// private functions for class
+	private static function createOCRFiles($originalFiles, $originalsFilepath, $assetsID, $tmpDir, $options) {
+		$saveDir = self::getSaveDir($assetsID, 'ocr');
+		// clear out the directory ensure no previous files are left
+		$files = scandir($saveDir);
+		foreach ($files as $file) {
+			if ($file == '.' || $file == '..') continue;
+			unlink($saveDir.DIRECTORY_SEPARATOR.$file);
+		}
+
+		// loop over each jpg file and create an OCR text file in the $tmpDir
+		$files = scandir($tmpDir);
+		// filter out any non-jpg files
+		$jpgFiles = array();
+		foreach ($files as $file) {
+			if (preg_match("/\.jpg$/", $file)) {
+				$jpgFiles[] = $file;
+			}
+		}
+
+		// var_dump($tmpDir);
+		// var_dump($jpgFiles);
+		
+		foreach ($jpgFiles as $filename) {
+			// $originalFile     = $originalFiles.DIRECTORY_SEPARATOR.$filename;
+			// $_filename        = pathinfo($originalFile);
+			// $filename         = $_filename['filename'];
+			// $thumbnailCreated = false;
+
+			// Create an OCR text file
+			// if (isset($options['ocr']) && str2bool($options['ocr'])) {
+				if (($return[] = self::createOCRTextFile($tmpDir,$assetsID,$filename)) === FALSE) {
+					errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
+					throw new Exception("Failed to create OCR file for $filename");
+				}
+			// }
+		}	
+		return $return;	
+	}	
+
+	private static function convertTiffsToJPGs($originalFiles, $originalsFilepath, $tmpDir) {
+		foreach ($originalFiles as $filename) {
+			// Figure some stuff out about the file
+			$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
+			$_filename    = pathinfo($originalFile);
+			$filename     = $_filename['filename'];
+
+			$baseFilename = $tmpDir.DIRECTORY_SEPARATOR.$filename;
+
+			// Create a temporary jpg file of the original file
+			$_exec = shell_exec(sprintf('convert %s %s 2>&1',
+				escapeshellarg($originalFile), // input.ext
+				escapeshellarg($baseFilename.".jpg") // output.jpg
+				));	
+		}	
+	}
+
 	private static function setProcessingState($rowID,$state) {
 
 		$sql       = sprintf("UPDATE `objectProcessing` SET `state`='%s' WHERE `ID`='%s'",
@@ -1402,7 +1487,6 @@ class files {
 	 * @return bool
 	 **/
 	private static function createThumbnail($originalFile,$filename,$options,$assetsID,$combined=FALSE) {
-
 		if ($originalFile instanceof Imagick) {
 			$image = $originalFile;
 		} else {
@@ -1417,7 +1501,7 @@ class files {
 
 		$assetsDirectory = ($combined != FALSE)? "combine" : 'thumbs';
 
-		$thumbname = (($combined != FALSE) ? "thumb" : $filename);
+		$thumbname = (($combined != FALSE) ? "thumb.jpg" : $filename);
 		$savePath  = self::getSaveDir($assetsID,$assetsDirectory).$thumbname;
 
 		// Make a copy of the original
@@ -1477,16 +1561,26 @@ class files {
 		return FALSE;
 	}
 
-	private static function combineFiles($originalFiles, $originalsFilepath, $assetsID, $options) {
+	private static function clearTempDir($tmpDir) {
+		// Clear out the temp directory
+		$files = scandir($tmpDir);
+		foreach ($files as $file) {
+			if ($file == '.' || $file == '..') continue;
+			unlink($tmpDir.DIRECTORY_SEPARATOR.$file);
+		}
+		rmdir($tmpDir);
+	}
+
+	private static function combineFiles($originalFiles, $originalsFilepath, $assetsID, $tmpDir, $options) {
 		$saveBase = mfcs::config('convertedPath');
 
 		try {
 			$errors      = array();
 			$createThumb = TRUE;
 
-			// Create us some temp working space
-			$tmpDir = mfcs::config('mfcstmp').DIRECTORY_SEPARATOR.uniqid();
-			mkdir($tmpDir,0777,TRUE);
+			// // Create us some temp working space
+			// $tmpDir = mfcs::config('mfcstmp').DIRECTORY_SEPARATOR.uniqid();
+			// mkdir($tmpDir,0777,TRUE);
 
 			// Ensure that the HOCR file is created
 			if (!self::createHOCR("$saveBase/hocr.cfg")) return FALSE;
@@ -1516,10 +1610,10 @@ class files {
 				}
 
 				// Create a temporary jpg file of the original file
-				$_exec = shell_exec(sprintf('convert %s %s 2>&1',
-					escapeshellarg($originalFile), // input.ext
-					escapeshellarg($baseFilename.".jpg") // output.jpg
-					));
+				// $_exec = shell_exec(sprintf('convert %s %s 2>&1',
+				// 	escapeshellarg($originalFile), // input.ext
+				// 	escapeshellarg($baseFilename.".jpg") // output.jpg
+				// 	));
 
 				// perform hOCR on the temporary jpg file which gets stored in combined as an HTML file
 				$_exec = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
@@ -1562,7 +1656,7 @@ class files {
 					));
 
 				// remove the temporary jpg file
-				unlink($baseFilename.".jpg");
+				// unlink($baseFilename.".jpg");
 
 				// If the output of hocr2pdf is not "Writing unmodified DCT buffer." then there was an error
 				if (trim($_exec) !== 'Writing unmodified DCT buffer.') {
@@ -1603,9 +1697,19 @@ class files {
 			);
 
 			// Lastly, we delete our temp working dir (always nice to cleanup after yourself)
-			if (self::cleanupTempDirectory($tmpDir) === FALSE) {
-				errorHandle::errorMsg("Unable to clean up temporary directory: ".$tmpDir);
-				throw new Exception("Unable to clean up temporary directory: ".$tmpDir);
+			// if (self::cleanupTempDirectory($tmpDir) === FALSE) {
+			// 	errorHandle::errorMsg("Unable to clean up temporary directory: ".$tmpDir);
+			// 	throw new Exception("Unable to clean up temporary directory: ".$tmpDir);
+			// }
+
+			// Remove all pdf files in the temp directory
+			$files = scandir($tmpDir);
+
+			// filter out any non-pdf files
+			foreach ($files as $file) {
+				if (substr($file, -4) == '.pdf') {
+					unlink($tmpDir.DIRECTORY_SEPARATOR.$file);
+				}
 			}
 
 			return $return;
