@@ -898,44 +898,14 @@ class files {
 
 				// Convert uploaded files into some ofhter size/format/etc
 				if (self::shouldConvertFiles($options)) {
-					// we create the Imagick object here so that we can pass it to thumbnail creation
-					$image = new Imagick();
-
-					if(substr($originalFile, -4) == '.pdf'){
-						$image->readImage($originalFile."[0]");
-					} else 	{
-						$image->readImage($originalFile);
-					}
-					// Convert it
-					if (($image = self::convertImage($image,$options,$assetsID,$filename)) === FALSE) {
-						throw new Exception("Failed to create processed image: ".$originalFile);
-					}
-
-					$filename = $filename.'.'.strtolower($image->getImageFormat());
-
-					// Create a thumbnail that includes converted options
-					if (self::shouldCreateThumbnail($options)) {
-						if (($return['thumbs'][] = self::createThumbnail($image,$filename,$options,$assetsID)) === FALSE) {
-							throw new Exception("Failed to create thumbnail: ".$filename);
-						}
-						$thumbnailCreated = true;
-					}
-
-					// Set the return array
-					$return['processed'][] = array(
-						'name'   => $filename,
-						'path'   => self::getSaveDir($assetsID,'processed',FALSE),
-						'size'   => filesize(self::getSaveDir($assetsID,'processed').$filename),
-						'type'   => self::getMimeType(self::getSaveDir($assetsID,'processed').$filename),
-						'errors' => '',
-					);
+					$result = processFile($originalFile, $filename, $assetsID, $options, $thumbnailCreated);
+					$thumbnailCreated = $result['thumbnailCreated'];
+					$return['processed'][] = $result['file'];
 				}
 	
 			    // Create a thumbnail without any conversions
 				if (self::shouldCreateThumbnail($options) && ($thumbnailCreated === false)) {
-					if (($return['thumbs'][] = self::createThumbnail($originalFile,$filename,$options,$assetsID)) === FALSE) {
-						throw new Exception("Failed to create thumbnail: ".$filename);
-					}
+					$return['thumbs'][] = self::createThumbnail($originalFile,$filename,$options,$assetsID);
 				}
 
 				// Convert Audio
@@ -1365,6 +1335,49 @@ class files {
 	}
 
 	// private functions for class
+	private static function processFile($originalFile, $filename, $assetsID, $options, $thumbnailCreated = false) {
+		// we create the Imagick object here so that we can pass it to thumbnail creation
+		$image = new Imagick();
+
+		if(substr($originalFile, -4) == '.pdf'){
+			$image->readImage($originalFile."[0]");
+		} else 	{
+			$image->readImage($originalFile);
+		}
+		// Convert it
+		if (($image = self::convertImage($image,$options,$assetsID,$filename)) === FALSE) {
+			throw new Exception("Failed to create processed image: ".$originalFile);
+		}
+
+		$filename = $filename.'.'.strtolower($image->getImageFormat());
+
+		// Create a thumbnail that includes converted options
+		if (self::shouldCreateThumbnail($options)) {
+			if (($return['thumbs'][] = self::createThumbnail($image,$filename,$options,$assetsID)) === FALSE) {
+				throw new Exception("Failed to create thumbnail: ".$filename);
+			}
+			$thumbnailCreated = true;
+		}
+
+		// Set the return array
+		$return = array();
+
+		// Store the file information
+		$return['file'] = array(
+			'name'   => $filename,
+			'path'   => self::getSaveDir($assetsID,'processed',FALSE),
+			'size'   => filesize(self::getSaveDir($assetsID,'processed').$filename),
+			'type'   => self::getMimeType(self::getSaveDir($assetsID,'processed').$filename),
+			'errors' => '',
+		);
+
+		// Store the thumbnail creation status
+		$return['thumbnailCreated'] = $thumbnailCreated;
+
+		// Return the array
+		return $return;
+	}
+
 	private static function createTemporaryDirectory() {
 		$tmpDir = mfcs::config('mfcstmp') . DIRECTORY_SEPARATOR . uniqid();
 		mkdir($tmpDir, 0777, TRUE);
