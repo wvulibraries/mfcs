@@ -898,7 +898,7 @@ class files {
 
 				// Convert uploaded files into some ofhter size/format/etc
 				if (self::shouldConvertFiles($options)) {
-					$result = processFile($originalFile, $filename, $assetsID, $options, $thumbnailCreated);
+					$result = self::processFile($originalFile, $filename, $assetsID, $options, $thumbnailCreated);
 					$thumbnailCreated = $result['thumbnailCreated'];
 					$return['processed'][] = $result['file'];
 				}
