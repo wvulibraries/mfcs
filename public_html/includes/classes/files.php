@@ -11,7 +11,6 @@ class files {
 	private static $insertFieldNames = array();
 	private static $fixity_files     = array();
 
-
 	public static function errorOldProcessingJobs() {
 
 		$oldDate = time() - 604800;
@@ -850,14 +849,7 @@ class files {
 		$originalFiles = self::getFilteredOriginalFiles($originalsFilepath);
 	
 		// Setup return array
-		$return = array(
-			'processed' => array(),
-			'combine'   => array(),
-			'thumbs'    => array(),
-			'ocr'       => array(),
-			'video'     => array(),
-			'videoThumbs' => array()			
-		);
+		$return = self::initializeReturnArray();
 	
 		// If there are no files to process, return true
 		if (empty($originalFiles)) {
@@ -868,8 +860,7 @@ class files {
 		natcasesort($originalFiles);
 
 		// Create us some temp working space
-		$tmpDir = mfcs::config('mfcstmp').DIRECTORY_SEPARATOR.uniqid();
-		mkdir($tmpDir,0777,TRUE);
+		$tmpDir = self::createTemporaryDirectory();
 	
 		try {
 			// if conbine is checked or ocr is checked we will generate temporary jpg files that both
@@ -889,7 +880,7 @@ class files {
 			} // If OCR
 
 			// clear all temporary jpg files and remove the temp directory
-			self::clearTempDir($tmpDir);
+			self::cleanupTempDirectory($tmpDir);
 
 			// This conditional needs updated when different conversion options are added or removed.
 			// If the file has no processing to do, don't do any ...
@@ -1238,7 +1229,6 @@ class files {
         return $return;
 	}
 
-	// public static function createOCRTextFile($originalFile, $assetsID, $filename){
 	public static function createOCRTextFile($tmpDir, $assetsID, $filename){
 		// get the base filename
 		$basename = pathinfo($filename, PATHINFO_FILENAME);
@@ -1375,6 +1365,12 @@ class files {
 	}
 
 	// private functions for class
+	private static function createTemporaryDirectory() {
+		$tmpDir = mfcs::config('mfcstmp') . DIRECTORY_SEPARATOR . uniqid();
+		mkdir($tmpDir, 0777, TRUE);
+		return $tmpDir;
+	}
+
 	private static function shouldCreateOCRFile($options) {
 		return isset($options['ocr']) && str2bool($options['ocr']);
 	}
@@ -1389,10 +1385,6 @@ class files {
 		try {
 			$errors      = array();
 			$createThumb = TRUE;
-
-			// // Create us some temp working space
-			// $tmpDir = mfcs::config('mfcstmp').DIRECTORY_SEPARATOR.uniqid();
-			// mkdir($tmpDir,0777,TRUE);
 
 			// Ensure that the HOCR file is created
 			if (!self::createHOCR("$saveBase/hocr.cfg")) return FALSE;
@@ -1421,28 +1413,12 @@ class files {
 					$createThumb = FALSE;
 				}
 
-				// Create a temporary jpg file of the original file
-				// $_exec = shell_exec(sprintf('convert %s %s 2>&1',
-				// 	escapeshellarg($originalFile), // input.ext
-				// 	escapeshellarg($baseFilename.".jpg") // output.jpg
-				// 	));
-
 				// perform hOCR on the temporary jpg file which gets stored in combined as an HTML file
 				$_exec = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
 					escapeshellarg($baseFilename.".jpg"), // input.ext
 					escapeshellarg($baseFilename), // output.html
 					escapeshellarg("$saveBase/hocr.cfg") // hocr config file
 					));
-
-				// remove the temporary jpg file
-				// unlink($baseFilename.".jpg");
-
-				// perform hOCR on the original uploaded file which gets stored in combined as an HTML file
-				// $_exec = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
-				// 	escapeshellarg($originalFile), // input.ext
-				// 	escapeshellarg($baseFilename), // output.html
-				// 	escapeshellarg("$saveBase/hocr.cfg") // hocr config file
-				// 	));
 
 				// If a new-line char is in the output, assume it's an error
 				// Tesseract failed, let's normalize the image and try again
@@ -1454,21 +1430,12 @@ class files {
 					touch($baseFilename.".html");
 				}
 
-				// Convert original image to a jpg
-				// $_exec = shell_exec(sprintf('convert %s %s 2>&1',
-				// 	escapeshellarg($originalFile), // input.ext
-				// 	escapeshellarg($baseFilename.".jpg") // output.jpg
-				// 	));
-
 				// Create an OCR'd pdf of the converted file
 				$_exec = shell_exec(sprintf('hocr2pdf -i %s -s -o %s < %s 2>&1',
 					escapeshellarg($baseFilename.".jpg"), // input.ext
 					escapeshellarg($baseFilename.".pdf"), // output.pdf
 					escapeshellarg($baseFilename.".html") // input.html
 					));
-
-				// remove the temporary jpg file
-				// unlink($baseFilename.".jpg");
 
 				// If the output of hocr2pdf is not "Writing unmodified DCT buffer." then there was an error
 				if (trim($_exec) !== 'Writing unmodified DCT buffer.') {
@@ -1507,12 +1474,6 @@ class files {
 				'type'   => 'application/pdf',
 				'errors' => $errors,
 			);
-
-			// Lastly, we delete our temp working dir (always nice to cleanup after yourself)
-			// if (self::cleanupTempDirectory($tmpDir) === FALSE) {
-			// 	errorHandle::errorMsg("Unable to clean up temporary directory: ".$tmpDir);
-			// 	throw new Exception("Unable to clean up temporary directory: ".$tmpDir);
-			// }
 
 			// Remove all pdf files in the temp directory
 			$files = scandir($tmpDir);
@@ -1709,15 +1670,19 @@ class files {
 			);
 	}
 
-	private static function clearTempDir($tmpDir) {
-		// Clear out the temp directory
-		$files = scandir($tmpDir);
-		foreach ($files as $file) {
-			if ($file == '.' || $file == '..') continue;
-			unlink($tmpDir.DIRECTORY_SEPARATOR.$file);
+	private static function cleanupTempDirectory($tmpDir) {
+		if (!is_dir($tmpDir) || !is_writable($tmpDir)) {
+			return false;
 		}
-		rmdir($tmpDir);
-	}
+
+		foreach (glob("$tmpDir/*") as $file) {
+			if (!unlink($file)) {
+				return false;
+			}
+		}
+
+		return rmdir($tmpDir);
+	}	
 
 	private static function printImage($filename,$mimeType) {
 		$tmpName = tempnam(mfcs::config('mfcstmp'), 'mfcs').".jpeg";
@@ -1738,17 +1703,15 @@ class files {
 		});
 	}
 
-	private static function cleanupTempDirectory($tmpDir) {
-		if (!is_dir($tmpDir) || !is_writable($tmpDir)) {
-			return false;
-		}
-
-		foreach (glob("$tmpDir/*") as $file) {
-			if (!unlink($file)) {
-				return false;
-			}
-		}
-
-		return rmdir($tmpDir);
-	}
+	private static function initializeReturnArray() {
+		return array(
+			'processed' => array(),
+			'combine' => array(),
+			'thumbs' => array(),
+			'ocr' => array(),
+			'audio'     => array(),
+			'video'     => array(),
+			'videoThumbs' => array(),			
+		);
+	}	
 }
