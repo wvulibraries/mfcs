@@ -897,7 +897,7 @@ class files {
 				$thumbnailCreated = false;
 
 				// Convert uploaded files into some ofhter size/format/etc
-				if (isset($options['convert']) && str2bool($options['convert'])) {
+				if (self::shouldConvertFiles($options)) {
 					// we create the Imagick object here so that we can pass it to thumbnail creation
 					$image = new Imagick();
 
@@ -914,7 +914,7 @@ class files {
 					$filename = $filename.'.'.strtolower($image->getImageFormat());
 
 					// Create a thumbnail that includes converted options
-					if (isset($options['thumbnail']) && str2bool($options['thumbnail'])) {
+					if (self::shouldCreateThumbnail($options)) {
 						if (($return['thumbs'][] = self::createThumbnail($image,$filename,$options,$assetsID)) === FALSE) {
 							throw new Exception("Failed to create thumbnail: ".$filename);
 						}
@@ -932,14 +932,14 @@ class files {
 				}
 	
 			    // Create a thumbnail without any conversions
-				if (isset($options['thumbnail']) && str2bool($options['thumbnail']) && ($thumbnailCreated === false)) {
+				if (self::shouldCreateThumbnail($options) && ($thumbnailCreated === false)) {
 					if (($return['thumbs'][] = self::createThumbnail($originalFile,$filename,$options,$assetsID)) === FALSE) {
 						throw new Exception("Failed to create thumbnail: ".$filename);
 					}
 				}
 
 				// Convert Audio
-				if (isset($options['convertAudio']) && str2bool($options['convertAudio'])) {
+				if (self::shouldConvertAudio($options)) {	
 					$convertAudio =  self::convertAudio($assetsID, $filename, $originalFile, $options);
 					if(isset($convertAudio['error'])){
 						throw new Exception('Failed to convert audio:'.$convertAudio['errror']);
@@ -949,7 +949,7 @@ class files {
 				}
 
 				// Convert Video
-				if (isset($options['convertVideo']) && str2bool($options['convertVideo'])) {
+				if (self::shouldConvertVideo($options)) {	
 					$convertVideo =  self::convertVideo($assetsID, $filename, $originalFile, $options);
 					if($convertVideo['errors']){
 						throw new Exception($convertVideo['errors']);
@@ -959,7 +959,7 @@ class files {
 				}
 
 				// Video Thumbnails
-				if (isset($options['videothumbnail']) && str2bool($options['videothumbnail'])) {
+				if (self::shouldCreateVideoThumbnails($options)) {	
 					$createThumbs =  self::createVideoThumbs($assetsID, $filename, $originalFile, $options);
 					if(isset($createThumbs['errors'])){
 						throw new Exception('Failed to create video thumbnails');
@@ -1371,8 +1371,28 @@ class files {
 		return $tmpDir;
 	}
 
+	private static function shouldConvertFiles($options) {
+		return isset($options['convert']) && str2bool($options['convert']);
+	}	
+
+	private static function shouldCreateThumbnail($options) {
+		return isset($options['thumbnail']) && str2bool($options['thumbnail']);
+	}	
+
 	private static function shouldCreateOCRFile($options) {
 		return isset($options['ocr']) && str2bool($options['ocr']);
+	}
+
+	private static function shouldConvertAudio($options) {
+		return isset($options['convertAudio']) && str2bool($options['convertAudio']);
+	}
+	
+	private static function shouldConvertVideo($options) {
+		return isset($options['convertVideo']) && str2bool($options['convertVideo']);
+	}
+	
+	private static function shouldCreateVideoThumbnails($options) {
+		return isset($options['videothumbnail']) && str2bool($options['videothumbnail']);
 	}
 
 	private static function shouldCombineFiles($options) {
