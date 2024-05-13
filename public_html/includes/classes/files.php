@@ -185,6 +185,21 @@ class files {
 			self::setProcessingState($row['ID'], 2);
 
 			$object = objects::get($row['objectID'], true);
+
+			// check $object['data'][$row['fieldName']] and make sure it's an array if not there
+			// is a problem with the object and we should set the state to 3
+			// field may not be populated even though it exists on the form.
+			if (!isset($object['data'][$row['fieldName']])) {
+				self::setProcessingState($row['ID'], 3);
+				continue;
+			}
+
+			// if no files are uploaded, set the state to 3
+			if ($object['data'][$row['fieldName']]['files'] == null) {
+				self::setProcessingState($row['ID'], 3);
+				continue;
+			}
+
 			$files = $object['data'][$row['fieldName']];
 			$assetsID = $files['uuid'];
 			$fieldOptions = forms::getField($object['formID'], $row['fieldName']);
@@ -900,7 +915,12 @@ class files {
 				if (self::shouldConvertFiles($options)) {
 					$result = self::processFile($originalFile, $filename, $assetsID, $options, $thumbnailCreated);
 					$thumbnailCreated = $result['thumbnailCreated'];
-					$return['processed'][] = $result['file'];
+					$return['processed'][] = $result['processed'];
+
+					// If the thumbnail was created, add it to the return array
+					if ($thumbnailCreated) {
+						$return['thumbs'][] = $result['thumbs'];
+					}
 				}
 	
 			    // Create a thumbnail without any conversions
@@ -910,7 +930,7 @@ class files {
 
 				// Convert Audio
 				if (self::shouldConvertAudio($options)) {	
-					$convertAudio =  self::convertAudio($assetsID, $filename, $originalFile, $options);
+					$convertAudio = self::convertAudio($assetsID, $filename, $originalFile, $options);
 					if(isset($convertAudio['error'])){
 						throw new Exception('Failed to convert audio:'.$convertAudio['errror']);
 					} else {
@@ -1074,66 +1094,64 @@ class files {
 	}
 
 	public static function createVideoThumbs($assetsID, $name, $originalFile, $options){
-		try{
-            $ffmpeg        = new FFmpeg();
-            $inputFile     = $ffmpeg->input($originalFile);
-            $uploadedVideo = $ffmpeg->getMetadata();
-
-
-            // Removes Error Logs and sets strict file conversions
-            // ----------------------------------------------------------------------
-            $ffmpeg->set('-strict', '-2');
-            $ffmpeg->logLevel('quiet');
-
-            // Get Thumbnail Information
-            // ----------------------------------------------------------------------
-            $numberOfThumbnails = $options['videoThumbFrames'];
-            $thumbSize          = $options['videoThumbWidth']."x".$options['videoThumbHeight'];
-            $thumbFormat        = $options['videoFormatThumb'];
-            $path               = self::getSaveDir($assetsID,'thumbnails');
-
-            // Create number to use as intervals for time caputers
-            // ----------------------------------------------------------------------
-            $timeOfCap          = floor($uploadedVideo['duration'] / $numberOfThumbnails);
-
-            if(!is_dir($path)){
-                throw new Exception("Thumbnail directory is not setup.");
-            }
-
-            // Loop through and save file information
-            // ----------------------------------------------------------------------
-            for($i = 0; $i < $numberOfThumbnails; $i++){
-                $thumbName = $name."_$i";
-                $time = $timeOfCap * $i;
-
-                if($time == 0){
-                    $time = 1; // need to start at frame 1
-                }
-
-                $ffmpeg->thumb($thumbSize, $time)->output($path.$thumbName.$thumbFormat);
-                $conversion = $ffmpeg->ready();
-
-				$return[] = array(
-					'name'   => $name.'.'.$format,
-					'path'   => self::getSaveDir($assetsID,'videoThumbs',FALSE),
-					'size'   => filesize(self::getSaveDir($assetsID,'videoThumbs').$thumbName.$thumbFormat),
-					'type'   => self::getMimeType(self::getSaveDir($assetsID,'videoThumbs').$thumbName.$thumbFormat),
+		$return = array(); // Initialize return array
+	
+		try {
+			$ffmpeg = new FFmpeg();
+			$inputFile = $ffmpeg->input($originalFile);
+			$uploadedVideo = $ffmpeg->getMetadata();
+	
+			// Set FFmpeg options
+			$ffmpeg->set('-strict', '-2')->logLevel('quiet');
+	
+			// Determine thumbnail parameters
+			$numberOfThumbnails = isset($options['videoThumbFrames']) && !empty($options['videoThumbFrames']) ? $options['videoThumbFrames'] : 1;
+			$thumbWidth = isset($options['videoThumbWidth']) && !empty($options['videoThumbWidth']) ? $options['videoThumbWidth'] : 150;
+			$thumbHeight = isset($options['videoThumbHeight']) && !empty($options['videoThumbHeight']) ? $options['videoThumbHeight'] : 150;
+			$thumbSize = $thumbWidth . "x" . $thumbHeight;
+			$thumbFormat = isset($options['videoFormatThumb']) && !empty($options['videoFormatThumb']) ? $options['videoFormatThumb'] : "jpg";
+	
+			// Prepare directory for thumbnails
+			$path = self::getSaveDir($assetsID, 'videoThumbs');
+			if (!is_dir($path)) {
+				throw new Exception("Thumbnail directory is not set up.");
+			}
+	
+			// Calculate time intervals for thumbnail capture
+			$timeOfCap = floor($uploadedVideo['duration'] / $numberOfThumbnails);
+	
+			// Loop through and generate thumbnails
+			for ($i = 0; $i < $numberOfThumbnails; $i++) {
+				$thumbName = $name . "_$i";
+				$time = $timeOfCap * $i;
+				if ($time == 0) {
+					$time = 1; // Start at frame 1
+				}
+	
+				$ffmpeg->thumb($thumbSize, $time)->output($path . $thumbName . '.' . $thumbFormat);
+				$conversion = $ffmpeg->ready();
+	
+				// Add thumbnail info to return array
+				$return[] = [
+					'name' => $name . '.' . $thumbFormat,
+					'path' => self::getSaveDir($assetsID, 'videoThumbs', false),
+					'size' => filesize(self::getSaveDir($assetsID, 'videoThumbs') . $thumbName . '.' . $thumbFormat),
+					'type' => self::getMimeType(self::getSaveDir($assetsID, 'videoThumbs') . $thumbName . '.' . $thumbFormat),
 					'errors' => '',
-				);
-
-                if($conversion !== 0){
-                    throw new Exception('Could not make thumbs: ' . $ffmpeg->command);
-                }
-            }
-        } catch (Exception $e) {
-            errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
-            errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::DEBUG);
-
-            return array('errors' => $e->getMessage());
-        }
-
-        return $return;
-    }
+				];
+	
+				if ($conversion !== 0) {
+					throw new Exception('Could not generate thumbnails: ' . $ffmpeg->command);
+				}
+			}
+		} catch (Exception $e) {
+			errorHandle::newError(__METHOD__ . "() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
+			errorHandle::newError(__METHOD__ . "() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::DEBUG);
+			return ['errors' => $e->getMessage()];
+		}
+	
+		return $return;
+	}	
 
 	public static function convertAudio($assetsID, $name, $originalFile, $options){
         try{
@@ -1336,6 +1354,9 @@ class files {
 
 	// private functions for class
 	private static function processFile($originalFile, $filename, $assetsID, $options, $thumbnailCreated = false) {
+		// Set the return array
+		$return = array();
+
 		// we create the Imagick object here so that we can pass it to thumbnail creation
 		$image = new Imagick();
 
@@ -1353,17 +1374,14 @@ class files {
 
 		// Create a thumbnail that includes converted options
 		if (self::shouldCreateThumbnail($options)) {
-			if (($return['thumbs'][] = self::createThumbnail($image,$filename,$options,$assetsID)) === FALSE) {
+			if (($return['thumbs'] = self::createThumbnail($image,$filename,$options,$assetsID)) === FALSE) {
 				throw new Exception("Failed to create thumbnail: ".$filename);
 			}
 			$thumbnailCreated = true;
 		}
 
-		// Set the return array
-		$return = array();
-
 		// Store the file information
-		$return['file'] = array(
+		$return['processed'] = array(
 			'name'   => $filename,
 			'path'   => self::getSaveDir($assetsID,'processed',FALSE),
 			'size'   => filesize(self::getSaveDir($assetsID,'processed').$filename),
@@ -1438,7 +1456,7 @@ class files {
 				// Create a thumbnail of the first image
 				if ($createThumb === TRUE) {
 
-					if (($return[] = self::createThumbnail($originalFile,$filename,$options,$assetsID,TRUE)) === FALSE) {
+					if (($return['thumbs'][] = self::createThumbnail($originalFile,$filename,$options,$assetsID,TRUE)) === FALSE) {
 						throw new Exception("Failed to create thumbnail: ".$filename);
 					}
 
@@ -1550,23 +1568,12 @@ class files {
 				$jpgFiles[] = $file;
 			}
 		}
-
-		// var_dump($tmpDir);
-		// var_dump($jpgFiles);
 		
 		foreach ($jpgFiles as $filename) {
-			// $originalFile     = $originalFiles.DIRECTORY_SEPARATOR.$filename;
-			// $_filename        = pathinfo($originalFile);
-			// $filename         = $_filename['filename'];
-			// $thumbnailCreated = false;
-
-			// Create an OCR text file
-			// if (isset($options['ocr']) && str2bool($options['ocr'])) {
-				if (($return[] = self::createOCRTextFile($tmpDir,$assetsID,$filename)) === FALSE) {
-					errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
-					throw new Exception("Failed to create OCR file for $filename");
-				}
-			// }
+			if (($return[] = self::createOCRTextFile($tmpDir,$assetsID,$filename)) === FALSE) {
+				errorHandle::errorMsg("Failed to create OCR text file: ".$filename);
+				throw new Exception("Failed to create OCR file for $filename");
+			}
 		}	
 		return $return;	
 	}	
