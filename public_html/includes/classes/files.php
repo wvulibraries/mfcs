@@ -326,9 +326,8 @@ class files {
    	 	$suffixes = array('', 'KB', 'MB', 'GB', 'TB');
     	return round(pow(1024, $base - floor($base)), $precision) . " " . $suffixes[floor($base)];
 	}
-
+	
 	public static function buildFilesPreview($objectID,$fieldName=NULL){
-
 		if (objects::validID(TRUE,$objectID) === FALSE) {
 			return FALSE;
 		}
@@ -358,13 +357,21 @@ class files {
 			$assetsID      = $fileDataArray['uuid'];
 			$fileLIs       = array();
 
-			uasort($fileDataArray['files']['archive'],function($a,$b) { return strnatcasecmp($a['name'],$b['name']); });
+			// Check if $fileDataArray['files']['archive'] is an array before sorting
+			if (isset($fileDataArray['files']['archive']) && is_array($fileDataArray['files']['archive'])) {
+				uasort($fileDataArray['files']['archive'], function ($a, $b) {
+					return strnatcasecmp($a['name'], $b['name']);
+				});
+			} else {
+				// Handle the case when $fileDataArray['files']['archive'] is not an array
+				// Log an error and continue to the next iteration
+				error_log('Error: $fileDataArray[\'files\'][\'archive\'] is not an array or is null.');
+				continue;
+			}
 
 			foreach($fileDataArray['files']['archive'] as $fileID => $file){
-
 				$_filename = pathinfo($file['name']);
 				$filename  = $_filename['filename'];
-				$icon      = "";
 				$links     = array();
 				$type 	   = explode('/', $file['type']);
 
@@ -375,53 +382,13 @@ class files {
 				$extraFileInfo = $fi->file($filePathFull);
 				$filesize      = self::formatBytes($filesize);
 
-				$sql       = sprintf("SELECT `checksum`, `pass`, `lastChecked` FROM `filesChecks` WHERE `location`='%s'",$file['path'].DIRECTORY_SEPARATOR.$file['name']);
-				$sqlResult_cs = mfcs::$engine->openDB->query($sql);
-
-				if (!$sqlResult_cs['result']) {
-					errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
-					return FALSE;
-				}
-
-				$row_cs   = mysql_fetch_array($sqlResult_cs['result'],  MYSQL_ASSOC);
-				$checksum = (isnull($row_cs['checksum']))?"Not Available":$row_cs['checksum'];
-				if (isnull($row_cs['lastChecked'])) {
-					$checksum_pass_class = "checksum_not_checked";
-				}
-				else if ($row_cs['pass'] == "0") {
-					$checksum_pass_class = "checksum_fail";
-				}
-				else {
-					$checksum_pass_class = "checksum_pass";
-				}
-
+				// Get the checksum information
+				$checksuminfo = self::getFileChecksumInfo($file);
+				$checksum_pass_class = $checksuminfo['checksum_pass_class'];
+				$checksum = $checksuminfo['checksum'];
 
 				// Choose an Icon for the type of data
-				switch ($type[0]) {
-					case 'image':
-						$icon = '<i class="fa fa-file-image-o"></i>';
-						break;
-					case 'video':
-						$icon = '<i class="fa fa-file-video-o"></i>';
-						break;
-					case 'audio':
-						$icon = '<i class="fa fa-file-sound-o"></i>';
-						break;
-					case 'text':
-						$icon = '<i class="fa fa-file-text-o"></i>';
-						break;
-					case 'application':
-						if($type[1] == 'pdf'){
-							$icon = '<i class="fa fa-file-pdf-o"></i>';
-						} else {
-							$icon = '<i class="fa fa-file-o"></i>';
-						}
-						break;
-					default:
-						$icon = '<i class="fa fa-file-o"></i>';
-						break;
-				}
-
+				$icon = self::getFileIcon($type);
 
 				$links['Original'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
 					localvars::get('siteRoot'),
@@ -506,9 +473,8 @@ class files {
 
 				$previewLinks  = array();
 				$downloadLinks = array();
-				$iFrameOutput;
-				foreach($links as $linkLabel => $linkURL){
 
+				foreach($links as $linkLabel => $linkURL){
 					// Build Links
 					$previewLinks[]  = sprintf('<li><a tabindex="-1" href="javascript:void(0);" data-target="modal" data-url="%s">%s</a></li>', $linkURL, $linkLabel);
 					$downloadLinks[] = sprintf('<li><a tabindex="-1" href="%s&download=1">%s</a></li>',$linkURL, $linkLabel);
@@ -522,7 +488,6 @@ class files {
 				$previewDropdown .= sprintf('<ul class="dropdown-menu fileModalPreview">%s</ul>', implode('', $previewLinks));
 				$previewDropdown .= '</div>';
 
-
 				// Build the download dropbox HTML
 				$downloadDropdown  = '<div class="btn-group">';
 				$downloadDropdown .= '	<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">';
@@ -530,7 +495,6 @@ class files {
 				$downloadDropdown .= '	</a>';
 				$downloadDropdown .= sprintf('<ul class="dropdown-menu">%s</ul>', implode('', $downloadLinks));
 				$downloadDropdown .= '</div>';
-
 
 				$fileLIs[] = sprintf('<li><span class="filename span6">%s %s </span><span class="dropdowns span6"> %s %s </span><br /><span class="filesize">File size:  %s </span><br /><span class="file_checksum %s">Checksum: %s</span><br /><span class="file_dir">Location: %s</span></li>',
 					$icon,
@@ -544,15 +508,11 @@ class files {
 				);
 			}
 
-
 			$output .= sprintf('<div class="filePreviewField"><header><i class="fa fa-folder-open"></i> %s</header><ul class="filePreviews">%s</ul></div>', $field['label'], implode('', $fileLIs));
-
-			// $output .= $iFrameOutput;
-
 		}
 		return $output;
 	}
-
+	
 	public static function buildThumbnailURL($objectID) {
 
 		if (objects::validID(TRUE,$objectID) === FALSE) {
@@ -1353,6 +1313,48 @@ class files {
 	}
 
 	// private functions for class
+	private static function getFileIcon($fileType) {
+		switch ($fileType[0]) {
+			case 'image':
+				return '<i class="fa fa-file-image-o"></i>';
+			case 'video':
+				return '<i class="fa fa-file-video-o"></i>';
+			case 'audio':
+				return '<i class="fa fa-file-sound-o"></i>';
+			case 'text':
+				return '<i class="fa fa-file-text-o"></i>';
+			case 'application':
+				return ($fileType[1] == 'pdf') ? '<i class="fa fa-file-pdf-o"></i>' : '<i class="fa fa-file-o"></i>';
+			default:
+				return '<i class="fa fa-file-o"></i>';
+		}		
+	}
+
+	private static function getFileChecksumInfo($file) {
+		$checksum_pass_class = "";
+		$checksum = "Not Available";
+
+		$sql = sprintf("SELECT `checksum`, `pass`, `lastChecked` FROM `filesChecks` WHERE `location`='%s'", $file['path'] . DIRECTORY_SEPARATOR . $file['name']);
+		$sqlResult_cs = mfcs::$engine->openDB->query($sql);
+
+		if ($sqlResult_cs['result']) {
+			$row_cs = mysql_fetch_array($sqlResult_cs['result'], MYSQL_ASSOC);
+			$checksum = (is_null($row_cs['checksum'])) ? "Not Available" : $row_cs['checksum'];
+
+			if (is_null($row_cs['lastChecked'])) {
+				$checksum_pass_class = "checksum_not_checked";
+			} elseif ($row_cs['pass'] == "0") {
+				$checksum_pass_class = "checksum_fail";
+			} else {
+				$checksum_pass_class = "checksum_pass";
+			}
+		} else {
+			errorHandle::newError(__METHOD__ . "() - : " . $sqlResult['error'], errorHandle::DEBUG);
+		}
+
+		return array('checksum_pass_class' => $checksum_pass_class, 'checksum' => $checksum);
+	}
+
 	private static function processFile($originalFile, $filename, $assetsID, $options, $thumbnailCreated = false) {
 		// Set the return array
 		$return = array();
