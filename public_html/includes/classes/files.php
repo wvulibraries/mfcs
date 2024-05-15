@@ -1365,13 +1365,13 @@ class files {
 				$conversion = $ffmpeg->ready();
 	
 				// Add thumbnail info to return array
-				$return[] = [
+				$return[] = array(
 					'name' => $name . '.' . $thumbFormat,
 					'path' => self::getSaveDir($assetsID, 'videoThumbs', false),
 					'size' => filesize(self::getSaveDir($assetsID, 'videoThumbs') . $thumbName . '.' . $thumbFormat),
 					'type' => self::getMimeType(self::getSaveDir($assetsID, 'videoThumbs') . $thumbName . '.' . $thumbFormat),
 					'errors' => '',
-				];
+				);
 	
 				if ($conversion !== 0) {
 					throw new Exception('Could not generate thumbnails: ' . $ffmpeg->command);
