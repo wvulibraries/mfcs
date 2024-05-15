@@ -1,4 +1,4 @@
-<?php
+a<?php
 
 /**
  * Main MFCS object
@@ -1380,7 +1380,7 @@ class files {
 		} catch (Exception $e) {
 			errorHandle::newError(__METHOD__ . "() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
 			errorHandle::newError(__METHOD__ . "() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::DEBUG);
-			return ['errors' => $e->getMessage()];
+			return array('errors' => $e->getMessage());
 		}
 	
 		return $return;
