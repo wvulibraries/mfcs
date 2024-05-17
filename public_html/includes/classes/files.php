@@ -12,56 +12,55 @@ class files {
 	private static $fixity_files     = array();
 
 	public static function errorOldProcessingJobs() {
-
 		$oldDate = time() - 604800;
-
-		$sql       = sprintf("UPDATE `objectProcessing` SET `state`='3' WHERE `timestamp`<'%s'",
-			$oldDate
-			);
+		$sql = sprintf("UPDATE `objectProcessing` SET `state`='3' WHERE `timestamp`<'%s'", $oldDate);
 		$sqlResult = mfcs::$engine->openDB->query($sql);
-
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
-			return FALSE;
+			return false;
 		}
-
-		return TRUE;
-
+		return true;
 	}
 
+	/**
+	 * Deletes old processing jobs with a state of 0.
+	 *
+	 * @return bool Returns TRUE on success, FALSE on failure.
+	 */
 	public static function deleteOldProcessingJobs() {
-		$sql       = sprintf("DELETE FROM `objectProcessing` WHERE `state`='0'");
+		$sql = "DELETE FROM `objectProcessing` WHERE `state`='0'";
 		$sqlResult = mfcs::$engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
 			errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
-			return FALSE;
+			return false;
 		}
 
-		return TRUE;
+		return true;
 	}
 
+	/**
+	 * add processing field
+	 * @param string $fieldname the fieldname to add
+	 * @return bool TRUE on success
+	 */
 	public static function addProcessingField($fieldname) {
-
 		self::$insertFieldNames[] = $fieldname;
-
-		return TRUE;
+		return true;
 	}
 
 	/**
 	 * Remove a processing field
-	 * @param  string $fieldname the fieldnaem to remove
+	 * @param  string $fieldname the fieldname to remove
 	 * @return bool            TRUE on success, FALSE if not found
 	 */
 	public static function removeProcessingField($fieldname) {
-		for($I=0;$I<count(self::$insertFieldNames); $I++) {
-			if (self::$insertFieldNames[$I] == $fieldname) {
-				unset(self::$insertFieldNames[$I]);
-				return TRUE;
-			}
+		$key = array_search($fieldname, self::$insertFieldNames);
+		if ($key !== false) {
+			unset(self::$insertFieldNames[$key]);
+			return true;
 		}
-
-		return NULL;
+		return false;
 	}
 
 	public static function resetProcessingFields() {
@@ -1650,14 +1649,6 @@ class files {
 	}
 	
 	private static function getFileIcon($fileType) {
-		// when called from getFileInformation, $fileType is the file type
-		// is not working
-		// when calling from original code I get
-		// array(2) { [0]=> string(5) "image" [1]=> string(4) "tiff" } 
-
-		// self::vardump($fileType);
-		// die();
-
 		switch ($fileType[0]) {
 			case 'image':
 				return '<i class="fa fa-file-image-o"></i>';
@@ -1672,10 +1663,6 @@ class files {
 			default:
 				return '<i class="fa fa-file-o"></i>';
 		}
-
-		// error_reporting(E_ALL);
-		// ini_set('display_errors', 1);
-		// return '<i class=fa fa-file-image-o></i>';
 	}
 
 	private static function getFileChecksumInfo($file) {
@@ -1848,7 +1835,7 @@ class files {
 				// Create a thumbnail of the first image
 				if ($createThumb === TRUE) {
 
-					if (($return['thumbs'][] = self::createThumbnail($originalFile,$filename,$options,$assetsID,TRUE)) === FALSE) {
+					if (($return[] = self::createThumbnail($originalFile,$filename,$options,$assetsID,TRUE)) === FALSE) {
 						throw new Exception("Failed to create thumbnail: ".$filename);
 					}
 
@@ -2155,4 +2142,3 @@ class files {
 		echo "</pre>";
 	}
 }
-
