@@ -128,3 +128,12 @@ Insure you run the sh ./scripts/setup.sh file to configure the mysql database.
 
 # Mfcs Database export
 
+# Current Issues
+Running Mfcs in dev seems to only work correctly in firefox running in chrome I'm seeing this error.
+
+"Bad Request
+Your browser sent a request that this server could not understand.
+Size of a request header field exceeds server limit.
+
+Apache/2.2.15 (CentOS) Server at 172.18.0.3 Port 80"
+

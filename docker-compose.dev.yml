@@ -12,8 +12,11 @@ services:
       - .:/vagrant
       - ./data:/home/mfcs.lib.wvu.edu/data
       - ./scripts:/home/mfcs.lib.wvu.edu/scripts
+      - ./public_html:/home/mfcs.lib.wvu.edu/public_html
+      - ./template:/home/mfcs.lib.wvu.edu/template
+      - ./serverConfiguration:/home/mfcs.lib.wvu.edu/serverConfiguration       
       - ./SQLFiles:/home/mfcs.lib.wvu.edu/SQLFiles      
-      - ./data/git_pull:/tmp/git
+      - ./data/git_pulls:/tmp/git
     env_file:
         - './env/.env.dev.mfcs' 
     ports:

@@ -10,8 +10,14 @@ WORKDIR /home/mfcs.lib.wvu.edu
 ## Remove mysql server
 RUN yum -y remove mysql-server
 
-## Install mysql client
-RUN yum -y install mysql
+## Install mysql client and cron
+RUN yum -y install mysql cronie
+
+## Start cron
+RUN service crond start
+
+## check if cron is running
+RUN chkconfig crond on
 
 ## Install required packages
 RUN yum -y install ImageMagick php-pecl-imagick python-devel \
@@ -25,8 +31,6 @@ RUN yum -y install autoconf automake cmake freetype-devel gcc gcc-c++ \
 
 ## ClamAV
 RUN yum -y install clamav clamav-db clamav-devel
-
-ADD . /vagrant
 
 ADD ./scripts/entrypoint.dev.sh /usr/bin/
 RUN chmod -v +x /usr/bin/entrypoint.dev.sh
