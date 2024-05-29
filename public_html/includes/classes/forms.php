@@ -10,87 +10,101 @@ class forms {
 	// @TODO this needs to be expanded to include callbacks for the replacement text as well.
 	private static $fieldVariables = array('%userid%', '%username%', '%firstname%', '%lastname%', '%date%', '%time%', '%time12%', '%time24%', '%timestamp%');
 
-	function validID() {
+	
+	/**
+	 * Returns boolean value of whether the formID is valid
+	 * Optimized using ChatGpt 3.5 suggestions
+	 * Date: 2024-04-18
+	 * Modified_by: Tracy A. McCormick
+	 * @return string         The value of the field
+	 */
+	public static function validID() {
 		$engine = EngineAPI::singleton();
-
-		if (!isset($engine->cleanGet['MYSQL']['formID'])
-			|| is_empty($engine->cleanGet['MYSQL']['formID'])
-			|| !validate::integer($engine->cleanGet['MYSQL']['formID'])) {
-
-			if (objects::validID($engine->cleanGet['MYSQL']['objectID'])) {
-				$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
-
-				if ($object === FALSE) {
-					return FALSE;
-				}
-
-				http::setGet('formID',$object['formID']);
-
-			}
-			else {
-				return FALSE;
-			}
+		
+		// Check if formID is already set and valid
+		if (isset($engine->cleanGet['MYSQL']['formID']) && !empty($engine->cleanGet['MYSQL']['formID']) && validate::integer($engine->cleanGet['MYSQL']['formID'])) {
+			return true; // FormID is valid, no need to proceed further
 		}
 
-		return TRUE;
+		$objectID = $engine->cleanGet['MYSQL']['objectID'];
 
+		// Check if objectID is valid
+		if (!objects::validID($objectID)) {
+			return false; // Invalid objectID
+		}
+
+		// Get the object and set formID
+		$object = objects::get($objectID);
+		if ($object === false) {
+			return false; // Failed to retrieve object
+		}
+
+		// Set formID in HTTP GET
+		http::setGet('formID', $object['formID']);		
+
+		return true; // Validation passed
 	}
 
-	public static function get($formID=NULL,$productionOnly=FALSE) {
-
-		if (isnull($formID)) {
+	// copilot refactor - 2024-04-24
+	public static function get($formID = NULL, $productionOnly = FALSE) {
+		if (is_null($formID)) {
 			return self::getForms();
 		}
 
-		$mfcs      = mfcs::singleton();
-		$cachID    = "getForm:".$formID;
-		$cache     = $mfcs->cache("get",$cachID);
+		$mfcs = mfcs::singleton();
+		$cacheID = "getForm:" . $formID;
+		$cache = $mfcs->cache("get", $cacheID);
 
-		if (!isnull($cache)) {
-			return($cache);
+		if (!is_null($cache)) {
+			return $cache;
 		}
 
 		$engine = EngineAPI::singleton();
 
-		$sql       = sprintf("SELECT * FROM `forms` WHERE `ID`='%s'%s",
+		$sql = sprintf(
+			"SELECT * FROM `forms` WHERE `ID`='%s'%s",
 			$engine->openDB->escape($formID),
-			($productionOnly === TRUE)?" AND `production`='1'":""
+			($productionOnly === TRUE) ? " AND `production`='1'" : ""
 		);
 
 		$sqlResult = $engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
-			errorHandle::newError(__METHOD__."() - ".$sqlResult['error'], errorHandle::DEBUG);
+			errorHandle::newError(__METHOD__ . "() - " . $sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-
 
 		if ($sqlResult['numrows'] == 0) {
 			return FALSE;
 		}
 
-		$form           = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+		$form = mysqli_fetch_array($sqlResult['result'], MYSQLI_ASSOC);
 
-		if (($form['fields'] = unserialize(base64_decode($form['fields']))) === FALSE) {
-			errorHandle::newError(__METHOD__."() - fields", errorHandle::DEBUG);
+		$form['fields'] = unserialize(base64_decode($form['fields']));
+		if ($form['fields'] === FALSE) {
+			errorHandle::newError(__METHOD__ . "() - fields", errorHandle::DEBUG);
 			errorHandle::errorMsg("Error retrieving form.");
 			return FALSE;
 		}
 
-		if (($form['idno'] = unserialize(base64_decode($form['idno']))) === FALSE) {
-			errorHandle::newError(__METHOD__."() - idno", errorHandle::DEBUG);
+		$form['idno'] = unserialize(base64_decode($form['idno']));
+		if ($form['idno'] === FALSE) {
+			errorHandle::newError(__METHOD__ . "() - idno", errorHandle::DEBUG);
 			errorHandle::errorMsg("Error retrieving form.");
 			return FALSE;
 		}
 
-		if (!isempty($form['navigation']) && ($form['navigation'] = unserialize(base64_decode($form['navigation']))) === FALSE) {
-			errorHandle::newError(__METHOD__."() - navigation!", errorHandle::DEBUG);
-			errorHandle::errorMsg("Error retrieving form.");
-			return FALSE;
+		if (!isempty($form['navigation'])) {
+			$form['navigation'] = unserialize(base64_decode($form['navigation']));
+			if ($form['navigation'] === FALSE) {
+				errorHandle::newError(__METHOD__ . "() - navigation!", errorHandle::DEBUG);
+				errorHandle::errorMsg("Error retrieving form.");
+				return FALSE;
+			}
 		}
 
-		if ($mfcs->cache("create",$cachID,$form) === FALSE) {
-			errorHandle::newError(__METHOD__."() - unable to cache form", errorHandle::DEBUG);
+		if ($mfcs->cache("create", $cacheID, $form) === FALSE) {
+			errorHandle::newError(__METHOD__ . "() - unable to cache form", errorHandle::DEBUG);
 		}
 
 		return $form;
@@ -121,7 +135,7 @@ class forms {
 		}
 
 		$forms = array();
-		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+		while ($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
 
 			$forms[$row['ID']] = self::get($row['ID'],$productionOnly);
 
@@ -273,7 +287,7 @@ class forms {
 				return FALSE;
 			}
 
-			$result = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+			$result = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
 			return $result['count(*)'];
 		} else {
 			return FALSE;
@@ -340,7 +354,7 @@ class forms {
 			return FALSE;
 		}
 
-		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+		$row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
 
 		return $row['COUNT(*)'];
 
@@ -464,70 +478,6 @@ class forms {
 		return $choices;
 	}
 
-	private static function drawCheckBoxes($field,$fieldChoices) {
-
-		$output = "";
-
-		foreach ($fieldChoices as $choice) {
-			$output .= sprintf('<input type="%s" name="%s" id="%s_%s" value="%s" %s/><label for="%s_%s">%s</label>',
-				htmlSanitize($field['type']),
-				htmlSanitize($field['name']),
-				htmlSanitize($field['name']),
-				htmlSanitize($choice['index']),
-				htmlSanitize($choice['value']),
-				(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $option)?'checked="checked"':"",
-				htmlSanitize($field['name']),
-				htmlSanitize($choice['index']),
-				htmlSanitize($choice['display'])
-			);
-		}
-
-		return $output;
-
-	}
-
-	private static function drawSelectDropdowns($field,$fieldChoices,$value=NULL) {
-
-		$output = "";
-
-		if(isset($field['choicesNull']) && str2bool($field['choicesNull'])){
-			$output .= '<option value="">Make a selection</option>';
-		}
-		foreach ($fieldChoices as $choice) {
-
-			if (isnull($value) && isset($field['choicesFieldDefault']) && !isempty($field['choicesFieldDefault']) && $choice['display'] == $field['choicesFieldDefault']) {
-				$value = $choice['value'];
-			}
-			else if (isnull($value) && isset($field['choicesDefault']) && !isempty($field['choicesDefault'])) {
-				$value = $field['choicesDefault'];
-			}
-
-			$output .= sprintf('<option value="%s" %s>%s</option>',
-				htmlSanitize($choice['value']),
-				(!isnull($value) && $value == $choice['value'])?'selected="selected"':"",
-				htmlSanitize($choice['display'])
-			);
-		}
-		return $output;
-	}
-
-	private static function drawMultiselectBoxes($field,$fieldChoices) {
-		$output = "";
-
-		if(isset($field['choicesNull']) && str2bool($field['choicesNull'])){
-			$output .= '<option value="">Make a selection</option>';
-		}
-
-		foreach ($fieldChoices as $choice) {
-			$output .= sprintf('<option value="%s" %s>%s</option>',
-				htmlSanitize($choice['value']),
-				(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $choice['value'])?'selected="selected"':"",
-				htmlSanitize($choice['display'])
-			);
-		}
-		return $output;
-	}
-
 	public static function drawFieldChoices($field,$choices,$value=NULL) {
 
 		if (!isset($field['type'])) return FALSE;
@@ -552,45 +502,22 @@ class forms {
 
 	}
 
-	private static function publicReleaseObjSelect($objectID, $object, $form) {
-		if(!isnull($objectID)) {
-			if ($object['publicRelease'] == "0") return false;
-		}
-		else if ($form['objPublicReleaseDefaultTrue'] == "0") {
-			return false;
-		}
-		return true;
-	}
-
 	public static function build($formID,$objectID = NULL,$error=FALSE) {
-
 		$engine = EngineAPI::singleton();
-
 		// Get the current Form
 		$form   = self::get($formID);
-
 		if ($form === FALSE) {
 			return FALSE;
 		}
 
-		$fields = $form['fields'];
-
-		if (usort($fields, 'sortFieldsByPosition') !== TRUE) {
-			errorHandle::newError(__METHOD__."() - usort", errorHandle::DEBUG);
-			errorHandle::errorMsg("Error retrieving form.");
+		$fields = self::sortFields($form['fields']);
+		if ($fields === FALSE) {
 			return FALSE;
 		}
 
-		if (!isnull($objectID)) {
-			$object = objects::get($objectID,TRUE);
-			if ($object === FALSE) {
-				errorHandle::errorMsg("Error retrieving object.");
-				return FALSE;
-			}
-		}
-		else if (isnull($objectID) && $error === TRUE) {
-			$object         = array();
-			$object['data'] = array();
+		$object = self::getObject($objectID, $error);
+		if ($object === FALSE) {
+			return FALSE;
 		}
 
 		$output = sprintf('<form action="%s?formID=%s%s" method="%s" name="insertForm" data-formid="%s">',
@@ -1086,29 +1013,6 @@ class forms {
 
 	}
 
-	private static function hasFieldVariables($value) {
-		foreach (self::$fieldVariables as $variable) {
-			if(stripos($variable, $value) !== FALSE) {
-				return TRUE;
-			}
-		}
-
-		return FALSE;
-
-	}
-
-	private static function getFieldValue($field,$object) {
-		$field['value'] = convertString($field['value']);
-
-		if (self::hasFieldVariables($field['value'])) {
-			return htmlSanitize(self::applyFieldVariables($field['value']));
-		}
-
-		return isset($object['data'][$field['name']])
-			? htmlSanitize(convertString($object['data'][$field['name']]))
-			: htmlSanitize(self::applyFieldVariables($field['value']));
-	}
-
 	// @TODO it doesnt look like the edit table is honoring form creator choices on
 	// which fields are displayed
 	//
@@ -1220,92 +1124,6 @@ class forms {
 		}
 		else {
 			return "No data entered for this Metadata Form.";
-		}
-
-	}
-
-	// returns NULL when the other function should continue
-	// returns FALSE when something doesn't validate
-	// returns TRUE when something does validate
-	private static function validateSubmission($formID,$field,$value=NULL,$objectID) {
-
-
-		if ($field['type'] == "fieldset" || $field['disabled'] == "true") return NULL;
-
-		// If the IDNO is managed by the system, skip it:
-		if ($field['type'] == "idno" && $field['managedBy'] != "user") return NULL;
-
-		if (strtolower($field['required']) == "true" && (isnull($value) || !isset($value) || isempty($value))) {
-			errorHandle::newError(__METHOD__."() - missing", errorHandle::DEBUG);
-			errorHandle::errorMsg("Missing data for required field '".$field['label']."'.");
-			return FALSE;
-
-		}
-
-		// Perform validations here
-		$valid = TRUE;
-		if (!empty($field['format'])) {
-			if (strtolower($field['format']) == 'characters' || strtolower($field['format']) == 'digits') {
-				if (!empty($field['min']) && $field['min'] > strlen($value)) {
-					$valid = FALSE;
-				}
-				if (!empty($field['max']) && $field['max'] < strlen($value)) {
-					$valid = FALSE;
-				}
-			}
-			else if (strtolower($field['format']) == 'words') {
-				if (!empty($field['min']) && $field['min'] > str_word_count($value)) {
-					$valid = FALSE;
-				}
-				if (!empty($field['max']) && $field['max'] < str_word_count($value)) {
-					$valid = FALSE;
-				}
-			}
-		}
-
-		// Skip if it's already invalid
-		if ($valid === TRUE) {
-			// No validation to test
-			if (isempty($field['validation']) || $field['validation'] == "none") {
-				$valid = TRUE;
-			}
-			// Empty fields that are not required are valid
-			else if (!str2bool($field['required']) && is_empty($value)) {
-				$valid = TRUE;
-			}
-			else {
-				$valid = FALSE;
-				if (validate::isValidMethod($field['validation']) === TRUE) {
-					if ($field['validation'] == "regexp") {
-						$valid = validate::$field['validation']($field['validationRegex'],$value);
-					}
-					else {
-						$valid = validate::$field['validation']($value);
-					}
-				}
-			}
-		}
-
-		if ($valid === FALSE) {
-			errorHandle::newError(__METHOD__."() - data", errorHandle::DEBUG);
-			errorHandle::errorMsg("Invalid data provided in field '".$field['label']."'.");
-			return FALSE;
-		}
-
-		// Duplicate Checking (Form)
-		if (strtolower($field['duplicates']) == "true") {
-			if (self::isDupe($formID,$field['name'],$value,$objectID)) {
-				errorHandle::newError(__METHOD__."() - Dupe -- ".$field['name'], errorHandle::DEBUG);
-				errorHandle::errorMsg("Duplicate data (in form) provided in field '".$field['label']."'.");
-				return FALSE;
-			}
-		}
-
-		if (!is_empty(mfcs::$engine->errorStack)) {
-			return FALSE;
-		}
-		else {
-			return TRUE;
 		}
 
 	}
@@ -1539,7 +1357,7 @@ class forms {
 				}
 
 				if ($tmpArray !== TRUE) {
-
+					
 					// didn't generate a proper uuid for the items, rollback
 					if (!isset($tmpArray['uuid'])) {
 						$engine->openDB->transRollback();
@@ -1595,6 +1413,12 @@ class forms {
 		}
 
 		if ($newObject === TRUE) {
+
+			// var_dump($formID);
+			// var_dump($values);
+			// var_dump($form['metadata']);
+			// var_dump(isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0");
+			// die();
 
 			if (objects::create($formID,$values,$form['metadata'],isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",null,null,$publicReleaseObj) === FALSE) {
 				$engine->openDB->transRollback();
@@ -1781,7 +1605,7 @@ class forms {
 			return array();
 		}
 
-		while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+		while ($row = mysqli_fetch_array($sqlResult['result'], MYSQLI_ASSOC)) {
 			$return[] = $row['projectID'];
 		}
 
@@ -1889,7 +1713,7 @@ class forms {
 
 		$data = array();
 
-		while($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+		while($row = mysqli_fetch_array($sqlResult['result'], MYSQLI_ASSOC)) {
 			if (!isnull($fieldName) && $row['fieldName'] != $fieldName) {
 				continue;
 			}
@@ -1917,7 +1741,6 @@ class forms {
 	// This returns an array with the same fields, in the same order, but with the
 	// field name as the index to the field.
 	public static function rebuild_form_fields($fields) {
-
 		if (!is_array($fields)) {
 			return false;
 		}
@@ -1931,5 +1754,214 @@ class forms {
 		return $new_fields;
 	}
 
+	// private functions
+
+	private static function publicReleaseObjSelect($objectID, $object, $form) {
+		if(!isnull($objectID)) {
+			if ($object['publicRelease'] == "0") return false;
+		}
+		else if ($form['objPublicReleaseDefaultTrue'] == "0") {
+			return false;
+		}
+		return true;
+	}
+
+	private static function sortFields($fields) {
+		if (usort($fields, 'sortFieldsByPosition') !== TRUE) {
+			errorHandle::newError(__METHOD__."() - usort", errorHandle::DEBUG);
+			errorHandle::errorMsg("Error retrieving form.");
+			return FALSE;
+		}
+		return $fields;
+	}
+
+	private static function getObject($objectID, $error) {
+		$object = null; // Declare the variable $object
+
+		if (!isnull($objectID)) {
+			$object = objects::get($objectID, TRUE);
+			if ($object === FALSE) {
+				errorHandle::errorMsg("Error retrieving object.");
+				return FALSE;
+			}
+		} else if (isnull($objectID) && $error === TRUE) {
+			$object = array();
+			$object['data'] = array();
+		}
+		return $object;
+	}
+
+	private static function drawSelectDropdowns($field,$fieldChoices,$value=NULL) {
+
+		$output = "";
+
+		if(isset($field['choicesNull']) && str2bool($field['choicesNull'])){
+			$output .= '<option value="">Make a selection</option>';
+		}
+		foreach ($fieldChoices as $choice) {
+
+			if (isnull($value) && isset($field['choicesFieldDefault']) && !isempty($field['choicesFieldDefault']) && $choice['display'] == $field['choicesFieldDefault']) {
+				$value = $choice['value'];
+			}
+			else if (isnull($value) && isset($field['choicesDefault']) && !isempty($field['choicesDefault'])) {
+				$value = $field['choicesDefault'];
+			}
+
+			$output .= sprintf('<option value="%s" %s>%s</option>',
+				htmlSanitize($choice['value']),
+				(!isnull($value) && $value == $choice['value'])?'selected="selected"':"",
+				htmlSanitize($choice['display'])
+			);
+		}
+		return $output;
+	}
+
+	private static function drawMultiselectBoxes($field,$fieldChoices) {
+		$output = "";
+
+		if(isset($field['choicesNull']) && str2bool($field['choicesNull'])){
+			$output .= '<option value="">Make a selection</option>';
+		}
+
+		foreach ($fieldChoices as $choice) {
+			$output .= sprintf('<option value="%s" %s>%s</option>',
+				htmlSanitize($choice['value']),
+				(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $choice['value'])?'selected="selected"':"",
+				htmlSanitize($choice['display'])
+			);
+		}
+		return $output;
+	}	
+
+	private static function drawCheckBoxes($field,$fieldChoices) {
+
+		$output = "";
+
+		foreach ($fieldChoices as $choice) {
+			$output .= sprintf('<input type="%s" name="%s" id="%s_%s" value="%s" %s/><label for="%s_%s">%s</label>',
+				htmlSanitize($field['type']),
+				htmlSanitize($field['name']),
+				htmlSanitize($field['name']),
+				htmlSanitize($choice['index']),
+				htmlSanitize($choice['value']),
+				(isset($field['choicesDefault']) && !isempty($field['choicesDefault']) && $field['choicesDefault'] == $option)?'checked="checked"':"",
+				htmlSanitize($field['name']),
+				htmlSanitize($choice['index']),
+				htmlSanitize($choice['display'])
+			);
+		}
+
+		return $output;
+
+	}	
+
+	// returns NULL when the other function should continue
+	// returns FALSE when something doesn't validate
+	// returns TRUE when something does validate
+	private static function validateSubmission($formID,$field,$value=NULL,$objectID) {
+
+
+		if ($field['type'] == "fieldset" || $field['disabled'] == "true") return NULL;
+
+		// If the IDNO is managed by the system, skip it:
+		if ($field['type'] == "idno" && $field['managedBy'] != "user") return NULL;
+
+		if (strtolower($field['required']) == "true" && (isnull($value) || !isset($value) || isempty($value))) {
+			errorHandle::newError(__METHOD__."() - missing", errorHandle::DEBUG);
+			errorHandle::errorMsg("Missing data for required field '".$field['label']."'.");
+			return FALSE;
+
+		}
+
+		// Perform validations here
+		$valid = TRUE;
+		if (!empty($field['format'])) {
+			if (strtolower($field['format']) == 'characters' || strtolower($field['format']) == 'digits') {
+				if (!empty($field['min']) && $field['min'] > strlen($value)) {
+					$valid = FALSE;
+				}
+				if (!empty($field['max']) && $field['max'] < strlen($value)) {
+					$valid = FALSE;
+				}
+			}
+			else if (strtolower($field['format']) == 'words') {
+				if (!empty($field['min']) && $field['min'] > str_word_count($value)) {
+					$valid = FALSE;
+				}
+				if (!empty($field['max']) && $field['max'] < str_word_count($value)) {
+					$valid = FALSE;
+				}
+			}
+		}
+
+		// Skip if it's already invalid
+		if ($valid === TRUE) {
+			// No validation to test
+			if (isempty($field['validation']) || $field['validation'] == "none") {
+				$valid = TRUE;
+			}
+			// Empty fields that are not required are valid
+			else if (!str2bool($field['required']) && is_empty($value)) {
+				$valid = TRUE;
+			}
+			else {
+				$valid = FALSE;
+				if (validate::isValidMethod($field['validation']) === TRUE) {
+					if ($field['validation'] == "regexp") {
+						$valid = validate::$field['validation']($field['validationRegex'],$value);
+					}
+					else {
+						$valid = validate::$field['validation']($value);
+					}
+				}
+			}
+		}
+
+		if ($valid === FALSE) {
+			errorHandle::newError(__METHOD__."() - data", errorHandle::DEBUG);
+			errorHandle::errorMsg("Invalid data provided in field '".$field['label']."'.");
+			return FALSE;
+		}
+
+		// Duplicate Checking (Form)
+		if (strtolower($field['duplicates']) == "true") {
+			if (self::isDupe($formID,$field['name'],$value,$objectID)) {
+				errorHandle::newError(__METHOD__."() - Dupe -- ".$field['name'], errorHandle::DEBUG);
+				errorHandle::errorMsg("Duplicate data (in form) provided in field '".$field['label']."'.");
+				return FALSE;
+			}
+		}
+
+		if (!is_empty(mfcs::$engine->errorStack)) {
+			return FALSE;
+		}
+		else {
+			return TRUE;
+		}
+
+	}	
+
+	private static function hasFieldVariables($value) {
+		foreach (self::$fieldVariables as $variable) {
+			if(stripos($variable, $value) !== FALSE) {
+				return TRUE;
+			}
+		}
+
+		return FALSE;
+
+	}
+
+	private static function getFieldValue($field,$object) {
+		$field['value'] = convertString($field['value']);
+
+		if (self::hasFieldVariables($field['value'])) {
+			return htmlSanitize(self::applyFieldVariables($field['value']));
+		}
+
+		return isset($object['data'][$field['name']])
+			? htmlSanitize(convertString($object['data'][$field['name']]))
+			: htmlSanitize(self::applyFieldVariables($field['value']));
+	}
 }
 ?>

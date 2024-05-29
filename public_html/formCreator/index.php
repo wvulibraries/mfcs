@@ -334,7 +334,7 @@ try {
 	}
 
 	$tmp = array();
-	while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+	while ($row = mysqli_fetch_array($sqlResult['result'], MYSQLI_ASSOC)) {
 		$tmp[] = sprintf('<option value="%s">%s</option>',
 			$row['ID'],
 			$row['name']
@@ -641,7 +641,7 @@ if (!isnull($formID)) {
 			throw new Exception("Error getting navigation");
 		}
 
-		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+		$row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
 
 		if (!is_empty($row['navigation'])) {
 			$tmp       = decodeFields($row['navigation']);
@@ -737,7 +737,7 @@ if (isset($engine->cleanGet['MYSQL']['id']) && !isempty($engine->cleanGet['MYSQL
 	$sqlResult = $engine->openDB->query($sql);
 	if(!$sqlResult['result']) throw new Exception("MySQL Error - getting permissions ({$sqlResult['error']})");
 
-	while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+	while($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
 		$optionHTML = sprintf('<option value="%s">%s, %s (%s)</option>',
 			htmlSanitize($row['userID']),
 			htmlSanitize($row['lastname']),

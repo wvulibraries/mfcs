@@ -28,7 +28,7 @@ if (!$sqlResult['result']) {
 
 if ($sqlResult['numrows'] == "0") die("Nothing to do.\n");
 
-$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+$row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
 
 files::process($row['objectID'],$row['fieldName']);
 

@@ -19,7 +19,7 @@ if (!$sqlResult['result']) {
     die;
 }
 
-while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+while($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
 
     $sql       = sprintf("DELETE FROM `objectsData` WHERE `objectID`='%s'",
         $engine->openDB->escape($row['objectID'])

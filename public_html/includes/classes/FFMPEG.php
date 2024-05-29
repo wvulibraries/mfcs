@@ -574,42 +574,45 @@ class FFmpeg{
         return $metadata;
     }
 
-    public function getMetadata(){
-        // get return values form file streams
-        $info      = json_decode($this->getFileStreams(), true);
+    public function getMetadata()
+    {
+        // Get return values from file streams
+        $info = json_decode($this->getFileStreams(), true);
 
-        // there should at least be one codec type and one stream
-        if(isset($info['streams'][0]['codec_type'])){
+        // Initialize fileParams array
+        $fileParams = array();
+
+        // Check if there is at least one codec type and one stream
+        if (isset($info['streams'][0]['codec_type'])) {
             $type = $info['streams'][0]['codec_type'];
+
+            // If it is audio, use the first stream
+            if (strtolower($type) == 'audio') {
+                $audioStream = $info["streams"][0];
+                $fileParams['duration'] = $audioStream['duration'];
+                $fileParams['audioSamplerate'] = $audioStream['sample_rate'];
+                $fileParams['audioBitRate'] = $audioStream['bit_rate'];
+                $fileParams['maxBitRate'] = isset($audioStream['max_bit_rate']) ? $audioStream['max_bit_rate'] : null;
+            } else {
+                // Setup Information for Uploaded Video By streams
+                $videoStream = $info["streams"][0];
+                $audioStream = $info["streams"][1];
+
+                // Combine Streams into Used Information for Video
+                $fileParams['rotation'] = isset($videoStream['tags']['rotate']) ? $videoStream['tags']['rotate'] : 0;
+                $fileParams['width'] = $videoStream['width'];
+                $fileParams['height'] = $videoStream['height'];
+                $fileParams['frameRate'] = $videoStream['r_frame_rate'];
+                $fileParams['videoBitRate'] = $videoStream['bit_rate'];
+                $fileParams['duration'] = $videoStream['duration'];
+
+                $fileParams['audioSamplerate'] = $audioStream['sample_rate'];
+                $fileParams['audioBitRate'] = $audioStream['bit_rate'];
+                $fileParams['maxBitRate'] = isset($audioStream['max_bit_rate']) ? $audioStream['max_bit_rate'] : null;
+            }
         }
 
-        // if it is audio use the first stream
-        if(strtolower($type) == 'audio'){
-            $audioStream = $info["streams"][0];
-            $fileParams['duration']        = $audioStream['duration'];
-            $fileParams['audioSamplerate'] = $audioStream['sample_rate'];
-            $fileParams['audioBitRate']    = $audioStream['bit_rate'];
-            $fileParams['maxBitRate']      = isset($audioStream['max_bit_rate']) ? $audioStream['max_bit_rate'] : null;
-        } else {
-            // Setup Information for Uploaded Video By streams
-            $videoStream = $info["streams"][0];
-            $audioStream = $info["streams"][1];
-
-            // Combine Streams into Used Information for Video
-            $fileParams = array();
-            $fileParams['rotation']        = isset($videoStream['tags']['rotate']) ? $videoStream['tags']['rotate'] : 0;
-            $fileParams['width']           = $videoStream['width'];
-            $fileParams['height']          = $videoStream['height'];
-            $fileParams['frameRate']       = $videoStream['r_frame_rate'];
-            $fileParams['videoBitRate']    = $videoStream['bit_rate'];
-            $fileParams['duration']        = $videoStream['duration'];
-
-            $fileParams['audioSamplerate'] = $audioStream['sample_rate'];
-            $fileParams['audioBitRate']    = $audioStream['bit_rate'];
-            $fileParams['maxBitRate']      = isset($audioStream['max_bit_rate']) ? $audioStream['max_bit_rate'] : null;
-        }
-
-        // return it
+        // Return the fileParams array
         return $fileParams;
     }
 

@@ -3,7 +3,7 @@
 # Base PRE Setup
 GITDIR="/tmp/git"
 ENGINEAPIGIT="https://github.com/wvulibraries/engineAPI.git"
-ENGINEBRANCH="engineAPI-3.x"
+ENGINEBRANCH="engineAPI-3.2-develop"
 ENGINEAPIHOME="/home/engineAPI"
 
 SERVERURL="/home/mfcs.lib.wvu.edu"
@@ -33,8 +33,8 @@ cd $GITDIR
 git clone -b $ENGINEBRANCH $ENGINEAPIGIT
 
 # remove exiting defaultPrivate.php and replace with our custom one
-rm $GITDIR/engineAPI/engine/engineAPI/3.1/config/defaultPrivate.php
-ln -s /vagrant/serverConfiguration/defaultPrivate.php $GITDIR/engineAPI/engine/engineAPI/3.1/config/defaultPrivate.php
+rm $GITDIR/engineAPI/engine/engineAPI/3.2/config/defaultPrivate.php
+ln -s /vagrant/serverConfiguration/defaultPrivate.php $GITDIR/engineAPI/engine/engineAPI/3.2/config/defaultPrivate.php
 
 mkdir -p $SERVERURL/phpincludes/
 ln -s $GITDIR/engineAPI/engine/ $SERVERURL/phpincludes/
@@ -42,7 +42,7 @@ ln -s $GITDIR/engineAPI/engine/ $SERVERURL/phpincludes/
 # Application Specific
 
 ln -s /vagrant/public_html $SERVERURL/$DOCUMENTROOT
-ln -s $SERVERURL/phpincludes/engine/engineAPI/3.1 $SERVERURL/phpincludes/engine/engineAPI/latest
+ln -s $SERVERURL/phpincludes/engine/engineAPI/3.2 $SERVERURL/phpincludes/engine/engineAPI/latest
 
 rm -f /etc/php.ini
 rm -f /etc/httpd/conf/httpd.conf

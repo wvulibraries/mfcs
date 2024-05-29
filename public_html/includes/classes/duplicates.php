@@ -85,7 +85,7 @@ class duplicates {
 			return TRUE;
 		}
 
-		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+		$row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
 
 		// we return TRUE on Error, because if a dupe is encountered we want it to fail out.
 

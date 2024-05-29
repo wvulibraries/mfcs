@@ -1,125 +1,93 @@
 <?php
 include("../header.php");
 
-//Permissions Access
-if(!mfcsPerms::evaluatePageAccess(2)){
+// Permissions Access
+if (!mfcsPerms::evaluatePageAccess(2)) {
 	header('Location: /index.php?permissionFalse');
 }
 
-$permissions      = TRUE;
+$permissions = true;
 
 try {
-
-	if (($validate_return = valid::validate(array("metedata"=>false,"authtype"=>"viewer","productionReady"=>true))) !== TRUE) {
-		$permissions = FALSE;
+	if (($validate_return = valid::validate(array("metedata" => false, "authtype" => "viewer", "productionReady" => true))) !== true) {
+		$permissions = false;
 		throw new Exception($validate_return);
 	}
 
-	log::insert("Data View: Object",$engine->cleanGet['MYSQL']['objectID'],$engine->cleanGet['MYSQL']['formID']);
+	log::insert("Data View: Object", $engine->cleanGet['MYSQL']['objectID'], $engine->cleanGet['MYSQL']['formID']);
 
-	localvars::add("objectID",$engine->cleanGet['MYSQL']['objectID']);
+	localvars::add("objectID", $engine->cleanGet['MYSQL']['objectID']);
 
-	//////////
 	// Metadata Tab Stuff
 	$form = forms::get($engine->cleanGet['MYSQL']['formID']);
-	if ($form === FALSE) {
+	if ($form === false) {
 		throw new Exception("Error retrieving form.");
 	}
 
-	localvars::add("formName",$form['title']);
+	localvars::add("formName", $form['title']);
 
-	// build the form for displaying
-	$builtForm = forms::build($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID']);
-	if ($builtForm === FALSE) {
+	// Build the form for displaying
+	$builtForm = forms::build($engine->cleanGet['MYSQL']['formID'], $engine->cleanGet['MYSQL']['objectID']);
+	if ($builtForm === false) {
 		throw new Exception("Error building form.");
 	}
 
-	localvars::add("form",$builtForm);
+	localvars::add("form", $builtForm);
 
 	// Editor information
 	$object = objects::get($engine->cleanGet['MYSQL']['objectID']);
-	if (is_empty($object['createdBy'])) {
-		localvars::add("createdByUsername","Unavailable");
-	}
-	else {
-		$user   = users::get($object['createdBy']);
-		localvars::add("createdByUsername",$user['username']);
-	}
+	localvars::add("createdByUsername", is_empty($object['createdBy']) ? "Unavailable" : users::get($object['createdBy'])['username']);
+	localvars::add("createdOnDate", date('D, d M Y H:i', $object['createTime']));
+	localvars::add("modifiedByUsername", is_empty($object['modifiedBy']) ? "Unavailable" : users::get($object['modifiedBy'])['username']);
+	localvars::add("modifiedOnDate", date('D, d M Y H:i', $object['modifiedTime']));
 
-	localvars::add("createdOnDate",date('D, d M Y H:i',$object['createTime']));
-
-	if (is_empty($object['modifiedBy'])) {
-		localvars::add("modifiedByUsername","Unavailable");
-	}
-	else {
-		$user   = users::get($object['modifiedBy']);
-		localvars::add("modifiedByUsername",$user['username']);
-	}
-
-	localvars::add("modifiedOnDate",date('D, d M Y H:i',$object['modifiedTime']));
-
-	// build the files list for displaying
+	// Build the files list for displaying
 	$filesViewer = files::buildFilesPreview($engine->cleanGet['MYSQL']['objectID']);
-//	if ($filesViewer === FALSE) {
-//		throw new Exception("Error building files view.");
-//	}
+	localvars::add("filesViewer", $filesViewer);
 
-	localvars::add("filesViewer",$filesViewer);
-	// Metadata Tab Stuff
-	//////////
-
-	//////////
 	// Project Tab Stuff
 	$selectedProjects = objects::getProjects($engine->cleanGet['MYSQL']['objectID']);
-	localVars::add("projectOptions",projects::generateProjectChecklist($selectedProjects));
-	// Project Tab Stuff
-	//////////
+	localVars::add("projectOptions", projects::generateProjectChecklist($selectedProjects));
 
-  	// build the items for Public Urls
-	// @TODO; there are too many redundant isnull checks. can they be consolidated?
-	if(!isnull($engine->cleanGet['MYSQL']['objectID'])) {
-    $oai_url = sprintf("%s?verb=GetRecord&identifier=%s&metadataPrefix=oai_dc", mfcs::config("oai_url"), objects::getIDNOForObjectID($engine->cleanGet['MYSQL']['objectID']));
-    $local_urls = sprintf('<li><a href="%1$s">%1$s</a></li>',objects::getUrl($engine->cleanGet['MYSQL']['objectID']));
-    $local_urls .= sprintf('<li><a href="%s">OAI</a>', $oai_url);
-		localvars::add('publicUrls',$local_urls);
+	// Build the items for Public Urls
+	// if (!isnull($engine->cleanGet['MYSQL']['objectID'])) {
+	// 	$oai_url = sprintf("%s?verb=GetRecord&identifier=%s&metadataPrefix=oai_dc", mfcs::config("oai_url"), objects::getIDNOForObjectID($engine->cleanGet['MYSQL']['objectID']));
+	// 	$local_urls = sprintf('<li><a href="%1$s">%1$s</a></li>', objects::getUrl($engine->cleanGet['MYSQL']['objectID']));
+	// 	$local_urls .= sprintf('<li><a href="%s">OAI</a>', $oai_url);
+	// 	localvars::add('publicUrls', $local_urls);
 
-    $oai_output = file_get_contents($oai_url);
-    if ($oai_output) {
-      $doc = new DomDocument('1.0');
-      $doc->preserveWhiteSpace = false;
-      $doc->formatOutput = true;
-      $doc->loadXML($oai_output);
-      $oai_output = htmlSanitize($doc->saveXML());
-    } else {
-      $oai_output = "OAI Record not available in OAI Application";
-    }
-    localvars::add('oaiOutput', $oai_output);
-	}
+	// 	$oai_output = file_get_contents($oai_url);
+	// 	if ($oai_output) {
+	// 		$doc = new DomDocument('1.0');
+	// 		$doc->preserveWhiteSpace = false;
+	// 		$doc->formatOutput = true;
+	// 		$doc->loadXML($oai_output);
+	// 		$oai_output = htmlSanitize($doc->saveXML());
+	// 	} else {
+	// 		$oai_output = "OAI Record not available in OAI Application";
+	// 	}
+	// 	localvars::add('oaiOutput', $oai_output);
+	// }
 
-	//////////
 	// Children Tab Stuff
-	if (($formList = listGenerator::generateFormSelectList($engine->cleanGet['MYSQL']['objectID'])) === FALSE) {
+	$formList = listGenerator::generateFormSelectList($engine->cleanGet['MYSQL']['objectID']);
+	if ($formList === false) {
 		errorHandle::errorMsg("Error getting Forms Listing");
 		throw new Exception('Error');
 	}
-	else {
-		localvars::add("formList",$formList);
-	}
+	localvars::add("formList", $formList);
 	$childList = listGenerator::generateChildList($engine->cleanGet['MYSQL']['objectID']);
 	localVars::add("childrenList", is_empty($childList) ? 'No children available' : $childList);
-	// Children Tab Stuff
-	//////////
 
-}
-catch (Exception $e) {
-	log::insert("Data View: Object: Error",0,0,$e->getMessage());
+} catch (Exception $e) {
+	log::insert("Data View: Object: Error", 0, 0, $e->getMessage());
 	errorHandle::errorMsg($e->getMessage());
 }
 
-localvars::add("leftnav",navigation::buildProjectNavigation($engine->cleanGet['MYSQL']['formID']));
-localVars::add("results",displayMessages());
+localvars::add("leftnav", navigation::buildProjectNavigation($engine->cleanGet['MYSQL']['formID']));
+localVars::add("results", displayMessages());
 
-$engine->eTemplate("include","header");
+$engine->eTemplate("include", "header");
 ?>
 
 <section>
@@ -157,15 +125,14 @@ $engine->eTemplate("include","header");
 					<li><a data-toggle="tab" href="#metadata">Metadata</a></li>
 					<li><a data-toggle="tab" href="#files" id="filesTab">Files</a></li>
 					<li><a data-toggle="tab" href="#project">Project</a></li>
-          <li><a data-toggle="tab" href="#publicUrls">Public Urls &amp; OAI</a></li>
+          			<!-- <li><a data-toggle="tab" href="#publicUrls">Public Urls &amp; OAI</a></li> -->
+          			<li><a data-toggle="tab" href="#publicUrls">Public Urls</a></li>
 					<!-- <li><a data-toggle="tab" href="#children">Children</a></li> -->
 				</ul>
 
 				<div class="tab-content">
 					<div class="tab-pane" id="metadata">
 						{local var="form"}
-
-
 						<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
 							<p><b>Created by:</b> <em>{local var="createdByUsername"} on {local var="createdOnDate"}</em></p>
 							<p><b>Modified by:</b> <em>{local var="modifiedByUsername"} on {local var="modifiedOnDate"}</em></p>
@@ -186,15 +153,16 @@ $engine->eTemplate("include","header");
 						</form>
           </div>
           <div class="tab-pane" id="publicUrls">
-            <h2>Public Urls &amp; OAI</h2>
+            <!-- <h2>Public Urls &amp; OAI</h2> -->
+			<h2>Public Urls</h2>
             <p>Note: If the public URL has not been registered with MFCS yet, the first item may be blank.</p>
             <ul>
               {local var="publicUrls"}
             </ul>
-            <p>OAI Record:</p>
+            <!-- <p>OAI Record:</p>
             <pre>
               {local var="oaiOutput"}
-            </pre>
+            </pre> -->
           </div>
 <!-- 					<div class="tab-pane" id="children">
 						{local var="childrenList"}

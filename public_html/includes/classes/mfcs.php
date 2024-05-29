@@ -107,7 +107,7 @@ class mfcs {
 			return FALSE;
 		}
 
-		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+		$row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
 
 		if ($increment === TRUE) {
 			$row['count'] = (string)((int)$row['count'] + 1);
