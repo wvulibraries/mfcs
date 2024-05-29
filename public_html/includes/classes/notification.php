@@ -47,7 +47,7 @@ class notification {
 		}
 
 		$contact_emails = array();
-		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+		while($row = mysqli_fetch_array($sqlResult['result'])) {
 			$contact_emails[$row['email']] = sprintf("%s %s",$row["firstname"],$row['lastname']);
 		}
 
@@ -79,7 +79,7 @@ class notification {
 			return false;
 		}
 
-		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+		while($row = mysqli_fetch_array($sqlResult['result'])) {
 			$notificationEmails[$row['email']] = sprintf("%s %s",$row['firstname'],$row['lastname']);
 		}
 

@@ -42,7 +42,7 @@ if (!$sqlResult['result']) {
 }
 
 $table_data = array();
-while($row  = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+while($row  = mysqli_fetch_array($sqlResult['result'])) {
 
     $table_data[] = array(
         "delete"  => sprintf('<input type="checkbox" name="delete[]" value="%s" />',$row['ID']),

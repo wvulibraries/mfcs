@@ -9,7 +9,7 @@ if (!$sqlResult['result']) {
 }
 
 $virus_info = "";
-while($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+while($row       = mysqli_fetch_array($sqlResult['result'])) {
 	$object = objects::get($row['objectID']);
 
 	$virus_info = sprintf('<div id="virus_holder"><span class="virus_date"><b>Date:</b> %s</span>  <span class="virus_form_title"><b>Form:</b> %s</span>  <span class="virus_obj_idno"><b>Object IDNO:</b> %s</span>  <span class="virus_file"><b>File:</b> %s</span></div>',

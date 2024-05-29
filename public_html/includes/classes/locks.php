@@ -64,7 +64,7 @@ class locks {
 			return FALSE;
 		}
 		
-		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+		$row = mysqli_fetch_array($sqlResult['result']);
 
 		if ((int)$row["COUNT(*)"] != 0) {
 			localvars::add("lockUsername",$row['username']);
@@ -118,7 +118,7 @@ class locks {
 			return FALSE;
 		}
 		
-		$row  = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+		$row  = mysqli_fetch_array($sqlResult['result']);
 
 		return self::unlock($row['typeID'],$row['type']);
 

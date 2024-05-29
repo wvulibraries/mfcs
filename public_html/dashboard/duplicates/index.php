@@ -12,7 +12,7 @@ if (!$sqlResult['result']) {
 
 $duplicate_files = "";
 
-while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+while($row = mysqli_fetch_array($sqlResult['result'])) {
 
 	$sql       = sprintf("SELECT * from `filesChecks` WHERE `checksum`='%s'",$row['checksum']);
 	$sqlResult2 = $engine->openDB->query($sql);
@@ -23,7 +23,7 @@ while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 	}
 	
 	$duplicate_files .= sprintf('<div class="duplicate_files_holder"><h2>%s</h2>',$row['checksum']);
-	while ($file = mysql_fetch_array($sqlResult2['result'],  MYSQL_ASSOC)) {
+	while ($file = mysqli_fetch_array($sqlResult2['result'],  MYSQL_ASSOC)) {
 		$object = objects::get($file['objectID']);
 		$duplicate_files .= sprintf('<p><span class="dupe_object">Object ID: <a href="%sdataEntry/object.php?objectID=%s">%s</a></span>',mfcs::config("siteRoot"),$file['objectID'],$file['objectID']);
 		$duplicate_files .= sprintf('<p><span class="dupe_form">Form: %s</span>',forms::title($object['formID']));

@@ -276,7 +276,7 @@ class files {
 		// We are modifying the file system (exports). transaction rollbacks would
 		// have to be done on the file system as well.
 
-		while ($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+		while ($row       = mysqli_fetch_array($sqlResult['result'])) {
 
 			// set the state of the row to 2
 			self::setProcessingState($row['ID'],2);
@@ -469,7 +469,7 @@ class files {
 					return FALSE;
 				}
 
-				$row_cs   = mysql_fetch_array($sqlResult_cs['result'],  MYSQL_ASSOC);
+				$row_cs   = mysqli_fetch_array($sqlResult_cs['result'],  MYSQL_ASSOC);
 				$checksum = (isnull($row_cs['checksum']))?"Not Available":$row_cs['checksum'];
 				if (isnull($row_cs['lastChecked'])) {
 					$checksum_pass_class = "checksum_not_checked";

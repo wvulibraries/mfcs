@@ -48,7 +48,7 @@ class listGenerator {
 				return FALSE;
 			}
 
-			$object_count = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+			$object_count = mysqli_fetch_array($sqlResult['result']);
 			//end TODO
 
 			$data_size                = $object_count["COUNT(*)"];
@@ -191,134 +191,138 @@ class listGenerator {
 
 	}
 
-	public static function createFormObjectList($formID, $thumbnail=FALSE) {
-
+	public static function createFormObjectList($formID, $thumbnail = false)
+	{
 		$engine = mfcs::$engine;
-
-		if (($form     = forms::get($formID)) === FALSE) {
-			return FALSE;
+	
+		// Get the form data
+		$form = forms::get($formID);
+		if ($form === false) {
+			return false;
 		}
-
-		$data_size                = forms::countInForm($formID);
-		$userPaginationCount      = users::user('pagination',25); // how many items to display in the table
-		$pagination               = new pagination($data_size);
+	
+		// Pagination setup
+		$data_size = forms::countInForm($formID);
+		$userPaginationCount = users::user('pagination', 25);
+		$pagination = new pagination($data_size);
 		$pagination->itemsPerPage = $userPaginationCount;
-		$pagination->currentPage  = isset($engine->cleanGet['MYSQL'][ $pagination->urlVar ])
-									? $engine->cleanGet['MYSQL'][ $pagination->urlVar ]
-									: 1;
-		$startPos                 = $userPaginationCount*($pagination->currentPage-1);
-		$objects                  = objects::getAllObjectsForForm($formID,"idno",TRUE,array($startPos,$userPaginationCount));
-
-
-		$excludeFields = array("idno","file");
-
-		$headers = array("View","Edit","Creation Date","Modified Date","System IDNO","Form IDNO"); //"Revisions",
-		foreach($form['fields'] as $field) {
-			if (in_array(strtolower($field['type']), $excludeFields)) continue;
-
-			if (str2bool($field['displayTable'])) {
-				$headers[] = $field['label'];
+		$pagination->currentPage = isset($engine->cleanGet['MYSQL'][$pagination->urlVar])
+			? $engine->cleanGet['MYSQL'][$pagination->urlVar]
+			: 1;
+		$startPos = $userPaginationCount * ($pagination->currentPage - 1);
+		$objects = objects::getAllObjectsForForm($formID, "idno", true, [$startPos, $userPaginationCount]);
+	
+		// Prepare headers for the table
+		$excludeFields = ["idno", "file"];
+		$headers = ["View", "Edit", "Creation Date", "Modified Date", "System IDNO", "Form IDNO"];
+		foreach ($form['fields'] as $field) {
+			if (in_array(strtolower($field['type']), $excludeFields) || !str2bool($field['displayTable'])) {
+				continue;
 			}
+			$headers[] = $field['label'];
 		}
-
+	
+		// Add Thumbnail header if requested
 		if ($thumbnail) {
 			array_unshift($headers, "Thumbnail");
 		}
-
-		$data = array();
+	
+		// Prepare data for the table
+		$data = [];
 		foreach ($objects as $object) {
-
-			// Is this needed? Redundant?
-			// $form = forms::get($object['formID']);
-
-			$tmp = array(self::genLinkURLs("view",$object['ID']),self::genLinkURLs("edit",$object['ID']),date("Y-m-d h:ia",$object['createTime']),date("Y-m-d h:ia",$object['modifiedTime']),$object['ID'],$object['idno']); //,self::genLinkURLs("revisions",$object['ID'])
-			foreach($form['fields'] as $field) {
-				if (in_array(strtolower($field['type']), $excludeFields)) continue;
-
-				if (str2bool($field['displayTable'])) {
-					$tmp[] = $object['data'][$field['name']];
+			$tmp = [
+				self::genLinkURLs("view", $object['ID']),
+				self::genLinkURLs("edit", $object['ID']),
+				date("Y-m-d h:ia", $object['createTime']),
+				date("Y-m-d h:ia", $object['modifiedTime']),
+				$object['ID'],
+				$object['idno']
+			];
+	
+			foreach ($form['fields'] as $field) {
+				if (in_array(strtolower($field['type']), $excludeFields) || !str2bool($field['displayTable'])) {
+					continue;
 				}
+				$tmp[] = $object['data'][$field['name']];
 			}
-
+	
+			// Add Thumbnail column if requested
 			if ($thumbnail) {
-				array_unshift($tmp, sprintf('<img src="%s" />',files::buildThumbnailURL($object['ID'])));
+				array_unshift($tmp, sprintf('<img src="%s" />', files::buildThumbnailURL($object['ID'])));
 			}
-
+	
 			$data[] = $tmp;
-
 		}
-
-		return self::createTable_new($data,$headers,$data_size,$pagination,$formID);
-
-#		return self::createTable($data,$headers,TRUE,$formID);
-
+	
+		return self::createTable_new($data, $pagination, $headers, $data_size, $formID);
 	}
-
-	private static function createTable_new($data,$headers = NULL,$array_size=TRUE,$pagination,$formID=NULL) {
-		$table = new tableObject("array");
-
-		$table->summary  = "Object Listing";
-		$table->sortable = FALSE;
-		$table->class    = "table table-striped table-bordered";
-		$table->id       = "objectListingTable";
-		$table->layout   = TRUE;
-
-		if (isnull($headers)) {
-			$headers = array();
-			$headers[] = "System IDNO";
-			$headers[] = "Form IDNO";
-			$headers[] = "Title";
-			$headers[] = "View";
-			$headers[] = "Edit";
-			// $headers[] = "Revisions";
-		}
-
-		$table->headers($headers);
-
-		$userPaginationCount = users::user('pagination',25);
-		if($array_size > $userPaginationCount){
-
-			$tableHTML  = $table->display($data);
-			$tableHTML .= sprintf('<div class="span6"> %s </div>', $pagination->nav_bar());
-			$tableHTML .= sprintf('<div class="span2"> <span class="paginationJumpLabel">Jump to Page:</span> %s</div>',
-				$pagination->dropdown()
+	
+	private static function createTable_new($data, $pagination, $headers = NULL, $array_size=TRUE, $formID=NULL) 
+	{
+			$table = new tableObject("array");
+			$table->summary = "Object Listing";
+			$table->sortable = false;
+			$table->class = "table table-striped table-bordered";
+			$table->id = "objectListingTable";
+			$table->layout = true;
+		
+			if (is_null($headers)) {
+				$headers = [
+					"System IDNO",
+					"Form IDNO",
+					"Title",
+					"View",
+					"Edit",
+					// "Revisions" // Uncomment if needed
+				];
+			}
+		
+			$table->headers($headers);
+		
+			$userPaginationCount = users::user('pagination', 25);
+			if (count($data) > $userPaginationCount) {
+				$tableHTML  = $table->display($data);
+				$tableHTML .= sprintf('<div class="span6">%s</div>', $pagination->nav_bar());
+				$tableHTML .= sprintf('<div class="span2"><span class="paginationJumpLabel">Jump to Page:</span> %s</div>',
+					$pagination->dropdown()
 				);
-			$tableHTML .= sprintf('<div class="span2"><span class="paginationJumpLabel">Records per page:</span> %s</div>',
-				$pagination->recordsPerPageDropdown()
+				$tableHTML .= sprintf('<div class="span2"><span class="paginationJumpLabel">Records per page:</span> %s</div>',
+					$pagination->recordsPerPageDropdown()
 				);
-			$tableHTML .= sprintf('<div class="span2"><form id="jumpToIDNOForm"><span class="paginationJumpLabel">Jump to IDNO:</span> <input type="text" name="jumpToIDNO" id="jumpToIDNO" data-formid="%s" value="" /></form></div>',
-				(isnull($formID))?"":htmlSanitize($formID)
+				$tableHTML .= sprintf('<div class="span2"><form id="jumpToIDNOForm"><span class="paginationJumpLabel">Jump to IDNO:</span> <input type="text" name="jumpToIDNO" id="jumpToIDNO" data-formid="%s" value="" /></form></div>',
+					(is_null($formID)) ? "" : htmlSanitize($formID)
 				);
-
-			return $tableHTML;
-		}else{
-			return $table->display($data);
-		}
+		
+				return $tableHTML;
+			} else {
+				return $table->display($data);
+			}
 	}
 
 	public static function createFormShelfList($formID) {
-
-		$engine        = mfcs::$engine;
-		$objects       = objects::getAllObjectsForForm($formID,"idno",FALSE);
-		if (($form          = forms::get($formID)) === FALSE) {
+		$engine = mfcs::$engine;
+		$objects = objects::getAllObjectsForForm($formID, "idno", FALSE);
+		if (($form = forms::get($formID)) === FALSE) {
 			return FALSE;
 		}
 
-		$excludeFields = array("idno","file");
+		$excludeFields = array("idno", "file");
 
-		$headers = array("Form IDNO","Edit","View","Creation Date","Modified Date");  //,"Revisions"
+		$headers = array("Form IDNO", "Edit", "View", "Creation Date", "Modified Date");
 
 		$data = array();
 		foreach ($objects as $object) {
-
-			$tmp    = array($object['idno'],self::genLinkURLs("edit",$object['ID']),self::genLinkURLs("view",$object['ID']),date("Y-m-d h:ia",$object['createTime']),date("Y-m-d h:ia",$object['modifiedTime'])); //,self::genLinkURLs("revisions",$object['ID'])
+			$tmp = array(
+				$object['idno'],
+				self::genLinkURLs("edit", $object['ID']),
+				self::genLinkURLs("view", $object['ID']),
+				date("Y-m-d h:ia", $object['createTime']),
+				date("Y-m-d h:ia", $object['modifiedTime'])
+			);
 			$data[] = $tmp;
-
 		}
 
-
-		return self::createTable($data,$headers,FALSE);
-
+		return self::createTable($data, $headers, FALSE);
 	}
 
 	public static function createProjectObjectList($projectID) {
@@ -726,7 +730,7 @@ class listGenerator {
 		}
 
 		$objects = array();
-		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+		while ($row = mysqli_fetch_array($sqlResult['result'])) {
 			$objects[$row['typeID']] = $row['type'];
 		}
 

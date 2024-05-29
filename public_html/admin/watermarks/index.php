@@ -78,7 +78,7 @@ $sqlResult = $engine->openDB->query($sql);
 
 if ($sqlResult['result']) {
 	$tmp = NULL;
-	while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+	while ($row = mysqli_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
 		try{
 			$i = new Imagick();
 			$i->readImageBlob($row['data']);
@@ -113,7 +113,7 @@ if (!isnull($ID)) {
 	$sqlResult = $engine->openDB->query($sql);
 
 	if ($sqlResult['result']) {
-		$row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
+		$row = mysqli_fetch_array($sqlResult['result'], MYSQL_ASSOC);
 
 		localVars::add("nameVal",$row['name']);
 	}

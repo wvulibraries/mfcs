@@ -19,6 +19,15 @@ echo "Creating New EngineAPI database"
 # import EngineAPI database
 mysql -u root -h $DATABASE_HOST EngineAPI < /tmp/git/engineAPI/sql/EngineAPI.sql
 
+# import engineCMS database
+if [ -e $SERVERURL/SQLFiles/engineCMS.sql ]
+then
+  echo "Importing engineCMS database backup"
+  mysql -u root -h $DATABASE_HOST engineCMS < $SERVERURL/SQLFiles/engineCMS.sql  
+else
+  echo "No backup found, skipping database import"
+fi
+
 if [ -e $SERVERURL/SQLFiles/mfcs.sql ]
 then
   echo "Importing mfcs database backup"

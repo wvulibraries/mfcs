@@ -57,7 +57,7 @@ class users {
             return FALSE;
 		}
 		else {
-			while ($row = mysql_fetch_assoc($sqlResult['result'])) {
+			while ($row = mysqli_fetch_array($sqlResult['result'])) {
 				$currentProjects[ $row['ID'] ] = $row['projectName'];
 			}
 		}
@@ -66,71 +66,104 @@ class users {
 
 	}
 
-	public static function processUser() {
+    /**
+     * Process the user
+     *
+     * This function retrieves the user data from the database and inserts a new user if necessary.
+     *
+     * @return bool TRUE on success, FALSE on failure
+     */
+    public static function processUser() {
+        $engine = EngineAPI::singleton();
+        $username = sessionGet('username');
 
-		$engine = EngineAPI::singleton();
-
-		$username  = sessionGet('username');
-        $sqlSelect = sprintf("SELECT * FROM users WHERE username='%s' LIMIT 1", 
-        	$engine->openDB->escape($username)
-        	);
+        $sqlSelect = sprintf("SELECT * FROM users WHERE username='%s' LIMIT 1", $engine->openDB->escape($username));
         $sqlResult = $engine->openDB->query($sqlSelect);
-        if (!$sqlResult['result']) {
-            errorHandle::newError(__METHOD__."() - Failed to lookup user ({$sqlResult['error']})", errorHandle::HIGH);
-            return FALSE;
-        }
-        else {
-            if (!$sqlResult['numRows']) {
-                // No user found, add them!
-                $sqlInsert = sprintf("INSERT INTO users (username) VALUES('%s')", 
-                	$engine->openDB->escape($username)
-                	);
-                $sqlResult = $engine->openDB->query($sqlInsert);
-                if (!$sqlResult['result']) {
-                    errorHandle::newError(__METHOD__."() - Failed to insert new user ({$sqlResult['error']})", errorHandle::DEBUG);
-                    return FALSE;
-                }
-                else {
-                    $sqlResult = $engine->openDB->query($sqlSelect);
-                    self::$user = mysql_fetch_assoc($sqlResult['result']);
-                }
-            }
-            else {
-                self::$user = mysql_fetch_assoc($sqlResult['result']);
-            }
 
+        if (!$sqlResult) {
+            errorHandle::newError(__METHOD__ . "() - Failed to execute SELECT query: " . $engine->openDB->error, errorHandle::DEBUG);
+            return false;
         }
 
-        return TRUE;
-	}
 
+        // Check if any rows were returned
+        if ($sqlResult['result']->num_rows == 0) {
+            // No user found, add them!
+            $sqlInsert = sprintf("INSERT INTO users (username) VALUES('%s')", $engine->openDB->escape($username));
+            $insertResult = $engine->openDB->query($sqlInsert);
+
+            if (!$insertResult) {
+                errorHandle::newError(__METHOD__ . "() - Failed to insert new user: " . $engine->openDB->error, errorHandle::DEBUG);
+                return false;
+            }
+
+            // Re-run the select query to fetch the newly inserted user
+            $sqlResult = $engine->openDB->query($sqlSelect);
+        }
+
+        // Check again if we have a valid result
+        if ($sqlResult && isset($sqlResult['result']) && $sqlResult['result']->num_rows > 0) {
+            // Fetch the user data
+            $userData = $sqlResult['result']->fetch_assoc();
+            if ($userData) {
+                // Assign the fetched user data to a separate variable
+                $userDataResult = $userData;
+                return true;
+            }
+        }
+
+        errorHandle::newError(__METHOD__ . "() - Failed to fetch user data", errorHandle::DEBUG);
+        return false;
+    }
+    
     // userID can be mysql ID or username
+    /**
+     * Get user data by ID or username
+     *
+     * @param mixed $userID The ID or username of the user
+     * @return mixed|null The user data as an associative array, or null if not found
+     */
     public static function get($userID) {
-
+        $whereClause = '';
         if (validate::integer($userID)) {
             $whereClause = sprintf("WHERE `ID`='%s'",
                 mfcs::$engine->openDB->escape($userID)
-                );
-        }
-        else {
+            );
+        } else {
             $whereClause = sprintf("WHERE `username`='%s'",
                 mfcs::$engine->openDB->escape($userID)
-                );
-        }
-
-        $sql       = sprintf("SELECT * FROM `users` %s LIMIT 1",
-            $whereClause
             );
-        $sqlResult = mfcs::$engine->openDB->query($sql);
-        
-        if (!$sqlResult['result']) {
-            errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
-            return FALSE;
         }
-        
-        return mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
-
+    
+        $sql = sprintf("SELECT * FROM `users` %s LIMIT 1",
+            $whereClause
+        );
+        $sqlResult = mfcs::$engine->openDB->query($sql);
+    
+        if ($sqlResult === false) {
+            // Check for SQL error
+            errorHandle::newError(__METHOD__."() - SQL Error: ".mysqli_error(mfcs::$engine->openDB), errorHandle::DEBUG);
+            return null;
+        }
+    
+        // Check if $sqlResult is a mysqli_result object
+        if (!($sqlResult instanceof mysqli_result)) {
+            errorHandle::newError(__METHOD__."() - Query result is not a valid mysqli_result object", errorHandle::DEBUG);
+            return null;
+        }
+    
+        // Fetch the result as an associative array
+        $row = mysqli_fetch_assoc($sqlResult);
+    
+        if (!$row) {
+            // No rows found
+            errorHandle::newError(__METHOD__."() - No rows found for userID: $userID", errorHandle::DEBUG);
+            return null;
+        }
+    
+        return $row;
     }
+    
 
     public static function getUsers() {
 
@@ -143,7 +176,7 @@ class users {
         }
         
         $users = array();
-        while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+        while($row = mysqli_fetch_array($sqlResult['result'])) {
             if (($user = self::get($row['ID'])) == FALSE) {
                 return FALSE;
             }

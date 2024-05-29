@@ -4,7 +4,7 @@
 GITDIR="/tmp/git"
 LOGDIR="/tmp/log"
 ENGINEAPIGIT="https://github.com/wvulibraries/engineAPI.git"
-ENGINEBRANCH="engineAPI-3.x"
+ENGINEBRANCH="creator-fix"
 ENGINEAPIHOME="/home/engineAPI"
 
 SERVERURL="/home/mfcs.lib.wvu.edu"
@@ -41,8 +41,8 @@ else
 fi
 
 # remove exiting defaultPrivate.php and replace with our custom one
-# rm $GITDIR/engineAPI/engine/engineAPI/3.1/config/defaultPrivate.php
-# ln -s /home/mfcs.lib.wvu.edu/serverConfiguration/defaultPrivate.php $GITDIR/engineAPI/engine/engineAPI/3.1/config/defaultPrivate.php
+rm $GITDIR/engineAPI/engine/engineAPI/3.1/config/defaultPrivate.php
+ln -s /home/mfcs.lib.wvu.edu/serverConfiguration/defaultPrivate.php $GITDIR/engineAPI/engine/engineAPI/3.1/config/defaultPrivate.php
 
 # create $SERVERURL/phpincludes/ if it doesn't exist
 if [ ! -d "$SERVERURL/phpincludes/" ]; then
