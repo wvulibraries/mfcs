@@ -38,7 +38,7 @@ class forms {
 		if ($object === false) {
 			return false; // Failed to retrieve object
 		}
-
+		
 		// Set formID in HTTP GET
 		http::setGet('formID', $object['formID']);		
 
@@ -182,31 +182,32 @@ class forms {
 		return $form['objectTitleField'];
 	}
 
+	/**
+	 * Checks if a form is a container
+	 * @param int $formID The ID of the form
+	 * @return bool Returns true if the form is a container, false otherwise
+	 * Copilot Refactor 05-29-2024
+	 * Modified by: Tracy A. McCormick
+	 */
 	public static function isContainer($formID) {
 		$form = self::get($formID);
 
-		if ((int)$form['container'] === 1) {
-			return TRUE;
-		}
-		else {
-			return FALSE;
-		}
-
-		return FALSE;
+		return (int)$form['container'] === 1;
 	}
 
+	/**
+	 * Checks if a form is production ready
+	 * @param int $formID The ID of the form
+	 * @return bool Returns true if the form is production ready, false otherwise
+	 * Copilot Refactor 05-29-2024
+	 * Modified by: Tracy A. McCormick
+	 */
 	public static function isProductionReady($formID) {
 		if (($form = self::get($formID)) === FALSE) {
 			return FALSE;
 		}
 
-		if ((int)$form['production'] == 1) {
-			return TRUE;
-		}
-		else {
-			return FALSE;
-		}
-
+		return (int)$form['production'] == 1;
 	}
 
 	/*
@@ -264,16 +265,14 @@ class forms {
 
 	}
 
+	/*
+	 * copilot refactor 05-29-2024
+	 * modified by: Tracy A. McCormick
+	 */
 	public static function isMetadataForm($formID) {
 		$form = self::get($formID);
 
-		if ($form['metadata'] == 1) {
-			return TRUE;
-		}
-		else {
-			return FALSE;
-		}
-
+		return ($form['metadata'] == 1);
 	}
 
 	public static function formHasProjects($formID){
@@ -393,11 +392,11 @@ class forms {
 	public static function IDNO_is_managed($formID) {
 		$idno_info = self::getFormIDInfo($formID);
 
-		if ($idno_info['managedBy'] == "system") {
-			return TRUE;
+		if ($idno_info['managedBy'] === "system") {
+			return true;
 		}
 
-		return FALSE;
+		return false;
 	}
 
 	public static function getField($formID,$fieldName) {
@@ -419,8 +418,7 @@ class forms {
 	public static function getFields($formID) {
 		if (($form = self::get($formID)) === FALSE) {
 			return FALSE;
-		}
-		else {
+		} else {
 			return $form['fields'];
 		}
 	}
