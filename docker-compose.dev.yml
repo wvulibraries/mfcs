@@ -12,8 +12,8 @@ services:
       - ./config:/config    
       - ./config/config.ini:/home/mfcs.lib.wvu.edu/config.ini 
       - ./config/php.ini:/usr/local/etc/php/php.ini   
-      - ./data/session/php7:/var/lib/php/session         
-      - ./data/logs/php7:/tmp/log     
+      - ./data/session:/var/lib/php/session         
+      - ./data/logs:/tmp/log     
       - ./public_html:/home/mfcs.lib.wvu.edu/public_html
       - ./template:/home/mfcs.lib.wvu.edu/template      
       - ./data:/home/mfcs.lib.wvu.edu/data
@@ -29,7 +29,7 @@ services:
       db:
           condition: service_healthy   
     healthcheck:
-      test: curl --fail -s http://localhost:8081/ || exit 1
+      test: curl --fail -s http://localhost:8080/ || exit 1
       interval: 1m30s
       timeout: 10s
       retries: 3      
