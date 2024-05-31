@@ -1,6 +1,6 @@
 version: '2.1'
 services:
-  app:
+  web:
     build: 
       context: ./
       dockerfile: Dockerfile.dev
@@ -8,16 +8,19 @@ services:
       - "database.lib.wvu.edu:172.17.0.1"
       - "www.libraries.wvu.edu:127.0.0.1"
     container_name: web
-    volumes:
-      # - ./env/env.dev.auth:/etc/.env    
+    volumes:   
       - ./config:/config    
-      - ./data/logs:/tmp/log      
+      - ./config/config.ini:/home/mfcs.lib.wvu.edu/config.ini 
+      - ./config/php.ini:/usr/local/etc/php/php.ini   
+      - ./data/session:/var/lib/php/session         
+      - ./data/logs:/tmp/log     
       - ./public_html:/home/mfcs.lib.wvu.edu/public_html
+      - ./template:/home/mfcs.lib.wvu.edu/template      
       - ./data:/home/mfcs.lib.wvu.edu/data
       - ./serverConfiguration:/home/mfcs.lib.wvu.edu/serverConfiguration  
       - ./SQLFiles:/home/mfcs.lib.wvu.edu/SQLFiles    
       - ./scripts:/home/mfcs.lib.wvu.edu/scripts
-      - ./gitpulls:/tmp/git
+      - ./data/git_pulls:/tmp/git
     env_file:
         - './env/.env.dev.mfcs' 
     ports:
@@ -29,16 +32,21 @@ services:
       test: curl --fail -s http://localhost:8080/ || exit 1
       interval: 1m30s
       timeout: 10s
-      retries: 3
+      retries: 3      
   db:
-    image: mysql:5.7
+    image: mysql:5.7.27
     container_name: db
     restart: on-failure
     ports:
       - "3306:3306"
+    ulimits:
+        nofile: # Fix memory leak issue on some systems when LimitCORE=infinity (containerd)
+          soft: 1048576
+          hard: 1048576      
     env_file:
       - './env/.env.dev.db'         
     volumes:
+      - ./config/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
       - mysql:/var/lib/mysql
       - ./SQLFiles/setup-docker.sql:/docker-entrypoint-initdb.d/setup-docker.sql
     healthcheck:
