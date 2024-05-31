@@ -501,7 +501,7 @@ class listGenerator {
 		}
 
 		if (($metaForms = forms::getMetadataForms($entry)) === FALSE) {
-			errorHandle::errorMsg("Errot getting Metadata Forms.");
+			errorHandle::errorMsg("Error getting Metadata Forms.");
 			return FALSE;
 		}
 
@@ -587,7 +587,7 @@ class listGenerator {
 
 		return $output;
 	}
-
+	
 	public static function generateFormSelectListForFormCreator($metadata = TRUE) {
 
 		if ($metadata === TRUE) {

@@ -1757,7 +1757,7 @@ class forms {
 	// private functions
 
 	private static function publicReleaseObjSelect($objectID, $object, $form) {
-		if(!isnull($objectID)) {
+		if(!is_null($objectID)) {
 			if ($object['publicRelease'] == "0") return false;
 		}
 		else if ($form['objPublicReleaseDefaultTrue'] == "0") {

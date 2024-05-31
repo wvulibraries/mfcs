@@ -11,7 +11,8 @@ WORKDIR /home/mfcs.lib.wvu.edu
 RUN yum -y install ImageMagick php-pecl-imagick python-devel \
 	perl-ExtUtils-CBuilder.x86_64 perl-ExtUtils-Embed.x86_64 \
     perl-ExtUtils-MakeMaker.x86_64 perl-ExtUtils-ParseXS.x86_64 \
-    libjpeg-devel libpng-devel libtiff-devel SDL-devel agg-devel
+    libjpeg-devel libpng-devel libtiff-devel SDL-devel agg-devel \
+    cronie wget
 
 ## Install FFMPEG Dependencies
 RUN yum -y install autoconf automake cmake freetype-devel gcc gcc-c++ \

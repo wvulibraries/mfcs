@@ -8,6 +8,7 @@ $engineVarsPrivate['mysql']['server']   = getenv("DATABASE_HOST");
 $engineVarsPrivate['mysql']['port']     = getenv("DATABASE_PORT");
 $engineVarsPrivate['mysql']['username'] = getenv("DATABASE_USER");
 $engineVarsPrivate['mysql']['password'] = getenv("DATABASE_PASSWORD");
+$engineVarsPrivate['mysql']['database'] = getenv("DATABASE_NAME");
 
 $engineVarsPrivate["privateVars"]["engineDB"] = array(
 	array(

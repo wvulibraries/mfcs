@@ -54,7 +54,7 @@ if (!$sqlResult['result']) {
 	die ("error getting max.");
 }
 
-$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+$row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
 
 $lastExportDate = (isnull($row['MAX(`date`)']))?0:$row['MAX(`date`)'];
 
