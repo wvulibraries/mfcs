@@ -8,7 +8,7 @@ sessionLogin.php
 SQLFiles/dump
 public_html/includes/.sass-cache
 3.1
-SQLFiles/mfcs.2014.12.13.post.sql
+SQLFiles/mfcs*.sql
 SQLFiles/dump
 .sass-cache
 public_html/includes/css/base.css.map

@@ -15,7 +15,7 @@ class mfcsPerms {
     		return FALSE;
     	}
 
-    	$row = mysqli_fetch_array($sqlResult['result']);
+    	$row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
     	if ((int)$row['COUNT(permissions.ID)'] > 0) return TRUE;
 		return FALSE;
 	}
@@ -30,22 +30,19 @@ class mfcsPerms {
 	public static function hasAdminAccess($username = NULL){
 		if(isnull($username)) $username = sessionGet("username");
 		$user = users::get($username);
-		if (isnull($user)) return FALSE;
 		return (strtolower($user['status']) == 'admin' ? TRUE : FALSE);
 	}
 
 	public static function hasEditorAccess($username = NULL){
 		if(isnull($username)) $username = sessionGet("username");
 		$user = users::get($username);
-		if (isnull($user)) return FALSE;
 		return (strtolower($user['status']) == 'editor' ? TRUE : FALSE);
 	}
 
 	public static function hasUserAccess($username = NULL){
 		if(isnull($username)) $username = sessionGet("username");
 		$user = users::get($username);
-		if (isnull($user)) return FALSE;
-		return (strtolower($user['status']) == 'user');
+		return (strtolower($user['status']) == 'user' ? TRUE : FALSE);
 	}
 
 	public static function isAdmin($formID, $username = NULL) {
@@ -135,7 +132,7 @@ class mfcsPerms {
 		
 		$permissions = array();
 
-		while($row       = mysqli_fetch_array($sqlResult['result'])) {
+		while($row       = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
 
 			if (!isset($permissions[$row['type']])) $permissions[$row['type']] = array();
 

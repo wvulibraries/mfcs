@@ -30,23 +30,24 @@ class objects {
 	}
 
 	public static function get($objectID=NULL,$ignoreCache=FALSE) {
-		if (is_null($objectID)) {
+
+		if (isnull($objectID)) {
 			return self::getObjects();
 		}
 
-		if (!$ignoreCache && !is_null($objectID)) {
+		if (!$ignoreCache && !isnull($objectID)) {
 			$mfcs      = mfcs::singleton();
-			$cacheID   = "getObject:".$objectID;
-			$cache     = $mfcs->cache("get",$cacheID);
+			$cachID    = "getObject:".$objectID;
+			$cache     = $mfcs->cache("get",$cachID);
 
-			if (!is_null($cache)) {
-				return $cache;
+			if (!isnull($cache)) {
+				return($cache);
 			}
 		}
 
 		$sql       = sprintf("SELECT * FROM `objects` WHERE `ID`='%s'",
 			mfcs::$engine->openDB->escape($objectID)
-		);
+			);
 		$sqlResult = mfcs::$engine->openDB->query($sql);
 
 		if (!$sqlResult['result']) {
@@ -54,7 +55,7 @@ class objects {
 			return FALSE;
 		}
 
-		$object = mysqli_fetch_array($sqlResult['result']);
+		$object = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
 
 		$object = self::buildObject($object,$ignoreCache);
 
@@ -75,7 +76,7 @@ class objects {
 
 		if ($sqlResult['numrows'] == 0) return false;
 
-		$row = mysqli_fetch_array($sqlResult['result']);
+		$row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
 
 		return self::get($row['ID'],$ignoreCache);
 
@@ -112,7 +113,7 @@ class objects {
 		}
 
 		$objects = array();
-		while ($row = mysqli_fetch_array($sqlResult['result'])) {
+		while ($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
 			$objects[] = self::buildObject($row,$ignoreCache);
 		}
 
@@ -136,7 +137,7 @@ class objects {
 		}
 
 		$children = array();
-		while($row = mysqli_fetch_array($sqlResult['result'])) {
+		while($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
 			$children[] = self::buildObject($row);;
 		}
 
@@ -158,7 +159,7 @@ class objects {
 			return FALSE;
 		}
 
-		$row = mysqli_fetch_array($sqlResult['result']);
+		$row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
 
 		return $row['formID'];
 
@@ -186,7 +187,7 @@ class objects {
 			return FALSE;
 		}
 
-		$row = mysqli_fetch_array($sqlResult['result']);
+		$row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
 
 		return $row['idno'];
 
@@ -228,7 +229,7 @@ class objects {
 			return false;
 		}
 
-		$row = mysqli_fetch_array($sqlResult['result']);
+		$row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
 		return $row['url'];
 	}
 
@@ -297,7 +298,7 @@ class objects {
 		}
 
 		$objects = array();
-		while ($row = mysqli_fetch_array($sqlResult['result'])) {
+		while ($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
 			$objects[] = self::buildObject($row,TRUE,$metadata);
 		}
 
@@ -348,7 +349,7 @@ class objects {
 		}
 
 		$objects = array();
-		while($row = mysqli_fetch_array($sqlResult['result'])) {
+		while($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
 			$objects[] = self::buildObject($row,TRUE,$metadata);
 		}
 
@@ -367,7 +368,7 @@ class objects {
 		}
 
 		$objects = array();
-		while($row = mysqli_fetch_array($sqlResult['result'])) {
+		while($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
 			$objects[] = self::buildObject($row,TRUE,$metadata);
 		}
 
@@ -871,7 +872,7 @@ class objects {
 			return array();
 		}
 
-		while ($row = mysqli_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+		while ($row = mysqli_fetch_array($sqlResult['result'], MYSQLI_ASSOC)) {
 			$return[] = $row['projectID'];
 		}
 
@@ -959,7 +960,7 @@ class objects {
 
 		$data = array();
 
-		while($row = mysqli_fetch_array($sqlResult['result'])) {
+		while($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
 			$data[$row['fieldName']] = ($row['encoded'] == "1")?unserialize(base64_decode($row['value'])):$row['value'];
 		}
 
@@ -1138,7 +1139,7 @@ class objects {
 				return false;
 			}
 
-			$row = mysqli_fetch_array($sqlResult['result']);
+			$row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
 
 			return $row["COUNT(*)"];
 	}

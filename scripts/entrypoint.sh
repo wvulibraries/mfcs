@@ -38,7 +38,7 @@ ln -s $GITDIR/engineAPI/engine/ $SERVERURL/phpincludes/
 # Application Specific
 
 ln -s /vagrant/public_html $SERVERURL/$DOCUMENTROOT
-ln -s $SERVERURL/phpincludes/engine/engineAPI/3.1 $SERVERURL/phpincludes/engine/engineAPI/latest
+ln -s $SERVERURL/phpincludes/engine/engineAPI/3.2 $SERVERURL/phpincludes/engine/engineAPI/latest
 
 rm -f /etc/php.ini
 rm -f /etc/httpd/conf/httpd.conf

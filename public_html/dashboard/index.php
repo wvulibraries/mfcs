@@ -20,7 +20,7 @@ foreach ($counts as $type=>$sql) {
 		errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
 	}
 
-	$row = mysqli_fetch_array($sqlResult['result']);
+	$row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
 
 	localvars::add($type,$row["COUNT(*)"]);
 }
@@ -33,7 +33,7 @@ if (!$sqlResult['result']) {
 	errorHandle::errorMsg("Unable to get File Types");
 }
 
-$row        = mysqli_fetch_array($sqlResult['result']);
+$row        = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
 $file_types = decodeFields($row['value']);
 
 $file_types_list = "";

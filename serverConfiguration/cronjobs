@@ -1,0 +1,5 @@
+0 3 * * * /bin/bash /home/mfcs.lib.wvu.edu/scripts/processFilesCron.sh
+0 2 * * * /bin/bash /home/mfcs.lib.wvu.edu/scripts/checksum_newFiles.sh
+0 2 * * * /bin/bash /home/mfcs.lib.wvu.edu/scripts/checksum_recheck.sh
+0 1 * * * /bin/bash /home/mfcs.lib.wvu.edu/scripts/systems_information.sh
+#0 1 * * * /bin/bash /home/mfcs.lib.wvu.edu/scripts/virus_scan.sh

@@ -117,7 +117,7 @@ class virus {
 			return FALSE;
 		}
 
-		while ($row = mysqli_fetch_array($sqlResult['result'])) {
+		while($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
 
 			// set the state of the row to 2, the "working" state
 			self::set_virus_state($row['ID'],"2"); 
@@ -150,7 +150,6 @@ class virus {
 	}
 
 	public static function notify_of_virus() {
-
 		$sql       = sprintf("SELECT * FROM `virusChecks` WHERE `state`='3'");
 		$sqlResult = mfcs::$engine->openDB->query($sql);
 		
@@ -159,13 +158,12 @@ class virus {
 			return FALSE;
 		}
 		
-		while ($row = mysqli_fetch_array($sqlResult['result'])) {
+		while($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
 			notification::notifyAdmins("[MFCS Notification] : Virus Found.", "ObjectID: ".$row['objectID']);
 
 			$object = objects::get($row['objectID']);
 			notification::notify_form_contacts($object['formID'], "[MFCS Notification] : Virus Found", $filePath);
 		}
-
 	}
 
 }

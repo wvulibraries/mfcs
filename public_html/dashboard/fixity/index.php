@@ -9,7 +9,7 @@ if (!$sqlResult['result']) {
 }
 
 $fixity_info = "";
-while($row       = mysqli_fetch_array($sqlResult['result'])) {
+while($row       = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
 	$object = objects::get($row['objectID']);
 
 	$fixity_info = sprintf('<div id="fixity_holder"><span class="fixity_date"><b>Date:</b> %s</span>  <span class="fixity_form_title"><b>Form:</b> %s</span>  <span class="fixity_obj_idno"><b>Object IDNO:</b> %s</span>  <span class="fixity_file"><b>File:</b> %s</span></div>',

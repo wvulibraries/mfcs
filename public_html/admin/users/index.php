@@ -1,5 +1,8 @@
 <?php
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 include("../../header.php");
 
 //Permissions Access
@@ -10,66 +13,28 @@ if(!mfcsPerms::evaluatePageAccess(3)){
 $tableName = "users";
 
 function defineList($tableName) {
-	$l      = new listManagement($tableName);
+    $l = new listManagement($tableName);
 
-	$l->addField(array(
-		"field"    => "username",
-		"label"    => "Username",
-		));
+	$fields = array(
+		array("field" => "username", "label" => "Username"),
+		array("field" => "firstname", "label" => "First Name", "dupes" => true),
+		array("field" => "lastname", "label" => "Last Name", "dupes" => true),
+		array("field" => "email", "label" => "Email", "dupes" => true, "blank" => true),
+		array("field" => "isStudent", "label" => "Is the User a Student?", "dupes" => true, "type" => "yesNo"),
+		array("field" => "active", "label" => "Is the User Active?", "dupes" => true, "type" => "yesNo"),
+		array("field" => "status", "label" => "Status", "type" => "select", "dupes" => true, "options" => array(
+			array("value" => "Editor", "label" => "Editor"),
+			array("value" => "User", "label" => "User", "selected" => true),
+			array("value" => "Admin", "label" => "Admin")
+		)),
+		array("field" => "formCreator", "label" => "Form Creator", "dupes" => true, "type" => "yesNo")
+	);
 
-	$l->addField(array(
-		"field"    => "firstname",
-		"label"    => "First Name",
-		"dupes"    => TRUE
-		));
+    foreach ($fields as $field) {
+        $l->addField($field);
+    }
 
-	$l->addField(array(
-		"field"    => "lastname",
-		"label"    => "Last Name",
-		"dupes"    => TRUE
-		));
-
-	$l->addField(array(
-		"field"    => "email",
-		"label"    => "Email",
-		"dupes"    => TRUE,
-		"blank"    => TRUE
-		));
-
-	$l->addField(array(
-		"field"    => "isStudent",
-		"label"    => "Is the User a Student?",
-		"dupes"    => TRUE,
-		"type"     => "yesNo"
-		));
-
-	$l->addField(array(
-		"field"    => "active",
-		"label"    => "Is the User Active?",
-		"dupes"    => TRUE,
-		"type"     => "yesNo"
-		));
-
-	$l->addField(array(
-		"field"    => "status",
-		"label"    => "Status",
-		"type"     => "select",
-		"dupes"    => TRUE,
-		"options"  => array(
-			array("value"=>"Editor","label"=>"Editor"),
-			array("value"=>"User","label"=>"User","selected"=>TRUE),
-			array("value"=>"Admin","label"=>"Admin")
-			)
-		));
-
-	$l->addField(array(
-		"field"    => "formCreator",
-		"label"    => "Form Creator",
-		"dupes"    => TRUE,
-		"type"     => "yesNo"
-		));
-
-	return $l;
+    return $l;
 }
 
 if (isset($engine->cleanPost['MYSQL'][$tableName."_submit"])) {

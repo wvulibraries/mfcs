@@ -24,7 +24,7 @@ if (!$sqlResult['result']) {
 
 $fileMissingCount = 0;
 
-while($row = mysqli_fetch_array($sqlResult['result'])) {
+while($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
 
 	// if there are more than 50 missing files, break out of the loop. 
 	// we assume that there is something wrong with the file system at this

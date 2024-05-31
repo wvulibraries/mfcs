@@ -22,7 +22,7 @@ if (!$sqlResult['result']) {
 	return FALSE;
 }
 
-while($row = mysqli_fetch_array($sqlResult['result'])) {
+while($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
 
 	$checksum = md5_file(mfcs::config('archivalPathMFCS')."/".$row['location']);
 

@@ -14,6 +14,8 @@ $parentObject     = NULL;
 $permissions      = TRUE;
 $locked           = FALSE;
 
+$forms 			  = new forms;
+
 try {
 
 	$error = FALSE;
@@ -139,24 +141,24 @@ try {
 
 	// build the items for Public Urls
 	// @TODO; there are too many redundant isnull checks. can they be consolidated?
-	if(!isnull($engine->cleanGet['MYSQL']['objectID'])) {
-    $oai_url = sprintf("%s?verb=GetRecord&identifier=%s&metadataPrefix=oai_dc", mfcs::config("oai_url"), objects::getIDNOForObjectID($engine->cleanGet['MYSQL']['objectID']));
-    $local_urls = sprintf('<li><a href="%1$s">%1$s</a></li>',objects::getUrl($engine->cleanGet['MYSQL']['objectID']));
-    $local_urls .= sprintf('<li><a href="%s">OAI</a>', $oai_url);
-		localvars::add('publicUrls',$local_urls);
+	// if(!isnull($engine->cleanGet['MYSQL']['objectID'])) {
+    // $oai_url = sprintf("%s?verb=GetRecord&identifier=%s&metadataPrefix=oai_dc", mfcs::config("oai_url"), objects::getIDNOForObjectID($engine->cleanGet['MYSQL']['objectID']));
+    // $local_urls = sprintf('<li><a href="%1$s">%1$s</a></li>',objects::getUrl($engine->cleanGet['MYSQL']['objectID']));
+    // $local_urls .= sprintf('<li><a href="%s">OAI</a>', $oai_url);
+	// 	localvars::add('publicUrls',$local_urls);
 
-    $oai_output = file_get_contents($oai_url);
-    if ($oai_output) {
-      $doc = new DomDocument('1.0');
-      $doc->preserveWhiteSpace = false;
-      $doc->formatOutput = true;
-      $doc->loadXML($oai_output);
-      $oai_output = htmlSanitize($doc->saveXML());
-    } else {
-      $oai_output = "OAI Record not available in OAI Application";
-    }
-    localvars::add('oaiOutput', $oai_output);
-	}
+    // $oai_output = file_get_contents($oai_url);
+    // if ($oai_output) {
+    //   $doc = new DomDocument('1.0');
+    //   $doc->preserveWhiteSpace = false;
+    //   $doc->formatOutput = true;
+    //   $doc->loadXML($oai_output);
+    //   $oai_output = htmlSanitize($doc->saveXML());
+    // } else {
+    //   $oai_output = "OAI Record not available in OAI Application";
+    // }
+    // localvars::add('oaiOutput', $oai_output);
+	// }
 
 	// build the files list for displaying
 	if(isset($engine->cleanGet['MYSQL']['objectID'])){
@@ -190,7 +192,7 @@ catch(Exception $e) {
 }
 
 // build the form for displaying
-if (forms::validID()) {
+if ($forms->validID()) {
 	try {
 		if (($builtForm = forms::build($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'],$error)) === FALSE) {
 			throw new Exception("Error building form.");
@@ -278,7 +280,8 @@ $engine->eTemplate("include","header");
 					<?php if (!isnull($engine->cleanGet['MYSQL']['objectID'])) { ?>
 						<li><a data-toggle="tab" href="#files" id="filesTab">Files</a></li>
 						<li><a data-toggle="tab" href="#project">Project</a></li>
-						<li><a data-toggle="tab" href="#publicUrls">Public Urls &amp; OAI</a></li>
+						<!-- <li><a data-toggle="tab" href="#publicUrls">Public Urls &amp; OAI</a></li> -->
+						<li><a data-toggle="tab" href="#publicUrls">Public Urls</a></li>
 						<?php if(forms::isContainer($engine->cleanGet['MYSQL']['formID'])) { ?>
 							<!-- <li><a data-toggle="tab" href="#children">Children</a></li> -->
 						<?php } ?>
@@ -322,15 +325,16 @@ $engine->eTemplate("include","header");
 							</form>
 						</div>
 						<div class="tab-pane" id="publicUrls">
-							<h2>Public Urls &amp; OAI</h2>
-              <p>Note: If the public URL has not been registered with MFCS yet, the first item may be blank.</p>
+							<!-- <h2>Public Urls &amp; OAI</h2> -->
+							<h2>Public Urls</h2>
+              				<p>Note: If the public URL has not been registered with MFCS yet, the first item may be blank.</p>
 							<ul>
 								{local var="publicUrls"}
 							</ul>
-              <p>OAI Record:</p>
-              <pre>
-                {local var="oaiOutput"}
-              </pre>
+							<!-- <p>OAI Record:</p>
+							<pre>
+								{local var="oaiOutput"}
+							</pre> -->
 						</div>
 						<?php if(forms::isContainer($engine->cleanGet['MYSQL']['formID'])) { ?>
 							<!-- <div class="tab-pane" id="children">

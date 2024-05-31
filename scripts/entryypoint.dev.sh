@@ -4,7 +4,7 @@
 GITDIR="/tmp/git"
 LOGDIR="/tmp/log"
 ENGINEAPIGIT="https://github.com/wvulibraries/engineAPI.git"
-ENGINEBRANCH="creator-fix"
+ENGINEBRANCH="engineAPI-3.2-develop"
 ENGINEAPIHOME="/home/engineAPI"
 
 SERVERURL="/home/mfcs.lib.wvu.edu"
@@ -32,6 +32,11 @@ PHPMODULES="/usr/local/lib/php/extensions/no-debug-non-zts-20210902"
 # create $GITDIR if it doesn't exist
 if [ ! -d "$GITDIR" ]; then
     mkdir -p $GITDIR
+fi
+
+# if the engineAPI directory doesn't exist, clone it
+if [ ! -d "$GITDIR/engineAPI" ]; then
+    # clone the engineAPI
     cd $GITDIR
     git clone -b $ENGINEBRANCH $ENGINEAPIGIT
 else
@@ -41,8 +46,8 @@ else
 fi
 
 # remove exiting defaultPrivate.php and replace with our custom one
-rm $GITDIR/engineAPI/engine/engineAPI/3.1/config/defaultPrivate.php
-ln -s /home/mfcs.lib.wvu.edu/serverConfiguration/defaultPrivate.php $GITDIR/engineAPI/engine/engineAPI/3.1/config/defaultPrivate.php
+rm $GITDIR/engineAPI/engine/engineAPI/3.2/config/defaultPrivate.php
+ln -s $SERVERURL/serverConfiguration/defaultPrivate.php $GITDIR/engineAPI/engine/engineAPI/3.2/config/defaultPrivate.php
 
 # create $SERVERURL/phpincludes/ if it doesn't exist
 if [ ! -d "$SERVERURL/phpincludes/" ]; then
@@ -64,10 +69,10 @@ ln -s $GITDIR/engineAPI/engine/ $SERVERURL/phpincludes/
 # ln -s /home/mfcs.lib.wvu.edu/public_html $SERVERURL/$DOCUMENTROOT
 
 # remove existing symbolic links if exists
-# rm -f $SERVERURL/phpincludes/engine/engineAPI/latest
+rm -f $SERVERURL/phpincludes/engine/engineAPI/latest
 
 # create symbolic links to application
-# ln -s $SERVERURL/phpincludes/engine/engineAPI/3.1 $SERVERURL/phpincludes/engine/engineAPI/latest
+ln -s $SERVERURL/phpincludes/engine/engineAPI/3.2 $SERVERURL/phpincludes/engine/engineAPI/latest
 
 # remove existing symbolic links if exists
 # rm -f /etc/php.ini
@@ -85,13 +90,13 @@ mkdir -p $SERVERURL/data/working/tmp
 mkdir -p $SERVERURL/data/working/uploads
 
 # link engineAPI JS directory to distribution
-# ln -s /tmp/git/engineAPI/engine/template/distribution/public_html/js $SERVERURL/public_html/javascript/distribution
+ln -s /tmp/git/engineAPI/engine/template/distribution/public_html/js $SERVERURL/public_html/javascript/distribution
 
-# # remove existing symbolic link to template if exists
-# rm -f $GITDIR/engineAPI/engine/template
+# remove existing symbolic link to template if exists
+rm -f $GITDIR/engineAPI/engine/template
 
 # # setup the template link
-# ln -s /home/mfcs.lib.wvu.edu/template/* $GITDIR/engineAPI/engine/template/
+ln -s $SERVERURL/template/* $GITDIR/engineAPI/engine/template/
 
 # mkdir -p /home/mfcs.lib.wvu.edu/serverConfiguration/serverlogs
 # touch /home/mfcs.lib.wvu.edu/serverConfiguration/serverlogs/error_log
