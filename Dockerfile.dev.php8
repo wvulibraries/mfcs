@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     vim \
     git \
     cron \
+    exactimage \
     libmagickwand-dev --no-install-recommends \
     && pecl install imagick    
 

@@ -1822,67 +1822,125 @@ class files {
 			$gsTemp = $tmpDir.DIRECTORY_SEPARATOR.uniqid();
 			touch($gsTemp);
 
+			// foreach ($originalFiles as $filename) {
+
+			// 	// Figure some stuff out about the file
+			// 	$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
+			// 	$_filename    = pathinfo($originalFile);
+			// 	$filename     = $_filename['filename'];
+
+
+			// 	$baseFilename = $tmpDir.DIRECTORY_SEPARATOR.$filename;
+
+			// 	// Create a thumbnail of the first image
+			// 	if ($createThumb === TRUE) {
+
+			// 		if (($return[] = self::createThumbnail($originalFile,$filename,$options,$assetsID,TRUE)) === FALSE) {
+			// 			throw new Exception("Failed to create thumbnail: ".$filename);
+			// 		}
+
+			// 		// Prevent making multiple thumbnails
+			// 		$createThumb = FALSE;
+			// 	}
+
+			// 	// perform hOCR on the temporary jpg file which gets stored in combined as an HTML file
+			// 	$_exec = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
+			// 		escapeshellarg($baseFilename.".jpg"), // input.ext
+			// 		escapeshellarg($baseFilename), // output.html
+			// 		escapeshellarg("$saveBase/hocr.cfg") // hocr config file
+			// 		));
+
+			// 	// If a new-line char is in the output, assume it's an error
+			// 	// Tesseract failed, let's normalize the image and try again
+			// 	if (strpos(trim($_exec), "\n") !== FALSE) {
+			// 		$errors[] = "Unable to process OCR for ".basename($originalFile).". Continuing&hellip;";
+			// 		errorHandle::warningMsg("Unable to process OCR for ".basename($originalFile).". Continuing&hellip;");
+
+			// 		// Ensure HTML file exists
+			// 		touch($baseFilename.".html");
+			// 	}
+
+			// 	// Create an OCR'd pdf of the converted file
+			// 	$_exec = shell_exec(sprintf('hocr2pdf -i %s -s -o %s < %s 2>&1',
+			// 		escapeshellarg($baseFilename.".jpg"), // input.ext
+			// 		escapeshellarg($baseFilename.".pdf"), // output.pdf
+			// 		escapeshellarg($baseFilename.".html") // input.html
+			// 		));
+
+			// 	// If the output of hocr2pdf is not "Writing unmodified DCT buffer." then there was an error
+			// 	if (trim($_exec) !== 'Writing unmodified DCT buffer.') {
+			// 		if (strpos($_exec,'Warning:') !== FALSE) {
+			// 			errorHandle::newError("hocr2pdf Warning: ".$_exec, errorHandle::DEBUG);
+			// 		}
+			// 		else {
+			// 			errorHandle::errorMsg("Failed to Create PDF: ".basename($filename,"jpg").".pdf");
+			// 			throw new Exception("hocr2pdf Error: ".$_exec);
+			// 		}
+			// 	}
+
+			// 	// Add this pdf to a temp file that will be read in by gs
+			// 	file_put_contents($gsTemp, $baseFilename.".pdf".PHP_EOL, FILE_APPEND);
+
+			// 	// We're done with this file, delete it
+			// 	unlink($baseFilename.".html");
+			// }
+
 			foreach ($originalFiles as $filename) {
-
 				// Figure some stuff out about the file
-				$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
-				$_filename    = pathinfo($originalFile);
-				$filename     = $_filename['filename'];
-
-
-				$baseFilename = $tmpDir.DIRECTORY_SEPARATOR.$filename;
-
+				$originalFile = $originalsFilepath . DIRECTORY_SEPARATOR . $filename;
+				$_filename = pathinfo($originalFile);
+				$filename = $_filename['filename'];
+				$baseFilename = $tmpDir . DIRECTORY_SEPARATOR . $filename;
+			
 				// Create a thumbnail of the first image
 				if ($createThumb === TRUE) {
-
-					if (($return[] = self::createThumbnail($originalFile,$filename,$options,$assetsID,TRUE)) === FALSE) {
-						throw new Exception("Failed to create thumbnail: ".$filename);
+					if (($return[] = self::createThumbnail($originalFile, $filename, $options, $assetsID, TRUE)) === FALSE) {
+						throw new Exception("Failed to create thumbnail: " . $filename);
 					}
-
 					// Prevent making multiple thumbnails
 					$createThumb = FALSE;
 				}
-
-				// perform hOCR on the temporary jpg file which gets stored in combined as an HTML file
-				$_exec = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
-					escapeshellarg($baseFilename.".jpg"), // input.ext
+			
+				// Perform hOCR on the temporary jpg file which gets stored in combined as an HTML file
+				$_exec = shell_exec(sprintf(
+					'tesseract %s %s -l eng %s 2>&1',
+					escapeshellarg($baseFilename . ".jpg"), // input.ext
 					escapeshellarg($baseFilename), // output.html
 					escapeshellarg("$saveBase/hocr.cfg") // hocr config file
-					));
-
+				));
+				
 				// If a new-line char is in the output, assume it's an error
 				// Tesseract failed, let's normalize the image and try again
 				if (strpos(trim($_exec), "\n") !== FALSE) {
-					$errors[] = "Unable to process OCR for ".basename($originalFile).". Continuing&hellip;";
-					errorHandle::warningMsg("Unable to process OCR for ".basename($originalFile).". Continuing&hellip;");
-
+					$errors[] = "Unable to process OCR for " . basename($originalFile) . ". Continuing&hellip;";
+					errorHandle::warningMsg("Unable to process OCR for " . basename($originalFile) . ". Continuing&hellip;");
 					// Ensure HTML file exists
-					touch($baseFilename.".html");
+					touch($baseFilename . ".html");
 				}
-
+			
 				// Create an OCR'd pdf of the converted file
-				$_exec = shell_exec(sprintf('hocr2pdf -i %s -s -o %s < %s 2>&1',
-					escapeshellarg($baseFilename.".jpg"), // input.ext
-					escapeshellarg($baseFilename.".pdf"), // output.pdf
-					escapeshellarg($baseFilename.".html") // input.html
-					));
-
-				// If the output of hocr2pdf is not "Writing unmodified DCT buffer." then there was an error
-				if (trim($_exec) !== 'Writing unmodified DCT buffer.') {
-					if (strpos($_exec,'Warning:') !== FALSE) {
-						errorHandle::newError("hocr2pdf Warning: ".$_exec, errorHandle::DEBUG);
-					}
-					else {
-						errorHandle::errorMsg("Failed to Create PDF: ".basename($filename,"jpg").".pdf");
-						throw new Exception("hocr2pdf Error: ".$_exec);
+				$_exec = shell_exec(sprintf(
+					'hocr2pdf -i %s -o %s -s < %s 2>&1',
+					escapeshellarg($baseFilename . ".jpg"), // input.ext
+					escapeshellarg($baseFilename . ".pdf"), // output.pdf
+					escapeshellarg($baseFilename . ".html") // input.html
+				));
+			
+				// Check the output of hocr2pdf
+				if (trim($_exec) !== '') {
+					if (strpos($_exec, 'Warning:') !== FALSE) {
+						errorHandle::newError("hocr2pdf Warning: " . $_exec, errorHandle::DEBUG);
+					} else {
+						errorHandle::errorMsg("Failed to Create PDF: " . basename($filename, ".jpg") . ".pdf");
+						throw new Exception("hocr2pdf Error: " . $_exec);
 					}
 				}
-
+			
 				// Add this pdf to a temp file that will be read in by gs
-				file_put_contents($gsTemp, $baseFilename.".pdf".PHP_EOL, FILE_APPEND);
-
+				file_put_contents($gsTemp, $baseFilename . ".pdf" . PHP_EOL, FILE_APPEND);
+			
 				// We're done with this file, delete it
-				unlink($baseFilename.".html");
+				unlink($baseFilename . ".html");
 			}
 
 			// Combine all PDF files in directory

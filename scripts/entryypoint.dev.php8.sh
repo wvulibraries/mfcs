@@ -177,6 +177,9 @@ touch $LOGDIR/error.log
 rm -f $LOGDIR/access.log
 touch $LOGDIR/access.log
 
+# load crontab from file
+crontab /home/mfcs.lib.wvu.edu/serverConfiguration/crontab.dev
+
 # start the apache2 service in the foreground to keep
 # the container from closing
 exec apache2-foreground             # main execution
