@@ -9,8 +9,11 @@ mysql -u root -h $DATABASE_HOST EngineAPI < /tmp/git/engineAPI/sql/EngineAPI.sql
 # import engineCMS database - engine keeps looking for this database
 mysql -u root -h $DATABASE_HOST engineCMS < /home/mfcs.lib.wvu.edu/SQLFiles/engineCMS.sql
 
+# import engineCMS database - engine keeps looking for this database
+mysql -u root -h $DATABASE_HOST engineCMS < /home/mfcs.lib.wvu.edu/SQLFiles/engineCMS.sql
+
 # first value is size in megabytes to load main database
-# mysql -u root -h $DATABASE_HOST -Bse "set global max_allowed_packet=1024*1024*1024"; #first value is size in megabytes
+mysql -u root -h $DATABASE_HOST -Bse "set global max_allowed_packet=1024*1024*1024"; #first value is size in megabytes
 
 # if backup exists import that and do selected migrations
 # I was using a older backup and additional migrations needed
