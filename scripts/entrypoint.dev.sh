@@ -3,7 +3,7 @@
 # Base PRE Setup
 GITDIR="/tmp/git"
 ENGINEAPIGIT="https://github.com/wvulibraries/engineAPI.git"
-ENGINEBRANCH="engineAPI-3.x"
+ENGINEBRANCH="engineAPI-3.2-develop"
 ENGINEAPIHOME="/home/engineAPI"
 
 SERVERURL="/home/mfcs.lib.wvu.edu"
@@ -25,6 +25,9 @@ cat yum-wof /etc/yum.repos.d/CentOS-Base.repo
 
 # yum -y update
 
+# load crontab
+crontab $SERVERURL/serverConfiguration/cronjobs.dev
+
 mv /etc/httpd/conf.d/mod_security.conf /etc/httpd/conf.d/mod_security.conf.bak
 # /etc/init.d/httpd start
 
@@ -33,22 +36,22 @@ cd $GITDIR
 git clone -b $ENGINEBRANCH $ENGINEAPIGIT
 
 # remove exiting defaultPrivate.php and replace with our custom one
-rm $GITDIR/engineAPI/engine/engineAPI/3.1/config/defaultPrivate.php
-ln -s /vagrant/serverConfiguration/defaultPrivate.php $GITDIR/engineAPI/engine/engineAPI/3.1/config/defaultPrivate.php
+rm $GITDIR/engineAPI/engine/engineAPI/3.2/config/defaultPrivate.php
+ln -s $SERVERURL/serverConfiguration/defaultPrivate.php $GITDIR/engineAPI/engine/engineAPI/3.2/config/defaultPrivate.php
 
 mkdir -p $SERVERURL/phpincludes/
 ln -s $GITDIR/engineAPI/engine/ $SERVERURL/phpincludes/
 
 # Application Specific
 
-ln -s /vagrant/public_html $SERVERURL/$DOCUMENTROOT
-ln -s $SERVERURL/phpincludes/engine/engineAPI/3.1 $SERVERURL/phpincludes/engine/engineAPI/latest
+# ln -s /vagrant/public_html $SERVERURL/$DOCUMENTROOT
+ln -s $SERVERURL/phpincludes/engine/engineAPI/3.2 $SERVERURL/phpincludes/engine/engineAPI/latest
 
 rm -f /etc/php.ini
 rm -f /etc/httpd/conf/httpd.conf
 
-ln -s /vagrant/serverConfiguration/php.ini /etc/php.ini
-ln -s /vagrant/serverConfiguration/vagrant_httpd.conf /etc/httpd/conf/httpd.conf
+ln -s $SERVERURL/serverConfiguration/php.ini /etc/php.ini
+ln -s $SERVERURL/serverConfiguration/httpd.conf /etc/httpd/conf/httpd.conf
 
 mkdir -p $SERVERURL/data/archives/mfcs
 mkdir -p $SERVERURL/data/archives/other
@@ -63,10 +66,10 @@ mkdir -p $SERVERURL/public_html/javascript/
 ln -s /tmp/git/engineAPI/engine/template/distribution/public_html/js $SERVERURL/public_html/javascript/distribution
 
 # setup the template link
-ln -s /vagrant/template/* $GITDIR/engineAPI/engine/template/
+ln -s $SERVERURL/template/* $GITDIR/engineAPI/engine/template/
 
-mkdir -p /vagrant/serverConfiguration/serverlogs
-touch /vagrant/serverConfiguration/serverlogs/error_log
+mkdir -p $SERVERURL/serverConfiguration/serverlogs
+touch $SERVERURL/serverConfiguration/serverlogs/error_log
 /etc/init.d/httpd restart
 chkconfig httpd on
 
@@ -80,18 +83,18 @@ ln -s $SERVERURL $ENGINEAPIHOME
 ln -s /tmp/git/engineAPI/public_html/engineIncludes $SERVERURL/$DOCUMENTROOT/engineIncludes
 
 #install 3rd Party dependencies
-cd /vagrant/serverConfiguration/3rdParty
+cd $SERVERURL/serverConfiguration/3rdParty
 rpm -Uvh --force --quiet remi-release-6*.rpm epel-release-6*.rpm
 
 rm -f /etc/yum.repos.d/remi.repo
-ln -s /vagrant/serverConfiguration/remi.repo /etc/yum.repos.d/remi.repo
+ln -s $SERVERURL/serverConfiguration/remi.repo /etc/yum.repos.d/remi.repo
 
 # yum -y install libjpeg-devel libpng-devel libtiff-devel SDL-devel agg-devel
 
-tar -zxf /vagrant/serverConfiguration/3rdParty/leptonica-1.69.tar.gz --directory=/tmp
-tar -zxf /vagrant/serverConfiguration/3rdParty/tesseract-ocr-3.02.02.tar.gz --directory=/tmp
-tar -zxf /vagrant/serverConfiguration/3rdParty/tesseract-ocr-3.02.eng.tar.gz --directory=/tmp
-tar -xf /vagrant/serverConfiguration/3rdParty/exact-image-0.8.8.tar --directory=/tmp
+tar -zxf $SERVERURL/serverConfiguration/3rdParty/leptonica-1.69.tar.gz --directory=/tmp
+tar -zxf $SERVERURL/serverConfiguration/3rdParty/tesseract-ocr-3.02.02.tar.gz --directory=/tmp
+tar -zxf $SERVERURL/serverConfiguration/3rdParty/tesseract-ocr-3.02.eng.tar.gz --directory=/tmp
+tar -xf $SERVERURL/serverConfiguration/3rdParty/exact-image-0.8.8.tar --directory=/tmp
 
 cd /tmp/leptonica-1.69
 ./configure
@@ -118,7 +121,7 @@ cd /tmp
 mkdir ffmpeg
 
 echo "Extracing FFMPEG"
-tar -xvf /vagrant/serverConfiguration/3rdParty/ffmpeg-2.6.8.tar.xz --directory /tmp/ffmpeg/
+tar -xvf $SERVERURL/serverConfiguration/3rdParty/ffmpeg-2.6.8.tar.xz --directory /tmp/ffmpeg/
 cd /tmp/ffmpeg/ffmpeg-2.8.6-64bit-static
 cp ffmpeg /usr/local/bin/
 cp ffmpeg-10bit /usr/local/bin/
@@ -129,4 +132,4 @@ echo "Completed install"
 
 /sbin/service httpd start
 
-tail -f /vagrant/serverConfiguration/serverlogs/error_log
+tail -f $SERVERURL/serverConfiguration/serverlogs/error_log

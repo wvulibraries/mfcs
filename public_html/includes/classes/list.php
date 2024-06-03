@@ -48,7 +48,7 @@ class listGenerator {
 				return FALSE;
 			}
 
-			$object_count = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+			$object_count = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
 			//end TODO
 
 			$data_size                = $object_count["COUNT(*)"];
@@ -501,7 +501,7 @@ class listGenerator {
 		}
 
 		if (($metaForms = forms::getMetadataForms($entry)) === FALSE) {
-			errorHandle::errorMsg("Errot getting Metadata Forms.");
+			errorHandle::errorMsg("Error getting Metadata Forms.");
 			return FALSE;
 		}
 
@@ -587,7 +587,7 @@ class listGenerator {
 
 		return $output;
 	}
-
+	
 	public static function generateFormSelectListForFormCreator($metadata = TRUE) {
 
 		if ($metadata === TRUE) {
@@ -726,7 +726,7 @@ class listGenerator {
 		}
 
 		$objects = array();
-		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+		while ($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
 			$objects[$row['typeID']] = $row['type'];
 		}
 

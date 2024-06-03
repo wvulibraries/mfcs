@@ -46,8 +46,7 @@ class forms {
 	}
 
 	// copilot refactor - 2024-04-24
-	public static function get($formID = NULL, $productionOnly = FALSE)
-	{
+	public static function get($formID = NULL, $productionOnly = FALSE) {
 		if (is_null($formID)) {
 			return self::getForms();
 		}
@@ -79,7 +78,7 @@ class forms {
 			return FALSE;
 		}
 
-		$form = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
+		$form = mysqli_fetch_array($sqlResult['result'], MYSQLI_ASSOC);
 
 		$form['fields'] = unserialize(base64_decode($form['fields']));
 		if ($form['fields'] === FALSE) {
@@ -136,7 +135,7 @@ class forms {
 		}
 
 		$forms = array();
-		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+		while ($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
 
 			$forms[$row['ID']] = self::get($row['ID'],$productionOnly);
 
@@ -288,7 +287,7 @@ class forms {
 				return FALSE;
 			}
 
-			$result = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+			$result = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
 			return $result['count(*)'];
 		} else {
 			return FALSE;
@@ -355,7 +354,7 @@ class forms {
 			return FALSE;
 		}
 
-		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+		$row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
 
 		return $row['COUNT(*)'];
 
@@ -1606,7 +1605,7 @@ class forms {
 			return array();
 		}
 
-		while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+		while ($row = mysqli_fetch_array($sqlResult['result'], MYSQLI_ASSOC)) {
 			$return[] = $row['projectID'];
 		}
 
@@ -1714,7 +1713,7 @@ class forms {
 
 		$data = array();
 
-		while($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+		while($row = mysqli_fetch_array($sqlResult['result'], MYSQLI_ASSOC)) {
 			if (!isnull($fieldName) && $row['fieldName'] != $fieldName) {
 				continue;
 			}
@@ -1758,7 +1757,7 @@ class forms {
 	// private functions
 
 	private static function publicReleaseObjSelect($objectID, $object, $form) {
-		if(!isnull($objectID)) {
+		if(!is_null($objectID)) {
 			if ($object['publicRelease'] == "0") return false;
 		}
 		else if ($form['objPublicReleaseDefaultTrue'] == "0") {

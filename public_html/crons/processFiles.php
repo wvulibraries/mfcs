@@ -18,7 +18,7 @@ $engine->obCallback = FALSE;
 # Count how many items we need to iterate through.  
 $sqlCount = sprintf("SELECT COUNT(*) AS `processing` FROM `objectProcessing` WHERE `state`='1' ");
 $countQuery = mfcs::$engine->openDB->query($sqlCount); 
-$result = mysql_fetch_array($countQuery['result'],  MYSQL_ASSOC);
+$result = mysqli_fetch_array($countQuery['result'],  MYSQLI_ASSOC);
 
 # set the count variable as int
 $count = (int) $result['processing'];
@@ -37,7 +37,7 @@ while($count > 0) {
 
 	if ($sqlResult['numrows'] == "0") break;
 
-	$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+	$row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
 	files::process($row['objectID'],$row['fieldName']);
 	$count--; 
 }

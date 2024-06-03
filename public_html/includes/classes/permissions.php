@@ -15,7 +15,7 @@ class mfcsPerms {
     		return FALSE;
     	}
 
-    	$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
+    	$row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
     	if ((int)$row['COUNT(permissions.ID)'] > 0) return TRUE;
 		return FALSE;
 	}
@@ -132,7 +132,7 @@ class mfcsPerms {
 		
 		$permissions = array();
 
-		while($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+		while($row       = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
 
 			if (!isset($permissions[$row['type']])) $permissions[$row['type']] = array();
 

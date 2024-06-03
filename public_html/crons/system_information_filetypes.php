@@ -23,7 +23,7 @@ if (!$sqlResult['result']) {
 }
 
 $file_types = array("types" => array(), "forms" => array());
-while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
+while ($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
 
 	$objects = objects::get($row['ID'],TRUE);
 	getFiles($objects);

@@ -38,19 +38,24 @@ class users {
         return TRUE;
     }
 
+    /**
+     * Load user's projects
+     *
+     * @return array|bool Returns an array of user's projects or FALSE if an error occurred
+     */
     public static function loadProjects() {
         $engine = EngineAPI::singleton();
         $currentProjects = array();
-        $sql = sprintf("SELECT projects.ID,projectName FROM `projects` LEFT JOIN users_projects ON users_projects.projectID=projects.ID WHERE users_projects.userID=%s",
+        $sql = sprintf("SELECT projects.ID,projectName FROM `projects` LEFT JOIN users_projects ON users_projects.projectID=projects.ID WHERE users_projects.userID='%s'",
             $engine->openDB->escape(self::user('ID'))
         );
         $sqlResult = $engine->openDB->query($sql);
         if (!$sqlResult['result']) {
-            errorHandle::newError("Failed to load user's projects ({$sqlResult['error']})", errorHandle::HIGH);
+            errorHandle::newError(__METHOD__ . "() - Failed to load user's projects ({$sqlResult['error']})", errorHandle::HIGH);
             errorHandle::errorMsg("Failed to load your current projects.");
             return FALSE;
         } else {
-            while ($row = mysql_fetch_assoc($sqlResult['result'])) {
+            while ($row = mysqli_fetch_assoc($sqlResult['result'])) {
                 $currentProjects[$row['ID']] = $row['projectName'];
             }
         }
@@ -84,10 +89,10 @@ class users {
                     return FALSE;
                 } else {
                     $sqlResult = $engine->openDB->query($sqlSelect);
-                    self::$user = mysql_fetch_assoc($sqlResult['result']);
+                    self::$user = mysqli_fetch_assoc($sqlResult['result']);
                 }
             } else {
-                self::$user = mysql_fetch_assoc($sqlResult['result']);
+                self::$user = mysqli_fetch_assoc($sqlResult['result']);
             }
         }
         return TRUE;
@@ -120,7 +125,7 @@ class users {
             return FALSE;
         }
 
-        return mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
+        return mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
     }
 
     /**
@@ -138,7 +143,7 @@ class users {
         }
 
         $users = array();
-        while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
+        while($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
             if (($user = self::get($row['ID'])) == FALSE) {
                 return FALSE;
             }

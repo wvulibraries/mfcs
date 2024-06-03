@@ -23,3 +23,16 @@ SQLFiles/mfcs_updatedDB.sql
 gitpulls/
 mysql/
 data/
+package.box
+mfcs-1.box
+mfcs-manual-exports/mcppc_2024-05-08_14-51-22.csv
+mfcs-manual-processing/192268
+mfcs-manual-processing/192270
+mfcs-manual-processing/192379
+mfcs-manual-processing/192379-old
+public_html/public_html
+serverConfiguration/3rdParty/php-5.3.3-23.el6_4.i686.rpm
+serverConfiguration/3rdParty/php-clamav_0.15.8.tar.gz
+SQLFiles/mfcs-20240416.sql
+SQLFiles/mfcs-20230922162813.sql
+Tests/Sample Virus Upload/eicar.com.tiff
