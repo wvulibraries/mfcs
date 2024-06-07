@@ -177,6 +177,13 @@ touch $LOGDIR/error.log
 rm -f $LOGDIR/access.log
 touch $LOGDIR/access.log
 
+# load crontab from file
+crontab /home/mfcs.lib.wvu.edu/serverConfiguration/crontab.dev
+
+# remove /etc/ImageMagick-6/policy.xml and replace with our custom one
+rm /etc/ImageMagick-6/policy.xml
+ln -s /config/policy.xml /etc/ImageMagick-6/policy.xml
+
 # start the apache2 service in the foreground to keep
 # the container from closing
 exec apache2-foreground             # main execution

@@ -2,7 +2,7 @@
 
 // This file should be set to be readable only by the web server user and the system administrator (or root)
 
-global $engineVarsPrivate;//MySQL Information
+global $engineVarsPrivate; // MySQL Information
 
 $engineVarsPrivate['mysql']['server']   = getenv("DATABASE_HOST");
 $engineVarsPrivate['mysql']['port']     = getenv("DATABASE_PORT");

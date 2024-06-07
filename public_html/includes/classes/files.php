@@ -325,242 +325,6 @@ class files {
    	 	$suffixes = array('', 'KB', 'MB', 'GB', 'TB');
     	return round(pow(1024, $base - floor($base)), $precision) . " " . $suffixes[floor($base)];
 	}
-
-	// original function here for reference as it is being refactored	
-	// public static function buildFilesPreview($objectID,$fieldName=NULL){
-	// 	if (objects::validID(TRUE,$objectID) === FALSE) {
-	// 		return FALSE;
-	// 	}
-
-	// 	if (($object = objects::get($objectID,TRUE)) === FALSE) {
-	// 		return FALSE;
-	// 	}
-
-	// 	$output = '';
-
-	// 	if (isset($fieldName)) {
-	// 		$field  = forms::getField($object['formID'],$fieldName);
-	// 		$fields = array($field);
-	// 	}
-	// 	else {
-	// 		$fields = forms::getFields($object['formID']);
-	// 	}
-
-	// 	$fileLIs = array();
-	// 	foreach($fields as $field){
-
-	// 		if($field['type'] != 'file') continue;
-	// 		if(empty($object['data'][ $field['name'] ])) continue;
-
-	// 		// Figure out some needed vars for later
-	// 		$fileDataArray = $object['data'][$field['name']];
-	// 		$assetsID      = $fileDataArray['uuid'];
-	// 		$fileLIs       = array();
-
-	// 		// Check if $fileDataArray['files']['archive'] is an array before sorting
-	// 		if (isset($fileDataArray['files']['archive']) && is_array($fileDataArray['files']['archive'])) {
-	// 			uasort($fileDataArray['files']['archive'], function ($a, $b) {
-	// 				return strnatcasecmp($a['name'], $b['name']);
-	// 			});
-	// 		} else {
-	// 			// Handle the case when $fileDataArray['files']['archive'] is not an array
-	// 			// Log an error and continue to the next iteration
-	// 			error_log('Error: $fileDataArray[\'files\'][\'archive\'] is not an array or is null.');
-	// 			continue;
-	// 		}
-
-	// 		foreach($fileDataArray['files']['archive'] as $fileID => $file){
-
-	// 			$_filename = pathinfo($file['name']);
-	// 			$filename  = $_filename['filename'];
-	// 			$icon      = "";
-	// 			$links     = array();
-	// 			$type 	   = explode('/', $file['type']);
-
-	// 			$fi            = new finfo();
-	// 			$filePathFull  = mfcs::config("archivalPathMFCS").DIRECTORY_SEPARATOR.$file['path'].DIRECTORY_SEPARATOR.$file['name'];
-	// 			$filesize      = filesize($filePathFull);
-
-	// 			$extraFileInfo = $fi->file($filePathFull);
-	// 			$filesize      = self::formatBytes($filesize);
-
-	// 			$sql       = sprintf("SELECT `checksum`, `pass`, `lastChecked` FROM `filesChecks` WHERE `location`='%s'",$file['path'].DIRECTORY_SEPARATOR.$file['name']);
-	// 			$sqlResult_cs = mfcs::$engine->openDB->query($sql);
-
-	// 			if (!$sqlResult_cs['result']) {
-	// 				errorHandle::newError(__METHOD__."() - : ".$sqlResult['error'], errorHandle::DEBUG);
-	// 				return FALSE;
-	// 			}
-
-	// 			$row_cs   = mysqli_fetch_array($sqlResult_cs['result'],  MYSQLI_ASSOC);
-	// 			$checksum = (isnull($row_cs['checksum']))?"Not Available":$row_cs['checksum'];
-	// 			if (isnull($row_cs['lastChecked'])) {
-	// 				$checksum_pass_class = "checksum_not_checked";
-	// 			}
-	// 			else if ($row_cs['pass'] == "0") {
-	// 				$checksum_pass_class = "checksum_fail";
-	// 			}
-	// 			else {
-	// 				$checksum_pass_class = "checksum_pass";
-	// 			}
-
-
-	// 			// Choose an Icon for the type of data
-	// 			switch ($type[0]) {
-	// 				case 'image':
-	// 					$icon = '<i class="fa fa-file-image-o"></i>';
-	// 					break;
-	// 				case 'video':
-	// 					$icon = '<i class="fa fa-file-video-o"></i>';
-	// 					break;
-	// 				case 'audio':
-	// 					$icon = '<i class="fa fa-file-sound-o"></i>';
-	// 					break;
-	// 				case 'text':
-	// 					$icon = '<i class="fa fa-file-text-o"></i>';
-	// 					break;
-	// 				case 'application':
-	// 					if($type[1] == 'pdf'){
-	// 						$icon = '<i class="fa fa-file-pdf-o"></i>';
-	// 					} else {
-	// 						$icon = '<i class="fa fa-file-o"></i>';
-	// 					}
-	// 					break;
-	// 				default:
-	// 					$icon = '<i class="fa fa-file-o"></i>';
-	// 					break;
-	// 			}
-
-
-	// 			$links['Original'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
-	// 				localvars::get('siteRoot'),
-	// 				$objectID,
-	// 				$field['name'],
-	// 				$fileID,
-	// 				'archive');
-
-	// 			if(isset($field['convert']) && str2bool($field['convert'])){
-	// 				$links['Converted'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
-	// 					localvars::get('siteRoot'),
-	// 					$objectID,
-	// 					$field['name'],
-	// 					$fileID,
-	// 					'processed');
-	// 			}
-	// 			if(isset($field['thumbnail']) && str2bool($field['thumbnail'])){
-	// 				$links['Thumbnail'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
-	// 					localvars::get('siteRoot'),
-	// 					$objectID,
-	// 					$field['name'],
-	// 					$fileID,
-	// 					'thumbs');
-	// 			}
-	// 			if(isset($field['ocr']) && str2bool($field['ocr'])){
-	// 				$links['OCR'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
-	// 					localvars::get('siteRoot'),
-	// 					$objectID,
-	// 					$field['name'],
-	// 					$fileID,
-	// 					'ocr');
-	// 			}
-	// 			if(isset($field['combine']) && str2bool($field['combine'])){
-	// 				$links['Combined PDF'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
-	// 					localvars::get('siteRoot'),
-	// 					$objectID,
-	// 					$field['name'],
-	// 					'combinedPDF');
-	// 				$links['Combined Thumbnail'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
-	// 					localvars::get('siteRoot'),
-	// 					$objectID,
-	// 					$field['name'],
-	// 					'combinedThumb');
-	// 			}
-	// 			if(isset($field['convertAudio']) && str2bool($field['convertAudio'])){
-	// 				$links['Converted Audio'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
-	// 					localvars::get('siteRoot'),
-	// 					$objectID,
-	// 					$field['name'],
-	// 					$fileID,
-	// 					'audio');
-	// 			}
-	// 			if(isset($field['convertVideo']) && str2bool($field['convertVideo'])){
-	// 				$links['Converted Video'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
-	// 					localvars::get('siteRoot'),
-	// 					$objectID,
-	// 					$field['name'],
-	// 					$fileID,
-	// 					'video');
-	// 			}
-	// 			if(isset($field['videothumbnail']) && str2bool($field['videothumbnail'])){
-	// 				$numVideoThumbs = $field['videoThumbFrames'];
-
-	// 				for($i = 0; $i < $numVideoThumbs; $i++){
-	// 					$filename = $file['name'];
-	// 					$filename = explode(".", $filename);
-	// 					$filename = $filename[0];
-
-	// 					if(!$i == 0){
-	// 						$filename = $filename."_".$i;
-	// 					}
-
-	// 					$links["Thumbnail_".$i] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s&name=%s',
-	// 						localvars::get('siteRoot'),
-	// 						$objectID,
-	// 						$field['name'],
-	// 						'thumbnails',
-	// 						$filename
-	// 					);
-	// 				}
-	// 			}
-
-	// 			$previewLinks  = array();
-	// 			$downloadLinks = array();
-	// 			$iFrameOutput;
-	// 			foreach($links as $linkLabel => $linkURL){
-
-	// 				// Build Links
-	// 				$previewLinks[]  = sprintf('<li><a tabindex="-1" href="javascript:void(0);" data-target="modal" data-url="%s">%s</a></li>', $linkURL, $linkLabel);
-	// 				$downloadLinks[] = sprintf('<li><a tabindex="-1" href="%s&download=1">%s</a></li>',$linkURL, $linkLabel);
-	// 			}
-
-	// 			// Build the preview dropdown HTML
-	// 			$previewDropdown  = '<div class="btn-group">';
-	// 			$previewDropdown .= '	<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">';
-	// 			$previewDropdown .= '		Preview <span class="caret"></span>';
-	// 			$previewDropdown .= '	</a>';
-	// 			$previewDropdown .= sprintf('<ul class="dropdown-menu fileModalPreview">%s</ul>', implode('', $previewLinks));
-	// 			$previewDropdown .= '</div>';
-
-
-	// 			// Build the download dropbox HTML
-	// 			$downloadDropdown  = '<div class="btn-group">';
-	// 			$downloadDropdown .= '	<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">';
-	// 			$downloadDropdown .= '		Download <span class="caret"></span>';
-	// 			$downloadDropdown .= '	</a>';
-	// 			$downloadDropdown .= sprintf('<ul class="dropdown-menu">%s</ul>', implode('', $downloadLinks));
-	// 			$downloadDropdown .= '</div>';
-
-
-	// 			$fileLIs[] = sprintf('<li><span class="filename span6">%s %s </span><span class="dropdowns span6"> %s %s </span><br /><span class="filesize">File size:  %s </span><br /><span class="file_checksum %s">Checksum: %s</span><br /><span class="file_dir">Location: %s</span></li>',
-	// 				$icon,
-	// 				$file['name'],
-	// 				$previewDropdown,
-	// 				$downloadDropdown,
-	// 				$filesize,
-	// 				$checksum_pass_class,
-	// 				$checksum,
-	// 				$file['path'].DIRECTORY_SEPARATOR.$file['name']
-	// 			);
-	// 		}
-
-
-	// 		$output .= sprintf('<div class="filePreviewField"><header><i class="fa fa-folder-open"></i> %s</header><ul class="filePreviews">%s</ul></div>', $field['label'], implode('', $fileLIs));
-
-	// 		// $output .= $iFrameOutput;
-
-	// 	}
-	// 	return $output;
-	// }
 	
 	public static function buildFilesPreview($objectID,$fieldName=NULL){
 		if (objects::validID(TRUE,$objectID) === FALSE) {
@@ -607,7 +371,6 @@ class files {
 			foreach($fileDataArray['files']['archive'] as $fileID => $file){
 				$fileInfo = self::getFileInformation($file);
 
-
 				$filename = $fileInfo['filename'];
 				$filesize = $fileInfo['filesize'];
 				$checksum = $fileInfo['checksumInfo']['checksum'];
@@ -636,7 +399,7 @@ class files {
 
 				// Choose an Icon for the type of data
 				// self::vardump($type);
-				// $icon = self::getFileIcon($type);
+				$icon = self::getFileIcon($type);
 				// self::vardump($icon);
 				// die();
 
@@ -1124,6 +887,8 @@ class files {
 			// if ocr is checked, read the images and create an OCR text file for each
 			if (self::shouldCreateOCRFile($options)) {
 				$return['ocr'] = self::createOCRFiles($originalFiles, $originalsFilepath, $assetsID, $tmpDir, $options);
+				// var_dump($return['ocr']);
+				// die();
 			} // If OCR
 
 			// clear all temporary jpg files and remove the temp directory
@@ -1456,17 +1221,8 @@ class files {
 		// set $baseFilename to the path of the temporary jpg file
 		$baseFilename = $tmpDir . DIRECTORY_SEPARATOR . $basename;
 
-		// set $baseFilename to the path of the original file
-		// $baseFilename = pathinfo($originalFile, PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR . pathinfo($originalFile, PATHINFO_FILENAME);
-
 		// New TesseractOCR object
 		$tesseract = new TesseractOCR();
-
-		// Create a temporary jpg file of the original file
-		// $_exec = shell_exec(sprintf('convert %s %s 2>&1',
-		// 	escapeshellarg($originalFile), // input.ext
-		// 	escapeshellarg($baseFilename.".jpg") // output.jpg
-		// 	));
 	
 		try {
 			$text = $tesseract->recognize($baseFilename.".jpg");
@@ -1478,26 +1234,25 @@ class files {
 	
 			$saveDir = self::getSaveDir($assetsID, 'ocr');
 
-			// get namename from $filename
-
-
 			$filePath = $saveDir . DIRECTORY_SEPARATOR . $basename . '.txt';
 			
 			if (file_put_contents($filePath, $text) === false) {
-
 				throw new Exception('Failed to write OCR text file.');
 			}
-	
+
+			// verify that the file was created
+			if (!file_exists($filePath)) {
+				throw new Exception('OCR text file was not created.');
+			}
+
+			// return the file information
 			$return['ocr'][] = array(
 				'name'   => $basename.'.txt',
-				'path'   => self::getSaveDir($assetsID,'ocr',FALSE),
-				'size'   => filesize(self::getSaveDir($assetsID,'ocr').$basename.'.txt'),
-				'type'   => self::getMimeType(self::getSaveDir($assetsID,'ocr').$basename.'.txt'),
+				'path'   => $saveDir,
+				'size'   => filesize($filePath),
+				'type'   => self::getMimeType($filePath),
 				'errors' => '',
 			);
-
-			// remove the temporary jpg file
-			// unlink($baseFilename.".jpg");
 	
 			return $return; // Assuming you want to return some data after successful operation
 		} catch (Exception $e) {
@@ -1771,6 +1526,10 @@ class files {
 		// Store the thumbnail creation status
 		$return['thumbnailCreated'] = $thumbnailCreated;
 
+		// clean up the image object
+		$image->clear();
+		$image->destroy();
+
 		// Return the array
 		return $return;
 	}
@@ -1823,66 +1582,72 @@ class files {
 			touch($gsTemp);
 
 			foreach ($originalFiles as $filename) {
-
 				// Figure some stuff out about the file
-				$originalFile = $originalsFilepath.DIRECTORY_SEPARATOR.$filename;
-				$_filename    = pathinfo($originalFile);
-				$filename     = $_filename['filename'];
-
-
-				$baseFilename = $tmpDir.DIRECTORY_SEPARATOR.$filename;
-
+				$originalFile = $originalsFilepath . DIRECTORY_SEPARATOR . $filename;
+				$_filename = pathinfo($originalFile);
+				$filename = $_filename['filename'];
+				$baseFilename = $tmpDir . DIRECTORY_SEPARATOR . $filename;
+			
 				// Create a thumbnail of the first image
 				if ($createThumb === TRUE) {
-
-					if (($return[] = self::createThumbnail($originalFile,$filename,$options,$assetsID,TRUE)) === FALSE) {
-						throw new Exception("Failed to create thumbnail: ".$filename);
+					if (($return[] = self::createThumbnail($originalFile, $filename, $options, $assetsID, TRUE)) === FALSE) {
+						throw new Exception("Failed to create thumbnail: " . $filename);
 					}
-
 					// Prevent making multiple thumbnails
 					$createThumb = FALSE;
 				}
-
-				// perform hOCR on the temporary jpg file which gets stored in combined as an HTML file
-				$_exec = shell_exec(sprintf('tesseract %s %s -l eng %s 2>&1',
-					escapeshellarg($baseFilename.".jpg"), // input.ext
+			
+				// Perform hOCR on the temporary jpg file which gets stored in combined as an HTML file
+				$_exec = shell_exec(sprintf(
+					'tesseract %s %s -l eng %s 2>&1',
+					escapeshellarg($baseFilename . ".jpg"), // input.ext
 					escapeshellarg($baseFilename), // output.html
 					escapeshellarg("$saveBase/hocr.cfg") // hocr config file
-					));
+				));
 
+				$hocrFile = $baseFilename . ".hocr"; // Tesseract output file
+				$htmlFile = $baseFilename . ".html"; // Desired HTML file
+
+				// Rename the .hocr file to .html
+				if (file_exists($hocrFile)) {
+					rename($hocrFile, $htmlFile);
+				} else {
+					errorHandle::warningMsg("Tesseract output file not found: " . $hocrFile);
+					touch($htmlFile);
+				}	
+				
 				// If a new-line char is in the output, assume it's an error
 				// Tesseract failed, let's normalize the image and try again
 				if (strpos(trim($_exec), "\n") !== FALSE) {
-					$errors[] = "Unable to process OCR for ".basename($originalFile).". Continuing&hellip;";
-					errorHandle::warningMsg("Unable to process OCR for ".basename($originalFile).". Continuing&hellip;");
-
+					$errors[] = "Unable to process OCR for " . basename($originalFile) . ". Continuing&hellip;";
+					errorHandle::warningMsg("Unable to process OCR for " . basename($originalFile) . ". Continuing&hellip;");
 					// Ensure HTML file exists
-					touch($baseFilename.".html");
+					touch($baseFilename . ".html");
 				}
-
+			
 				// Create an OCR'd pdf of the converted file
-				$_exec = shell_exec(sprintf('hocr2pdf -i %s -s -o %s < %s 2>&1',
-					escapeshellarg($baseFilename.".jpg"), // input.ext
-					escapeshellarg($baseFilename.".pdf"), // output.pdf
-					escapeshellarg($baseFilename.".html") // input.html
-					));
-
-				// If the output of hocr2pdf is not "Writing unmodified DCT buffer." then there was an error
-				if (trim($_exec) !== 'Writing unmodified DCT buffer.') {
-					if (strpos($_exec,'Warning:') !== FALSE) {
-						errorHandle::newError("hocr2pdf Warning: ".$_exec, errorHandle::DEBUG);
-					}
-					else {
-						errorHandle::errorMsg("Failed to Create PDF: ".basename($filename,"jpg").".pdf");
-						throw new Exception("hocr2pdf Error: ".$_exec);
+				$_exec = shell_exec(sprintf(
+					'hocr2pdf -i %s -o %s -s < %s 2>&1',
+					escapeshellarg($baseFilename . ".jpg"), // input.ext
+					escapeshellarg($baseFilename . ".pdf"), // output.pdf
+					escapeshellarg($baseFilename . ".html") // input.html
+				));
+			
+				// Check the output of hocr2pdf
+				if (trim($_exec) !== '') {
+					if (strpos($_exec, 'Warning:') !== FALSE) {
+						errorHandle::newError("hocr2pdf Warning: " . $_exec, errorHandle::DEBUG);
+					} else {
+						errorHandle::errorMsg("Failed to Create PDF: " . basename($filename, ".jpg") . ".pdf");
+						throw new Exception("hocr2pdf Error: " . $_exec);
 					}
 				}
-
+			
 				// Add this pdf to a temp file that will be read in by gs
-				file_put_contents($gsTemp, $baseFilename.".pdf".PHP_EOL, FILE_APPEND);
-
+				file_put_contents($gsTemp, $baseFilename . ".pdf" . PHP_EOL, FILE_APPEND);
+			
 				// We're done with this file, delete it
-				unlink($baseFilename.".html");
+				unlink($baseFilename . ".html");
 			}
 
 			// Combine all PDF files in directory
@@ -1940,6 +1705,7 @@ class files {
 
 		// loop over each jpg file and create an OCR text file in the $tmpDir
 		$files = scandir($tmpDir);
+
 		// filter out any non-jpg files
 		$jpgFiles = array();
 		foreach ($files as $file) {
@@ -1954,6 +1720,9 @@ class files {
 				throw new Exception("Failed to create OCR file for $filename");
 			}
 		}	
+
+		// var_dump($return);
+		
 		return $return;	
 	}	
 
