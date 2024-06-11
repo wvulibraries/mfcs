@@ -43,7 +43,7 @@ COPY ./config/000-default.conf /etc/apache2/sites-available/000-default.conf
 
 EXPOSE 80
 
-ADD ./scripts/entryypoint.dev.sh /usr/bin/entrypoint.dev.sh
+ADD ./scripts/entrypoint.dev.sh /usr/bin/entrypoint.dev.sh
 RUN chmod -v +x /usr/bin/entrypoint.dev.sh
 
 # Start the service
