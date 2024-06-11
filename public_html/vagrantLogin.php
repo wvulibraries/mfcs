@@ -1,10 +1,10 @@
 <?php 
 
-if (strtolower($_SERVER['SERVER_NAME']) != "localhost") {
-	header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found"); 
-	print "Page not found.";
-	die();
-}
+// if (strtolower($_SERVER['SERVER_NAME']) != "localhost") {
+// 	header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found"); 
+// 	print "Page not found.";
+// 	die();
+// }
 
 require 'engineInclude.php';
 
