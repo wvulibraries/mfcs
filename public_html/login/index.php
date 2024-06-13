@@ -16,6 +16,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Login Type
 $loginType = "ldap";
+
 // Domain for ldap login
 $engine->localVars("domain", "wvu-ad");
 

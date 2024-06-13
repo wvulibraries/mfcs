@@ -13,14 +13,15 @@ services:
       - ./config/config.ini:/home/mfcs.lib.wvu.edu/config.ini 
       - ./config/php.ini:/usr/local/etc/php/php.ini   
       - ./data/session:/var/lib/php/session         
-      - ./data/logs:/tmp/log     
+      - ./data/logs:/tmp/log 
+      - ./data:/home/mfcs.lib.wvu.edu/data
       - ./public_html:/home/mfcs.lib.wvu.edu/public_html
       - ./template:/home/mfcs.lib.wvu.edu/template      
-      - ./data:/home/mfcs.lib.wvu.edu/data
       - ./serverConfiguration:/home/mfcs.lib.wvu.edu/serverConfiguration  
       - ./SQLFiles:/home/mfcs.lib.wvu.edu/SQLFiles    
       - ./scripts:/home/mfcs.lib.wvu.edu/scripts
       - ./data/git_pulls:/tmp/git
+      - ./mfcs-manual-imports:/home/mfcs.lib.wvu.edu/mfcs-manual-imports
     env_file:
         - './env/.env.dev.mfcs' 
     ports:

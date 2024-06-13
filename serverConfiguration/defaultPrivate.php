@@ -23,9 +23,13 @@ $engineVarsPrivate["privateVars"]["engineDB"] = array(
 		'file'     => 'stats.php',
 		'function' => '__construct',
 	),
+	// array(
+	// 	'file'     => 'mysql.php',
+	// 	'function' => 'mysqlLogin',
+	// ),
 	array(
-		'file'     => 'mysql.php',
-		'function' => 'mysqlLogin',
+		'file'     => 'ldap.php',
+		'function' => 'ldapLogin',
 	),
 );
 ?>

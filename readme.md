@@ -11,8 +11,8 @@ MFCS should be able to export data in any format for, or connect to, any digital
 
 The ultimate design goal for MFCS is to provide institutions with a robust system to store and archive digital projects, finding aids, and other material that will ultimately live in a system such as Hydra, Islandora, or DLXS (or any other) without having to worry about Lock-in or complex upgrade paths between digital repository systems. As systems change, become obsolete, or are updated the only change that should be needed to migrate data to a new system are new or updated MFCS export scripts. No more exporting and importing data between your old authoritative system and your new one, which reduces the risk of cross walking errors and data corruption. 
 
-A vagrant setup is provided as part of the repository. For authentication into the vagrant box a simple script is located here:
-[http://localhost:8080/vagrantLogin.php](http://localhost:8080/vagrantLogin.php)
+A docker setup is provided as part of the repository. For authentication into the docker dev setup a simple script is located here:
+[http://localhost:8080/devLogin.php](http://localhost:8080/devLogin.php)
 
 Video 1, Metadata Entry Demo:
 http://www.youtube.com/watch?v=8RVqZNPsf8A
@@ -127,4 +127,6 @@ With node installed and npm install in the root directory run the command ```npm
 Insure you run the sh ./scripts/setup.sh file to configure the mysql database.
 
 # Mfcs Database export
+If importing a back mfcs database place the mfcs.sql file in the SQLFiles folder. If running in dev mode uncomment the 2024.06.12.1509.sql so the docker user
+is added.
 

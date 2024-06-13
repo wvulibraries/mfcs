@@ -21,10 +21,6 @@
         // die();
     }
 
-    session_save_path('/tmp');
-
-    include "../public_html/header.php";
-
     $csv_file = "RDMRegistryPilotData20230911.csv";
     $import_dir = "/home/mfcs.lib.wvu.edu/data/imports/";
 
@@ -42,7 +38,7 @@
     $bom = pack('CCC', 0xef, 0xbb, 0xbf);
 
     if (0 !== strcmp(fread($fp, 3), $bom)) {
-        fseek($handle, 0);
+        fseek($fp, 0);
     }
 
     // Headrow

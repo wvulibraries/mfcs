@@ -20,8 +20,8 @@ mysql -u root -h $DATABASE_HOST engineCMS < $SERVERURL/SQLFiles/engineCMS.sql
 if [ -e /home/mfcs.lib.wvu.edu/SQLFiles/mfcs.sql ]
 then
   mysql -u root -h $DATABASE_HOST mfcs < $SERVERURL/SQLFiles/mfcs.sql
-  # only add if we are using a backup from the real server
-  mysql -u root -h $DATABASE_HOST mfcs < $SERVERURL/SQLFiles/migrations/2016.07.26.0945.sql
+  # only add if we are using a backup from the real server and need the docker user
+  # mysql -u root -h $DATABASE_HOST mfcs < $SERVERURL/SQLFiles/migrations/2024.06.12.1509.sql
   # updated one table to adjust fieldtype to LONGTEXT for large data
   # only needed until production server is updated and we get a new backup copy to use
   mysql -u root -h $DATABASE_HOST mfcs < $SERVERURL/SQLFiles/migrations/2024.05.06.1740.sql

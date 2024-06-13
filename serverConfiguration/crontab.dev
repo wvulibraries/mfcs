@@ -1,1 +1,1 @@
-* * * * * cd /home/mfcs.lib.wvu.edu/public_html/crons/; php processFiles.php
+* * * * * /bin/bash /home/mfcs.lib.wvu.edu/scripts/processFilesCron.sh

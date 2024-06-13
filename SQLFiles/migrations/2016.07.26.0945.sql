@@ -4,4 +4,5 @@
 
 #UPDATE users SET status='ADMIN', active=1, formCreator=1 WHERE username='vagrant';
 
-INSERT INTO users (username, status, active, formCreator) VALUES ('vagrant','ADMIN',1,1);
+# INSERT INTO users (username, status, active, formCreator) VALUES ('vagrant','ADMIN',1,1);
+INSERT INTO users (username, status, active, formCreator) VALUES ('admin','ADMIN',1,1);

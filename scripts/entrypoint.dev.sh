@@ -7,6 +7,10 @@ ENGINEAPIGIT="https://github.com/wvulibraries/engineAPI.git"
 ENGINEBRANCH="engineAPI-3.2-develop"
 ENGINEAPIHOME="/home/engineAPI"
 
+MFCSEXPORTSGIT="https://github.com/wvulibraries/mfcs-export.git"
+MFCSEXPORTSBRANCH="master"
+MFCSEXPORTSHOME="/home/mfcs-export"
+
 SERVERURL="/home/mfcs.lib.wvu.edu"
 DOCUMENTROOT="public_html"
 
@@ -16,6 +20,17 @@ PHPMODULES="/usr/local/lib/php/extensions/no-debug-non-zts-20210902"
 # create $GITDIR if it doesn't exist
 if [ ! -d "$GITDIR" ]; then
     mkdir -p $GITDIR
+fi
+
+# if the mfcs-exports directory doesn't exist, clone it
+if [ ! -d "$GITDIR/mfcs-export" ]; then
+    # clone the mfcs-exports
+    cd $GITDIR
+    git clone -b $MFCSEXPORTSBRANCH $MFCSEXPORTSGIT
+else
+    # update the mfcs-exports
+    cd $GITDIR/mfcs-export
+    git pull origin $MFCSEXPORTSBRANCH   
 fi
 
 # if the engineAPI directory doesn't exist, clone it
@@ -52,12 +67,17 @@ rm -f $SERVERURL/phpincludes/engine/engineAPI/latest
 # create symbolic links to application
 ln -s $SERVERURL/phpincludes/engine/engineAPI/3.2 $SERVERURL/phpincludes/engine/engineAPI/latest
 
+# create directories
 mkdir -p $SERVERURL/data/archives/mfcs
 mkdir -p $SERVERURL/data/archives/other
 mkdir -p $SERVERURL/data/exports
 mkdir -p $SERVERURL/data/working/mfcsStaging
 mkdir -p $SERVERURL/data/working/tmp
 mkdir -p $SERVERURL/data/working/uploads
+
+# create nfs-exports/mfcs-exports directories this is used as a placeholder for the nfs volume
+# which would be mounted in the docker-compose file
+mkdir -p $SERVERURL/data/nfs-exports/mfcs-exports
 
 # link engineAPI JS directory to distribution
 ln -s /tmp/git/engineAPI/engine/template/distribution/public_html/js $SERVERURL/public_html/javascript/distribution
