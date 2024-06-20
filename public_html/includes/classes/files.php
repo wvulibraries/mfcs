@@ -4,7 +4,7 @@
  * Main MFCS object
  * @author David Gersting
  * @modified_by Tracy A. McCormick
- * @modified_on 2024-04-19
+ * @modified_on 2024-06-20
  */
 class files {
 
@@ -259,47 +259,47 @@ class files {
 
 	}
 
-	public static function generateFilePreview($filename,$mimeType=NULL){
-		// Determine the object's MIME type
-		if(!isset($mimeType)){
-			if(isPHP('5.3')){
-				$fi = new finfo(FILEINFO_MIME_TYPE);
-				$mimeType = $fi->file($filename);
-			}else{
-				$fi = new finfo(FILEINFO_MIME);
-				list($mimeType,$mimeEncoding) = explode(';', $fi->file($filename));
-			}
-		}
+	// public static function generateFilePreview($filename,$mimeType=NULL){
+	// 	// Determine the object's MIME type
+	// 	if(!isset($mimeType)){
+	// 		if(isPHP('5.3')){
+	// 			$fi = new finfo(FILEINFO_MIME_TYPE);
+	// 			$mimeType = $fi->file($filename);
+	// 		}else{
+	// 			$fi = new finfo(FILEINFO_MIME);
+	// 			list($mimeType,$mimeEncoding) = explode(';', $fi->file($filename));
+	// 		}
+	// 	}
 
-		// Get the file's source
-		if(!isset($fileData)) $fileData = file_get_contents($filename);
+	// 	// Get the file's source
+	// 	if(!isset($fileData)) $fileData = file_get_contents($filename);
 
-		// List of Video Mime types
-		$videoMimeTypes = array( 'application/mp4', 'application/ogg', 'video/3gpp', 'video/3gpp2', 'video/flv', 'video/h264', 'video/mp4', 'video/mpeg', 'video/mpeg-2', 'video/mpeg4', 'video/ogg', 'video/ogm', 'video/quicktime', 'video/avi');
-		$audioMimeTypes  = array('audio/acc', 'audio/mp4', 'audio/mp3', 'audio/mp2', 'audio/mpeg', 'audio/oog', 'audio/midi', 'audio/wav', 'audio/x-ms-wma','audio/webm');
-		$imageMimeTypes = array('image/jpeg', 'image/gif', 'image/png', 'image/bmp', 'image/tiff', 'image/x-icon');
-		$pdfMimeTypes   = array('application/pdf');
+	// 	// List of Video Mime types
+	// 	$videoMimeTypes = array( 'application/mp4', 'application/ogg', 'video/3gpp', 'video/3gpp2', 'video/flv', 'video/h264', 'video/mp4', 'video/mpeg', 'video/mpeg-2', 'video/mpeg4', 'video/ogg', 'video/ogm', 'video/quicktime', 'video/avi');
+	// 	$audioMimeTypes  = array('audio/acc', 'audio/mp4', 'audio/mp3', 'audio/mp2', 'audio/mpeg', 'audio/oog', 'audio/midi', 'audio/wav', 'audio/x-ms-wma','audio/webm');
+	// 	$imageMimeTypes = array('image/jpeg', 'image/gif', 'image/png', 'image/bmp', 'image/tiff', 'image/x-icon');
+	// 	$pdfMimeTypes   = array('application/pdf');
 
-		// Figure out what to do with the data
-		switch(trim(strtolower($mimeType))){
-			case 'image/tiff':
-				self::printImage($filename,$mimeType);
-			break;
+	// 	// Figure out what to do with the data
+	// 	switch(trim(strtolower($mimeType))){
+	// 		case 'image/tiff':
+	// 			self::printImage($filename,$mimeType);
+	// 		break;
 
-			case in_array($mimeType, $imageMimeTypes):
-			case in_array($mimeType, $pdfMimeTypes):
-			case in_array($mimeType, $audioMimeTypes):
-			case in_array($mimeType, $videoMimeTypes):
-				ini_set('memory_limit',-1);
-				header("Content-type: $mimeType");
-				die(file_get_contents($filename));
-			break;
+	// 		case in_array($mimeType, $imageMimeTypes):
+	// 		case in_array($mimeType, $pdfMimeTypes):
+	// 		case in_array($mimeType, $audioMimeTypes):
+	// 		case in_array($mimeType, $videoMimeTypes):
+	// 			ini_set('memory_limit',-1);
+	// 			header("Content-type: $mimeType");
+	// 			die(file_get_contents($filename));
+	// 		break;
 
-			default:
-				echo '[No preview available - Unknown file type please download the file]';
-				break;
-		}
-	}
+	// 		default:
+	// 			echo '[No preview available - Unknown file type please download the file]';
+	// 			break;
+	// 	}
+	// }
 
 	/**
 	 * Takes a file and returns its mime type
@@ -326,227 +326,99 @@ class files {
     	return round(pow(1024, $base - floor($base)), $precision) . " " . $suffixes[floor($base)];
 	}
 	
-	public static function buildFilesPreview($objectID,$fieldName=NULL){
-		if (objects::validID(TRUE,$objectID) === FALSE) {
-			return FALSE;
-		}
-
-		if (($object = objects::get($objectID,TRUE)) === FALSE) {
-			return FALSE;
-		}
-
-		$output = '';
-
-		if (isset($fieldName)) {
-			$field  = forms::getField($object['formID'],$fieldName);
-			$fields = array($field);
-		}
-		else {
-			$fields = forms::getFields($object['formID']);
-		}
-
-		$fileLIs = array();
-		foreach($fields as $field){
-
-			if($field['type'] != 'file') continue;
-			if(empty($object['data'][ $field['name'] ])) continue;
-
-			// Figure out some needed vars for later
-			$fileDataArray = $object['data'][$field['name']];
-			$assetsID      = $fileDataArray['uuid'];
-			$fileLIs       = array();
-
-			// Check if $fileDataArray['files']['archive'] is an array before sorting
-			if (isset($fileDataArray['files']['archive']) && is_array($fileDataArray['files']['archive'])) {
-				uasort($fileDataArray['files']['archive'], function ($a, $b) {
-					return strnatcasecmp($a['name'], $b['name']);
-				});
-			} else {
-				// Handle the case when $fileDataArray['files']['archive'] is not an array
-				// Log an error and continue to the next iteration
-				error_log('Error: $fileDataArray[\'files\'][\'archive\'] is not an array or is null.');
-				continue;
-			}
-
-			foreach($fileDataArray['files']['archive'] as $fileID => $file){
-				$fileInfo = self::getFileInformation($file);
-
-				$filename = $fileInfo['filename'];
-				$filesize = $fileInfo['filesize'];
-				$checksum = $fileInfo['checksumInfo']['checksum'];
-				$checksum_pass_class = $fileInfo['checksumInfo']['checksum_pass_class'];
-				$icon = $fileInfo['icon'];
-				
-				// self::vardump($fileInfo);
-				// die();
-
-				// $_filename = pathinfo($file['name']);
-				// $filename  = $_filename['filename'];
-				$links     = array();
-				// $type 	   = explode('/', $file['type']);
-
-				$fi            = new finfo();
-				$filePathFull  = mfcs::config("archivalPathMFCS").DIRECTORY_SEPARATOR.$file['path'].DIRECTORY_SEPARATOR.$file['name'];
-				// $filesize      = filesize($filePathFull);
-
-				$extraFileInfo = $fi->file($filePathFull);
-				// $filesize      = self::formatBytes($filesize);
-
-				// Get the checksum information
-				$checksuminfo = self::getFileChecksumInfo($file);
-				$checksum_pass_class = $checksuminfo['checksum_pass_class'];
-				$checksum = $checksuminfo['checksum'];
-
-				// Choose an Icon for the type of data
-				// self::vardump($type);
-				$icon = self::getFileIcon($type);
-				// self::vardump($icon);
-				// die();
-
-				$links['Original'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
-					localvars::get('siteRoot'),
-					$objectID,
-					$field['name'],
-					$fileID,
-					'archive');
-
-				if(isset($field['convert']) && str2bool($field['convert'])){
-					$links['Converted'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
-						localvars::get('siteRoot'),
-						$objectID,
-						$field['name'],
-						$fileID,
-						'processed');
-				}
-				if(isset($field['thumbnail']) && str2bool($field['thumbnail'])){
-					$links['Thumbnail'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
-						localvars::get('siteRoot'),
-						$objectID,
-						$field['name'],
-						$fileID,
-						'thumbs');
-				}
-				if(isset($field['ocr']) && str2bool($field['ocr'])){
-					$links['OCR'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
-						localvars::get('siteRoot'),
-						$objectID,
-						$field['name'],
-						$fileID,
-						'ocr');
-				}
-				if(isset($field['combine']) && str2bool($field['combine'])){
-					$links['Combined PDF'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
-						localvars::get('siteRoot'),
-						$objectID,
-						$field['name'],
-						'combinedPDF');
-					$links['Combined Thumbnail'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
-						localvars::get('siteRoot'),
-						$objectID,
-						$field['name'],
-						'combinedThumb');
-				}
-				if(isset($field['convertAudio']) && str2bool($field['convertAudio'])){
-					$links['Converted Audio'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
-						localvars::get('siteRoot'),
-						$objectID,
-						$field['name'],
-						$fileID,
-						'audio');
-				}
-				if(isset($field['convertVideo']) && str2bool($field['convertVideo'])){
-					$links['Converted Video'] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
-						localvars::get('siteRoot'),
-						$objectID,
-						$field['name'],
-						$fileID,
-						'video');
-				}
-				if(isset($field['videothumbnail']) && str2bool($field['videothumbnail'])){
-					$numVideoThumbs = $field['videoThumbFrames'];
-
-					for($i = 0; $i < $numVideoThumbs; $i++){
-						$filename = $file['name'];
-						$filename = explode(".", $filename);
-						$filename = $filename[0];
-
-						if(!$i == 0){
-							$filename = $filename."_".$i;
-						}
-
-						$links["Thumbnail_".$i] = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s&name=%s',
-							localvars::get('siteRoot'),
-							$objectID,
-							$field['name'],
-							'thumbnails',
-							$filename
-						);
-					}
-				}
-
-				$previewLinks  = array();
-				$downloadLinks = array();
-
-				foreach($links as $linkLabel => $linkURL){
-					// Build Links
-					$previewLinks[]  = sprintf('<li><a tabindex="-1" href="javascript:void(0);" data-target="modal" data-url="%s">%s</a></li>', $linkURL, $linkLabel);
-					$downloadLinks[] = sprintf('<li><a tabindex="-1" href="%s&download=1">%s</a></li>',$linkURL, $linkLabel);
-				}
-
-				// Build the preview dropdown HTML
-				$previewDropdown  = '<div class="btn-group">';
-				$previewDropdown .= '	<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">';
-				$previewDropdown .= '		Preview <span class="caret"></span>';
-				$previewDropdown .= '	</a>';
-				$previewDropdown .= sprintf('<ul class="dropdown-menu fileModalPreview">%s</ul>', implode('', $previewLinks));
-				$previewDropdown .= '</div>';
-
-				// Build the download dropbox HTML
-				$downloadDropdown  = '<div class="btn-group">';
-				$downloadDropdown .= '	<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">';
-				$downloadDropdown .= '		Download <span class="caret"></span>';
-				$downloadDropdown .= '	</a>';
-				$downloadDropdown .= sprintf('<ul class="dropdown-menu">%s</ul>', implode('', $downloadLinks));
-				$downloadDropdown .= '</div>';
-
-				$fileLIs[] = sprintf('<li><span class="filename span6">%s %s </span><span class="dropdowns span6"> %s %s </span><br /><span class="filesize">File size:  %s </span><br /><span class="file_checksum %s">Checksum: %s</span><br /><span class="file_dir">Location: %s</span></li>',
-					$icon,
-					$file['name'],
-					$previewDropdown,
-					$downloadDropdown,
-					$filesize,
-					$checksum_pass_class,
-					$checksum,
-					$file['path'].DIRECTORY_SEPARATOR.$file['name']
-				);
-			}
-
-			$output .= sprintf('<div class="filePreviewField"><header><i class="fa fa-folder-open"></i> %s</header><ul class="filePreviews">%s</ul></div>', $field['label'], implode('', $fileLIs));
-		}
-		return $output;
-	}
-
-	// new needs to be tested trying to integrate and test new functions
-	// this is chatgpt suggested code update
-	// public static function buildFilesPreview($objectID, $fieldName = NULL) {
-	// 	if (!objects::validID(TRUE, $objectID) || !($object = objects::get($objectID, TRUE))) {
+	// public static function buildFilesPreview($objectID,$fieldName=NULL){
+	// 	if (objects::validID(TRUE,$objectID) === FALSE) {
 	// 		return FALSE;
 	// 	}
-	
+
+	// 	if (($object = objects::get($objectID,TRUE)) === FALSE) {
+	// 		return FALSE;
+	// 	}
+
 	// 	$output = '';
-	
-	// 	$fields = isset($fieldName) ? array(forms::getField($object['formID'], $fieldName)) : forms::getFields($object['formID']);
-	
-	// 	foreach ($fields as $field) {
-	// 		if ($field['type'] != 'file' || empty($object['data'][$field['name']])) {
+
+	// 	$fields = isset($fieldName) ? [forms::getField($object['formID'], $fieldName)] : forms::getFields($object['formID']);
+
+	// 	foreach($fields as $field){
+	// 		// If the field isn't a file field, or there's no data for the field, skip it
+	// 		if ($field['type'] != 'file' || empty($object['data'][$field['name']])) continue;
+
+	// 		// Figure out some needed vars for later
+	// 		$fileDataArray = $object['data'][$field['name']];
+	// 		$fileLIs       = array();
+
+	// 		// Check if $fileDataArray['files']['archive'] is an array before sorting
+	// 		if (!isset($fileDataArray['files']['archive']) || !is_array($fileDataArray['files']['archive'])) {
+	// 			error_log('Error: $fileDataArray[\'files\'][\'archive\'] is not an array or is null.');
 	// 			continue;
 	// 		}
 	
-	// 		$output .= self::processFileField($field, $objectID);
+	// 		uasort($fileDataArray['files']['archive'], function ($a, $b) {
+	// 			return strnatcasecmp($a['name'], $b['name']);
+	// 		});
+
+	// 		foreach($fileDataArray['files']['archive'] as $fileID => $file){
+	// 			// Build the links
+	// 			$links = self::buildFileLinks($objectID, $field, $fileID, $file);
+
+	// 			// Get the file information
+	// 			$fileInfo = self::getFileInformation($file);
+
+	// 			// Build the file list item
+	// 			$fileLIs[] = self::buildFileListItem($fileInfo, $links, $file);
+	// 		}
+
+	// 		$output .= sprintf('<div class="filePreviewField"><header><i class="fa fa-folder-open"></i> %s</header><ul class="filePreviews">%s</ul></div>', $field['label'], implode('', $fileLIs));
 	// 	}
-	
 	// 	return $output;
 	// }
+
+	public static function buildFilesPreview($objectID, $fieldName = NULL) {
+		if (objects::validID(TRUE, $objectID) === FALSE) {
+			return FALSE;
+		}
+	
+		if (($object = objects::get($objectID, TRUE)) === FALSE) {
+			return FALSE;
+		}
+	
+		$output = '';
+	
+		$fields = isset($fieldName) ? [forms::getField($object['formID'], $fieldName)] : forms::getFields($object['formID']);
+	
+		foreach ($fields as $field) {
+			// If the field isn't a file field, or there's no data for the field, skip it
+			if ($field['type'] != 'file' || empty($object['data'][$field['name']])) continue;
+	
+			// Figure out some needed vars for later
+			$fileDataArray = $object['data'][$field['name']];
+			$fileLIs = array();
+	
+			// Check if $fileDataArray['files']['archive'] is an array before sorting
+			if (!isset($fileDataArray['files']['archive']) || !is_array($fileDataArray['files']['archive'])) {
+				error_log('Error: $fileDataArray[\'files\'][\'archive\'] is not an array or is null.');
+				continue;
+			}
+	
+			uasort($fileDataArray['files']['archive'], function ($a, $b) {
+				return strnatcasecmp($a['name'], $b['name']);
+			});
+	
+			foreach ($fileDataArray['files']['archive'] as $fileID => $file) {
+				// Build the links
+				$links = self::buildFileLinks($objectID, $field, $fileID, $file);
+	
+				// Get the file information
+				$fileInfo = self::getFileInformation($file);
+	
+				// Build the file list item
+				$fileLIs[] = self::buildFileListItem($fileInfo, $links, $file);
+			}
+	
+			$output .= sprintf('<div class="filePreviewField"><header><i class="fa fa-folder-open"></i> %s</header><ul class="filePreviews">%s</ul></div>', $field['label'], implode('', $fileLIs));
+		}
+		return $output;
+	}	
 	
 	public static function buildThumbnailURL($objectID) {
 
@@ -1340,66 +1212,185 @@ class files {
 	}
 
 	// private functions for class
+	private static function buildFileLinks($objectID, $field, $fileID, $file) {
+		// Build the links
+		$links = array();
+	
+		$siteRoot = localvars::get('siteRoot');
+	
+		$links['Original'] = sprintf(
+			'%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
+			$siteRoot,
+			$objectID,
+			$field['name'],
+			$fileID,
+			'archive'
+		);
+	
+		if (isset($field['convert']) && str2bool($field['convert'])) {
+			$links['Converted'] = sprintf(
+				'%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
+				$siteRoot,
+				$objectID,
+				$field['name'],
+				$fileID,
+				'processed'
+			);
+		}
+		if (isset($field['thumbnail']) && str2bool($field['thumbnail'])) {
+			$links['Thumbnail'] = sprintf(
+				'%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
+				$siteRoot,
+				$objectID,
+				$field['name'],
+				$fileID,
+				'thumbs'
+			);
+		}
+		if (isset($field['ocr']) && str2bool($field['ocr'])) {
+			$links['OCR'] = sprintf(
+				'%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
+				$siteRoot,
+				$objectID,
+				$field['name'],
+				$fileID,
+				'ocr'
+			);
+		}
+		if (isset($field['combine']) && str2bool($field['combine'])) {
+			$links['Combined PDF'] = sprintf(
+				'%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
+				$siteRoot,
+				$objectID,
+				$field['name'],
+				'combinedPDF'
+			);
+			$links['Combined Thumbnail'] = sprintf(
+				'%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s',
+				$siteRoot,
+				$objectID,
+				$field['name'],
+				'combinedThumb'
+			);
+		}
+		if (isset($field['convertAudio']) && str2bool($field['convertAudio'])) {
+			$links['Converted Audio'] = sprintf(
+				'%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
+				$siteRoot,
+				$objectID,
+				$field['name'],
+				$fileID,
+				'audio'
+			);
+		}
+		if (isset($field['convertVideo']) && str2bool($field['convertVideo'])) {
+			$links['Converted Video'] = sprintf(
+				'%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
+				$siteRoot,
+				$objectID,
+				$field['name'],
+				$fileID,
+				'video'
+			);
+		}
+		if (isset($field['videothumbnail']) && str2bool($field['videothumbnail'])) {
+			$numVideoThumbs = $field['videoThumbFrames'];
+	
+			for ($i = 0; $i < $numVideoThumbs; $i++) {
+				$filename = $file['name'];
+				$filename = explode(".", $filename);
+				$filename = $filename[0];
+	
+				if ($i != 0) {
+					$filename = $filename . "_" . $i;
+				}
+	
+				$links["Thumbnail_" . $i] = sprintf(
+					'%sincludes/fileViewer.php?objectID=%s&field=%s&type=%s&name=%s',
+					$siteRoot,
+					$objectID,
+					$field['name'],
+					'thumbnails',
+					$filename
+				);
+			}
+		}
+	
+		return $links;
+	}
 
-	// new needs to be tested trying to integrate and test
-	// this is chatgpt suggested code update	
-	// private static function processFileField($field, $objectID) {
-	// 	$fileDataArray = $object['data'][$field['name']];
-	// 	$fileLIs = array();
+	private static function buildFileListItem($fileInfo, $links, $file) {
+		$filename = $fileInfo['filename'];
+		$filesize = $fileInfo['filesize'];
+		$checksum = $fileInfo['checksumInfo']['checksum'];
+		$checksum_pass_class = $fileInfo['checksumInfo']['checksum_pass_class'];
+		$icon = $fileInfo['icon'];
 	
-	// 	if (!isset($fileDataArray['files']['archive']) || !is_array($fileDataArray['files']['archive'])) {
-	// 		error_log('Error: $fileDataArray[\'files\'][\'archive\'] is not an array or is null.');
-	// 		return ''; // or handle the error as needed
-	// 	}
+		$fi = new finfo();
+		$filePathFull = mfcs::config("archivalPathMFCS") . DIRECTORY_SEPARATOR . $file['path'] . DIRECTORY_SEPARATOR . $file['name'];
 	
-	// 	uasort($fileDataArray['files']['archive'], function ($a, $b) {
-	// 		return strnatcasecmp($a['name'], $b['name']);
-	// 	});
+		$extraFileInfo = $fi->file($filePathFull);
 	
-	// 	foreach ($fileDataArray['files']['archive'] as $fileID => $file) {
-	// 		$fileInfo = self::getFileInformation($file);
+		// Get the checksum information
+		$checksuminfo = self::getFileChecksumInfo($file);
+		$checksum_pass_class = $checksuminfo['checksum_pass_class'];
+		$checksum = $checksuminfo['checksum'];
 	
-	// 		// Build HTML for file preview and add to $fileLIs
-	// 		$fileLIs[] = self::buildFileListItem($file, $fileInfo, $objectID, $field['name'], $fileID);
-	// 	}
+		$previewLinks = array();
+		$downloadLinks = array();
 	
-	// 	// Build output for this field's files
-	// 	return sprintf(
-	// 		'<div class="filePreviewField"><header><i class="fa fa-folder-open"></i> %s</header><ul class="filePreviews">%s</ul></div>',
-	// 		htmlspecialchars($field['label']),
-	// 		implode('', $fileLIs)
-	// 	);
-	// }
+		foreach ($links as $linkLabel => $linkURL) {
+			// Build Links
+			$previewLinks[]  = sprintf('<li><a tabindex="-1" href="javascript:void(0);" onclick="previewFile(this, \'%s\');">%s</a></li>', $linkURL, $linkLabel);
+			$downloadLinks[] = sprintf('<li><a tabindex="-1" href="%s&download=1">%s</a></li>', $linkURL, $linkLabel);
+		}
+	
+		// Build the preview dropdown HTML
+		$previewDropdown  = self::buildDropdownLinks($previewLinks, 'Preview');
+	
+		// Build the download dropbox HTML
+		$downloadDropdown = self::buildDropdownLinks($downloadLinks, 'Download');
+	
+		return sprintf('<li><span class="filename span6">%s %s </span><span class="dropdowns span6"> %s %s </span><br /><span class="filesize">File size:  %s </span><br /><span class="file_checksum %s">Checksum: %s</span><br /><span class="file_dir">Location: %s</span></li>',
+			$icon,
+			$file['name'],
+			$previewDropdown,
+			$downloadDropdown,
+			$filesize,
+			$checksum_pass_class,
+			$checksum,
+			$file['path']
+		);
+	}
 
-	// new needs to be tested trying to integrate and test
-	// this is chatgpt suggested code update isn't returning
-	// the icon for the file type needs further testing and
-	// debugging	
+	private static function buildDropdownLinks($links, $label) {
+		return sprintf(
+			'<div class="btn-group">
+				<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">%s <span class="caret"></span></a>
+				<ul class="dropdown-menu">%s</ul>
+			</div>',
+			$label,
+			implode('', $links)
+		);    
+	}
+
 	private static function getFileInformation($file) {
-		// self::vardump($file);
-
+		// Get file information
 		$_filename = pathinfo($file['name']);
-		$filename = $_filename['filename'];
 
 		// Get file icon
 		$type 	   = explode('/', $file['type']);
-		$icon = self::getFileIcon($type);
-		
-		// self::vardump($icon);
-		// die();
 
-		$fi = new finfo();
+		// Get file path
 		$filePathFull = mfcs::config("archivalPathMFCS") . DIRECTORY_SEPARATOR . $file['path'] . DIRECTORY_SEPARATOR . $file['name'];
-		$filesize = self::formatBytes(filesize($filePathFull));
-	
-		// Retrieve checksum information
-		$checksumInfo = self::getFileChecksumInfo($file);
-	
+
+		// Return file information
 		return array(
-			'filename' => $filename,
-			'icon' => $icon,
-			'filesize' => $filesize,
-			'checksumInfo' => $checksumInfo,
+			'filename' => $_filename['filename'],
+			'icon' => self::getFileIcon($type),
+			'filesize' => self::formatBytes(filesize($filePathFull)),
+			'checksumInfo' => self::getFileChecksumInfo($file),
+			'filePathFull' => mfcs::config("archivalPathMFCS") . DIRECTORY_SEPARATOR . $file['path'] . DIRECTORY_SEPARATOR . $file['name'],
 		);
 	}
 	
@@ -1443,48 +1434,6 @@ class files {
 		}
 
 		return array('checksum_pass_class' => $checksum_pass_class, 'checksum' => $checksum);
-	}
-	
-	private static function buildFileListItem($file, $fileInfo, $objectID, $fieldName, $fileID) {
-		$links = array();
-		$previewLinks = array();
-		$downloadLinks = array();
-
-		// Build links based on file properties
-		foreach($links as $linkLabel => $linkURL){
-			// Build Links
-			$previewLinks[]  = sprintf('<li><a tabindex="-1" href="javascript:void(0);" data-target="modal" data-url="%s">%s</a></li>', $linkURL, $linkLabel);
-			$downloadLinks[] = sprintf('<li><a tabindex="-1" href="%s&download=1">%s</a></li>',$linkURL, $linkLabel);
-		}		
-	
-		// Build the preview dropdown HTML
-		$previewDropdown  = '<div class="btn-group">';
-		$previewDropdown .= '	<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">';
-		$previewDropdown .= '		Preview <span class="caret"></span>';
-		$previewDropdown .= '	</a>';
-		$previewDropdown .= sprintf('<ul class="dropdown-menu fileModalPreview">%s</ul>', implode('', $previewLinks));
-		$previewDropdown .= '</div>';
-
-		// Build the download dropbox HTML
-		$downloadDropdown  = '<div class="btn-group">';
-		$downloadDropdown .= '	<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">';
-		$downloadDropdown .= '		Download <span class="caret"></span>';
-		$downloadDropdown .= '	</a>';
-		$downloadDropdown .= sprintf('<ul class="dropdown-menu">%s</ul>', implode('', $downloadLinks));
-		$downloadDropdown .= '</div>';
-	
-		// Build the file list item HTML
-		return sprintf(
-			'<li><span class="filename span6">%s %s</span><span class="dropdowns span6">%s %s</span><br /><span class="filesize">File size: %s</span><br /><span class="file_checksum %s">Checksum: %s</span><br /><span class="file_dir">Location: %s</span></li>',
-			$fileInfo['icon'],
-			htmlspecialchars($fileInfo['filename']),
-			$previewDropdown,
-			$downloadDropdown,
-			$fileInfo['filesize'],
-			$fileInfo['checksum']['checksum_pass_class'],
-			$fileInfo['checksum']['checksum'],
-			$file['path'] . DIRECTORY_SEPARATOR . $file['name']
-		);
 	}	
 
 	private static function processFile($originalFile, $filename, $assetsID, $options, $thumbnailCreated = false) {
@@ -1720,8 +1669,6 @@ class files {
 				throw new Exception("Failed to create OCR file for $filename");
 			}
 		}	
-
-		// var_dump($return);
 		
 		return $return;	
 	}	
