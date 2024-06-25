@@ -33,7 +33,6 @@ if (!isCLI()) {
 
 		exit;
 	}
-
 }
 
 // End Checks
