@@ -23,7 +23,7 @@ class valid {
 			'formID' => true,
 			'authtype' => false,
 			'metadata' => null,
-			'productionReady' => ($test['formID']) ? true : false,
+			'productionReady' => (isset($test['formID']) && $test['formID']) ? true : false,
 			'objectID_required' => false,
 			'object_in_form' => true,
 			'parent_id' => false,

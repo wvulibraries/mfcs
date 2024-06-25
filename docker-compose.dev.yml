@@ -10,6 +10,7 @@ services:
     container_name: web
     volumes:   
       - ./config:/config    
+      - ./config/supervisor:/etc/supervisor/conf.d/
       - ./config/config.ini:/home/mfcs.lib.wvu.edu/config.ini 
       - ./config/php.ini:/usr/local/etc/php/php.ini   
       - ./data/session:/var/lib/php/session         
@@ -19,7 +20,6 @@ services:
       - ./template:/home/mfcs.lib.wvu.edu/template      
       - ./serverConfiguration:/home/mfcs.lib.wvu.edu/serverConfiguration  
       - ./SQLFiles:/home/mfcs.lib.wvu.edu/SQLFiles    
-      - ./scripts:/home/mfcs.lib.wvu.edu/scripts
       - ./data/git_pulls:/tmp/git
       - ./mfcs-manual-imports:/home/mfcs.lib.wvu.edu/mfcs-manual-imports
     env_file:
@@ -30,7 +30,7 @@ services:
       db:
           condition: service_healthy   
     healthcheck:
-      test: curl --fail -s http://localhost:8080/ || exit 1
+      test: curl --fail -s http://localhost/ || exit 1
       interval: 1m30s
       timeout: 10s
       retries: 3      

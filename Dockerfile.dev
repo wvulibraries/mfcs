@@ -1,5 +1,7 @@
 FROM php:8.2-apache
 
+USER root
+
 WORKDIR /home/mfcs.lib.wvu.edu
 ADD ./public_html /home/mfcs.lib.wvu.edu/public_html
 
@@ -42,6 +44,10 @@ RUN apt-get install -y cmake ffmpeg
 COPY ./config/000-default.conf /etc/apache2/sites-available/000-default.conf
 
 EXPOSE 80
+
+# Copy scripts and change permissions   
+COPY ./scripts/*.sh /home/mfcs.lib.wvu.edu/scripts/
+RUN chmod -v +x /home/mfcs.lib.wvu.edu/scripts/*.sh
 
 ADD ./scripts/entrypoint.dev.sh /usr/bin/entrypoint.dev.sh
 RUN chmod -v +x /usr/bin/entrypoint.dev.sh
