@@ -46,7 +46,7 @@ COPY ./config/000-default.conf /etc/apache2/sites-available/000-default.conf
 EXPOSE 80
 
 # Copy scripts and change permissions
-RUN mkdir -p /home/mfcs.lib.wvu.edu/scriptsS
+RUN mkdir -p /home/mfcs.lib.wvu.edu/scripts
 COPY ./scripts/*.sh /home/mfcs.lib.wvu.edu/scripts/
 RUN chmod -v +x /home/mfcs.lib.wvu.edu/scripts/*.sh
 
