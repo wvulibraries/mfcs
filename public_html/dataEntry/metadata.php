@@ -19,7 +19,7 @@ $permissions = TRUE;
 
 try {
 
-	if (($validate_return = valid::validate(array("metedata"=>true,"authtype"=>"editor","productionReady"=>true))) !== TRUE) {
+	if (($validate_return = valid::validate(array("metadata"=>true,"authtype"=>"editor","productionReady"=>true))) !== TRUE) {
 		$permissions = FALSE;
 		throw new Exception($validate_return);
 	}
