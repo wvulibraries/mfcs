@@ -131,10 +131,6 @@ touch $LOGDIR/error.log
 rm -f $LOGDIR/access.log
 touch $LOGDIR/access.log
 
-# set permissions on script files
-# RUN chmod 0744 $SERVERURL/scripts/datecron.sh
-# RUN chmod 0744 $SERVERURL/scripts/processFilesCron.sh
-
 # load crontab from file
 crontab $SERVERURL/serverConfiguration/crontab.dev
 

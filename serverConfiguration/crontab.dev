@@ -1,1 +1,3 @@
-* * * * * /bin/bash /home/mfcs.lib.wvu.edu/scripts/processFilesCron.sh
+* * * * * /home/mfcs.lib.wvu.edu/scripts/datecron.sh >> /tmp/log/date.log 2>&1
+* * * * * /home/mfcs.lib.wvu.edu/scripts/processFilesCron.sh >> /tmp/log/processFiles.log 2>&1
+#

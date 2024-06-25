@@ -9,7 +9,7 @@ if (!mfcsPerms::evaluatePageAccess(2)) {
 $permissions = true;
 
 try {
-	if (($validate_return = valid::validate(array("metedata" => false, "authtype" => "viewer", "productionReady" => true))) !== true) {
+	if (($validate_return = valid::validate(array("metadata" => false, "authtype" => "viewer", "productionReady" => true))) !== true) {
 		$permissions = false;
 		throw new Exception($validate_return);
 	}

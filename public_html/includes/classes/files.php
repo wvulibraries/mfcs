@@ -259,47 +259,47 @@ class files {
 
 	}
 
-	// public static function generateFilePreview($filename,$mimeType=NULL){
-	// 	// Determine the object's MIME type
-	// 	if(!isset($mimeType)){
-	// 		if(isPHP('5.3')){
-	// 			$fi = new finfo(FILEINFO_MIME_TYPE);
-	// 			$mimeType = $fi->file($filename);
-	// 		}else{
-	// 			$fi = new finfo(FILEINFO_MIME);
-	// 			list($mimeType,$mimeEncoding) = explode(';', $fi->file($filename));
-	// 		}
-	// 	}
+	public static function generateFilePreview($filename,$mimeType=NULL){
+		// Determine the object's MIME type
+		if(!isset($mimeType)){
+			if(isPHP('5.3')){
+				$fi = new finfo(FILEINFO_MIME_TYPE);
+				$mimeType = $fi->file($filename);
+			}else{
+				$fi = new finfo(FILEINFO_MIME);
+				list($mimeType,$mimeEncoding) = explode(';', $fi->file($filename));
+			}
+		}
 
-	// 	// Get the file's source
-	// 	if(!isset($fileData)) $fileData = file_get_contents($filename);
+		// Get the file's source
+		if(!isset($fileData)) $fileData = file_get_contents($filename);
 
-	// 	// List of Video Mime types
-	// 	$videoMimeTypes = array( 'application/mp4', 'application/ogg', 'video/3gpp', 'video/3gpp2', 'video/flv', 'video/h264', 'video/mp4', 'video/mpeg', 'video/mpeg-2', 'video/mpeg4', 'video/ogg', 'video/ogm', 'video/quicktime', 'video/avi');
-	// 	$audioMimeTypes  = array('audio/acc', 'audio/mp4', 'audio/mp3', 'audio/mp2', 'audio/mpeg', 'audio/oog', 'audio/midi', 'audio/wav', 'audio/x-ms-wma','audio/webm');
-	// 	$imageMimeTypes = array('image/jpeg', 'image/gif', 'image/png', 'image/bmp', 'image/tiff', 'image/x-icon');
-	// 	$pdfMimeTypes   = array('application/pdf');
+		// List of Video Mime types
+		$videoMimeTypes = array( 'application/mp4', 'application/ogg', 'video/3gpp', 'video/3gpp2', 'video/flv', 'video/h264', 'video/mp4', 'video/mpeg', 'video/mpeg-2', 'video/mpeg4', 'video/ogg', 'video/ogm', 'video/quicktime', 'video/avi');
+		$audioMimeTypes  = array('audio/acc', 'audio/mp4', 'audio/mp3', 'audio/mp2', 'audio/mpeg', 'audio/oog', 'audio/midi', 'audio/wav', 'audio/x-ms-wma','audio/webm');
+		$imageMimeTypes = array('image/jpeg', 'image/gif', 'image/png', 'image/bmp', 'image/tiff', 'image/x-icon');
+		$pdfMimeTypes   = array('application/pdf');
 
-	// 	// Figure out what to do with the data
-	// 	switch(trim(strtolower($mimeType))){
-	// 		case 'image/tiff':
-	// 			self::printImage($filename,$mimeType);
-	// 		break;
+		// Figure out what to do with the data
+		switch(trim(strtolower($mimeType))){
+			case 'image/tiff':
+				self::printImage($filename,$mimeType);
+			break;
 
-	// 		case in_array($mimeType, $imageMimeTypes):
-	// 		case in_array($mimeType, $pdfMimeTypes):
-	// 		case in_array($mimeType, $audioMimeTypes):
-	// 		case in_array($mimeType, $videoMimeTypes):
-	// 			ini_set('memory_limit',-1);
-	// 			header("Content-type: $mimeType");
-	// 			die(file_get_contents($filename));
-	// 		break;
+			case in_array($mimeType, $imageMimeTypes):
+			case in_array($mimeType, $pdfMimeTypes):
+			case in_array($mimeType, $audioMimeTypes):
+			case in_array($mimeType, $videoMimeTypes):
+				ini_set('memory_limit',-1);
+				header("Content-type: $mimeType");
+				die(file_get_contents($filename));
+			break;
 
-	// 		default:
-	// 			echo '[No preview available - Unknown file type please download the file]';
-	// 			break;
-	// 	}
-	// }
+			default:
+				echo '[No preview available - Unknown file type please download the file]';
+				break;
+		}
+	}
 
 	/**
 	 * Takes a file and returns its mime type

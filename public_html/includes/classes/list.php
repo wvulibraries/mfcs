@@ -514,7 +514,7 @@ class listGenerator {
 
 			if(!mfcsPerms::isEditor($form['ID'])) continue;
 
-			if (($metedataForms = forms::getObjectFormMetaForms($form['ID'])) === FALSE) {
+			if (($metadataForms = forms::getObjectFormMetaForms($form['ID'])) === FALSE) {
 				errorHandle::errorMsg("Error getting Metadata Forms");
 				return FALSE;
 			}
@@ -547,7 +547,7 @@ class listGenerator {
 			$output .= '<div class="accordion-inner panel-body">';
 
 			$output .= '<ul>';
-			foreach ($metedataForms as $I=>$metadataForm) {
+			foreach ($metadataForms as $I=>$metadataForm) {
 
 				if (isset($metaForms[$I])) {
 					unset($metaForms[$I]);
