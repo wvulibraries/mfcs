@@ -10,7 +10,6 @@ services:
     container_name: web
     volumes:   
       - ./config:/config    
-      - ./config/supervisor:/etc/supervisor/conf.d/
       - ./config/config.ini:/home/mfcs.lib.wvu.edu/config.ini 
       - ./config/php.ini:/usr/local/etc/php/php.ini   
       - ./data/session:/var/lib/php/session         

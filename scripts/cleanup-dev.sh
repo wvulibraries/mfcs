@@ -15,3 +15,6 @@ rm -rf ./data/working/uploads/*
 
 # clear the ./data/working/tmp directory
 rm -rf ./data/working/tmp/*
+
+# clear the ./data/session directory
+rm -rf ./data/session/*
