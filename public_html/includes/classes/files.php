@@ -839,128 +839,110 @@ class files {
 		return $return;
 	} 
 
-	public static function convertVideo($assetsID, $name, $originalFile, $options){
+	public static function convertVideo($assetsID, $name, $originalFile, $options) {
 		try {
-            $ffmpeg        = new FFmpeg();
-            $inputFile     = $ffmpeg->input($originalFile);
-            $uploadedVideo = $ffmpeg->getMetadata();
-
-            // set some default values that are needed for good conversions
-            // most conversions will not be able to go past a certain sample rate
-            $defaultFrameRate    = "24";
-            $resolutionMaxWidth  = "1920";
-            $resolutionMaxHeight = "1080";
-
-            // Get Option Info For Saving
-            // ----------------------------------------------------------------------
-			$savePath = self::getSaveDir($assetsID,'video');
-			$format   = ".".$options['videoFormat'];
-
-            // Set Defaults Needed for Good Conversions
-            // ----------------------------------------------------------------------
-            $ffmpeg->frameRate($defaultFrameRate);
-            $ffmpeg->set('-strict', '-2');
-            $ffmpeg->logLevel('quiet');
-
-            // Aspect Ratio
-            // @TODO Need to figure out the process for converting videos to a
-            // certain aspect ratio that may not be in that aspect ratio with
-            // bars added in places that need bars
-            // ---------------------------------------------------------------------
-            if(isset($options['aspectRatio']) && !is_empty($options['aspectRatio'])){
-                $aspectRatio = explode(":", $options['aspectRatio']);
-                $numAspectRatio = $aspectRatio[0] / $aspectRatio[1];
-            } else {
-                $numAspectRatio = $uploadedVideo['width'] / $uploadedVideo['height'];
-            }
-
-            // Check and Modify the Size
-            // Helps to Make sure that Max Res is not exceeded
-            // ----------------------------------------------------------------------
-            // use defaults
-            if((!isset($options['videoWidth']) && !isset($options['videoHeight'])) || (is_empty($options['videoWidth']) && is_empty($options['videoHeight']))){
-                 $videoWidth  = $uploadedVideo['width'];
-                 $videoHeight = $uploadedVideo['height'];
-            }
-
-            // use width and find height
-            if(isset($options['videoWidth']) && !is_empty($options['videoWidth']) && !isset($options['videoHeight'])){
-                $videoWidth  = ($options['videoWidth'] <= $resolutionMaxWidth ? $options['videoWidth'] : $resolutionMaxWidth);
-                $videoHeight =  FFmpeg::aspectRatioCalc($numAspectRatio, $uploadedVideo['width'], $uploadedVideo['height'], $options['videoWidth']);
-            }
-            // use height and find width
-            else if(!isset($options['videoWidth']) && isset($options['videoHeight']) && !is_empty($options['videoHeight'])){
-                $videoHeight = ($options['videoHeight'] <= $resolutionMaxHeight ? $options['videoHeight'] : $resolutionMaxHeight);
-                $videoWidth  = FFmpeg::aspectRatioCalc($numAspectRatio, $uploadedVideo['width'], $uploadedVideo['height'], null, $options['videoHeight']);
-            }
-            // if both are set, unset the video height and use the width so that video retains aspect ratio
-            // check to see if they put portriat or landscape heights
-            else {
-                if($options['videoWidth'] < $options['videoHeight']){
-                    $options['videoWidth'] = $options['videoHeight'];
-                }
-                $videoWidth  = ($options['videoWidth'] <= $resolutionMaxWidth ? $options['videoWidth'] : $resolutionMaxWidth);
-                $videoHeight =  FFmpeg::aspectRatioCalc( $numAspectRatio, $uploadedVideo['width'], $uploadedVideo['height'], $options['videoWidth']);
-            }
-
-            $ffmpeg->size($videoWidth."x".$videoHeight);
-
-            // This rotates the video if it is vertical for the output settings
-            // this sets the metadata of the video to rotate 90 and play the vertical video
-            if($uploadedVideo['rotation'] == 90){
-                $ffmpeg->set('-metadata:s:v', 'rotate="90"');
-                $ffmpeg->transpose(0);
-            }
-
-            // BitRates of Video
-            // ----------------------------------------------------------------------
-            if(isset($options['videobitRate']) && !is_empty($options['videobitRate'])){
-                $bitrate = floor(($options['videobitRate'] * 1024));
-                if($bitrate > floatval($uploadedVideo['videoBitRate'])){
-                    $bitrate = floatval($uploadedVideo['videoBitRate']);
-                }
-            } else {
-                $bitrate = $uploadedVideo['videoBitRate'];
-            }
-
-            // Make sure its not null
-            if($bitrate !== null){
-                $ffmpeg->videoBitrate($bitrate);
-            }
-
-
-            if(!is_dir($savePath)){
-                throw new Exception("Can not save file because directory doesn't exsist");
-            }
-
-            // Where does this go?
-            $ffmpeg->output($savePath.$name.$format);
-
-            // Make it Happen
-            $conversion = $ffmpeg->ready();
-
-            if($conversion !== 0){
-                throw new Exception('There was a problem with the video conversion check ffmpeg command: ' . $ffmpeg->command);
-            }
-
-        } catch (Exception $e) {
-            errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
-            errorHandle::newError(__METHOD__."() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::DEBUG);
-            return array(
-                'errors' => $e->getMessage(),
-            );
-        }
-
-		$return = array(
-			'name'   => $name.$format,
-			'path'   => self::getSaveDir($assetsID,'video',FALSE),
-			'size'   => filesize(self::getSaveDir($assetsID,'video').$name.$format),
-			'type'   => self::getMimeType(self::getSaveDir($assetsID,'video').$name.$format),
+			$ffmpeg = new FFmpeg();
+			$inputFile = $ffmpeg->input($originalFile);
+			$uploadedVideo = $ffmpeg->getMetadata();
+	
+			$defaultFrameRate = 24;
+			$resolutionMaxWidth = 1920;
+			$resolutionMaxHeight = 1080;
+	
+			$savePath = self::getSaveDir($assetsID, 'video');
+			$format = "." . $options['videoFormat'];
+	
+			$ffmpeg->frameRate($defaultFrameRate);
+			$ffmpeg->set('-strict', '-2');
+			$ffmpeg->logLevel('quiet');
+	
+			if (isset($options['aspectRatio']) && !empty($options['aspectRatio'])) {
+				$aspectRatio = explode(":", $options['aspectRatio']);
+				if (is_numeric($aspectRatio[0]) && is_numeric($aspectRatio[1])) {
+					$numAspectRatio = floatval($aspectRatio[0]) / floatval($aspectRatio[1]);
+				} else {
+					throw new Exception('Invalid aspect ratio provided.');
+				}
+			} else {
+				if (is_numeric($uploadedVideo['width']) && is_numeric($uploadedVideo['height']) && $uploadedVideo['height'] != 0) {
+					$numAspectRatio = floatval($uploadedVideo['width']) / floatval($uploadedVideo['height']);
+				} else {
+					throw new Exception('Invalid video dimensions.');
+				}
+			}
+	
+			error_log("Aspect Ratio: " . var_export($numAspectRatio, true));
+	
+			if ((!isset($options['videoWidth']) && !isset($options['videoHeight'])) || 
+				(empty($options['videoWidth']) && empty($options['videoHeight']))) {
+				$videoWidth = $uploadedVideo['width'];
+				$videoHeight = $uploadedVideo['height'];
+			} else {
+				if (isset($options['videoWidth']) && !empty($options['videoWidth']) && !isset($options['videoHeight'])) {
+					$videoWidth = min(floatval($options['videoWidth']), $resolutionMaxWidth);
+					$videoHeight = FFmpeg::aspectRatioCalc($numAspectRatio, $uploadedVideo['width'], $uploadedVideo['height'], $videoWidth);
+				} elseif (!isset($options['videoWidth']) && isset($options['videoHeight']) && !empty($options['videoHeight'])) {
+					$videoHeight = min(floatval($options['videoHeight']), $resolutionMaxHeight);
+					$videoWidth = FFmpeg::aspectRatioCalc($numAspectRatio, $uploadedVideo['width'], $uploadedVideo['height'], null, $videoHeight);
+				} else {
+					if (floatval($options['videoWidth']) < floatval($options['videoHeight'])) {
+						$options['videoWidth'] = $options['videoHeight'];
+					}
+					$videoWidth = min(floatval($options['videoWidth']), $resolutionMaxWidth);
+					$videoHeight = FFmpeg::aspectRatioCalc($numAspectRatio, $uploadedVideo['width'], $uploadedVideo['height'], $videoWidth);
+				}
+			}
+	
+			error_log("Video Width: " . var_export($videoWidth, true));
+			error_log("Video Height: " . var_export($videoHeight, true));
+	
+			$ffmpeg->size($videoWidth . "x" . $videoHeight);
+	
+			if (isset($uploadedVideo['rotation']) && $uploadedVideo['rotation'] == 90) {
+				$ffmpeg->set('-metadata:s:v', 'rotate="90"');
+				$ffmpeg->transpose(0);
+			}
+	
+			if (isset($options['videobitRate']) && !empty($options['videobitRate'])) {
+				$bitrate = floor(floatval($options['videobitRate']) * 1024);
+				if ($bitrate > floatval($uploadedVideo['videoBitRate'])) {
+					$bitrate = floatval($uploadedVideo['videoBitRate']);
+				}
+			} else {
+				$bitrate = $uploadedVideo['videoBitRate'];
+			}
+	
+			if ($bitrate !== null) {
+				$ffmpeg->videoBitrate($bitrate);
+			}
+	
+			if (!is_dir($savePath)) {
+				throw new Exception("Cannot save file because directory doesn't exist.");
+			}
+	
+			$ffmpeg->output($savePath . $name . $format);
+			$conversion = $ffmpeg->ready();
+	
+			if ($conversion !== 0) {
+				throw new Exception('There was a problem with the video conversion. Check ffmpeg command: ' . $ffmpeg->command);
+			}
+	
+		} catch (Exception $e) {
+			errorHandle::newError(__METHOD__ . "() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::HIGH);
+			errorHandle::newError(__METHOD__ . "() - {$e->getMessage()} {$e->getLine()}:{$e->getFile()}", errorHandle::DEBUG);
+			return array(
+				'errors' => $e->getMessage(),
+			);
+		}
+	
+		return array(
+			'name'   => $name . $format,
+			'path'   => self::getSaveDir($assetsID, 'video', false),
+			'size'   => filesize(self::getSaveDir($assetsID, 'video') . $name . $format),
+			'type'   => self::getMimeType(self::getSaveDir($assetsID, 'video') . $name . $format),
 			'errors' => '',
 		);
-
-        return $return;
-	}
+	}	
 
 	public static function createVideoThumbs($assetsID, $name, $originalFile, $options){
 		$return = array(); // Initialize return array
