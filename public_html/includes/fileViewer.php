@@ -6,7 +6,7 @@ $engine->obCallback = false;
 
 // List of Mime types
 $videoMimeTypes = array('application/mp4', 'application/ogg', 'video/3gpp', 'video/3gpp2', 'video/flv', 'video/h264', 'video/mp4', 'video/mpeg', 'video/mpeg-2', 'video/mpeg4', 'video/ogg', 'video/ogm', 'video/quicktime', 'video/avi');
-$audioMimeTypes = array('audio/acc', 'audio/mp4', 'audio/mp3', 'audio/mp2', 'audio/mpeg', 'audio/oog', 'audio/midi', 'audio/wav', 'audio/x-ms-wma','audio/webm');
+$audioMimeTypes = array('audio/acc', 'audio/mp4', 'audio/mp3', 'audio/mp2', 'audio/mpeg', 'audio/oog', 'audio/midi', 'audio/wav', 'audio/x-ms-wma', 'audio/webm');
 $imageMimeTypes = array('image/jpeg', 'image/gif', 'image/png', 'image/bmp', 'image/tiff', 'image/x-icon');
 $pdfMimeTypes   = array('application/pdf');
 $webMimeTypes   = array('audio/mp4', 'audio/mp3', 'video/mp4', 'video/mpeg', 'video/ogg');
@@ -68,13 +68,21 @@ try {
         }
     }
 
+    // Check if the file exists, if not, use default thumbnail image, check $filepath to see if thumbs exist in string
+    if ((strpos($filepath, 'thumbs') !== false) && !file_exists($filepath)) {
+        $filepath = dirname(__FILE__).'/img/no-image.png';
+    }
+    
+    // Get MIME Type
+    $mimeType = mime_content_type($filepath);
+
     // Check if file is OCR type and handle it
     if ($fileType == 'ocr') {
         $fileID = $engine->cleanGet['MYSQL']['fileID'];
         $ocrFile = $fileArray['files']['ocr'][$fileID]["ocr"][0]['name'];
 
         if (!empty($ocrFile)) {
-            $filepath = ($fileType == 'archive') ? files::getSaveDir($fileUUID, $fileType) . DIRECTORY_SEPARATOR . $file['name'] : files::getSaveDir($fileUUID, $fileType) . $ocrFile;;
+            $filepath = ($fileType == 'archive') ? files::getSaveDir($fileUUID, $fileType) . DIRECTORY_SEPARATOR . $file['name'] : files::getSaveDir($fileUUID, $fileType) . $ocrFile;
 
             if (file_exists($filepath)) {
                 downloadFile($filepath);
@@ -85,9 +93,6 @@ try {
             throw new Exception('No OCR files found for this object.');
         }
     }
-
-    // Get MIME Type
-    $mimeType = mime_content_type($filepath);
 
     // Set headers and output file content
     if (isset($engine->cleanGet['MYSQL']['download']) && str2bool($engine->cleanGet['MYSQL']['download'])) {

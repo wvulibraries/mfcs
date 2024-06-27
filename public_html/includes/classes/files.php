@@ -326,74 +326,27 @@ class files {
     	return round(pow(1024, $base - floor($base)), $precision) . " " . $suffixes[floor($base)];
 	}
 	
-	// public static function buildFilesPreview($objectID,$fieldName=NULL){
-	// 	if (objects::validID(TRUE,$objectID) === FALSE) {
-	// 		return FALSE;
-	// 	}
-
-	// 	if (($object = objects::get($objectID,TRUE)) === FALSE) {
-	// 		return FALSE;
-	// 	}
-
-	// 	$output = '';
-
-	// 	$fields = isset($fieldName) ? [forms::getField($object['formID'], $fieldName)] : forms::getFields($object['formID']);
-
-	// 	foreach($fields as $field){
-	// 		// If the field isn't a file field, or there's no data for the field, skip it
-	// 		if ($field['type'] != 'file' || empty($object['data'][$field['name']])) continue;
-
-	// 		// Figure out some needed vars for later
-	// 		$fileDataArray = $object['data'][$field['name']];
-	// 		$fileLIs       = array();
-
-	// 		// Check if $fileDataArray['files']['archive'] is an array before sorting
-	// 		if (!isset($fileDataArray['files']['archive']) || !is_array($fileDataArray['files']['archive'])) {
-	// 			error_log('Error: $fileDataArray[\'files\'][\'archive\'] is not an array or is null.');
-	// 			continue;
-	// 		}
-	
-	// 		uasort($fileDataArray['files']['archive'], function ($a, $b) {
-	// 			return strnatcasecmp($a['name'], $b['name']);
-	// 		});
-
-	// 		foreach($fileDataArray['files']['archive'] as $fileID => $file){
-	// 			// Build the links
-	// 			$links = self::buildFileLinks($objectID, $field, $fileID, $file);
-
-	// 			// Get the file information
-	// 			$fileInfo = self::getFileInformation($file);
-
-	// 			// Build the file list item
-	// 			$fileLIs[] = self::buildFileListItem($fileInfo, $links, $file);
-	// 		}
-
-	// 		$output .= sprintf('<div class="filePreviewField"><header><i class="fa fa-folder-open"></i> %s</header><ul class="filePreviews">%s</ul></div>', $field['label'], implode('', $fileLIs));
-	// 	}
-	// 	return $output;
-	// }
-
-	public static function buildFilesPreview($objectID, $fieldName = NULL) {
-		if (objects::validID(TRUE, $objectID) === FALSE) {
+	public static function buildFilesPreview($objectID,$fieldName=NULL){
+		if (objects::validID(TRUE,$objectID) === FALSE) {
 			return FALSE;
 		}
-	
-		if (($object = objects::get($objectID, TRUE)) === FALSE) {
+
+		if (($object = objects::get($objectID,TRUE)) === FALSE) {
 			return FALSE;
 		}
-	
+
 		$output = '';
-	
+
 		$fields = isset($fieldName) ? [forms::getField($object['formID'], $fieldName)] : forms::getFields($object['formID']);
-	
-		foreach ($fields as $field) {
+
+		foreach($fields as $field){
 			// If the field isn't a file field, or there's no data for the field, skip it
 			if ($field['type'] != 'file' || empty($object['data'][$field['name']])) continue;
-	
+
 			// Figure out some needed vars for later
 			$fileDataArray = $object['data'][$field['name']];
-			$fileLIs = array();
-	
+			$fileLIs       = array();
+
 			// Check if $fileDataArray['files']['archive'] is an array before sorting
 			if (!isset($fileDataArray['files']['archive']) || !is_array($fileDataArray['files']['archive'])) {
 				error_log('Error: $fileDataArray[\'files\'][\'archive\'] is not an array or is null.');
@@ -403,69 +356,125 @@ class files {
 			uasort($fileDataArray['files']['archive'], function ($a, $b) {
 				return strnatcasecmp($a['name'], $b['name']);
 			});
-	
-			foreach ($fileDataArray['files']['archive'] as $fileID => $file) {
+
+			foreach($fileDataArray['files']['archive'] as $fileID => $file){
 				// Build the links
 				$links = self::buildFileLinks($objectID, $field, $fileID, $file);
-	
+
 				// Get the file information
 				$fileInfo = self::getFileInformation($file);
-	
+
 				// Build the file list item
 				$fileLIs[] = self::buildFileListItem($fileInfo, $links, $file);
 			}
-	
+
 			$output .= sprintf('<div class="filePreviewField"><header><i class="fa fa-folder-open"></i> %s</header><ul class="filePreviews">%s</ul></div>', $field['label'], implode('', $fileLIs));
 		}
 		return $output;
-	}	
+	}
+
+	// public static function buildFilesPreview($objectID, $fieldName = NULL) {
+	// 	if (objects::validID(TRUE, $objectID) === FALSE) {
+	// 		return FALSE;
+	// 	}
+	
+	// 	if (($object = objects::get($objectID, TRUE)) === FALSE) {
+	// 		return FALSE;
+	// 	}
+	
+	// 	$output = '';
+	
+	// 	$fields = isset($fieldName) ? [forms::getField($object['formID'], $fieldName)] : forms::getFields($object['formID']);
+	
+	// 	foreach ($fields as $field) {
+	// 		// If the field isn't a file field, or there's no data for the field, skip it
+	// 		if ($field['type'] != 'file' || empty($object['data'][$field['name']])) continue;
+	
+	// 		// Figure out some needed vars for later
+	// 		$fileDataArray = $object['data'][$field['name']];
+	// 		$fileLIs = array();
+	
+	// 		// Check if $fileDataArray['files']['archive'] is an array before sorting
+	// 		if (!isset($fileDataArray['files']['archive']) || !is_array($fileDataArray['files']['archive'])) {
+	// 			error_log('Error: $fileDataArray[\'files\'][\'archive\'] is not an array or is null.');
+	// 			continue;
+	// 		}
+	
+	// 		uasort($fileDataArray['files']['archive'], function ($a, $b) {
+	// 			return strnatcasecmp($a['name'], $b['name']);
+	// 		});
+	
+	// 		foreach ($fileDataArray['files']['archive'] as $fileID => $file) {
+	// 			// Build the links
+	// 			$links = self::buildFileLinks($objectID, $field, $fileID, $file);
+	
+	// 			// Get the file information
+	// 			$fileInfo = self::getFileInformation($file);
+	
+	// 			// Build the file list item
+	// 			$fileLIs[] = self::buildFileListItem($fileInfo, $links, $file);
+	// 		}
+	
+	// 		$output .= sprintf('<div class="filePreviewField"><header><i class="fa fa-folder-open"></i> %s</header><ul class="filePreviews">%s</ul></div>', $field['label'], implode('', $fileLIs));
+	// 	}
+	// 	return $output;
+	// }
+	
+	// public static function defaultThumbURL() {
+	// 	//return localvars::get('siteRoot') . 'includes/img/no-image.png';
+	// 	return "/home/mfcs.lib.wvu.edu/public_html/includes/img/no-image.png";
+	// }
 	
 	public static function buildThumbnailURL($objectID) {
 
-		if (objects::validID(TRUE,$objectID) === FALSE) {
+		if (objects::validID(TRUE, $objectID) === FALSE) {
 			return FALSE;
 		}
-
-		if (($object = objects::get($objectID,TRUE)) === FALSE) {
+	
+		if (($object = objects::get($objectID, TRUE)) === FALSE) {
 			return FALSE;
 		}
-
+	
 		$output = "";
-
+	
 		$fields = forms::getFields($object['formID']);
-
+	
 		foreach ($fields as $field) {
-
+	
 			if ($field['type'] != 'file') continue;
-
+	
 			// If there's nothing uploaded for the field, no need to continue
-			if (empty($object['data'][ $field['name'] ])) continue;
-
+			if (empty($object['data'][$field['name']])) continue;
+	
 			$fileDataArray = $object['data'][$field['name']];
-
-			uasort($fileDataArray['files']['archive'],function($a,$b) { return strnatcasecmp($a['name'],$b['name']); });
-
-			foreach ($fileDataArray['files']['archive'] as $fileID => $file) {
-
-				$_filename = pathinfo($file['name']);
-				$filename  = $_filename['filename'];
-
-				$output = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
-						localvars::get('siteRoot'),
-						$objectID,
-						$field['name'],
-						$fileID,
-						'thumbs');
-
-				break;
-
+	
+			// Ensure that $fileDataArray['files']['archive'] is an array
+			if (isset($fileDataArray['files']['archive']) && is_array($fileDataArray['files']['archive'])) {
+				uasort($fileDataArray['files']['archive'], function($a, $b) {
+					return strnatcasecmp($a['name'], $b['name']);
+				});
+	
+				foreach ($fileDataArray['files']['archive'] as $fileID => $file) {
+	
+					$_filename = pathinfo($file['name']);
+					$filename  = $_filename['filename'];
+	
+					$output = sprintf('%sincludes/fileViewer.php?objectID=%s&field=%s&fileID=%s&type=%s',
+							localvars::get('siteRoot'),
+							$objectID,
+							$field['name'],
+							$fileID,
+							'thumbs');
+	
+					break;
+				}
+			} else {
+				error_log("Error: \$fileDataArray['files']['archive'] is not an array or is not set. Object ID: $objectID, Field: " . $field['name']);
 			}
-
 		}
-
+	
 		return $output;
-
-	}
+	}	
 
 	/**
 	 * Returns the base path to be used when uploading files
@@ -759,8 +768,6 @@ class files {
 			// if ocr is checked, read the images and create an OCR text file for each
 			if (self::shouldCreateOCRFile($options)) {
 				$return['ocr'] = self::createOCRFiles($originalFiles, $originalsFilepath, $assetsID, $tmpDir, $options);
-				// var_dump($return['ocr']);
-				// die();
 			} // If OCR
 
 			// clear all temporary jpg files and remove the temp directory
@@ -845,6 +852,8 @@ class files {
 			$inputFile = $ffmpeg->input($originalFile);
 			$uploadedVideo = $ffmpeg->getMetadata();
 	
+			error_log("Uploaded Video Metadata: " . var_export($uploadedVideo, true));
+	
 			$defaultFrameRate = 24;
 			$resolutionMaxWidth = 1920;
 			$resolutionMaxHeight = 1080;
@@ -893,8 +902,8 @@ class files {
 				}
 			}
 	
-			error_log("Video Width: " . var_export($videoWidth, true));
-			error_log("Video Height: " . var_export($videoHeight, true));
+			error_log("Video Width After Calculation: " . var_export($videoWidth, true));
+			error_log("Video Height After Calculation: " . var_export($videoHeight, true));
 	
 			$ffmpeg->size($videoWidth . "x" . $videoHeight);
 	
@@ -911,6 +920,8 @@ class files {
 			} else {
 				$bitrate = $uploadedVideo['videoBitRate'];
 			}
+	
+			error_log("Bitrate: " . var_export($bitrate, true));
 	
 			if ($bitrate !== null) {
 				$ffmpeg->videoBitrate($bitrate);
@@ -942,8 +953,8 @@ class files {
 			'type'   => self::getMimeType(self::getSaveDir($assetsID, 'video') . $name . $format),
 			'errors' => '',
 		);
-	}	
-
+	}
+	
 	public static function createVideoThumbs($assetsID, $name, $originalFile, $options){
 		$return = array(); // Initialize return array
 	

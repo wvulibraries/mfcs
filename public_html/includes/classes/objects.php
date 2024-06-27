@@ -488,31 +488,6 @@ class objects {
 	// creates a new object and puts it in the database
 	// we are assuming that all data is valid at this point
 	public static function create($formID, $data, $metadata, $parentID = 0, $modifiedTime = NULL, $createTime = NULL, $publicReleaseObj = 0) {
-		// do a var_dump on each of the passed in variables to make sure they are what we expect
-
-		// echo "<pre>";
-		// var_dump($formID);
-		// echo "</pre>";
-		// echo "<pre>";
-		// var_dump($data);
-		// echo "</pre>";
-		// echo "<pre>";
-		// var_dump($metadata);
-		// echo "</pre>";
-		// echo "<pre>";
-		// var_dump($parentID);
-		// echo "</pre>";
-		// echo "<pre>";
-		// var_dump($modifiedTime);
-		// echo "</pre>";
-		// echo "<pre>";
-		// var_dump($createTime);
-		// echo "</pre>";
-		// echo "<pre>";
-		// var_dump($publicReleaseObj);
-		// echo "</pre>";
-		// die();
-
 		if (checks::is_ok("readonly")) {
 			errorHandle::errorMsg("MFCS is currently in Read Only Mode.");
 			return FALSE;
@@ -685,133 +660,132 @@ class objects {
 
 	}
 
-	public static function update($objectID,$formID,$data,$metadata,$parentID=0,$modifiedTime=NULL,$publicReleaseObj=0) {
-
-		errorHandle::newError(__METHOD__."() - update:".$publicReleaseObj, errorHandle::DEBUG);
-
+	public static function update($objectID, $formID, $data, $metadata, $parentID = 0, $modifiedTime = NULL, $publicReleaseObj = 0) {
+		// Log the input parameters
+		error_log("objects::update() - Input Parameters: objectID={$objectID}, formID={$formID}, data=" . var_export($data, true) . ", metadata={$metadata}, parentID={$parentID}, modifiedTime={$modifiedTime}, publicReleaseObj={$publicReleaseObj}");
+		
+		errorHandle::newError(__METHOD__ . "() - update:" . $publicReleaseObj, errorHandle::DEBUG);
+	
 		if (checks::is_ok("readonly")) {
 			errorHandle::errorMsg("MFCS is currently in Read Only Mode.");
 			return FALSE;
 		}
-
+	
 		if (!is_array($data)) {
-			errorHandle::newError(__METHOD__."() - : data is not array", errorHandle::DEBUG);
+			errorHandle::newError(__METHOD__ . "() - : data is not array", errorHandle::DEBUG);
 			return FALSE;
 		}
-
+	
 		// Get the current Form
 		if (($form = forms::get($formID)) === FALSE) {
-			errorHandle::newError(__METHOD__."() - retrieving form by formID", errorHandle::DEBUG);
+			errorHandle::newError(__METHOD__ . "() - retrieving form by formID", errorHandle::DEBUG);
 			return FALSE;
 		}
-
+	
 		// the form is an object form, make sure that it has an ID field defined.
 		if (($idnoInfo = forms::getFormIDInfo($formID)) === FALSE) {
-			errorHandle::newError(__METHOD__."() - no IDNO field for object form.", errorHandle::DEBUG);
+			errorHandle::newError(__METHOD__ . "() - no IDNO field for object form.", errorHandle::DEBUG);
 			return FALSE;
 		}
-
+	
 		// begin transactions
 		$result = mfcs::$engine->openDB->transBegin("objects");
 		if ($result !== TRUE) {
-			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
+			errorHandle::newError(__METHOD__ . "() - unable to start database transactions", errorHandle::DEBUG);
 			return FALSE;
 		}
-
+	
 		// place old version into revision control
 		// excluding metadata objects
 		if ($metadata == 0) {
-			$rcs    = revisions::create();
+			$rcs = revisions::create();
 			$return = $rcs->insertRevision($objectID);
-
+	
 			if ($return !== TRUE) {
-
 				mfcs::$engine->openDB->transRollback();
 				mfcs::$engine->openDB->transEnd();
-
-				errorHandle::newError(__METHOD__."() - unable to insert revisions", errorHandle::DEBUG);
+	
+				errorHandle::newError(__METHOD__ . "() - unable to insert revisions", errorHandle::DEBUG);
 				return FALSE;
 			}
 		}
-
+	
 		// insert new version
-		$sql = sprintf("UPDATE `objects` SET `parentID`='%s', `data`='%s', `formID`='%s', `metadata`='%s', `modifiedTime`='%s', `modifiedBy`='%s', `publicRelease`='%s' WHERE `ID`='%s'",
-			isset(mfcs::$engine->cleanPost['MYSQL']['parentID'])?mfcs::$engine->cleanPost['MYSQL']['parentID']:mfcs::$engine->openDB->escape($parentID),
+		$sql = sprintf(
+			"UPDATE `objects` SET `parentID`='%s', `data`='%s', `formID`='%s', `metadata`='%s', `modifiedTime`='%s', `modifiedBy`='%s', `publicRelease`='%s' WHERE `ID`='%s'",
+			isset(mfcs::$engine->cleanPost['MYSQL']['parentID']) ? mfcs::$engine->cleanPost['MYSQL']['parentID'] : mfcs::$engine->openDB->escape($parentID),
 			encodeFields($data),
 			mfcs::$engine->openDB->escape($formID),
 			mfcs::$engine->openDB->escape($metadata),
-			(isnull($modifiedTime))?time():$modifiedTime,
+			isnull($modifiedTime) ? time() : $modifiedTime,
 			mfcs::$engine->openDB->escape(users::user('ID')),
 			$publicReleaseObj == 1 ? 1 : 0,
 			mfcs::$engine->openDB->escape($objectID)
-			);
-
+		);
+	
 		$sqlResult = mfcs::$engine->openDB->query($sql);
-
+	
 		if (!$sqlResult['result']) {
 			mfcs::$engine->openDB->transRollback();
 			mfcs::$engine->openDB->transEnd();
-
-			errorHandle::newError(__METHOD__."() - ".$sql." -- ".$sqlResult['error'], errorHandle::DEBUG);
+	
+			errorHandle::newError(__METHOD__ . "() - " . $sql . " -- " . $sqlResult['error'], errorHandle::DEBUG);
 			return FALSE;
 		}
-
+	
 		// Insert into the new data table
-		if (self::insertObjectData($objectID,$data,$formID) === FALSE) {
+		if (self::insertObjectData($objectID, $data, $formID) === FALSE) {
 			mfcs::$engine->openDB->transRollback();
 			mfcs::$engine->openDB->transEnd();
-
-			errorHandle::newError(__METHOD__."() - inserting objects", errorHandle::DEBUG);
+	
+			errorHandle::newError(__METHOD__ . "() - inserting objects", errorHandle::DEBUG);
 			return FALSE;
 		}
-
+	
 		// Update duplicate matching table
-		if (duplicates::updateDupeTable($formID,$objectID,$data) === FALSE) {
+		if (duplicates::updateDupeTable($formID, $objectID, $data) === FALSE) {
 			mfcs::$engine->openDB->transRollback();
 			mfcs::$engine->openDB->transEnd();
-			errorHandle::newError(__METHOD__."() - updating dupe matching", errorHandle::DEBUG);
+			errorHandle::newError(__METHOD__ . "() - updating dupe matching", errorHandle::DEBUG);
 			return FALSE;
 		}
-
+	
 		// if it is an object form (not a metadata form)
 		// do the IDNO stuff
 		// We only have to do this if the IDNO is managed by the user
 		if ($form['metadata'] == "0" && $idnoInfo['managedBy'] != "system") {
-
-			// the form is an object form, make sure that it has an ID field defined.
 			if (($idnoInfo = forms::getFormIDInfo($formID)) === FALSE) {
-				errorHandle::newError(__METHOD__."() - no IDNO field for object form.", errorHandle::DEBUG);
+				errorHandle::newError(__METHOD__ . "() - no IDNO field for object form.", errorHandle::DEBUG);
 				return FALSE;
 			}
-
-			$idno = (isset(mfcs::$engine->cleanPost['MYSQL']['idno']) && !isempty(mfcs::$engine->cleanPost['MYSQL']['idno']))?mfcs::$engine->cleanPost['MYSQL']['idno']:self::getIDNOForObjectID($objectID);
-
+	
+			$idno = isset(mfcs::$engine->cleanPost['MYSQL']['idno']) && !isempty(mfcs::$engine->cleanPost['MYSQL']['idno']) ? mfcs::$engine->cleanPost['MYSQL']['idno'] : self::getIDNOForObjectID($objectID);
+	
 			if ($idno === FALSE || isempty($idno)) {
 				mfcs::$engine->openDB->transRollback();
 				mfcs::$engine->openDB->transEnd();
-
+	
 				return FALSE;
 			}
-
-			if (!self::updateIDNO($objectID,$idno)) {
-
+	
+			if (!self::updateIDNO($objectID, $idno)) {
 				mfcs::$engine->openDB->transRollback();
 				mfcs::$engine->openDB->transEnd();
-
-				errorHandle::newError(__METHOD__."() - updating the IDNO: ".$sqlResult['error'], errorHandle::DEBUG);
+	
+				errorHandle::newError(__METHOD__ . "() - updating the IDNO: " . $sqlResult['error'], errorHandle::DEBUG);
 				return FALSE;
-
 			}
-
 		}
-
+	
 		// end transactions
 		mfcs::$engine->openDB->transCommit();
 		mfcs::$engine->openDB->transEnd();
-
+	
+		// Log the successful update
+		error_log("objects::update() - Update successful for objectID={$objectID}");
+		
 		return TRUE;
-
-	}
+	}	
 
 	private static function updateIDNO($objectID,$idno) {
 		// update the object with the new idno

@@ -536,10 +536,8 @@ class listGenerator {
 			// thumbnail list
 			$output .= sprintf('<a class="icon-item" href="%sdataView/list.php?listType=formThumbnailView&formID=%s"><i class="fa fa-picture-o"></i></a>',mfcs::config("siteRoot"),$form['ID']);
 
-
 			// paginated list
 			$output .= sprintf('<a class="icon-item" href="%sdataView/list.php?listType=form&formID=%s"><i class="fa fa-list-ol"></i></a>',mfcs::config("siteRoot"),$form['ID']);
-
 
 			$output .= '</div>';
 			$output .= "</div>"; // heading
