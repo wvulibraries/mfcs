@@ -10,6 +10,7 @@ require_once "classes/checksum.php";
 require_once "classes/duplicates.php";
 require_once "classes/exporting.php";
 require_once "classes/files.php";
+require_once "classes/form_builder.php";
 require_once "classes/forms.php";
 require_once "classes/list_generator.php";
 require_once "classes/locks.php";

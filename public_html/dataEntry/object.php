@@ -194,7 +194,7 @@ catch(Exception $e) {
 // build the form for displaying
 if ($forms->validID()) {
 	try {
-		if (($builtForm = forms::build($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'],$error)) === FALSE) {
+		if (($builtForm = formBuilder::build($engine->cleanGet['MYSQL']['formID'],$engine->cleanGet['MYSQL']['objectID'],$error)) === FALSE) {
 			throw new Exception("Error building form.");
 		}
 

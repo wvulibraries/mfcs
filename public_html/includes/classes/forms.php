@@ -502,517 +502,6 @@ class forms {
 
 	}
 
-	public static function build($formID,$objectID = NULL,$error=FALSE) {
-		$engine = EngineAPI::singleton();
-		// Get the current Form
-		$form   = self::get($formID);
-		if ($form === FALSE) {
-			return FALSE;
-		}
-
-		$fields = self::sortFields($form['fields']);
-		if ($fields === FALSE) {
-			return FALSE;
-		}
-
-		$object = self::getObject($objectID, $error);
-		if ($object === FALSE) {
-			return FALSE;
-		}
-
-		$output = sprintf('<form action="%s?formID=%s%s" method="%s" name="insertForm" data-formid="%s">',
-			$_SERVER['PHP_SELF'],
-			htmlSanitize($formID),
-			(!isnull($objectID)) ? '&objectID='.$objectID : "",
-			"post",
-			mfcs::$engine->openDB->escape($formID)
-		);
-
-		$output .= sessionInsertCSRF();
-
-		if (isset($engine->cleanGet['HTML']['parentID'])) {
-			$output .= sprintf('<input type="hidden" name="parentID" value="%s">',
-				$engine->cleanGet['HTML']['parentID']
-				);
-		}
-
-		// If there is a Lock ID add it to the form
-		if (!isempty(localvars::get("lockID"))) {
-			$output .= sprintf('<input type="hidden" name="lockID" value="%s">',
-				localvars::get("lockID")
-				);
-		}
-
-		if ($form['objPublicReleaseShow'] == 1 && $form['metadata'] == 0) {
-			$objPublicReleaseDefaultTrueYes = forms::publicReleaseObjSelect($objectID,$object,$form);
-			$output .= '<label form="publicReleaseObj">Release to Public:</label>';
-			$output .= '<select name="publicReleaseObj" id="publicReleaseObj">';
-			$output .= sprintf('<option value="yes" %s>Yes</option>', $objPublicReleaseDefaultTrueYes ? "selected" : "");
-			$output .= sprintf('<option value="no" %s>No</option>', !$objPublicReleaseDefaultTrueYes ? "selected" : "");
-			$output .= '</select>';
-		}
-
-		$currentFieldset = "";
-
-		foreach ($fields as $field) {
-
-			if ($field['type'] == "fieldset") {
-				continue;
-			}
-			if ($field['type'] == "idno" && (strtolower($field['managedBy']) == "system" && isnull($objectID))) {
-				continue;
-			}
-
-			// deal with field sets
-			if ($field['fieldset'] != $currentFieldset) {
-				if ($currentFieldset != "") {
-					$output .= "</fieldset>";
-				}
-				if (!isempty($field['fieldset'])) {
-					$output .= sprintf('<fieldset><legend>%s</legend>',
-						$field['fieldset']
-					);
-				}
-				$currentFieldset = $field['fieldset'];
-			}
-
-
-			if ($error === TRUE) {
-				// This is RAW because it is post data being displayed back out to the user who submitted it
-				// during a submission error. we don't want to corrupt the data by sanitizing it and then
-				// sanitizing it again on submissions
-				//
-				// it should not be a security issue because it is being displayed back out to the user that is submissing the data.
-				// this will likely cause issues with security scans
-				//
-				// @SECURITY False Positive 1
-				if (isset($engine->cleanPost['RAW'][$field['name']])) {
-					$object['data'][$field['name']] = $engine->cleanPost['RAW'][$field['name']];
-					if ($field['type'] == "select") {
-						$field['choicesDefault'] = $engine->cleanPost['RAW'][$field['name']];
-					}
-				}
-			}
-
-			// build the actual input box
-
-			$output .= '<div class="formCreator dataEntry">';
-
-
-			// Handle disabled on insert form
-			if (isset($field['disabledInsert']) && $field['disabledInsert'] == "true" && isnull($objectID)) {
-				$field['disabled'] = "true";
-			}
-
-			// Handle Read Only on Update form
-			if (isset($field['disabledUpdate']) &&  $field['disabledUpdate'] == "true" && !isnull($objectID)) {
-				$field['readonly'] = "true";
-			}
-
-			// @TODO There is excessive logic here. We have already continued/skipped passed IDNOs that we aren't displaying at this point.
-			// version 2.0 cleanup.
-			if ($field['type'] != "idno"
-				|| ($field['type'] == "idno" && isset($field['managedBy']) && strtolower($field['managedBy']) != "system")
-				|| ($field['type'] == "idno" && isset($field['managedBy']) && strtolower($field['managedBy']) == "system" && !isnull($objectID))
-				) {
-				$output .= sprintf('<label for="%s" class="formLabel %s">%s:</label>',
-					htmlSanitize($field['id']),
-					(strtolower($field['required']) == "true")?"requiredField":"",
-					htmlSanitize($field['label'])
-				);
-			}
-
-			if ($field['type'] == "textarea" || $field['type'] == "wysiwyg") {
-				$output .= sprintf('<textarea name="%s" placeholder="%s" id="%s" class="%s %s" %s %s %s %s>%s</textarea>',
-					htmlSanitize($field['name']),
-					htmlSanitize($field['placeholder']),
-					htmlSanitize($field['id']),
-					htmlSanitize($field['class']),
-					($field['type'] == "wysiwyg" ? "wysiwyg" : ""),
-					(!isempty($field['style']))?'style="'.htmlSanitize($field['style']).'"':"",
-					//true/false type attributes
-					(strtoupper($field['required']) == "TRUE")?"required":"",
-					(strtoupper($field['readonly']) == "TRUE")?"readonly":"",
-					(strtoupper($field['disabled']) == "TRUE")?"disabled":"",
-					self::getFieldValue($field,(isset($object))?$object:NULL)
-				);
-
-				if ($field['type'] == "wysiwyg") {
-					$output .= sprintf('<script type="text/javascript">window.CKEDITOR_BASEPATH="%sincludes/js/CKEditor/"</script>',
-						localvars::get("siteRoot")
-					);
-					$output .= sprintf('<script type="text/javascript" src="%sincludes/js/CKEditor/ckeditor.js"></script>',
-						localvars::get("siteRoot")
-					);
-					$output .= '<script type="text/javascript">$(function(){';
-					$output .= sprintf('if (CKEDITOR.instances["%s"]){ CKEDITOR.remove(CKEDITOR.instances["%s"]); }',
-						htmlSanitize($field['id']),
-						htmlSanitize($field['id'])
-					);
-					$output .= sprintf(' CKEDITOR.replace("%s"); ',
-						htmlSanitize($field['id'])
-					);
-
-					$output .= 'htmlParser = "";';
-					$output .= '';
-					$output .= sprintf('if(CKEDITOR.instances["%s"].dataProcessor){ CKEDITOR.instances["%s"].dataProcessor.htmlFilter;}',
-						$field['name'],
-						htmlSanitize($field['id'])
-					);
-
-					$output .= '});</script>';
-
-				}
-
-			}
-			else if ($field['type'] == "checkbox" || $field['type'] == "radio") {
-
-				if (($fieldChoices = forms::getFieldChoices($field)) === FALSE) {
-					return FALSE;
-				}
-
-				$output .= sprintf('<div data-type="%s" data-formid="%s" data-fieldname="%s" %s>',
-					$field['type'],
-					$formID,
-					htmlSanitize($field['name']),
-					(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':""
-				);
-
-
-				$output .= self::drawFieldChoices($field,$fieldChoices);
-
-				$output .= '</div>';
-
-			}
-			else if ($field['type'] == "select") {
-
-				if (($fieldChoices = forms::getFieldChoices($field)) === FALSE) {
-					return FALSE;
-				}
-
-				$output .= sprintf('<select name="%s" id="%s" data-type="%s" data-formid="%s" data-fieldname="%s" %s>',
-					htmlSanitize($field['name']),
-					htmlSanitize($field['name']),
-					$field['type'],
-					$formID,
-					htmlSanitize($field['name']),
-					(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':""
-				);
-
-				$output .= self::drawFieldChoices($field,$fieldChoices,(isset($object['data'][$field['name']]))?$object['data'][$field['name']]:NULL);
-
-				$output .= "</select>";
-
-			}
-			// else if ($field['type'] == "select") {
-
-			// 	if (isset($field['choicesType']) && !isempty($field['choicesType']) && $field['choicesType'] == "manual") {
-			// 		if (($fieldChoices = forms::getFieldChoices($field)) === FALSE) {
-			// 			return FALSE;
-			// 		}
-
-			// 		$output .= sprintf('<select name="%s" id="%s" data-type="%s" data-formid="%s" data-fieldname="%s" %s>%s</select>',
-			// 			htmlSanitize($field['name']),
-			// 			htmlSanitize($field['name']),
-			// 			$field['type'],
-			// 			$formID,
-			// 			htmlSanitize($field['name']),
-			// 			(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
-			// 			self::drawFieldChoices($field,$fieldChoices,(isset($object['data'][$field['name']]))?$object['data'][$field['name']]:NULL)
-			// 		);
-			// 	}
-			// 	else {
-			// 		$output .= sprintf('<input type="hidden" name="%s" id="%s" data-type="%s" data-formid="%s" data-fieldname="%s" %s>',
-			// 			htmlSanitize($field['name']),
-			// 			htmlSanitize($field['name']),
-			// 			$field['type'],
-			// 			$formID,
-			// 			htmlSanitize($field['name']),
-			// 			(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
-			// 			htmlSanitize($field['name'])
-			// 		);
-
-			// 		$output .= sprintf("<script charset=\"utf-8\">
-			// 				$(function() {
-			// 					$('#%s')
-			// 						.select2({
-			// 							minimumResultsForSearch: 10,
-			// 							placeholder: 'Make a Selection',
-			// 							ajax: {
-			// 								url: 'retrieveOptions.php',
-			// 								dataType: 'json',
-			// 								quietMillis: 300,
-			// 								data: function(term, page) {
-			// 									return {
-			// 										q: term,
-			// 										page: page,
-			// 										pageSize: 1000,
-			// 										formID: '%s',
-			// 										fieldName: '%s'
-			// 									};
-			// 								},
-			// 								results: function(data, page) {
-			// 									var more = (page * data.pageSize) < data.total;
-
-			// 									return {
-			// 										results: data.options,
-			// 										more: more
-			// 									};
-			// 								},
-			// 							},
-			// 							// initSelection: function(element, callback) {
-
-			// 					  //           var id = $(element).val();
-			// 					  //           if(id !== '') {
-			// 					  //           	$.ajax('retrieveSingleOption.php', {
-			// 					  //           		data: function() {
-			// 					  //           			return {
-			// 					  //           				formID: '%s',
-			// 					  //           				id: id
-			// 					  //           			};
-			// 					  //           		},
-			// 					  //                   dataType: 'json'
-			// 					  //               }).done(function(data) {
-			// 					  //                   callback(data.results[0]);
-			// 					  //               });
-			// 					  //           }
-			// 					  //       }
-			// 						});
-			// 					// $('#%s').select2( 'val', '%s' );
-			// 				});
-
-			// 			</script>",
-			// 			htmlSanitize($field['name']),
-			// 			htmlSanitize($field['choicesForm']),
-			// 			htmlSanitize($field['choicesField']),
-			// 			$object['data'][$field['name']]
-			// 		);
-			// 	}
-
-			// }
-			else if ($field['type'] == 'multiselect') {
-
-
-				$output .= '<div class="multiSelectContainer">';
-				$output .= sprintf('<select name="%s[]" id="%s" size="5" multiple="multiple">',
-					htmlSanitize($field['name']),
-					htmlSanitize(str_replace("/","_",$field['name']))
-				);
-
-				if (isset($object['data'][$field['name']]) && is_array($object['data'][$field['name']])) {
-
-					foreach ($object['data'][$field['name']] as $selectedItem) {
-						$tmpObj  = objects::get($selectedItem, true);
-						$output .= sprintf('<option value="%s">%s</option>',
-							htmlSanitize($selectedItem),
-							htmlSanitize($tmpObj['data'][$field['choicesField']])
-						);
-
-						// if the temp object is false then we have a problem
-						// if($tmpObj === false){
-						// 	errorHandle::newError("Can't get Object for Metadata Object", errorHandle::DEBUG);
-						// }
-					}
-				}
-
-				$output .= '</select><br />';
-
-				if (isset($field['choicesType']) && !isempty($field['choicesType']) && $field['choicesType'] == "manual") {
-					if (($fieldChoices = forms::getFieldChoices($field)) === FALSE) {
-						return FALSE;
-					}
-
-					$output .= sprintf('<select name="%s_available" id="%s_available" data-type="%s" data-formid="%s" data-fieldname="%s" %s onchange="addItemToID(\'%s\', this.options[this.selectedIndex]);">%s</select>',
-						htmlSanitize(str_replace("/","_",$field['name'])),
-						htmlSanitize($field['name']),
-						$field['type'],
-						$formID,
-						htmlSanitize($field['name']),
-						(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
-						htmlSanitize(str_replace("/","_",$field['name'])),
-						self::drawFieldChoices($field,$fieldChoices)
-					);
-				}
-				else {
-					$output .= sprintf('<input type="hidden" name="%s_available" id="%s_available" data-type="%s" data-formid="%s" data-fieldname="%s" %s>',
-						htmlSanitize($field['name']),
-						htmlSanitize(str_replace("/","_",$field['name'])),
-						$field['type'],
-						$formID,
-						htmlSanitize($field['name']),
-						(isset($field['choicesForm']) && !isempty($field['choicesForm']))?'data-choicesForm="'.$field['choicesForm'].'"':"",
-						htmlSanitize($field['name'])
-					);
-
-					$output .= sprintf("<script charset=\"utf-8\">
-							$(function() {
-								$('#%s_available')
-									.select2({
-										minimumResultsForSearch: 10,
-										placeholder: 'Make a Selection',
-										ajax: {
-											url: 'retrieveOptions.php',
-											dataType: 'json',
-											quietMillis: 300,
-											async: true,
-											data: function(term, page) {
-												return {
-													q: term,
-													page: page,
-													pageSize: 1000,
-													formID: '%s',
-													fieldName: '%s'
-												};
-											},
-											results: function(data, page) {
-												var more = (page * data.pageSize) < data.total;
-												return {
-													results: data.options,
-													more: more
-												};
-											},
-										},
-									})
-									.on('select2-selecting', function(e) {
-										addToID('%s', e.val, e.choice.text);
-										console.log(%s);
-									});
-							});
-						</script>",
-						htmlSanitize(str_replace("/","_",$field['name'])),
-						htmlSanitize($field['choicesForm']),
-						htmlSanitize($field['choicesField']),
-						htmlSanitize(str_replace("/","_",$field['name'])),
-						htmlSanitize(str_replace("/","_",$field['name']))
-					);
-				}
-
-				$output .= "<br />";
-				$output .= sprintf('<button type="button" onclick="removeFromList(\'%s\')" class="btn">Remove Selected</button>',
-					htmlSanitize(htmlSanitize(str_replace("/","_",$field['name'])))
-					);
-
-				$output .= "</div>";
-			}
-			else if ($field['type'] == 'file') {
-				$formHasFiles = true;
-				$output .= '<div style="display: inline-block;">';
-				if(!isnull($objectID)){
-					$output .= empty($object['data'][ $field['name'] ])
-						? '<span style="color: #666;font-style: italic;">No file uploaded</span><br>'
-						: '<a href="javascript:;" onclick="$(\'#filesTab\').click();">Click to view files tab</a><br>';
-				}
-				$uploadID = md5($field['name'].mt_rand());
-				$output .= sprintf('<div class="fineUploader" data-multiple="%s" data-upload_id="%s" data-allowed_extensions="%s" style="display: inline-block;"></div><input type="hidden" name="%s" value="%s">',
-					htmlSanitize($field['multipleFiles']),
-					$uploadID,
-					htmlSanitize(implode(',',$field['allowedExtensions'])),
-					htmlSanitize($field['name']),
-					$uploadID);
-				$output .= '</div>';
-			}
-			else {
-
-				// populate the idno field
-				if ($field['type'] == "idno") {
-					$field['type'] = "text";
-					if (isset($object) && !isset($object['data'][$field['name']])) $object['data'][$field['name']] = $object['idno'];
-
-					// the IDNO is managed by the user. It shouldn't be set to read only
-					if (isset($field['managedBy']) && strtolower($field['managedBy']) != "system") {
-						$field['readonly'] = "false";
-					}
-					else {
-						// just in case ...
-						$field['readonly'] = "true";
-					}
-
-				}
-
-				// get the field value, if the object exists
-				$fieldValue = self::getFieldValue($field,(isset($object))?$object:NULL);
-
-
-				$output .= sprintf('<input type="%s" name="%s" value="%s" placeholder="%s" %s id="%s" class="%s" %s %s %s />',
-					htmlSanitize($field['type']),
-					htmlSanitize($field['name']),
-					$fieldValue,
-					htmlSanitize($field['placeholder']),
-					//for numbers
-					($field['type'] == "number")?(buildNumberAttributes($field)):"",
-					htmlSanitize($field['id']),
-					htmlSanitize($field['class']),
-					// (!isempty($field['style']))?'style="'.htmlSanitize($field['style']).'"':"",
-					//true/false type attributes
-					(strtoupper($field['required']) == "TRUE")?"required":"",
-					(strtoupper($field['readonly']) == "TRUE")?"readonly":"",
-					(strtoupper($field['disabled']) == "TRUE")?"disabled":""
-				);
-			}
-
-			if(isset($field['help']) && $field['help']){
-
-				list($helpType,$helpValue) = explode('|', $field['help'], 2);
-				$helpType = trim($helpType);
-
-				switch($helpType){
-					case 'text':
-						$output .= sprintf(' <a class="creatorFormHelp" href="javascript:;" rel="popover" data-placement="right" data-content="%s"> <i class="fa fa-question-circle"></i> </a>', $helpValue);
-						break;
-					case 'html':
-						$output .= sprintf(' <a class="creatorFormHelp" href="javascript:;" rel="popover" data-html="true" data-placement="right" data-trigger="hover" data-content="%s"><i class="fa fa-question-circle"></i></a>', $helpValue);
-						break;
-					case 'web':
-						$output .= sprintf(' <a class="creatorFormHelp" href="%s" target="_blank" style="target-new: tab;"> <i class="fa fa-question-circle"></i> </a>', $helpValue);
-						// $output .= sprintf(' <a href="javascript:;" title="Click for help" class="icon-question-sign" onclick="$(\'#helpModal_%s\').modal(\'show\');"></a>', $field['id']);
-						// $output .= sprintf('<div id="helpModal_%s" rel="modal" class="modal hide fade" data-show="false">', $field['id']);
-						// $output .= '	<div class="modal-header">';
-						// $output .= '		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>';
-						// $output .= '		<h3 id="myModalLabel">Field Help</h3>';
-						// $output .= '	</div>';
-						// $output .= '	<div class="modal-body">';
-						// $output .= sprintf('		<iframe src="%s" seamless="seamless" style="width: 100%%; height: 100%%;"></iframe>', $helpValue);
-						// $output .= '	</div>';
-						// $output .= '</div>';
-						break;
-				}
-			}
-
-			$output .= "</div>";
-		}
-
-		if (!isempty($currentFieldset)) {
-			$output .= "</fieldset>";
-		}
-
-		$output .= sprintf('<input type="submit" value="%s" name="%s" id="objectSubmitBtn" class="btn" />',
-			(isnull($objectID))?htmlSanitize($form["submitButton"]):htmlSanitize($form["updateButton"]),
-			$objectID ? "updateForm" : "submitForm"
-		);
-
-		// Display a delete link on updates to metadate forms
-		if (!isnull($objectID) && self::isMetadataForm($formID)) {
-			$output .= sprintf('<a href="%sdata/metadata/edit/delete/?objectID=%s&formID=%s" id="delete_metadata_link"><i class="fa fa-trash"></i>Delete</a>',
-				localvars::get('siteRoot'),
-				$objectID,
-				$formID
-				);
-		}
-
-		if(isset($formHasFiles) and $formHasFiles){
-			$output .= '<div class="alert alert-info" id="objectSubmitProcessing">
-							<strong>Processing Files</strong>
-
-							<br>Please Wait... <i class="fa fa-refresh fa-spin fa-2x"></i>
-						</div>';
-		}
-
-		$output .= "</form>";
-
-		return $output;
-
-	}
-
 	// @TODO it doesnt look like the edit table is honoring form creator choices on
 	// which fields are displayed
 	//
@@ -1263,36 +752,262 @@ class forms {
 	}
 
 	// NOTE: data is being saved as RAW from the array.
-	public static function submit($formID,$objectID=NULL,$importing=FALSE) {
+	// public static function submit($formID,$objectID=NULL,$importing=FALSE) {
+
+	// 	$engine               = mfcs::$engine;
+	// 	$backgroundProcessing = array();
+
+	// 	if (isnull($objectID)) {
+	// 		$newObject = TRUE;
+	// 	}
+	// 	else {
+	// 		$newObject = FALSE;
+	// 	}
+
+	// 	// Check the Lock, if this is an update
+	// 	// we don't lock metadata updates.
+	// 	if ($newObject === FALSE && !self::isMetadataForm($formID)) {
+
+	// 		if (!locks::check_for_update($objectID,"object")) {
+	// 			return FALSE;
+	// 		}
+
+	// 	}
+
+	// 	// Get the current Form
+	// 	if (($form = self::get($formID)) === FALSE) {
+	// 		errorHandle::newError(__METHOD__."() - retrieving form by formID", errorHandle::DEBUG);
+	// 		return FALSE;
+	// 	}
+
+	// 	// the form is an object form, make sure that it has an ID field defined.
+	// 	// @TODO this check can probably be removed, its being checked in object class
+	// 	if ($form['metadata'] == "0") {
+	// 		$idnoInfo = self::getFormIDInfo($formID);
+	// 		if ($idnoInfo === FALSE) {
+	// 			errorHandle::newError(__METHOD__."() - no IDNO field for object form.", errorHandle::DEBUG);
+	// 			return FALSE;
+	// 		}
+	// 	}
+
+	// 	$fields = $form['fields'];
+
+	// 	if (usort($fields, 'sortFieldsByPosition') !== TRUE) {
+	// 		errorHandle::newError(__METHOD__."() - usort", errorHandle::DEBUG);
+	// 		if (!$importing) errorHandle::errorMsg("Error retrieving form.");
+	// 		return FALSE;
+	// 	}
+
+	// 	$values = array();
+
+	// 	if (isset($engine->cleanPost['RAW']['publicReleaseObj'])) {
+	// 		$publicReleaseObj = strtolower($engine->cleanPost['RAW']['publicReleaseObj']) == "no" ? 0 : 1;
+	// 	} else {
+	// 		// create the public release object as a default
+	// 		$publicReleaseObj = 1;
+	// 	}
+
+	// 	// go through all the fields, get their values
+	// 	foreach ($fields as $field) {
+
+	// 		$value           = (isset($engine->cleanPost['RAW'][$field['name']]))?$engine->cleanPost['RAW'][$field['name']]:"";
+	// 		$validationTests = self::validateSubmission($formID,$field,$value,$objectID);
+
+	// 		if (isnull($validationTests) || $validationTests === FALSE) {
+	// 			continue;
+	// 		}
+
+	// 		if (strtolower($field['readonly']) == "true") {
+	// 			// need to pull the data that loaded with the form
+	// 			if ($newObject === FALSE) {
+	// 				// grab it from the database
+	// 				$oldObject              = objects::get($objectID);
+	// 				$values[$field['name']] = $oldObject['data'][$field['name']];
+	// 			}
+	// 			else {
+	// 				// If the form has a variable in the value we apply the variable, otherwise, field value.
+	// 				// we need to check for disabled on insert form
+	// 				if (!isset($field['disabledInsert']) || (isset($field['disabledInsert']) && $field['disabledInsert'] == "false")) {
+	// 					$values[$field['name']] = (self::hasFieldVariables($field['value']))?self::applyFieldVariables($value):$field['value'];
+	// 				}
+	// 				// grab the default value from the form.
+	// 				// $values[$field['name']] = $field['value'];
+	// 			}
+	// 		}
+	// 		else if (strtolower($field['type']) == "file" && isset($engine->cleanPost['MYSQL'][$field['name']])) {
+
+	// 			// Process uploaded files
+	// 			$uploadID = $engine->cleanPost['MYSQL'][$field['name']];
+
+	// 			// Process the uploads and put them into their archival locations
+	// 			if (($tmpArray = files::processObjectUploads($objectID, $uploadID)) === FALSE) {
+	// 				errorHandle::newError(__METHOD__."() - Archival Location", errorHandle::DEBUG);
+	// 				return FALSE;
+	// 			}
+
+	// 			if ($tmpArray !== TRUE) {
+					
+	// 				// didn't generate a proper uuid for the items, rollback
+	// 				if (!isset($tmpArray['uuid'])) {
+	// 					$engine->openDB->transRollback();
+	// 					$engine->openDB->transEnd();
+	// 					errorHandle::newError(__METHOD__."() - No UUID", errorHandle::DEBUG);
+	// 					return FALSE;
+	// 				}
+
+	// 				// ads this field to the files object
+	// 				// we can't do inserts yet because we don't have the objectID on
+	// 				// new objects
+	// 				files::addProcessingField($field['name']);
+
+	// 				// Should the files be processed now or later?
+	// 				if (isset($field['bgProcessing']) && str2bool($field['bgProcessing']) === TRUE) {
+	// 					$backgroundProcessing[$field['name']] = TRUE;
+	// 				}
+	// 				else {
+	// 					$backgroundProcessing[$field['name']] = FALSE;
+	// 				}
+
+	// 				$values[$field['name']] = $tmpArray;
+	// 			}
+	// 			else {
+	// 				// if we don't have files, and this is an update, we need to pull the files information from the
+	// 				// version that is already in the system.
+	// 				if ($newObject === FALSE) {
+	// 					$oldObject = objects::get($objectID);
+
+	// 					if (objects::hasFiles($objectID,$field['name']) === TRUE) {
+	// 						$values[$field['name']] = $oldObject['data'][$field['name']];
+	// 					}
+	// 				}
+	// 			}
+
+	// 		}
+	// 		else {
+	// 			$values[$field['name']] = $value;
+	// 		}
+	// 	}
+
+	// 	if (isset($engine->errorStack['error']) && count($engine->errorStack['error']) > 0) {
+	// 		// errorHandle::newError(__METHOD__."() - Error stack not empty.", errorHandle::DEBUG);
+	// 		return FALSE;
+	// 	}
+
+	// 	// start transactions
+	// 	$result = $engine->openDB->transBegin("objects");
+	// 	if ($result !== TRUE) {
+	// 		if (!$importing) errorHandle::errorMsg("Database transactions could not begin.");
+	// 		errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
+	// 		return FALSE;
+	// 	}
+
+	// 	if ($newObject === TRUE) {
+
+	// 		// var_dump($formID);
+	// 		// var_dump($values);
+	// 		// var_dump($form['metadata']);
+	// 		// var_dump(isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0");
+	// 		// die();
+
+	// 		if (objects::create($formID,$values,$form['metadata'],isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",null,null,$publicReleaseObj) === FALSE) {
+	// 			$engine->openDB->transRollback();
+	// 			$engine->openDB->transEnd();
+
+	// 			if (!$importing) errorHandle::errorMsg("Error inserting new object.");
+	// 			errorHandle::newError(__METHOD__."() - Error inserting new object.", errorHandle::DEBUG);
+
+	// 			return FALSE;
+	// 		}
+
+	// 		// Grab the objectID of the new object
+	// 		$objectID = localvars::get("newObjectID");
+
+	// 	}
+	// 	else {
+
+	// 		if (objects::update($objectID,$formID,$values,$form['metadata'],isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",null,$publicReleaseObj) === FALSE) {
+	// 			$engine->openDB->transRollback();
+	// 			$engine->openDB->transEnd();
+
+
+	// 			if (!$importing) errorHandle::errorMsg("Error updating.");
+	// 			errorHandle::newError(__METHOD__."() - Error updating.", errorHandle::DEBUG);
+
+	// 			return FALSE;
+	// 		}
+
+	// 	}
+
+	// 	// Now that we have a valid objectID, we insert into the processing table
+	// 	if (files::insertIntoProcessingTable($objectID) === FALSE) {
+	// 			$engine->openDB->transRollback();
+	// 			$engine->openDB->transEnd();
+
+	// 			errorHandle::newError(__METHOD__."() - Processing Table", errorHandle::DEBUG);
+
+	// 			return FALSE;
+	// 	}
+
+	// 	// end transactions
+	// 	$engine->openDB->transCommit();
+	// 	$engine->openDB->transEnd();
+
+	// 	if (!is_empty($backgroundProcessing)) {
+	// 		foreach ($backgroundProcessing as $fieldName=>$V) {
+
+	// 			// insert into the virusChecks table
+	// 			if (virus::insert_into_table($objectID,$fieldName) === FALSE) {
+	// 				$engine->openDB->transRollback();
+	// 				$engine->openDB->transEnd();
+
+	// 				errorHandle::newError(__METHOD__."() - Virus checks table", errorHandle::DEBUG);
+
+	// 				return FALSE;
+	// 			}
+
+	// 			if ($V === FALSE) {
+	// 				// No background processing. do it now.
+	// 				files::process($objectID,$fieldName);
+	// 			}
+	// 		}
+	// 	}
+
+	// 	if ($newObject === TRUE) {
+	// 		if (!$importing) errorHandle::successMsg("Object created successfully.");
+	// 	}
+	// 	else {
+	// 		if (!$importing) errorHandle::successMsg("Object updated successfully.");
+	// 	}
+
+	// 	return TRUE;
+	// }
+
+	public static function submit($formID, $objectID = NULL, $importing = FALSE) {
 
 		$engine               = mfcs::$engine;
 		$backgroundProcessing = array();
-
+	
 		if (isnull($objectID)) {
 			$newObject = TRUE;
-		}
-		else {
+		} else {
 			$newObject = FALSE;
 		}
-
-		// Check the Lock, if this is an update
-		// we don't lock metadata updates.
+	
+		// Check the Lock, if this is an update we don't lock metadata updates.
 		if ($newObject === FALSE && !self::isMetadataForm($formID)) {
-
 			if (!locks::check_for_update($objectID,"object")) {
+				errorHandle::newError(__METHOD__."() - Lock check failed", errorHandle::DEBUG);
 				return FALSE;
 			}
-
 		}
-
+	
 		// Get the current Form
 		if (($form = self::get($formID)) === FALSE) {
 			errorHandle::newError(__METHOD__."() - retrieving form by formID", errorHandle::DEBUG);
 			return FALSE;
 		}
-
+	
 		// the form is an object form, make sure that it has an ID field defined.
-		// @TODO this check can probably be removed, its being checked in object class
 		if ($form['metadata'] == "0") {
 			$idnoInfo = self::getFormIDInfo($formID);
 			if ($idnoInfo === FALSE) {
@@ -1300,110 +1015,86 @@ class forms {
 				return FALSE;
 			}
 		}
-
+	
 		$fields = $form['fields'];
-
+	
 		if (usort($fields, 'sortFieldsByPosition') !== TRUE) {
 			errorHandle::newError(__METHOD__."() - usort", errorHandle::DEBUG);
 			if (!$importing) errorHandle::errorMsg("Error retrieving form.");
 			return FALSE;
 		}
-
+	
 		$values = array();
-
+	
 		if (isset($engine->cleanPost['RAW']['publicReleaseObj'])) {
 			$publicReleaseObj = strtolower($engine->cleanPost['RAW']['publicReleaseObj']) == "no" ? 0 : 1;
 		} else {
-			// create the public release object as a default
-			$publicReleaseObj = 1;
+			$publicReleaseObj = 1; // create the public release object as a default
 		}
-
+	
 		// go through all the fields, get their values
 		foreach ($fields as $field) {
-
 			$value           = (isset($engine->cleanPost['RAW'][$field['name']]))?$engine->cleanPost['RAW'][$field['name']]:"";
 			$validationTests = self::validateSubmission($formID,$field,$value,$objectID);
-
+	
 			if (isnull($validationTests) || $validationTests === FALSE) {
 				continue;
 			}
-
+	
 			if (strtolower($field['readonly']) == "true") {
-				// need to pull the data that loaded with the form
 				if ($newObject === FALSE) {
-					// grab it from the database
-					$oldObject              = objects::get($objectID);
+					$oldObject = objects::get($objectID);
 					$values[$field['name']] = $oldObject['data'][$field['name']];
-				}
-				else {
-					// If the form has a variable in the value we apply the variable, otherwise, field value.
-					// we need to check for disabled on insert form
+				} else {
 					if (!isset($field['disabledInsert']) || (isset($field['disabledInsert']) && $field['disabledInsert'] == "false")) {
 						$values[$field['name']] = (self::hasFieldVariables($field['value']))?self::applyFieldVariables($value):$field['value'];
 					}
-					// grab the default value from the form.
-					// $values[$field['name']] = $field['value'];
 				}
-			}
-			else if (strtolower($field['type']) == "file" && isset($engine->cleanPost['MYSQL'][$field['name']])) {
-
-				// Process uploaded files
+			} else if (strtolower($field['type']) == "file" && isset($engine->cleanPost['MYSQL'][$field['name']])) {
 				$uploadID = $engine->cleanPost['MYSQL'][$field['name']];
-
-				// Process the uploads and put them into their archival locations
+	
 				if (($tmpArray = files::processObjectUploads($objectID, $uploadID)) === FALSE) {
 					errorHandle::newError(__METHOD__."() - Archival Location", errorHandle::DEBUG);
 					return FALSE;
 				}
-
+	
 				if ($tmpArray !== TRUE) {
-					
-					// didn't generate a proper uuid for the items, rollback
 					if (!isset($tmpArray['uuid'])) {
 						$engine->openDB->transRollback();
 						$engine->openDB->transEnd();
 						errorHandle::newError(__METHOD__."() - No UUID", errorHandle::DEBUG);
 						return FALSE;
 					}
-
-					// ads this field to the files object
-					// we can't do inserts yet because we don't have the objectID on
-					// new objects
+	
 					files::addProcessingField($field['name']);
-
-					// Should the files be processed now or later?
+	
 					if (isset($field['bgProcessing']) && str2bool($field['bgProcessing']) === TRUE) {
 						$backgroundProcessing[$field['name']] = TRUE;
-					}
-					else {
+					} else {
 						$backgroundProcessing[$field['name']] = FALSE;
 					}
-
+	
 					$values[$field['name']] = $tmpArray;
-				}
-				else {
-					// if we don't have files, and this is an update, we need to pull the files information from the
-					// version that is already in the system.
+				} else {
 					if ($newObject === FALSE) {
 						$oldObject = objects::get($objectID);
-
+	
 						if (objects::hasFiles($objectID,$field['name']) === TRUE) {
 							$values[$field['name']] = $oldObject['data'][$field['name']];
 						}
 					}
 				}
-
-			}
-			else {
+	
+			} else {
 				$values[$field['name']] = $value;
 			}
 		}
-
+	
 		if (isset($engine->errorStack['error']) && count($engine->errorStack['error']) > 0) {
-			// errorHandle::newError(__METHOD__."() - Error stack not empty.", errorHandle::DEBUG);
+			errorHandle::newError(__METHOD__."() - Error stack not empty", errorHandle::DEBUG);
 			return FALSE;
 		}
-
+	
 		// start transactions
 		$result = $engine->openDB->transBegin("objects");
 		if ($result !== TRUE) {
@@ -1411,88 +1102,61 @@ class forms {
 			errorHandle::newError(__METHOD__."() - unable to start database transactions", errorHandle::DEBUG);
 			return FALSE;
 		}
-
+	
 		if ($newObject === TRUE) {
-
-			// var_dump($formID);
-			// var_dump($values);
-			// var_dump($form['metadata']);
-			// var_dump(isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0");
-			// die();
-
 			if (objects::create($formID,$values,$form['metadata'],isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",null,null,$publicReleaseObj) === FALSE) {
 				$engine->openDB->transRollback();
 				$engine->openDB->transEnd();
-
 				if (!$importing) errorHandle::errorMsg("Error inserting new object.");
 				errorHandle::newError(__METHOD__."() - Error inserting new object.", errorHandle::DEBUG);
-
 				return FALSE;
 			}
-
-			// Grab the objectID of the new object
+	
 			$objectID = localvars::get("newObjectID");
-
-		}
-		else {
-
+		} else {
 			if (objects::update($objectID,$formID,$values,$form['metadata'],isset($engine->cleanPost['MYSQL']['parentID'])?$engine->cleanPost['MYSQL']['parentID']:"0",null,$publicReleaseObj) === FALSE) {
 				$engine->openDB->transRollback();
 				$engine->openDB->transEnd();
-
-
 				if (!$importing) errorHandle::errorMsg("Error updating.");
 				errorHandle::newError(__METHOD__."() - Error updating.", errorHandle::DEBUG);
-
 				return FALSE;
 			}
-
 		}
-
-		// Now that we have a valid objectID, we insert into the processing table
+	
 		if (files::insertIntoProcessingTable($objectID) === FALSE) {
-				$engine->openDB->transRollback();
-				$engine->openDB->transEnd();
-
-				errorHandle::newError(__METHOD__."() - Processing Table", errorHandle::DEBUG);
-
-				return FALSE;
+			$engine->openDB->transRollback();
+			$engine->openDB->transEnd();
+			errorHandle::newError(__METHOD__."() - Processing Table", errorHandle::DEBUG);
+			return FALSE;
 		}
-
-		// end transactions
+	
 		$engine->openDB->transCommit();
 		$engine->openDB->transEnd();
-
+	
 		if (!is_empty($backgroundProcessing)) {
 			foreach ($backgroundProcessing as $fieldName=>$V) {
-
-				// insert into the virusChecks table
 				if (virus::insert_into_table($objectID,$fieldName) === FALSE) {
 					$engine->openDB->transRollback();
 					$engine->openDB->transEnd();
-
 					errorHandle::newError(__METHOD__."() - Virus checks table", errorHandle::DEBUG);
-
 					return FALSE;
 				}
-
+	
 				if ($V === FALSE) {
-					// No background processing. do it now.
 					files::process($objectID,$fieldName);
 				}
 			}
 		}
-
+	
 		if ($newObject === TRUE) {
 			if (!$importing) errorHandle::successMsg("Object created successfully.");
-		}
-		else {
+		} else {
 			if (!$importing) errorHandle::successMsg("Object updated successfully.");
 		}
-
+	
 		return TRUE;
 	}
-
+	
 	public static function formsAreCompatible($form1,$form2) {
 
 		// if intefers are passed in, grab the forms.
@@ -1756,7 +1420,7 @@ class forms {
 
 	// private functions
 
-	private static function publicReleaseObjSelect($objectID, $object, $form) {
+	public static function publicReleaseObjSelect($objectID, $object, $form) {
 		if(!is_null($objectID)) {
 			if ($object['publicRelease'] == "0") return false;
 		}
@@ -1766,7 +1430,7 @@ class forms {
 		return true;
 	}
 
-	private static function sortFields($fields) {
+	public static function sortFields($fields) {
 		if (usort($fields, 'sortFieldsByPosition') !== TRUE) {
 			errorHandle::newError(__METHOD__."() - usort", errorHandle::DEBUG);
 			errorHandle::errorMsg("Error retrieving form.");
@@ -1775,7 +1439,7 @@ class forms {
 		return $fields;
 	}
 
-	private static function getObject($objectID, $error) {
+	public static function getObject($objectID, $error) {
 		$object = null; // Declare the variable $object
 
 		if (!isnull($objectID)) {
@@ -1952,7 +1616,7 @@ class forms {
 
 	}
 
-	private static function getFieldValue($field,$object) {
+	public static function getFieldValue($field,$object) {
 		$field['value'] = convertString($field['value']);
 
 		if (self::hasFieldVariables($field['value'])) {
