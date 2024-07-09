@@ -200,7 +200,15 @@ class qqFileUploader {
 	protected function toBytes($str) {
 		$val = trim($str);
 		$last = strtolower($str[strlen($str) - 1]);
-
+	
+		if (!is_numeric($val)) {
+			$val = substr($val, 0, -1); // Remove the last character if it's not numeric
+		}
+	
+		if (!is_numeric($val)) {
+			return 0; // Return 0 if the value is still not numeric
+		}
+	
 		switch ($last) {
 			case 'g':
 				$val *= 1024;
@@ -209,7 +217,7 @@ class qqFileUploader {
 			case 'k':
 				$val *= 1024;
 		}
-
+	
 		return $val;
 	}
 }
