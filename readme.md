@@ -122,3 +122,8 @@ See bootstrap.sh for up to date examples of installing all of the third party so
 
 # Grunt 
 With node installed and npm install in the root directory run the command ```npm install``` This will install the local node modules needed to watch your sass and js files.  Type grunt this will cause all files to update.  Build are final production files, and refactored are the files that you edit to make changes to the build files.  
+
+# Server notes
+
+## Logs
+Production logs are located at /var/log/httpd/mfcs.lib.wvu.edu-error_log
