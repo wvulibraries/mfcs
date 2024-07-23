@@ -22,7 +22,7 @@ if (!$sqlResult['result']) {
 	return FALSE;
 }
 
-$row          = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
+$row          = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 $totalObjects = $row["COUNT(*)"];
 printf("Total Objects: %s\n",$totalObjects);
 
@@ -35,7 +35,7 @@ if (!$sqlResult['result']) {
 }
 
 $count = 0;
-while ($row       = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
+while ($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
 	$objects = objects::get($row['ID'],TRUE);
 	$count  += getFiles($objects);

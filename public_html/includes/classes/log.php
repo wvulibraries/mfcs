@@ -44,7 +44,7 @@ class log {
 				return array();
 			}
 
-			while ($row = mysqli_fetch_array($sqlResult['result'], MYSQLI_ASSOC)) {
+			while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
 				$blame[] = [$row['username'], date('D, d M Y H:i', $row['date'])];
 			}
 		}

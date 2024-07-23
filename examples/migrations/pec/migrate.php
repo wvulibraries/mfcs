@@ -183,7 +183,7 @@ if (!$sqlResult['result']) {
 $records   = array();
 $metadata = array();
 
-while ($row       = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
+while ($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 	foreach ($row as $I=>$V) {
 		$records[$row['identifier']][$I] = $V; 
 	}
@@ -203,7 +203,7 @@ foreach ($metadataSQL as $I=>$sql) {
 		exit;
 	}
 	
-	while($row       = mysqli_fetch_array($sqlResult2['result'],  MYSQLI_ASSOC)) {
+	while($row       = mysql_fetch_array($sqlResult2['result'],  MYSQL_ASSOC)) {
 
 		switch ($I) {
 			case "creator_CorpName":

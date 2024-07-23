@@ -26,7 +26,7 @@ then
   mysql -u root -h $DATABASE_HOST mfcs < /home/mfcs.lib.wvu.edu/SQLFiles/migrations/2016.07.26.0945.sql
   # updated one table to adjust fieldtype to LONGTEXT for large data
   # only needed until production server is updated and we get a new backup copy to use
-  mysql -u root -h $DATABASE_HOST mfcs < /home/mfcs.lib.wvu.edu/SQLFiles/migrations/2024.05.06.1740.sql
+  # mysql -u root -h $DATABASE_HOST mfcs < /home/mfcs.lib.wvu.edu/SQLFiles/migrations/2024.05.06.1740.sql
 else
   echo "No backup found, skipping database import and running migrations"
   mysql -u root -h $DATABASE_HOST mfcs < /home/mfcs.lib.wvu.edu/SQLFiles/baseSnapshot.sql

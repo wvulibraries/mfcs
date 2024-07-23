@@ -117,7 +117,7 @@ class virus {
 			return FALSE;
 		}
 
-		while($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
+		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
 			// set the state of the row to 2, the "working" state
 			self::set_virus_state($row['ID'],"2"); 
@@ -158,7 +158,7 @@ class virus {
 			return FALSE;
 		}
 		
-		while($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
+		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 			notification::notifyAdmins("[MFCS Notification] : Virus Found.", "ObjectID: ".$row['objectID']);
 
 			$object = objects::get($row['objectID']);

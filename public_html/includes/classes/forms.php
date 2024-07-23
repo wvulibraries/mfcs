@@ -78,7 +78,7 @@ class forms {
 			return FALSE;
 		}
 
-		$form = mysqli_fetch_array($sqlResult['result'], MYSQLI_ASSOC);
+		$form = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC);
 
 		$form['fields'] = unserialize(base64_decode($form['fields']));
 		if ($form['fields'] === FALSE) {
@@ -135,7 +135,7 @@ class forms {
 		}
 
 		$forms = array();
-		while ($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
+		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
 			$forms[$row['ID']] = self::get($row['ID'],$productionOnly);
 
@@ -287,7 +287,7 @@ class forms {
 				return FALSE;
 			}
 
-			$result = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
+			$result = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 			return $result['count(*)'];
 		} else {
 			return FALSE;
@@ -354,7 +354,7 @@ class forms {
 			return FALSE;
 		}
 
-		$row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
+		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
 		return $row['COUNT(*)'];
 
@@ -1605,7 +1605,7 @@ class forms {
 			return array();
 		}
 
-		while ($row = mysqli_fetch_array($sqlResult['result'], MYSQLI_ASSOC)) {
+		while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
 			$return[] = $row['projectID'];
 		}
 
@@ -1713,7 +1713,7 @@ class forms {
 
 		$data = array();
 
-		while($row = mysqli_fetch_array($sqlResult['result'], MYSQLI_ASSOC)) {
+		while($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
 			if (!isnull($fieldName) && $row['fieldName'] != $fieldName) {
 				continue;
 			}

@@ -7,7 +7,7 @@ $sql = sprintf("SELECT ID,fields FROM `forms`");
 $sqlResult = $engine->openDB->query($sql);
 
 if ($sqlResult['result']) {
-	while ($row = mysqli_fetch_array($sqlResult['result'], MYSQLI_ASSOC)) {
+	while ($row = mysql_fetch_array($sqlResult['result'], MYSQL_ASSOC)) {
 		$tmp = decodeFields($row['fields']);
 		if (isset($tmp) && is_array($tmp)) {
 			$field = array();

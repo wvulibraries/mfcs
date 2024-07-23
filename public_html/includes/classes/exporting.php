@@ -311,7 +311,7 @@ class exporting {
 			return false;
 		}
 
-		$row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
+		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
 		return (isnull($row['MAX(`date`)']))?0:$row['MAX(`date`)'];
 	}

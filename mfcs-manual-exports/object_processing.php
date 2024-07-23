@@ -13,7 +13,7 @@ if (!file_exists($table)) {
 
 $sql       = sprintf("SELECT * FROM " . $table);
 $sqlResult = mfcs::$engine->openDB->query($sql);
-while ($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {    
+while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {    
     file_put_contents('./'.$table.'/' . $row["ID"] .'.json', print_r(json_encode($row), true));
 }
 

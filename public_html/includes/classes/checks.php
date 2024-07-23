@@ -49,7 +49,7 @@ class checks {
 			return NULL;
 		}
 		
-		$row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
+		$row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
 		return ($row['value'] === "0")?FALSE:TRUE;
 

@@ -1,131 +1,37 @@
 version: '2.1'
 services:
-  # web:
-  #   build: 
-  #     context: ./
-  #     dockerfile: Dockerfile.dev
-  #   extra_hosts:
-  #     - "database.lib.wvu.edu:172.17.0.1"
-  #     - "www.libraries.wvu.edu:127.0.0.1"
-  #   container_name: web
-  #   volumes:
-  #     - ./data:/home/mfcs.lib.wvu.edu/data
-  #     - ./config/config.ini:/home/mfcs.lib.wvu.edu/config.ini       
-  #     - ./scripts:/home/mfcs.lib.wvu.edu/scripts
-  #     - ./public_html:/home/mfcs.lib.wvu.edu/public_html
-  #     - ./template:/home/mfcs.lib.wvu.edu/template
-  #     - ./serverConfiguration:/home/mfcs.lib.wvu.edu/serverConfiguration  
-  #     - ./data/logs/php5:/home/mfcs.lib.wvu.edu/serverConfiguration/serverLogs     
-  #     - ./SQLFiles:/home/mfcs.lib.wvu.edu/SQLFiles      
-  #     - ./data/git_pulls:/tmp/git
-  #   env_file:
-  #       - './env/.env.dev.mfcs' 
-  #   ports:
-  #     - "8080:80"
-  #   depends_on:
-  #     db:
-  #         condition: service_healthy   
-  #   healthcheck:
-  #     test: curl --fail -s http://localhost:8080/ || exit 1
-  #     interval: 1m30s
-  #     timeout: 10s
-  #     retries: 3
-  # web1:
-  #   build: 
-  #     context: ./
-  #     dockerfile: Dockerfile.dev.php5
-  #   extra_hosts:
-  #     - "database.lib.wvu.edu:172.17.0.1"
-  #     - "www.libraries.wvu.edu:127.0.0.1"
-  #   container_name: web-php5
-  #   volumes:
-  #     # - ./env/env.dev.auth:/etc/.env    
-  #     - ./config:/config    
-  #     - ./data/logs/php5-new:/tmp/log      
-  #     - ./public_html:/home/mfcs.lib.wvu.edu/public_html
-  #     - ./data:/home/mfcs.lib.wvu.edu/data
-  #     - ./serverConfiguration:/home/mfcs.lib.wvu.edu/serverConfiguration  
-  #     - ./SQLFiles:/home/mfcs.lib.wvu.edu/SQLFiles    
-  #     - ./scripts:/home/mfcs.lib.wvu.edu/scripts
-  #     - ./data/git_pulls:/tmp/git
-  #   env_file:
-  #       - './env/.env.dev.mfcs' 
-  #   ports:
-  #     - "8080:80"
-  #   depends_on:
-  #     db:
-  #         condition: service_healthy   
-  #   healthcheck:
-  #     test: curl --fail -s http://localhost:8081/ || exit 1
-  #     interval: 1m30s
-  #     timeout: 10s
-  #     retries: 3
-  web2:
+  web:
     build: 
       context: ./
-      dockerfile: Dockerfile.dev.php7
+      dockerfile: Dockerfile.dev
     extra_hosts:
       - "database.lib.wvu.edu:172.17.0.1"
       - "www.libraries.wvu.edu:127.0.0.1"
-    container_name: web-php7
-    volumes:   
-      - ./config:/config    
-      - ./config/config.ini:/home/mfcs.lib.wvu.edu/config.ini 
-      - ./config/php.ini:/usr/local/etc/php/php.ini   
-      - ./data/session/php7:/var/lib/php/session         
-      - ./data/logs/php7:/tmp/log     
-      - ./public_html:/home/mfcs.lib.wvu.edu/public_html
-      - ./template:/home/mfcs.lib.wvu.edu/template      
-      - ./data:/home/mfcs.lib.wvu.edu/data
-      - ./serverConfiguration:/home/mfcs.lib.wvu.edu/serverConfiguration  
-      - ./SQLFiles:/home/mfcs.lib.wvu.edu/SQLFiles    
-      - ./scripts:/home/mfcs.lib.wvu.edu/scripts
-      - ./data/git_pulls:/tmp/git
-    env_file:
-        - './env/.env.dev.mfcs' 
-    ports:
-      - "8081:80"
-    depends_on:
-      db:
-          condition: service_healthy   
-    healthcheck:
-      test: curl --fail -s http://localhost:8081/ || exit 1
-      interval: 1m30s
-      timeout: 10s
-      retries: 3
-  web3:
-    build: 
-      context: ./
-      dockerfile: Dockerfile.dev.php8
-    extra_hosts:
-      - "database.lib.wvu.edu:172.17.0.1"
-      - "www.libraries.wvu.edu:127.0.0.1"
-    container_name: web-php8
+    container_name: web
     volumes:
-      - ./config:/config    
-      - ./config/config.ini:/home/mfcs.lib.wvu.edu/config.ini 
-      - ./config/php.ini:/usr/local/etc/php/php.ini   
-      - ./data/session/php8:/var/lib/php/session         
-      - ./data/logs/php8:/tmp/log     
+      - ./config:/config
+      - ./config/config.ini:/home/mfcs.lib.wvu.edu/config.ini           
+      - ./data/logs:/tmp/log
+      - ./data/logs:/home/mfcs.lib.wvu.edu/serverConfiguration/serverLogs            
+      - ./data/mfcs-data:/home/mfcs.lib.wvu.edu/data     
       - ./public_html:/home/mfcs.lib.wvu.edu/public_html
-      - ./template:/home/mfcs.lib.wvu.edu/template      
-      - ./data:/home/mfcs.lib.wvu.edu/data
-      - ./serverConfiguration:/home/mfcs.lib.wvu.edu/serverConfiguration  
-      - ./SQLFiles:/home/mfcs.lib.wvu.edu/SQLFiles    
-      - ./scripts:/home/mfcs.lib.wvu.edu/scripts
-      - ./data/git_pulls:/tmp/git
+      - ./template:/home/mfcs.lib.wvu.edu/template
+      - ./serverConfiguration:/home/mfcs.lib.wvu.edu/serverConfiguration    
+      - ./SQLFiles:/home/mfcs.lib.wvu.edu/SQLFiles      
+      - ./data/git:/tmp/git
+      - ./mfcs-manual-imports:/home/mfcs.lib.wvu.edu/mfcs-manual-imports      
     env_file:
         - './env/.env.dev.mfcs' 
     ports:
-      - "8082:80"
+      - "8080:80"
     depends_on:
       db:
           condition: service_healthy   
     healthcheck:
-      test: curl --fail -s http://localhost:8082/ || exit 1
+      test: curl --fail -s http://localhost:8080/ || exit 1
       interval: 1m30s
       timeout: 10s
-      retries: 3        
+      retries: 3     
   db:
     image: mysql:5.7.27
     container_name: db

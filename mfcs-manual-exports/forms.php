@@ -17,7 +17,7 @@ foreach ($forms as $form) {
  if ($form != null) {
 	  $sql       = sprintf("SELECT * FROM permissions WHERE permissions.formID='%s'", $form['ID']);
 	  $sqlResult = mfcs::$engine->openDB->query($sql);
-	  while ($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
+	  while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 		unset($row['ID']);
 		unset($row['formID']);
 		$form["permissions"][] = (object)$row;

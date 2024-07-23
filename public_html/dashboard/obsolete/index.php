@@ -10,7 +10,7 @@ if (!$sqlResult['result']) {
 }
 
 $obsoleteFileTypes = array();
-while($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
+while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 	$obsoleteFileTypes[] = $row['extension'];
 }
 
@@ -27,7 +27,7 @@ foreach ($obsoleteFileTypes as $extension) {
 		errorHandle::errorMsg("Unable to get Obsolete File Types");
 	}
 
-	$row  = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
+	$row  = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
 	if ($row['count'] > 0) {
 
@@ -39,7 +39,7 @@ foreach ($obsoleteFileTypes as $extension) {
 			errorHandle::errorMsg("Unable to get Files");
 		}
 
-		while($file = mysqli_fetch_array($sqlResult2['result'],  MYSQLI_ASSOC)) {
+		while($file = mysql_fetch_array($sqlResult2['result'],  MYSQL_ASSOC)) {
 			$object = objects::get($file['objectID']);
 			$files_type_list_by_form .= sprintf('<li><a href="/dataEntry/object.php?objectID=%s">Edit<i class="fa fa-edit"></i></a> <span class="filename">%s</span> from <span class="obsolete_form_name">%s</span></li>',
 				$file['objectID'],

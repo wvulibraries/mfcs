@@ -33,7 +33,7 @@ try {
 		throw new Exception("Error retrieving project.");
 	}
 
-	$row       = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
+	$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
 	localvars::add("projectName",$row['projectName']);
 	localvars::add("leftnav",buildProjectNavigation($engine->cleanGet['MYSQL']['id']));

@@ -34,7 +34,7 @@ class projects {
 		}
 
 		$projects = array();
-		while($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
+		while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 
 			if (($projects[] = self::get($row['ID'])) === FALSE) {
 				return FALSE;
@@ -70,7 +70,7 @@ class projects {
 			return FALSE;
 		}
 
-		$project = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
+		$project = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 		if (!isempty($project['forms']) && ($project['forms'] = decodeFields($project['forms'])) === FALSE) {
 			return FALSE;
 		}
@@ -131,7 +131,7 @@ class projects {
 		}
 
 		$projects = array();
-		while ($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
+		while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 			if (($projects[] = self::get($row['projectID'])) === FALSE) {
 				return FALSE;
 			}
@@ -156,7 +156,7 @@ class projects {
 		}
 
 		$formIDs = array();
-		while($row       = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
+		while($row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
 			if ($form === TRUE) {
 				if (($formIDs[$row['formID']] = forms::get($row['formID'])) === FALSE) {
 					return FALSE;
@@ -181,7 +181,7 @@ class projects {
 			return FALSE;
 		}
 
-		$row       = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
+		$row       = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
 
 		return (isset($row['projectName']))?$row['projectName']:"Project Not Found";
 
@@ -200,7 +200,7 @@ class projects {
     }
 
     $idnos = array();
-    while($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
+    while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
       $idnos[] = $row['idno'];
     }
     return ($idnos);

@@ -36,23 +36,11 @@ function decode($data) {
 }
 
 function save_object_revisions($table, $objectID) {
-    // $revisions = new revisionControlSystem('objects','revisions','ID','modifiedTime');
-    // $history = revisions::history_revision_history('1000');
-    // var_dump($history);
-    // die();
-
-    // $sql       = sprintf("SELECT * FROM " . $table . " WHERE ID = 92292");
-    // $sqlResult = mfcs::$engine->openDB->query($sql);
-    // while ($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
-    //     var_dump($row);
-    //     die();
-    // }
-
     $sql       = sprintf("SELECT * FROM " . $table . " WHERE primaryID = " . $objectID);
     $sqlResult = mfcs::$engine->openDB->query($sql);
     $revisions = array();
     $formID = null;
-    while ($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
+    while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
         $metadata = is_array($row['metadata']) ? $row['metadata'] : decode($row['metadata']);
         if ($metadata === false) {
             print ('Error: Decoding metadata - Record ' . $row['ID'] . ' For Object ' . $objectID . PHP_EOL);
@@ -93,7 +81,7 @@ if (!file_exists($table)) {
 $sql       = sprintf("SELECT * FROM objects");
 $sqlResult = mfcs::$engine->openDB->query($sql);
 $count = 0;
-while ($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
+while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
     $filename = './' . $table . '/' . $row['ID'] .'.json';
 
     if (file_exists($filename) && (filesize($filename) === 0)) {

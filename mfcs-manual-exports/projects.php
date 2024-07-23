@@ -18,7 +18,7 @@ foreach ($projects as $project) {
 
 	  $sql       = sprintf("SELECT * FROM users_projects WHERE users_projects.projectID='%s'", $project['ID']);
 	  $sqlResult = mfcs::$engine->openDB->query($sql);
-	  while ($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
+	  while ($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
       unset($row['UD']);
       unset($row['projectID']);
       $project["users"][] = (object)$row;

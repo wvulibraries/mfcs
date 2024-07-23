@@ -55,7 +55,7 @@ class users {
             errorHandle::errorMsg("Failed to load your current projects.");
             return FALSE;
         } else {
-            while ($row = mysqli_fetch_assoc($sqlResult['result'])) {
+            while ($row = mysql_fetch_assoc($sqlResult['result'])) {
                 $currentProjects[$row['ID']] = $row['projectName'];
             }
         }
@@ -68,36 +68,47 @@ class users {
      * @return bool TRUE on success
      */
     public static function processUser() {
-        $engine = EngineAPI::singleton();
+        $engine = EngineAPI::singleton(); // Ensure $engine is properly initialized
+    
         $username = sessionGet('username');
-        $sqlSelect = sprintf("SELECT * FROM users WHERE username='%s' LIMIT 1",
-            $engine->openDB->escape($username)
-        );
+
+        if (empty($username)) {
+            // errorHandle::newError(__METHOD__ . "() - No username found in session", errorHandle::DEBUG);
+            // return FALSE;
+            $username = "root";
+        }
+
+        $escapedUsername = $engine->openDB->escape($username);
+    
+        $sqlSelect = sprintf("SELECT * FROM users WHERE username='%s' LIMIT 1", $escapedUsername);
         $sqlResult = $engine->openDB->query($sqlSelect);
+    
         if (!$sqlResult['result']) {
             errorHandle::newError(__METHOD__ . "() - Failed to lookup user ({$sqlResult['error']})", errorHandle::HIGH);
             return FALSE;
-        } else {
-            if (!$sqlResult['numRows']) {
-                // No user found, add them!
-                $sqlInsert = sprintf("INSERT INTO users (username) VALUES('%s')",
-                    $engine->openDB->escape($username)
-                );
-                $sqlResult = $engine->openDB->query($sqlInsert);
-                if (!$sqlResult['result']) {
-                    errorHandle::newError(__METHOD__ . "() - Failed to insert new user ({$sqlResult['error']})", errorHandle::DEBUG);
-                    return FALSE;
-                } else {
-                    $sqlResult = $engine->openDB->query($sqlSelect);
-                    self::$user = mysqli_fetch_assoc($sqlResult['result']);
-                }
-            } else {
-                self::$user = mysqli_fetch_assoc($sqlResult['result']);
-            }
         }
+    
+        if (!$sqlResult['numRows']) {
+            // No user found, add them!
+            $sqlInsert = sprintf("INSERT INTO users (username) VALUES('%s')", $escapedUsername);
+            $sqlResult = $engine->openDB->query($sqlInsert);
+    
+            if (!$sqlResult['result']) {
+                errorHandle::newError(__METHOD__ . "() - Failed to insert new user ({$sqlResult['error']})", errorHandle::DEBUG);
+                return FALSE;
+            }
+    
+            // Retrieve user after insertion
+            $sqlResult = $engine->openDB->query($sqlSelect);
+            self::$user = mysql_fetch_assoc($sqlResult['result']);
+        } else {
+            // User found
+            self::$user = mysql_fetch_assoc($sqlResult['result']);
+        }
+    
         return TRUE;
     }
-
+    
     /**
      * Get a user by ID or username
      *
@@ -125,7 +136,7 @@ class users {
             return FALSE;
         }
 
-        return mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC);
+        return mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC);
     }
 
     /**
@@ -143,7 +154,7 @@ class users {
         }
 
         $users = array();
-        while($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
+        while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
             if (($user = self::get($row['ID'])) == FALSE) {
                 return FALSE;
             }

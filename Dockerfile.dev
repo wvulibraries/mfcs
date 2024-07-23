@@ -32,6 +32,11 @@ RUN yum -y install autoconf automake cmake freetype-devel gcc gcc-c++ \
 ## ClamAV
 RUN yum -y install clamav clamav-db clamav-devel
 
+# Copy scripts and change permissions
+RUN mkdir -p /home/mfcs.lib.wvu.edu/scripts
+COPY ./scripts/*.sh /home/mfcs.lib.wvu.edu/scripts/
+RUN chmod -v +x /home/mfcs.lib.wvu.edu/scripts/*.sh
+
 ADD ./scripts/entrypoint.dev.sh /usr/bin/
 RUN chmod -v +x /usr/bin/entrypoint.dev.sh
 

@@ -12,7 +12,7 @@ $fields = array('Identifier', 'Object ID', 'File', 'Checksum');
 $fp = fopen('file.csv', 'w');
 fputcsv($fp, $fields);
 
-while($row = mysqli_fetch_array($sqlResult['result'],  MYSQLI_ASSOC)) {
+while($row = mysql_fetch_array($sqlResult['result'],  MYSQL_ASSOC)) {
   # var_dump($row);
 
   $data = array(
