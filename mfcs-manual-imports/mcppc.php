@@ -28,7 +28,8 @@ function createObject($formID, $values) {
     }
 
     // Log the created item details
-    file_put_contents('/tmp/log/item.log', "Created item: " . print_r($item, true), FILE_APPEND);
+    $timestamp = date('Y-m-d H:i:s');
+    file_put_contents('/tmp/log/item.log', "Created item at $timestamp: " . print_r($item, true) . PHP_EOL, FILE_APPEND);
 
     return $item;
 }

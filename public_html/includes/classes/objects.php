@@ -609,7 +609,7 @@ class objects {
 		mfcs::$engine->openDB->transCommit();
 		mfcs::$engine->openDB->transEnd();
 	
-		return TRUE;
+		return $objectID;
 	}
 	
 	public static function getIDNOForObjectID($objectID) {
