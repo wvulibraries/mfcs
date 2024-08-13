@@ -52,9 +52,12 @@ services:
       - './env/.env.dev.db'         
     volumes:
       - ./config/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
-      - ./data/mysql:/var/lib/mysql
+      - mysql:/var/lib/mysql
       - ./SQLFiles/setup-docker.sql:/docker-entrypoint-initdb.d/setup-docker.sql
     healthcheck:
         test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
         timeout: 30s
         retries: 10
+
+volumes:
+  mysql:
