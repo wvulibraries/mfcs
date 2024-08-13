@@ -4,9 +4,9 @@ services:
     build: 
       context: ./
       dockerfile: Dockerfile.dev
-    extra_hosts:
-      - "database.lib.wvu.edu:172.17.0.1"
-      - "www.libraries.wvu.edu:127.0.0.1"
+    # extra_hosts:
+    #   - "database.lib.wvu.edu:172.17.0.1"
+    #   - "www.libraries.wvu.edu:127.0.0.1"
     container_name: web
     volumes:   
       - ./config:/config    
@@ -14,12 +14,12 @@ services:
       - ./config/php.ini:/usr/local/etc/php/php.ini   
       - ./data/session:/var/lib/php/session         
       - ./data/logs:/tmp/log 
-      - ./data:/home/mfcs.lib.wvu.edu/data
+      - ./data/mfcs-data:/home/mfcs.lib.wvu.edu/data 
       - ./public_html:/home/mfcs.lib.wvu.edu/public_html
       - ./template:/home/mfcs.lib.wvu.edu/template      
       - ./serverConfiguration:/home/mfcs.lib.wvu.edu/serverConfiguration  
       - ./SQLFiles:/home/mfcs.lib.wvu.edu/SQLFiles    
-      - ./data/git_pulls:/tmp/git
+      - ./data/git:/tmp/git
       - ./mfcs-manual-imports:/home/mfcs.lib.wvu.edu/mfcs-manual-imports
     env_file:
         - './env/.env.dev.mfcs' 
@@ -34,7 +34,7 @@ services:
       timeout: 10s
       retries: 3      
   db:
-    image: mysql:5.7.27
+    image: mysql:8
     container_name: db
     restart: on-failure
     ports:
