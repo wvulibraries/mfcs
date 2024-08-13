@@ -21,9 +21,9 @@ services:
       - ./data/git:/tmp/git
       - ./mfcs-manual-imports:/home/mfcs.lib.wvu.edu/mfcs-manual-imports
       # mapped volumes
-      - /data/archives:/home/mfcs.lib.wvu.edu/data 
-      - /data/exports:/home/mfcs.lib.wvu.edu/data 
-      - /data/working:/home/mfcs.lib.wvu.edu/data 
+      - /data/archives:/home/mfcs.lib.wvu.edu/data/archives
+      - /data/exports:/home/mfcs.lib.wvu.edu/data/exports
+      - /data/working:/home/mfcs.lib.wvu.edu/data/working
       # replace with nsf share
       - ./data/nfs-exports:/home/mfcs.lib.wvu.edu/data/nfs-exports
     env_file:
