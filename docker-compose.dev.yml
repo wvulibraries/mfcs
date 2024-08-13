@@ -4,9 +4,9 @@ services:
     build: 
       context: ./
       dockerfile: Dockerfile.dev
-    # extra_hosts:
-    #   - "database.lib.wvu.edu:172.17.0.1"
-    #   - "www.libraries.wvu.edu:127.0.0.1"
+    extra_hosts:
+      - "database.lib.wvu.edu:172.17.0.1"
+      - "www.libraries.wvu.edu:127.0.0.1"
     container_name: web
     volumes:   
       - ./config:/config    
