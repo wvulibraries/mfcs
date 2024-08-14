@@ -1,30 +1,54 @@
-# Webserver container for WVU Lib Engine API
-# Using Centos:latest base image
-# Version 1
+FROM php:8.2-apache
 
-FROM trmccormick/centos6-mfcs
 USER root
 
 WORKDIR /home/mfcs.lib.wvu.edu
+ADD ./public_html /home/mfcs.lib.wvu.edu/public_html
 
-## Install required packages
-RUN yum -y install ImageMagick php-pecl-imagick python-devel \
-	perl-ExtUtils-CBuilder.x86_64 perl-ExtUtils-Embed.x86_64 \
-    perl-ExtUtils-MakeMaker.x86_64 perl-ExtUtils-ParseXS.x86_64 \
-    libjpeg-devel libpng-devel libtiff-devel SDL-devel agg-devel \
-    cronie wget
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \   
+    libldap2-dev \
+    default-mysql-client \
+    vim \
+    git \
+    cron \
+    exactimage \
+    imagemagick \
+    ghostscript \
+    libmagickwand-dev --no-install-recommends \
+    && pecl install imagick    
 
-## Install FFMPEG Dependencies
-RUN yum -y install autoconf automake cmake freetype-devel gcc gcc-c++ \
-    git libtool make mercurial nasm pkgconfig zlib-devel
+# Install PHP extensions
+RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
+RUN docker-php-ext-install mysqli pdo pdo_mysql ldap 
+RUN docker-php-ext-enable imagick
+
+# install composer
+# RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Tesseract
+# -------------------------------------------------------------------------------------------------
+RUN apt-get install -y libleptonica-dev libtesseract-dev tesseract-ocr
+# ------------------------------------------------------------------------------------------------- 
+
+# FFMPEG Conversions
+# -------------------------------------------------------------------------------------------------
+RUN apt-get install -y cmake ffmpeg
+# -------------------------------------------------------------------------------------------------
 
 ## ClamAV
-RUN yum -y install clamav clamav-db clamav-devel
+# RUN apt-get -y install clamav clamav-db clamav-devel
 
-ADD . /vagrant
+# Update apache site for our custom location 
+COPY ./config/000-default.conf /etc/apache2/sites-available/000-default.conf
 
-ADD ./scripts/entrypoint.sh /usr/bin/
-RUN chmod -v +x /usr/bin/entrypoint.sh
+EXPOSE 80
+
+# Copy scripts and change permissions
+RUN mkdir -p /home/mfcs.lib.wvu.edu/scripts
+COPY ./scripts/*.sh /home/mfcs.lib.wvu.edu/scripts/
+RUN chmod -v +x /home/mfcs.lib.wvu.edu/scripts/*.sh
 
 # Start the service
-ENTRYPOINT ["/usr/bin/entrypoint.sh"]
+ENTRYPOINT ["bash", "/usr/bin/entrypoint.sh"] 

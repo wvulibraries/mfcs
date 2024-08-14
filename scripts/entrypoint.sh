@@ -2,50 +2,93 @@
 
 # Base PRE Setup
 GITDIR="/tmp/git"
+LOGDIR="/tmp/log"
 ENGINEAPIGIT="https://github.com/wvulibraries/engineAPI.git"
-ENGINEBRANCH="engineAPI-3.x"
+ENGINEBRANCH="engineAPI-3.2-develop"
 ENGINEAPIHOME="/home/engineAPI"
+
+MFCSEXPORTSGIT="https://github.com/wvulibraries/mfcs-export.git"
+MFCSEXPORTSBRANCH="master"
+MFCSEXPORTSHOME="/home/mfcs-export"
 
 SERVERURL="/home/mfcs.lib.wvu.edu"
 DOCUMENTROOT="public_html"
-SQLFILES="/vagrant/SQLFiles/migrations/*.sql"
 
-#this should match extension_dir from phpinfo()
-PHPMODULES="/usr/lib64/php/modules/"
+SELECT2GIT="https://github.com/select2/select2.git"
+SELECT2BRANCH="stable/3.5"
+SELECT2HOME=$SERVERURL/$DOCUMENTROOT/includes/select2-3.5.0
 
-cat yum-wof /etc/yum.repos.d/CentOS-Base.repo
+# this should match extension_dir from phpinfo()
+PHPMODULES="/usr/local/lib/php/extensions/no-debug-non-zts-20210902"
 
-# yum -y install \
-# 	httpd httpd-devel httpd-manual httpd-tools \
-# 	mysql-connector-java mysql-connector-odbc mysql-devel mysql-lib mysql-server \
-# 	mod_auth_kerb mod_auth_mysql mod_authz_ldap mod_evasive mod_perl mod_security mod_ssl mod_wsgi \
-# 	php php-devel php-bcmath php-cli php-common php-gd php-ldap php-mbstring php-mcrypt php-mysql \
-# 	php-odbc php-pdo php-pear php-pear-Benchmark php-pecl-apc php-pecl-imagick php-pecl-memcache php-soap php-xml php-xmlrpc \
-# 	emacs emacs-common emacs-nox git
+# create $GITDIR if it doesn't exist
+if [ ! -d "$GITDIR" ]; then
+    mkdir -p $GITDIR
+fi
 
-# yum -y update
+# if the mfcs-exports directory doesn't exist, clone it
+if [ ! -d "$GITDIR/mfcs-export" ]; then
+    # clone the mfcs-exports
+    cd $GITDIR
+    git clone -b $MFCSEXPORTSBRANCH $MFCSEXPORTSGIT
+else
+    # update the mfcs-exports
+    cd $GITDIR/mfcs-export
+    git pull origin $MFCSEXPORTSBRANCH   
+fi
 
-mv /etc/httpd/conf.d/mod_security.conf /etc/httpd/conf.d/mod_security.conf.bak
-/etc/init.d/httpd start
+# if the engineAPI directory doesn't exist, clone it
+if [ ! -d "$GITDIR/engineAPI" ]; then
+    # clone the engineAPI
+    cd $GITDIR
+    git clone -b $ENGINEBRANCH $ENGINEAPIGIT
+else
+    # update the engineAPI
+    cd $GITDIR/engineAPI
+    git pull origin $ENGINEBRANCH    
+fi
 
-mkdir -p $GITDIR
-cd $GITDIR
-git clone -b $ENGINEBRANCH $ENGINEAPIGIT
+# if the select2 directory doesn't exist, clone it
+if [ ! -d "$GITDIR/select2" ]; then
+    # clone the select2
+    cd $GITDIR
+    git clone -b $SELECT2BRANCH $SELECT2GIT
+else
+    # update the select2
+    cd $GITDIR/select2
+    git pull origin $SELECT2BRANCH    
+fi
 
-mkdir -p $SERVERURL/phpincludes/
+# remove exiting defaultPrivate.php and replace with our custom one
+rm $GITDIR/engineAPI/engine/engineAPI/3.2/config/defaultPrivate.php
+ln -s $SERVERURL/serverConfiguration/defaultPrivate.php $GITDIR/engineAPI/engine/engineAPI/3.2/config/defaultPrivate.php
+
+# create $SERVERURL/phpincludes/ if it doesn't exist
+if [ ! -d "$SERVERURL/phpincludes/" ]; then
+    mkdir -p $SERVERURL/phpincludes/
+fi
+
+# remove existing engine symbolic link if exists
+rm -f $SERVERURL/phpincludes/engine
+
+# create symbolic link to engineAPI
 ln -s $GITDIR/engineAPI/engine/ $SERVERURL/phpincludes/
+
+# remove existing select2 symbolic link if exists
+rm -f $SELECT2HOME
+
+# create symbolic link to select2
+ln -s $GITDIR/select2 $SELECT2HOME
 
 # Application Specific
 
-ln -s /vagrant/public_html $SERVERURL/$DOCUMENTROOT
+# remove existing symbolic links if exists
+rm -f $SERVERURL/phpincludes/engine/engineAPI/latest
+
+# create symbolic links to application
 ln -s $SERVERURL/phpincludes/engine/engineAPI/3.2 $SERVERURL/phpincludes/engine/engineAPI/latest
 
-rm -f /etc/php.ini
-rm -f /etc/httpd/conf/httpd.conf
-
-ln -s /vagrant/serverConfiguration/php.ini /etc/php.ini
-ln -s /vagrant/serverConfiguration/vagrant_httpd.conf /etc/httpd/conf/httpd.conf
-
+# create directories
 mkdir -p $SERVERURL/data/archives/mfcs
 mkdir -p $SERVERURL/data/archives/other
 mkdir -p $SERVERURL/data/exports
@@ -53,112 +96,62 @@ mkdir -p $SERVERURL/data/working/mfcsStaging
 mkdir -p $SERVERURL/data/working/tmp
 mkdir -p $SERVERURL/data/working/uploads
 
-chown apache $SERVERURL/data/ -R
+# create nfs-exports/mfcs-exports directories this is used as a placeholder for the nfs volume
+# which would be mounted in the docker-compose file
+mkdir -p $SERVERURL/data/nfs-exports/mfcs-exports
 
-mkdir -p $SERVERURL/public_html/javascript/
+# link engineAPI JS directory to distribution
 ln -s /tmp/git/engineAPI/engine/template/distribution/public_html/js $SERVERURL/public_html/javascript/distribution
 
-# setup the template link
-ln -s /vagrant/template/* $GITDIR/engineAPI/engine/template/
+# remove existing symbolic link to template if exists
+rm -f $GITDIR/engineAPI/engine/template
 
-mkdir -p /vagrant/serverConfiguration/serverlogs
-touch /vagrant/serverConfiguration/serverlogs/error_log
-/etc/init.d/httpd restart
-chkconfig httpd on
+# setup the template link
+ln -s $SERVERURL/template/* $GITDIR/engineAPI/engine/template/
 
 # setup emailing support (this is a vagrant requirement) due to symbolic linking
-sudo mkdir -p /tmp/git/phpincludes/engine/phpmailer
-sudo cp $SERVERURL/phpincludes/engine/phpmailer/*.php /tmp/git/phpincludes/engine/phpmailer/
+mkdir -p /tmp/git/phpincludes/engine/phpmailer
+cp $SERVERURL/phpincludes/engine/phpmailer/*.php /tmp/git/phpincludes/engine/phpmailer/
 
 # Base Post Setup
 
 ln -s $SERVERURL $ENGINEAPIHOME
+
+# remove existing symbolic link if exists
+rm -f $SERVERURL/$DOCUMENTROOT/engineIncludes
+
+# create symbolic link to engineAPI
 ln -s /tmp/git/engineAPI/public_html/engineIncludes $SERVERURL/$DOCUMENTROOT/engineIncludes
 
-## Setup the EngineAPI Database
+# remove existing error.log if exists
+rm -f $LOGDIR/error.log
+touch $LOGDIR/error.log
 
-/etc/init.d/mysqld start
-chkconfig mysqld on
+# remove existing access.log if exists
+rm -f $LOGDIR/access.log
+touch $LOGDIR/access.log
 
-mysql -u root < /tmp/git/engineAPI/sql/vagrantSetup.sql
-mysql -u root EngineAPI < /tmp/git/engineAPI/sql/EngineAPI.sql
+# load crontab from file
+crontab $SERVERURL/serverConfiguration/crontab.dev
 
-# first value is size in megabytes to load main database
-mysql -u root -Bse "set global max_allowed_packet=1024*1024*1024"; #first value is size in megabytes
+# start the cron service   
+service cron start
 
-# application Post Setup
-mysql -u root < /vagrant/SQLFiles/setup.sql
+# remove /etc/ImageMagick-6/policy.xml and replace with our custom one
+rm /etc/ImageMagick-6/policy.xml
+ln -s /config/policy.xml /etc/ImageMagick-6/policy.xml
 
-# if backup exists import that and do selected migrations
-# I was using a older backup and additional migrations needed
-# to be run. if using a more current backup the migrations may
-# not be required.
-if [ -e /vagrant/SQLFiles/mfcs.sql ]
-then
-  mysql -u root mfcs < /vagrant/SQLFiles/mfcs.sql
-  mysql -u root mfcs < /vagrant/SQLFiles/migrations/2016.07.26.0945.sql
-else
-  echo "No backup found, skipping database import and running migrations"
-  mysql -u root mfcs < /vagrant/SQLFiles/baseSnapshot.sql
-  for f in $SQLFILES
-  do
-  	echo "Processing $f ..."
-  	mysql -u root mfcs < "$f"
-  done
-fi
+# Run npm install to install Node.js dependencies
+# cd $SERVERURL/$DOCUMENTROOT/includes/js
+# npm install
 
-#install 3rd Party dependencies
-cd /vagrant/serverConfiguration/3rdParty
-rpm -Uvh --force --quiet remi-release-6*.rpm epel-release-6*.rpm
+# # Run Grunt tasks if Gruntfile.js exists
+# if [ -f "Gruntfile.js" ]; then
+#     grunt
+# else
+#     echo "Gruntfile.js not found. Skipping Grunt tasks."
+# fi
 
-# yum -y install \
-# 	ImageMagick php-pecl-imagick python-devel \
-# 	perl-ExtUtils-CBuilder.x86_64 perl-ExtUtils-Embed.x86_64 perl-ExtUtils-MakeMaker.x86_64 perl-ExtUtils-ParseXS.x86_64
-
-rm -f /etc/yum.repos.d/remi.repo
-ln -s /vagrant/serverConfiguration/remi.repo /etc/yum.repos.d/remi.repo
-
-# yum -y install libjpeg-devel libpng-devel libtiff-devel SDL-devel agg-devel
-
-tar -zxf /vagrant/serverConfiguration/3rdParty/leptonica-1.69.tar.gz --directory=/tmp
-tar -zxf /vagrant/serverConfiguration/3rdParty/tesseract-ocr-3.02.02.tar.gz --directory=/tmp
-tar -zxf /vagrant/serverConfiguration/3rdParty/tesseract-ocr-3.02.eng.tar.gz --directory=/tmp
-tar -xf /vagrant/serverConfiguration/3rdParty/exact-image-0.8.8.tar --directory=/tmp
-
-cd /tmp/leptonica-1.69
-./configure
-make
-make install
-
-cd /tmp/tesseract-ocr
-./autogen.sh
-./configure
-make
-make install
-
-cp /tmp/tesseract-ocr/tessdata/eng.* /usr/local/share/tessdata
-
-cd /tmp/exact-image-0.8.8
-./configure
-make
-make install
-
-ln -s /usr/local/bin/tesseract /usr/bin/
-ln -s /usr/local/bin/hocr2pdf /usr/bin/
-
-cd /tmp
-mkdir ffmpeg
-
-echo "Extracing FFMPEG"
-tar -xvf /vagrant/serverConfiguration/3rdParty/ffmpeg-2.6.8.tar.xz --directory /tmp/ffmpeg/
-cd /tmp/ffmpeg/ffmpeg-2.8.6-64bit-static
-cp ffmpeg /usr/local/bin/
-cp ffmpeg-10bit /usr/local/bin/
-cp ffprobe /usr/local/bin/
-cp ffserver /usr/local/bin/
-cp qt-faststart /usr/local/bin/
-echo "Completed install"
-
-/sbin/service httpd restart
-
-tail -f /vagrant/serverConfiguration/serverlogs/error_log
+# start the apache2 service in the foreground to keep
+# the container from closing
+exec apache2-foreground             # main execution
