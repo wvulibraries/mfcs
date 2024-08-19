@@ -28,12 +28,12 @@ services:
       - /data/archives:/home/mfcs.lib.wvu.edu/data/archives
       # folder contains processed files - needed for generating exports
       - /data/processed:/home/mfcs.lib.wvu.edu/data/exports
-      # working directory - uplooads, tmp, mfcsStaging
+      # working directory - uploads, tmp, mfcsStaging
       - /data/working:/home/mfcs.lib.wvu.edu/data/working
       # temporary exports directory - testing
-      - /data/archives/exports:/home/mfcs.lib.wvu.edu/exports
+      - /data/working/exports:/home/mfcs.lib.wvu.edu/exports
       # replace with nsf share - needed for exports / imports to hydra heads
-      - ./data/nfs-exports:/home/mfcs.lib.wvu.edu/data/nfs-exports
+      - /data/working/nfs-exports:/home/mfcs.lib.wvu.edu/data/nfs-exports
     env_file:
         - './env/.env.dev.mfcs' 
     ports:
