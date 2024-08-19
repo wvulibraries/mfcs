@@ -50,5 +50,9 @@ RUN mkdir -p /home/mfcs.lib.wvu.edu/scripts
 COPY ./scripts/*.sh /home/mfcs.lib.wvu.edu/scripts/
 RUN chmod -v +x /home/mfcs.lib.wvu.edu/scripts/*.sh
 
+# Copy entrypoint script
+COPY ./scripts/entrypoint.sh /usr/bin/entrypoint.sh
+RUN chmod -v +x /usr/bin/entrypoint.sh
+
 # Start the service
 ENTRYPOINT ["bash", "/usr/bin/entrypoint.sh"] 

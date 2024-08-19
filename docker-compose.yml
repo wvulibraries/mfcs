@@ -26,7 +26,9 @@ services:
       - ./config/php.ini:/usr/local/etc/php/php.ini 
       # mapped volumes
       - /data/archives:/home/mfcs.lib.wvu.edu/data/archives
-      - /data/exports:/home/mfcs.lib.wvu.edu/data/exports
+      # folder contains processed files - needed for generating exports
+      - /data/processed:/home/mfcs.lib.wvu.edu/data/exports
+      # working directory - uplooads, tmp, mfcsStaging
       - /data/working:/home/mfcs.lib.wvu.edu/data/working
       # temporary exports directory - testing
       - /data/archives/exports:/home/mfcs.lib.wvu.edu/exports
