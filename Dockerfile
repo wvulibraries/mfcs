@@ -1,4 +1,4 @@
-FROM php:8.2-apache
+FROM php:8.3-apache
 
 USER root
 
@@ -55,4 +55,4 @@ COPY ./scripts/entrypoint.sh /usr/bin/entrypoint.sh
 RUN chmod -v +x /usr/bin/entrypoint.sh
 
 # Start the service
-ENTRYPOINT ["bash", "/usr/bin/entrypoint.sh"] 
+ENTRYPOINT ["bash", "/usr/bin/entrypoint.sh"]
