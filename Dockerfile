@@ -10,7 +10,6 @@ RUN apt-get update && apt-get install -y \
     build-essential \   
     libldap2-dev \
     default-mysql-client \
-    vim \
     git \
     cron \
     exactimage \
