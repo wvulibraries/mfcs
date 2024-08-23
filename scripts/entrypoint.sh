@@ -92,7 +92,7 @@ ln -s /tmp/git/engineAPI/engine/template/distribution/public_html/js $SERVERURL/
 rm -f $GITDIR/engineAPI/engine/template
 
 # setup the template link
-ln -s $SERVERURL/template/* $GITDIR/engineAPI/engine/template/
+ln -s $SERVERURL/template $GITDIR/engineAPI/engine/template
 
 # setup emailing support (this is a vagrant requirement) due to symbolic linking
 mkdir -p /tmp/git/phpincludes/engine/phpmailer
