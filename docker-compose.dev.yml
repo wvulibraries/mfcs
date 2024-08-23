@@ -33,7 +33,7 @@ services:
       - ./data/mfcs-data/working:/home/mfcs.lib.wvu.edu/data/working
       # folder contains the main index.php and subdirectories linking back to the
       # mfcs-exports git repo. See the mfcs-exports git repo for more information.
-      # only mount if you testing exports. rename the exiting folder prior to mounting
+      # only mount if you testing exports. rename the existing folder prior to mounting
       - ./data/exports-store:/home/mfcs.lib.wvu.edu/exports
       # replace with nsf share - needed for exports / imports to hydra heads
       - ./data/mfcs-data/nfs-exports:/home/mfcs.lib.wvu.edu/data/nfs-exports

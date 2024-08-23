@@ -1,2 +1,5 @@
 * * * * * /home/mfcs.lib.wvu.edu/scripts/processFilesCron.sh >> /tmp/log/processFiles.log 2>&1
+0 2 * * * /home/mfcs.lib.wvu.edu/scripts/checksum_newFiles.sh >> /tmp/log/checksumNewFiles.log 2>&1
+0 2 * * * /home/mfcs.lib.wvu.edu/scripts/checksum_recheck.sh >> /tmp/log/checksumRecheck.log 2>&1
+0 1 * * * /home/mfcs.lib.wvu.edu/scripts/systems_information.sh >> /tmp/log/systemsInformation.log 2>&1
 #

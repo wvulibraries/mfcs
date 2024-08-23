@@ -3,7 +3,7 @@
 		 <php>
 		 	<var name="DB_DSN"    value="mysql:dbname=mfcs;host=localhost" />
 		 	<var name="DB_USER"   value="username" />
-		 	<var name="DB_PASSWD" value="passwordd" />
+		 	<var name="DB_PASSWD" value="password" />
 		 	<var name="DB_DBNAME" value="mfcs" />
 		 </php>
 

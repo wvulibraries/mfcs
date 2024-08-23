@@ -1,6 +1,9 @@
 <?php
 
-// This file should be set to be readable only by the web server user and the system administrator (or root)
+// I have updated this file to use getenv() to pull the environment variables from the docker-compose file
+// This is a more secure way to store the database information
+// Additional updates my be needed to the other files to use the environment variables
+// like the engineDB default file.
 
 global $engineVarsPrivate; // MySQL Information
 
@@ -23,6 +26,9 @@ $engineVarsPrivate["privateVars"]["engineDB"] = array(
 		'file'     => 'stats.php',
 		'function' => '__construct',
 	),
+	// this doesn't appear to have ever been implemented
+	// there should have been a choice to use mysql or ldap
+	// either through a config or environment variable
 	// array(
 	// 	'file'     => 'mysql.php',
 	// 	'function' => 'mysqlLogin',
