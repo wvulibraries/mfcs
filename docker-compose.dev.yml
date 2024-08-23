@@ -3,7 +3,7 @@ services:
   web:
     build: 
       context: ./
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     # extra_hosts:
     #   - "database.lib.wvu.edu:172.17.0.1"
     #   - "www.libraries.wvu.edu:127.0.0.1"

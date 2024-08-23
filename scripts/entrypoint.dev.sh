@@ -117,7 +117,7 @@ rm -f $LOGDIR/access.log
 touch $LOGDIR/access.log
 
 # load crontab from file
-crontab /config/crontab
+crontab /config/crontab.dev
 
 # start the cron service   
 service cron start
