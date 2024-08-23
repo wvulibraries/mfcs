@@ -31,7 +31,7 @@ services:
       # working directory - uploads, tmp, mfcsStaging
       - /data/working:/home/mfcs.lib.wvu.edu/data/working
       # temporary exports directory - testing
-      - /data/working/exports:/home/mfcs.lib.wvu.edu/exports
+      - /extra/exports:/home/mfcs.lib.wvu.edu/exports
       # replace with nsf share - needed for exports / imports to hydra heads
       - /data/working/nfs-exports:/home/mfcs.lib.wvu.edu/data/nfs-exports
     env_file:
