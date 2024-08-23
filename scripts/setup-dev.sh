@@ -35,6 +35,13 @@ else
   done
 fi
 
+# template tasks
+# remove existing symbolic link to template if exists
+# rm -rf /tmp/git/engineAPI/engine/template
+
+# setup the template link
+# ln -s ./template /tmp/git/engineAPI/engine/template
+
 # This is for objectID=192268
 # http://localhost:8080/dataEntry/object.php?objectID=192268
 # create path ./data/archives/f/c/1/6/c/0/0/3/e/d/8/a/4/4/6/c/9/9/8/0/1/d/d/9/f/4/8/c/a/f/c/1/fc16c003-ed8a-446c-9980-1dd9f48cafc1

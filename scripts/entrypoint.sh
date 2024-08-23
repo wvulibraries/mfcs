@@ -7,10 +7,6 @@ ENGINEAPIGIT="https://github.com/wvulibraries/engineAPI.git"
 ENGINEBRANCH="engineAPI-3.2-develop"
 ENGINEAPIHOME="/home/engineAPI"
 
-MFCSEXPORTSGIT="https://github.com/wvulibraries/mfcs-export.git"
-MFCSEXPORTSBRANCH="master"
-MFCSEXPORTSHOME="/home/mfcs-export"
-
 SERVERURL="/home/mfcs.lib.wvu.edu"
 DOCUMENTROOT="public_html"
 
@@ -24,17 +20,6 @@ PHPMODULES="/usr/local/lib/php/extensions/no-debug-non-zts-20210902"
 # create $GITDIR if it doesn't exist
 if [ ! -d "$GITDIR" ]; then
     mkdir -p $GITDIR
-fi
-
-# if the mfcs-exports directory doesn't exist, clone it
-if [ ! -d "$GITDIR/mfcs-export" ]; then
-    # clone the mfcs-exports
-    cd $GITDIR
-    git clone -b $MFCSEXPORTSBRANCH $MFCSEXPORTSGIT
-else
-    # update the mfcs-exports
-    cd $GITDIR/mfcs-export
-    git pull origin $MFCSEXPORTSBRANCH   
 fi
 
 # if the engineAPI directory doesn't exist, clone it

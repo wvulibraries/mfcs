@@ -34,3 +34,10 @@ else
   	mysql -u root -h $DATABASE_HOST mfcs < "$f"
   done
 fi
+
+# template tasks
+# remove existing symbolic link to template if exists
+# rm -rf /tmp/git/engineAPI/engine/template
+
+# setup the template link
+# ln -s ./template/* /tmp/git/engineAPI/engine/template/
