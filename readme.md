@@ -130,3 +130,8 @@ Insure you run the sh ./scripts/setup.sh file to configure the mysql database.
 If importing a back mfcs database place the mfcs.sql file in the SQLFiles folder. If running in dev mode uncomment the 2024.06.12.1509.sql so the docker user
 is added.
 
+# PhpUnit Testing
+PhpUnit is installed via composer the dependicies are stored in the vendor which is mapped to the main data folder outside the docker container.
+
+./vendor/bin/phpunit tests
+

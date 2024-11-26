@@ -14,7 +14,8 @@ services:
       - ./data/logs:/tmp/log 
       - ./public_html:/home/mfcs.lib.wvu.edu/public_html         
       - ./serverConfiguration:/home/mfcs.lib.wvu.edu/serverConfiguration  
-      - ./SQLFiles:/home/mfcs.lib.wvu.edu/SQLFiles    
+      - ./SQLFiles:/home/mfcs.lib.wvu.edu/SQLFiles  
+      # map in the git folder for things like engineAPI, mfcs-exports, etc
       - ./data/git:/tmp/git
       # paths for mfcs exports
       - ./data/git/mfcs-export:/home/mfcs.lib.wvu.edu/git_pull/mfcs-export
@@ -33,12 +34,18 @@ services:
       - ./data/mfcs-data/working:/home/mfcs.lib.wvu.edu/data/working
       # folder contains the main index.php and subdirectories linking back to the
       # mfcs-exports git repo. See the mfcs-exports git repo for more information.
-      # only mount if you testing exports. rename the existing folder prior to mounting
+      # only mount if your testing exports. rename the existing folder prior to mounting
       - ./data/exports-store:/home/mfcs.lib.wvu.edu/exports
+      # for imports - currently used for importing csv data for orcid collection
+      - ./data/mfcs-data/imports:/home/mfcs.lib.wvu.edu/data/imports
       # replace with nsf share - needed for exports / imports to hydra heads
       - ./data/mfcs-data/nfs-exports:/home/mfcs.lib.wvu.edu/data/nfs-exports
       # map in testing folder
       - ./data/mfcs-data/testing:/home/mfcs.lib.wvu.edu/data/testing
+      # map in vendor folder for composer
+      - ./data/vendor:/home/mfcs.lib.wvu.edu/vendor
+      # map in the tests folder
+      - ./tests:/home/mfcs.lib.wvu.edu/tests
     env_file:
         - './env/.env.dev.mfcs' 
     ports:

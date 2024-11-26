@@ -16,7 +16,12 @@ if (is_empty($formID)) {
 	$formID = NULL;
 }
 
-log::insert("Form Creator: Edit Forms",0,$formID);
+// do not try passing values if its a new form
+if (!isnull($formID)) {
+	log::insert("Form Creator: Edit Forms", 0, $formID);
+} else {
+	log::insert("Form Creator: Create Forms");
+}
 
 if(isset($engine->cleanPost['MYSQL']['deleteForm'])){
 	forms::delete($engine->cleanGet['HTML']['id']);
@@ -812,14 +817,12 @@ try {
 	errorHandle::errorMsg($e->getMessage());
 }
 
-
 // Render Stuff
 localvars::add('bitRates',      renderToOptions($bitrates));
 localvars::add('videoBitrates', renderToOptions($videoBitrates));
 localvars::add('audioOptions',  renderToOptions($audioTypes));
 localvars::add('videoTypes',    renderToOptions($videoTypes));
 localvars::add('videoThumbs',   renderToOptions($videoThumbs));
-
 
 localvars::add("selectedEntryUsers",  $selectedEntryUsers);
 localvars::add("selectedViewUsers",   $selectedViewUsers);

@@ -2,56 +2,62 @@
 
 class log {
 
-	// copilot refactor 2024-04-24
-	public static function insert($action, $objectID = 0, $formID = 0, $info = null)
-	{
-		$username = mfcs::$engine->openDB->escape(users::user('username'));
-		$ip = mfcs::$engine->openDB->escape($_SERVER['REMOTE_ADDR']);
-		$action = mfcs::$engine->openDB->escape($action);
-		$objectID = ($objectID !== null) ? mfcs::$engine->openDB->escape($objectID) : 'NULL';
-		$formID = mfcs::$engine->openDB->escape($formID);
-		$info = mfcs::$engine->openDB->escape($info);
-		$date = time();
+    // Insert method with manual query construction
+    public static function insert($action, $objectID = 0, $formID = 0, $info = null)
+    {
+        $db = mfcs::$engine->openDB;
 
-		$sql = "INSERT INTO `logs` (`username`, `IP`, `action`, `objectID`, `formID`, `info`, `date`) 
-				VALUES ('$username', '$ip', '$action', $objectID, '$formID', '$info', '$date')";
-		$sqlResult = mfcs::$engine->openDB->query($sql);
+        // Escaping input manually (as in original)
+        $username = $db->escape(users::user('username'));
+        $ip = $db->escape($_SERVER['REMOTE_ADDR']);
+        $action = $db->escape($action);
+        $objectID = ($objectID !== null) ? $db->escape($objectID) : 'NULL';
+        $formID = $db->escape($formID);
+        $info = $db->escape($info);
+        $date = time();
 
-		if (!$sqlResult['result']) {
-			errorHandle::newError(__METHOD__ . "() - : " . $sqlResult['error'], errorHandle::DEBUG);
-			return false;
-		}
+        $sql = "INSERT INTO `logs` (`username`, `IP`, `action`, `objectID`, `formID`, `info`, `date`) 
+                VALUES ('$username', '$ip', '$action', $objectID, '$formID', '$info', '$date')";
+        
+        $sqlResult = $db->query($sql);
 
-		return true;
-	}
+        // Handling the response and ensuring an array structure
+        if (!is_array($sqlResult) || !$sqlResult['result']) {
+            errorHandle::newError(__METHOD__ . "() - SQL Insert Failed: " . $sqlResult['error'], errorHandle::DEBUG);
+            return false;
+        }
 
-	// $actions = array of actions
-	public static function pull_actions($actions, $objectID)
-	{
-		if (!is_array($actions)) {
-			return array();
-		}
+        return true;
+    }
 
-		$blame = array();
+    // pull_actions method with manual query construction
+    public static function pull_actions($actions, $objectID)
+    {
+        if (!is_array($actions)) {
+            return array();
+        }
 
-		foreach ($actions as $action) {
-			$sql = "SELECT `username`, `date` FROM `logs` WHERE `objectID` = ? AND `action` = ?";
-			$params = [mfcs::$engine->openDB->escape($objectID), mfcs::$engine->openDB->escape($action)];
-			$sqlResult = mfcs::$engine->openDB->query($sql, $params);
+        $db = mfcs::$engine->openDB;
+        $blame = array();
 
-			if (!$sqlResult['result']) {
-				errorHandle::newError(__METHOD__ . "() - : " . $sqlResult['error'], errorHandle::DEBUG);
-				return array();
-			}
+        foreach ($actions as $action) {
+            $sql = "SELECT `username`, `date` FROM `logs` WHERE `objectID` = '" . $db->escape($objectID) . "' AND `action` = '" . $db->escape($action) . "'";
+            $sqlResult = $db->query($sql);
 
-			while ($row = mysqli_fetch_array($sqlResult['result'], MYSQLI_ASSOC)) {
-				$blame[] = [$row['username'], date('D, d M Y H:i', $row['date'])];
-			}
-		}
+            // Ensure correct structure of the result
+            if (!is_array($sqlResult) || !$sqlResult['result']) {
+                errorHandle::newError(__METHOD__ . "() - SQL Query Failed: " . $sqlResult['error'], errorHandle::DEBUG);
+                return array();
+            }
 
-		return $blame;
-	}
+            // Fetch rows from result
+            while ($row = mysqli_fetch_array($sqlResult['result'], MYSQLI_ASSOC)) {
+                $blame[] = [$row['username'], date('D, d M Y H:i', $row['date'])];
+            }
+        }
 
+        return $blame;
+    }
 }
 
 ?>

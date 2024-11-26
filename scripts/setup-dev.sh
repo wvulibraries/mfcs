@@ -1,4 +1,6 @@
 #!/bin/bash
+# setup dev needs to be run from inside the web container
+
 SERVERURL="/home/mfcs.lib.wvu.edu"
 SQLFILES="$SERVERURL/SQLFiles/migrations/*.sql"
 
@@ -75,3 +77,10 @@ mkdir -p ./data/archives/mfcs/2/5/8/b/f/1/3/6/e/9/5/b/4/8/9/c/9/e/d/3/9/8/d/a/f/
 # copy WVUL_am1500_*.tif to the above path
 cp ./data/testing/archive-download/4224.HobbieLeenieFalconeJon/4224.HobbieLeenieFalconeJon.Video.001.2.19.21.mp4 ./data/archives/mfcs/2/5/8/b/f/1/3/6/e/9/5/b/4/8/9/c/9/e/d/3/9/8/d/a/f/c/a/5/e/4/8/2/258bf136-e95b-489c-9ed3-98dafca5e482
 
+# This is for objectID=144499
+# http://localhost:8080/dataEntry/object.php?objectID=144499
+# create path ./data/archives/3/1/0/6/2/8/f/7/e/b/8/b/4/2/3/8/a/8/8/6/d/f/e/3/3/7/2/7/8/e/2/c/310628f7-eb8b-4238-a886-dfe337278e2c
+mkdir -p ./data/archives/mfcs/3/1/0/6/2/8/f/7/e/b/8/b/4/2/3/8/a/8/8/6/d/f/e/3/3/7/2/7/8/e/2/c/310628f7-eb8b-4238-a886-dfe337278e2c
+
+# copy WVUL_am1500_*.tif to the above path
+cp ./data/testing/archive-download/am4050/am4050_010689-87296-007.jpg ./data/archives/mfcs/3/1/0/6/2/8/f/7/e/b/8/b/4/2/3/8/a/8/8/6/d/f/e/3/3/7/2/7/8/e/2/c/310628f7-eb8b-4238-a886-dfe337278e2c

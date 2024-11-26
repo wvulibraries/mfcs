@@ -85,14 +85,19 @@ mkdir -p $SERVERURL/data/working/uploads
 # which would be mounted in the docker-compose file
 mkdir -p $SERVERURL/data/nfs-exports/mfcs-exports
 
+# remove existing symbolic link to data if exists
+rm -f $SERVERURL/public_html/javascript/distribution
+
 # link engineAPI JS directory to distribution
 ln -s /tmp/git/engineAPI/engine/template/distribution/public_html/js $SERVERURL/public_html/javascript/distribution
 
 # remove existing symbolic link to template if exists
-rm -f $GITDIR/engineAPI/engine/template
+# this doesn't appear to work keeps saying its busy not sure we need to remove it anyway
+# commenting for testing 11/26/2024
+# rm -f $GITDIR/engineAPI/engine/template
 
 # setup the template link
-ln -s $SERVERURL/template $GITDIR/engineAPI/engine/template
+# ln -s $SERVERURL/template $GITDIR/engineAPI/engine/template
 
 # setup emailing support (this is a vagrant requirement) due to symbolic linking
 mkdir -p /tmp/git/phpincludes/engine/phpmailer

@@ -24,8 +24,17 @@ RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
 RUN docker-php-ext-install mysqli pdo pdo_mysql ldap 
 RUN docker-php-ext-enable imagick
 
-# install composer
-# RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Copy composer.json and composer.lock (if you have it)
+ADD composer.json /home/mfcs.lib.wvu.edu/
+# If you have a composer.lock file, copy it as well
+# COPY composer.lock /home/mfcs.lib.wvu.edu/
+
+# Install PHPUnit globally
+RUN curl -sS https://phar.phpunit.de/phpunit.phar -o /usr/local/bin/phpunit && \
+    chmod +x /usr/local/bin/phpunit
 
 # Tesseract
 # -------------------------------------------------------------------------------------------------

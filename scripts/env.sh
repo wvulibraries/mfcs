@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # /home/mfcs.lib.wvu.edu/scripts/env.sh
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 export DATABASE_HOST=db

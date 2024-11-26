@@ -10,6 +10,9 @@ rm -rf ./data/mfcs-data/exports/*
 # remove ./data/archives contents and all subdirectories
 rm -rf ./data/mfcs-data/archives/*
 
+# remove ./data/processed contents and all subdirectories
+rm -rf ./data/mfcs-data/processed/*
+
 # remove ./data/working/uploads contents and all subdirectories
 rm -rf ./data/mfcs-data/working/uploads/*
 

@@ -650,7 +650,10 @@ class files {
 	public static function getWatermarkBlob($id){
 		$sql = sprintf("SELECT data FROM watermarks WHERE ID='%s' LIMIT 1", mfcs::$engine->openDB->escape($id));
 		$res = mfcs::$engine->openDB->query($sql);
-		if($res['result']) return mysql_result($res['result'],0,'data');
+		if ($res['result']) {
+			$row = mysqli_fetch_assoc($res['result']);
+			return $row['data'];
+		}
 
 		// If we're here, an error happened
 		errorHandle::newError(__METHOD__."() - Failed to get watermark! (MySQL Error: {$res['error']})", errorHandle::HIGH);
